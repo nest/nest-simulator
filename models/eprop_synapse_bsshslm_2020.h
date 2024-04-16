@@ -312,7 +312,7 @@ private:
   double weight_;
 
   //! The time step when the previous spike arrived.
-  long t_previous_spike_;
+  long t_spike_previous_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -364,7 +364,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -386,7 +386,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -410,7 +410,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -426,7 +426,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -451,7 +451,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -519,10 +519,10 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     t_previous_trigger_spike_ = t_spike;
   }
 
-  if ( t_previous_spike_ > 0 )
+  if ( t_spike_previous_ > 0 )
   {
     const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_previous_spike_ );
+    presyn_isis_.push_back( t - t_spike_previous_ );
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -543,7 +543,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     t_previous_trigger_spike_ = t_spike;
   }
 
-  t_previous_spike_ = t_spike;
+  t_spike_previous_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

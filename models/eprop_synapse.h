@@ -383,7 +383,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   epsilon_ = es.epsilon_;
-  previous_z_buffer_ = es.previous_z_buffer_;
+  z_previous_buffer_ = es.z_previous_buffer_;
 
   return *this;
 }
@@ -392,8 +392,8 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_spike_previous( es.t_spike_previous_ )
-  , t_previous_trigger_spike_( es.t_previous_spike_ )
+  , t_spike_previous_( es.t_spike_previous_ )
+  , t_previous_trigger_spike_( es.t_spike_previous_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
   , epsilon_( es.epsilon_ )
@@ -420,7 +420,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   epsilon_ = es.epsilon_;
-  previous_z_buffer_ = es.previous_z_buffer_;
+  z_previous_buffer_ = es.z_previous_buffer_;
 
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
@@ -473,7 +473,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_previous_spike_, t_spike, eprop_isi_trace_cutoff, false );
+  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff, false );
 
   t_spike_previous_ = t_spike;
 

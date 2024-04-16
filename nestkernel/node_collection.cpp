@@ -67,7 +67,6 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
         ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
         : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
                                                  : stride ) )
-  , begin_in_part_idx_( offset )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
         ? kernel().mpi_manager.get_rank()
@@ -92,7 +91,6 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
         ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
         : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
                                                  : stride ) )
-  , begin_in_part_idx_( offset )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
         ? kernel().mpi_manager.get_rank()
@@ -136,15 +134,13 @@ nc_const_iterator::advance_composite_iterator_( size_t n )
   }
 
   // Find starting point in new part, step 1: overall first in new part
-  std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, begin_in_part_idx_, n );
+  std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, element_idx_, n );
 
   FULL_LOGGING_ONLY( kernel().write_to_dump(
     String::compose( "ACI1 rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
 
   if ( part_idx_ != invalid_index )
   {
-    begin_in_part_idx_ = element_idx_;
-
     // Step 2: Find rank/thread specific starting point
     switch ( kind_ )
     {
@@ -711,19 +707,24 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   , last_part_( 0 )
   , last_elem_( end - 1 )
   , is_sliced_( start != 0 or end != primitive.size() or stride > 1 )
+  , cumul_abs_size_( { primitive.size() } )
+  , first_in_part_( { first_elem_ } )
 {
   assert( end > 0 );
   assert( first_elem_ <= last_elem_ );
 }
 
 NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& parts )
-  : size_( 0 )
+  : parts_()
+  , size_( 0 )
   , stride_( 1 )
   , first_part_( 0 )
   , first_elem_( 0 )
   , last_part_( 0 )
   , last_elem_( 0 )
   , is_sliced_( false )
+  , cumul_abs_size_()
+  , first_in_part_()
 {
   if ( parts.size() < 1 )
   {
@@ -731,7 +732,7 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
   }
 
   NodeCollectionMetadataPTR meta = parts[ 0 ].get_metadata();
-  parts_.reserve( parts.size() );
+
   for ( const auto& part : parts )
   {
     if ( meta.get() and not( meta == part.get_metadata() ) )
@@ -746,6 +747,7 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
     }
   }
 
+  const auto n_parts = parts_.size();
   if ( parts_.size() == 0 )
   {
     throw BadProperty( "Cannot create composite NodeCollection from only empty parts" );
@@ -753,8 +755,19 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
 
   std::sort( parts_.begin(), parts_.end(), primitive_sort_op );
 
-  last_part_ = parts_.size() - 1;
+  // Only after sorting can we set up the remaining fields
+  last_part_ = n_parts - 1;
   last_elem_ = parts_[ last_part_ ].size() - 1; // well defined because we allow no empty parts
+
+  cumul_abs_size_.resize( n_parts );
+  cumul_abs_size_[ 0 ] = parts_[ 0 ].size();
+  for ( size_t j = 1; j < n_parts; ++j )
+  {
+    cumul_abs_size_[ j ] = cumul_abs_size_[ j - 1 ] + parts_[ j ].size();
+  }
+
+  // All parts start at beginning since no slicing
+  std::vector< size_t >( n_parts, 0 ).swap( first_in_part_ );
 }
 
 NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& composite,
@@ -769,6 +782,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   , last_part_( 0 )
   , last_elem_( 0 )
   , is_sliced_( true )
+  , cumul_abs_size_()
+  , first_in_part_()
 {
   if ( end - start < 1 )
   {
@@ -792,6 +807,9 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     std::tie( first_part_, first_elem_ ) = it.get_part_offset();
     last_part_ = first_part_;
     last_elem_ = first_elem_;
+
+    cumul_abs_size_.emplace_back( parts_[ first_part_ ].size() ); // absolute size of the one valid part
+    first_in_part_.emplace_back( first_elem_ );
   }
   else
   {
@@ -806,6 +824,35 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     const nc_const_iterator last_it = composite.begin() + ( end - 1 );
     FULL_LOGGING_ONLY( kernel().write_to_dump( "Building last it --- DONE" ); )
     std::tie( last_part_, last_elem_ ) = last_it.get_part_offset();
+
+    // We consider now only parts beginning with first_part_ to and including last_part_
+    const auto n_parts = last_part_ - first_part_ + 1;
+    cumul_abs_size_.reserve( n_parts );
+    first_in_part_.reserve( n_parts );
+    cumul_abs_size_.emplace_back( parts_[ first_part_ ].size() );
+    first_in_part_.emplace_back( first_elem_ );
+
+    for ( size_t j = 1; j < n_parts; ++j )
+    {
+      const auto prev_cas = cumul_abs_size_[ j - 1 ];
+      cumul_abs_size_.emplace_back( prev_cas + parts_[ j ].size() );
+
+      // Compute absolute index from beginning of start_part for first element beyond part j-1
+      const auto prev_num_elems = 1 + ( ( prev_cas - 1 - first_elem_ ) / stride_ );
+      const auto next_elem_abs_idx = first_elem_ + prev_num_elems * stride_;
+      assert( next_elem_abs_idx >= prev_cas );
+      const auto next_elem_loc_idx = next_elem_abs_idx - prev_cas;
+
+      // We have a next element if it is in the part; if we are in last_part_, we must not have passed last_elem
+      if ( next_elem_abs_idx < cumul_abs_size_[ j ] and ( j < n_parts - 1 or next_elem_loc_idx <= last_elem_ ) )
+      {
+        first_in_part_.emplace_back( next_elem_loc_idx );
+      }
+      else
+      {
+        first_in_part_.emplace_back( invalid_index );
+      }
+    }
   }
 }
 
@@ -984,7 +1031,8 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
 
   size_t idx_first_in_part = start_offset;
 
-  for ( size_t pix = start_part; pix <= last_part_; ++pix )
+  size_t pix = start_part;
+  do
   {
     const size_t phase_first_node = gid_to_phase( parts_[ pix ][ idx_first_in_part ] );
 
@@ -1026,21 +1074,58 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
     }
     else
     {
-      std::tie( pix, idx_first_in_part ) = find_next_part_( pix, idx_first_in_part );
+      // find next part with at least one element in stride
+      do
+      {
+        ++pix;
+      } while ( pix <= last_part_ and first_in_part_[ pix ] == invalid_index );
+
+      if ( pix > last_part_ )
+      {
+        // node collection exhausted
+        return { invalid_index, invalid_index };
+      }
+      else
+      {
+        idx_first_in_part = first_in_part_[ pix ];
+      }
     }
-  }
+  } while ( pix <= last_part_ );
 
   return { invalid_index, invalid_index };
 }
 
 std::pair< size_t, size_t >
-NodeCollectionComposite::find_next_part_( size_t part_idx, size_t begin_in_part_idx, size_t n ) const
+NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, size_t n ) const
 {
-  // We currently can only handle stepping forward by a single element
-  assert( n == 1 );
+  if ( part_idx == last_part_ )
+  {
+    // no more parts to look for
+    return { invalid_index, invalid_index };
+  }
 
-  const size_t part_num_elems = 1 + ( parts_[ part_idx ].size() - 1 - begin_in_part_idx ) / stride_;
+  auto rel_part_idx = part_idx - first_part_; // because cumul/first_in rel to first_part
 
+  const auto part_abs_begin = rel_part_idx == 0 ? 0 : cumul_abs_size_[ rel_part_idx - 1 ];
+  const auto new_abs_idx = part_abs_begin + element_idx + n * stride_;
+
+  assert( new_abs_idx >= cumul_abs_size_[ rel_part_idx ] ); // otherwise we are not beyond current part as assumed
+
+  // Now move to part that contains new position
+  do
+  {
+    ++rel_part_idx;
+  } while ( rel_part_idx < cumul_abs_size_.size() and cumul_abs_size_[ rel_part_idx ] < new_abs_idx );
+
+  if ( rel_part_idx >= cumul_abs_size_.size() or first_in_part_[ rel_part_idx ] == invalid_index )
+  {
+    // node collection exhausted
+    return { invalid_index, invalid_index };
+  }
+
+  // We have found an element
+  return { first_part_ + rel_part_idx, new_abs_idx - cumul_abs_size_[ rel_part_idx - 1 ] };
+  /*
   FULL_LOGGING_ONLY(
     kernel().write_to_dump( String::compose( "fnp ini rk %1, thr %2, pix %3, bipi %4, n %5, pne %6, strd %7",
       kernel().mpi_manager.get_rank(),
@@ -1050,53 +1135,7 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t begin_in_part_
       n,
       part_num_elems,
       stride_ ) ); )
-
-  // Move to next part by by naive stepping from previous part
-  // new_idx will be >= 0, otherwise we would not be here
-  size_t new_idx = begin_in_part_idx + part_num_elems * stride_ - parts_[ part_idx ].size();
-  ++part_idx;
-
-  FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp bw rk %1, thr %2, pix %3, nix %4",
-    kernel().mpi_manager.get_rank(),
-    kernel().vp_manager.get_thread_id(),
-    part_idx,
-    new_idx ) ); )
-
-  // Continue while idx not inside a new part; need to check against last_elem_ in last part
-  while ( part_idx <= last_part_ )
-  {
-    const auto part_last = part_idx < last_part_ ? parts_[ part_idx ].size() - 1 : last_elem_;
-    if ( new_idx <= part_last )
-    {
-      break;
-    }
-
-    new_idx -= parts_[ part_idx ].size();
-    ++part_idx;
-
-    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp ew rk %1, thr %2, pix %3, nix %4",
-      kernel().mpi_manager.get_rank(),
-      kernel().vp_manager.get_thread_id(),
-      part_idx,
-      new_idx ) ); )
-  }
-
-  // If we get here with valid index, we found a fitting part
-  if ( part_idx <= last_part_ )
-  {
-    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp res rk %1, thr %2, pix %3, nix %4",
-      kernel().mpi_manager.get_rank(),
-      kernel().vp_manager.get_thread_id(),
-      part_idx,
-      new_idx ) ); )
-    return { part_idx, new_idx };
-  }
-  else
-  {
-    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
-      "fnp res rk %1, thr %2 --- invalid", kernel().mpi_manager.get_rank(), kernel().vp_manager.get_thread_id() ) ); )
-    return { invalid_index, invalid_index };
-  }
+  */
 }
 
 

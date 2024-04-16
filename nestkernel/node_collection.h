@@ -180,7 +180,6 @@ private:
   size_t element_idx_;         //!< index into (current) primitive node collection
   size_t part_idx_;            //!< index into parts vector of composite collection
   size_t step_;                //!< internal step also accounting for stepping over rank/thread
-  size_t begin_in_part_idx_;   //!< index of first element in NC in current part
   const NCIteratorKind kind_;  //!< whether to iterate over all elements or rank/thread specific
   const size_t rank_or_vp_;    //!< rank or vp iterator is bound to
 
@@ -727,14 +726,17 @@ class NodeCollectionComposite : public NodeCollection
   friend class nc_const_iterator;
 
 private:
-  std::vector< NodeCollectionPrimitive > parts_; //!< Vector of primitives
-  size_t size_;                                  //!< Total number of node IDs
+  std::vector< NodeCollectionPrimitive > parts_; //!< Primitives forming composite
+  size_t size_;                                  //!< Total number of node IDs, takes into account slicing
   size_t stride_;                                //!< Step length, set when slicing.
   size_t first_part_;                            //!< Primitive to start at, set when slicing
   size_t first_elem_;                            //!< Element to start at, set when slicing
   size_t last_part_;                             //!< Last entry of parts_ belonging to sliced NC
   size_t last_elem_;                             //!< Last entry of parts_[last_part_] belonging to sliced NC
   bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
+  std::vector< size_t > cumul_abs_size_;         //!< Cumulative size of parts ignoring slicing
+  std::vector< size_t >
+    first_in_part_; //!< Local index to first element in each part when slicing is taken into account
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -765,13 +767,13 @@ private:
   /**
    * Find next part and offset in it after moving beyond previous part, based on stride.
    *
-   * @param part_idx  Part we are about to leave
-   * @param begin_in_part_idx Index to first element within slice in part we are about to leave
+   * @param part_idx Part for current iterator position
+   * @param element_idx Element for current iterator position
    * @param n Number of node collection elements we advance by (ie argument that was passed to to `operator+(n)`)
    *
    * @return New part-offset tuple pointing into new part, or invalid_index tuple.
    */
-  std::pair< size_t, size_t > find_next_part_( size_t part_idx, size_t begin_in_part_idx, size_t n = 1 ) const;
+  std::pair< size_t, size_t > find_next_part_( size_t part_idx, size_t element_idx, size_t n = 1 ) const;
 
   //! helper for thread_local_begin/compsite_update_indices
   static size_t gid_to_vp_( size_t gid );
@@ -908,11 +910,12 @@ nc_const_iterator::operator+=( const size_t n )
   }
   else
   {
+    advance_composite_iterator_( n );
     // We unroll to steps of 1 for stabilitiy for now, since n > 1 does not yet work
-    for ( size_t k = 0; k < n; ++k )
+    /*for ( size_t k = 0; k < n; ++k )
     {
       advance_composite_iterator_( 1 );
-    }
+    }*/
   }
 
   return *this;

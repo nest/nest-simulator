@@ -481,8 +481,9 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  for ( long t = t_spike_previous; t < std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
-        ++t, ++eprop_hist_it )
+  const long t_compute_until = std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
+
+  for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
   {
     z = z_previous_buffer;
     z_previous_buffer = z_current_buffer;

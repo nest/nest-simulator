@@ -316,7 +316,6 @@ private:
    */
   WeightOptimizer* optimizer_;
 
-  double grad_ = 0.0;
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;
   double epsilon_ = 0.0;
@@ -382,7 +381,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   optimizer_ = es.optimizer_;
-  grad_ = es.grad_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   epsilon_ = es.epsilon_;
@@ -397,7 +395,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , weight_( es.weight_ )
   , t_previous_spike_( es.t_previous_spike_ )
   , t_previous_trigger_spike_( es.t_previous_spike_ )
-  , grad_( es.grad_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
   , epsilon_( es.epsilon_ )
@@ -421,7 +418,6 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  grad_ = es.grad_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   epsilon_ = es.epsilon_;

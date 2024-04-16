@@ -461,8 +461,8 @@ nest::eprop_iaf_psc_delta::handle( DataLoggingRequest& e )
 
 void
 eprop_iaf_psc_delta::compute_gradient( const long t_spike,
-  const long t_previous_spike,
-  double& previous_z_buffer,
+  const long t_spike_previous,
+  double& z_previous_buffer,
   double& z_bar,
   double& e_bar,
   double& epsilon,
@@ -470,24 +470,23 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  long t = t_previous_spike; // inter-spike time step
-  double e = 0.0;            // eligibility trace
-  double z = 0.0;            // spiking variable
-  double psi = 0.0;          // surrogate gradient
-  double L = 0.0;            // learning signal
-  double grad = 0.0;         // gradient
+  double e = 0.0;                // eligibility trace
+  double z = 0.0;                // spiking variable
+  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
+  double psi = 0.0;              // surrogate gradient
+  double L = 0.0;                // learning signal
+  double grad = 0.0;             // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
 
-  auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
+  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  double pre = 1.0;
-
-  while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
+  for ( long t = t_spike_previous; t < std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
+        ++t, ++eprop_hist_it )
   {
-    z = previous_z_buffer;
-    previous_z_buffer = pre;
-    pre = 0.0;
+    z = z_previous_buffer;
+    z_previous_buffer = z_current_buffer;
+    z_current_buffer = 0.0;
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;
@@ -498,12 +497,9 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     grad = L * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
-
-    ++eprop_hist_it;
-    ++t;
   }
 
-  const int power = t_spike - ( t_previous_spike + P_.eprop_isi_trace_cutoff_ );
+  const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
 
   if ( power > 0 )
   {

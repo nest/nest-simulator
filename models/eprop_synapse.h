@@ -304,7 +304,7 @@ private:
   double weight_;
 
   //! The time step when the previous spike arrived.
-  long t_previous_spike_;
+  long t_spike_previous_;
 
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_;
@@ -323,8 +323,7 @@ private:
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;
   double epsilon_ = 0.0;
-
-  double previous_z_buffer_ = 0.0;
+  double z_previous_buffer_ = 0.0;
 };
 
 template < typename targetidentifierT >
@@ -348,7 +347,7 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( nullptr )
 {
@@ -365,7 +364,7 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( es.optimizer_ )
 {
@@ -384,7 +383,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   optimizer_ = es.optimizer_;
 
@@ -395,7 +394,7 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( es.optimizer_ )
 {
@@ -415,7 +414,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
 
   optimizer_ = es.optimizer_;
@@ -462,16 +461,16 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
 
   const long t_spike = e.get_stamp().get_steps();
 
-  if ( t_previous_spike_ != 0 )
+  if ( t_spike_previous_ != 0 )
   {
     target->compute_gradient(
-      t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
+      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_previous_spike_, t_spike, eprop_isi_trace_cutoff, true );
+  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff, true );
 
-  t_previous_spike_ = t_spike;
+  t_spike_previous_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

@@ -56,7 +56,7 @@ public:
   EpropArchivingNode( const EpropArchivingNode& );
 
   //! Initialize the update history and register the eprop synapse.
-  void register_eprop_connection() override;
+  void register_eprop_connection( const bool is_bsshslm_2020_model = true ) override;
 
   //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update,

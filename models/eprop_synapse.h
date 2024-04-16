@@ -304,13 +304,10 @@ private:
   double weight_;
 
   //! The time step when the previous spike arrived.
-  long t_spike_previous_;
+  long t_spike_previous_ = 0;
 
   //! The time step when the spike arrived that triggered the previous e-prop update.
-  long t_previous_trigger_spike_;
-
-  //! %Time constant for low-pass filtering the eligibility trace.
-  double tau_m_readout_;
+  long t_previous_trigger_spike_ = 0;
 
   /**
    *  Optimizer
@@ -319,7 +316,6 @@ private:
    */
   WeightOptimizer* optimizer_;
 
-  double grad_ = 0.0;
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;
   double epsilon_ = 0.0;
@@ -364,8 +360,6 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_spike_previous_( 0 )
-  , t_previous_trigger_spike_( 0 )
   , optimizer_( es.optimizer_ )
 {
 }
@@ -386,6 +380,10 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   optimizer_ = es.optimizer_;
+  z_bar_ = es.z_bar_;
+  e_bar_ = es.e_bar_;
+  epsilon_ = es.epsilon_;
+  previous_z_buffer_ = es.previous_z_buffer_;
 
   return *this;
 }
@@ -394,8 +392,11 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_spike_previous_( 0 )
-  , t_previous_trigger_spike_( 0 )
+  , t_spike_previous( es.t_spike_previous_ )
+  , t_previous_trigger_spike_( es.t_previous_spike_ )
+  , z_bar_( es.z_bar_ )
+  , e_bar_( es.e_bar_ )
+  , epsilon_( es.epsilon_ )
   , optimizer_( es.optimizer_ )
 {
   es.optimizer_ = nullptr;
@@ -416,6 +417,10 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
+  z_bar_ = es.z_bar_;
+  e_bar_ = es.e_bar_;
+  epsilon_ = es.epsilon_;
+  previous_z_buffer_ = es.previous_z_buffer_;
 
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
@@ -439,7 +444,7 @@ eprop_synapse< targetidentifierT >::check_connection( Node& s,
   ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  t.register_eprop_connection();
+  t.register_eprop_connection( false );
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
@@ -468,7 +473,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff, true );
+  target->write_update_to_history( t_previous_spike_, t_spike, eprop_isi_trace_cutoff, false );
 
   t_spike_previous_ = t_spike;
 

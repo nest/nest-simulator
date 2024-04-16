@@ -456,7 +456,7 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
+      epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;

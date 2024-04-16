@@ -449,7 +449,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-    epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
+    epsilon = V_.P_adapt_ * epsilon + e;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
     grad = L * e_bar;
 

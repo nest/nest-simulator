@@ -488,7 +488,7 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection();
+  virtual void register_eprop_connection( const bool is_bsshslm_2020_model = true );
 
   /**
    * Get the number of steps the time-point of the signal has to be shifted to
@@ -511,7 +511,7 @@ public:
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
     const long eprop_isi_trace_cutoff = 0,
-    const bool clean = false );
+    const bool is_bsshslm_2020_model = true );
 
   /**
    * Get maximum number of time steps integrated between two consecutive spikes.

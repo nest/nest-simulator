@@ -309,9 +309,6 @@ private:
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_;
 
-  //! %Time constant for low-pass filtering the eligibility trace.
-  double tau_m_readout_;
-
   /**
    *  Optimizer
    *

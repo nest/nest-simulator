@@ -316,9 +316,16 @@ private:
    */
   WeightOptimizer* optimizer_;
 
+  //! Low-pass filtered spiking variable
   double z_bar_ = 0.0;
+
+  //! Low-pass filtered eligibility trace.
   double e_bar_ = 0.0;
+
+  //! Adaptive threshold component of the eligibility vector.
   double epsilon_ = 0.0;
+
+  //! Value of spiking variable one time step before t_previous_spike_.
   double z_previous_buffer_ = 0.0;
 };
 

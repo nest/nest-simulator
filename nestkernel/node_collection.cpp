@@ -102,6 +102,15 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 
   // Allow <= for end iterator
   assert( ( part < collection.parts_.size() and offset <= collection.parts_[ part ].size() ) );
+
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "NCITctor rk %1, pix %2, eix %3, step %4, kind %5, rvp %6",
+      kernel().mpi_manager.get_rank(),
+      part_idx_,
+      element_idx_,
+      step_,
+      static_cast< int >( kind_ ),
+      rank_or_vp_ ) ); )
 }
 
 void
@@ -244,13 +253,15 @@ nc_const_iterator::operator*() const
   {
     if ( *this >= composite_collection_->end() )
     {
-      FULL_LOGGING_ONLY(
-        kernel().write_to_dump( String::compose( "nci::op* comp err rk %1, pix %2, lp %3, eix %4, le %5",
+      FULL_LOGGING_ONLY( kernel().write_to_dump(
+        String::compose( "nci::op* comp err rk %1, lp %2, le %3, pix %4, eix %5, end_pix %6, end_eix %7",
           kernel().mpi_manager.get_rank(),
-          part_idx_,
           composite_collection_->last_part_,
+          composite_collection_->last_elem_,
+          part_idx_,
           element_idx_,
-          composite_collection_->last_elem_ ) ); )
+          composite_collection_->end().part_idx_,
+          composite_collection_->end().element_idx_ ) ); )
       assert( false );
       throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
@@ -1103,7 +1114,7 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
         parts_.size(),
         this ) ); )
 
-    if ( offset != invalid_index and offset < parts_[ pix ].size() )
+    if ( offset != invalid_index and offset < parts_[ pix ].size() and ( pix < last_part_ or offset <= last_elem_ ) )
     {
       assert( gid_to_phase( parts_[ pix ][ offset ] ) == phase );
       return { pix, offset };

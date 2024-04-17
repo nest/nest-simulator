@@ -903,6 +903,8 @@ NodeCollection::get_last() const
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
+  assert( kind_ != NCIteratorKind::END );
+
   if ( primitive_collection_ )
   {
     // guard against passing end and ensure we step to uniquely defined last element at end
@@ -910,12 +912,18 @@ nc_const_iterator::operator+=( const size_t n )
   }
   else
   {
-    advance_composite_iterator_( n );
-    // We unroll to steps of 1 for stabilitiy for now, since n > 1 does not yet work
-    /*for ( size_t k = 0; k < n; ++k )
+    if ( kind_ == NCIteratorKind::GLOBAL )
     {
-      advance_composite_iterator_( 1 );
-    }*/
+      advance_composite_iterator_( n );
+    }
+    else
+    {
+      // We unroll to steps of 1 to avoid problems with phase adjustment
+      for ( size_t k = 0; k < n; ++k )
+      {
+        advance_composite_iterator_( 1 );
+      }
+    }
   }
 
   return *this;

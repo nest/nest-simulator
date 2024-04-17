@@ -107,13 +107,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 void
 nc_const_iterator::advance_composite_iterator_( size_t n )
 {
-  /* Find the part the stepping has taken us into.
-   *
-   * We only execute the loop if
-   *   (1) we have stepped beyond the current primitive, and
-   *   (2) there is at least one more part into which we can step
-   */
-
+  // See if we can do a simple step, i.e., stay in current part
   const size_t new_element_idx = element_idx_ + n * step_;
   size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
   if ( new_element_idx < primitive_size )
@@ -133,54 +127,96 @@ nc_const_iterator::advance_composite_iterator_( size_t n )
     }
   }
 
-  // Find starting point in new part, step 1: overall first in new part
-  std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, element_idx_, n );
-
-  FULL_LOGGING_ONLY( kernel().write_to_dump(
-    String::compose( "ACI1 rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
-
-  if ( part_idx_ != invalid_index )
+  // We know that we need to look in another part
+  if ( part_idx_ == composite_collection_->last_part_ )
   {
-    // Step 2: Find rank/thread specific starting point
-    switch ( kind_ )
-    {
-    case NCIteratorKind::RANK_LOCAL:
-    {
-      const size_t num_ranks = kernel().mpi_manager.get_num_processes();
-      const size_t current_rank = kernel().mpi_manager.get_rank();
-
-      std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
-        num_ranks, current_rank, part_idx_, element_idx_, NodeCollectionComposite::gid_to_rank_ );
-
-      FULL_LOGGING_ONLY( kernel().write_to_dump(
-        String::compose( "ACIL rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
-      break;
-    }
-    case NCIteratorKind::THREAD_LOCAL:
-    {
-      const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-      const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-
-      std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
-        num_vps, current_vp, part_idx_, element_idx_, NodeCollectionComposite::gid_to_vp_ );
-
-      break;
-    }
-    default:
-      assert( kind_ == NCIteratorKind::GLOBAL );
-      FULL_LOGGING_ONLY(
-        kernel().write_to_dump( String::compose( "ACI PLAIN rk %1", kernel().mpi_manager.get_rank() ) ); )
-      // Nothing to do
-      break;
-    }
-  }
-
-  // In case we did not find a solution, set to uniquely defined end iterator
-  if ( part_idx_ == invalid_index )
-  {
+    // No more parts, set to end()
     part_idx_ = composite_collection_->last_part_;
     element_idx_ = composite_collection_->last_elem_ + 1;
+    return;
   }
+
+  // At least one more part available
+
+  if ( kind_ == NCIteratorKind::GLOBAL )
+  {
+    // Simple stepping scheme without phase adjustment
+    std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, element_idx_, n );
+
+    // In case we did not find a solution, set to end()
+    if ( part_idx_ == invalid_index )
+    {
+      part_idx_ = composite_collection_->last_part_;
+      element_idx_ = composite_collection_->last_elem_ + 1;
+    }
+  }
+  else
+  {
+    // We are stepping over rank- or thread-specific elements and need phase adjustment.
+    //
+    // Current part is exhausted. We need to find the next part containing
+    // and element compatible with stride_ and then perform phase adjustment.
+    assert( n == 1 );
+
+    // Find next part that has element in underlying GLOBAL stride
+    auto rel_part_idx = part_idx_ - composite_collection_->first_part_; // because cumul/first_in rel to first_part
+    do
+    {
+      ++rel_part_idx;
+    } while ( rel_part_idx < composite_collection_->cumul_abs_size_.size()
+      and composite_collection_->first_in_part_[ rel_part_idx ] == invalid_index );
+
+    if ( rel_part_idx < composite_collection_->cumul_abs_size_.size() )
+    {
+      // We have a candidate part and a first valid element in it
+      assert( composite_collection_->first_in_part_[ rel_part_idx ] != invalid_index );
+      part_idx_ = composite_collection_->first_part_ + rel_part_idx;
+      element_idx_ = composite_collection_->first_in_part_[ rel_part_idx ];
+
+      // Now perform phase adjustment
+      switch ( kind_ )
+      {
+      case NCIteratorKind::RANK_LOCAL:
+      {
+        const size_t num_ranks = kernel().mpi_manager.get_num_processes();
+        const size_t current_rank = kernel().mpi_manager.get_rank();
+
+        std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
+          num_ranks, current_rank, part_idx_, element_idx_, NodeCollectionComposite::gid_to_rank_ );
+
+        FULL_LOGGING_ONLY( kernel().write_to_dump(
+          String::compose( "ACIL rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
+        break;
+      }
+      case NCIteratorKind::THREAD_LOCAL:
+      {
+        const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+        const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
+
+        std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
+          num_vps, current_vp, part_idx_, element_idx_, NodeCollectionComposite::gid_to_vp_ );
+
+        break;
+      }
+      default:
+        assert( false ); // should not be here, otherwise kind_ is inconsistent
+        break;
+      }
+
+      // In case we did not find a solution in phase adjustment, set to end()
+      if ( part_idx_ == invalid_index )
+      {
+        part_idx_ = composite_collection_->last_part_;
+        element_idx_ = composite_collection_->last_elem_ + 1;
+      }
+    }
+    else
+    {
+      // Node collection exhausted, set to end()
+      part_idx_ = composite_collection_->last_part_;
+      element_idx_ = composite_collection_->last_elem_ + 1;
+    }
+  } // else kind_ == GLOBAL
 }
 
 void
@@ -1098,11 +1134,7 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
 std::pair< size_t, size_t >
 NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, size_t n ) const
 {
-  if ( part_idx == last_part_ )
-  {
-    // no more parts to look for
-    return { invalid_index, invalid_index };
-  }
+  assert( part_idx < last_part_ );
 
   auto rel_part_idx = part_idx - first_part_; // because cumul/first_in rel to first_part
 
@@ -1115,7 +1147,7 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, s
   do
   {
     ++rel_part_idx;
-  } while ( rel_part_idx < cumul_abs_size_.size() and cumul_abs_size_[ rel_part_idx ] < new_abs_idx );
+  } while ( rel_part_idx < cumul_abs_size_.size() and cumul_abs_size_[ rel_part_idx ] <= new_abs_idx );
 
   if ( rel_part_idx >= cumul_abs_size_.size() or first_in_part_[ rel_part_idx ] == invalid_index )
   {

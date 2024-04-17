@@ -268,7 +268,7 @@ void register_eprop_iaf_adapt_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
- * threshold adaptation for e-prop plasticity according to Bellec et al (2020).
+ * threshold adaptation for e-prop plasticity according to Bellec et al. (2020).
  */
 class eprop_iaf_adapt_bsshslm_2020 : public EpropArchivingNodeRecurrent
 {

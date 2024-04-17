@@ -199,7 +199,7 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
 /**
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al. (2020).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

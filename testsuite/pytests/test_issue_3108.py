@@ -47,7 +47,7 @@ else:
         lambda nc: nc[::3],
         lambda nc: nc[1:],
         lambda nc: nc[:5] + nc[8:],
-        lambda nc: (nc[:5] + nc[8:])[-1],
+        lambda nc: (nc[:5] + nc[8:])[-1:],
         lambda nc: (nc[:5] + nc[8:])[::2],
         lambda nc: (nc[:5] + nc[8:])[::3],
         lambda nc: (nc[:5] + nc[9:])[::2],
@@ -66,18 +66,18 @@ def test_slice_node_collections(n_threads, transform):
     n_sliced = transform(n_orig)
     n_pyslice_gids = transform(n_orig_gids)
 
-    n_pyslice_gids_on_rank = set(
-        (n.global_id for n in nest.NodeCollection(n_pyslice_gids) if n.vp % nest.NumProcesses() == nest.Rank())
+    n_pyslice_gids_on_rank = sorted(
+        n.global_id for n in nest.NodeCollection(n_pyslice_gids) if n.vp % nest.NumProcesses() == nest.Rank()
     )
 
     assert n_sliced._to_array()["All"] == n_pyslice_gids
 
     n_sliced_gids_by_rank = n_sliced._to_array("rank")
     assert len(n_sliced_gids_by_rank) == 1
-    assert set(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
+    assert sorted(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
 
     n_sliced_gids_by_thread = n_sliced._to_array("thread")
-    assert set(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
+    assert sorted(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
 
     for thread, tgids in n_sliced_gids_by_thread.items():
         for node in nest.NodeCollection(tgids):
@@ -103,7 +103,7 @@ def test_slice_single_element_parts(n_threads, stride):
     n_sliced = n_orig[::stride]
     n_pyslice_gids = n_orig_gids[::stride]
 
-    n_pyslice_gids_on_rank = set(
+    n_pyslice_gids_on_rank = sorted(
         (n.global_id for n in nest.NodeCollection(n_pyslice_gids) if n.vp % nest.NumProcesses() == nest.Rank())
     )
 
@@ -111,10 +111,10 @@ def test_slice_single_element_parts(n_threads, stride):
 
     n_sliced_gids_by_rank = n_sliced._to_array("rank")
     assert len(n_sliced_gids_by_rank) == 1
-    assert set(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
+    assert sorted(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
 
     n_sliced_gids_by_thread = n_sliced._to_array("thread")
-    assert set(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
+    assert sorted(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
 
     for thread, tgids in n_sliced_gids_by_thread.items():
         for node in nest.NodeCollection(tgids):
@@ -132,10 +132,10 @@ def test_multi_parts_slicing(n_threads, stride):
     n_orig = nest.Create("parrot_neuron", 97)
     n_orig_gids = n_orig._to_array()["All"]
 
-    n_sliced = n_orig[:5] + n_orig[6] + n_orig[8:18] + n_orig[23:34] + n_orig[41:]
-    n_pyslice_gids = nn_orig_gids[:5] + nn_orig_gids[6] + nn_orig_gids[8:18] + nn_orig_gids[23:34] + nn_orig_gids[41:]
+    n_sliced = n_orig[:5] + n_orig[6:7] + n_orig[8:18] + n_orig[23:34] + n_orig[41:]
+    n_pyslice_gids = n_orig_gids[:5] + n_orig_gids[6:7] + n_orig_gids[8:18] + n_orig_gids[23:34] + n_orig_gids[41:]
 
-    n_pyslice_gids_on_rank = set(
+    n_pyslice_gids_on_rank = sorted(
         (n.global_id for n in nest.NodeCollection(n_pyslice_gids) if n.vp % nest.NumProcesses() == nest.Rank())
     )
 
@@ -143,10 +143,10 @@ def test_multi_parts_slicing(n_threads, stride):
 
     n_sliced_gids_by_rank = n_sliced._to_array("rank")
     assert len(n_sliced_gids_by_rank) == 1
-    assert set(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
+    assert sorted(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
 
     n_sliced_gids_by_thread = n_sliced._to_array("thread")
-    assert set(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
+    assert sorted(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
 
     for thread, tgids in n_sliced_gids_by_thread.items():
         for node in nest.NodeCollection(tgids):
@@ -252,7 +252,7 @@ def test_connect_with_single_element_slice_and_mpi(n_threads, pick):
     src = tuple(c.sources())
     tgt = tuple(c.targets())
     assert src == (layer[pick].global_id,) * len(local_nodes)
-    assert tgt == local_nodes
+    assert sorted(tgt) == sorted(local_nodes)
 
 
 @pytest.mark.parametrize("n_threads", num_threads)

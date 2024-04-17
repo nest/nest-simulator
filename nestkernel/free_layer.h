@@ -280,7 +280,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
     //   nodes, then step in lockstep through the positions_ array.
     auto nc_it = nc->rank_local_begin();
     const auto nc_end = nc->end();
-    if ( nc_it != nc_end )
+    if ( nc_it < nc_end )
     {
       // Node index in node collection is global to NEST, so we need to scale down
       // to get right indices into positions_, which has only rank-local data.

@@ -245,13 +245,13 @@ nc_const_iterator::operator*() const
     if ( *this >= composite_collection_->end() )
     {
       FULL_LOGGING_ONLY(
-        kernel().write_to_dump( String::compose( "nci::op* comp err rk %1, pix %2, ep %3, eix %4, eo %5",
+        kernel().write_to_dump( String::compose( "nci::op* comp err rk %1, pix %2, lp %3, eix %4, le %5",
           kernel().mpi_manager.get_rank(),
           part_idx_,
-          composite_collection_->end_part_,
+          composite_collection_->last_part_,
           element_idx_,
-          composite_collection_->end_offset_ ) ); )
-
+          composite_collection_->last_elem_ ) ); )
+      assert( false );
       throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
 
@@ -1088,7 +1088,7 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
 
     FULL_LOGGING_ONLY(
       kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, ix_first %3, phase_first %4, offs %5, stp %6, sto "
-                                               "%7, pix %8, ep %9, eo %10, primsz %11, nprts: %12, this: %13",
+                                               "%7, pix %8, lp %9, le %10, primsz %11, nprts: %12, this: %13",
         kernel().mpi_manager.get_rank(),
         kernel().vp_manager.get_thread_id(),
         idx_first_in_part,
@@ -1097,8 +1097,8 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
         start_part,
         start_offset,
         pix,
-        end_part_,
-        end_offset_,
+        last_part_,
+        last_elem_,
         parts_[ pix ].size(),
         parts_.size(),
         this ) ); )
@@ -1259,11 +1259,11 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
   }
 
   FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NewComposite: sp %1, so %2, ep %3, eo %4, sz %5, strd %6",
-      new_composite.start_part_,
-      new_composite.start_offset_,
+    kernel().write_to_dump( String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
+      new_composite.first_part_,
+      new_composite.first_elem_,
       new_composite.last_part_,
-      new_composite.last_offset_,
+      new_composite.last_elem_,
       new_composite.size_,
       new_composite.stride_ ) ); )
 
@@ -1401,9 +1401,6 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
 
   if ( is_sliced_ )
   {
-    assert( stride_ > 1 or ( last_part_ != 0 or last_elem_ != 0 ) );
-    // Sliced composite NodeCollection
-
     size_t current_part = 0;
     size_t current_offset = 0;
     size_t previous_part = std::numeric_limits< size_t >::infinity();

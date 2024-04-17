@@ -75,7 +75,6 @@ on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-The change of the synaptic weight is calculated from the gradient
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout

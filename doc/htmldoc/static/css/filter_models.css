@@ -1,0 +1,14 @@
+body {
+    font-family: Arial, sans-serif;
+}
+select {
+    width: 200px;
+    height: 150px;
+    margin-bottom: 10px;
+}
+#model-list {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}

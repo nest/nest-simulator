@@ -499,10 +499,11 @@ NodeCollection::to_array( const std::string& selection ) const
     {
 #pragma omp critical
       {
-        // Casts to size_t essential, otherwise SLI does strange things
-        node_ids.push_back( static_cast< size_t >( 0 ) );
+        // We need to defined zero explicitly here, otherwise push_back() does strange things
+        const size_t zero = 0;
+        node_ids.push_back( zero );
         node_ids.push_back( kernel().vp_manager.get_thread_id() );
-        node_ids.push_back( static_cast< size_t >( 0 ) );
+        node_ids.push_back( zero );
         for ( auto it = thread_local_begin(); it < end(); ++it )
         {
           node_ids.push_back( ( *it ).node_id );

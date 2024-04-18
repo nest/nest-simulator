@@ -309,13 +309,6 @@ private:
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_ = 0;
 
-  /**
-   *  Optimizer
-   *
-   *  @note Pointer is set by check_connection() and deleted by delete_optimizer().
-   */
-  WeightOptimizer* optimizer_;
-
   //! Low-pass filtered spiking variable.
   double z_bar_ = 0.0;
 
@@ -327,6 +320,13 @@ private:
 
   //! Value of spiking variable one time step before t_previous_spike_.
   double z_previous_buffer_ = 0.0;
+
+  /**
+   *  Optimizer
+   *
+   *  @note Pointer is set by check_connection() and deleted by delete_optimizer().
+   */
+  WeightOptimizer* optimizer_;
 };
 
 template < typename targetidentifierT >
@@ -386,11 +386,11 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  optimizer_ = es.optimizer_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
+  optimizer_ = es.optimizer_;
 
   return *this;
 }

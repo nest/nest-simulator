@@ -124,29 +124,75 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
       rank_or_vp_ ) ); )
 }
 
-void
-nc_const_iterator::advance_composite_iterator_( size_t n )
+size_t
+nc_const_iterator::find_next_within_part_( size_t n ) const
 {
-  // See if we can do a simple step, i.e., stay in current part
   const size_t new_element_idx = element_idx_ + n * step_;
-  size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-  if ( new_element_idx < primitive_size )
+
+  if ( primitive_collection_ )
   {
-    // Still in old part, check if we have passed end
-    if ( part_idx_ == composite_collection_->last_part_ and new_element_idx > composite_collection_->last_elem_ )
+    // Avoid running over end of collection
+    return std::min( new_element_idx, primitive_collection_->size() );
+  }
+
+  if ( new_element_idx < composite_collection_->parts_[ part_idx_ ].size() )
+  {
+    if ( composite_collection_->valid_idx_( part_idx_, new_element_idx ) )
     {
-      // set iterator to uniquely defined end() element
-      assert( part_idx_ == composite_collection_->last_part_ );
-      element_idx_ = composite_collection_->last_elem_ + 1;
-      return;
+      // We have found an element in the part
+      return new_element_idx;
     }
     else
     {
-      element_idx_ = new_element_idx;
-      return;
+      // We have reached the end of the node collection, return index for end iterator
+      assert( part_idx_ == composite_collection_->last_part_ );
+      return composite_collection_->last_elem_ + 1;
     }
   }
 
+  // No new element found in this part and collection not exhausted
+  return element_idx_;
+}
+
+void
+nc_const_iterator::advance_global_iter_to_new_part_( size_t n )
+{
+  if ( part_idx_ == composite_collection_->last_part_ )
+  {
+    // No more parts, set to end()
+    part_idx_ = composite_collection_->last_part_;
+    element_idx_ = composite_collection_->last_elem_ + 1;
+    return;
+  }
+
+  // Find new position counting from beginning of node collection
+  const auto part_abs_begin = part_idx_ == 0 ? 0 : composite_collection_->cumul_abs_size_[ part_idx_ - 1 ];
+  const auto new_abs_idx = part_abs_begin + element_idx_ + n * composite_collection_->stride_;
+
+  // Confirm that new position is in a new part
+  assert( new_abs_idx >= composite_collection_->cumul_abs_size_[ part_idx_ ] );
+
+  // Move to part that contains new position
+  do
+  {
+    ++part_idx_;
+  } while ( part_idx_ <= composite_collection_->last_part_
+    and composite_collection_->cumul_abs_size_[ part_idx_ ] <= new_abs_idx );
+
+  // If there is another element, it must have this index
+  element_idx_ = new_abs_idx - composite_collection_->cumul_abs_size_[ part_idx_ - 1 ];
+
+  if ( not composite_collection_->valid_idx_( part_idx_, element_idx_ ) )
+  {
+    // Node collection exhausted
+    part_idx_ = composite_collection_->last_part_;
+    element_idx_ = composite_collection_->last_elem_ + 1;
+  }
+}
+
+void
+nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
+{
   // We know that we need to look in another part
   if ( part_idx_ == composite_collection_->last_part_ )
   {
@@ -156,38 +202,21 @@ nc_const_iterator::advance_composite_iterator_( size_t n )
     return;
   }
 
-  // At least one more part available
-
-  if ( kind_ == NCIteratorKind::GLOBAL )
+  // {RANK,THREAD}_LOCAL iterators require phase adjustment
+  // which is feasible only for single steps, so unroll
+  for ( size_t k = 0; k < n; ++k )
   {
-    // Simple stepping scheme without phase adjustment
-    std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, element_idx_, n );
-
-    // In case we did not find a solution, set to end()
-    if ( part_idx_ == invalid_index )
-    {
-      part_idx_ = composite_collection_->last_part_;
-      element_idx_ = composite_collection_->last_elem_ + 1;
-    }
-  }
-  else
-  {
-    // We are stepping over rank- or thread-specific elements and need phase adjustment.
-    //
-    // Current part is exhausted. We need to find the next part containing
-    // and element compatible with stride_ and then perform phase adjustment.
-    assert( n == 1 );
-
     // Find next part that has element in underlying GLOBAL stride
     do
     {
       ++part_idx_;
-    } while ( part_idx_ < composite_collection_->cumul_abs_size_.size()
+    } while ( part_idx_ <= composite_collection_->last_part_
       and composite_collection_->first_in_part_[ part_idx_ ] == invalid_index );
 
-    if ( part_idx_ < composite_collection_->cumul_abs_size_.size() )
+    if ( part_idx_ <= composite_collection_->last_part_ )
     {
-      // We have a candidate part and a first valid element in it
+      // We have a candidate part and a first valid element in it, so we perform phase adjustment
+
       assert( composite_collection_->first_in_part_[ part_idx_ ] != invalid_index );
       element_idx_ = composite_collection_->first_in_part_[ part_idx_ ];
 
@@ -220,21 +249,20 @@ nc_const_iterator::advance_composite_iterator_( size_t n )
         assert( false ); // should not be here, otherwise kind_ is inconsistent
         break;
       }
-
-      // In case we did not find a solution in phase adjustment, set to end()
-      if ( part_idx_ == invalid_index )
-      {
-        part_idx_ = composite_collection_->last_part_;
-        element_idx_ = composite_collection_->last_elem_ + 1;
-      }
     }
     else
     {
-      // Node collection exhausted, set to end()
-      part_idx_ = composite_collection_->last_part_;
-      element_idx_ = composite_collection_->last_elem_ + 1;
+      break; // no more parts to search
     }
-  } // else kind_ == GLOBAL
+  }
+
+  // In case we did not find a solution in phase adjustment, set to end()
+  if ( part_idx_ == invalid_index or not composite_collection_->valid_idx_( part_idx_, element_idx_ ) )
+  {
+    // Node collection exhausted, set to end()
+    part_idx_ = composite_collection_->last_part_;
+    element_idx_ = composite_collection_->last_elem_ + 1;
+  }
 }
 
 void
@@ -1152,36 +1180,6 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
   return { invalid_index, invalid_index };
 }
 
-std::pair< size_t, size_t >
-NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, size_t n ) const
-{
-  assert( part_idx < last_part_ );
-
-  // Find new position counting from beginning of node collection
-  const auto part_abs_begin = part_idx == 0 ? 0 : cumul_abs_size_[ part_idx - 1 ];
-  const auto new_abs_idx = part_abs_begin + element_idx + n * stride_;
-
-  // Confirm that new position is in a new part
-  assert( new_abs_idx >= cumul_abs_size_[ part_idx ] );
-
-  // Move to part that contains new position
-  do
-  {
-    ++part_idx;
-  } while ( part_idx < cumul_abs_size_.size() and cumul_abs_size_[ part_idx ] <= new_abs_idx );
-
-  if ( part_idx >= cumul_abs_size_.size() or first_in_part_[ part_idx ] == invalid_index )
-  {
-    // Either we checked all parts or the part containing the index contains no element
-    // compatible with our stride
-    return { invalid_index, invalid_index };
-  }
-
-  // We have found a new element
-  return { part_idx, new_abs_idx - cumul_abs_size_[ part_idx - 1 ] };
-}
-
-
 size_t
 NodeCollectionComposite::gid_to_vp_( size_t gid )
 {
@@ -1306,12 +1304,6 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
       }
     }
   }
-}
-
-bool
-NodeCollectionComposite::contains( const size_t node_id ) const
-{
-  return get_nc_index( node_id ) != -1;
 }
 
 long

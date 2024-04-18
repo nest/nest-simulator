@@ -220,9 +220,19 @@ private:
     NCIteratorKind kind = NCIteratorKind::GLOBAL );
 
   /**
-   * Advance composite iterator by n elements, taking stride into account.
+   * Return element_idx_ for next element if within part. Returns current element_idx_ otherwise.
    */
-  void advance_composite_iterator_( size_t n );
+  size_t find_next_within_part_( size_t n ) const;
+
+  /**
+   * Advance composite GLOBAL iterator by n elements, taking stride into account.
+   */
+  void advance_global_iter_to_new_part_( size_t n );
+
+  /**
+   * Advance composite {THREAD,RANK}_LOCAL iterator by n elements, taking stride into account.
+   */
+  void advance_local_iter_to_new_part_( size_t n );
 
 public:
   using iterator_category = std::forward_iterator_tag;
@@ -765,6 +775,11 @@ private:
     gid_to_phase_fcn_ period_first_node ) const;
 
   /**
+   * Return true if part_idx/element_idx pair indicates element of collection
+   */
+  bool valid_idx_( const size_t part_idx, const size_t element_idx ) const;
+
+  /**
    * Find next part and offset in it after moving beyond previous part, based on stride.
    *
    * @param part_idx Part for current iterator position
@@ -780,6 +795,7 @@ private:
 
   //! helper for rank_local_begin/compsite_update_indices
   static size_t gid_to_rank_( size_t gid );
+
 
 public:
   /**
@@ -905,25 +921,30 @@ nc_const_iterator::operator+=( const size_t n )
 {
   assert( kind_ != NCIteratorKind::END );
 
-  if ( primitive_collection_ )
+  if ( n == 0 )
   {
-    // Guard against passing end ( size() gives element_index_ for end() iterator )
-    element_idx_ = std::min( element_idx_ + n * step_, primitive_collection_->size() );
+    return *this;
+  }
+
+  const auto new_element_idx = find_next_within_part_( n );
+
+  // For a primitive collection, we either have a new element or are at the end
+  // For a composite collection, we may need to search through further parts,
+  // which is signalled by new_element_idx == element_idx_
+  if ( primitive_collection_ or new_element_idx != element_idx_ )
+  {
+    element_idx_ = new_element_idx;
   }
   else
   {
+    // We did not find a new element in the current part and have not exhausted the collection
     if ( kind_ == NCIteratorKind::GLOBAL )
     {
-      advance_composite_iterator_( n );
+      advance_global_iter_to_new_part_( n );
     }
     else
     {
-      // {RANK,THREAD}_LOCAL iterators require phase adjustment
-      // which is feasible only for single steps, so unroll
-      for ( size_t k = 0; k < n; ++k )
-      {
-        advance_composite_iterator_( 1 );
-      }
+      advance_local_iter_to_new_part_( n );
     }
   }
 
@@ -940,21 +961,7 @@ nc_const_iterator::operator+( const size_t n ) const
 inline nc_const_iterator&
 nc_const_iterator::operator++()
 {
-  assert( kind_ != NCIteratorKind::END );
-
-  // This code is partial duplication of operator+(n), but because it is much simpler
-  // for composite collections than operator+(n), we code it explicitly here instead
-  // of redirecting to operator+(1).
-  if ( primitive_collection_ )
-  {
-    // Guard against passing end ( size() gives element_index_ for end() iterator )
-    element_idx_ = std::min( element_idx_ + step_, primitive_collection_->size() );
-  }
-  else
-  {
-    advance_composite_iterator_( 1 );
-  }
-
+  ( *this ) += 1;
   return *this;
 }
 
@@ -1186,6 +1193,19 @@ NodeCollectionComposite::empty() const
   // Composite NodeCollections can never be empty.
   return false;
 }
+
+inline bool
+NodeCollectionComposite::contains( const size_t node_id ) const
+{
+  return get_nc_index( node_id ) != -1;
+}
+
+inline bool
+NodeCollectionComposite::valid_idx_( const size_t part_idx, const size_t element_idx ) const
+{
+  return part_idx < last_part_ or ( part_idx == last_part_ and element_idx <= last_elem_ );
+}
+
 } // namespace nest
 
 #endif /* #ifndef NODE_COLLECTION_H */

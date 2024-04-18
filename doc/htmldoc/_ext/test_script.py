@@ -26,7 +26,7 @@ def find_models_in_tag_combinations(models_dict):
         result_list.append(tag_info)
 
         # Write the JSON output directly to a file
-    with open("_static/filter_model.json", "w") as json_file:
+    with open("static/filter_model.json", "w") as json_file:
         json.dump(result_list, json_file, indent=2)
     # Prepare for combinations of tags
     tags = list(model_to_tags.keys())

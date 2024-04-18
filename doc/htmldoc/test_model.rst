@@ -1,6 +1,9 @@
 Model directory
 ===============
 
+.. literalinclude:: filter_model.json
+   :language: json
+
 Find a model
 ------------
 

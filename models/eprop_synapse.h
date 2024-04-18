@@ -316,7 +316,7 @@ private:
    */
   WeightOptimizer* optimizer_;
 
-  //! Low-pass filtered spiking variable
+  //! Low-pass filtered spiking variable.
   double z_bar_ = 0.0;
 
   //! Low-pass filtered eligibility trace.

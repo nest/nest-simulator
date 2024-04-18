@@ -734,9 +734,9 @@ private:
   size_t last_part_;                             //!< Last entry of parts_ belonging to sliced NC
   size_t last_elem_;                             //!< Last entry of parts_[last_part_] belonging to sliced NC
   bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
-  std::vector< size_t > cumul_abs_size_;         //!< Cumulative size of parts ignoring slicing
+  std::vector< size_t > cumul_abs_size_;         //!< Cumulative size of parts
   std::vector< size_t >
-    first_in_part_; //!< Local index to first element in each part when slicing is taken into account
+    first_in_part_; //!< Local index to first element in each part when slicing is taken into account, or invalid_index
 
   /**
    * Goes through the vector of primitives, merging as much as possible.

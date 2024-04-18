@@ -179,19 +179,17 @@ nc_const_iterator::advance_composite_iterator_( size_t n )
     assert( n == 1 );
 
     // Find next part that has element in underlying GLOBAL stride
-    auto rel_part_idx = part_idx_ - composite_collection_->first_part_; // because cumul/first_in rel to first_part
     do
     {
-      ++rel_part_idx;
-    } while ( rel_part_idx < composite_collection_->cumul_abs_size_.size()
-      and composite_collection_->first_in_part_[ rel_part_idx ] == invalid_index );
+      ++part_idx_;
+    } while ( part_idx_ < composite_collection_->cumul_abs_size_.size()
+      and composite_collection_->first_in_part_[ part_idx_ ] == invalid_index );
 
-    if ( rel_part_idx < composite_collection_->cumul_abs_size_.size() )
+    if ( part_idx_ < composite_collection_->cumul_abs_size_.size() )
     {
       // We have a candidate part and a first valid element in it
-      assert( composite_collection_->first_in_part_[ rel_part_idx ] != invalid_index );
-      part_idx_ = composite_collection_->first_part_ + rel_part_idx;
-      element_idx_ = composite_collection_->first_in_part_[ rel_part_idx ];
+      assert( composite_collection_->first_in_part_[ part_idx_ ] != invalid_index );
+      element_idx_ = composite_collection_->first_in_part_[ part_idx_ ];
 
       // Now perform phase adjustment
       switch ( kind_ )
@@ -820,9 +818,9 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
 
   cumul_abs_size_.resize( n_parts );
   cumul_abs_size_[ 0 ] = parts_[ 0 ].size();
-  for ( size_t j = 1; j < n_parts; ++j )
+  for ( size_t pix = 1; pix < n_parts; ++pix )
   {
-    cumul_abs_size_[ j ] = cumul_abs_size_[ j - 1 ] + parts_[ j ].size();
+    cumul_abs_size_[ pix ] = cumul_abs_size_[ pix - 1 ] + parts_[ pix ].size();
   }
 
   // All parts start at beginning since no slicing
@@ -841,8 +839,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   , last_part_( 0 )
   , last_elem_( 0 )
   , is_sliced_( true )
-  , cumul_abs_size_()
-  , first_in_part_()
+  , cumul_abs_size_( parts_.size(), 0 )
+  , first_in_part_( parts_.size(), invalid_index )
 {
   if ( end - start < 1 )
   {
@@ -867,34 +865,28 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     last_part_ = first_part_;
     last_elem_ = first_elem_;
 
-    cumul_abs_size_.emplace_back( parts_[ first_part_ ].size() ); // absolute size of the one valid part
-    first_in_part_.emplace_back( first_elem_ );
+    cumul_abs_size_[ first_part_ ] = parts_[ first_part_ ].size(); // absolute size of the one valid part
+    first_in_part_[ first_part_ ] = first_elem_;
   }
   else
   {
     // The NodeCollection is not sliced
     // Update start and stop positions.
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building start it" ); )
     const nc_const_iterator start_it = composite.begin() + start;
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building start it --- DONE" ); )
     std::tie( first_part_, first_elem_ ) = start_it.get_part_offset();
 
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building last it" ); )
     const nc_const_iterator last_it = composite.begin() + ( end - 1 );
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building last it --- DONE" ); )
     std::tie( last_part_, last_elem_ ) = last_it.get_part_offset();
 
-    // We consider now only parts beginning with first_part_ to and including last_part_
-    const auto n_parts = last_part_ - first_part_ + 1;
-    cumul_abs_size_.reserve( n_parts );
-    first_in_part_.reserve( n_parts );
-    cumul_abs_size_.emplace_back( parts_[ first_part_ ].size() );
-    first_in_part_.emplace_back( first_elem_ );
+    // Fill cumulative size/first_in data structures beginning with first_part_
+    // All entries have been initialized with 0 or invalid_index, respectively
+    cumul_abs_size_[ first_part_ ] = parts_[ first_part_ ].size();
+    first_in_part_[ first_part_ ] = first_elem_;
 
-    for ( size_t j = 1; j < n_parts; ++j )
+    for ( size_t pix = first_part_ + 1; pix <= last_part_; ++pix )
     {
-      const auto prev_cas = cumul_abs_size_[ j - 1 ];
-      cumul_abs_size_.emplace_back( prev_cas + parts_[ j ].size() );
+      const auto prev_cas = cumul_abs_size_[ pix - 1 ];
+      cumul_abs_size_[ pix ] = prev_cas + parts_[ pix ].size();
 
       // Compute absolute index from beginning of start_part for first element beyond part j-1
       const auto prev_num_elems = 1 + ( ( prev_cas - 1 - first_elem_ ) / stride_ );
@@ -903,15 +895,21 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
       const auto next_elem_loc_idx = next_elem_abs_idx - prev_cas;
 
       // We have a next element if it is in the part; if we are in last_part_, we must not have passed last_elem
-      if ( next_elem_abs_idx < cumul_abs_size_[ j ] and ( j < n_parts - 1 or next_elem_loc_idx <= last_elem_ ) )
+      if ( next_elem_abs_idx < cumul_abs_size_[ pix ] and ( pix < last_part_ or next_elem_loc_idx <= last_elem_ ) )
       {
-        first_in_part_.emplace_back( next_elem_loc_idx );
+        first_in_part_[ pix ] = next_elem_loc_idx;
       }
       else
       {
-        first_in_part_.emplace_back( invalid_index );
+        first_in_part_[ pix ] = invalid_index;
       }
     }
+  }
+
+  // For consistency, fill size values of remaining entries
+  for ( size_t pix = last_part_ + 1; pix < parts_.size(); ++pix )
+  {
+    cumul_abs_size_[ pix ] = cumul_abs_size_[ last_part_ ];
   }
 }
 
@@ -1159,38 +1157,25 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, s
 {
   assert( part_idx < last_part_ );
 
-  auto rel_part_idx = part_idx - first_part_; // because cumul/first_in rel to first_part
-
-  const auto part_abs_begin = rel_part_idx == 0 ? 0 : cumul_abs_size_[ rel_part_idx - 1 ];
+  const auto part_abs_begin = part_idx == 0 ? 0 : cumul_abs_size_[ part_idx - 1 ];
   const auto new_abs_idx = part_abs_begin + element_idx + n * stride_;
 
-  assert( new_abs_idx >= cumul_abs_size_[ rel_part_idx ] ); // otherwise we are not beyond current part as assumed
+  assert( new_abs_idx >= cumul_abs_size_[ part_idx ] ); // otherwise we are not beyond current part as assumed
 
   // Now move to part that contains new position
   do
   {
-    ++rel_part_idx;
-  } while ( rel_part_idx < cumul_abs_size_.size() and cumul_abs_size_[ rel_part_idx ] <= new_abs_idx );
+    ++part_idx;
+  } while ( part_idx < cumul_abs_size_.size() and cumul_abs_size_[ part_idx ] <= new_abs_idx );
 
-  if ( rel_part_idx >= cumul_abs_size_.size() or first_in_part_[ rel_part_idx ] == invalid_index )
+  if ( part_idx >= cumul_abs_size_.size() or first_in_part_[ part_idx ] == invalid_index )
   {
     // node collection exhausted
     return { invalid_index, invalid_index };
   }
 
   // We have found an element
-  return { first_part_ + rel_part_idx, new_abs_idx - cumul_abs_size_[ rel_part_idx - 1 ] };
-  /*
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "fnp ini rk %1, thr %2, pix %3, bipi %4, n %5, pne %6, strd %7",
-      kernel().mpi_manager.get_rank(),
-      kernel().vp_manager.get_thread_id(),
-      part_idx,
-      begin_in_part_idx,
-      n,
-      part_num_elems,
-      stride_ ) ); )
-  */
+  return { part_idx, new_abs_idx - cumul_abs_size_[ part_idx - 1 ] };
 }
 
 

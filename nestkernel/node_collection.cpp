@@ -303,15 +303,10 @@ nc_const_iterator::operator*() const
       throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
 
-    // To obtain index in node collection, we must first sum sizes of all preceding parts
-    gt.nc_index = std::accumulate( composite_collection_->parts_.begin(),
-      composite_collection_->parts_.begin() + part_idx_,
-      static_cast< size_t >( 0 ),
-      []( const size_t a, const NodeCollectionPrimitive& b ) { return a + b.size(); } );
-
+    const auto part_begin_idx = part_idx_ == 0 ? 0 : composite_collection_->cumul_abs_size_[ part_idx_ - 1 ];
+    gt.nc_index = part_begin_idx + element_idx_;
     gt.node_id = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
-    gt.nc_index += element_idx_;
   }
 
   return gt;
@@ -1352,34 +1347,26 @@ NodeCollectionComposite::get_nc_index( const size_t node_id ) const
   // We now know that lower == upper and that if the node is in this part
   // if it is in the node collection. We do not need to check for first/last,
   // since we did that above.
+  const auto part_begin_idx = lower == 0 ? 0 : cumul_abs_size_[ lower - 1 ];
+  const auto node_idx = part_begin_idx + parts_[ lower ].get_nc_index( node_id );
+
   if ( not is_sliced_ )
   {
-    // Since NC is not sliced, we can just calculate and return the local ID.
-    const auto sum_pre = std::accumulate( parts_.begin(),
-      parts_.begin() + lower,
-      static_cast< size_t >( 0 ),
-      []( const size_t a, const NodeCollectionPrimitive& b ) { return a + b.size(); } );
-    const auto node_idx = sum_pre + parts_[ lower ].get_nc_index( node_id );
+    // Since NC is not sliced, node_idx is the desired index
     assert( this->operator[]( node_idx ) == node_id );
-
     return node_idx;
   }
   else
   {
-    const auto size_prev_parts = std::accumulate( parts_.begin() + first_part_,
-      parts_.begin() + lower,
-      static_cast< size_t >( 0 ),
-      []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); } );
-
-    const auto absolute_pos = size_prev_parts + parts_[ lower ].get_nc_index( node_id );
-    const auto distance_from_first = absolute_pos - first_elem_;
+    // We need to take stride into account
+    const auto distance_from_first = node_idx - first_elem_;
 
     // Exploit that same stride applies to all parts
     if ( distance_from_first % stride_ == 0 )
     {
-      const auto node_idx = distance_from_first / stride_;
-      assert( this->operator[]( node_idx ) == node_id );
-      return node_idx;
+      const auto sliced_node_idx = distance_from_first / stride_;
+      assert( this->operator[]( sliced_node_idx ) == node_id );
+      return sliced_node_idx;
     }
     else
     {

@@ -76,6 +76,16 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 {
   assert( not collection_ptr.get() or collection_ptr.get() == &collection );
   assert( element_idx_ <= collection.size() ); // allow == for end()
+
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "NCIT Prim ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
+      kernel().mpi_manager.get_rank(),
+      kernel().vp_manager.get_thread_id(),
+      part_idx_,
+      element_idx_,
+      step_,
+      static_cast< int >( kind_ ),
+      rank_or_vp_ ) ); )
 }
 
 nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
@@ -104,8 +114,9 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   assert( ( part < collection.parts_.size() and offset <= collection.parts_[ part ].size() ) );
 
   FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NCITctor rk %1, pix %2, eix %3, step %4, kind %5, rvp %6",
+    kernel().write_to_dump( String::compose( "NCIT Comp ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
       kernel().mpi_manager.get_rank(),
+      kernel().vp_manager.get_thread_id(),
       part_idx_,
       element_idx_,
       step_,

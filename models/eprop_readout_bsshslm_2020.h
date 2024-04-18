@@ -58,11 +58,11 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
-             -z_j^{t-1}v_\mathrm{th} \,, \\
-    \kappa &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1}
+             -z_j^{t-1}v_\text{th} \,, \\
+    \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
 
-whereby :math:`W_{ji}^\mathrm{out}` are the output synaptic weights and
+whereby :math:`W_{ji}^\text{out}` are the output synaptic weights and
 :math:`z_i^{t-1}` are the recurrent presynaptic spike state variables.
 
 Descriptions of further parameters and variables can be found in the table below.
@@ -75,13 +75,13 @@ on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+:math:`\frac{\text{d}{E}}{\text{d}{W_{ij}}}=g`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
-  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
+  \frac{\text{d}E}{\text{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
 
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 

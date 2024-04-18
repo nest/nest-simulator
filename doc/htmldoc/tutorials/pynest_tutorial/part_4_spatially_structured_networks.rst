@@ -390,6 +390,3 @@ NodeCollection, which describes the spatial properties.
       'extent': (1.0, 1.0),
       'network_size': 20,
       'shape': (4, 5)}
-
-It may also be useful to look at the ``spatial`` property of the
-NodeCollection, which describes the layer properties.

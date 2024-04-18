@@ -57,6 +57,7 @@ extensions = [
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
+    "test_script",
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
@@ -176,10 +177,12 @@ html_static_path = ["static"]
 
 html_css_files = [
     "css/custom.css",
+    "css/filter_models.css",
     "css/pygments.css",
 ]
 
 html_js_files = [
+    "js/filter_models.js",
     "js/custom.js",
 ]
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
@@ -207,7 +210,7 @@ intersphinx_mapping = {
     "gpu": ("https://nest-gpu.readthedocs.io/en/latest/", None),
     "neuromorph": ("https://electronicvisions.github.io/hbp-sp9-guidebook/", None),
     "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
-    "tvb": ("https://docs.thevirtualbrain.org/", None),
+    # "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
 

@@ -15,7 +15,7 @@ repos:
     rev: v18.1.3
     hooks:
       - id: clang-format
-        types_or: [c++, python]
+        types_or: [c++]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0

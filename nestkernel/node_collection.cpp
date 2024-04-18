@@ -1157,12 +1157,14 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, s
 {
   assert( part_idx < last_part_ );
 
+  // Find new position counting from beginning of node collection
   const auto part_abs_begin = part_idx == 0 ? 0 : cumul_abs_size_[ part_idx - 1 ];
   const auto new_abs_idx = part_abs_begin + element_idx + n * stride_;
 
-  assert( new_abs_idx >= cumul_abs_size_[ part_idx ] ); // otherwise we are not beyond current part as assumed
+  // Confirm that new position is in a new part
+  assert( new_abs_idx >= cumul_abs_size_[ part_idx ] );
 
-  // Now move to part that contains new position
+  // Move to part that contains new position
   do
   {
     ++part_idx;
@@ -1170,11 +1172,12 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t element_idx, s
 
   if ( part_idx >= cumul_abs_size_.size() or first_in_part_[ part_idx ] == invalid_index )
   {
-    // node collection exhausted
+    // Either we checked all parts or the part containing the index contains no element
+    // compatible with our stride
     return { invalid_index, invalid_index };
   }
 
-  // We have found an element
+  // We have found a new element
   return { part_idx, new_abs_idx - cumul_abs_size_[ part_idx - 1 ] };
 }
 

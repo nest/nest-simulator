@@ -907,7 +907,7 @@ nc_const_iterator::operator+=( const size_t n )
 
   if ( primitive_collection_ )
   {
-    // guard against passing end and ensure we step to uniquely defined last element at end
+    // Guard against passing end ( size() gives element_index_ for end() iterator )
     element_idx_ = std::min( element_idx_ + n * step_, primitive_collection_->size() );
   }
   else
@@ -918,7 +918,8 @@ nc_const_iterator::operator+=( const size_t n )
     }
     else
     {
-      // We unroll to steps of 1 to avoid problems with phase adjustment
+      // {RANK,THREAD}_LOCAL iterators require phase adjustment
+      // which is feasible only for single steps, so unroll
       for ( size_t k = 0; k < n; ++k )
       {
         advance_composite_iterator_( 1 );
@@ -939,7 +940,21 @@ nc_const_iterator::operator+( const size_t n ) const
 inline nc_const_iterator&
 nc_const_iterator::operator++()
 {
-  ( *this ) += 1;
+  assert( kind_ != NCIteratorKind::END );
+
+  // This code is partial duplication of operator+(n), but because it is much simpler
+  // for composite collections than operator+(n), we code it explicitly here instead
+  // of redirecting to operator+(1).
+  if ( primitive_collection_ )
+  {
+    // Guard against passing end ( size() gives element_index_ for end() iterator )
+    element_idx_ = std::min( element_idx_ + step_, primitive_collection_->size() );
+  }
+  else
+  {
+    advance_composite_iterator_( 1 );
+  }
+
   return *this;
 }
 

@@ -1,8 +1,13 @@
 Model directory
 ===============
 
-.. literalinclude:: filter_model.json
-   :language: json
+.. literalinclude:: static/js/bad_filter_model.js
+
+
+----
+
+
+.. literalinclude:: _static/js/bad_filter_model.js
 
 Find a model
 ------------

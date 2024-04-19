@@ -847,7 +847,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
-          path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+          path: /home/runner/work/nest-simulator/nest-simulator/build/test_report_*/

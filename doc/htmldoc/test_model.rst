@@ -7,7 +7,6 @@ Model directory
 ----
 
 
-.. literalinclude:: _static/js/bad_filter_model.js
 
 Find a model
 ------------

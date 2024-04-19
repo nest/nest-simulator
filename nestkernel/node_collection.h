@@ -570,6 +570,8 @@ class NodeCollectionPrimitive : public NodeCollection
   friend class nc_const_iterator;
 
 private:
+  // Even though all members are logically const, we cannot declare them const because
+  // sorting or merging the parts_ array requires assignment.
   size_t first_;                       //!< The first node ID in the primitive
   size_t last_;                        //!< The last node ID in the primitive
   size_t model_id_;                    //!< Model ID of the node IDs

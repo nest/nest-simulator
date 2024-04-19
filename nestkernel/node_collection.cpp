@@ -288,7 +288,7 @@ nc_const_iterator::operator*() const
   }
   else
   {
-    if ( *this >= composite_collection_->end() )
+    if ( not composite_collection_->valid_idx_(part_idx_, element_idx_ ) )
     {
       FULL_LOGGING_ONLY( kernel().write_to_dump(
         String::compose( "nci::op* comp err rk %1, lp %2, le %3, pix %4, eix %5, end_pix %6, end_eix %7",
@@ -300,7 +300,7 @@ nc_const_iterator::operator*() const
           composite_collection_->end().part_idx_,
           composite_collection_->end().element_idx_ ) ); )
       assert( false );
-      throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
+      throw KernelException( "Invalid NodeCollection iterator for composite collection)" );
     }
 
     const auto part_begin_idx = part_idx_ == 0 ? 0 : composite_collection_->cumul_abs_size_[ part_idx_ - 1 ];
@@ -536,7 +536,9 @@ NodeCollection::to_array( const std::string& selection ) const
         node_ids.push_back( zero );
         node_ids.push_back( kernel().vp_manager.get_thread_id() );
         node_ids.push_back( zero );
-        for ( auto it = thread_local_begin(); it < end(); ++it )
+        
+        const auto end_it = end();
+        for ( auto it = thread_local_begin(); it < end_it; ++it )
         {
           node_ids.push_back( ( *it ).node_id );
         }
@@ -549,14 +551,15 @@ NodeCollection::to_array( const std::string& selection ) const
     // no-argument constructor nor copy constructor and this is a debug function only.
     if ( selection == "all" )
     {
-      for ( auto it = begin(); it < end(); ++it )
+      for ( const auto& val : *this )
       {
-        node_ids.push_back( ( *it ).node_id );
+        node_ids.push_back( val.node_id );
       }
     }
     else if ( selection == "rank" )
     {
-      for ( auto it = rank_local_begin(); it < end(); ++it )
+      const auto end_it = end();
+      for ( auto it = rank_local_begin(); it < end_it; ++it )
       {
         node_ids.push_back( ( *it ).node_id );
       }
@@ -991,9 +994,9 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     const auto& shortest = shortest_longest_nc.first;
     const auto& longest = shortest_longest_nc.second;
 
-    for ( auto short_it = shortest.begin(); short_it < shortest.end(); ++short_it )
+    for ( const auto& short_elem : shortest )
     {
-      if ( longest.contains( ( *short_it ).node_id ) )
+      if ( longest.contains( short_elem.node_id ) )
       {
         throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
@@ -1402,7 +1405,9 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     std::vector< std::string > string_vector;
 
     out << nc << "metadata=" << metadata << ",";
-    for ( nc_const_iterator it = begin(); it < end(); ++it )
+    
+    const auto end_it = end();
+    for ( nc_const_iterator it = begin(); it < end_it; ++it )
     {
       std::tie( current_part, current_offset ) = it.get_part_offset();
       if ( current_part != previous_part ) // New primitive

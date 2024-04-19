@@ -86,6 +86,8 @@ public:
 
 /**
  * Represent single node entry in node collection.
+ *
+ * These triples are not actually stored in the node collection, they are constructed when an iterator is dereferenced.
  */
 class NodeIDTriple
 {
@@ -103,7 +105,7 @@ public:
  * Behavior is determined by the constructor used to create the iterator.
  *
  * @note In addition to a raw pointer to either a primitive or composite node collection, which is used
- * for all actual work, the iterator also holds a NodeCollectionPTR to the NC it iterates over. This is solely
+ * for all actual work, the iterator also holds a NodeCollectionPTR to the NC it iterates over. This is necessary
  * so that anonymous node collections at the SLI/Python level are not auto-destroyed when they go out
  * of scope while the iterator lives on.
  *
@@ -113,52 +115,302 @@ public:
  *
  * In the following discussion, we use the following terms:
  *
+ * - **global iterator** is an iterator that steps through all elements of a node collection irrespective of the VP they
+ * belong to
+ * - **{rank,thread}-local iterator** is an iterator that steps only through those elements that belong to the
+ * rank/thread on which the iterator was created
  * - **stride** is the user-given stride through a node collection as in ``nc[::stride]``
- * - **period** is the number of either ranks or threads, depending on whether we want rank- or thread-local iteration
- * - **phase** is the rank or VP to which a node belongs
+ * - **period** is 1 for global iterators and the number of ranks/threads for {rank/thread}-local iterators
+ * - **phase** is the placement of a given node within the period, thus always 0 for global iterators;
+ *   for composite node collections, the phase needs to be determined independently for each part
  * - **step** is the number of elements of the underlying primitive node collection to advance by to move to the next
- * element
+ *   element; for global iterators, it is equal to the stride, for {rank/thread}-local iterators it is given by
+ * lcm(stride, period) and applies only *within* each part of a composite node collection
  *
- * For ``NodeCollectionPrimitive``, creating a rank/thread-local ``begin()`` iterator and stepping is easy:
+ * Note further that
+ * - `first_`, `first_part_`, `first_elem_` and `last_`, `last_part_`, `last_elem_` refer to the
+ *   first and last elements belonging to the node collection; in particular "last" is *inclusive*
+ * - For primitive NCs, the end iterator is given by `part_idx_ == 0, element_idx_ = last_ + 1`
+ * - For and empty primitive NC, the end iterator is given by `part_idx_ == 0, element_idx_ = 0`
+ * - For composite NCs, the end iterator is given by `part_idx_ == last_part_, element_idx_ == last_elem_ + 1`
+ * - To check whether an iterator over a composite NC is valid, use `NodeCollectionComposite::valid_idx_()`
+ * - Composite NCs can never be empty
+ * - The `end()` iterator is the same independent of whether one iterates globally or locally
+ * - Constructing the `end()` iterator is costly, especially for composite NCs. In classic for loops including `... ; it
+ * < nc->end() ; ...`, the `end()` iterator is constructed anew for every iteration, even if `nc` is `const` (tested
+ * with AppleClang 15 and GCC 13, `-std=c++17`). Therefore, either construct the `end()` iterator first
  *
- * 1. Find the `phase` of the first element of the NC
- * 2. Use modular arithmetic to find the first element in the NC belonging to the current rank/thread
- * 3. Set the step to the period.
+ *         const auto end_it = nc->end();
+ *         for ( auto it = nc->thread_local_begin() ; it < end_it ; ++it )
  *
- * For ``NodeCollectionComposite``, one needs to take multiple aspects into account
+ *   or use range iteration (global iteration only, uses `!=` to compare iterators)
  *
- * - The search for the begin-element for a given rank/thread must begin at ``start_part_/start_offset_``
- *   - This is done using the ``first_index()`` procedure from ``numerics.h``
- *   - If we do not find a solution in ``start_part_``, we need to look through subsequent parts, which may have a
- * different phase relation. See the stepping discussion below for how to proceed.
- * - Within each part, we have ``step = lcm(period, stride)``.
- * - Whenever we step out of a given part, we need to find a new starting point as follows:
- *     1. Find the last element compatible with the current stride on any rank/thread.
- *     2. Move forward by a single stride.
- *     3. Find the part in and offset at which the resulting element is located. This may require advancing by multiple
- * parts, since parts may contain as little as a single element.
- *     4. From the part/offset we have found, use the ``first_index()`` function to find the first location for the
- * current rank/thread. Note that this in itself may require moving to further part(s).
- *  - The precise method to find the part and offset in step 3 above is as follows.
- *    - Let ``p`` be the part we have just stepped out of, and let ``p_b`` be the first index in ``p`` belonging to the
- * slice.
- *    - Let ``p_e == p.size()`` be the one-past-last index of ``p``.
- *    - Then the number of elements in the slice is given by ``n_p = 1 + (p_e - 1 - p_b) // stride``, where ``//``
- *      marks integer division, i.e., flooring.
- *    - The element of the composite node collection that we are looking for then has index ``ix = p_b + n_p * stride``.
- *      This index ``ix`` is to be interpreted by counting from the beginning of ``p`` over *all* elements of the
- * underlying primitive node collection
- *      ``p`` and all subsequent parts until we have gotten to ``ix``.
- *    - This yields the following algorithm:
- *      1. Compute ``ix = p_b + n_p * stride``
- *      2. While ``ix > p.size()`` and at least one more part in node collection
- *        a. ``ix -= p.size()``
- *        b. ``p <- next(p)``
- *      3. If ``p == parts.end()``
- *          there is no more element in the node collection on this rank/thread
- *        else
- *          ``assert ix < p.size()``
- *          ``return index(p), ix``
+ *         for ( const auto& nc_elem : nc )
+ *
+ * ## Iteration over primitive collections
+ *
+ * For ``NodeCollectionPrimitive``, creating a rank/thread-local ``begin()`` iterator and stepping is straightforward:
+ *
+ * 1. Since `stride == 1` by definition for a primitive NC, we have `step == period`
+ * 2. Find the `phase` of the first element of the NC
+ * 3. Use modular arithmetic to find the first element in the NC belonging to the current rank/thread, if it exists.
+ * 4. To move forward by `n` elements, add `n * step` and check that one is still `<= last_`
+ * 5. If one stepped past `last_`, set `element_idx_ = last_ + 1` to ensure that `it != nc->end()` compares correctly
+ *
+ *
+ * ## Constructing a composite node collection
+ *
+ * Upon construction of a `NodeCollectionComposite` instance, we need to determine its first and last entries.
+ * We can distinguish three different cases, mapping to three different constructors.
+ *
+ * ### Case A: Slicing a primitive collection
+ *
+ * If `nc` is a primivtive collection and we slice as `nc[start:end:stride]`, we only have a single part and
+ *
+ * - `first_part_ = 0, first_elem_ = start`
+ * - `last_part_ = 0, last_elem_ = end - 1`
+ * - `stride_ = stride`
+ * - `size_ =  1 + ( end - start - 1 ) / stride` (integer division, see c'tor doc for derivation)
+ *
+ * ### Case B: Joining multiple primitive collections
+ *
+ * We receive a list of parts, which are all primitive collections. The new collection consists of all elements of all
+ * parts.
+ *
+ * 1. Collect all non-empty parts into the vector `parts_`
+ * 2. Ensure parts do not overlap and sort in order of increasing GIDs
+ *
+ * The collection now begins with the first element of the first part and ends with the last element of the last part,
+ * i.e.,
+ *
+ * - `first_part_ = 0, first_elem_ = 0`
+ * - `last_part_ = 0, last_elem_ = parts_[last_elem_].size() - 1`
+ * - `stride_ = 1`
+ * - `size_ = sum_k parts_[k].size()`
+ *
+ * ### Case C: Slicing a composite node collection
+ *
+ * Here, we have two subcases:
+ *
+ * #### Case C.1: Single element of sliced composite
+ *
+ * If `nc` is already sliced, we can only pick a single element given by `start` and `end==start+1`.  We proceed as
+ * follows:
+ *
+ * 1. Build iterator pointing to element as `it = nc.begin() + start`
+ * 2. Extract from this iterator
+ *   - `first_part_ = it.part_idx_, first_elem_ = it.elem_idx_`
+ * 3. We further have
+ *   - `last_part_ = first_part_, last_elem_ = last_elem_`
+ *   - `stride_ = 1` (the constructor is called with stride==1 if we do `nc[1]`)
+ *   - `size_ = 1` (but computed using equation above for consistency with C.2)
+ *
+ * #### Case C.2: Slicing of non-sliced composite
+ *
+ * We slice as `nc[start:end:stride]` but are guaranteed that all elements in `parts_` are in `nc` and all parts have
+ * stride 1. We thus proceed as follows:
+ * 1. Build iterator pointing to first element as `first_it = nc.begin() + start`
+ * 2. Build iterator pointing to last element as `last_it = nc.begin() + (end - 1)`
+ * 2. Extract from these iterators
+ *   - `first_part_ = first_it.part_idx_, first_elem_ = first_it.elem_idx_`
+ *   - `last_part_ = last_it.part_idx_, last_elem_ = last_it.elem_idx_`
+ * 3. We further have
+ *   - `stride_ = stride` (irrelevant in this case, but set thus for consistency with C.2)
+ *   - `size_ = 1 + ( end - start - 1 ) / stride`
+ *
+ * ### Additional data structures
+ *
+ * We further construct a vector of the cumulative sizes of all parts and a vector containing for each part the
+ * part-local index to the first element of each part that belongs to the node collection, or `invalid_index` if there
+ * is no element in the part.
+ * **Note:** The cumulative sizes include *all* elements of the parts, including elements before `first_elem_` or after
+ * `last_elem_`, but they do *not* include elements in parts before `first_part_` or after `last_part_`.
+ *
+ * #### Case A
+ *
+ * - `cumul_abs_size_` has a single element equal to the size of the underlying primitive collection.
+ * - `first_in_part_` has a single element equal to `first_elem_`
+ *
+ * #### Case B
+ *
+ * - `cumul_abs_size_` are straightforward cumulative sums of the sizes, beginning with `parts_[0].size()`
+ * - `first_in_part_` has `parts_.size()` elements, all zero since `stride==1` so we start from the beginning of each
+ * part
+ *
+ * #### Case C.1
+ *
+ * - `cumul_abs_size_`: zero before `first_part_`, for all subsequent parts `parts_[first_part_].size()`
+ * - `first_in_part_`: for `first_part_`, it is `first_elem_`, for all others `invalid_index`
+ *
+ * #### Case C.2
+ *
+ * - `cumul_abs_size_`:
+ *   - zero before `first_part_`
+ *   - cumulative sums from `first_part_` on starting with `parts_[first_part_].size()`
+ *   - from `last_part_` on all `cumul_abs_size_[last_part_]`
+ * - `first_in_part_`:
+ *   - for `first_part_`, it is `first_elem_`
+ *   - for all subsequent parts `part_idx_ <= last_part_`:
+ *     1. Compute number of elements in previous parts, taking stride into account (same equation as for composite size)
+ *       `n_pe = 1 + ( cumul_abs_size_[ part_idx_ - 1 ] - 1 - first_elem_ ) / stride`
+ *     2. Compute absolute index of next element from beginning of first_part_
+ *       `next_abs_idx = first_elem_ + n_pe * stride_`
+ *     3. Compute part-local index
+ *       `next_loc_idx = next_abs_idx - cumul_abs_size_[ part_idx_ - 1 ]`
+ *     4. If `next_loc_idx_` is valid index, store as `first_in_part_[part_idx_]`, otherwise store `invalid_index`
+ *   - `invalid_index` for all parts before `first_part_` and after `last_part_`
+ *
+ *
+ * ## Iteration over composite collections
+ *
+ *  - All underlying parts are primitive node collections and thus have `stride == 1`. One cannot join node collections
+ * with different strides.
+ * - Thus, if a composite NC is sliced, the same `stride` applies to all parts; by definition, also the same `period`
+ * applies to all parts
+ * - Therefore, the `step = lcm(stride, period)` is the same throughout
+ * - When slicing a compositve node collection, we always retain the full set of parts and mark by `first_part_` and
+ * `last_part_` (inclusive) which parts are relevant for the sliced collection.
+ *
+ * We now need to distinguish between global and local iteration.
+ *
+ * ### Global iteration
+ *
+ * For global iteration, we can ignore phase relations. We need to take into account slicing and possible gaps between
+ * parts, as well as the possibility, for `stride > 1`, that parts contain no elements. Consider the following node
+ * collection with several parts; vertical bars indicate borders between parts ( to construct such a node collection,
+ * join collections with different neuron models). In the table, (PartIdx, ElemIdx) show the iterator values for
+ * iterators pointing to the corresponding element in the collection, while PythonIdx is the index that applies for
+ * slicing from the Python level. Different slices are shown in the final lines of the table, with asterisks marking the
+ * elements belonging to the sliced collection. Note that the second slice does not contain any elements from the first
+ * and third parts.
+ *
+ *      GID        1 2 | 3 4 5 | 6 7 8 | 9 10 11
+ *      PartIdx    0 0 | 1 1 1 | 2 2 2 | 3  3  3
+ *      ElemIdx    0 1 | 0 1 2 | 0 1 2 | 0  1  2
+ *      ----------------------------------------
+ *      PythonIdx  0 1 | 2 3 4 | 5 6 7 | 8  9 10
+ *      ----------------------------------------
+ *      [::3]      *   |   *   |   *   |    *
+ *      [4::5]         |     * |       |    *
+ *      [1:11:3]     * |     * |     * |
+ *
+ * #### Iterator initialization
+ *
+ * The `begin()` iterator is given by
+ * - `part_idx_ = nc.first_part_, element_idx_ = nc.first_elem_`
+ * - `step_ = nc.stride_`
+ * - `kind_ = NCIterator::GLOBAL`
+ *
+ * #### Iterator stepping
+ * - Assume we want to move `n` elements forward. In the `[::3]` example above, starting with `begin()` and stepping by
+ *   `n=2` elements forward would take us from the element with GID 1 to the element with GID 7.
+ * - Proceed like this
+ *   1. Compute candidate element index `new_idx = element_idx_ + n * step_`
+ *   2. If we have passed the end of the collection, we set `part_idx_, element_idx_` to the end-iterator values and
+ * return
+ *   3. Otherwise, if we are still in the current part, we set `element_idx_ = new_idx` and return
+ *   4. Otherwise, we need to look in the next part.
+ *   5. We first check if there is a next part, if not, we set to end()
+ *   6. Otherwise, we move through remaining parts and use `cumul_abs_size_` to check if we have reached a part
+ *     containing `new_idx`. If so, we also need to check if we ended up in `last_part_` and if so, if before
+ * `last_elem_`.
+ *   7. If we have found a valid element in a new part, we set `part_idx_, element_idx_`, otherwise, we set them to the
+ * end() iterator.
+ *
+ * ### Local iteration
+ *
+ * Rank-local and thread-local iteration work in exactly the same way, just that the period and phase are in one case
+ * given by the ranks and in the other by the threads. Thus, we discuss the algorithms only once.
+ *
+ * - For `period > 1`, the relation of `phase` to position in a given part can differ from part to part. Consider the
+ * following node collection in a simulation with four threads (one MPI process). The table shows the GID of the neuron,
+ * its thread (phase), the part_idx and the element_idx of a iterator pointing to the element. Finally, elements that
+ * belong to thread 1 and 2 respectively, are marked with an asterisk:
+ *
+ *         GID       1  2  3  4  5  6  7  8  9  10  11
+ *         PartIdx   0  0  0  0  0  0  0  0  0   0   0
+ *         ElemIdx   0  1  2  3  4  5  6  7  8   9  10
+ *         Phase     1  2  3  0  1  2  3  0  1   2   3
+ *         -------------------------------------------
+ *         On thr 1  *           *           *
+ *         On thr 2     *           *            *
+ *
+ *     The phase relation here is `phase == element_idx % period + 1`, where `1` is the phase of the node with GID 1.
+ *
+ *     Now consider a new node collection constructed by
+ *
+ *         nc2 = nc[:5] + nc[8:]
+ *
+ *     This yields a node collection with two parts, marked with the vertical line (note that nodes 6 and 7 are not
+ * included). We consider it once it its entirety and once sliced as `nc2[::3]`. The `1stInPt` line marks the elements
+ * indexed by the `first_in_part_` vector.
+ *
+ *         GID            1  2  3  4  5  |  8  9  10  11  12  13  14  15  16
+ *         PartIdx        0  0  0  0  0  |  1  1   1   1   1   1   1   1   1
+ *         ElemIdx        0  1  2  3  4  |  0  1   2   3   4   5   6   7   8
+ *         Phase          1  2  3  0  1  |  0  1   2   3   0   1   2   3   0
+ *         -----------------------------------------------------------------
+ *         All 1stInPt    #              |  #
+ *         All thr 0               *     |  *              *               *
+ *         All thr 1      *           *  |     *               *
+ *         All thr 2         *           |         *               *
+ *         All thr 3            *        |             *               *
+ *         -----------------------------------------------------------------
+ *         [::3] 1stInPt  #              |                     #
+ *         [::3] thr 0             *     |                                 *
+ *         [::3] thr 1    *              |                     *
+ *         [::3] thr 2       *           |                         *
+ *         [::3] thr 3          *        |                             *
+ *
+ *     The phase relation is the same as above for the first part, but for the second part, the phase relation is
+ *     `phase == element_idx % period + 0`, where `0` is the phase of the node with GID 8, the first node in the second
+ * part.
+ *
+ *
+ * #### Local iterator initialization for primitive collection
+ *
+ * 1. Obtain the `first_phase_`, i.e., the phase (rank/thread) of the `first_` element in the collection.
+ * 2. Let `proc_phase_` be the phase of the rank or thread constructing the iterator (i.e, the number of the rank or
+ * thread)
+ * 3. Then set
+ * - `part_idx_ = 0, element_idx_ = ( proc_phase_ - first_phase_ + period ) % period`
+ * - `step_ = period`
+ * - `kind_ = NCIterator::{RANK,THREAD}_LOCAL`
+ *
+ * #### Local iterator initialization for composite collection
+ *
+ * Here, we may need to move through several parts to find the first valid entry. We proceed as follows:
+ *
+ * 1. Set `part_idx = nc.first_part_, elem_idx = nc.first_elem_`
+ * 2. With `elem_idx` as starting point, find index of first element in part `part_idx` that belongs to the current
+ * rank/thread. This is done by `first_index()` provided by `libnestutil/numerics.h`, see documentation of algorithm
+ * there. This step is the "phase adjustment" mentioned above.
+ * 3. If Step 2 did not return a valid index, increase `part_idx` until we have found a part containing a valid entry,
+ * i.e., one with `nc.first_in_part_[part_idx] != invalid_index` or until we have exhausted the collection
+ * 4. If we have exhausted the collection, set iterator to `end()`, otherwise set `elem_idx =
+ * nc.first_in_part_[part_idx]` with Step 2.
+ *
+ * We further have
+ * - `step_ = lcm(nc.stride_, period)`
+ * - `kind_ = NCIterator::{RANK, THREAD}_LOCAL`
+ *
+ * #### Stepping a local iterator
+ *
+ * - Assume we want to move `n` elements forward. In the `[::3]` example with four threads above,
+ *   starting with `thread_local_begin()` on thread 0 abd stepping `n=1` element forward
+ *   would take us from the element with GID 4 to the element with GID 16.
+ * - Proceed like this
+ *   1. Compute candidate element index `new_idx = element_idx_ + n * step_`
+ *   2. If `new_idx` is in the current part, we set `element_idx_ = new_idx` and are done.
+ *   3. Otherwise, if there are no more parts, set to the end iterator
+ *   4. If more parts are available, we need to unroll the step by `n` into `n` steps of size 1, because otherwise
+ *     we cannot handle the phase  adjustment on transition into new parts correctly.
+ *   5. For each individual step we do the following
+ *     a. Advance `part_idx_` until we have a valid `nc.first_in_part_[part_idx_]` or no more parts
+ *     b. If there are no more parts, set to end iterator and return
+ *     c. Otherwise, set `element_idx_ = nc.first_in_part_[part_idx_]` and then find the first element
+ *       after that local the current thread/rank using the same algorithm as for the local iterator intialization
+ *   6. Set to the end() iterator if we did not find a valid solution.
  */
 class nc_const_iterator
 {
@@ -309,7 +561,8 @@ public:
  *
  *  There is only a single type of end iterator returned by ``end()``.
  *
- *  For more information on composite node collections, see the documentation for the derived class.
+ *  For more information on composite node collections, see the documentation for the derived class and
+ * `nc_const_iterator`.
  */
 class NodeCollection
 {
@@ -711,27 +964,6 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  * - Any part after ``first_part_`` but before ``last_part_`` will always be in the NC in its entirety.
  * - A composite node collection is never empty (in that case it would be replaced with a Primitive. Therefore,
  *   there is always at least one part with one element.
- *
- * For marking the end of the NC, the following logic applies to make comparison operators simpler
- * **OUTDATED**
- * - Assume that the last element ``final`` of the composite collection (after all slicing effects are taken into
- *   account), is in part ``i``.
- * - Let ``idx_in_i`` be the index of ``final`` in ``part[i]``, i.e., ``part[i][index_in_i] == final``.
- * - If ``final`` is the last element of ``part[i]``, i.e., ``idx_in_i == part[i].size()-1``, then ``end_part_ == i+1``
- *   and ``end_offset_ == 0``
- * - Otherwise, ``end_part_ == i`` and ``end_offset_ == idx_in_i``
- *
- * Thus,
- * - ``end_offset_`` always observes "one-past-the-end" logic, while ``end_part_`` does so only if ``end_offset_ == 0``
- * - to iterate over all parts containing elements of the NC, we need to do
- *
- *   .. code-block:: c++
- *
- *     for ( auto pix = start_part_ ; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ) ; ++pix )
- *
- * - the logic here is that if ``end_offset_ == 0``, then ``end_part_`` already follows "one past" logic, but otherwise
- * we need to add 1
- * **END OUTDATED**
  */
 class NodeCollectionComposite : public NodeCollection
 {

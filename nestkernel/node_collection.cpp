@@ -131,7 +131,7 @@ nc_const_iterator::find_next_within_part_( size_t n ) const
 
   if ( primitive_collection_ )
   {
-    // Avoid running over end of collection
+    // Avoid running over end of collection; primitive_collection_->size() is end marker
     return std::min( new_element_idx, primitive_collection_->size() );
   }
 
@@ -288,7 +288,7 @@ nc_const_iterator::operator*() const
   }
   else
   {
-    if ( not composite_collection_->valid_idx_(part_idx_, element_idx_ ) )
+    if ( not composite_collection_->valid_idx_( part_idx_, element_idx_ ) )
     {
       FULL_LOGGING_ONLY( kernel().write_to_dump(
         String::compose( "nci::op* comp err rk %1, lp %2, le %3, pix %4, eix %5, end_pix %6, end_eix %7",
@@ -536,7 +536,7 @@ NodeCollection::to_array( const std::string& selection ) const
         node_ids.push_back( zero );
         node_ids.push_back( kernel().vp_manager.get_thread_id() );
         node_ids.push_back( zero );
-        
+
         const auto end_it = end();
         for ( auto it = thread_local_begin(); it < end_it; ++it )
         {
@@ -649,17 +649,17 @@ NodeCollectionPrimitive::rank_local_begin( NodeCollectionPTR cp ) const
 {
   const size_t num_processes = kernel().mpi_manager.get_num_processes();
   const size_t rank = kernel().mpi_manager.get_rank();
-  const size_t rank_first_node =
+  const size_t first_elem_rank =
     kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
-  const size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
+  const size_t elem_idx = ( rank - first_elem_rank + num_processes ) % num_processes;
 
-  if ( offset > size() ) // Too few node IDs to be shared among all MPI processes.
+  if ( elem_idx > size() ) // Too few node IDs to be shared among all MPI processes.
   {
     return const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END ); // end iterator
   }
   else
   {
-    return const_iterator( cp, *this, offset, num_processes, nc_const_iterator::NCIteratorKind::RANK_LOCAL );
+    return const_iterator( cp, *this, elem_idx, num_processes, nc_const_iterator::NCIteratorKind::RANK_LOCAL );
   }
 }
 
@@ -898,8 +898,8 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   {
     // The NodeCollection is not sliced
     // Update start and stop positions.
-    const nc_const_iterator start_it = composite.begin() + start;
-    std::tie( first_part_, first_elem_ ) = start_it.get_part_offset();
+    const nc_const_iterator first_it = composite.begin() + start;
+    std::tie( first_part_, first_elem_ ) = first_it.get_part_offset();
 
     const nc_const_iterator last_it = composite.begin() + ( end - 1 );
     std::tie( last_part_, last_elem_ ) = last_it.get_part_offset();
@@ -914,7 +914,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
       const auto prev_cas = cumul_abs_size_[ pix - 1 ];
       cumul_abs_size_[ pix ] = prev_cas + parts_[ pix ].size();
 
-      // Compute absolute index from beginning of start_part for first element beyond part j-1
+      // Compute absolute index from beginning of first_part_ for first element beyond part j-1
       const auto prev_num_elems = 1 + ( ( prev_cas - 1 - first_elem_ ) / stride_ );
       const auto next_elem_abs_idx = first_elem_ + prev_num_elems * stride_;
       assert( next_elem_abs_idx >= prev_cas );
@@ -1106,43 +1106,40 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 std::pair< size_t, size_t >
 NodeCollectionComposite::specific_local_begin_( size_t period,
   size_t phase,
-  size_t start_part,
-  size_t start_offset,
+  size_t first_part,
+  size_t first_elem,
   gid_to_phase_fcn_ gid_to_phase ) const
 {
-  assert( start_offset < parts_[ start_part ].size() );
+  assert( first_elem < parts_[ first_part ].size() );
 
-  size_t idx_first_in_part = start_offset;
-
-  size_t pix = start_part;
+  size_t pix = first_part;
   do
   {
-    const size_t phase_first_node = gid_to_phase( parts_[ pix ][ idx_first_in_part ] );
+    const size_t phase_first_node = gid_to_phase( parts_[ pix ][ first_elem ] );
 
-    size_t offset = first_index( period, phase_first_node, stride_, phase );
-    /* offset can now be
-     * - offset < part.size() : we have a solution
+    size_t elem_idx = first_index( period, phase_first_node, stride_, phase );
+    /* elem_idx can now be
+     * - elem_idx < part.size() : we have a solution
      * - invalid_index : equation not solvable in existing part (eg even thread and nc has only odd gids), must search
      * in remaining parts
-     * - offset >= part.size() : there would be a solution if the part had been larger with same structure
+     * - elem_idx >= part.size() : there would be a solution if the part had been larger with same structure
      */
 
     // Add starting point only if valid offset, otherwise we would invalidate invalid_index marker
-    if ( offset != invalid_index )
+    if ( elem_idx != invalid_index )
     {
-      offset += idx_first_in_part;
+      elem_idx += first_elem;
     }
 
     FULL_LOGGING_ONLY(
-      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, ix_first %3, phase_first %4, offs %5, stp %6, sto "
-                                               "%7, pix %8, lp %9, le %10, primsz %11, nprts: %12, this: %13",
+      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, phase_first %3, offs %4, stp %5, sto %6,"
+                                               " pix %7, lp %8, le %9, primsz %10, nprts: %11, this: %12",
         kernel().mpi_manager.get_rank(),
         kernel().vp_manager.get_thread_id(),
-        idx_first_in_part,
         phase_first_node,
         offset,
-        start_part,
-        start_offset,
+        first_part,
+        first_elem,
         pix,
         last_part_,
         last_elem_,
@@ -1150,10 +1147,11 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
         parts_.size(),
         this ) ); )
 
-    if ( offset != invalid_index and offset < parts_[ pix ].size() and ( pix < last_part_ or offset <= last_elem_ ) )
+    if ( elem_idx != invalid_index and elem_idx < parts_[ pix ].size()
+      and ( pix < last_part_ or elem_idx <= last_elem_ ) )
     {
-      assert( gid_to_phase( parts_[ pix ][ offset ] ) == phase );
-      return { pix, offset };
+      assert( gid_to_phase( parts_[ pix ][ elem_idx ] ) == phase );
+      return { pix, elem_idx };
     }
     else
     {
@@ -1170,7 +1168,7 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
       }
       else
       {
-        idx_first_in_part = first_in_part_[ pix ];
+        first_elem = first_in_part_[ pix ];
       }
     }
   } while ( pix <= last_part_ );
@@ -1405,7 +1403,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     std::vector< std::string > string_vector;
 
     out << nc << "metadata=" << metadata << ",";
-    
+
     const auto end_it = end();
     for ( nc_const_iterator it = begin(); it < end_it; ++it )
     {

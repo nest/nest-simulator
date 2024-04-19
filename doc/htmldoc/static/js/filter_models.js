@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('static/filter_model.json')
+    fetch('static/data/filter_model.json')
         .then(response => response.json())
         .then(data => {
             populateTags(data);
@@ -46,7 +46,7 @@ function populateTags(data) {
 function updateModelDisplay() {
     const activeButtons = document.querySelectorAll('.filter-button.is-active');
     const selectedTags = Array.from(activeButtons).map(button => button.textContent.split(' ')[0]);
-    fetch('static/filter_model.json')
+    fetch('static/data/filter_model.json')
         .then(response => response.json())
         .then(data => {
             const filteredModels = filterModelsByTags(data, selectedTags);

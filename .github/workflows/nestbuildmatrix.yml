@@ -718,10 +718,7 @@ jobs:
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-          path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+          path: /home/runner/work/nest-simulator/nest-simulator/build/test_report_*/
 
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -846,5 +843,5 @@ jobs:
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         if: ${{ always() }}
         with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
+          name: "build_logs_macos"
           path: /home/runner/work/nest-simulator/nest-simulator/build/test_report_*/

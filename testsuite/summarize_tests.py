@@ -71,10 +71,15 @@ if __name__ == "__main__":
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, "*.xml"))):
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace("_", " ")
-        ph_res = parse_result_file(pfile)
-        results[ph_name] = ph_res
-        for k, v in ph_res.items():
-            totals[k] += v
+        try:
+            ph_res = parse_result_file(pfile)
+            results[ph_name] = ph_res
+            for k, v in ph_res.items():
+                totals[k] += v
+        except Exception as err:
+            msg = f"ERROR: {pfile} not parsable with error {err}"
+            results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
+            totals["Failed tests"].append(msg)
 
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
 
@@ -97,10 +102,13 @@ if __name__ == "__main__":
     print(tline)
     for pn, pr in results.items():
         print(f"{pn:<{first_col_w}s}", end="")
-        for c in cols:
-            fmt = ".1f" if c == "Time" else "d"
-            print(f"{pr[c]:{col_w}{fmt}}", end="")
-        print()
+        if pr["Tests"] == 0 and pr["Failed tests"]:
+            print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
+        else:
+            for c in cols:
+                fmt = ".1f" if c == "Time" else "d"
+                print(f"{pr[c]:{col_w}{fmt}}", end="")
+            print()
 
     print(tline)
     print(f"{'Total':<{first_col_w}s}", end="")
@@ -111,7 +119,8 @@ if __name__ == "__main__":
     print(tline)
     print()
 
-    if totals["Failures"] + totals["Errors"] > 0:
+    # Second condition handles xml parsing failures
+    if totals["Failures"] + totals["Errors"] > 0 or totals["Failed tests"]:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
         print("    The following tests failed")
         for t in totals["Failed tests"]:

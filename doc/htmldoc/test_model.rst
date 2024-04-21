@@ -1,11 +1,6 @@
 Model directory
 ===============
 
-.. literalinclude:: static/js/bad_filter_model.js
-
-
-----
-
 
 
 Find a model
@@ -13,15 +8,13 @@ Find a model
 
 NEST has over 100 models, choose an option for finding the one you need!
 
-.. grid:: 1 1 3 3
+.. grid:: 1 1 2 2
 
    .. grid-item-card::
 
-      Filter models with our :ref:`model_selector`
+      * Filter models with our :ref:`model_selector`
 
-   .. grid-item-card::
-
-      Get :ref:`full_list` of models
+      * Or get the :ref:`full_list`
 
    .. grid-item-card::
 
@@ -47,7 +40,7 @@ Select a tag to display corresponding models. By selecting multiple tags, you ca
     <div id="tag-container">
         <!-- Tags will be populated here by JavaScript -->
     </div>
-    <h3>Filtered model list </h3>
+    <h3>List of models based on your selection </h3>
     <div id="model-list"></div>
     <script src="_static/js/filter_models.js"></script>
 

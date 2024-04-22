@@ -719,9 +719,8 @@ jobs:
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+            build/install_manifest.txt
+            build/test_report_*/
 
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -848,6 +847,5 @@ jobs:
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+            build/install_manifest.txt
+            build/test_report_*/

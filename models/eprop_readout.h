@@ -91,6 +91,20 @@ Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
 
+The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
+matrix :math:`B_{jk} and the continuous error signal :math:`e_k^t` emitted by
+readout neuron :math:`k` and :math:`e_k^t` defined via a mean-squared error
+loss:
+
+.. math::
+ L_j^t = B_{jk}e_k^t = y_k^t - y_k^{*,t}\, .
+
+whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
+readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
+
+Furthermore, the readout and target signal are multiplied by a learning window
+signal, which has a value of 1.0 within the learning window and 0.0 outside.
+
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf<../models/eprop_iaf/>`

@@ -98,6 +98,36 @@ Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
 
+The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
+matrix :math:`B_{jk} and the continuous error signal :math:`e_k^t` emitted by
+readout neuron :math:`k`:
+
+.. math::
+ L_j^t = B_{jk}e_k^t \, .
+
+The error signal depends on the selected loss function.
+If a mean squared error loss is selected, then:
+
+.. math::
+ e_k^t = y_k^t - y_k^{*,t} \,,
+
+whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
+readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
+
+If a cross-entropy loss is selected, then:
+
+.. math::
+ e^k_t = \pi_k^t - \pi_k^{*,t} \,,
+ \pi_k^t &= \text{softmax}_k \left(y_1^t, ..., y_K^t \right) =
+\frac{\exp\left(y_k^t\right)}{\sum_{k'}\exp\left(y_{k'}^t\right)} \,,
+
+whereby the readout signal :math:`\pi_k^t` corresponds to the softmax of the
+membrane voltage of readout neuron :math:`k` and :math:`\pi_k^{*,t}` is the
+one-hot encoded target signal.
+
+Furthermore, the readout and target signal are zero before the onset of the
+learning window in each update interval.
+
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`

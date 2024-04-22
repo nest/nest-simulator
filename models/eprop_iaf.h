@@ -66,8 +66,8 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
              + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \,, \\
     \alpha &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
 
-whereby :math:`W_{ji}^\mathrm{rec}` and :math:`W_{ji}^\mathrm{in}` are the recurrent and
-input synaptic weights, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
+whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+input synaptic weight matrices, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
 recurrent and input presynaptic spike state variables, respectively.
 
 Descriptions of further parameters and variables can be found in the table below.

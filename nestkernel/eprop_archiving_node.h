@@ -34,6 +34,76 @@
 
 namespace nest
 {
+/* BeginUserDocs:  e-prop plasticity
+
+Short description
++++++++++++++++++
+Archiving node for the history of e-prop variables.
+
+Description
++++++++++++
+The archiving node comprises a set of functions needed for writing the e-prop
+values of the e-prop variables to history and retrieving them, as well as
+functions to compute, for example, the firing rate regularization and the
+surrogate gradient.
+
+Surrogate gradient functions
+++++++++++++++++++++++++++++
+
+The membrane voltage enters into the e-prop algorithm in the form of its
+surrogate gradient / pseudo-derivative. The literature offers a plethora
+different surrogate gradient functions (see e.g., [1]_). Here, there are four to
+choose from:
+
+1. A piecewise linear function used among others in [2]_:
+
+.. math::
+    \psi_j^t = \frac{\gamma}{v_\text{th}} \text{max}
+               \left(0, 1-\beta\, \left| \frac{v_j^t-v_\text{th}}{v_\text{th}}\right| \right) \,.
+
+2. An exponential function used in [3]_:
+
+.. math::
+  \psi_j^t = \gamma\,\text{exp}\left(-\beta\,\text{abs}\left( v_j^t-v_\text{th} \right)\right) \,.
+
+3. The derivative of a fast sigmoid function used in [4]_:
+
+.. math::
+  \psi_j^t = \gamma\,\left(1 + \beta\, \text{abs} \left( v_j^t-v_\text{th}\right)\right)^2 \,.
+
+4. An arctan function used in [5]_:
+
+.. math::
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{1+\left(\beta\,\pi\,\left(v_j^t-v_\text{th}\right)\right)^2} \,.
+
+
+References
+++++++++++
+
+.. [1] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
+       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
+       https://doi.org/10.1109/MSP.2019.2931595
+
+.. [2] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
+       Maass W (2020). A solution to the learning dilemma for recurrent
+       networks of spiking neurons. Nature Communications, 11:3625.
+       https://doi.org/10.1038/s41467-020-17236-y
+
+.. [3] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
+       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82f2b308c3b01637c607ce05f52a2fed-Abstract.html
+
+.. [4] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
+       Spiking Neural Networks. Neural Computation, 30:1514–1541.
+       https://doi.org/10.1162/neco_a_01086
+
+.. [5] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
+       learning in spiking neural networks. Advances in Neural Information
+       Processing Systems, 34:21056–21069.
+       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
+
+EndUserDocs */
+
 /**
  * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
  * according to Bellec et al. (2020) and supporting additional biological features described in Korcsak-Gorzo,

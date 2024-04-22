@@ -401,6 +401,17 @@ params_gen_rate_target = {
     "amplitude_values": np.tile(target_signal, n_iter * n_batch),
 }
 
+####################
+
+nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
+# %% ###########################################################################################################
+# Create learning window
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
+# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
+# opens the learning window while passing a value of 0 closes it.
+
 params_gen_learning_window = {
     "amplitude_times": [duration["total_offset"]],
     "amplitude_values": [1.0],
@@ -408,7 +419,6 @@ params_gen_learning_window = {
 
 ####################
 
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################

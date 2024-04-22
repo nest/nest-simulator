@@ -519,6 +519,18 @@ amplitude_times = np.hstack(
 
 amplitude_values = np.array([0.0, 1.0] * n_batch * n_iter)
 
+####################
+
+nest.SetStatus(gen_spk_in, params_gen_spk_in)
+nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
+# %% ###########################################################################################################
+# Create learning window
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
+# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
+# opens the learning window while passing a value of 0 closes it.
+
 params_gen_learning_window = {
     "amplitude_times": amplitude_times,
     "amplitude_values": amplitude_values,
@@ -526,8 +538,6 @@ params_gen_learning_window = {
 
 ####################
 
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################

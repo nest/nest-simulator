@@ -196,7 +196,10 @@ V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Abs
 V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-The following state variables evolve during simulation.
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
 
 ================== ==== =============== ============= ========================
 **Neuron state variables and recordables**
@@ -204,22 +207,18 @@ The following state variables evolve during simulation.
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ========================
 adaptation              :math:`a_j`               0.0 Adaptation variable
-learning_signal         :math:`L_j`               0.0 Learning signal
-surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
 V_m                  mV :math:`v_j`             -70.0 Membrane voltage
 V_th_adapt           mV :math:`A_j`             -55.0 Adapting spike threshold
 ================== ==== =============== ============= ========================
 
-Recordables
-+++++++++++
-
-The following variables can be recorded:
-
-  - adaptation variable ``adaptation``
-  - adapting spike threshold ``V_th_adapt``
-  - learning signal ``learning_signal``
-  - membrane potential ``V_m``
-  - surrogate gradient ``surrogate_gradient``
+================== ==== =============== ============= ========================
+**E-prop state variables and recordables**
+------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ========================
+learning_signal         :math:`L_j`               0.0 Learning signal
+surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
+================== ==== =============== ============= ========================
 
 Usage
 +++++

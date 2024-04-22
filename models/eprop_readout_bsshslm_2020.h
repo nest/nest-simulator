@@ -126,10 +126,21 @@ V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute 
                                                                        voltage
 ===================== ======= ===================== ================== =========================================
 
-The following state variables evolve during simulation.
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
 
 ===================== ==== =============== ============= ==========================
 **Neuron state variables and recordables**
+-----------------------------------------------------------------------------------
+State variable        Unit Math equivalent Initial value Description
+===================== ==== =============== ============= ==========================
+V_m                   mV   :math:`v_j`               0.0 Membrane voltage
+===================== ==== =============== ============= ==========================
+
+===================== ==== =============== ============= ==========================
+**E-prop state variables and recordables**
 -----------------------------------------------------------------------------------
 State variable        Unit Math equivalent Initial value Description
 ===================== ==== =============== ============= ==========================
@@ -137,19 +148,7 @@ error_signal          mV   :math:`L_j`               0.0 Error signal
 readout_signal        mV   :math:`y_j`               0.0 Readout signal
 readout_signal_unnorm mV                             0.0 Unnormalized readout signal
 target_signal         mV   :math:`y^*_j`             0.0 Target signal
-V_m                   mV   :math:`v_j`               0.0 Membrane voltage
 ===================== ==== =============== ============= ==========================
-
-Recordables
-+++++++++++
-
-The following variables can be recorded:
-
-  - error signal ``error_signal``
-  - readout signal ``readout_signal``
-  - readout signal ``readout_signal_unnorm``
-  - target signal ``target_signal``
-  - membrane potential ``V_m``
 
 Usage
 +++++

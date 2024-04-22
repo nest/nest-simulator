@@ -77,9 +77,16 @@ weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
 Recordables
 +++++++++++
 
-The following variables can be recorded:
+The following variables can be recorded. Note that since this connection lacks
+a plasticity mechanism the weight does not evolve over time.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ==========================================================
+**Synapse recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++

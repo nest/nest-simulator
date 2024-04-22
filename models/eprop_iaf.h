@@ -183,26 +183,27 @@ V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Abs
 V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-The following state variables evolve during simulation.
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
 
 ================== ==== =============== ============= ==========================================================
 **Neuron state variables and recordables**
 ----------------------------------------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ==========================================================
-learning_signal    pA   :math:`L_j`               0.0 Learning signal
-surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane voltage
 V_m                mV   :math:`v_j`             -70.0 Membrane voltage
 ================== ==== =============== ============= ==========================================================
 
-Recordables
-+++++++++++
-
-The following variables can be recorded:
-
-  - learning signal ``learning_signal``
-  - membrane potential ``V_m``
-  - surrogate gradient ``surrogate_gradient``
+================== ==== =============== ============= ==========================================================
+**E-prop state variables and recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+learning_signal    pA   :math:`L_j`               0.0 Learning signal
+surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane voltage
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++

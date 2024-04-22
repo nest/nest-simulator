@@ -210,10 +210,7 @@ params_nrn_rec = {
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
     "V_th": 0.5,  # mV, spike threshold membrane voltage
-    "V_reset": -0.5,
-    "kappa": np.exp(
-        -duration["step"] / params_nrn_out["tau_m"]
-    ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
+    "V_reset": -0.5,  # mV, reset membrane voltage
 }
 
 if model_nrn_rec == "eprop_iaf":

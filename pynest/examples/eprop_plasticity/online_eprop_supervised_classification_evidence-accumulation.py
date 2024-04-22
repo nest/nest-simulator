@@ -218,7 +218,7 @@ params_nrn_reg = {
 
 if model_nrn_reg == "eprop_iaf_psc_delta":
     del params_nrn_reg["regular_spike_arrival"]
-    params_nrn_reg["V_reset"] = -0.5
+    params_nrn_reg["V_reset"] = -0.5  # mV, reset membrane voltage
     params_nrn_reg["c_reg"] = 2.0 / duration["sequence"] * duration["learning_window"]
     params_nrn_reg["V_th"] = 0.5
 

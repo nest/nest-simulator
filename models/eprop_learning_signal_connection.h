@@ -121,7 +121,8 @@ void register_eprop_learning_signal_connection( const std::string& name );
 
 /**
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
- * according to Bellec et al. (2020).
+ * according to Bellec et al. (2020) with additional biological features described in
+ * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT >

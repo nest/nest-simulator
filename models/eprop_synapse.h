@@ -146,7 +146,9 @@ Examples using this model
 EndUserDocs */
 
 /**
- * Base class implementing common properties for the e-prop synapse model.
+ * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
+ * (in preparation).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -189,9 +191,8 @@ public:
 void register_eprop_synapse( const std::string& name );
 
 /**
- * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
- *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

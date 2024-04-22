@@ -34,9 +34,10 @@
 
 namespace nest
 {
-
 /**
- * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity.
+ * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
+ * according to Bellec et al. (2020) and supporting additional biological features described in Korcsak-Gorzo,
+ * Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for

@@ -29,7 +29,7 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
-plasticity mechanism by Bellec et al. [1]_.
+plasticity mechanism by Bellec et al. [1]_ with additional biological features described in [3]_.
 
 The primary objective of this task is to classify the Neuromorphic MNIST dataset [2]_, an adaptation of the
 traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing.

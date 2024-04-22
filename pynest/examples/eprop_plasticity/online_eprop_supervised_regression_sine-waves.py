@@ -29,7 +29,8 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
-is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
+is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_ with
+additional biological features described in [3]_.
 
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_.

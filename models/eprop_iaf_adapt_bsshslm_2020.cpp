@@ -281,7 +281,7 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 
   const double dt = Time::get_resolution().get_ms();
 
-  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ ); // called alpha in reference [1]_
+  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );

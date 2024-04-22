@@ -444,7 +444,7 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage.
+    //! Propagator matrix entry for evolving the membrane voltage (called "alpha" in Bellec et al. (2020)).
     double P_v_m_;
 
     //! Propagator matrix entry for evolving the incoming spike variables.

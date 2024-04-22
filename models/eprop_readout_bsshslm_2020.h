@@ -58,8 +58,13 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1} \,, \\
+    v_j^t &= \kappa v_j^{t-1}+ P_{z_\text{in}} \left( \sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1} \right) \,, \\
     \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
+    P_{z_\text{in}} &=
+    \begin{cases}
+    1 \\
+    1 - \kappa
+    \end{cases} \,,
 
 whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.

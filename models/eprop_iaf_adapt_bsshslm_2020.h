@@ -65,9 +65,14 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
-             + \sum_i W_{ji}^\text{in}x_i^t-z_j^{t-1}v_\text{th} \,, \\
+    v_j^t &= \alpha v_j^{t-1}+ P_{z_\text{in}} \left(\sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
+             + \sum_i W_{ji}^\text{in}x_i^t \right) -z_j^{t-1}v_\text{th} \,, \\
     \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
+    P_{z_\text{in}} &=
+    \begin{cases}
+    1 \\
+    1 - \alpha
+    \end{cases} \,,
 
 whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
 input synaptic weight matrices, and :math:`z_i^{t-1}` and :math:`x_i^t` are the

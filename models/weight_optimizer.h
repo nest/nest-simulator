@@ -117,11 +117,14 @@ v                   :math:`v`                 0.0 Second moment raw estimate
 
 References
 ++++++++++
-.. [1] Huh, D. & Sejnowski, T. J. Gradient descent for spiking neural networks. 32nd
-       Conference on Neural Information Processing Systems (2018).
+
+.. [1] Huh D, Sejnowski TJ (2018). Gradient descent for spiking neural networks.
+       Advances in Neural Information Processing Systems, 31:1433-1443.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/185e65bc40581880c4f2c82958de8cfe-Abstract.html
+
 .. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
-       Proceedings of International Conference on Learning Representations (ICLR).
-       https://doi.org/10.48550/arXiv.1412.6980
+       arXiv preprint, 1412.6980. https://doi.org/10.48550/arXiv.1412.6980
+
 .. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
 
 See also

@@ -36,19 +36,22 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-postsynaptic currents
+postsynaptic currents for e-prop plasticity
 
 Description
 +++++++++++
 
-``iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
-where the potential jumps on each spike arrival.
+``eprop_iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
+where the potential jumps on each spike arrival used for eligibility propagation
+(e-prop) plasticity.
+
+It is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
@@ -151,7 +154,7 @@ iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_psc_delta
+.. listexamples:: eprop_iaf_psc_delta
 
 EndUserDocs */
 

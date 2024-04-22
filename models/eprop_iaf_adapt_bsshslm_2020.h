@@ -134,11 +134,11 @@ whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout n
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
-:math:`f^\text{target}`. The gradient :math:`g^\text{reg}` of the regularization loss :math:`E^\text{reg}`
+:math:`f^\text{target}`. The gradient :math:`g_\text{reg}` of the regularization loss :math:`E_\text{reg}`
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\text{d}E^\text{reg}}{\text{d}W_{ji}} = g^\text{reg} = c_\text{reg}
+  \frac{\text{d}E_\text{reg}}{\text{d}W_{ji}} = g_\text{reg} = c_\text{reg}
   \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t\,,
 
 whereby :math:`c_\text{reg}` scales the overall regularization and the average

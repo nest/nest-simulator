@@ -89,7 +89,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================ ======= =============== ======= ======================================================
-**Common synapse parameters**
+**Common e-prop synapse parameters**
 -------------------------------------------------------------------------------------------------------
 Parameter        Unit    Math equivalent Default Description
 ================ ======= =============== ======= ======================================================
@@ -103,8 +103,15 @@ optimizer                                     {} Dictionary of optimizer paramet
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+============= ==== ========================= ======= =========================================================
+
+============= ==== ========================= ======= =========================================================
+**Individual e-prop synapse parameters**
+--------------------------------------------------------------------------------------------------------------
+Parameter     Unit Math equivalent           Default Description
+============= ==== ========================= ======= =========================================================
+tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 ============= ==== ========================= ======= =========================================================
 
 Recordables

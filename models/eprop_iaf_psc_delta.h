@@ -99,6 +99,28 @@ The following parameters can be set in the status dictionary.
                           refractory period. Default: false
 ================= ======= ======================================================
 
+=========================== ======= ======================= ================ ===================================
+**E-prop parameters**
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
+c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
+                                                                             regularization
+f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
+                                                                             regularization
+beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
+                                                                             / pseudo-derivative of membrane
+                                                                             voltage
+gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
+                                                                             gradient / pseudo-derivative of
+                                                                             membrane voltage
+surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
+                                                                             pseudo-derivative function
+                                                                             ["piecewise_linear", "exponential",
+                                                                             "fast_sigmoid_derivative",
+                                                                             "arctan"]
+=========================== ======= ======================= ================ ===================================
+
 References
 ++++++++++
 

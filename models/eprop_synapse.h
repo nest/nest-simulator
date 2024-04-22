@@ -85,7 +85,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================ ==== =============== ======= ======================================================
-**Common synapse parameters**
+**Common e-prop synapse parameters**
 ----------------------------------------------------------------------------------------------------
 Parameter        Unit Math equivalent Default Description
 ================ ==== =============== ======= ======================================================
@@ -98,7 +98,6 @@ optimizer                                  {} Dictionary of optimizer parameters
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-kappa              :math:`\kappa`                0.9 Low-pass filtering kernel of the eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 

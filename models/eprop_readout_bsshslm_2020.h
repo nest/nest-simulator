@@ -58,9 +58,9 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+ P_{z_\text{in}} \left( \sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1} \right) \,, \\
+    v_j^t &= \kappa v_j^{t-1}+ \zeta \left( \sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1} \right) \,, \\
     \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
-    P_{z_\text{in}} &=
+    \zeta &=
     \begin{cases}
     1 \\
     1 - \kappa
@@ -399,10 +399,11 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage (called "kappa" in Bellec et al. (2020)).
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.

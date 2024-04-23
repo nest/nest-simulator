@@ -55,41 +55,67 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1} \,, \\
-    \kappa &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+    v_j^t &= \kappa v_j^{t-1}+ \zeta \left(\sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1}\right) \,, \\
+    \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
+    \zeta &=
+    \begin{cases}
+    1 \\
+    1 - \alpha
+    \end{cases} \,,
 
 whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
 
 Descriptions of further parameters and variables can be found in the table below.
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+The spike state variable of a presynaptic neuron is expressed by a Heaviside function:
 
-See the documentation on the ``iaf_psc_delta`` neuron model for more information
-on the integration of the subthreshold dynamics.
+.. math::
+    z_i^t = H\left(v_i^t-v_\text{th}\right) \,.
 
-The change of the synaptic weight is calculated from the gradient :math:`g` of
-the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-The change of the synaptic weight is calculated from the gradient
-:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+An additional state variable and the corresponding differential equation
+represents a piecewise constant external current.
+
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
+
+The change of the synaptic weight is calculated from the gradient :math:`g^t` of
+the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
+:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}=g^t`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
+In between two presynaptic spikes, the gradient is calculated for each time step until the cutoff time point, i.e., for
+:math:`t \, \epsilon \, \left[t_\text{spike}^{t-1} , \text{min}\left(t_\text{spike}^{t-1} + \text{cutoff},
+t_\text{spike}^t\right)\right]`:
+
 .. math::
-  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
+  \frac{\text{d}E^t}{\text{d}W_{ji}} = g^t &= L_j^t \bar{z}_i^{t-1} \,. \\
 
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 
 .. math::
-  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t)\,, \\
-  \mathcal{F}_\kappa(z_i^t) &= \kappa\, \mathcal{F}_\kappa(z_i^{t-1}) + z_i^t
-  \;\text{with}\, \mathcal{F}_\kappa(z_i^0)=z_i^0\,\,.
+  \bar{z}_i^t &= \mathcal{F}_\alpha\left(z_{i}^t\right)=\alpha \bar{z}_i^{t-1} + \zeta z_i^t
+\\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
+
+As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
+for more information on the available optimizers):
+
+.. math::
+  w^t = \text{optimizer}\left(t, g^t, w^{t-1} \right)\,.
+
+After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
+the next spike:
+
+.. math::
+  p &= \text{max}\left(0, t_\text{spike}^{t} - \left(t_\text{spike}^{t-1} + \text{cutoff}\right) \right) \\
+  \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
 
 The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
 matrix :math:`B_{jk} and the continuous error signal :math:`e_k^t` emitted by
@@ -369,10 +395,11 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage.
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.

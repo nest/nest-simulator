@@ -48,9 +48,10 @@ neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagat
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The e-prop synapse collects the presynaptic spikes needed for calculating the
-weight update. When it is time to update, it triggers the calculation of the
-gradient which is specific to the post-synaptic neuron and is thus defined there.
+The e-prop synapse triggers the calculation of the gradient at each spike
+over an interval that begins at the previous spike and ends at a cutoff specified by the user or the
+current spike, depending on which of the two time points is earlier.
+The gradient calculation is specific to the post-synaptic neuron and thus defined there.
 
 Eventually, it optimizes the weight with the specified optimizer.
 

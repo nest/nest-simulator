@@ -65,10 +65,10 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+ P_{z_\text{in}} \left(\sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
+    v_j^t &= \alpha v_j^{t-1}+ \zeta \left(\sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
              + \sum_i W_{ji}^\text{in}x_i^t \right) -z_j^{t-1}v_\text{th} \,, \\
     \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
-    P_{z_\text{in}} &=
+    \zeta &=
     \begin{cases}
     1 \\
     1 - \alpha
@@ -456,16 +456,17 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage (called "alpha" in Bellec et al. (2020)).
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
 
-    //! Propagator matrix entry for evolving the adaptation.
+    //! Propagator matrix entry for evolving the adaptation (mathematical symbol "rho" in user documentation).
     double P_adapt_;
 
     //! Total refractory steps.

@@ -93,15 +93,8 @@ able to spike for an absolute refractory period :math:`t_\text{ref}`.
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
 
-Furthermore, the pseudo-derivative of the membrane voltage needed for e-prop
-plasticity is calculated:
-
-.. math::
-    \psi_j^t = \frac{\gamma}{v_\text{th}} \text{max}
-               \left(0, 1-\left| \frac{v_j^t-v_\text{th}}{v_\text{th}}\right| \right) \,.
-
-See the documentation on the ``iaf_psc_delta`` neuron model for more information
-on the integration of the subthreshold dynamics.
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
@@ -111,6 +104,9 @@ spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the post
 voltage :math:`\psi_j^t` (which together form the eligibility trace
 :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
+
+See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
+gradients functions.
 
 .. math::
   \frac{ \text{d}E }{ \text{d}W_{ji} } &= g = \sum_t L_j^t \bar{e}_{ji}^t \,, \\

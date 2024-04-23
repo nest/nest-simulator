@@ -211,9 +211,7 @@ params_nrn_reg = {
     "tau_m": 20.0,
     "V_m": 0.0,
     "V_th": 0.6,  # mV, spike threshold membrane voltage
-    "kappa": np.exp(
-        -duration["step"] / params_nrn_out["tau_m"]
-    ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
+    "kappa": 0.97,  # low-pass filter of the eligibility trace
 }
 
 if model_nrn_reg == "eprop_iaf_psc_delta":
@@ -239,7 +237,7 @@ params_nrn_ad = {
     "tau_m": 20.0,
     "V_m": 0.0,
     "V_th": 0.6,
-    "kappa": np.exp(-duration["step"] / params_nrn_out["tau_m"]),
+    "kappa": 0.97,
 }
 
 params_nrn_ad["adapt_beta"] = 1.7 * (

@@ -81,7 +81,7 @@ eprop_iaf::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
+  , kappa_( 0.97 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }

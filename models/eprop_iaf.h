@@ -180,8 +180,11 @@ regular_spike_arrival       Boolean                                     True If 
                                                                              PSC scale)
 t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
 tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the
-                                                                             membrane voltage
+V_min                       mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
+                                                            value            membrane voltage
+                                                            representable
+                                                            by a ``double``
+                                                            type in C++
 V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 

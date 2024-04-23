@@ -157,8 +157,11 @@ regular_spike_arrival Boolean                                     True If True, 
                                                                        end of the time step, if False at the
                                                                        beginning (determines PSC scale)
 tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
-                                                                       voltage
+V_min                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
+                                                    value              voltage
+                                                    representable by a
+                                                    ``double`` type in
+                                                    C++
 ===================== ======= ===================== ================== =========================================
 
 Recordables

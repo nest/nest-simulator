@@ -62,13 +62,13 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+ \zeta \left(\sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
-      + \sum_i W_{ji}^\text{in}x_i^t\right)-z_j^{t-1}v_\text{th} \,, \\
-    \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
-    \zeta &=
+  v_j^t &= \alpha v_j^{t-1} + \zeta \left( \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \sum_i W_{ji}^\text{in} x_i^t \right) - z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
+  \zeta &=
     \begin{cases}
-    1 \\
-    1 - \alpha
+      1 \\
+      1 - \alpha
     \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
@@ -80,14 +80,14 @@ Descriptions of further parameters and variables can be found in the table below
 The threshold adaptation is given by:
 
 .. math::
-    A_j^t &= v_\text{th} + \beta a_j^t \,, \\
-    a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
-    \rho &= e^{-\frac{\Delta t}{\tau_\text{a}}} \,.
+  A_j^t &= v_\text{th} + \beta a_j^t \,, \\
+  a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
+  \rho &= e^{-\frac{\Delta t}{\tau_\text{a}}} \,. \\
 
 The spike state variable is expressed by a Heaviside function:
 
 .. math::
-    z_j^t = H\left(v_j^t-A_j^t\right) \,.
+  z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
 If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
@@ -113,21 +113,21 @@ See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archivin
 gradients functions.
 
 In between two presynaptic spikes, the gradient is calculated for each time step until the cutoff time point, i.e., for
-:math:`t \, \epsilon \, \left[t_\text{spike}^{t-1} , \text{min}\left(t_\text{spike}^{t-1} + \text{cutoff},
-t_\text{spike}^t\right)\right]`:
+:math:`t \, \epsilon \, \left[ t_\text{s}^{t-1}, \text{min} \left( t_\text{s}^{t-1} + {\Delta t}_\text{c},
+t_\text{s}^t \right) \right]`:
 
 .. math::
-  \frac{\text{d}E^t}{\text{d}W_{ji}} = g^t &= L_j^t \bar{e}_{ji}^t, \\
-  e_{ji}^t &= \psi_j^t \left(\bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right) \,, \\
+  \frac{\text{d}E^t}{\text{d}W_{ji}} &= g^t = L_j^t \bar{e}_{ji}^t \,, \\
+  e_{ji}^t &= \psi_j^t \left( \bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1} \right) \,, \\
   \epsilon^{t-1}_{ji,\text{a}} &= e_{ji}^t + \rho \epsilon_{ji,a}^{t-2} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t &= \mathcal{F}_\kappa\left(e_{ji}^t\right)=\kappa \bar{e}_{ji}^{t-1} + \left(1-\kappa\right)e_{ji}^t\,
-\\
-  \bar{z}_i^t &= \mathcal{F}_\alpha \left(z_{i}^t\right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \\
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
+    = \kappa \bar{e}_{ji}^{t-1} + \left( 1- \kappa \right) e_{ji}^t \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
 Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
 neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
@@ -135,32 +135,30 @@ neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\text{d}E_\text{reg}^t}{\text{d}W_{ji}} &= g_\text{reg}^t \approx c_\text{reg} (f^{\text{ema},t}_j -
-f^{\text{target})\,\bar{e}_{ji}^t \,, \\
-  f^{\text{ema},t}_j &= \mathcal{F}_\kappa\left(\frac{z_j^t}{\Delta t} \right) = \kappa f^{\text{ema},t-1}_j +
-\left(1-\kappa\right) \frac{z_j^t}{\Delta t} \,, \\
+  \frac{\text{d} E_\text{reg}^t }{ \text{d} W_{ji}} &= g_\text{reg}^t
+    \approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa f^{\text{ema},t-1}_j + \left(1- \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 
 whereby :math:`c_\text{reg}` is a constant scaling factor.
 
 The overall gradient is given by the addition of the two gradients.
 
 As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
-current gradient :math:`g^t` to the optimizer (see
-:doc:`weight_optimizer<../models/weight_optimizer/>`
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
 for more information on the available optimizers):
 
 .. math::
-  w^t = \text{optimizer}\left(t, g^t, w^{t-1} \right)\,.
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
 
 After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
 the next spike:
 
 .. math::
-  p &= \text{max}\left(0, t_\text{spike}^{t} - \left(t_\text{spike}^{t-1} + \text{cutoff}\right) \right) \\
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
   \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,, \\
-  \epsilon^{t+p} &= \epsilon^t \rho^p \,.
-
+  \epsilon^{t+p} &= \epsilon^t \rho^p \,. \\
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 

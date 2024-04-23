@@ -55,13 +55,13 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+ \zeta \left(\sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1}\right) \,, \\
-    \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
-    \zeta &=
+  v_j^t &= \kappa v_j^{t-1}+ \zeta \left( \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \right) \,, \\
+  \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m}} } \,, \\
+  \zeta &=
     \begin{cases}
-    1 \\
-    1 - \alpha
-    \end{cases} \,,
+      1 \\
+      1 - \alpha
+    \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
@@ -71,7 +71,7 @@ Descriptions of further parameters and variables can be found in the table below
 The spike state variable of a presynaptic neuron is expressed by a Heaviside function:
 
 .. math::
-    z_i^t = H\left(v_i^t-v_\text{th}\right) \,.
+  z_i^t = H \left( v_i^t - v_\text{th} \right) \,. \\
 
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
@@ -81,23 +81,23 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}=g^t`
+:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}} = g^t`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 In between two presynaptic spikes, the gradient is calculated for each time step until the cutoff time point, i.e., for
-:math:`t \, \epsilon \, \left[t_\text{spike}^{t-1} , \text{min}\left(t_\text{spike}^{t-1} + \text{cutoff},
-t_\text{spike}^t\right)\right]`:
+:math:`t \, \epsilon \, \left[ t_\text{s}^{t-1}, \text{min} \left( t_\text{s}^{t-1} + {\Delta t}_\text{c},
+t_\text{s}^t \right) \right]`:
 
 .. math::
-  \frac{\text{d}E^t}{\text{d}W_{ji}} = g^t &= L_j^t \bar{z}_i^{t-1} \,. \\
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } = g^t = L_j^t \bar{z}_i^{t-1} \,. \\
 
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 
 .. math::
-  \bar{z}_i^t &= \mathcal{F}_\alpha\left(z_{i}^t\right)=\alpha \bar{z}_i^{t-1} + \zeta z_i^t
-\\
+  \bar{z}_i^t = \mathcal{F}_\alpha \left( z_{i}^t \right)
+    = \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
@@ -108,22 +108,22 @@ current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../mod
 for more information on the available optimizers):
 
 .. math::
-  w^t = \text{optimizer}\left(t, g^t, w^{t-1} \right)\,.
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
 
 After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
 the next spike:
 
 .. math::
-  p &= \text{max}\left(0, t_\text{spike}^{t} - \left(t_\text{spike}^{t-1} + \text{cutoff}\right) \right) \\
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
 
 The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
-matrix :math:`B_{jk} and the continuous error signal :math:`e_k^t` emitted by
+matrix :math:`B_{jk}` and the continuous error signal :math:`e_k^t` emitted by
 readout neuron :math:`k` and :math:`e_k^t` defined via a mean-squared error
 loss:
 
 .. math::
- L_j^t = B_{jk}e_k^t = y_k^t - y_k^{*,t}\, .
+  L_j^t = B_{jk} e_k^t = B_{jk} \left( y_k^t - y_k^{*,t} \right) \,. \\
 
 whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
 readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.

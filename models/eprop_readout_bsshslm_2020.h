@@ -58,13 +58,13 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+ \zeta \left( \sum_{i \neq j}W_{ji}^\text{out}z_i^{t-1} \right) \,, \\
-    \kappa &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
-    \zeta &=
+  v_j^t &= \kappa v_j^{t-1}+ \zeta \left( \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \right) \,, \\
+  \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
+  \zeta &=
     \begin{cases}
-    1 \\
-    1 - \kappa
-    \end{cases} \,,
+      1 \\
+      1 - \kappa
+    \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
@@ -74,42 +74,42 @@ Descriptions of further parameters and variables can be found in the table below
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
 
-See the documentation on the ``iaf_psc_delta`` neuron model for more information
-on the integration of the subthreshold dynamics.
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E}}{\text{d}{W_{ij}}}=g`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }=g`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
-  \frac{\text{d}E}{\text{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } = g = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
 
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 
 .. math::
-  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t)\,, \\
-  \mathcal{F}_\kappa(z_i^t) &= \kappa\, \mathcal{F}_\kappa(z_i^{t-1}) + z_i^t
-  \;\text{with}\, \mathcal{F}_\kappa(z_i^0)=z_i^0\,\,.
+  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t) \,, \\
+  \mathcal{F}_\kappa(z_i^t) &= \kappa \mathcal{F}_\kappa \left( z_i^{t-1} \right) + z_i^t \,, \\
+  \mathcal{F}_\kappa(z_i^0) &= z_i^0 \,. \\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
 
 The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
-matrix :math:`B_{jk} and the continuous error signal :math:`e_k^t` emitted by
+matrix :math:`B_{jk}` and the continuous error signal :math:`e_k^t` emitted by
 readout neuron :math:`k`:
 
 .. math::
- L_j^t = B_{jk}e_k^t \, .
+  L_j^t = B_{jk} e_k^t \,. \\
 
 The error signal depends on the selected loss function.
 If a mean squared error loss is selected, then:
 
 .. math::
- e_k^t = y_k^t - y_k^{*,t} \,,
+  e_k^t = y_k^t - y_k^{*,t} \,, \\
 
 whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
 readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
@@ -117,9 +117,9 @@ readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
 If a cross-entropy loss is selected, then:
 
 .. math::
- e^k_t = \pi_k^t - \pi_k^{*,t} \,,
- \pi_k^t &= \text{softmax}_k \left(y_1^t, ..., y_K^t \right) =
-\frac{\exp\left(y_k^t\right)}{\sum_{k'}\exp\left(y_{k'}^t\right)} \,,
+  e^k_t &= \pi_k^t - \pi_k^{*,t} \,, \\
+  \pi_k^t &= \text{softmax}_k \left( y_1^t, ..., y_K^t \right) =
+    \frac{ \exp \left( y_k^t\right) }{ \sum_{k'} \exp \left( y_{k'}^t \right) } \,, \\
 
 whereby the readout signal :math:`\pi_k^t` corresponds to the softmax of the
 membrane voltage of readout neuron :math:`k` and :math:`\pi_k^{*,t}` is the

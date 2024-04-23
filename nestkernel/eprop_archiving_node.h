@@ -58,23 +58,23 @@ choose from:
 1. A piecewise linear function used among others in [2]_:
 
 .. math::
-    \psi_j^t = \frac{\gamma}{v_\text{th}} \text{max}
-               \left(0, 1-\beta\, \left| \frac{v_j^t-v_\text{th}}{v_\text{th}}\right| \right) \,.
+  \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
+    \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
 
 2. An exponential function used in [3]_:
 
 .. math::
-  \psi_j^t = \gamma\,\text{exp}\left(-\beta\,\text{abs}\left( v_j^t-v_\text{th} \right)\right) \,.
+  \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
 
 3. The derivative of a fast sigmoid function used in [4]_:
 
 .. math::
-  \psi_j^t = \gamma\,\left(1 + \beta\, \text{abs} \left( v_j^t-v_\text{th}\right)\right)^2 \,.
+  \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
 
 4. An arctan function used in [5]_:
 
 .. math::
-  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{1+\left(\beta\,\pi\,\left(v_j^t-v_\text{th}\right)\right)^2} \,.
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
 
 
 References

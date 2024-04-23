@@ -49,7 +49,7 @@ Currently two weight optimizers are implemented: gradient descent and the Adam o
 In gradient descent [1]_ the weights are optimized via:
 
 .. math::
-  W_t = W_{t-1} - \eta \, g_t \,,
+  W_t = W_{t-1} - \eta g_t \,, \\
 
 whereby :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
@@ -58,15 +58,15 @@ In the Adam scheme [2]_ the weights are optimized via:
 
 .. math::
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
-  m_t &= \beta_1 \, m_{t-1} + \left(1-\beta_1\right) \, g_t \,, \\
-  v_t &= \beta_2 \, v_{t-1} + \left(1-\beta_2\right) \, g_t^2 \,, \\
-  \alpha_t &= \eta\,\frac{\sqrt{1-\beta_2^t}}{1-\beta_1^t} \,, \\
-  W_t &= W_{t-1} - \alpha_t\frac{m_t}{\sqrt{v_t} + \hat{\epsilon}} \,.
+  m_t &= \beta_1 m_{t-1} + \left( 1- \beta_1 \right) g_t \,, \\
+  v_t &= \beta_2 v_{t-1} + \left( 1 - \beta_2 \right) g_t^2 \,, \\
+  \alpha_t &= \eta \frac{ \sqrt{ 1- \beta_2^t } }{ 1 - \beta_1^t } \,, \\
+  W_t &= W_{t-1} - \alpha_t \frac{ m_t }{ \sqrt{v_t} + \hat{\epsilon} } \,. \\
 
 Note that the implementation follows the implementation in TensorFlow [3]_ for comparability.
 The TensorFlow implementation deviates from [1]_ in that it assumes
-:math:`\hat{\epsilon}=\epsilon\,\sqrt{1-\beta_2^t}` to be constant, whereas [1]_
-assumes :math:`\epsilon=\hat{\epsilon}\,\sqrt{1-\beta_2^t}` to be constant.
+:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas [1]_
+assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
 
 Parameters
 ++++++++++

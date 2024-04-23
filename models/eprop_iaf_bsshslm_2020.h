@@ -65,14 +65,14 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1} + \zeta \left( \sum_{i \neq j}W_{ji}^\text{rec}z_i^{t-1}
-             + \sum_i W_{ji}^\text{in}x_i^t) \right) -z_j^{t-1}v_\text{th} \,, \\
-    \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,,
-    \zeta &=
+  v_j^t &= \alpha v_j^{t-1} + \zeta \left( \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \sum_i W_{ji}^\text{in} x_i^t) \right) -z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
+  \zeta &=
     \begin{cases}
-    1 \\
-    1 - \alpha
-    \end{cases} \,,
+      1 \\
+      1 - \alpha
+    \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
 input synaptic weight matrices, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
@@ -83,7 +83,7 @@ Descriptions of further parameters and variables can be found in the table below
 The spike state variable is expressed by a Heaviside function:
 
 .. math::
-    z_j^t = H\left(v_j^t-v_\text{th}\right) \,.
+  z_j^t = H \left( v_j^t - v_\text{th} \right) \,. \\
 
 If the membrane voltage crosses the threshold voltage :math:`v_\text{th}`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
@@ -113,18 +113,18 @@ voltage :math:`\psi_j^t` (which together form the eligibility trace
 neurons.
 
 .. math::
-  \frac{\text{d}E}{\text{d}W_{ji}} = g &= \sum_t L_j^t \bar{e}_{ji}^t, \\
-   e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1}\,, \\
+  \frac{ \text{d}E }{ \text{d}W_{ji} } &= g = \sum_t L_j^t \bar{e}_{ji}^t \,, \\
+   e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1} \,, \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \;\text{with}\, \kappa=e^{-\frac{\Delta t}{
-    \tau_\text{m,out}}}\,,\\
-    \bar{z}_i^t&=\mathcal{F}_\alpha(z_i^t)\,,\\
-    \mathcal{F}_\alpha(z_i^t) &= \alpha\, \mathcal{F}_\alpha(z_i^{t-1}) + z_i^t
-    \;\text{with}\, \mathcal{F}_\alpha(z_i^0)=z_i^0\,,
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \,, \\
+  \kappa=e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha(z_i^t) \,, \\
+  \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
+  \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
 
 whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
@@ -134,8 +134,9 @@ rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing r
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\text{d}E_\text{reg}}{\text{d}W_{ji}} = g_\text{reg} = c_\text{reg}
-  \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t\,,
+  \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} } = g_\text{reg}
+    = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
+    \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 
 whereby :math:`c_\text{reg}` scales the overall regularization and the average
 is taken over the time that passed since the previous update, that is, the number of

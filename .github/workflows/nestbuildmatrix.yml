@@ -707,6 +707,8 @@ jobs:
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
+        env:
+          DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES: ${{ contains(matrix.use, 'mpi') && contains(matrix.use, 'openmp') }}
         run: |
           pwd
           cd "$NEST_VPATH"

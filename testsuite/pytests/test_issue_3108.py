@@ -34,6 +34,10 @@ The spatial tests test that NodeCollection::rank_local_begin() works.
 The connect tests test that NodeCollection::thread_local_begin() works.
 """
 
+# Needs up to 16 cores when run on 4 MPI ranks.
+# Experiences severe slowdown on Github runners under Linux with MPI and OpenMP
+pytestmark = pytest.mark.requires_many_cores
+
 if nest.ll_api.sli_func("is_threaded"):
     num_threads = [1, 2, 3, 4]
 else:

@@ -450,7 +450,7 @@ NEST provides a number of built-in synapse models that can be used
 during connection setup. The default model is the :hxt_ref:`static_synapse`,
 whose only parameters ``weight`` and ``delay`` do not change over
 time. Other synapse models implement learning and adaptation in the
-form of long-term or short-term :hxt_ref:`plasticity`. A list of available
+form of long-term or short-term plasticity. A list of available
 synapse models is accessible via the command ``nest.synapse_models``.
 More detailed information about each of them can be found in the
 :doc:`model directory <../models/index_synapse>`.

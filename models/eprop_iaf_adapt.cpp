@@ -451,10 +451,10 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
     epsilon = V_.P_adapt_ * epsilon + e;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad = L * e_bar;
-
-    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
+    grad += L * e_bar;
   }
+
+  weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 
   const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
 

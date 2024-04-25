@@ -63,7 +63,7 @@ def test_unsupported_model_raises(target_model):
 def test_eprop_regression():
     """
     Test correct computation of losses for a regression task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
@@ -362,7 +362,7 @@ def test_eprop_regression():
 def test_eprop_classification():
     """
     Test correct computation of losses for a classification task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# online_eprop_supervised_classification_evidence-accumulation.py
+# eprop_supervised_classification_evidence-accumulation.py
 #
 # This file is part of NEST.
 #

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_regression_sine-waves.py
+# eprop_supervised_regression_sine-waves_bsshslm_2020.py
 #
 # This file is part of NEST.
 #

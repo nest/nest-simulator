@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_classification_evidence-accumulation.py
+# eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py
 #
 # This file is part of NEST.
 #

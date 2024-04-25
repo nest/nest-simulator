@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# online_eprop_supervised_regression_neuromorphic_mnist.py
+# eprop_supervised_classification_neuromorphic_mnist.py
 #
 # This file is part of NEST.
 #

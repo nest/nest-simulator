@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# online_eprop_supervised_regression_sine-waves.py
+# eprop_supervised_regression_sine-waves.py
 #
 # This file is part of NEST.
 #

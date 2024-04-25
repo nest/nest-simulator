@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_regression_lemniscate.py
+# eprop_supervised_regression_lemniscate_bsshslm_2020.py
 #
 # This file is part of NEST.
 #

@@ -65,7 +65,7 @@ References
 .. [2] Orchard, G., Jayawant, A., Cohen, G. K., & Thakor, N. (2015). Converting static image datasets to
        spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
+.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Plesser HE, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
 """  # pylint: disable=line-too-long # noqa: E501
 

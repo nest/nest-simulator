@@ -169,8 +169,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
-       eligibility propagation (in preparation)
+       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+       implementation of eligibility propagation (in preparation)
 
 Sends
 +++++

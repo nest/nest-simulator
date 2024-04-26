@@ -169,7 +169,7 @@ model_nrn_rec = "eprop_iaf"
 params_nrn_out = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "E_L": 0.0,  # mV, leak / resting membrane potential
-    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
+    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,  # pA, external current input
     "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "tau_m": 30.0,  # ms, membrane time constant
@@ -181,7 +181,7 @@ params_nrn_rec = {
     "C_m": 1.0,
     "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 10,
+    "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,

@@ -177,10 +177,10 @@ def run_sim(coherence, seed=123):
 
     poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.0})
 
-    sr_nonselective = nest.Create("spike_recorder")
-    sr_selective1 = nest.Create("spike_recorder")
-    sr_selective2 = nest.Create("spike_recorder")
-    sr_inhibitory = nest.Create("spike_recorder")
+    sr_nonselective = nest.Create("spike_recorder", {"time_in_steps": True})
+    sr_selective1 = nest.Create("spike_recorder", {"time_in_steps": True})
+    sr_selective2 = nest.Create("spike_recorder", {"time_in_steps": True})
+    sr_inhibitory = nest.Create("spike_recorder", {"time_in_steps": True})
 
     sr_selective1_raster = nest.Create("spike_recorder", 100)
     sr_selective2_raster = nest.Create("spike_recorder", 100)

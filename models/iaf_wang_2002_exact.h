@@ -55,7 +55,7 @@ namespace nest
  **/
 extern "C" inline int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 
-
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 Short description
@@ -87,11 +87,10 @@ The membrane potential and synaptic variables evolve according to
     I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in
     \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
     I_\mathrm{GABA} &= (V(t) - V_I)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex]
-    \frac{dS_{j,\mathrm{AMPA}}}{dt} &=-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t -
-t_j^k) \\[3ex] \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in
-\Delta_j} \delta (t - t_j^k) \\[3ex] \frac{dS_{j,\mathrm{NMDA}}}{dt} &=
--\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 - S_{j,\mathrm{NMDA}})\\[3ex] \frac{dx_j}{dt} &= -
-\frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
+    \frac{dS_{j,\mathrm{AMPA}}}{dt} &=-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex] 
+    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 - S_{j,\mathrm{NMDA}})\\[3ex]
+    \frac{dx_j}{dt} &= -\frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
 
 where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
 neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
@@ -145,9 +144,7 @@ The following values can be recorded.
 =========== ===========================================================
 
 .. note::
-   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when
-creating the model, while the different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be
-set by the user.
+   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
 
 .. note::
    :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST
@@ -175,7 +172,13 @@ See also
 
 iaf_wang_2002
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_wang_2002, iaf_wang_2002_exact
+
 EndUserDocs */
+// clang-format on
 
 void register_iaf_wang_2002_exact( const std::string& name );
 

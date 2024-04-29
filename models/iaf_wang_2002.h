@@ -55,7 +55,7 @@ namespace nest
  */
 extern "C" inline int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
-
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 Short description
@@ -184,15 +184,13 @@ See also
 
 iaf_wang_2002_exact
 
-
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: ht_neuron
-
-
+.. listexamples:: iaf_wang_2002, iaf_wang_2002_exact
 
 EndUserDocs */
+// clang-format on
 
 void register_iaf_wang_2002( const std::string& name );
 

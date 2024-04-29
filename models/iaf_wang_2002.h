@@ -152,7 +152,7 @@ The following values can be recorded.
 =========== ===========================================================
 
 .. note::
-   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so setting the variables is thus done by changing the weights.
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so these variables are set by changing the weights.
 
 .. note::
     For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_wang_2002. For AMPA/GABA synapses, any pre-synaptic neuron can be used.

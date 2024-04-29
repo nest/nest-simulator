@@ -307,6 +307,7 @@ public:
     double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
     double s_NMDA_pre;           // for determining (unweighted) alpha * (1 - s_NMDA) term on
                                  // pre-synaptic side
+
     double I_NMDA_; // For recording NMDA currents
 
     int r_; //!< number of refractory steps remaining

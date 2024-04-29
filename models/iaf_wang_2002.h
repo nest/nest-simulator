@@ -94,8 +94,8 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
 
 .. math::
 
-    k_0 &= (\alpha \tau_r)^{\frac{\tau_r}{\tau_d}} \gamma \big[1 - \frac{\tau_r}{\tau_d}, \alpha \tau_r \big]
-    k_1 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
+    k_0 &= (\alpha \tau_r)^{\frac{\tau_r}{\tau_d}} \gamma \big[1 - \frac{\tau_r}{\tau_d}, \alpha \tau_r \big] \\[3ex]
+    k_1 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1
 
 where :math:`\mathrm{E_N}` is the `generalized exponential integral
 <https://en.wikipedia.org/wiki/Exponential_integral#Generalization>`_, and :math:`\Gamma` is the `gamma function

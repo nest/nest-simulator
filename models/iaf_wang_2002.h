@@ -157,6 +157,8 @@ The following values can be recorded.
 .. note::
     For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_wang_2002. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
 
+.. note::
+    For technical reasons, spikes from iaf_wang_2002 neurons must be recorded with time_in_steps: True set in the spike recorder, ignoring the offset value. We hope to correct this in a future version of NEST.
 
 Sends
 +++++

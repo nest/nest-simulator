@@ -90,15 +90,12 @@ The membrane potential and synaptic variables evolve according to
     \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex] 
     \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}} + \sum_{k \in \Delta_j} (k_0 + k_1 S(t)) \delta (t - t_j^k) \\[3ex]
 
-where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
-neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
+where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
 
 .. math::
 
-    k_0 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
-    k_1 &= -\alpha \tau_\mathrm{r} \mathrm{E_N} \Big[ \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}, \alpha \tau_\mathrm{r}
-\Big] + (\alpha \tau_\mathrm{r})^{\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}} \Gamma \Big[ 1 -
-\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}} \Big]
+    k_0 &= (\alpha \tau_r)^{\frac{\tau_r}{\tau_d}} \gamma \big[1 - \frac{\tau_r}{\tau_d}, \alpha \tau_r \big]
+    k_1 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
 
 where :math:`\mathrm{E_N}` is the `generalized exponential integral
 <https://en.wikipedia.org/wiki/Exponential_integral#Generalization>`_, and :math:`\Gamma` is the `gamma function

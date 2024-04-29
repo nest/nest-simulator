@@ -147,8 +147,7 @@ The following values can be recorded.
    It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
 
 .. note::
-   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST
-model, so setting the variables is thus done by changing the weights.
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so setting the variables is thus done by changing the weights.
 
 Sends
 +++++
@@ -175,7 +174,7 @@ iaf_wang_2002
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_wang_2002, iaf_wang_2002_exact
+.. listexamples:: iaf_wang_2002_exact
 
 EndUserDocs */
 // clang-format on

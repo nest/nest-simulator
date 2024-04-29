@@ -105,12 +105,10 @@ The specification of this model differs slightly from the one in [1]_. The param
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
 
-
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 =============== ======= ===========================================================
  E_L            mV      Resting potential
@@ -129,7 +127,6 @@ The following parameters can be set in the status dictionary.
  conc_Mg2       mM      Extracellular magnesium concentration
  gsl_error_tol  -       GSL error tolerance
 =============== ======= ===========================================================
-
 
 Recordables
 +++++++++++
@@ -235,7 +232,6 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-
   // make dynamics function quasi-member
   friend int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 
@@ -337,7 +333,6 @@ private:
     std::vector< RingBuffer > spikes_;
     RingBuffer currents_;
 
-
     /**
      * Vector for weights
      */
@@ -370,7 +365,6 @@ private:
      */
     double I_stim_;
   };
-
 
   // Variables class -------------------------------------------------------
 

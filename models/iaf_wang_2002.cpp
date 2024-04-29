@@ -89,7 +89,6 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   // not the state vector in the node, node.S_.y[].
 
   const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
-
   const double I_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
   node.S_.I_NMDA_ = ( y[ S::V_m ] - node.P_.E_ex ) / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 )
@@ -393,7 +392,6 @@ nest::iaf_wang_2002::pre_run_hook()
   V_.S_jump_0 = pow( alpha_tau, tau_rise_tau_dec ) * boost::math::tgamma_lower( 1 - tau_rise_tau_dec, alpha_tau );
 }
 
-
 /* ---------------------------------------------------------------------------
  * Update and spike handling functions
  * --------------------------------------------------------------------------- */
@@ -434,7 +432,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
         throw GSLSolverFailure( get_name(), status );
       }
     }
-
 
     // add incoming spikes
     S_.y_[ State_::s_AMPA ] += B_.spikes_[ SynapseTypes::AMPA - 1 ].get_value( lag );

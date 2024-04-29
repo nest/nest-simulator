@@ -376,7 +376,6 @@ nest::iaf_wang_2002_exact::init_buffers_()
   B_.I_stim_ = 0.0;
 }
 
-
 void
 nest::iaf_wang_2002_exact::pre_run_hook()
 {

@@ -113,12 +113,10 @@ For more implementation details and a comparison to the exact version see:
 
 - `wong_approximate_implementation <../model_details/wong_approximate_implementation.ipynb>`_
 
-
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 =============== ======= ===========================================================
  E_L            mV      Resting potential
@@ -137,7 +135,6 @@ The following parameters can be set in the status dictionary.
  conc_Mg2       mM      Extracellular magnesium concentration
  gsl_error_tol  -       GSL error tolerance
 =============== ======= ===========================================================
-
 
 Recordables
 +++++++++++
@@ -250,7 +247,6 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-
   // make dynamics function quasi-member
   friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
@@ -284,7 +280,6 @@ private:
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
-
 public:
   // State variables class --------------------------------------------
 
@@ -312,7 +307,6 @@ public:
     double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
     double s_NMDA_pre;           // for determining (unweighted) alpha * (1 - s_NMDA) term on
                                  // pre-synaptic side
-
     double I_NMDA_; // For recording NMDA currents
 
     int r_; //!< number of refractory steps remaining
@@ -404,7 +398,6 @@ private:
   {
     return S_.I_NMDA_;
   }
-
 
   // Data members -----------------------------------------------------------
 

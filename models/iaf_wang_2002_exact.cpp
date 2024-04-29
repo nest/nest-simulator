@@ -480,7 +480,7 @@ nest::iaf_wang_2002_exact::update( Time const& origin, const long from, const lo
     for ( size_t i = NMDA - 1; i < B_.spikes_.size(); ++i )
     // i starts at 2, runs through all NMDA spikes
     {
-      const size_t si = i - ( NMDA - 1 );        // index which starts at 0
+      const size_t si = i - ( NMDA - 1 ); // index which starts at 0
 
       assert( si >= 0 );
       assert( State_::s_NMDA_base + si * 2 <= S_.state_vec_size );

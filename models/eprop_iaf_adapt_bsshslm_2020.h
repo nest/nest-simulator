@@ -65,8 +65,8 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \alpha v_j^{t-1} + \zeta \left( \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
-    + \sum_i W_{ji}^\text{in} x_i^t \right) - z_j^{t-1} v_\text{th} \,, \\
+  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
   \alpha &= e^{-\frac{ \Delta t }{ \tau_\text{m} }} \,, \\
   \zeta &=
     \begin{cases}

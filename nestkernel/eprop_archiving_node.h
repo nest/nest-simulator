@@ -50,9 +50,13 @@ surrogate gradient.
 Surrogate gradient functions
 ++++++++++++++++++++++++++++
 
-The membrane voltage enters into the e-prop algorithm in the form of its
-surrogate gradient / pseudo-derivative. The literature offers a plethora
-different surrogate gradient functions (see e.g., [1]_). Here, there are four to
+Surrogate gradients help overcome the challenge of the spiking function's
+non-differentiability, facilitating the use of gradient-based learning
+techniques such as e-prop. The non-existent derivative of the spiking
+variable with respect to the membrane voltage,
+:math: `\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+replaced with a variety of surrogate gradient functions, as detailed in
+various studies (see, e.g., [1]).). Here, there are four to
 choose from:
 
 1. A piecewise linear function used among others in [2]_:

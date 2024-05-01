@@ -54,7 +54,7 @@ Surrogate gradients help overcome the challenge of the spiking function's
 non-differentiability, facilitating the use of gradient-based learning
 techniques such as e-prop. The non-existent derivative of the spiking
 variable with respect to the membrane voltage,
-:math: `\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+:math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
 replaced with a variety of surrogate gradient functions, as detailed in
 various studies (see, e.g., [1]).). Here, there are four to
 choose from:

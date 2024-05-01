@@ -669,16 +669,13 @@ for iteration in np.arange(n_iter):
 
     # calculate recall errors
 
-    mse = np.mean((target_signal - readout_signal) ** 2, axis=2)
-    distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2)
+    loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=2), axis=(0, 1))
 
-    losses = np.mean(mse, axis=(0, 1))
-
-    y_prediction = np.argmin(distance_to_target, axis=0)
+    y_prediction = np.argmin(np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2), axis=0)
     y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
     accuracy = np.mean((y_target == y_prediction), axis=0)
 
-    print(f"    iteration: {iteration} loss: {losses:0.5f} accuracy: {accuracy:0.5f}")
+    print(f"    iteration: {iteration} loss: {loss:0.5f} accuracy: {accuracy:0.5f}")
 
 # %% ###########################################################################################################
 # Read out post-training weights
@@ -720,12 +717,9 @@ readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 target_signal = target_signal.reshape((n_out, n_iter, evaluation_group_size, steps["sequence"]))
 target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
-mse = np.mean((target_signal - readout_signal) ** 2, axis=3)
-distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=3)
+loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
 
-loss = np.mean(mse, axis=(0, 2))
-
-y_prediction = np.argmin(distance_to_target, axis=0)
+y_prediction = np.argmin(np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=3), axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
 accuracy = np.mean((y_target == y_prediction), axis=1)
 recall_errors = 1.0 - accuracy

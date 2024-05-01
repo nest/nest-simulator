@@ -117,9 +117,9 @@ In between two presynaptic spikes, the gradient is calculated for each time step
 t_\text{s}^t \right) \right]`:
 
 .. math::
-  \frac{\text{d}E^t}{\text{d}W_{ji}} &= g^t = L_j^t \bar{e}_{ji}^t \,, \\
-  e_{ji}^t &= \psi_j^t \left( \bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1} \right) \,, \\
-  \epsilon^{t-1}_{ji,\text{a}} &= e_{ji}^t + \rho \epsilon_{ji,a}^{t-2} \,. \\
+  \frac{\text{d}E^t}{\text{d}W_{ji}} &= g^t = L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  e_{ji}^{t-1} &= \psi_j^{t-1} \left( \bar{z}_i^{t-2} - \beta \epsilon_{ji,a}^{t-2} \right) \,, \\
+  \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:

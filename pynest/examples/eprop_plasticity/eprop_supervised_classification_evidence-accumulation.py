@@ -55,7 +55,7 @@ cues, and a last group defining the recall window, in which the network has to d
 compares the network signal :math:`\pi_k` with the teacher target signal :math:`\pi_k^*`, which it receives from
 a rate generator. Since the decision is at the end and all the cues are relevant, the network has to keep the
 cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
-assessed by employing a cross-entropy error loss.
+assessed by employing a mean squared error loss.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
 
@@ -88,8 +88,8 @@ from IPython.display import Image
 # Schematic of network architecture
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # This figure, identical to the one in the description, shows the required network architecture in the center,
-# the input and output of the pattern generation task above, and lists of the required NEST device, neuron, and
-# synapse models below. The connections that must be established are numbered 1 to 7.
+# the input and output of the evidence accumulation task above, and lists of the required NEST device, neuron,
+# and synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
     Image(filename="./eprop_supervised_classification_schematic_evidence-accumulation.png")
@@ -257,10 +257,9 @@ nrns_reg = nest.Create(model_nrn_reg, n_reg, params_nrn_reg)
 nrns_ad = nest.Create("eprop_iaf_adapt", n_ad, params_nrn_ad)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
+gen_learning_window = nest.Create("step_rate_generator")
 
 nrns_rec = nrns_reg + nrns_ad
-
-gen_learning_window = nest.Create("step_rate_generator")
 
 # %% ###########################################################################################################
 # Create recorders
@@ -599,7 +598,7 @@ events_wr = wr.get("events")
 # %% ###########################################################################################################
 # Evaluate training error
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# We evaluate the network's training error by calculating a loss - in this case, the cross-entropy error between
+# We evaluate the network's training error by calculating a loss - in this case, the mean squared error between
 # the integrated recurrent network activity and the target rate.
 
 readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
@@ -656,7 +655,7 @@ plt.rcParams.update(
 fig, axs = plt.subplots(2, 1, sharex=True)
 
 axs[0].plot(range(1, n_iter + 1), loss)
-axs[0].set_ylabel(r"$E = -\sum_{t,k} \pi_k^{*,t} \log \pi_k^t$")
+axs[0].set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
 
 axs[1].plot(range(1, n_iter + 1), recall_errors)
 axs[1].set_ylabel("recall errors")
@@ -714,9 +713,9 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
     plot_recordable(axs[9], events_mm_ad, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_recordable(axs[10], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)
-    plot_recordable(axs[11], events_mm_out, "target_signal", r"$\pi^*_k$" + "\n", xlims)
-    plot_recordable(axs[12], events_mm_out, "readout_signal", r"$\pi_k$" + "\n", xlims)
-    plot_recordable(axs[13], events_mm_out, "error_signal", r"$\pi_k-\pi^*_k$" + "\n", xlims)
+    plot_recordable(axs[11], events_mm_out, "target_signal", r"$y^*_k$" + "\n", xlims)
+    plot_recordable(axs[12], events_mm_out, "readout_signal", r"$y_k$" + "\n", xlims)
+    plot_recordable(axs[13], events_mm_out, "error_signal", r"$y_k-y^*_k$" + "\n", xlims)
 
     axs[-1].set_xlabel(r"$t$ (ms)")
     axs[-1].set_xlim(*xlims)

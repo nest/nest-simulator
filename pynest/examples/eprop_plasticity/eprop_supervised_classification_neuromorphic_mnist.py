@@ -424,42 +424,41 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # representative samples are used throughout the training process.
 
 
-def download_and_extract_dataset(url, dataset_directory="468j46mzdv-1"):
-    path = os.path.join(".", dataset_directory)
+def unzip(zip_file_path, extraction_path):
+    print(f"Extracting {zip_file_path}.")
+    with zipfile.ZipFile(zip_file_path, "r") as zip_file:
+        zip_file.extractall(extraction_path)
+    os.remove(zip_file_path)
 
-    expected_contents = ["Test", "Train"]
-    if os.path.exists(path) and all(os.path.exists(os.path.join(path, content)) for content in expected_contents):
+
+def download_and_extract_nmnist_dataset(save_path="./"):
+    nmnist_dataset = {
+        "url": "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip",
+        "directory": "468j46mzdv-1",
+        "zip": "dataset.zip",
+    }
+
+    path = os.path.join(save_path, nmnist_dataset["directory"])
+
+    train_path = os.path.join(path, "Train")
+    test_path = os.path.join(path, "Test")
+
+    downloaded_zip_path = os.path.join(save_path, nmnist_dataset["zip"])
+
+    if os.path.exists(path) and os.path.exists(train_path) and os.path.exists(test_path):
         print(f"\nThe directory '{path}' already exists with expected contents. Skipping download and extraction.")
-        return path
-
-    local_zip_filename = "dataset.zip"
-
-    if not os.path.exists(local_zip_filename):
-        print("\nDownloading Neuromorphic-MNIST (N-MNIST) dataset...")
-        response = requests.get(url, timeout=10)
-        with open(local_zip_filename, "wb") as file:
-            file.write(response.content)
-        print("Download completed.")
     else:
-        print(f"Found {local_zip_filename}, skipping download.")
+        if not os.path.exists(downloaded_zip_path):
+            print("\nDownloading the Neuromorphic-MNIST (N-MNIST) dataset.")
+            response = requests.get(nmnist_dataset["url"], timeout=10)
+            with open(downloaded_zip_path, "wb") as file:
+                file.write(response.content)
 
-    print("Extracting dataset...")
-    with zipfile.ZipFile(local_zip_filename, "r") as zip_ref:
-        zip_ref.extractall(".")
-    print("Extraction completed.")
+        unzip(downloaded_zip_path, save_path)
+        unzip(f"{train_path}.zip", path)
+        unzip(f"{test_path}.zip", path)
 
-    for sub_zip in ["Train.zip", "Test.zip"]:
-        sub_zip_path = os.path.join(path, sub_zip)
-        print(f"Extracting {sub_zip}...")
-        with zipfile.ZipFile(sub_zip_path, "r") as zip_ref:
-            zip_ref.extractall(path)
-        print(f"Extraction of {sub_zip} completed.")
-        os.remove(sub_zip_path)
-
-    os.remove(local_zip_filename)
-    print(f"Removed the zip file {local_zip_filename}.")
-
-    return path
+    return train_path, test_path
 
 
 def load_image(file_path, pixels_blocklist=None):
@@ -534,11 +533,8 @@ class DataLoader:
         return images_group, labels_group
 
 
-dataset_url = "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip"
-path = download_and_extract_dataset(dataset_url)
-
-train_path = os.path.join(path, "Train/")
-test_path = os.path.join(path, "Test/")
+save_path = "./"  # path to save the N-MNIST dataset to
+train_path, test_path = download_and_extract_nmnist_dataset(save_path)
 
 selected_labels = [label for label in range(n_out)]
 

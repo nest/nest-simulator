@@ -300,7 +300,7 @@ public:
     int r_;             //!< number of refractory steps remaining
 
     double s_NMDA_sum; // For recording NMDA gating variables
-    double I_NMDA_; // For recording NMDA currents
+    double I_NMDA_;    // For recording NMDA currents
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );

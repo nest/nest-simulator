@@ -480,7 +480,7 @@ def load_image(file_path, pixels_blocklist=None):
         image_full[pixel].append(time)
 
     for pixel, times in enumerate(image_full):
-        if pixel not in pixels_blocklist:
+        if pixels_blocklist is not None and pixel not in pixels_blocklist:
             image.append(times)
 
     return image

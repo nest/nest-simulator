@@ -75,7 +75,6 @@ References
 # We begin by importing all libraries required for the simulation, analysis, and visualization.
 
 import os
-import sys
 import zipfile
 
 import matplotlib as mpl
@@ -120,8 +119,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # individual data points presented one at a time, the `evaluation_group_size` specifies the number of instances
 # over which the network's output is collectively assessed to compute the mean accuracy and error.
 
-evaluation_group_size = 4  # number of instances used to calculate the mean accuracy and error
-n_iter = 4
+evaluation_group_size = 4  # number of instances to calculate the mean accuracy and error, 100 for convergence
+n_iter = 4  # 200 for convergence
 
 steps = {}
 
@@ -141,7 +140,7 @@ steps["delays"] = steps["delay_in_rec"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
-steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
+steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of simulation
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
@@ -151,11 +150,9 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # Set up simulation
 # .................
 # As last step of the setup, we reset the NEST kernel to remove all existing NEST simulation settings and
-# objects and set some NEST kernel parameters, some of which are e-prop-related.
+# objects and set some NEST kernel parameters.
 
 params_setup = {
-    "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
-    "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 4,  # number of virtual processes, set in case of distributed computing
@@ -182,43 +179,42 @@ pixels_blocklist = np.loadtxt("./NMNIST_pixels_blocklist.txt")
 
 n_in = 2 * 34 * 34 - len(pixels_blocklist)  # number of input neurons
 n_rec = 100  # number of recurrent neurons
-n_out = 10
+n_out = 10  # number of readout neurons
 
 model_nrn_rec = "eprop_iaf"
 
 params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
+    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "E_L": 0.0,  # mV, leak / resting membrane potential
     "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
-    "I_e": 0.0,
-    "regular_spike_arrival": False,
-    "tau_m": 100.0,
-    "V_m": 0.0,
+    "I_e": 0.0,  # pA, external current input
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "tau_m": 100.0,  # ms, membrane time constant
+    "V_m": 0.0,  # mV, initial value of the membrane voltage
 }
 
 params_nrn_rec = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
-    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "C_m": 1.0,
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
-    "E_L": 0.0,  # mV, leak reversal potential
-    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
+    "E_L": 0.0,
+    "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
-    "I_e": 0.0,  # pA, external current input
+    "I_e": 0.0,
+    "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
-    "tau_m": 30.0,  # ms, membrane time constant
-    "V_m": 0.0,  # mV, initial value of the membrane voltage
-    "V_th": 0.5,  # mV, spike threshold membrane voltage
-    "V_reset": -0.5,  # mV, reset membrane voltage
+    "tau_m": 30.0,
+    "V_m": 0.0,
+    "V_th": 0.6,  # mV, spike threshold membrane voltage
     "kappa": 0.99,  # low-pass filter of the eligibility trace
 }
 
-if model_nrn_rec == "eprop_iaf":
-    del params_nrn_rec["V_reset"]
-    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]  # firing rate regularization scaling
-    params_nrn_rec["regular_spike_arrival"] = True  # postsynaptic current scale factor
-    params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
+if model_nrn_rec == "eprop_iaf_psc_delta":
+    del params_nrn_rec["regular_spike_arrival"]
+    params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
+    params_nrn_rec["V_th"] = 0.5
 
 ####################
 
@@ -233,7 +229,6 @@ nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 gen_learning_window = nest.Create("step_rate_generator")
 
-
 # %% ###########################################################################################################
 # Create recorders
 # ~~~~~~~~~~~~~~~~
@@ -243,12 +238,15 @@ gen_learning_window = nest.Create("step_rate_generator")
 # experiment, and the recording interval can be increased (see the documentation on the specific recorders). By
 # default, recordings are stored in memory but can also be written to file.
 
-n_record = 1  # number of adaptive and regular neurons each to record recordables from
-n_record_w = 3  # number of senders and targets to record weights from
+n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
+n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+
+if n_record == 0 or n_record_w == 0:
+    raise ValueError("n_record and n_record_w >= 1 required")
 
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
-    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
@@ -263,13 +261,20 @@ params_mm_out = {
 params_wr = {
     "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],  # limit senders to subsample weights to record
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
+}
+
+params_sr = {
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
 }
 
 ####################
 
 mm_rec = nest.Create("multimeter", params_mm_rec)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder")
+sr = nest.Create("spike_recorder", params_sr)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_rec_record = nrns_rec[:n_record]
@@ -277,7 +282,7 @@ nrns_rec_record = nrns_rec[:n_record]
 # %% ###########################################################################################################
 # Create connections
 # ~~~~~~~~~~~~~~~~~~
-# Now, we define the connectivities and set up the synaptic parameters, with the synaptic weights drawn from
+# Now, we define the connectivity and set up the synaptic parameters, with the synaptic weights drawn from
 # normal distributions. After these preparations, we establish the enumerated connections of the core network,
 # as well as additional connections to the recorders.
 # For this task, we implement a method characterized by sparse connectivity designed to enhance resource efficiency
@@ -326,6 +331,7 @@ params_common_syn_eprop = {
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
+    "weight_recorder": wr,
 }
 
 params_syn_base = {
@@ -336,7 +342,6 @@ params_syn_base = {
 params_syn_in = params_syn_base.copy()
 params_syn_rec = params_syn_base.copy()
 params_syn_out = params_syn_base.copy()
-
 
 params_syn_feedback = {
     "synapse_model": "eprop_learning_signal_connection",
@@ -400,12 +405,12 @@ for j in range(n_out):
 
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
-nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection
-nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
+nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection 7
 
 nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
 
 nest.Connect(mm_rec, nrns_rec_record, params_conn_all_to_all, params_syn_static)
+nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 
 # After creating the connections, we can individually initialize the optimizer's
 # dynamic variables for single synapses (here exemplarily for two connections).
@@ -554,6 +559,22 @@ selected_labels = [label for label in range(n_out)]
 train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blocklist)
 test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blocklist)
 
+amplitude_times = np.hstack(
+    [
+        np.array([0.0, duration["sequence"] - duration["learning_window"]])
+        + duration["total_offset"]
+        + i * duration["sequence"]
+        for i in range(evaluation_group_size * n_iter)
+    ]
+)
+
+amplitude_values = np.array([0.0, 1.0] * evaluation_group_size * n_iter)
+
+params_gen_learning_window = {
+    "amplitude_times": amplitude_times,
+    "amplitude_values": amplitude_values,
+}
+
 # %% ###########################################################################################################
 # Force final update
 # ~~~~~~~~~~~~~~~~~~
@@ -598,21 +619,6 @@ weights_pre_train = {
 
 nest.Simulate(duration["total_offset"])
 
-amplitude_times = np.hstack(
-    [
-        np.array([0.0, duration["sequence"] - duration["learning_window"]])
-        + duration["total_offset"]
-        + i * duration["sequence"]
-        for i in range(evaluation_group_size * (n_iter))
-    ]
-)
-
-amplitude_values = np.array([0.0, 1.0] * evaluation_group_size * (n_iter))
-
-params_gen_learning_window = {
-    "amplitude_times": amplitude_times,
-    "amplitude_values": amplitude_values,
-}
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 target_signal_rescale_factor = 1.0
@@ -662,16 +668,15 @@ for iteration in np.arange(n_iter):
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
     nest.Simulate(evaluation_group_size * steps["sequence"])
 
-    """
-    process data of recording devices
-    """
+    # process data of recording devices
+
     events_mm_out = mm_out.get("events")
 
     senders = events_mm_out["senders"]
     readout_signal = events_mm_out["V_m"]
     target_signal = events_mm_out["target_signal"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])  # nrns_out.tolist()
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
     readout_signal = readout_signal.reshape((n_out, iteration + 1, evaluation_group_size, steps["sequence"]))
@@ -680,9 +685,7 @@ for iteration in np.arange(n_iter):
     target_signal = target_signal.reshape((n_out, iteration + 1, evaluation_group_size, steps["sequence"]))
     target_signal = target_signal[:, -1, :, -steps["learning_window"] :]
 
-    """
-    calculate recall errors
-    """
+    # calculate recall errors
 
     mse = np.mean((target_signal - readout_signal) ** 2, axis=2)
     distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2)
@@ -693,7 +696,7 @@ for iteration in np.arange(n_iter):
     y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
     accuracy = np.mean((y_target == y_prediction), axis=0)
 
-    print(f"    iter: {iteration} loss: {losses:0.5f} acc: {accuracy:0.5f}")
+    print(f"    iteration: {iteration} loss: {losses:0.5f} accuracy: {accuracy:0.5f}")
 
 # %% ###########################################################################################################
 # Read out post-training weights
@@ -745,8 +748,6 @@ y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
 accuracy = np.mean((y_target == y_prediction), axis=1)
 recall_errors = 1.0 - accuracy
 
-print(accuracy)
-
 # %% ###########################################################################################################
 # Plot results
 # ~~~~~~~~~~~~
@@ -793,8 +794,8 @@ axs[-1].xaxis.get_major_locator().set_params(integer=True)
 fig.tight_layout()
 
 # %% ###########################################################################################################
-# Plot recordables
-# ................
+# Plot spikes and dynamic variables
+# .................................
 # This plotting routine shows how to plot all of the recorded dynamic variables and spikes across time. We take
 # one snapshot in the first iteration and one snapshot at the end.
 
@@ -847,7 +848,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 # Similarly, we can plot the weight histories. Note that the weight recorder, attached to the synapses, works
 # differently than the other recorders. Since synapses only get activated when they transmit a spike, the weight
 # recorder only records the weight in those moments. That is why the first weight registrations do not start in
-# the first time step and we add the inital weights manually.
+# the first time step and we add the initial weights manually.
 
 
 def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
@@ -868,9 +869,11 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 
-plot_weight_time_course(axs[0], events_wr, nrns_in, nrns_rec, "in_rec", r"$W_\mathrm{in}$" + "\n(pA)")
-plot_weight_time_course(axs[1], events_wr, nrns_rec, nrns_rec, "rec_rec", r"$W_\mathrm{rec}$" + "\n(pA)")
-plot_weight_time_course(axs[2], events_wr, nrns_rec, nrns_out, "rec_out", r"$W_\mathrm{out}$" + "\n(pA)")
+plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(
+    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
+)
+plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
 axs[-1].set_xlim(0, steps["task"])

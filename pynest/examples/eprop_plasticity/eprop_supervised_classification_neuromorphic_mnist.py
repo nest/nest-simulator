@@ -127,6 +127,7 @@ steps = {}
 
 steps["sequence"] = 300  # time steps of one full sequence
 steps["learning_window"] = 10  # time steps of window with non-zero learning signals
+steps["evaluation_group"] = evaluation_group_size * steps["sequence"]
 steps["task"] = n_iter * evaluation_group_size * steps["sequence"]  # time steps of task
 
 steps.update(
@@ -604,52 +605,48 @@ nest.Simulate(duration["total_offset"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
-target_signal_rescale_factor = 1.0
+target_signal_value = 1.0
 
 for iteration in np.arange(n_iter):
-    t_start_iteration = iteration * evaluation_group_size * steps["sequence"]
-    t_end_iteration = t_start_iteration + evaluation_group_size * steps["sequence"]
+    t_start_iteration = iteration * duration["evaluation_group"]
+    t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
-    loader = train_loader
-    params_common_syn_eprop["optimizer"]["eta"] = 5e-3
     if iteration != 0 and iteration % test_every == 0:
-        loader = test_loader
-        params_common_syn_eprop["optimizer"]["eta"] = 0.0
+        loader, eta = test_loader, 0.0
+    else:
+        loader, eta = train_loader, 5e-3
+
+    params_common_syn_eprop["optimizer"]["eta"] = eta
 
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
     img_group, targets_group = loader.get_new_evaluation_group()
 
     spike_times = [[] for _ in range(n_in)]
-    target_rates = np.zeros((n_out, evaluation_group_size * steps["sequence"]))
+    target_rates = np.zeros((n_out, steps["evaluation_group"]))
+
     for group_elem in range(evaluation_group_size):
         t_start_group_elem = group_elem * steps["sequence"]
         t_end_group_elem = t_start_group_elem + steps["sequence"]
+        t_start_absolute = t_start_iteration + t_start_group_elem
 
-        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_rescale_factor
+        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_value
 
         for n, relative_times in enumerate(img_group[group_elem]):
-            absolute_times = (t_start_iteration + t_start_group_elem) * np.ones_like(relative_times) + relative_times
-            spike_times[n] += absolute_times.tolist()
+            if len(relative_times) > 0:
+                spike_times[n] += (t_start_absolute + np.array(relative_times)).tolist()
 
-    params_gen_spk_in = []
-    for spk_times in spike_times:
-        params_gen_spk_in.append({"spike_times": spk_times})
+    params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
 
-    params_gen_rate_target = []
-    for target_rate in target_rates:
-        params_gen_rate_target.append(
-            {
-                "amplitude_times": np.arange(
-                    duration["total_offset"] + t_start_iteration, duration["total_offset"] + t_end_iteration
-                ),
-                "amplitude_values": target_rate,
-            }
-        )
+    amplitude_times = duration["total_offset"] + np.arange(t_start_iteration, t_end_iteration)
+
+    params_gen_rate_target = [
+        {"amplitude_times": amplitude_times, "amplitude_values": target_rate} for target_rate in target_rates
+    ]
 
     nest.SetStatus(gen_spk_in, params_gen_spk_in)
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
-    nest.Simulate(evaluation_group_size * steps["sequence"])
+    nest.Simulate(duration["evaluation_group"])
 
     # process data of recording devices
 
@@ -672,7 +669,7 @@ for iteration in np.arange(n_iter):
 
     loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=2), axis=(0, 1))
 
-    y_prediction = np.argmin(np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2), axis=0)
+    y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=2), axis=0)
     y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
     accuracy = np.mean((y_target == y_prediction), axis=0)
 
@@ -720,7 +717,7 @@ target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
 loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
 
-y_prediction = np.argmin(np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=3), axis=0)
+y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=3), axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
 accuracy = np.mean((y_target == y_prediction), axis=1)
 recall_errors = 1.0 - accuracy

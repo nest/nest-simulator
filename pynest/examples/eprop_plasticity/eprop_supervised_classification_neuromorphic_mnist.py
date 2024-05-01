@@ -120,7 +120,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # over which the network's output is collectively assessed to compute the mean accuracy and error.
 
 evaluation_group_size = 4  # number of instances to calculate the mean accuracy and error, 100 for convergence
-n_iter = 4  # 200 for convergence
+n_iter = 4  # number of iterations, 200 for convergence
+test_every = 10  # cyclical number of training iterations after which to test the performance
 
 steps = {}
 
@@ -611,7 +612,7 @@ for iteration in np.arange(n_iter):
 
     loader = train_loader
     params_common_syn_eprop["optimizer"]["eta"] = 5e-3
-    if iteration and iteration % 10 == 0:
+    if iteration != 0 and iteration % test_every == 0:
         loader = test_loader
         params_common_syn_eprop["optimizer"]["eta"] = 0.0
 

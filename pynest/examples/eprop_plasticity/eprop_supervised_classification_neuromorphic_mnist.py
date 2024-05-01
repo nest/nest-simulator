@@ -304,6 +304,10 @@ def calculate_glorot_dist(fan_in, fan_out):
     return glorot_distribution
 
 
+def create_mask(weights, sparsity_level):
+    return np.random.choice([0, 1], weights.shape, p=[sparsity_level, 1 - sparsity_level])
+
+
 dtype_weights = np.float32  # data type of weights - for reproducing TF results set to np.float32
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
@@ -311,17 +315,9 @@ np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding we
 weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights)
 weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
-
-sparsity_level_in = 0.9
-mask_in = np.random.choice([0, 1], weights_in_rec.shape, p=[sparsity_level_in, 1 - sparsity_level_in])
-sparsity_level_rec = 0.98
-mask_rec = np.random.choice([0, 1], weights_rec_rec.shape, p=[sparsity_level_rec, 1 - sparsity_level_rec])
-sparsity_level_out = 0.0
-mask_out = np.random.choice([0, 1], weights_rec_out.shape, p=[sparsity_level_out, 1 - sparsity_level_out])
-
-weights_in_rec *= mask_in
-weights_rec_rec *= mask_rec
-weights_rec_out *= mask_out
+weights_in_rec *= create_mask(weights_in_rec, 0.9)
+weights_rec_rec *= create_mask(weights_rec_rec, 0.98)
+weights_rec_out *= create_mask(weights_rec_out, 0.0)
 
 params_common_syn_eprop = {
     "optimizer": {
@@ -379,29 +375,19 @@ nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 
-# Sparse connectivity from input to recurrent neurons
-for j in range(n_rec):
-    for i in range(n_in):
-        w = weights_in_rec[j, i]
-        if np.abs(w) > 0:
-            params_syn_in["weight"] = w
-            nest.Connect(nrns_in[i], nrns_rec[j], params_conn_one_to_one, params_syn_in)
 
-# Sparse connectivity from recurrent to recurrent neurons
-for j in range(n_rec):
-    for i in range(n_rec):
-        w = weights_rec_rec[j, i]
-        if np.abs(w) > 0:
-            params_syn_rec["weight"] = w
-            nest.Connect(nrns_rec[i], nrns_rec[j], params_conn_one_to_one, params_syn_rec)
+def sparsely_connect(weights, params_syn, nrns_pre, nrns_post):
+    for j in range(weights.shape[0]):
+        for i in range(weights.shape[1]):
+            w = weights[j, i]
+            if np.abs(w) > 0.0:
+                params_syn["weight"] = w
+                nest.Connect(nrns_pre[i], nrns_post[j], params_conn_one_to_one, params_syn)
 
-# Sparse connectivity from recurrent to output neurons
-for j in range(n_out):
-    for i in range(n_rec):
-        w = weights_rec_out[j, i]
-        if np.abs(w) > 0:
-            params_syn_out["weight"] = w
-            nest.Connect(nrns_rec[i], nrns_out[j], params_conn_one_to_one, params_syn_out)
+
+sparsely_connect(weights_in_rec, params_syn_in, nrns_in, nrns_rec)  # connection 2
+sparsely_connect(weights_rec_rec, params_syn_rec, nrns_rec, nrns_rec)  # connection 3
+sparsely_connect(weights_rec_out, params_syn_out, nrns_rec, nrns_out)  # connection 4
 
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6

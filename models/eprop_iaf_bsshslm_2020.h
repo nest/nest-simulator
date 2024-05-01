@@ -102,7 +102,7 @@ the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
-voltage :math:`\psi_j^t` (the product of which forms the eligibility 
+voltage :math:`\psi_j^t` (the product of which forms the eligibility
 trace :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 

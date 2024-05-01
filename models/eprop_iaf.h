@@ -97,10 +97,10 @@ The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
 :math:`\frac{ \text{d} E^t}{ \text{d} W_{ij} } = g^t`
 which depends on the presynaptic
-spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
+spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
-voltage :math:`\psi_j^t` (the product of which forms the eligibility 
-trace :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted
+voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility 
+trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
 gradients functions.

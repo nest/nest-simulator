@@ -71,6 +71,7 @@ RecordablesMap< iaf_wang_2002 >::create()
   insert_( names::V_m, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::V_m > );
   insert_( names::s_AMPA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_GABA > );
+  insert_( names::s_NMDA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_NMDA > );
   insert_( names::I_NMDA, &iaf_wang_2002::get_I_NMDA_ );
 }
 }

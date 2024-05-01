@@ -66,6 +66,7 @@ RecordablesMap< iaf_wang_2002_exact >::create()
   insert_( names::V_m, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::V_m > );
   insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_GABA > );
+  insert_( names::s_NMDA, &iaf_wang_2002_exact::get_s_NMDA_ );
   insert_( names::I_NMDA, &iaf_wang_2002_exact::get_I_NMDA_ );
 }
 }
@@ -409,14 +410,14 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
   const double I_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
 
   // The sum of s_NMDA
-  double total_NMDA = 0;
+  node.S_.s_NMDA_sum = 0;
   for ( size_t i = State_::s_NMDA_base + 1, w_idx = 0; i < node.S_.state_vec_size; i += 2, ++w_idx )
   {
-    total_NMDA += ode_state[ i ] * node.B_.weights_.at( w_idx );
+    node.S_.s_NMDA_sum += ode_state[ i ] * node.B_.weights_.at( w_idx );
   }
 
   node.S_.I_NMDA_ = ( ode_state[ State_::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * total_NMDA;
+    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * node.S_.s_NMDA_sum;
 
   const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
 

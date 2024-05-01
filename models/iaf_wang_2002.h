@@ -142,6 +142,7 @@ The following values can be recorded.
  V_m         Membrane potential
  s_AMPA      sum of AMPA gating variables
  s_GABA      sum of GABA gating variables
+ s_NMDA      sum of NMDA gating variables
  I_NMDA      NMDA current
 =========== ===========================================================
 

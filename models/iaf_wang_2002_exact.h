@@ -299,6 +299,7 @@ public:
     long num_ports_;    //!< Number of ports
     int r_;             //!< number of refractory steps remaining
 
+    double s_NMDA_sum; // For recording NMDA gating variables
     double I_NMDA_; // For recording NMDA currents
 
     State_( const Parameters_& ); //!< Default initialization
@@ -388,7 +389,12 @@ private:
     return S_.ode_state_[ elem ];
   }
 
-  //! Get NMDA current from state, used by UniversalDataLogger
+  //! Get NMDA current / gating variable from state, used by UniversalDataLogger
+  double
+  get_s_NMDA_() const
+  {
+    return S_.s_NMDA_sum;
+  }
   double
   get_I_NMDA_() const
   {

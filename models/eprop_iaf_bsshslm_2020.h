@@ -98,7 +98,7 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E}}{\text{d}{W_{ij}}}=g`
+:math:`\frac{\text{d}{E}}{\text{d}{W_{ij}}}`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
@@ -110,7 +110,7 @@ See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archivin
 gradients functions.
 
 .. math::
-  \frac{ \text{d}E }{ \text{d}W_{ji} } &= g = \sum_t L_j^t \bar{e}_{ji}^t \,, \\
+  \frac{ \text{d}E }{ \text{d}W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
    e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1} \,, \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
@@ -131,7 +131,7 @@ rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing r
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} } = g_\text{reg}
+  \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} }
     = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
     \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 

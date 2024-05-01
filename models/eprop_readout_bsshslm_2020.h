@@ -79,13 +79,13 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }=g`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
-  \frac{ \text{d} E }{ \text{d} W_{ji} } = g = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
 
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 

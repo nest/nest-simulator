@@ -102,7 +102,7 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}=g^t`
+:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the postsynaptic membrane
 voltage :math:`\psi_j^t` (which together form the eligibility trace
@@ -117,7 +117,7 @@ In between two presynaptic spikes, the gradient is calculated for each time step
 t_\text{s}^t \right) \right]`:
 
 .. math::
-  \frac{\text{d}E^t}{\text{d}W_{ji}} &= g^t = L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  \frac{\text{d}E^t}{\text{d}W_{ji}} &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
   e_{ji}^{t-1} &= \psi_j^{t-1} \left( \bar{z}_i^{t-2} - \beta \epsilon_{ji,a}^{t-2} \right) \,, \\
   \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
@@ -135,8 +135,8 @@ neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\text{d} E_\text{reg}^t }{ \text{d} W_{ji}} &= g_\text{reg}^t
-    \approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
+  \frac{\text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
+    &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
   f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
     = \kappa f^{\text{ema},t-1}_j + \left(1- \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 

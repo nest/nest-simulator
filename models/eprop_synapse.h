@@ -48,9 +48,10 @@ neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagat
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The e-prop synapse collects the presynaptic spikes needed for calculating the
-weight update. When it is time to update, it triggers the calculation of the
-gradient which is specific to the post-synaptic neuron and is thus defined there.
+The e-prop synapse triggers the calculation of the gradient at each spike
+over an interval that begins at the previous spike and ends at a cutoff specified by the user or the
+current spike, depending on which of the two time points is earlier.
+The gradient calculation is specific to the post-synaptic neuron and thus defined there.
 
 Eventually, it optimizes the weight with the specified optimizer.
 
@@ -85,7 +86,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================ ==== =============== ======= ======================================================
-**Common synapse parameters**
+**Common e-prop synapse parameters**
 ----------------------------------------------------------------------------------------------------
 Parameter        Unit Math equivalent Default Description
 ================ ==== =============== ======= ======================================================
@@ -98,7 +99,6 @@ optimizer                                  {} Dictionary of optimizer parameters
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-kappa              :math:`\kappa`                0.9 Low-pass filtering kernel of the eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 
@@ -107,7 +107,13 @@ Recordables
 
 The following variables can be recorded.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ==========================================================
+**Synapse recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++
@@ -146,7 +152,9 @@ Examples using this model
 EndUserDocs */
 
 /**
- * Base class implementing common properties for the e-prop synapse model.
+ * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
+ * (in preparation).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -189,9 +197,8 @@ public:
 void register_eprop_synapse( const std::string& name );
 
 /**
- * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
- *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

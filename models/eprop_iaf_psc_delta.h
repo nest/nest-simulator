@@ -36,19 +36,22 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-postsynaptic currents
+postsynaptic currents for e-prop plasticity
 
 Description
 +++++++++++
 
-``iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
-where the potential jumps on each spike arrival.
+``eprop_iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
+where the potential jumps on each spike arrival used for eligibility propagation
+(e-prop) plasticity.
+
+It is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
@@ -99,6 +102,28 @@ The following parameters can be set in the status dictionary.
                           refractory period. Default: false
 ================= ======= ======================================================
 
+=========================== ======= ======================= ================ ===================================
+**E-prop parameters**
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
+c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
+                                                                             regularization
+f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
+                                                                             regularization
+beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
+                                                                             / pseudo-derivative of membrane
+                                                                             voltage
+gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
+                                                                             gradient / pseudo-derivative of
+                                                                             membrane voltage
+surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
+                                                                             pseudo-derivative function
+                                                                             ["piecewise_linear", "exponential",
+                                                                             "fast_sigmoid_derivative",
+                                                                             "arctan"]
+=========================== ======= ======================= ================ ===================================
+
 References
 ++++++++++
 
@@ -129,7 +154,7 @@ iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_psc_delta
+.. listexamples:: eprop_iaf_psc_delta
 
 EndUserDocs */
 

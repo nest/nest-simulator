@@ -51,7 +51,6 @@ The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
 model name the paper that introduced it by the first letter of the authors' last
 names and the publication year.
 
-
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
@@ -78,9 +77,16 @@ weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
 Recordables
 +++++++++++
 
-The following variables can be recorded:
+The following variables can be recorded. Note that since this connection lacks
+a plasticity mechanism the weight does not evolve over time.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ==========================================================
+**Synapse recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++
@@ -103,6 +109,7 @@ References
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
@@ -121,7 +128,8 @@ void register_eprop_learning_signal_connection( const std::string& name );
 
 /**
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
- * according to Bellec et al. (2020).
+ * according to Bellec et al. (2020) with additional biological features described in
+ * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT >

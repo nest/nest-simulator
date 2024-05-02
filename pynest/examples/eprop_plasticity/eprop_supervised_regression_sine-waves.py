@@ -29,7 +29,8 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
-is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
+is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_ with
+additional biological features described in [3]_.
 
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_.
@@ -400,6 +401,17 @@ params_gen_rate_target = {
     "amplitude_values": np.tile(target_signal, n_iter * n_batch),
 }
 
+####################
+
+nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
+# %% ###########################################################################################################
+# Create learning window
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
+# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
+# opens the learning window while passing a value of 0 closes it.
+
 params_gen_learning_window = {
     "amplitude_times": [duration["total_offset"]],
     "amplitude_values": [1.0],
@@ -407,7 +419,6 @@ params_gen_learning_window = {
 
 ####################
 
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################

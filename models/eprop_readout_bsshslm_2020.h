@@ -46,7 +46,7 @@ postsynaptic currents for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_readout_bsshslm_2020`` is an implementation of a integrate-and-fire neuron model
+``eprop_readout_bsshslm_2020`` is an implementation of an integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
@@ -58,42 +58,80 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
-             -z_j^{t-1}v_\mathrm{th} \,, \\
-    \kappa &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+  v_j^t &= \kappa v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
+  \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
+  \zeta &=
+    \begin{cases}
+      1 \\
+      1 - \kappa
+    \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\mathrm{out}` are the output synaptic weights and
-:math:`z_i^{t-1}` are the recurrent presynaptic spike state variables.
+whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
+:math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
 
 Descriptions of further parameters and variables can be found in the table below.
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+The spike state variable of a presynaptic neuron is expressed by a Heaviside function:
 
-See the documentation on the ``iaf_psc_delta`` neuron model for more information
-on the integration of the subthreshold dynamics.
+.. math::
+  z_i^t = H \left( v_i^t - v_\text{th} \right) \,. \\
+
+An additional state variable and the corresponding differential equation
+represents a piecewise constant external current.
+
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-The change of the synaptic weight is calculated from the gradient
-:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
-  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
 
-The presynaptic spike trains are low-pass filtered with an exponential kernel:
+The presynaptic spike trains are low-pass filtered with the following exponential kernel:
 
 .. math::
-  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t)\,, \\
-  \mathcal{F}_\kappa(z_i^t) &= \kappa\, \mathcal{F}_\kappa(z_i^{t-1}) + z_i^t
-  \;\text{with}\, \mathcal{F}_\kappa(z_i^0)=z_i^0\,\,.
+  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t) \,, \\
+  \mathcal{F}_\kappa(z_i^t) &= \kappa \mathcal{F}_\kappa \left( z_i^{t-1} \right) + z_i^t \,, \\
+  \mathcal{F}_\kappa(z_i^0) &= z_i^0 \,. \\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
+
+The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
+matrix :math:`B_{jk}` and the continuous error signal :math:`e_k^t` emitted by
+readout neuron :math:`k`:
+
+.. math::
+  L_j^t = B_{jk} e_k^t \,. \\
+
+The error signal depends on the selected loss function.
+If a mean squared error loss is selected, then:
+
+.. math::
+  e_k^t = y_k^t - y_k^{*,t} \,, \\
+
+whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
+readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
+
+If a cross-entropy loss is selected, then:
+
+.. math::
+  e^k_t &= \pi_k^t - \pi_k^{*,t} \,, \\
+  \pi_k^t &= \text{softmax}_k \left( y_1^t, ..., y_K^t \right) =
+    \frac{ \exp \left( y_k^t\right) }{ \sum_{k'} \exp \left( y_{k'}^t \right) } \,, \\
+
+whereby the readout signal :math:`\pi_k^t` corresponds to the softmax of the
+membrane voltage of readout neuron :math:`k` and :math:`\pi_k^{*,t}` is the
+one-hot encoded target signal.
+
+Furthermore, the readout and target signal are zero before the onset of the
+learning window in each update interval.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
@@ -117,20 +155,41 @@ Parameter             Unit    Math equivalent       Default            Descripti
 C_m                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 E_L                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
 I_e                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
-loss                          :math:`E`             mean_squared_error Loss function
-                                                                       ["mean_squared_error", "cross_entropy"]
 regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
                                                                        end of the time step, if False at the
                                                                        beginning (determines PSC scale)
 tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
-                                                                       voltage
+V_min                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
+                                                    value              voltage
+                                                    representable by a
+                                                    ``double`` type in
+                                                    C++
 ===================== ======= ===================== ================== =========================================
 
-The following state variables evolve during simulation.
+===================== ======= ===================== ================== =========================================
+**E-prop parameters**
+----------------------------------------------------------------------------------------------------------------
+Parameter             Unit    Math equivalent       Default            Description
+===================== ======= ===================== ================== =========================================
+loss                          :math:`E`             mean_squared_error Loss function
+                                                                       ["mean_squared_error", "cross_entropy"]
+===================== ======= ===================== ================== =========================================
+
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
 
 ===================== ==== =============== ============= ==========================
 **Neuron state variables and recordables**
+-----------------------------------------------------------------------------------
+State variable        Unit Math equivalent Initial value Description
+===================== ==== =============== ============= ==========================
+V_m                   mV   :math:`v_j`               0.0 Membrane voltage
+===================== ==== =============== ============= ==========================
+
+===================== ==== =============== ============= ==========================
+**E-prop state variables and recordables**
 -----------------------------------------------------------------------------------
 State variable        Unit Math equivalent Initial value Description
 ===================== ==== =============== ============= ==========================
@@ -138,19 +197,7 @@ error_signal          mV   :math:`L_j`               0.0 Error signal
 readout_signal        mV   :math:`y_j`               0.0 Readout signal
 readout_signal_unnorm mV                             0.0 Unnormalized readout signal
 target_signal         mV   :math:`y^*_j`             0.0 Target signal
-V_m                   mV   :math:`v_j`               0.0 Membrane voltage
 ===================== ==== =============== ============= ==========================
-
-Recordables
-+++++++++++
-
-The following variables can be recorded:
-
-  - error signal ``error_signal``
-  - readout signal ``readout_signal``
-  - readout signal ``readout_signal_unnorm``
-  - target signal ``target_signal``
-  - membrane potential ``V_m``
 
 Usage
 +++++
@@ -168,6 +215,7 @@ References
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
@@ -359,10 +407,11 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage.
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.

@@ -67,11 +67,11 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
 .. math::
   v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
     + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
-  \alpha &= e^{-\frac{ \Delta t }{ \tau_\text{m} }} \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
       1 \\
-      1 - \alpha \\
+      1 - \alpha
     \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
@@ -105,7 +105,7 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{ \text{d}E }{\text{d}W_{ij}}`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
@@ -117,7 +117,7 @@ See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archivin
 gradients functions.
 
 .. math::
-  \frac{\text{d}E}{\text{d}W_{ji}} &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
   e_{ji}^t &= \psi_j^t \left( \bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1} \right) \,, \\
   \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1} \bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
     \epsilon^{t-2}_{ji,a} \,. \\
@@ -126,11 +126,11 @@ The eligibility trace and the presynaptic spike trains are low-pass filtered
 with the following exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \,, \\
-  \kappa &= e^{-\frac{\Delta t}{\tau_\text{m,out}}} \,, \\
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right) \,, \\
+  \kappa &= e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
   \bar{z}_i^t &= \mathcal{F}_\alpha(z_i^t) \,, \\
-  \mathcal{F}_\alpha(z_i^t) &= \alpha \mathcal{F}_\alpha(z_i^{t-1}) + z_i^t \,, \\
-  \mathcal{F}_\alpha(z_i^0) &= z_i^0 \,, \\
+  \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
+  \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
 
 whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
@@ -141,10 +141,10 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
   \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} }
-    = c_\text{reg} \sum_t \frac{1}{Tn_\text{trial}}
+    = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
     \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 
-whereby :math:`c_\text{reg}` scales the overall regularization and the average
+whereby :math:`c_\text{reg}` is a constant scaling factor and the average
 is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
 

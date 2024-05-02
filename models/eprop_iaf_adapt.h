@@ -62,9 +62,9 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \alpha v_j^{t-1} + \zeta \left( \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
-    + \sum_i W_{ji}^\text{in} x_i^t \right) - z_j^{t-1} v_\text{th} \,, \\
-  \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
+  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
       1 \\
@@ -82,7 +82,7 @@ The threshold adaptation is given by:
 .. math::
   A_j^t &= v_\text{th} + \beta a_j^t \,, \\
   a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
-  \rho &= e^{-\frac{\Delta t}{\tau_\text{a}}} \,. \\
+  \rho &= e^{-\frac{ \Delta t }{ \tau_\text{a} }} \,. \\
 
 The spike state variable is expressed by a Heaviside function:
 
@@ -102,12 +102,13 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}`
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
 which depends on the presynaptic
-spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the postsynaptic membrane
-voltage :math:`\psi_j^t` (which together form the eligibility trace
-:math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
-neurons.
+spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
+of the spike state variable with respect to the postsynaptic membrane
+voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
+trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
+by the readout neurons.
 
 See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
 gradients functions.
@@ -127,7 +128,7 @@ defines the maximum allowable interval for integration between spikes.
 The expression for the gradient is given by:
 
 .. math::
-  \frac{\text{d}E^t}{\text{d}W_{ji}} &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
   e_{ji}^{t-1} &= \psi_j^{t-1} \left( \bar{z}_i^{t-2} - \beta \epsilon_{ji,a}^{t-2} \right) \,, \\
   \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
@@ -136,7 +137,7 @@ with the following exponential kernels:
 
 .. math::
   \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
-    = \kappa \bar{e}_{ji}^{t-1} + \left( 1- \kappa \right) e_{ji}^t \,, \\
+    = \kappa \bar{e}_{ji}^{t-1} + \left( 1 - \kappa \right) e_{ji}^t \,, \\
   \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
 Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
@@ -145,10 +146,10 @@ neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
+  \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
   f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
-    = \kappa f^{\text{ema},t-1}_j + \left(1- \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
+    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 
 whereby :math:`c_\text{reg}` is a constant scaling factor.
 

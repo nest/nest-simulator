@@ -66,8 +66,8 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
 
 .. math::
   v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
-    + \zeta \sum_i W_{ji}^\text{in} x_i^t) -z_j^{t-1} v_\text{th} \,, \\
-  \alpha &= e^{-\frac{\Delta t}{\tau_\text{m}}} \,, \\
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
       1 \\
@@ -98,7 +98,7 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E}}{\text{d}{W_{ij}}}`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
@@ -110,15 +110,15 @@ See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archivin
 gradients functions.
 
 .. math::
-  \frac{ \text{d}E }{ \text{d}W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
    e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1} \,, \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with the following exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \,, \\
-  \kappa=e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right) \,, \\
+  \kappa &= e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
   \bar{z}_i^t &= \mathcal{F}_\alpha(z_i^t) \,, \\
   \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
   \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
@@ -135,7 +135,7 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
     = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
     \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 
-whereby :math:`c_\text{reg}` scales the overall regularization and the average
+whereby :math:`c_\text{reg}` is a constant scaling factor and the average
 is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
 

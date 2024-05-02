@@ -46,7 +46,7 @@ postsynaptic currents for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_readout_bsshslm_2020`` is an implementation of a integrate-and-fire neuron model
+``eprop_readout_bsshslm_2020`` is an implementation of an integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
@@ -58,7 +58,7 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \kappa v_j^{t-1}+ \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
+  v_j^t &= \kappa v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
   \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
@@ -71,8 +71,13 @@ whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 
 Descriptions of further parameters and variables can be found in the table below.
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+The spike state variable of a presynaptic neuron is expressed by a Heaviside function:
+
+.. math::
+  z_i^t = H \left( v_i^t - v_\text{th} \right) \,. \\
+
+An additional state variable and the corresponding differential equation
+represents a piecewise constant external current.
 
 See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
 for more information on the integration of the subthreshold dynamics.
@@ -87,7 +92,7 @@ neurons.
 .. math::
   \frac{ \text{d} E }{ \text{d} W_{ji} } = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
 
-The presynaptic spike trains are low-pass filtered with an exponential kernel:
+The presynaptic spike trains are low-pass filtered with the following exponential kernel:
 
 .. math::
   \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t) \,, \\

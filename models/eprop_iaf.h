@@ -62,8 +62,8 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \alpha v_j^{t-1}+ \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
-    + \zeta \sum_i W_{ji}^\text{in} x_i^t -z_j^{t-1} v_\text{th} \,, \\
+  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
   \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
@@ -95,13 +95,14 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{ \text{d} E^t}{ \text{d} W_{ij} }`
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
 voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
 trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
+
 See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
 gradients functions.
 
@@ -140,7 +141,7 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
   \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
   f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
-    = \kappa f^{\text{ema},t-1}_j + \left( 1-\kappa \right) \frac{z_j^t}{\Delta t} \,, \\
+    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 
 whereby :math:`c_\text{reg}` is a constant scaling factor.
 
@@ -157,7 +158,7 @@ After the loop has terminated, the filtered dynamic variables of e-prop are prop
 the next spike:
 
 .. math::
-  p &= \text{max} \left( 0, t_\text{s}^{t} - \left(t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
   \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
 

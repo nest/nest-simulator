@@ -47,7 +47,7 @@ postsynaptic currents for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_readout`` is an implementation of a integrate-and-fire neuron model
+``eprop_readout`` is an implementation of an integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
@@ -56,11 +56,11 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
 
 .. math::
   v_j^t &= \kappa v_j^{t-1}+ \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
-  \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m}} } \,, \\
+  \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
       1 \\
-      1 - \alpha
+      1 - \kappa
     \end{cases} \,, \\
 
 whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
@@ -81,7 +81,7 @@ for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g^t` of
 the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\text{d}{E^t}}{\text{d}{W_{ij}}}`
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
@@ -103,11 +103,11 @@ The expression for the gradient is given by:
 .. math::
   \frac{ \text{d} E^t }{ \text{d} W_{ji} } = L_j^t \bar{z}_i^{t-1} \,. \\
 
-The presynaptic spike trains are low-pass filtered with an exponential kernel:
+The presynaptic spike trains are low-pass filtered with the following exponential kernel:
 
 .. math::
-  \bar{z}_i^t = \mathcal{F}_\alpha \left( z_{i}^t \right)
-    = \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
+  \bar{z}_i^t = \mathcal{F}_\kappa \left( z_{i}^t \right)
+    = \kappa \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /

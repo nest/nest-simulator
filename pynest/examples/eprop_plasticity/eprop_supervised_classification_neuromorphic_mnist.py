@@ -626,7 +626,7 @@ nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 target_signal_value = 1.0
 
-for iteration in np.arange(n_iter):
+for iteration in range(n_iter):
     t_start_iteration = iteration * duration["evaluation_group"]
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
@@ -653,7 +653,7 @@ for iteration in np.arange(n_iter):
 
         for n, relative_times in enumerate(img_group[group_elem]):
             if len(relative_times) > 0:
-                spike_times[n] += (t_start_absolute + np.array(relative_times)).tolist()
+                spike_times[n].extend(t_start_absolute + np.array(relative_times))
 
     params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
 

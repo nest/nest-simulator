@@ -1,7 +1,117 @@
 .. _modelsmain:
 
-Models in NEST
-==============
+
+Model directory
+===============
+
+
+
+Find a model
+------------
+
+NEST has over 100 models, choose an option for finding the one you need!
+
+.. grid:: 1 1 2 2
+  :gutter: 1
+
+  .. grid-item::
+
+     .. grid:: 1 1 1 1
+         :gutter: 1
+
+         .. grid-item-card:: Model selector
+
+            * Filter models with our :ref:`model_selector`
+
+         .. grid-item-card:: A-Z list
+
+            * Get the :ref:`full_list`
+
+  .. grid-item::
+
+     .. grid:: 1 1 1 1
+         :gutter: 1
+
+
+         .. grid-item-card:: Learn more about
+
+
+            * :ref:`neuron models <neurons_index>`
+
+            * :ref:`synapse models <synapse_index>`
+
+            * :ref:`device models <device_index>`
+
+            * :ref:`nestml_ad`
+
+.. _model_selector:
+
+Model selector
+--------------
+
+
+Select a tag to display corresponding models.
+
+By selecting multiple tags, you can refine your search to models that match all selected tags.
+
+.. raw:: html
+
+    <div id="tag-container">
+        <!-- Tags will be populated here by JavaScript -->
+    </div>
+    <h3>List of models based on your selection </h3>
+    <div id="model-list"></div>
+    <script src="../_static/js/filter_models.js"></script>
+
+
+----
+
+
+.. _full_list:
+
+Complete A-Z list of models
+----------------------------
+
+.. dropdown::  Show/Hide list
+   :animate: fade-in-slide-down
+   :color: info
+
+
+   **Neurons**
+
+   {% for items in tag_dict %}
+   {% if items.tag == "neuron" %}
+   {% for item in items.models | sort %}
+   * :doc:`{{ item | replace(".html", "") }}`
+   {% endfor %}
+   {% endif %}
+   {% endfor %}
+
+   **Synapses**
+
+   {% for items in tag_dict %}
+   {% if items.tag == "synapse" %}
+   {% for item in items.models | sort %}
+   * :doc:`{{ item | replace(".html", "") }}`
+   {% endfor %}
+   {% endif %}
+   {% endfor %}
+
+   **Devices**
+
+   {% for items in tag_dict %}
+   {% if items.tag == "device" %}
+   {% for item in items.models | sort %}
+   * :doc:`{{ item | replace(".html", "") }}`
+   {% endfor %}
+   {% endif %}
+   {% endfor %}
+
+
+
+
+
+----
 
 What we mean by `models`
 ------------------------
@@ -24,25 +134,7 @@ The term `models` in the context of NEST (and the field of computational neurosc
    description, we focus on neuron and synapse models and not on
    network models.
 
-Find a model
-------------
-
-By default, NEST comes with a ton of models! Textbook standards like
-integrate-and-fire and Hodgkin-Huxley-type models are available
-alongside high-quality implementations of models published by the
-neuroscience community.  The model directory is organized by keywords
-(e.g., :doc:`adaptive threshold <index_adaptive threshold>`,
-:doc:`conductance-based <index_conductance-based>`, etc.).  Models
-that contain a specific keyword will be listed under that word.
-
-In many modeling situations, the full set of models that ship with
-NEST by default is not needed. To only include a subset of the models
-with NEST, please have a look at the :ref:`modelset configuration
-options <modelset_config>`.
-
-.. seealso::
-
-   Discover :doc:`all the models in our directory <index>`.
+.. _nestml_ad:
 
 Create and customize models with NESTML
 ---------------------------------------
@@ -59,51 +151,22 @@ written in Python with high simulation performance through the automated generat
 
   NESTML is also available as part of NEST's official :ref:`docker image <docker>`.
 
-Model naming
-------------
-
-Neuron models
-~~~~~~~~~~~~~
-
-Neuron model names in NEST combine abbreviations that describe the dynamics and synapse specifications for that model.
-They may also include the author's name of a model based on a specific paper.
-
-For example, the neuron model name
-
-``iaf_cond_beta``
-
-    corresponds to an implementation of a spiking neuron using
-    integrate-and-fire dynamics with conductance-based
-    synapses. Incoming spike events induce a postsynaptic change of
-    conductance modeled by a beta function.
-
-As an example for a neuron model name based on specific paper,
-
-``hh_cond_exp_traub``
-
-    implements a modified version of the Hodgkin Huxley neuron model
-    based on Traub and Miles (1991)
-
-Synapse models
-~~~~~~~~~~~~~~
-
-Synapse models include the word synapse as the last word in the model name.
-
-Synapse models may begin with the author name (e.g., ``clopath_synapse``) or process (e.g., ``stdp_synapse``).
-
-Devices
-~~~~~~~
-
-A device name should represent its physical counterpart - like a multimeter is ``multimeter``.  In general, the term ``recorder`` is used for devices
-that store the output (e.g., spike times or synaptic strengths over time) of other nodes and make it accessible to the user. The term  ``generator`` is used for devices that provide input into the simulation.
-
 .. seealso::
 
   See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literature.
 
 References
 ~~~~~~~~~~
-  
+
 .. [1] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
        and Mathematical Modeling of Neural Systems. Cambridge, MA: MIT Press.
        https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_300
+
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    {% for keys in model_dict %}
+    {{ keys | replace(".html", "") }}
+    {% endfor %}

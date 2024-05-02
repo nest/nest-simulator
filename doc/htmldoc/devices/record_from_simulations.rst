@@ -38,15 +38,39 @@ Recording devices can fundamentally be subdivided into two groups:
   neuron (not the neuron to the sampler), and that the neuron must
   support the particular type of sampling.
 
-
-Recorders for every-day situations
-----------------------------------
-
-- :doc:`../models/multimeter`
-- :doc:`../models/spike_recorder`
-- :doc:`../models/weight_recorder`
-
 .. _recording_backends:
+
+What values can I record?
+-------------------------
+
+This depends on neuron or synapse model specified.
+
+You can get a list of properties that you can record using the ``recordables`` property.
+
+        ::
+
+         >>> nest.GetDefaults("iaf_cond_alpha")["recordables"]
+         ["g_ex", "g_in", "t_ref_remaining", "V_m"]
+
+
+Recorders available in NEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- :doc:`/models/multimeter`
+
+
+- :doc:`/models/spike_recorder`
+
+
+- :doc:`/models/weight_recorder`
+
+Check out the following examples to see how the recorders are used:
+
+- :doc:`/auto_examples/recording_demo`
+- :doc:`/auto_examples/multimeter_file`
+- :doc:`/auto_examples/urbanczik_synapse_example` uses all 3 recorders.
+
+
 
 Where does data end up?
 -----------------------
@@ -54,10 +78,6 @@ Where does data end up?
 After a recording device has collected or sampled data, the data is
 handed to a dedicated *recording backend*, set for each recorder.
 These are responsible for how the data are processed.
-
-Theoretically, recording backends are completely free in what they do
-with the data. The ones included in NEST can collect data in memory,
-display it on the terminal, or write it to files.
 
 To specify the recording backend for a given recording device, the
 property ``record_to`` of the latter has to be set to the name of the
@@ -67,12 +87,32 @@ call to :py:func:`.Create` or by using :py:func:`.SetStatus` on the model instan
 
 ::
 
- sr = nest.Create('spike_recorder', params={'record_to': 'ascii'})
+ sr = nest.Create("spike_recorder", params={"record_to": "memory"})
 
 Storing data in memory using the `memory` backend is the default for
 all recording devices as this does not require any additional setup of
 data paths or filesystem permissions and allows a convenient readout
 of data by the user after simulation.
+
+For example, you can use the ``events`` property to get the data output from the `memory` backend
+from any of the recorders:
+
+::
+
+   >>> spike_recorder.get("events")
+   {"senders": array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+   "times": array([ 2.1,  4.4,  6.7,  8.9, 11.1, 13.3, 15.5, 17.7, 19.9, 22.1, 24.3, 26.5, 28.7])}
+
+Additional properties can be set, depending on the recorder and recording backend used.
+
+For example:
+
+::
+
+   mm = nest.Create( "multimeter",
+      params={"interval": 0.1, "record_from": ["V_m", "g_ex", "g_in"], "record_to": "ascii", "label": "my_multimeter"},
+      )
+
 
 Each recording backend may provide a specific set of parameters
 (explained in the backend documentation below) that will be included
@@ -97,7 +137,7 @@ kernel attribute ``recording_backends``.
 ::
 
    >>> print(nest.recording_backends)
-   ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
+   ("ascii", "memory", "mpi", "screen", "sionlib")
 
 If a recording backend has global properties (i.e., parameters shared
 by all enrolled recording devices), those can be inspected with
@@ -106,17 +146,17 @@ by all enrolled recording devices), those can be inspected with
 ::
 
    >>> nest.GetDefaults("sionlib")
-   {'buffer_size': 1024,
-    'filename': '',
-    'sion_chunksize': 262144,
-    'sion_collective': False,
-    'sion_n_files': 1}
+   {"buffer_size": 1024,
+    "filename": "",
+    "sion_chunksize": 262144,
+    "sion_collective": False,
+    "sion_n_files": 1}
 
 Such global parameters can be set using :py:func:`.SetDefaults`
 
 ::
 
-   >>> nest.SetDefaults('sionlib', {'buffer_size': 512})
+   >>> nest.SetDefaults("sionlib", {"buffer_size": 512})
 
 Built-in backends
 -----------------
@@ -126,8 +166,8 @@ NEST. Please note that the availability of some of them depends on the
 compile-time configuration for NEST. See the backend documentation for
 details.
 
-- :doc:`../models/recording_backend_memory`
-- :doc:`../models/recording_backend_ascii`
-- :doc:`../models/recording_backend_screen`
-- :doc:`../models/recording_backend_sionlib`
-- :doc:`../models/recording_backend_mpi`
+.. include:: ../models/recording_backend_memory.rst
+.. include:: ../models/recording_backend_ascii.rst
+.. include:: ../models/recording_backend_screen.rst
+.. include:: ../models/recording_backend_sionlib.rst
+.. include:: ../models/recording_backend_mpi.rst

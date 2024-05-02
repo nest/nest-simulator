@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import re
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -149,10 +150,12 @@ def get_models(app, env, docname):
 
     # Extract models and tags, and find tag-to-model relationships
     env.model_dict = extract_tags_from_files(directory_path)
-    env.tag_dict = find_models_in_tag_combinations(models_dict)
+    env.tag_dict = find_models_in_tag_combinations(env.model_dict)
 
+    json_output = Path("static/data/filter_model.json")
+    json_output.parent.mkdir(exist_ok=True, parents=True)
     # Write the JSON output directly to a file used for dynamically loading data client-side
-    with open("static/data/filter_model.json", "w") as json_file:
+    with open(json_output, "w+") as json_file:
         json.dump(env.tag_dict, json_file, indent=2)
 
 

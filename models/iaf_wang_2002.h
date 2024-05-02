@@ -68,7 +68,7 @@ Description
 
 ``iaf_wang_2002`` is a leaky integrate-and-fire neuron model with
 
-* an approximate version of the neuron model described in [1]_.
+* an approximate version of the neuron model described in [1,2,3]_.
 * exponential conductance-based AMPA and GABA-synapses
 * exponential conductance-based NMDA-synapses weighted such that it approximates the original non-linear dynamics
 * a fixed refractory period
@@ -97,10 +97,8 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
     k_0 &= (\alpha \tau_r)^{\frac{\tau_r}{\tau_d}} \gamma \big[1 - \frac{\tau_r}{\tau_d}, \alpha \tau_r \big] \\[3ex]
     k_1 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1
 
-where :math:`\mathrm{E_N}` is the `generalized exponential integral
-<https://en.wikipedia.org/wiki/Exponential_integral#Generalization>`_, and :math:`\Gamma` is the `gamma function
-<https://en.wikipedia.org/wiki/Gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model
-will approach the exact model for large t.
+where :math:`\gamma` is the `lower incomplete gamma function
+<https://en.wikipedia.org/wiki/Incomplete_gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large t.
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
@@ -115,36 +113,37 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=============== ======= ===========================================================
- E_L            mV      Resting potential
- E_ex           mV      Excitatory reversal potential
- E_in           mV      Inhibitory reversal potential
- V_th           mV      Threshold potential
- V_reset        mV      Reset potential
- C_m            pF      Membrane capacitance
- g_L            nS      Leak conductance
- t_ref          ms      Refractory period
- tau_AMPA       ms      Synaptic time constant for AMPA synapse
- tau_GABA       ms      Synaptic time constant for GABA synapse
- tau_rise_NMDA  ms      Synaptic rise time constant for NMDA synapse
- tau_decay_NMDA ms      Synaptic decay time constant for NMDA synapse
- alpha          1/ms    Scaling factor for NMDA synapse
- conc_Mg2       mM      Extracellular magnesium concentration
- gsl_error_tol  -       GSL error tolerance
-=============== ======= ===========================================================
+=================== ================== ================================= ========================================================================
+**Parameter**       **Default**        **Math equivalent**               **Description**
+=================== ================== ================================= ========================================================================
+``E_L``             -70.0 mV           :math:`E_\mathrm{L}`              Leak reversal potential
+``E_ex``              0.0 mV           :math:`E_\mathrm{ex}`             Excitatory reversal potential     
+``E_in``            -70.0 mV           :math:`E_\mathrm{in}`             Inhibitory reversal potential 
+``V_th``            -55.0 mV           :math:`V_\mathrm{th}`             Spike threshold 
+``V_reset``         -60.0 mV           :math:`V_\mathrm{reset}`          Reset potential of the membrane
+``C_m``             250.0 pF           :math:`C_\mathrm{m}`              Capacitance of the membrane 
+``g_L``              25.0 nS           :math:`g_\mathrm{L}`              Leak conductance 
+``t_ref``             2.0 ms           :math:`t_\mathrm{ref}`            Duration of refractory period 
+``tau_AMPA``          2.0 ms           :math:`\tau_\mathrm{AMPA}`        Time constant of AMPA synapse
+``tau_GABA``          5.0 ms           :math:`\tau_\mathrm{GABA}`        Time constant of GABA synapse
+``tau_rise_NMDA``     2.0 ms           :math:`\tau_\mathrm{NMDA,rise}`   Rise time constant of NMDA synapse           
+``tau_decay_NMDA``  100.0 ms           :math:`\tau_\mathrm{NMDA,decay}`  Decay time constant of NMDA synapse
+``alpha``             0.5 ms^{-1}      :math:`\alpha`                    Rise-time coupling strength for NMDA synapse
+``conc_Mg2``          1.0 mM           :math:`[\mathrm{Mg}^+]`           Extracellular magnesium concentration
+``gsl_error_tol``    1e-3                                                Error tolerance for GSL RKF45-solver
+=================== ================== ================================= ========================================================================
 
-Recordables
-+++++++++++
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
-The following values can be recorded.
-
-=========== ===========================================================
- V_m         Membrane potential
- s_AMPA      sum of AMPA gating variables
- s_GABA      sum of GABA gating variables
- s_NMDA      sum of NMDA gating variables
- I_NMDA      NMDA current
-=========== ===========================================================
+================== ================= ========================== =================================
+**State variable** **Initial value** **Math equivalent**        **Description**
+================== ================= ========================== =================================
+``V_m``            -70 mV            :math:`V_{\mathrm{m}}`     Membrane potential
+``s_AMPA``           0               :math:`s_\mathrm{AMPA}`    AMPA gating variable 
+``s_GABA``           0               :math:`s_\mathrm{GABA}`    GABA gating variable 
+``s_NMDA``           0               :math:`s_\mathrm{NMDA}`    NMDA gating variable 
+``I_NMDA``           0 pA            :math:`I_\mathrm{NMDA}`    NMDA current
+================== ================= ========================== =================================
 
 .. note::
    :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so these variables are set by changing the weights.
@@ -168,9 +167,10 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Wang, X. J. (2002). Probabilistic decision making by slow reverberation in
-       cortical circuits. Neuron, 36(5), 955-968.
-       DOI: https://doi.org/10.1016/S0896-6273(02)01092-9
+.. [1] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The Importance of NMDA Receptors to Working Memory. Journal of Neuroscience, 19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
+.. [2] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The Importance of NMDA Receptors to Working Memory. Journal of Neuroscience, 19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
+.. [3] Wang, X. J. (2002). Probabilistic decision making by slow reverberation in
+       cortical circuits. Neuron, 36(5), 955-968. https://doi.org/10.1016/S0896-6273(02)01092-9
 
 See also
 ++++++++

@@ -114,7 +114,7 @@ t_\text{s}^t\right)\right]`:
   e_{ji}^{t-1} &= \psi_j^{t-1} \bar{z}_i^{t-2} \,, \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
-with some exponential kernels:
+with the following exponential kernels:
 
 .. math::
   \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)

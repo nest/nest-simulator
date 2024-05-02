@@ -123,7 +123,7 @@ gradients functions.
     \epsilon^{t-2}_{ji,a} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
-with some exponential kernels:
+with the following exponential kernels:
 
 .. math::
   \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \,, \\

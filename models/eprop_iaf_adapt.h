@@ -122,7 +122,7 @@ t_\text{s}^t \right) \right]`:
   \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
-with some exponential kernels:
+with the following exponential kernels:
 
 .. math::
   \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)

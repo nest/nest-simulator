@@ -497,7 +497,8 @@ class DataLoader:
 
         self.current_index = 0
         self.all_sample_paths, self.all_labels = self.get_all_sample_paths_with_labels()
-        self.shuffled_indices = np.random.permutation(len(self.all_sample_paths))
+        self.n_all_samples = len(self.all_sample_paths)
+        self.shuffled_indices = np.random.permutation(self.n_all_samples)
 
     def get_all_sample_paths_with_labels(self):
         all_sample_paths = []
@@ -516,18 +517,9 @@ class DataLoader:
     def get_new_evaluation_group(self):
         end_index = self.current_index + self.evaluation_group_size
 
-        if end_index <= len(self.all_sample_paths):
-            selected_indices = self.shuffled_indices[self.current_index : end_index]
-        else:
-            overflow = end_index - len(self.all_sample_paths)
-            selected_indices = np.concatenate(
-                (
-                    self.shuffled_indices[self.current_index : len(self.all_sample_paths)],
-                    self.shuffled_indices[:overflow],
-                )
-            )
+        selected_indices = np.take(self.shuffled_indices, range(self.current_index, end_index), mode="wrap")
 
-        self.current_index = (self.current_index + self.evaluation_group_size) % len(self.all_sample_paths)
+        self.current_index = (self.current_index + self.evaluation_group_size) % self.n_all_samples
 
         images_group = [load_image(self.all_sample_paths[i], self.pixels_blocklist) for i in selected_indices]
         labels_group = [self.all_labels[i] for i in selected_indices]

@@ -183,6 +183,8 @@ n_in = 2 * 34 * 34 - len(pixels_blocklist)  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 10  # number of readout neurons
 
+eta_training = 5e-3
+eta_testing = 0.0
 model_nrn_rec = "eprop_iaf"
 
 params_nrn_out = {
@@ -631,9 +633,9 @@ for iteration in range(n_iter):
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
     if iteration != 0 and iteration % test_every == 0:
-        loader, eta = test_loader, 0.0
+        loader, eta = test_loader, eta_testing
     else:
-        loader, eta = train_loader, 5e-3
+        loader, eta = train_loader, eta_training
 
     params_common_syn_eprop["optimizer"]["eta"] = eta
 

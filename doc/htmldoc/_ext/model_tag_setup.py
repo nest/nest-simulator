@@ -73,7 +73,8 @@ def find_models_in_tag_combinations(models_dict):
 
 def extract_tags_from_files(directory_path):
     """
-    Iterates through a list of file paths, opens each file, and extracts tags from the line that contains 'BeginUserDocs'.
+    Iterates through a list of file paths, opens each file, and extracts tags from the line
+    that contains 'BeginUserDocs'.
     Tags are expected to be comma-separated right after 'BeginUserDocs'.
 
     Parameters

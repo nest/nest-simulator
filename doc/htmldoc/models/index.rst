@@ -21,7 +21,7 @@ NEST has over 100 models, choose an option for finding the one you need!
 
          .. grid-item-card:: Model selector
 
-            * Filter models with our :ref:`model_selector`
+            * Filter models by tags with our :ref:`model_selector`
 
          .. grid-item-card:: A-Z list
 
@@ -42,7 +42,7 @@ NEST has over 100 models, choose an option for finding the one you need!
 
             * :ref:`device models <device_index>`
 
-            * :ref:`nestml_ad`
+            * :ref:`creating and customizing models with NESTML <nestml_ad>`
 
 .. _model_selector:
 
@@ -63,6 +63,8 @@ By selecting multiple tags, you can refine your search to models that match all 
     <div id="model-list"></div>
     <script src="../_static/js/filter_models.js"></script>
 
+|
+|
 
 ----
 
@@ -134,6 +136,11 @@ The term `models` in the context of NEST (and the field of computational neurosc
    description, we focus on neuron and synapse models and not on
    network models.
 
+.. seealso::
+
+  See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literature.
+
+
 .. _nestml_ad:
 
 Create and customize models with NESTML
@@ -150,10 +157,6 @@ written in Python with high simulation performance through the automated generat
 .. note::
 
   NESTML is also available as part of NEST's official :ref:`docker image <docker>`.
-
-.. seealso::
-
-  See our glossary section on :ref:`common abbreviations used for model terms <model_terms>`. It includes alternative terms commonly used in the literature.
 
 References
 ~~~~~~~~~~

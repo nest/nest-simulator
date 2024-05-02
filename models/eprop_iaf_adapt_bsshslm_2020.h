@@ -65,27 +65,32 @@ names and the publication year.
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{rec}z_i^{t-1}
-             + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \,, \\
-    \alpha &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
+  \zeta &=
+    \begin{cases}
+      1 \\
+      1 - \alpha
+    \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\mathrm{rec}` and :math:`W_{ji}^\mathrm{in}` are the recurrent and
-input synaptic weights, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
-recurrent and input presynaptic spike state variables, respectively.
+whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
+state variable, while :math:`x_i^t` represents the input at time :math:`t`.
 
 Descriptions of further parameters and variables can be found in the table below.
 
 The threshold adaptation is given by:
 
 .. math::
-    A_j^t &= v_\mathrm{th} + \beta a_j^t \,, \\
-    a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
-    \rho &= e^{-\frac{\Delta t}{\tau_\mathrm{a}}} \,.
+  A_j^t &= v_\text{th} + \beta a_j^t \,, \\
+  a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
+  \rho &= e^{-\frac{ \Delta t }{ \tau_\text{a} }} \,. \\
 
 The spike state variable is expressed by a Heaviside function:
 
 .. math::
-    z_j^t = H\left(v_j^t-A_j^t\right) \,.
+  z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
 If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
@@ -95,53 +100,51 @@ able to spike for an absolute refractory period :math:`t_\text{ref}`.
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
 
-Furthermore, the pseudo-derivative of the membrane voltage needed for e-prop
-plasticity is calculated:
-
-.. math::
-    \psi_j^t = \frac{\gamma}{v_\text{th}} \text{max}
-               \left(0, 1-\left| \frac{v_j^t-A_j^t}{v_\text{th}}\right| \right) \,.
-
-See the documentation on the ``iaf_psc_delta`` neuron model for more information
-on the integration of the subthreshold dynamics.
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
 
 The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
 which depends on the presynaptic
-spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the postsynaptic membrane
-voltage :math:`\psi_j^t` (which together form the eligibility trace
-:math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
-neurons.
+spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
+of the spike state variable with respect to the postsynaptic membrane
+voltage :math:`\psi_j^t` (the product of which forms the eligibility
+trace :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted
+by the readout neurons.
+
+See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
+gradients functions.
 
 .. math::
-  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{e}_{ji}^t, \\
-  e_{ji}^t &= \psi_j^t \left(\bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right)\,, \\
-  \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1}\bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
-  \epsilon^{t-2}_{ji,a}\,. \\
+  \frac{ \text{d} E }{ \text{d} W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
+  e_{ji}^t &= \psi_j^t \left( \bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1} \right) \,, \\
+  \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1} \bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
+    \epsilon^{t-2}_{ji,a} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
-with some exponential kernels:
+with the following exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t&=\mathcal{F}_\kappa(e_{ji}^t) \;\text{with}\, \kappa=e^{-\frac{\Delta t}{
-    \tau_\text{m,out}}}\,,\\
-    \bar{z}_i^t&=\mathcal{F}_\alpha(z_i^t)\,,\\
-    \mathcal{F}_\alpha(z_i^t) &= \alpha\, \mathcal{F}_\alpha(z_i^{t-1}) + z_i^t
-    \;\text{with}\, \mathcal{F}_\alpha(z_i^0)=z_i^0\,\,,
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right) \,, \\
+  \kappa &= e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha(z_i^t) \,, \\
+  \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
+  \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
 
 whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
-:math:`f^\text{target}`. The gradient :math:`g^\text{reg}` of the regularization loss :math:`E^\text{reg}`
+:math:`f^\text{target}`. The gradient :math:`g_\text{reg}` of the regularization loss :math:`E_\text{reg}`
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{\mathrm{d}E^\text{reg}}{\mathrm{d}W_{ji}} = g^\text{reg} = c_\text{reg}
-  \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t\,,
+  \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} }
+    = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
+    \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 
-whereby :math:`c_\text{reg}` scales the overall regularization and the average
+whereby :math:`c_\text{reg}` is a constant scaling factor and the average
 is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
 
@@ -171,9 +174,29 @@ adapt_beta                          :math:`\beta`                        1.0 Pre
 adapt_tau                   ms      :math:`\tau_\text{a}`               10.0 Time constant of the threshold
                                                                              adaptation
 C_m                         pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
+I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
+regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
+                                                                             the end of the time step, if False
+                                                                             at the beginning (determines PSC
+                                                                             scale)
+t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
+tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+V_min                       mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
+                                                            value            membrane voltage
+                                                            representable by
+                                                            a ``double``
+                                                            type in C++
+V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
+=========================== ======= ======================= ================ ===================================
+
+=========================== ======= ======================= ================ ===================================
+**E-prop parameters**
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
 c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
                                                                              regularization
-E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
 f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                              regularization
 beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
@@ -182,24 +205,17 @@ beta                                :math:`\beta`                        1.0 Wid
 gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
                                                                              gradient / pseudo-derivative of
                                                                              membrane voltage
-I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
-regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
-                                                                             the end of the time step, if False
-                                                                             at the beginning (determines PSC
-                                                                             scale)
 surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
                                                                              pseudo-derivative function
                                                                              ["piecewise_linear", "exponential",
                                                                              "fast_sigmoid_derivative",
                                                                              "arctan"]
-t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
-tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the
-                                                                             membrane voltage
-V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-The following state variables evolve during simulation.
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
 
 ================== ==== =============== ============= ========================
 **Neuron state variables and recordables**
@@ -207,22 +223,18 @@ The following state variables evolve during simulation.
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ========================
 adaptation              :math:`a_j`               0.0 Adaptation variable
-learning_signal         :math:`L_j`               0.0 Learning signal
-surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
 V_m                  mV :math:`v_j`             -70.0 Membrane voltage
 V_th_adapt           mV :math:`A_j`             -55.0 Adapting spike threshold
 ================== ==== =============== ============= ========================
 
-Recordables
-+++++++++++
-
-The following variables can be recorded:
-
-  - adaptation variable ``adaptation``
-  - adapting spike threshold ``V_th_adapt``
-  - learning signal ``learning_signal``
-  - membrane potential ``V_m``
-  - surrogate gradient ``surrogate_gradient``
+================== ==== =============== ============= ========================
+**E-prop state variables and recordables**
+------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ========================
+learning_signal         :math:`L_j`               0.0 Learning signal
+surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
+================== ==== =============== ============= ========================
 
 Usage
 +++++
@@ -240,6 +252,7 @@ References
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
@@ -268,7 +281,7 @@ void register_eprop_iaf_adapt_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
- * threshold adaptation for e-prop plasticity according to Bellec et al (2020).
+ * threshold adaptation for e-prop plasticity according to Bellec et al. (2020).
  */
 class eprop_iaf_adapt_bsshslm_2020 : public EpropArchivingNodeRecurrent
 {
@@ -444,16 +457,17 @@ private:
   //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator matrix entry for evolving the membrane voltage.
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
 
-    //! Propagator matrix entry for evolving the adaptation.
+    //! Propagator matrix entry for evolving the adaptation (mathematical symbol "rho" in user documentation).
     double P_adapt_;
 
     //! Total refractory steps.

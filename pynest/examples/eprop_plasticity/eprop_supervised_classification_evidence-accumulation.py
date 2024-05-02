@@ -507,6 +507,18 @@ params_gen_rate_target = [
     for nrn_out_idx in range(n_out)
 ]
 
+####################
+
+nest.SetStatus(gen_spk_in, params_gen_spk_in)
+nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
+# %% ###########################################################################################################
+# Create learning window
+# ~~~~~~~~~~~~~~~~~~~~~~
+# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
+# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
+# opens the learning window while passing a value of 0 closes it.
+
 amplitude_times = np.hstack(
     [
         np.array([0.0, duration["sequence"] - duration["learning_window"]])
@@ -525,8 +537,6 @@ params_gen_learning_window = {
 
 ####################
 
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################

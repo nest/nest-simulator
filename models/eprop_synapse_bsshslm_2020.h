@@ -89,7 +89,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================ ======= =============== ======= ======================================================
-**Common synapse parameters**
+**Common e-prop synapse parameters**
 -------------------------------------------------------------------------------------------------------
 Parameter        Unit    Math equivalent Default Description
 ================ ======= =============== ======= ======================================================
@@ -103,8 +103,15 @@ optimizer                                     {} Dictionary of optimizer paramet
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+============= ==== ========================= ======= =========================================================
+
+============= ==== ========================= ======= =========================================================
+**Individual e-prop synapse parameters**
+--------------------------------------------------------------------------------------------------------------
+Parameter     Unit Math equivalent           Default Description
+============= ==== ========================= ======= =========================================================
+tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 ============= ==== ========================= ======= =========================================================
 
 Recordables
@@ -112,7 +119,13 @@ Recordables
 
 The following variables can be recorded.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ==========================================================
+**Synapse recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++
@@ -151,7 +164,7 @@ Examples using this model
 EndUserDocs */
 
 /**
- * Base class implementing common properties for the e-prop synapse model.
+ * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -199,7 +212,8 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
 /**
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al.
+ * (2020).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

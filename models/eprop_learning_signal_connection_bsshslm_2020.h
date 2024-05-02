@@ -77,9 +77,16 @@ weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
 Recordables
 +++++++++++
 
-The following variables can be recorded:
+The following variables can be recorded. Note that since this connection lacks
+a plasticity mechanism the weight does not evolve over time.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ==========================================================
+**Synapse recordables**
+----------------------------------------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ==========================================================
+weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ==========================================================
 
 Usage
 +++++
@@ -102,6 +109,7 @@ References
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)

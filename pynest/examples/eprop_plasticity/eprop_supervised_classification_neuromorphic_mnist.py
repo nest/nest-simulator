@@ -601,6 +601,33 @@ weights_pre_train = {
 # We train the network by simulating for a set simulation time, determined by the number of iterations and the
 # evaluation group size and the length of one sequence.
 
+
+def evaluate(n_iteration, iter_start):
+    events_mm_out = mm_out.get("events")
+
+    readout_signal = events_mm_out["readout_signal"]
+    target_signal = events_mm_out["target_signal"]
+    senders = events_mm_out["senders"]
+
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+    readout_signal = readout_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
+    readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
+
+    target_signal = target_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
+    target_signal = target_signal[:, iter_start:, :, -steps["learning_window"] :]
+
+    loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
+
+    y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=3), axis=0)
+    y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
+    accuracy = np.mean((y_target == y_prediction), axis=1)
+    recall_errors = 1.0 - accuracy
+
+    return loss, accuracy, recall_errors
+
+
 nest.Simulate(duration["total_offset"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
@@ -648,32 +675,9 @@ for iteration in np.arange(n_iter):
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
     nest.Simulate(duration["evaluation_group"])
 
-    # process data of recording devices
+    loss, accuracy, recall_errors = evaluate(iteration + 1, -1)
 
-    events_mm_out = mm_out.get("events")
-
-    senders = events_mm_out["senders"]
-    readout_signal = events_mm_out["V_m"]
-    target_signal = events_mm_out["target_signal"]
-
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
-
-    readout_signal = readout_signal.reshape((n_out, iteration + 1, evaluation_group_size, steps["sequence"]))
-    readout_signal = readout_signal[:, -1, :, -steps["learning_window"] :]
-
-    target_signal = target_signal.reshape((n_out, iteration + 1, evaluation_group_size, steps["sequence"]))
-    target_signal = target_signal[:, -1, :, -steps["learning_window"] :]
-
-    # calculate recall errors
-
-    loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=2), axis=(0, 1))
-
-    y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=2), axis=0)
-    y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
-    accuracy = np.mean((y_target == y_prediction), axis=0)
-
-    print(f"    iteration: {iteration} loss: {loss:0.5f} accuracy: {accuracy:0.5f}")
+    print(f"    iteration: {iteration} loss: {loss[0]:0.5f} accuracy: {accuracy[0]:0.5f}")
 
 # %% ###########################################################################################################
 # Read out post-training weights
@@ -702,25 +706,7 @@ events_wr = wr.get("events")
 # We evaluate the network's training error by calculating a loss - in this case, the mean squared error between
 # the integrated recurrent network activity and the target rate.
 
-readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
-target_signal = events_mm_out["target_signal"]
-senders = events_mm_out["senders"]
-
-readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-target_signal = np.array([target_signal[senders == i] for i in set(senders)])
-
-readout_signal = readout_signal.reshape((n_out, n_iter, evaluation_group_size, steps["sequence"]))
-readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
-
-target_signal = target_signal.reshape((n_out, n_iter, evaluation_group_size, steps["sequence"]))
-target_signal = target_signal[:, :, :, -steps["learning_window"] :]
-
-loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
-
-y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=3), axis=0)
-y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
-accuracy = np.mean((y_target == y_prediction), axis=1)
-recall_errors = 1.0 - accuracy
+loss, accuracy, recall_errors = evaluate(n_iter, 0)
 
 # %% ###########################################################################################################
 # Plot results

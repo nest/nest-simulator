@@ -105,9 +105,19 @@ by the readout neurons.
 See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
 gradients functions.
 
-In between two presynaptic spikes, the gradient is calculated for each time step until the cutoff time point, i.e., for
-:math:`t \, \epsilon \, \left[ t_\text{s}^{t-1}, \text{min} \left( t_\text{s}^{t-1} + {\Delta t}_\text{c},
-t_\text{s}^t\right)\right]`:
+In the interval between two presynaptic spikes, the gradient is calculated
+at each time step until the cutoff time point. This computation occurs over
+the time range:
+
+:math:`t \in \left[ t_\text{spk,prev}, \min \left( t_\text{spk,prev} + \Delta t_\text{c}, t_\text{spk,curr} \right)
+\right]`.
+
+Here, :math:`t_\text{spk,prev}` represents the time of the previous spike that
+passed the synapse, while :math:`t_\text{spk,curr}` is the time of the
+current spike, which triggers the application of the learning rule and the
+subsequent synaptic weight update. The cutoff :math:`\Delta t_\text{c}`
+defines the maximum allowable interval for integration between spikes.
+The expression for the gradient is given by:
 
 .. math::
   \frac{ \text{d} E^t }{ \text{d} W_{ji} } &= L_j^t \bar{e}_{ji}^{t-1} \,, \\

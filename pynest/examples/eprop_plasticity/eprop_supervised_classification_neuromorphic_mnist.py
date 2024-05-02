@@ -31,9 +31,9 @@ Description
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
 plasticity mechanism by Bellec et al. [1]_.
 
-The primary objective of this task is to classify the Neuromorphic MNIST dataset [2]_, an adaptation of the
+The primary objective of this task is to classify the N-MNIST dataset [2]_, an adaptation of the
 traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing.
-The Neuromorphic MNIST dataset captures changes in pixel intensity through a dynamic vision sensor,
+The N-MNIST dataset captures changes in pixel intensity through a dynamic vision sensor,
 converting static images into sequences of binary events, which we interpret as spike trains.
 This conversion closely emulates biological neural processing, making it a fitting challenge for
 an e-prop-equipped spiking neural network (SNN).
@@ -408,7 +408,7 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # %% ###########################################################################################################
 # Create input and output
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# This section involves downloading the Neuromorphic-MNIST (N-MNIST) dataset, extracting it, and preparing it for
+# This section involves downloading the N-MNIST dataset, extracting it, and preparing it for
 # neural network training and testing. The dataset consists of two main components: training and test sets.
 
 # The `download_and_extract_dataset` function handles the retrieval of the dataset from a given URL and its
@@ -451,7 +451,7 @@ def download_and_extract_nmnist_dataset(save_path="./"):
         print(f"\nThe directory '{path}' already exists with expected contents. Skipping download and extraction.")
     else:
         if not os.path.exists(downloaded_zip_path):
-            print("\nDownloading the Neuromorphic-MNIST (N-MNIST) dataset.")
+            print("\nDownloading the N-MNIST dataset.")
             response = requests.get(nmnist_dataset["url"], timeout=10)
             with open(downloaded_zip_path, "wb") as file:
                 file.write(response.content)

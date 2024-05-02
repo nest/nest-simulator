@@ -76,7 +76,6 @@ if ( BUILD_SPHINX_DOCS )
     COMMAND ${Python_EXECUTABLE} clean_source_dirs.py
     COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
     COMMAND ${Python_EXECUTABLE} resolve_includes.py ${SPHINX_BUILD_DIR}/models
-    COMMAND cp ${_SPHINX_SOURCE_DIR}/filter_model.json ${_SPHINX_BUILD_DIR}
   )
   add_dependencies( docs sphinxdocs )
 

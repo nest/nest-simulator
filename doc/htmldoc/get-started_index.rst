@@ -221,7 +221,7 @@ More topics
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
    High performance computing <hpc/index>
-   NEST models <models/models-main>
+   NEST models <models/index>
    NEST and SONATA <nest_sonata/nest_sonata_guide>
    Simulation behavior <nest_behavior/running_simulations>
    Randomness in NEST <nest_behavior/random_numbers>

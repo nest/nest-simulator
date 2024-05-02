@@ -368,7 +368,7 @@ concrete type of that node. In a multi-compartment neuron, for
 instance, the different compartments could be addressed as different
 receptors, while another neuron model might make sets of different
 synaptic parameters available for each receptor. Please refer to the
-:doc:`model documentation <../models/index_neuron>` for details.
+:doc:`neuron models documentation <../neurons/index>` for details.
 
 In order to connect a pre-synaptic node to a certain receptor on a
 post-synaptic node, the integer ID of the target receptor can be
@@ -453,7 +453,7 @@ time. Other synapse models implement learning and adaptation in the
 form of long-term or short-term plasticity. A list of available
 synapse models is accessible via the command ``nest.synapse_models``.
 More detailed information about each of them can be found in the
-:doc:`model directory <../models/index_synapse>`.
+:doc:`synapse model page <../synapses/index>`.
 
 .. note::
    Not all nodes can be connected via all available synapse types. The

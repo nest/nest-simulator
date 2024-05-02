@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, binary
+/* BeginUserDocs: neuron, binary, artificial
 
 Short description
 +++++++++++++++++

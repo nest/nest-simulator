@@ -183,8 +183,6 @@ n_in = 2 * 34 * 34 - len(pixels_blocklist)  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 10  # number of readout neurons
 
-eta_training = 5e-3
-eta_testing = 0.0
 model_nrn_rec = "eprop_iaf"
 
 params_nrn_out = {
@@ -323,16 +321,21 @@ weights_in_rec *= create_mask(weights_in_rec, 0.9)
 weights_rec_rec *= create_mask(weights_rec_rec, 0.98)
 weights_rec_out *= create_mask(weights_rec_out, 0.0)
 
-params_common_syn_eprop = {
+params_common_syn_eprop_base = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
-        "eta": 5e-3,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
     "weight_recorder": wr,
 }
+
+params_common_syn_eprop_train = params_common_syn_eprop_base.copy()
+params_common_syn_eprop_train["optimizer"]["eta"] = 5e-3  # learning rate
+
+params_common_syn_eprop_test = params_common_syn_eprop_base.copy()
+params_common_syn_eprop_test["optimizer"]["eta"] = 0.0
 
 params_syn_base = {
     "synapse_model": "eprop_synapse",
@@ -633,11 +636,11 @@ for iteration in range(n_iter):
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
     if iteration != 0 and iteration % test_every == 0:
-        loader, eta = test_loader, eta_testing
+        loader = test_loader
+        params_common_syn_eprop = params_common_syn_eprop_test
     else:
-        loader, eta = train_loader, eta_training
-
-    params_common_syn_eprop["optimizer"]["eta"] = eta
+        loader = train_loader
+        params_common_syn_eprop = params_common_syn_eprop_train
 
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 

@@ -409,7 +409,7 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # This section involves downloading the N-MNIST dataset, extracting it, and preparing it for
 # neural network training and testing. The dataset consists of two main components: training and test sets.
 
-# The `download_and_extract_nmnist_dataset`` function retrieves the dataset from its public repository and extracts
+# The `download_and_extract_nmnist_dataset` function retrieves the dataset from its public repository and extracts
 # it into a specified directory. It checks for the presence of the dataset to avoid re-downloading. After downloading,
 # it extracts the main dataset zip file, followed by further extraction of nested zip files for training and test data,
 # ensuring that the dataset is ready for loading and processing.

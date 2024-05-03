@@ -35,72 +35,122 @@
 
 namespace nest
 {
-
+// Disable clang-formatting for documentation due to over-wide table.
+// clang-format off
 /* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
 
-Current-based leaky integrate-and-fire neuron model with delta-shaped
-postsynaptic currents for e-prop plasticity
+Leaky integrate-and-fire model with delta-shaped input currents
+for e-prop plasticity
 
 Description
 +++++++++++
 
-``eprop_iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
-where the potential jumps on each spike arrival used for eligibility propagation
-(e-prop) plasticity.
+``iaf_psc_delta`` is a leaky integrate-and-fire neuron model with
 
-It is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
+* a hard threshold,
+* a fixed refractory period,
+* Dirac delta (:math:`\delta`)-shaped synaptic input currents.
 
-The threshold crossing is followed by an absolute refractory period
-during which the membrane potential is clamped to the resting potential.
 
-Spikes arriving while the neuron is refractory, are discarded by
-default. If the property ``refractory_input`` is set to true, such
-spikes are added to the membrane potential at the end of the
-refractory period, dampened according to the interval between
-arrival and end of refractoriness.
+The `eprop_iaf_psc_delta` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
 
-The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics is solved on the time
-grid given by the computation step size. Incoming as well as emitted
-spikes are forced to that grid.
+Membrane potential evolution, spike emission, and refractoriness
+................................................................
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+The membrane potential evolves according to
 
-The general framework for the consistent formulation of systems with
-neuron like dynamics interacting by point events is described in
-[1]_.  A flow chart can be found in [2]_.
+.. math::
 
-Critical tests for the formulation of the neuron model are the
-comparisons of simulation results for different computation step
-sizes. sli/testsuite/nest contains a number of such tests.
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-The iaf_psc_delta is the standard model used to check the consistency
-of the nest simulation kernel because it is at the same time complex
-enough to exhibit non-trivial dynamics and simple enough compute
-relevant measures analytically.
+where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+a constant input current set as a model parameter.
+
+A spike is emitted at time step :math:`t^*=t_{k+1}` if
+
+.. math::
+
+   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
+
+Subsequently,
+
+.. math::
+
+   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+
+that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+Synaptic input
+..............
+
+The change in membrane potential due to synaptic inputs can be formulated as:
+
+.. math::
+
+   \dot{\Delta}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
+
+where :math:`j` indexes either excitatory (:math:`w_j > 0`)
+or inhibitory (:math:`w_j < 0`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, :math:`d_j`
+is the delay from neuron :math:`j`, and :math:`\delta` is the Dirac delta distribution.
+This implies that the jump in voltage upon a single synaptic input spike is
+
+.. math::
+
+   \Delta_{\text{syn}} = w \;,
+
+where :math:`w` is the corresponding synaptic weight in mV.
+
+
+The change in voltage caused by the synaptic input can be interpreted as being caused
+by individual post-synaptic currents (PSCs) given by
+
+.. math::
+
+   i_{\text{syn}}(t) = C_{\text{m}} \cdot w \cdot \delta(t).
+
+As a consequence, the total charge :math:`q` transferred by a single PSC is
+
+.. math::
+
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \cdot w \;.
+
+By default, :math:`V_\text{m}` is not bounded from below. To limit
+hyperpolarization to biophysically plausible values, set parameter
+:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
+
+
+
+
+
+.. note::
+   Spikes arriving while the neuron is refractory, are discarded by
+   default. If the property ``refractory_input`` is set to True, such
+   spikes are added to the membrane potential at the end of the
+   refractory period, dampened according to the interval between
+   arrival and end of refractoriness.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-================= ======= ======================================================
- V_m              mV      Membrane potential
- E_L              mV      Resting membrane potential
- C_m              pF      Capacity of the membrane
- tau_m            ms      Membrane time constant
- t_ref            ms      Duration of refractory period
- V_th             mV      Spike threshold
- V_reset          mV      Reset potential of the membrane
- I_e              pA      Constant input current
- V_min            mV      Absolute lower value for the membrane potential
- refractory_input boolean If true, do not discard input during
-                          refractory period. Default: false
-================= ======= ======================================================
+==================== ================== =============================== ==================================================================================
+**Parameter**        **Default**        **Math equivalent**             **Description**
+==================== ================== =============================== ==================================================================================
+``E_L``              -70 mV             :math:`E_\text{L}`              Resting membrane potential
+``C_m``              250 pF             :math:`C_{\text{m}}`            Capacitance of the membrane
+``tau_m``            10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
+``t_ref``            2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
+``V_th``             -55 mV             :math:`V_{\text{th}}`           Spike threshold
+``V_reset``          -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
+``I_e``              0 pA               :math:`I_\text{e}`              Constant input current
+``V_min``            :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
+``refractory_input`` ``False``          None                            If set to True, spikes arriving during refractory period are integrated afterwards
+==================== ================== =============================== ==================================================================================
 
 =========================== ======= ======================= ================ ===================================
 **E-prop parameters**
@@ -205,6 +255,13 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+
+private:
+  void init_buffers_() override;
+  void pre_run_hook() override;
+
+  void update( Time const&, const long, const long ) override;
+
   void compute_gradient( const long t_spike,
     const long t_spike_previous,
     double& z_previous_buffer,
@@ -215,25 +272,16 @@ public:
     const CommonSynapseProperties& cp,
     WeightOptimizer* optimizer ) override;
 
-  void pre_run_hook() override;
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  void update( Time const&, const long, const long ) override;
-
-  //! Get maximum number of time steps integrated between two consecutive spikes.
   long get_eprop_isi_trace_cutoff() override;
 
-protected:
-  void init_buffers_() override;
-
-private:
   //! Compute the surrogate gradient.
   double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )( double, double, double, double, double, double );
 
-  //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_iaf_psc_delta >;
 
-  //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< eprop_iaf_psc_delta >;
   friend class UniversalDataLogger< eprop_iaf_psc_delta >;
 
   // ----------------------------------------------------------------
@@ -275,7 +323,6 @@ private:
     //! Prefactor of firing rate regularization.
     double c_reg_;
 
-
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
@@ -292,8 +339,8 @@ private:
     //! Low-pass filter of the eligibility trace.
     double kappa_;
 
-    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
+    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
+    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
     Parameters_(); //!< Sets default parameter values
@@ -481,7 +528,6 @@ eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  // ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -497,7 +543,6 @@ eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  // ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

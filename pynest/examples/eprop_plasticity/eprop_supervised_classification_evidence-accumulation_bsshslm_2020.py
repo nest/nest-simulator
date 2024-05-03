@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to accumulate evidence with e-prop
--------------------------------------------------------
+Tutorial on learning to accumulate evidence with e-prop (_bsshslm_2020)
+-----------------------------------------------------------------------
 
 Training a classification model using supervised e-prop plasticity to accumulate evidence.
 

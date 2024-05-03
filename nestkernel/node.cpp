@@ -551,17 +551,17 @@ nest::Node::get_tau_syn_in( int )
 }
 
 void
-nest::Node::compute_gradient( const long t_spike,
-  const long t_spike_previous,
-  double& z_previous_buffer,
-  double& z_bar,
-  double& e_bar,
-  double& epsilon,
-  double& weight,
-  const CommonSynapseProperties& cp,
-  WeightOptimizer* optimizer )
+nest::Node::compute_gradient( const long,
+  const long,
+  double&,
+  double&,
+  double&,
+  double&,
+  double&,
+  const CommonSynapseProperties&,
+  WeightOptimizer* )
 {
-  throw KernelException( "The target node does not support compute_gradient()." );
+  throw IllegalConnection( "The target node does not support compute_gradient()." );
 }
 
 double

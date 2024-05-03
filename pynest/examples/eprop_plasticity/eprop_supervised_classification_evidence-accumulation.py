@@ -184,8 +184,6 @@ n_reg = 50  # number of regular neurons
 n_rec = n_ad + n_reg  # number of recurrent neurons
 n_out = 2  # number of readout neurons
 
-model_nrn_reg = "eprop_iaf"
-
 params_nrn_out = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "E_L": 0.0,  # mV, leak / resting membrane potential
@@ -213,12 +211,6 @@ params_nrn_reg = {
     "V_th": 0.6,  # mV, spike threshold membrane voltage
     "kappa": 0.97,  # low-pass filter of the eligibility trace
 }
-
-if model_nrn_reg == "eprop_iaf_psc_delta":
-    del params_nrn_reg["regular_spike_arrival"]
-    params_nrn_reg["V_reset"] = -0.5  # mV, reset membrane voltage
-    params_nrn_reg["c_reg"] = 2.0 / duration["sequence"] * duration["learning_window"]
-    params_nrn_reg["V_th"] = 0.5
 
 params_nrn_ad = {
     "beta": 1.0,
@@ -253,7 +245,7 @@ params_nrn_ad["adapt_beta"] = 1.7 * (
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
 
-nrns_reg = nest.Create(model_nrn_reg, n_reg, params_nrn_reg)
+nrns_reg = nest.Create("eprop_iaf", n_reg, params_nrn_reg)
 nrns_ad = nest.Create("eprop_iaf_adapt", n_ad, params_nrn_ad)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)

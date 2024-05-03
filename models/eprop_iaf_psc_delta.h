@@ -255,6 +255,13 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+
+private:
+  void init_buffers_() override;
+  void pre_run_hook() override;
+
+  void update( Time const&, const long, const long ) override;
+
   void compute_gradient( const long t_spike,
     const long t_spike_previous,
     double& z_previous_buffer,
@@ -267,18 +274,11 @@ public:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-
-  //! Get maximum number of time steps integrated between two consecutive spikes.
   long get_eprop_isi_trace_cutoff() override;
-
-private:
-  void init_buffers_() override;
-  void pre_run_hook() override;
-
-  void update( Time const&, const long, const long ) override;
 
   //! Compute the surrogate gradient.
   double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )( double, double, double, double, double, double );
+
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< eprop_iaf_psc_delta >;

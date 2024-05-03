@@ -311,21 +311,21 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+private:
+  void init_buffers_() override;
+  void pre_run_hook() override;
+
+  void update( Time const&, const long, const long ) override;
+
   double compute_gradient( std::vector< long >& presyn_isis,
     const long t_previous_update,
     const long t_previous_trigger_spike,
     const double kappa,
     const bool average_gradient ) override;
 
-  void pre_run_hook() override;
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  void update( Time const&, const long, const long ) override;
 
-protected:
-  void init_buffers_() override;
-
-private:
   //! Compute the surrogate gradient.
   double (
     eprop_iaf_adapt_bsshslm_2020::*compute_surrogate_gradient )( double, double, double, double, double, double );

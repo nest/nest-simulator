@@ -294,6 +294,12 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+private:
+  void init_buffers_() override;
+  void pre_run_hook() override;
+
+  void update( Time const&, const long, const long ) override;
+
   void compute_gradient( const long t_spike,
     const long t_spike_previous,
     double& z_previous_buffer,
@@ -304,18 +310,10 @@ public:
     const CommonSynapseProperties& cp,
     WeightOptimizer* optimizer ) override;
 
-  void pre_run_hook() override;
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  void update( Time const&, const long, const long ) override;
-
-  //! Get maximum number of time steps integrated between two consecutive spikes.
   long get_eprop_isi_trace_cutoff() override;
 
-protected:
-  void init_buffers_() override;
-
-private:
   //! Compute the error signal based on the mean-squared error loss.
   void compute_error_signal_mean_squared_error( const long lag );
 

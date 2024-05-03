@@ -297,6 +297,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   V_.P33_ = std::exp( -h / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
+  V_.P_z_in_ = 1.0;
 
   // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psp_delta can only handle refractory
@@ -318,8 +319,6 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
-
-  V_.P_z_in_ = 1.0;
 }
 
 long
@@ -391,9 +390,6 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     {
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;
-
-      // EX: must compute spike time
-      // set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );

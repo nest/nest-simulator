@@ -371,7 +371,7 @@ params_init_optimizer = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse", params_common_syn_eprop_train)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 

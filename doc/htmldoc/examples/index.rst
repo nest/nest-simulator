@@ -209,7 +209,7 @@ PyNEST examples
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_lemniscate_bsshslm_2020`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
-           * :doc:`/auto_examples/eprop_supervised_classification_neuromorphic_mnist`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_neuromorphic_mnist`
 
 
 .. grid:: 1 1 2 3

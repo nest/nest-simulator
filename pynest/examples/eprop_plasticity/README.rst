@@ -14,6 +14,11 @@ of e-prop [3]_ and how to visualize the simulation recordings.
 The tutorials with names ending in `_bsshslm_2020` use this original e-prop model. In contrast, the tutorials
 without this suffix use an e-prop version with additional biological features described in [3]_.
 
+Users interested in endowing an existing model with e-prop plasticity, may compare the .cpp and .h files of the
+:doc:`iaf_psc_delta</models/iaf_psc_delta>` and :doc:`eprop_iaf_psc_delta</models/eprop_iaf_psc_delta>` model.
+Parameters to run the `eprop_iaf_psc_delta` model are provided in
+:doc:`eprop_supervised_regression_sine-waves.py <eprop_supervised_regression_sine-waves>`.
+
 References
 ----------
 

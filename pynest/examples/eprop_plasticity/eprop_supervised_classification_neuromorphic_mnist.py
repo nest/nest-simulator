@@ -185,8 +185,6 @@ n_out = 10  # number of readout neurons
 
 eta_training = 5e-3
 eta_testing = 0.0
-model_nrn_rec = "eprop_iaf"
-
 params_nrn_out = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "E_L": 0.0,  # mV, leak / resting membrane potential
@@ -215,11 +213,6 @@ params_nrn_rec = {
     "kappa": 0.99,  # low-pass filter of the eligibility trace
 }
 
-if model_nrn_rec == "eprop_iaf_psc_delta":
-    del params_nrn_rec["regular_spike_arrival"]
-    params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
-    params_nrn_rec["V_th"] = 0.5
-
 ####################
 
 # Intermediate parrot neurons required between input spike generators and recurrent neurons,
@@ -228,7 +221,7 @@ if model_nrn_rec == "eprop_iaf_psc_delta":
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
 
-nrns_rec = nest.Create(model_nrn_rec, n_rec, params_nrn_rec)
+nrns_rec = nest.Create("eprop_iaf", n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 gen_learning_window = nest.Create("step_rate_generator")

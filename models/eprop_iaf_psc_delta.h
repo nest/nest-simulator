@@ -53,9 +53,9 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * Dirac delta (:math:`\delta`)-shaped synaptic input currents.
-* support for eligibility propagation (e-prop).
 
-It is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
+
+The `eprop_iaf_psc_delta` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................

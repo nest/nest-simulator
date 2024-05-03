@@ -11,7 +11,9 @@ supervised classification task to accumulate evidence [2]_. Here, you find tutor
 reproduce these two tasks as well as two more advanced regression tasks using the NEST implementation
 of e-prop [3]_ and how to visualize the simulation recordings.
 
-The tutorials with names ending in `_bsshslm_2020` use this original e-prop model. In contrast, the tutorials
+The tutorials with names ending in `_bsshslm_2020` use this original e-prop model. The suffix _bsshslm_2020
+follows the NEST convention to indicate in the model name the paper that introduced it by the first letter of
+the authors' last names and the publication year. In contrast, the tutorials
 without this suffix use an e-prop version with additional biological features described in [3]_.
 
 Users interested in endowing an existing model with e-prop plasticity, may compare the .cpp and .h files of the

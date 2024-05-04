@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_wang_2002.py
+# test_iaf_bw_2001.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests dynamics and connections of the approximate model iaf_wang_2002.
+Tests dynamics and connections of the approximate model iaf_bw_2001.
 
 Since the neuron is conductance based, it is impossible to analytically
 confirm the membrane potential. We therefore test that without the NMDA-
@@ -29,7 +29,7 @@ that with NMDA-currents, we get a larger V_m.
 We then test the AMPA and GABA gating variables against analytical solution,
 and NMDA synamptic current against analytical solution.
 We also test that an error is correctly raised when an NMDA-connection
-from neuron other than iaf_wang_2002 is made.
+from neuron other than iaf_bw_2001 is made.
 """
 
 import nest
@@ -103,9 +103,9 @@ def test_wang():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    nrn1 = nest.Create("iaf_wang_2002", wang_params)
-    nrn2 = nest.Create("iaf_wang_2002", wang_params)
-    nrn3 = nest.Create("iaf_wang_2002", wang_params)
+    nrn1 = nest.Create("iaf_bw_2001", wang_params)
+    nrn2 = nest.Create("iaf_bw_2001", wang_params)
+    nrn3 = nest.Create("iaf_bw_2001", wang_params)
     nrn4 = nest.Create("iaf_cond_exp", cond_exp_params)
 
     receptor_types = nrn1.get("receptor_types")
@@ -172,7 +172,7 @@ def test_illegal_connection_error():
     """
     nest.ResetKernel()
     nrn1 = nest.Create("iaf_psc_exp")
-    nrn2 = nest.Create("iaf_wang_2002")
+    nrn2 = nest.Create("iaf_bw_2001")
     receptor_types = nrn2.get("receptor_types")
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):

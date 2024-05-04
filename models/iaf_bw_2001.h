@@ -1,5 +1,5 @@
 /*
- *  iaf_wang_2002.h
+ *  iaf_bw_2001.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_WANG_2002_H
-#define IAF_WANG_2002_H
+#ifndef IAF_BW_2001_H
+#define IAF_BW_2001_H
 
 // Generated includes:
 #include "config.h"
@@ -53,7 +53,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" inline int iaf_wang_2002_dynamics( double, const double*, double*, void* );
+extern "C" inline int iaf_bw_2001_dynamics( double, const double*, double*, void* );
 
 // clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
@@ -66,7 +66,7 @@ Leaky integrate-and-fire-neuron model with conductance based synapses, and addit
 Description
 +++++++++++
 
-``iaf_wang_2002`` is a leaky integrate-and-fire neuron model with
+``iaf_bw_2001`` is a leaky integrate-and-fire neuron model with
 
 * an approximate version of the neuron model described in [1,2,3]_.
 * exponential conductance-based AMPA and GABA-synapses
@@ -149,10 +149,10 @@ The following state variables evolve during simulation and are available either 
    :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so these variables are set by changing the weights.
 
 .. note::
-    For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_wang_2002. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
+    For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_bw_2001. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
 
 .. note::
-    For technical reasons, spikes from iaf_wang_2002 neurons must be recorded with time_in_steps: True set in the spike recorder, ignoring the offset value. We hope to correct this in a future version of NEST.
+    For technical reasons, spikes from iaf_bw_2001 neurons must be recorded with time_in_steps: True set in the spike recorder, ignoring the offset value. We hope to correct this in a future version of NEST.
 
 Sends
 +++++
@@ -175,24 +175,24 @@ References
 See also
 ++++++++
 
-iaf_wang_2002_exact
+iaf_bw_2001_exact
 
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_wang_2002
+.. listexamples:: iaf_bw_2001
 
 EndUserDocs */
 // clang-format on
 
-void register_iaf_wang_2002( const std::string& name );
+void register_iaf_bw_2001( const std::string& name );
 
-class iaf_wang_2002 : public ArchivingNode
+class iaf_bw_2001 : public ArchivingNode
 {
 public:
-  iaf_wang_2002();
-  iaf_wang_2002( const iaf_wang_2002& );
-  ~iaf_wang_2002() override;
+  iaf_bw_2001();
+  iaf_bw_2001( const iaf_bw_2001& );
+  ~iaf_bw_2001() override;
 
   /**
    * Import all overloaded virtual functions that we
@@ -246,11 +246,11 @@ private:
   };
 
   // make dynamics function quasi-member
-  friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
+  friend int iaf_bw_2001_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_wang_2002 >;
-  friend class UniversalDataLogger< iaf_wang_2002 >;
+  friend class RecordablesMap< iaf_bw_2001 >;
+  friend class UniversalDataLogger< iaf_bw_2001 >;
 
   struct Parameters_
   {
@@ -329,11 +329,11 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_wang_2002& );
-    Buffers_( const Buffers_&, iaf_wang_2002& );
+    Buffers_( iaf_bw_2001& );
+    Buffers_( const Buffers_&, iaf_bw_2001& );
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_wang_2002 > logger_;
+    UniversalDataLogger< iaf_bw_2001 > logger_;
 
     // -----------------------------------------------------------------------
     //   Buffers and sums of incoming spikes and currents per timestep
@@ -407,12 +407,12 @@ private:
   Buffers_ B_;    //!< Buffers.
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_wang_2002 > recordablesMap_;
+  static RecordablesMap< iaf_bw_2001 > recordablesMap_;
 
-}; /* neuron iaf_wang_2002 */
+}; /* neuron iaf_bw_2001 */
 
 inline size_t
-iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_bw_2001::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -420,7 +420,7 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 }
 
 inline size_t
-iaf_wang_2002::handles_test_event( SpikeEvent& e, size_t receptor_type )
+iaf_bw_2001::handles_test_event( SpikeEvent& e, size_t receptor_type )
 {
   if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
@@ -431,13 +431,13 @@ iaf_wang_2002::handles_test_event( SpikeEvent& e, size_t receptor_type )
   if ( receptor_type == NMDA and typeid( sender ) != typeid( *this ) )
   {
     throw IllegalConnection(
-      "For NMDA synapses in iaf_wang_2002, pre-synaptic neuron must also be of type iaf_wang_2002" );
+      "For NMDA synapses in iaf_bw_2001, pre-synaptic neuron must also be of type iaf_bw_2001" );
   }
   return receptor_type;
 }
 
 inline size_t
-iaf_wang_2002::handles_test_event( CurrentEvent&, size_t receptor_type )
+iaf_bw_2001::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -447,7 +447,7 @@ iaf_wang_2002::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-iaf_wang_2002::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+iaf_bw_2001::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   /*
    * You should usually not change the code in this function.
@@ -465,7 +465,7 @@ iaf_wang_2002::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-iaf_wang_2002::get_status( DictionaryDatum& d ) const
+iaf_bw_2001::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -481,7 +481,7 @@ iaf_wang_2002::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_wang_2002::set_status( const DictionaryDatum& d )
+iaf_bw_2001::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -503,4 +503,4 @@ iaf_wang_2002::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // IAF_WANG_2002
+#endif // IAF_BW_2001

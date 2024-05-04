@@ -49,8 +49,8 @@ from matplotlib.gridspec import GridSpec
 np.random.seed(1234)
 rng = np.random.default_rng()
 
-# Use approximate model, can be replaced by "iaf_wang_2002_exact"
-model = "iaf_wang_2002"
+# Use approximate model, can be replaced by "iaf_bw_2001_exact"
+model = "iaf_bw_2001"
 
 dt = 0.1
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_wang_2002_exact.py
+# test_iaf_bw_2001_exact.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests dynamics of the model iaf_wang_2002_exact.
+Tests dynamics of the model iaf_bw_2001_exact.
 
 Since the neuron is conductance based, it is impossible to analytically
 confirm the membrane potential. We therefore test that without the NMDA-
@@ -108,9 +108,9 @@ def test_wang():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    nrn1 = nest.Create("iaf_wang_2002", wang_params)
-    nrn2 = nest.Create("iaf_wang_2002", wang_params)
-    nrn3 = nest.Create("iaf_wang_2002", wang_params)
+    nrn1 = nest.Create("iaf_bw_2001", wang_params)
+    nrn2 = nest.Create("iaf_bw_2001", wang_params)
+    nrn3 = nest.Create("iaf_bw_2001", wang_params)
     nrn4 = nest.Create("iaf_cond_exp", cond_exp_params)
 
     receptor_types = nrn1.get("receptor_types")

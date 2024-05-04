@@ -72,8 +72,8 @@ extra_params = {
     "aeif_cond_alpha_multisynapse": {"receptor_type": 1},
     "aeif_cond_beta_multisynapse": {"receptor_type": 1},
     "pp_cond_exp_mc_urbanczik": {"receptor_type": 1},
-    "iaf_wang_2002": {"receptor_type": 1},
-    "iaf_wang_2002_exact": {"receptor_type": 1},
+    "iaf_bw_2001": {"receptor_type": 1},
+    "iaf_bw_2001_exact": {"receptor_type": 1},
 }
 
 # Obtain all models with non-empty recordables list

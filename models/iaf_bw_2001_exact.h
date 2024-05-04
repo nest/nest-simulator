@@ -1,5 +1,5 @@
 /*
- *  iaf_wang_2002_exact.h
+ *  iaf_bw_2001_exact.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_WANG_2002_EXACT
-#define IAF_WANG_2002_EXACT
+#ifndef IAF_BW_2001_EXACT
+#define IAF_BW_2001_EXACT
 
 // Generated includes:
 #include "config.h"
@@ -53,7 +53,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  **/
-extern "C" inline int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
+extern "C" inline int iaf_bw_2001_exact_dynamics( double, const double y[], double f[], void* pnode );
 
 // clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
@@ -66,7 +66,7 @@ Leaky integrate-and-fire-neuron model with conductance based synapses, and addit
 Description
 +++++++++++
 
-``iaf_wang_2002_exact`` is a leaky integrate-and-fire neuron model with
+``iaf_bw_2001_exact`` is a leaky integrate-and-fire neuron model with
 
 * an exact implementation of the neuron model described in [1]_.
 * exponential conductance-based AMPA and GABA-synapses
@@ -104,7 +104,7 @@ slow.
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
-This model is slow to simulate when there are many neurons with NMDA-synapses, since each post-synaptic neuron simulates each pre-synaptic connection explicitly. The model iaf_wang_2002 is an approximation to this model which is significantly faster.
+This model is slow to simulate when there are many neurons with NMDA-synapses, since each post-synaptic neuron simulates each pre-synaptic connection explicitly. The model iaf_bw_2001 is an approximation to this model which is significantly faster.
 
 Parameters
 ++++++++++
@@ -170,24 +170,24 @@ References
 See also
 ++++++++
 
-iaf_wang_2002
+iaf_bw_2001
 
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_wang_2002
+.. listexamples:: iaf_bw_2001
 
 EndUserDocs */
 // clang-format on
 
-void register_iaf_wang_2002_exact( const std::string& name );
+void register_iaf_bw_2001_exact( const std::string& name );
 
-class iaf_wang_2002_exact : public ArchivingNode
+class iaf_bw_2001_exact : public ArchivingNode
 {
 public:
-  iaf_wang_2002_exact();
-  iaf_wang_2002_exact( const iaf_wang_2002_exact& );
-  ~iaf_wang_2002_exact() override;
+  iaf_bw_2001_exact();
+  iaf_bw_2001_exact( const iaf_bw_2001_exact& );
+  ~iaf_bw_2001_exact() override;
 
   /*
    * Import all overloaded virtual functions that we
@@ -237,11 +237,11 @@ private:
   };
 
   // make dynamics function quasi-member
-  friend int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
+  friend int iaf_bw_2001_exact_dynamics( double, const double y[], double f[], void* pnode );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_wang_2002_exact >;
-  friend class UniversalDataLogger< iaf_wang_2002_exact >;
+  friend class RecordablesMap< iaf_bw_2001_exact >;
+  friend class UniversalDataLogger< iaf_bw_2001_exact >;
 
   struct Parameters_
   {
@@ -324,13 +324,13 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_wang_2002_exact& );
-    Buffers_( const Buffers_&, iaf_wang_2002_exact& );
+    Buffers_( iaf_bw_2001_exact& );
+    Buffers_( const Buffers_&, iaf_bw_2001_exact& );
 
     /**
      * Logger for all analog data
      **/
-    UniversalDataLogger< iaf_wang_2002_exact > logger_;
+    UniversalDataLogger< iaf_bw_2001_exact > logger_;
 
     // -----------------------------------------------------------------------
     //   Buffers and sums of incoming spikes and currents per timestep
@@ -414,13 +414,13 @@ private:
   Buffers_ B_;    //!< Buffers.
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_wang_2002_exact > recordablesMap_;
+  static RecordablesMap< iaf_bw_2001_exact > recordablesMap_;
 
 
-}; /* neuron iaf_wang_2002_exact */
+}; /* neuron iaf_bw_2001_exact */
 
 inline size_t
-iaf_wang_2002_exact::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_bw_2001_exact::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -428,7 +428,7 @@ iaf_wang_2002_exact::send_test_event( Node& target, size_t receptor_type, synind
 }
 
 inline size_t
-iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
+iaf_bw_2001_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
@@ -451,7 +451,7 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-iaf_wang_2002_exact::handles_test_event( CurrentEvent&, size_t receptor_type )
+iaf_bw_2001_exact::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -461,7 +461,7 @@ iaf_wang_2002_exact::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-iaf_wang_2002_exact::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+iaf_bw_2001_exact::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   /*
    * You should usually not change the code in this function.
@@ -479,7 +479,7 @@ iaf_wang_2002_exact::handles_test_event( DataLoggingRequest& dlr, size_t recepto
 }
 
 inline void
-iaf_wang_2002_exact::get_status( DictionaryDatum& d ) const
+iaf_bw_2001_exact::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -497,7 +497,7 @@ iaf_wang_2002_exact::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_wang_2002_exact::set_status( const DictionaryDatum& d )
+iaf_bw_2001_exact::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -519,4 +519,4 @@ iaf_wang_2002_exact::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // IAF_WANG_2002
+#endif // IAF_BW_2001

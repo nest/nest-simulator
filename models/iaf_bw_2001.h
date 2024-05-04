@@ -430,8 +430,7 @@ iaf_bw_2001::handles_test_event( SpikeEvent& e, size_t receptor_type )
   const Node& sender = e.get_sender();
   if ( receptor_type == NMDA and typeid( sender ) != typeid( *this ) )
   {
-    throw IllegalConnection(
-      "For NMDA synapses in iaf_bw_2001, pre-synaptic neuron must also be of type iaf_bw_2001" );
+    throw IllegalConnection( "For NMDA synapses in iaf_bw_2001, pre-synaptic neuron must also be of type iaf_bw_2001" );
   }
   return receptor_type;
 }

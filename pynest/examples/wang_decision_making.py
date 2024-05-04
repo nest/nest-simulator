@@ -140,8 +140,9 @@ def run_sim(coherence, seed=123):
     rates_b = np.random.normal(mu_b, sigma, size=num_updates)
 
     # synaptic weights
-    w_plus = 1.7
-    w_minus = 1 - f * (w_plus - 1) / (1 - f)
+    w_plus = 1.7  # strong connections in selective populations
+    w_minus = 1 - f * (w_plus - 1) / (1 - f)  # weak connections between selective populations
+    # and from nonselective to selective populations
 
     delay = 0.5
 
@@ -182,13 +183,8 @@ def run_sim(coherence, seed=123):
     sr_selective2 = nest.Create("spike_recorder", {"time_in_steps": True})
     sr_inhibitory = nest.Create("spike_recorder", {"time_in_steps": True})
 
-    sr_selective1_raster = nest.Create("spike_recorder", 100)
-    sr_selective2_raster = nest.Create("spike_recorder", 100)
-
-    mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
-    mm_selective2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
-    mm_nonselective = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
-    mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
+    sr_selective1_raster = nest.Create("spike_recorder", 100, {"time_in_steps": True})
+    sr_selective2_raster = nest.Create("spike_recorder", 100, {"time_in_steps": True})
 
     ##################################################
     # Define synapse specifications
@@ -334,14 +330,6 @@ def run_sim(coherence, seed=123):
 
     nest.Connect(inhibitory_pop, sr_inhibitory)
 
-    # multimeters record from single neuron from each population.
-    # since the network is fully connected, it's the same for all
-    # neurons in the same population.
-    nest.Connect(mm_selective1, selective_pop1[0])
-    nest.Connect(mm_selective2, selective_pop2[0])
-    nest.Connect(mm_nonselective, nonselective_pop[0])
-    nest.Connect(mm_inhibitory, inhibitory_pop[0])
-
     ##################################################
     # Run simulation
     nest.Simulate(4000.0)
@@ -356,26 +344,6 @@ def run_sim(coherence, seed=123):
     spikes_selective1_raster = sr_selective1_raster.get("events", "times")
     spikes_selective2_raster = sr_selective2_raster.get("events", "times")
 
-    #     vm_nonselective = mm_nonselective.get("events", "V_m")
-    #     s_AMPA_nonselective = mm_nonselective.get("events", "s_AMPA")
-    #     s_GABA_nonselective = mm_nonselective.get("events", "s_GABA")
-    #     s_NMDA_nonselective = mm_nonselective.get("events", "s_NMDA")
-    #
-    #     vm_selective1 = mm_selective1.get("events", "V_m")
-    #     s_AMPA_selective1 = mm_selective1.get("events", "s_AMPA")
-    #     s_GABA_selective1 = mm_selective1.get("events", "s_GABA")
-    #     s_NMDA_selective1 = mm_selective1.get("events", "s_NMDA")
-    #
-    #     vm_selective2 = mm_selective2.get("events", "V_m")
-    #     s_AMPA_selective2 = mm_selective2.get("events", "s_AMPA")
-    #     s_GABA_selective2 = mm_selective2.get("events", "s_GABA")
-    #     s_NMDA_selective2 = mm_selective2.get("events", "s_NMDA")
-    #
-    #     vm_inhibitory = mm_inhibitory.get("events", "V_m")
-    #     s_AMPA_inhibitory = mm_inhibitory.get("events", "s_AMPA")
-    #     s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
-    #     s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
-
     return {
         "nonselective": spikes_nonselective,
         "selective1": spikes_selective1,
@@ -387,9 +355,9 @@ def run_sim(coherence, seed=123):
 
 
 coherences = [51.2, 12.8, 0.0]
-spikes = []
+results = []
 for c in coherences:
-    spikes.append(run_sim(c, seed=1234))
+    results.append(run_sim(c, seed=1234))
 
 ##################################################
 # Plots
@@ -411,9 +379,11 @@ num = NE * 0.15
 
 for j in range(3):
     # compute firing rates as moving averages over 50 ms windows with 5 ms strides
-    hist1, _ = np.histogram(spikes[j]["selective1"], bins=bins)
+    hist1, _ = np.histogram(
+        results[j]["selective1"] * dt, bins=bins
+    )  # spikes are recorded in steps, multiply på dt to get time
     hist1 = hist1.reshape((-1, 5)).sum(-1)
-    hist2, _ = np.histogram(spikes[j]["selective2"], bins=bins)
+    hist2, _ = np.histogram(results[j]["selective2"] * dt, bins=bins)
     hist2 = hist2.reshape((-1, 5)).sum(-1)
 
     pop1_rate = np.convolve(hist1, np.ones(10) * 0.1, mode="same") / num / 5 * 1000
@@ -426,12 +396,12 @@ for j in range(3):
     ax[j * 3 + 1, 0].set_ylim(0, 40)
     ax[j * 3 + 1, 1].set_ylim(0, 40)
     for k in range(100):
-        sp = spikes[j]["selective1_raster"][k] / 5.0
+        sp = results[j]["selective1_raster"][k] * dt / 5.0
         ax[j * 3, 0].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
         ax[j * 3, 0].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
         ax[j * 3, 0].set_yticks([])
         ax[j * 3, 0].set_ylim(0, 99)
-        sp = spikes[j]["selective2_raster"][k] / 5.0
+        sp = results[j]["selective2_raster"][k] * dt / 5.0
         ax[j * 3, 1].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
         ax[j * 3, 1].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
         ax[j * 3, 1].set_yticks([])

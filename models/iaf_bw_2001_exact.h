@@ -439,6 +439,11 @@ iaf_bw_2001_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     if ( receptor_type == SynapseTypes::NMDA )
     {
+      if ( B_.e_ != nullptr )
+      {
+        throw IllegalConnection(
+          "NMDA connections to this model can only be made before the first call to nest.Simulate" );
+      }
       // give each NMDA synapse a unique rport, starting from 3 (num_ports_ is initialized to 3)
       ++S_.num_ports_;
       return S_.num_ports_;

@@ -50,18 +50,6 @@ def s_soln(w, t, tau):
 
 
 def spiketrain_response(t, tau, spiketrain, w):
-    """
-    Creates 4 neurons.
-    nrn1: pre-synaptic iaf_psc_wang
-    nrn2: post-synaptic iaf_psc_wang, will have AMPA, GABA and NMDA synapses
-    nrn3: post-synaptic iaf_psc_wang, will only have AMPA and GABA
-    nrn4: post-synaptic iaf_psc_exp, will only have AMPA and GABA
-
-    We test that nrn3 and nrn4 have identical V_m.
-    We test that nrn2 has greater V_m compared to nrn3.
-    We test that s_AMPA and s_GABA have the correct analytical solution.
-    """
-
     response = np.zeros_like(t)
     for sp in spiketrain:
         t_ = t - 1.0 - sp
@@ -70,12 +58,12 @@ def spiketrain_response(t, tau, spiketrain, w):
     return response
 
 
-def test_wang():
+def test_iaf_bw_2001_exact():
     """
     Creates 4 neurons.
-    nrn1: pre-synaptic iaf_psc_wang
-    nrn2: post-synaptic iaf_psc_wang, will have AMPA, GABA and NMDA synapses
-    nrn3: post-synaptic iaf_psc_wang, will only have AMPA and GABA
+    nrn1: pre-synaptic iaf_bw_2001_exact
+    nrn2: post-synaptic iaf_bw_2001_exact, will have AMPA, GABA and NMDA synapses
+    nrn3: post-synaptic iaf_bw_2001_exact, will only have AMPA and GABA
     nrn4: post-synaptic iaf_psc_exp, will only have AMPA and GABA
 
     We test that nrn3 and nrn4 have identical V_m.
@@ -108,9 +96,9 @@ def test_wang():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    nrn1 = nest.Create("iaf_bw_2001", wang_params)
-    nrn2 = nest.Create("iaf_bw_2001", wang_params)
-    nrn3 = nest.Create("iaf_bw_2001", wang_params)
+    nrn1 = nest.Create("iaf_bw_2001_exact", wang_params)
+    nrn2 = nest.Create("iaf_bw_2001_exact", wang_params)
+    nrn3 = nest.Create("iaf_bw_2001_exact", wang_params)
     nrn4 = nest.Create("iaf_cond_exp", cond_exp_params)
 
     receptor_types = nrn1.get("receptor_types")
@@ -129,7 +117,7 @@ def test_wang():
     )
     mm4 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
-    # for post-synaptic iaf_psc_wang
+    # for post-synaptic iaf_bw_2001_exact
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
     gaba_syn_spec = {"weight": w_in, "receptor_type": receptor_types["GABA"]}
     nmda_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["NMDA"]}
@@ -169,3 +157,20 @@ def test_wang():
     assert (mm2.events["V_m"] >= mm3.events["V_m"]).all()
     nptest.assert_array_almost_equal(ampa_soln, mm2.events["s_AMPA"])
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
+
+
+def test_connect_NMDA_after_simulate():
+    """
+    Test that error is thrown if we try to make a connection after running
+    nest.Simulate and the buffers have already been created.
+    """
+    nrn1 = nest.Create("iaf_bw_2001_exact")
+    nrn2 = nest.Create("iaf_bw_2001_exact")
+
+    receptor_types = nrn1.get("receptor_types")
+    nmda_syn_spec = {"weight": 1.0, "receptor_type": receptor_types["NMDA"]}
+
+    nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
+    nest.Simulate(1.0)
+    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+        nest.Connect(nrn2, nrn1, syn_spec=nmda_syn_spec)

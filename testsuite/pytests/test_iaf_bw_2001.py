@@ -65,13 +65,13 @@ def spiketrain_response(t, tau, spiketrain, w):
     return response
 
 
-def test_wang():
+def test_iaf_bw_2001():
     """
     Creates 4 neurons.
-    nrn1: pre-synaptic iaf_psc_wang
-    nrn2: post-synaptic iaf_psc_wang, will have AMPA, GABA and NMDA synapses
-    nrn3: post-synaptic iaf_psc_wang, will only have AMPA and GABA
-    nrn4: post-synaptic iaf_psc_exp, will only have AMPA and GABA
+    nrn1: pre-synaptic iaf_bw_2001
+    nrn2: post-synaptic iaf_bw_2001, will have AMPA, GABA and NMDA synapses
+    nrn3: post-synaptic iaf_bw_2001, will only have AMPA and GABA
+    nrn4: post-synaptic iaf_cond_exp, will only have AMPA and GABA
 
     We test that nrn3 and nrn4 have identical V_m.
     We test that nrn2 has greater V_m compared to nrn3.
@@ -124,7 +124,7 @@ def test_wang():
     )
     mm4 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
-    # for post-synaptic iaf_psc_wang
+    # for post-synaptic iaf_bw_2001
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
     gaba_syn_spec = {"weight": w_in, "receptor_type": receptor_types["GABA"]}
     nmda_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["NMDA"]}
@@ -166,12 +166,72 @@ def test_wang():
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
 
 
-def test_illegal_connection_error():
+def test_approximation_I_NMDA_V_m():
     """
-    Test that connecting with NMDA synapses from iaf_psc_exp throws error.
+    Creates 3 neurons.
+    nrn1: pre-synaptic iaf_bw_2001
+    nrn2: post-synaptic iaf_bw_2001
+    nrn3: post-synaptic iaf_bw_2001_exact
+
+    We will check that the and membrane potentials
+    of nrn2 and nrn3 are sufficiently close.
     """
     nest.ResetKernel()
-    nrn1 = nest.Create("iaf_psc_exp")
+
+    nrn_params = {
+        "tau_GABA": 5.0,  # GABA decay time constant
+        "tau_AMPA": 2.0,  # AMPA decay time constant
+        "g_L": 25.0,  # leak conductance
+        "E_L": -70.0,  # leak reversal potential
+        "E_ex": 0.0,  # excitatory reversal potential
+        "E_in": -70.0,  # inhibitory reversal potential
+        "V_reset": -55.0,  # reset potential
+        "V_th": -50.0,  # threshold
+        "C_m": 500.0,  # membrane capacitance
+        "t_ref": 0.0,  # refreactory period
+    }
+
+    nrn1 = nest.Create("iaf_bw_2001", nrn_params)
+    nrn2 = nest.Create("iaf_bw_2001", nrn_params)
+    nrn3 = nest.Create("iaf_bw_2001_exact", nrn_params)
+
+    receptor_types = nrn1.get("receptor_types")
+
+    pg = nest.Create("poisson_generator", {"rate": 150.0})
+    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+
+    mm1 = nest.Create("multimeter", {"record_from": ["V_m", "I_NMDA"], "interval": 0.1, "time_in_steps": True})
+
+    mm2 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm3 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+
+    # for post-synaptic iaf_bw_2001
+    ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
+    nmda_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["NMDA"]}
+
+    # for post-synaptic iaf_cond_exp
+    ex_syn_spec = {"weight": w_ex}
+
+    nest.Connect(pg, nrn1, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn1, sr)
+
+    nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
+    nest.Connect(nrn1, nrn3, syn_spec=nmda_syn_spec)
+
+    nest.Connect(mm1, nrn1)
+    nest.Connect(mm2, nrn2)
+    nest.Connect(mm3, nrn3)
+
+    nest.Simulate(500.0)
+    assert np.max(np.abs(mm2.events["V_m"] - mm3.events["V_m"])) < 0.25
+
+
+def test_illegal_connection_error():
+    """
+    Test that connecting with NMDA synapses from iaf_cond_exp throws error.
+    """
+    nest.ResetKernel()
+    nrn1 = nest.Create("iaf_cond_exp")
     nrn2 = nest.Create("iaf_bw_2001")
     receptor_types = nrn2.get("receptor_types")
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}

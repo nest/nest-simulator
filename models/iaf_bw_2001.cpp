@@ -389,8 +389,8 @@ nest::iaf_bw_2001::pre_run_hook()
   const double alpha_tau = P_.alpha * P_.tau_rise_NMDA;
   const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
 
-  V_.S_jump_1 = std::expm1( -P_.alpha * P_.tau_rise_NMDA );
-  V_.S_jump_0 = std::pow( alpha_tau, tau_rise_tau_dec ) * boost::math::tgamma_lower( 1 - tau_rise_tau_dec, alpha_tau );
+  V_.k_1 = std::expm1( -P_.alpha * P_.tau_rise_NMDA );
+  V_.k_0 = std::pow( alpha_tau, tau_rise_tau_dec ) * boost::math::tgamma_lower( 1 - tau_rise_tau_dec, alpha_tau );
 }
 
 /* ---------------------------------------------------------------------------
@@ -461,7 +461,7 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
-      const double s_NMDA_delta = V_.S_jump_0 + V_.S_jump_1 * S_.s_NMDA_pre;
+      const double s_NMDA_delta = V_.k_0 + V_.k_1 * S_.s_NMDA_pre;
       S_.s_NMDA_pre += s_NMDA_delta;
 
       SpikeEvent se;

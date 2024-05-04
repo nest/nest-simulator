@@ -379,8 +379,8 @@ private:
   {
     //! refractory time in steps
     long RefractoryCounts_;
-    double S_jump_0; // zeroth order term of jump
-    double S_jump_1; // first order term of jump
+    double k_0; // zeroth order term of jump
+    double k_1; // first order term of jump
   };
 
   // Access functions for UniversalDataLogger -------------------------------

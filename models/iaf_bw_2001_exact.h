@@ -439,6 +439,8 @@ iaf_bw_2001_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     if ( receptor_type == SynapseTypes::NMDA )
     {
+      // after the buffers are initialized, new synapses cannot be added since the buffers would have
+      // to be expanded
       if ( B_.e_ != nullptr )
       {
         throw IllegalConnection(

@@ -132,9 +132,7 @@ The term `models` in the context of NEST (and the field of computational neurosc
    :ref:`PyNEST API <pynest_api>`. Examples for such network models
    are the :doc:`microcircuit model
    <../auto_examples/Potjans_2014/index>` or the `multi-area model
-   <https://inm-6.github.io/multi-area-model/>`_). In the following
-   description, we focus on neuron and synapse models and not on
-   network models.
+   <https://inm-6.github.io/multi-area-model/>`_).
 
 .. seealso::
 

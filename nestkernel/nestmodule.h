@@ -389,6 +389,15 @@ public:
     void execute( SLIInterpreter* ) const override;
   } copymodel_l_l_Dfunction;
 
+  /** @BeginDocumentation
+   *  Name: Install - install dynamically loaded module
+   */
+  class Install_sFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const override;
+  } install_sfunction;
+
   class GetConnections_DFunction : public SLIFunction
   {
   public:

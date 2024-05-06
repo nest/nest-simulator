@@ -204,7 +204,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
@@ -368,9 +368,15 @@ def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_s
      - any parameters specific to the selected synapse model.
 
 
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
+
+
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     # Confirm that we got node collections

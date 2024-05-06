@@ -54,7 +54,7 @@ if ( HAVE_PYTHON )
   endif ()
 
   target_link_libraries( pynestkernel
-      nest_lib nestutil nestkernel sli_lib models ${EXTERNAL_MODULE_LIBRARIES}
+      nest_lib nestutil nestkernel sli_lib models
       )
 
   target_include_directories( pynestkernel PRIVATE

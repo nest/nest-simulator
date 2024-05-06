@@ -267,7 +267,7 @@ Roles look like this ``:role-name:`content```.
 We will only cover a few examples here. You can find more information at the following links:
 
 
-* `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html#id24>`_
+* `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html>`_
 
 * `reStructuredText Primer <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
 

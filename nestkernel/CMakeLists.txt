@@ -23,6 +23,7 @@ set ( nestkernel_sources
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h
@@ -34,7 +35,7 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
-      dynamicloader.h dynamicloader.cpp
+      module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -115,6 +116,7 @@ set ( nestkernel_sources
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
       )
 
 

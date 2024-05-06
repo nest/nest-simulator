@@ -25,7 +25,9 @@ scipy>=1.10.1
 seaborn>=0.12.2
 sphinx>=6.2.1
 sphinx_autobuild>=2021.3.14
+sphinx-carousel
 sphinx-copybutton>=0.5.2
+sphinx-carousel
 sphinx-notfound-page>=0.8.3
 sphinx-design>=0.4.1
 sphinx-gallery>=0.13.0

@@ -9,23 +9,23 @@ Guides on using synapses in NEST
 
 .. grid:: 1 1 2 2
 
-   .. grid-item-card::  Managing coonnections
+   .. grid-item-card:: Managing coonnections
 
-      :ref:`connectivity_concepts`
-      :ref:`connection_generator`
-      :ref:`synapse_specification`
+      * :ref:`connectivity_concepts`
+      * :ref:`connection_generator`
+      * :ref:`synapse_spec`
 
-  .. grid-item-card::
+  .. grid-item-card:: Weight normalization
       :class-title: sd-d-flex-row sd-align-minor-center
       :link: weight_normalization
       :link-type: ref
 
-  .. grid-item-card::
+  .. grid-item-card:: Gap Junctions
       :class-title: sd-d-flex-row sd-align-minor-center
       :link: sim_gap_junctions
       :link-type: ref
 
-  .. grid-item-card::
+  .. grid-item-card:: Connection functionality
       :class-title: sd-d-flex-row sd-align-minor-center
       :link: handling_connections
       :link-type: ref

@@ -173,6 +173,13 @@ nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_on
     }
     connbuilder_factories_.clear();
     connruledict_->clear();
+
+    for ( auto tcbf : thirdconnbuilder_factories_ )
+    {
+      delete tcbf;
+    }
+    thirdconnbuilder_factories_.clear();
+    thirdconnruledict_->clear();
   }
 }
 

@@ -76,6 +76,7 @@ References
 
 import os
 import zipfile
+import copy
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -321,13 +322,14 @@ params_common_syn_eprop_base = {
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
-    "weight_recorder": wr,
 }
 
-params_common_syn_eprop_train = params_common_syn_eprop_base.copy()
+params_common_syn_eprop_train = copy.deepcopy(params_common_syn_eprop_base)
+params_common_syn_eprop_train["weight_recorder"] = wr
 params_common_syn_eprop_train["optimizer"]["eta"] = 5e-3  # learning rate
 
-params_common_syn_eprop_test = params_common_syn_eprop_base.copy()
+params_common_syn_eprop_test = copy.deepcopy(params_common_syn_eprop_base)
+params_common_syn_eprop_test["weight_recorder"] = wr
 params_common_syn_eprop_test["optimizer"]["eta"] = 0.0
 
 params_syn_base = {

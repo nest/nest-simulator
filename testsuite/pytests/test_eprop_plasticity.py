@@ -69,7 +69,7 @@ def test_eprop_regression():
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
            potential future changes to the NEST code base or a faulty installation). These reference losses
            were obtained from a simulation with the verified NEST e-prop implementation run with
-           TODO UPDATE: Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and NEST@3304c6b5c.
+           Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and NEST@9b65de4bf.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator

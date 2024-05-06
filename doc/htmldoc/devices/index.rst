@@ -24,6 +24,7 @@ Guides on using devices in NEST
 .. toctree::
   :maxdepth: 1
   :glob:
+  :hidden:
 
   *
 

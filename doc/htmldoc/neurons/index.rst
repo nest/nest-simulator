@@ -7,9 +7,36 @@ All about neurons in NEST
 Guides on using neurons in NEST
 -------------------------------
 
+.. grid:: 1 1 2 2
+   :gutter: 1
+
+   .. grid-item::
+
+     .. grid:: 1 1 1 1
+
+        .. grid-item-card:: Node management (neurons and devices)
+
+             * :ref:`node_handles`
+             * :ref:`param_ex`
+
+   .. grid-item::
+
+     .. grid:: 1 1 1 1
+
+        .. grid-item-card:: Exact integration
+           :class-title: sd-d-flex-row sd-align-minor-center
+           :link: exact_integration
+           :link-type: ref
+
+        .. grid-item-card:: Precise spike times
+           :class-title: sd-d-flex-row sd-align-minor-center
+           :link: sim_precise_spike_times
+           :link-type: ref
+
 .. toctree::
   :maxdepth: 1
   :glob:
+  :hidden:
 
   *
 

@@ -6,9 +6,34 @@ All about synapses and connections in NEST
 Guides on using synapses in NEST
 --------------------------------
 
+
+.. grid:: 1 1 2 2
+
+   .. grid-item-card::  Managing coonnections
+
+      :ref:`connectivity_concepts`
+      :ref:`connection_generator`
+      :ref:`synapse_specification`
+
+  .. grid-item-card::
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :link: weight_normalization
+      :link-type: ref
+
+  .. grid-item-card::
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :link: sim_gap_junctions
+      :link-type: ref
+
+  .. grid-item-card::
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :link: handling_connections
+      :link-type: ref
+
 .. toctree::
   :maxdepth: 1
   :glob:
+  :hidden:
 
   *
 

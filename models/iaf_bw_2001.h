@@ -152,7 +152,7 @@ The following state variables evolve during simulation and are available either 
     For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_bw_2001. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
 
 .. note::
-    For technical reasons, spikes from iaf_bw_2001 neurons must be recorded with time_in_steps: True set in the spike recorder, ignoring the offset value. We hope to correct this in a future version of NEST.
+    For technical reasons, spikes from ``iaf_bw_2001`` neurons must be recorded with ``time_in_steps: True`` set in the spike recorder, ignoring the offset value. We hope to correct this in a future version of NEST.
 
 Sends
 +++++

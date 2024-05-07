@@ -98,7 +98,7 @@ neurons respectively, and :math:`\Delta_j` is an index set for the spike times o
 Since :math:`S_{j,\mathrm{AMPA}}` and :math:`S_{j,\mathrm{GABA}}` are piecewise exponential functions, the sums are also
 a piecewise exponential function, and can be stored in a single synaptic variable each, :math:`S_{\mathrm{AMPA}}` and
 :math:`S_{\mathrm{GABA}}` respectively. The sum over :math:`S_{j,\mathrm{NMDA}}` does not have a simple expression, and
-cannot be simplified. Therefore, for each synapse, we need to integrate separate state variable, which makes the model
+cannot be simplified. Therefore, for each synapse, we need to integrate separate state variables, which makes the model
 slow.
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,

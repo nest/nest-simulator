@@ -119,7 +119,7 @@ def run_sim(coherence, seed=123):
     # where the expectations are constant over intervals of 50ms,
     # and then change. The values for each interval are normally
     # distributed, with means `mu_a`and `mu_b`, and standard deviation
-    # sigma.
+    # `sigma`.
     signal_start = 1000.0
     signal_duration = 1000.0
     signal_update_interval = 50.0

@@ -168,7 +168,7 @@ References
 ++++++++++
 
 .. [1] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The Importance of NMDA Receptors to Working Memory. Journal of Neuroscience, 19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
-.. [2] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The Importance of NMDA Receptors to Working Memory. Journal of Neuroscience, 19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
+.. [2] Brunel, N., & Wang, X.-J. (2001). Effects of Neuromodulation in a Cortical Network Model of Object Working Memory Dominated by Recurrent Inhibition. Journal of Computational Neuroscience, 11(1), 63–85. https://doi.org/10.1023/A:1011204814320
 .. [3] Wang, X. J. (2002). Probabilistic decision making by slow reverberation in
        cortical circuits. Neuron, 36(5), 955-968. https://doi.org/10.1016/S0896-6273(02)01092-9
 

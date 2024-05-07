@@ -98,7 +98,7 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
     k_1 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1
 
 where :math:`\gamma` is the `lower incomplete gamma function
-<https://en.wikipedia.org/wiki/Incomplete_gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large t.
+<https://en.wikipedia.org/wiki/Incomplete_gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large `t`.
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.

@@ -30,7 +30,7 @@ Two different subsets of the excitatory population,
 comprising 15% of the total population each, receive additional
 inputs from a time-inhomogeneous Poisson process, where the
 coherence between the two signals can be varied. Local inhibition
-mediates a winner-takes-all comptetion, and the activity of
+mediates a winner-takes-all competition, and the activity of
 one of the sub-population is suppressed.
 
 References

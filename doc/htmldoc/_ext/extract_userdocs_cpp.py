@@ -39,7 +39,7 @@ def UserDocExtractor(filenames, basedir="../..", replace_ext=".rst", outdir="mod
     """
     Extract all user documentation from given files.
 
-    This method searches for "BeginUserDocs" and "EndUserDocs" keywords and
+    This function searches for "BeginUserDocs" and "EndUserDocs" keywords and
     extracts all text inbetween as user-level documentation. The keyword
     "BeginUserDocs" may optionally be followed by a colon ":" and a comma
     separated list of tags till the end of the line. Note that this allows tags
@@ -129,6 +129,7 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
     """
     Modify a given text by replacing the first section named as given in
     `short_description` by the filename and content of that section.
+
     Parameters
     ----------
     doc : str
@@ -138,6 +139,7 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
       messages).
     short_description : str
       title of the section that is to be rewritten to the document title
+
     Returns
     -------
     str

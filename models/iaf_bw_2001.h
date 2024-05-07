@@ -106,7 +106,7 @@ Additionally, the synapses from the external population are not separated from t
 
 For more implementation details and a comparison to the exact version see:
 
-- `wong_approximate_implementation <../model_details/wong_approximate_implementation.ipynb>`_
+- `Brunel_Wang_2001_Model_Approximation <../model_details/Brunel_Wang_2001_Model_Approximation.ipynb>`_
 
 Parameters
 ++++++++++

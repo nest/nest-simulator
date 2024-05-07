@@ -175,7 +175,7 @@ iaf_bw_2001
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: iaf_bw_2001
+.. listexamples:: iaf_bw_2001_exact
 
 EndUserDocs */
 // clang-format on

@@ -23,7 +23,7 @@
 Decision making in recurrent network with NMDA-dynamics
 ------------------------------------------------------------
 
-This script simulates the network modelled in [1]_.
+This script simulates the network modeled in [1]_.
 An excitatory and an inhibitory population receives input
 from an external population modelled as a Poisson process.
 Two different subsets of the excitatory population,

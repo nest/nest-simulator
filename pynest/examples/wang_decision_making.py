@@ -118,7 +118,7 @@ def run_sim(coherence, seed=123):
     # the signal is given by a time-inhomogeneous Poisson process,
     # where the expectations are constant over intervals of 50ms,
     # and then change. The values for each interval are normally
-    # distributed, with means mu_a and mu_b, and standard deviation
+    # distributed, with means `mu_a`and `mu_b`, and standard deviation
     # sigma.
     signal_start = 1000.0
     signal_duration = 1000.0

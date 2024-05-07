@@ -68,7 +68,7 @@ Description
 
 ``iaf_bw_2001`` is a leaky integrate-and-fire neuron model with
 
-* an approximate version of the neuron model described in [1,2,3]_.
+* an approximate version of the neuron model described in [1]_, [2]_, [3]_.
 * exponential conductance-based AMPA and GABA-synapses
 * exponential conductance-based NMDA-synapses weighted such that it approximates the original non-linear dynamics
 * a fixed refractory period

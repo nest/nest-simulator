@@ -61,7 +61,7 @@ extern "C" inline int iaf_bw_2001_exact_dynamics( double, const double y[], doub
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire-neuron model with conductance based synapses, and additional NMDA receptors.
+Leaky integrate-and-fire-neuron model with conductance based synapses and additional NMDA receptors.
 
 Description
 +++++++++++

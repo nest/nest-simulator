@@ -102,7 +102,7 @@ where :math:`\gamma` is the `lower incomplete gamma function
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
-Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
+Additionally, the synapses from the external population are not separated from the recurrent AMPA-synapses.
 
 For more implementation details and a comparison to the exact version see:
 

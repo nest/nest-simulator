@@ -104,7 +104,7 @@ slow.
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
-This model is slow to simulate when there are many neurons with NMDA-synapses, since each post-synaptic neuron simulates each pre-synaptic connection explicitly. The model iaf_bw_2001 is an approximation to this model which is significantly faster.
+This model is slow to simulate when there are many neurons with NMDA-synapses, since each post-synaptic neuron simulates each pre-synaptic connection explicitly. The model :doc:`iaf_bw_2001 </models/iaf_bw_2001>` is an approximation to this model which is significantly faster.
 
 Parameters
 ++++++++++

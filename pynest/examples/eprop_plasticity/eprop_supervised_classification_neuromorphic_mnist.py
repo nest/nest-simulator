@@ -547,6 +547,34 @@ params_gen_learning_window = {
     "amplitude_values": amplitude_values,
 }
 
+
+def create_input_output(loader, target_signal_value=1.0):
+    img_group, targets_group = loader.get_new_evaluation_group()
+
+    spike_times = [[] for _ in range(n_in)]
+    target_rates = np.zeros((n_out, steps["evaluation_group"]))
+
+    for group_elem in range(evaluation_group_size):
+        t_start_group_elem = group_elem * steps["sequence"]
+        t_end_group_elem = t_start_group_elem + steps["sequence"]
+        t_start_absolute = t_start_iteration + t_start_group_elem
+
+        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_value
+
+        for n, relative_times in enumerate(img_group[group_elem]):
+            if len(relative_times) > 0:
+                spike_times[n].extend(t_start_absolute + np.array(relative_times))
+
+    params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
+
+    amplitude_times = duration["total_offset"] + np.arange(t_start_iteration, t_end_iteration)
+
+    params_gen_rate_target = [
+        {"amplitude_times": amplitude_times, "amplitude_values": target_rate} for target_rate in target_rates
+    ]
+    return params_gen_spk_in, params_gen_rate_target
+
+
 # %% ###########################################################################################################
 # Force final update
 # ~~~~~~~~~~~~~~~~~~
@@ -620,8 +648,6 @@ nest.Simulate(duration["total_offset"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
-target_signal_value = 1.0
-
 for iteration in range(n_iter):
     t_start_iteration = iteration * duration["evaluation_group"]
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
@@ -634,29 +660,7 @@ for iteration in range(n_iter):
     params_common_syn_eprop["optimizer"]["eta"] = eta
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
-    img_group, targets_group = loader.get_new_evaluation_group()
-
-    spike_times = [[] for _ in range(n_in)]
-    target_rates = np.zeros((n_out, steps["evaluation_group"]))
-
-    for group_elem in range(evaluation_group_size):
-        t_start_group_elem = group_elem * steps["sequence"]
-        t_end_group_elem = t_start_group_elem + steps["sequence"]
-        t_start_absolute = t_start_iteration + t_start_group_elem
-
-        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_value
-
-        for n, relative_times in enumerate(img_group[group_elem]):
-            if len(relative_times) > 0:
-                spike_times[n].extend(t_start_absolute + np.array(relative_times))
-
-    params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
-
-    amplitude_times = duration["total_offset"] + np.arange(t_start_iteration, t_end_iteration)
-
-    params_gen_rate_target = [
-        {"amplitude_times": amplitude_times, "amplitude_values": target_rate} for target_rate in target_rates
-    ]
+    params_gen_spk_in, params_gen_rate_target = create_input_output(loader)
 
     nest.SetStatus(gen_spk_in, params_gen_spk_in)
     nest.SetStatus(gen_rate_target, params_gen_rate_target)

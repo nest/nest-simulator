@@ -528,8 +528,8 @@ train_path, test_path = download_and_extract_nmnist_dataset(save_path)
 
 selected_labels = [label for label in range(n_out)]
 
-train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blocklist)
-test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blocklist)
+data_loader_train = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blocklist)
+data_loader_test = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blocklist)
 
 amplitude_times = np.hstack(
     [
@@ -653,9 +653,9 @@ for iteration in range(n_iter):
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
     if iteration != 0 and iteration % test_every == 0:
-        loader, eta = test_loader, eta_test
+        loader, eta = data_loader_test, eta_test
     else:
-        loader, eta = train_loader, eta_train
+        loader, eta = data_loader_train, eta_train
 
     params_common_syn_eprop["optimizer"]["eta"] = eta
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)

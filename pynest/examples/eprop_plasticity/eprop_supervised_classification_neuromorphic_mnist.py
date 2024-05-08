@@ -76,7 +76,6 @@ References
 
 import os
 import zipfile
-import copy
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -315,22 +314,19 @@ weights_in_rec *= create_mask(weights_in_rec, 0.9)
 weights_rec_rec *= create_mask(weights_rec_rec, 0.98)
 weights_rec_out *= create_mask(weights_rec_out, 0.0)
 
-params_common_syn_eprop_base = {
+params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
+        "eta": 5e-3,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
+    "weight_recorder": wr,
 }
 
-params_common_syn_eprop_train = copy.deepcopy(params_common_syn_eprop_base)
-params_common_syn_eprop_train["weight_recorder"] = wr
-params_common_syn_eprop_train["optimizer"]["eta"] = 5e-3  # learning rate
-
-params_common_syn_eprop_test = copy.deepcopy(params_common_syn_eprop_base)
-params_common_syn_eprop_test["weight_recorder"] = wr
-params_common_syn_eprop_test["optimizer"]["eta"] = 0.0
+eta_train = 5e-3
+eta_test = 0.0
 
 params_syn_base = {
     "synapse_model": "eprop_synapse",
@@ -373,7 +369,7 @@ params_init_optimizer = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop_train)
+nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 
@@ -631,12 +627,11 @@ for iteration in range(n_iter):
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
     if iteration != 0 and iteration % test_every == 0:
-        loader = test_loader
-        params_common_syn_eprop = params_common_syn_eprop_test
+        loader, eta = test_loader, eta_test
     else:
-        loader = train_loader
-        params_common_syn_eprop = params_common_syn_eprop_train
+        loader, eta = train_loader, eta_train
 
+    params_common_syn_eprop["optimizer"]["eta"] = eta
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
     img_group, targets_group = loader.get_new_evaluation_group()

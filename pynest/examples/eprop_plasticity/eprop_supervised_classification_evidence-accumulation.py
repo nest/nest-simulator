@@ -603,7 +603,7 @@ events_wr = wr.get("events")
 # We evaluate the network's training error by calculating a loss - in this case, the mean squared error between
 # the integrated recurrent network activity and the target rate.
 
-readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
+readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
 senders = events_mm_out["senders"]
 
@@ -611,12 +611,12 @@ readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
 target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
 readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
-readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
-
 target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+
+readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
-loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=0), axis=(1, 2))
+loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
 y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)

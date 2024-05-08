@@ -601,14 +601,14 @@ def evaluate(n_iteration, iter_start):
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
-    readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
-
     target_signal = target_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
+
+    readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
     target_signal = target_signal[:, iter_start:, :, -steps["learning_window"] :]
 
-    loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
+    loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
-    y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=3), axis=0)
+    y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
     y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
     accuracy = np.mean((y_target == y_prediction), axis=1)
     recall_errors = 1.0 - accuracy

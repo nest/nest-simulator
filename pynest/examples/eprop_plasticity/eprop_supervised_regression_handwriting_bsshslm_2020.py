@@ -509,7 +509,13 @@ for sender in set(senders):
     error = (readout_signal[idc] - target_signal[idc]) ** 2
     loss_list.append(0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"])))
 
-loss = np.mean(loss_list, axis=0)
+readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+
+loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
 # %% ###########################################################################################################
 # Plot results

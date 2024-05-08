@@ -501,7 +501,7 @@ for sender in set(senders):
     error = (readout_signal[idc] - target_signal[idc]) ** 2
     loss_list.append(0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"])))
 
-loss = np.sum(loss_list, axis=0)
+loss = np.mean(loss_list, axis=0)
 
 
 # %% ###########################################################################################################

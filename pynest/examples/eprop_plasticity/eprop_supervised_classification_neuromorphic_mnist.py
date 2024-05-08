@@ -119,7 +119,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # individual data points presented one at a time, the `group_size` specifies the number of instances
 # over which the network's output is collectively assessed to compute the mean accuracy and error.
 
-group_size = 4  # number of instances to calculate the mean accuracy and error, 100 for convergence
+group_size = 4  # number of instances over which to evaluate the learning performance, 100 for convergence
 n_iter = 4  # number of iterations, 200 for convergence
 test_every = 10  # cyclical number of training iterations after which to test the performance
 

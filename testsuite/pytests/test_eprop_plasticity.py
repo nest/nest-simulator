@@ -60,7 +60,15 @@ def test_unsupported_model_raises(target_model):
         nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse"})
 
 
-def test_eprop_regression():
+@pytest.mark.parametrize(
+    "neuron_model,optimizer",
+    [
+        ("eprop_iaf", "adam"),
+        ("eprop_iaf_adapt", "gradient_descent"),
+        ("eprop_iaf_psc_delta", "gradient_descent"),
+    ],
+)
+def test_eprop_regression(neuron_model, optimizer):
     """
     Test correct computation of losses for a regression task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
@@ -78,7 +86,7 @@ def test_eprop_regression():
 
     # Define timing of task
 
-    n_batch = 1
+    group_size = 2
     n_iter = 5
 
     steps = {
@@ -86,7 +94,7 @@ def test_eprop_regression():
     }
 
     steps["learning_window"] = steps["sequence"]
-    steps["task"] = n_iter * n_batch * steps["sequence"]
+    steps["task"] = n_iter * group_size * steps["sequence"]
 
     steps.update(
         {
@@ -151,9 +159,15 @@ def test_eprop_regression():
         "kappa": 0.97,
     }
 
+    if neuron_model == "eprop_iaf_psc_delta":
+        del params_nrn_rec["regular_spike_arrival"]
+        params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
+        params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
+        params_nrn_rec["V_th"] = 0.5
+
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
-    nrns_rec = nest.Create("eprop_iaf", n_rec, params_nrn_rec)
+    nrns_rec = nest.Create(neuron_model, n_rec, params_nrn_rec)
     nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
     gen_learning_window = nest.Create("step_rate_generator")
@@ -205,14 +219,19 @@ def test_eprop_regression():
 
     params_common_syn_eprop = {
         "optimizer": {
-            "type": "gradient_descent",
-            "batch_size": n_batch,
+            "type": optimizer,
+            "batch_size": 1,
             "eta": 1e-4,
             "Wmin": -100.0,
             "Wmax": 100.0,
         },
         "weight_recorder": wr,
     }
+
+    if optimizer == "adam":
+        params_common_syn_eprop["optimizer"]["beta_1"] = 0.9
+        params_common_syn_eprop["optimizer"]["beta_2"] = 0.999
+        params_common_syn_eprop["optimizer"]["epsilon"] = 1e-7
 
     params_syn_base = {
         "synapse_model": "eprop_synapse",
@@ -304,7 +323,7 @@ def test_eprop_regression():
 
     params_gen_rate_target = {
         "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
-        "amplitude_values": np.tile(target_signal, n_iter * n_batch),
+        "amplitude_values": np.tile(target_signal, n_iter * group_size),
     }
 
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
@@ -330,20 +349,49 @@ def test_eprop_regression():
 
     readout_signal = events_mm_out["readout_signal"]
     target_signal = events_mm_out["target_signal"]
+    senders = events_mm_out["senders"]
 
-    error = (readout_signal - target_signal) ** 2
-    loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+    readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
+
+    loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
     # Verify results
 
-    loss_NEST_reference = np.array(
-        [
-            102.32452148947576,
-            102.02905791284469,
-            104.18266745765690,
-            104.67929923397385,
-            105.13095153301973,
-        ]
-    )
+    if neuron_model == "eprop_iaf":
+        loss_NEST_reference = np.array(
+            [
+                115.18883444998838,
+                102.72225734161191,
+                91.09860416985143,
+                81.78596643400449,
+                67.49056117141924,
+            ]
+        )
+
+    elif neuron_model == "eprop_iaf_adapt":
+        loss_NEST_reference = np.array(
+            [
+                118.83409581341101,
+                88.51701482785218,
+                92.27960444728623,
+                91.08112706904505,
+                90.73396088060808,
+            ]
+        )
+
+    elif neuron_model == "eprop_iaf_psc_delta":
+        loss_NEST_reference = np.array(
+            [
+                99.72592024670320,
+                99.18740835025940,
+                97.36943205526256,
+                97.22479143972691,
+                95.04049338307325,
+            ]
+        )
 
     assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)

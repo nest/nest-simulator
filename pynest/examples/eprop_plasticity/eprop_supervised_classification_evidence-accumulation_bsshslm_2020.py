@@ -116,8 +116,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
 # The original number of iterations requires distributed computing.
 
-n_batch = 1  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 5  # number of iterations, 2000 in reference [2], 50 with n_batch 32 converges
+batch_size = 1  # batch size, 64 in reference [2], 32 in the README to reference [2]
+n_iter = 5  # number of iterations, 2000 in reference [2], 50 with batch_size 32 converges
 
 n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall, noise
 n_cues = 7  # number of cues given before decision
@@ -133,7 +133,7 @@ steps = {
 steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])  # time steps of all cues
 steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]  # time steps of one full sequence
 steps["learning_window"] = steps["recall"]  # time steps of window with non-zero learning signals
-steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
+steps["task"] = n_iter * batch_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -343,7 +343,7 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 params_common_syn_eprop = {
     "optimizer": {
         "type": "adam",  # algorithm to optimize the weights
-        "batch_size": n_batch,
+        "batch_size": batch_size,
         "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
         "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
         "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
@@ -434,23 +434,23 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
 
 def generate_evidence_accumulation_input_output(
-    n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+    batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
 ):
     n_pop_nrn = n_in // n_input_symbols
 
     prob_choices = np.array([prob_group, 1 - prob_group], dtype=np.float32)
-    idx = np.random.choice([0, 1], n_batch)
-    probs = np.zeros((n_batch, 2), dtype=np.float32)
+    idx = np.random.choice([0, 1], batch_size)
+    probs = np.zeros((batch_size, 2), dtype=np.float32)
     probs[:, 0] = prob_choices[idx]
     probs[:, 1] = prob_choices[1 - idx]
 
-    batched_cues = np.zeros((n_batch, n_cues), dtype=int)
-    for b_idx in range(n_batch):
+    batched_cues = np.zeros((batch_size, n_cues), dtype=int)
+    for b_idx in range(batch_size):
         batched_cues[b_idx, :] = np.random.choice([0, 1], n_cues, p=probs[b_idx])
 
-    input_spike_probs = np.zeros((n_batch, steps["sequence"], n_in))
+    input_spike_probs = np.zeros((batch_size, steps["sequence"], n_in))
 
-    for b_idx in range(n_batch):
+    for b_idx in range(batch_size):
         for c_idx in range(n_cues):
             cue = batched_cues[b_idx, c_idx]
 
@@ -467,7 +467,7 @@ def generate_evidence_accumulation_input_output(
     input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
     input_spike_bools[:, 0, :] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-    target_cues = np.zeros(n_batch, dtype=int)
+    target_cues = np.zeros(batch_size, dtype=int)
     target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)
 
     return input_spike_bools, target_cues
@@ -481,7 +481,7 @@ target_cues_list = []
 
 for iteration in range(n_iter):
     input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
-        n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+        batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     )
     input_spike_bools_list.append(input_spike_bools)
     target_cues_list.extend(target_cues.tolist())
@@ -494,8 +494,8 @@ params_gen_spk_in = [
     for nrn_in_idx in range(n_in)
 ]
 
-target_rate_changes = np.zeros((n_out, n_batch * n_iter))
-target_rate_changes[np.array(target_cues_list), np.arange(n_batch * n_iter)] = 1
+target_rate_changes = np.zeros((n_out, batch_size * n_iter))
+target_rate_changes[np.array(target_cues_list), np.arange(batch_size * n_iter)] = 1
 
 params_gen_rate_target = [
     {
@@ -590,10 +590,10 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
 target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
-readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
 
-target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))

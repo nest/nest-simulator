@@ -114,10 +114,13 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
-# The original number of iterations requires distributed computing.
+# The variable `group_size` is utilized post-training to aggregate and analyze the performance
+# metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on
+# individual data points presented one at a time, the `group_size` specifies the number of instances
+# over which the network's output is collectively assessed to compute the mean accuracy and error.
 
-n_batch = 1  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 5  # number of iterations, 2000 in reference [2], 50 with n_batch 32 converges
+group_size = 1  # number of instances over which to evaluate the learning performance, 32 for convergence
+n_iter = 5  # number of iterations, 50 with group_size 32 converges
 
 n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall, noise
 n_cues = 7  # number of cues given before decision
@@ -133,7 +136,7 @@ steps = {
 steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])  # time steps of all cues
 steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]  # time steps of one full sequence
 steps["learning_window"] = steps["recall"]  # time steps of window with non-zero learning signals
-steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
+steps["task"] = n_iter * group_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -340,7 +343,7 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 params_common_syn_eprop = {
     "optimizer": {
         "type": "adam",  # algorithm to optimize the weights
-        "batch_size": n_batch,
+        "batch_size": 1,
         "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
         "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
         "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
@@ -475,7 +478,7 @@ target_cues_list = []
 
 for iteration in range(n_iter):
     input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
-        n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+        group_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     )
     input_spike_bools_list.append(input_spike_bools)
     target_cues_list.extend(target_cues.tolist())
@@ -488,8 +491,8 @@ params_gen_spk_in = [
     for nrn_in_idx in range(n_in)
 ]
 
-target_rate_changes = np.zeros((n_out, n_batch * n_iter))
-target_rate_changes[np.array(target_cues_list), np.arange(n_batch * n_iter)] = 1
+target_rate_changes = np.zeros((n_out, group_size * n_iter))
+target_rate_changes[np.array(target_cues_list), np.arange(group_size * n_iter)] = 1
 
 params_gen_rate_target = [
     {
@@ -516,11 +519,11 @@ amplitude_times = np.hstack(
         np.array([0.0, duration["sequence"] - duration["learning_window"]])
         + duration["total_offset"]
         + i * duration["sequence"]
-        for i in range(n_batch * n_iter)
+        for i in range(group_size * n_iter)
     ]
 )
 
-amplitude_values = np.array([0.0, 1.0] * n_batch * n_iter)
+amplitude_values = np.array([0.0, 1.0] * group_size * n_iter)
 
 params_gen_learning_window = {
     "amplitude_times": amplitude_times,
@@ -603,20 +606,20 @@ events_wr = wr.get("events")
 # We evaluate the network's training error by calculating a loss - in this case, the mean squared error between
 # the integrated recurrent network activity and the target rate.
 
-readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
+readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
 senders = events_mm_out["senders"]
 
 readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
 target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
-readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
 
-target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
-loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=0), axis=(1, 2))
+loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
 y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)

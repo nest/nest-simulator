@@ -76,7 +76,6 @@ References
 
 import os
 import zipfile
-import copy
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -115,12 +114,12 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
-# The variable `evaluation_group_size` is utilized post-training to aggregate and analyze the performance
+# The variable `group_size` is utilized post-training to aggregate and analyze the performance
 # metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on
-# individual data points presented one at a time, the `evaluation_group_size` specifies the number of instances
+# individual data points presented one at a time, the `group_size` specifies the number of instances
 # over which the network's output is collectively assessed to compute the mean accuracy and error.
 
-evaluation_group_size = 4  # number of instances to calculate the mean accuracy and error, 100 for convergence
+group_size = 4  # number of instances over which to evaluate the learning performance, 100 for convergence
 n_iter = 4  # number of iterations, 200 for convergence
 test_every = 10  # cyclical number of training iterations after which to test the performance
 
@@ -128,8 +127,8 @@ steps = {}
 
 steps["sequence"] = 300  # time steps of one full sequence
 steps["learning_window"] = 10  # time steps of window with non-zero learning signals
-steps["evaluation_group"] = evaluation_group_size * steps["sequence"]
-steps["task"] = n_iter * evaluation_group_size * steps["sequence"]  # time steps of task
+steps["evaluation_group"] = group_size * steps["sequence"]
+steps["task"] = n_iter * group_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -315,22 +314,19 @@ weights_in_rec *= create_mask(weights_in_rec, 0.9)
 weights_rec_rec *= create_mask(weights_rec_rec, 0.98)
 weights_rec_out *= create_mask(weights_rec_out, 0.0)
 
-params_common_syn_eprop_base = {
+params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
+        "eta": 5e-3,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
+    "weight_recorder": wr,
 }
 
-params_common_syn_eprop_train = copy.deepcopy(params_common_syn_eprop_base)
-params_common_syn_eprop_train["weight_recorder"] = wr
-params_common_syn_eprop_train["optimizer"]["eta"] = 5e-3  # learning rate
-
-params_common_syn_eprop_test = copy.deepcopy(params_common_syn_eprop_base)
-params_common_syn_eprop_test["weight_recorder"] = wr
-params_common_syn_eprop_test["optimizer"]["eta"] = 0.0
+eta_train = 5e-3
+eta_test = 0.0
 
 params_syn_base = {
     "synapse_model": "eprop_synapse",
@@ -373,7 +369,7 @@ params_init_optimizer = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop_train)
+nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 
@@ -489,10 +485,10 @@ def load_image(file_path, pixels_blocklist=None):
 
 
 class DataLoader:
-    def __init__(self, path, selected_labels, evaluation_group_size, pixels_blocklist=None):
+    def __init__(self, path, selected_labels, group_size, pixels_blocklist=None):
         self.path = path
         self.selected_labels = selected_labels
-        self.evaluation_group_size = evaluation_group_size
+        self.group_size = group_size
         self.pixels_blocklist = pixels_blocklist
 
         self.current_index = 0
@@ -515,11 +511,11 @@ class DataLoader:
         return all_sample_paths, all_labels
 
     def get_new_evaluation_group(self):
-        end_index = self.current_index + self.evaluation_group_size
+        end_index = self.current_index + self.group_size
 
         selected_indices = np.take(self.shuffled_indices, range(self.current_index, end_index), mode="wrap")
 
-        self.current_index = (self.current_index + self.evaluation_group_size) % self.n_all_samples
+        self.current_index = (self.current_index + self.group_size) % self.n_all_samples
 
         images_group = [load_image(self.all_sample_paths[i], self.pixels_blocklist) for i in selected_indices]
         labels_group = [self.all_labels[i] for i in selected_indices]
@@ -532,24 +528,52 @@ train_path, test_path = download_and_extract_nmnist_dataset(save_path)
 
 selected_labels = [label for label in range(n_out)]
 
-train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blocklist)
-test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blocklist)
+data_loader_train = DataLoader(train_path, selected_labels, group_size, pixels_blocklist)
+data_loader_test = DataLoader(test_path, selected_labels, group_size, pixels_blocklist)
 
 amplitude_times = np.hstack(
     [
         np.array([0.0, duration["sequence"] - duration["learning_window"]])
         + duration["total_offset"]
         + i * duration["sequence"]
-        for i in range(evaluation_group_size * n_iter)
+        for i in range(group_size * n_iter)
     ]
 )
 
-amplitude_values = np.array([0.0, 1.0] * evaluation_group_size * n_iter)
+amplitude_values = np.array([0.0, 1.0] * group_size * n_iter)
 
 params_gen_learning_window = {
     "amplitude_times": amplitude_times,
     "amplitude_values": amplitude_values,
 }
+
+
+def create_input_output(loader, target_signal_value=1.0):
+    img_group, targets_group = loader.get_new_evaluation_group()
+
+    spike_times = [[] for _ in range(n_in)]
+    target_rates = np.zeros((n_out, steps["evaluation_group"]))
+
+    for group_elem in range(group_size):
+        t_start_group_elem = group_elem * steps["sequence"]
+        t_end_group_elem = t_start_group_elem + steps["sequence"]
+        t_start_absolute = t_start_iteration + t_start_group_elem
+
+        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_value
+
+        for n, relative_times in enumerate(img_group[group_elem]):
+            if len(relative_times) > 0:
+                spike_times[n].extend(t_start_absolute + np.array(relative_times))
+
+    params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
+
+    amplitude_times = duration["total_offset"] + np.arange(t_start_iteration, t_end_iteration)
+
+    params_gen_rate_target = [
+        {"amplitude_times": amplitude_times, "amplitude_values": target_rate} for target_rate in target_rates
+    ]
+    return params_gen_spk_in, params_gen_rate_target
+
 
 # %% ###########################################################################################################
 # Force final update
@@ -604,15 +628,15 @@ def evaluate(n_iteration, iter_start):
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
-    readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
+    readout_signal = readout_signal.reshape((n_out, n_iteration, group_size, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, n_iteration, group_size, steps["sequence"]))
 
-    target_signal = target_signal.reshape((n_out, n_iteration, evaluation_group_size, steps["sequence"]))
+    readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
     target_signal = target_signal[:, iter_start:, :, -steps["learning_window"] :]
 
-    loss = np.mean(np.mean((target_signal - readout_signal) ** 2, axis=3), axis=(0, 2))
+    loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
-    y_prediction = np.argmin(np.mean((target_signal_value - readout_signal) ** 2, axis=3), axis=0)
+    y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
     y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
     accuracy = np.mean((y_target == y_prediction), axis=1)
     recall_errors = 1.0 - accuracy
@@ -624,44 +648,19 @@ nest.Simulate(duration["total_offset"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
-target_signal_value = 1.0
-
 for iteration in range(n_iter):
     t_start_iteration = iteration * duration["evaluation_group"]
     t_end_iteration = t_start_iteration + duration["evaluation_group"]
 
     if iteration != 0 and iteration % test_every == 0:
-        loader = test_loader
-        params_common_syn_eprop = params_common_syn_eprop_test
+        loader, eta = data_loader_test, eta_test
     else:
-        loader = train_loader
-        params_common_syn_eprop = params_common_syn_eprop_train
+        loader, eta = data_loader_train, eta_train
 
+    params_common_syn_eprop["optimizer"]["eta"] = eta
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
-    img_group, targets_group = loader.get_new_evaluation_group()
-
-    spike_times = [[] for _ in range(n_in)]
-    target_rates = np.zeros((n_out, steps["evaluation_group"]))
-
-    for group_elem in range(evaluation_group_size):
-        t_start_group_elem = group_elem * steps["sequence"]
-        t_end_group_elem = t_start_group_elem + steps["sequence"]
-        t_start_absolute = t_start_iteration + t_start_group_elem
-
-        target_rates[targets_group[group_elem], t_start_group_elem:t_end_group_elem] = target_signal_value
-
-        for n, relative_times in enumerate(img_group[group_elem]):
-            if len(relative_times) > 0:
-                spike_times[n].extend(t_start_absolute + np.array(relative_times))
-
-    params_gen_spk_in = [{"spike_times": spk_times} for spk_times in spike_times]
-
-    amplitude_times = duration["total_offset"] + np.arange(t_start_iteration, t_end_iteration)
-
-    params_gen_rate_target = [
-        {"amplitude_times": amplitude_times, "amplitude_values": target_rate} for target_rate in target_rates
-    ]
+    params_gen_spk_in, params_gen_rate_target = create_input_output(loader)
 
     nest.SetStatus(gen_spk_in, params_gen_spk_in)
     nest.SetStatus(gen_rate_target, params_gen_rate_target)

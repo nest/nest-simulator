@@ -108,7 +108,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 
-n_batch = 1  # batch size, 1 in reference [2]
+batch_size = 1  # batch size, 1 in reference [2]
 n_iter = 5  # number of iterations, 2000 in reference [2]
 
 steps = {
@@ -116,7 +116,7 @@ steps = {
 }
 
 steps["learning_window"] = steps["sequence"]  # time steps of window with non-zero learning signals
-steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
+steps["task"] = n_iter * batch_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -281,7 +281,7 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype
 params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
-        "batch_size": n_batch,
+        "batch_size": batch_size,
         "eta": 1e-4,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
@@ -391,7 +391,7 @@ target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 
 
 params_gen_rate_target = {
     "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
-    "amplitude_values": np.tile(target_signal, n_iter * n_batch),
+    "amplitude_values": np.tile(target_signal, n_iter * batch_size),
 }
 
 ####################
@@ -471,9 +471,15 @@ events_wr = wr.get("events")
 
 readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
+senders = events_mm_out["senders"]
 
-error = (readout_signal - target_signal) ** 2
-loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
+readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+
+loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
 # %% ###########################################################################################################
 # Plot results

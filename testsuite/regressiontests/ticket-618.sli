@@ -46,7 +46,8 @@ Author: Hans Ekkehard Plesser, 2012-12-11
 
 M_ERROR setverbosity
 
-/excluded_models [ /eprop_iaf_bsshslm_2020 /eprop_iaf_adapt_bsshslm_2020 /eprop_readout_bsshslm_2020 ] def
+/excluded_models [ /eprop_iaf_bsshslm_2020 /eprop_iaf_adapt_bsshslm_2020 /eprop_readout_bsshslm_2020
+                   /eprop_iaf /eprop_iaf_adapt /eprop_iaf_psc_delta /eprop_readout ] def
 
 {
   GetKernelStatus /node_models get

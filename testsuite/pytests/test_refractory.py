@@ -60,6 +60,8 @@ neurons_interspike_ps = ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps
 neurons_eprop = [
     "eprop_iaf_bsshslm_2020",
     "eprop_iaf_adapt_bsshslm_2020",
+    "eprop_iaf",
+    "eprop_iaf_adapt",
 ]
 
 # Models that first clamp the membrane potential at a higher value
@@ -85,6 +87,7 @@ ignore_model = [
     "siegert_neuron",  # This one does not connect to voltmeter
     "step_rate_generator",  # No regular neuron model
     "eprop_readout_bsshslm_2020",  # This one does not spike
+    "eprop_readout",  # This one does not spike
     "iaf_tum_2000",  # Hijacks the offset field, see #2912
 ]
 

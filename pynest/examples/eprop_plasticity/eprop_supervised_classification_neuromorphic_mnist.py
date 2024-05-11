@@ -523,31 +523,6 @@ class DataLoader:
         return images_group, labels_group
 
 
-save_path = "./"  # path to save the N-MNIST dataset to
-train_path, test_path = download_and_extract_nmnist_dataset(save_path)
-
-selected_labels = [label for label in range(n_out)]
-
-data_loader_train = DataLoader(train_path, selected_labels, group_size, pixels_blocklist)
-data_loader_test = DataLoader(test_path, selected_labels, group_size, pixels_blocklist)
-
-amplitude_times = np.hstack(
-    [
-        np.array([0.0, duration["sequence"] - duration["learning_window"]])
-        + duration["total_offset"]
-        + i * duration["sequence"]
-        for i in range(group_size * n_iter)
-    ]
-)
-
-amplitude_values = np.array([0.0, 1.0] * group_size * n_iter)
-
-params_gen_learning_window = {
-    "amplitude_times": amplitude_times,
-    "amplitude_values": amplitude_values,
-}
-
-
 def create_input_output(loader, target_signal_value=1.0):
     img_group, targets_group = loader.get_new_evaluation_group()
 
@@ -574,6 +549,30 @@ def create_input_output(loader, target_signal_value=1.0):
     ]
     return params_gen_spk_in, params_gen_rate_target
 
+
+save_path = "./"  # path to save the N-MNIST dataset to
+train_path, test_path = download_and_extract_nmnist_dataset(save_path)
+
+selected_labels = [label for label in range(n_out)]
+
+data_loader_train = DataLoader(train_path, selected_labels, group_size, pixels_blocklist)
+data_loader_test = DataLoader(test_path, selected_labels, group_size, pixels_blocklist)
+
+amplitude_times = np.hstack(
+    [
+        np.array([0.0, duration["sequence"] - duration["learning_window"]])
+        + duration["total_offset"]
+        + i * duration["sequence"]
+        for i in range(group_size * n_iter)
+    ]
+)
+
+amplitude_values = np.array([0.0, 1.0] * group_size * n_iter)
+
+params_gen_learning_window = {
+    "amplitude_times": amplitude_times,
+    "amplitude_values": amplitude_values,
+}
 
 # %% ###########################################################################################################
 # Force final update

@@ -282,9 +282,9 @@ public:
   ConnectionManager connection_manager;
   SPManager sp_manager;
   EventDeliveryManager event_delivery_manager;
+  IOManager io_manager;
   ModelManager model_manager;
   MUSICManager music_manager;
-  IOManager io_manager;
   NodeManager node_manager;
   /**@}*/
 private:

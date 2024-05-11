@@ -41,12 +41,14 @@ soma_params = {
     "g_C": 0.0,  # soma has no parent
     "g_L": 1.0,  # [nS] Leak conductance
     "e_L": -70.0,  # [mV] leak reversal
+    "v_comp": -70.0,  # [mV] voltage initialization
 }
 dend_params = {
     "C_m": 0.1,  # [pF] Capacitance
     "g_C": 0.1,  # [nS] Coupling conductance to parent (soma here)
     "g_L": 0.1,  # [nS] Leak conductance
     "e_L": -70.0,  # [mV] leak reversal
+    "v_comp": -70.0,  # [mV] voltage initialization
 }
 
 ###############################################################################

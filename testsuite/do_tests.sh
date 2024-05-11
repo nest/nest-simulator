@@ -112,22 +112,13 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
+# Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 
-# create the report directory in TEST_BASEDIR. Save and restore the old value
-# of TMPDIR.
-
-if [[ "${TMPDIR-}" ]]; then
-    OLD_TMPDIR=$TMPDIR
-fi
-
-TMPDIR=$TEST_BASEDIR
-REPORTDIR="$(mktemp -d test_report_XXX)"
-
-if [[ "${OLD_TMPDIR-}" ]]; then
-    TMPDIR=OLD_TMPDIR
-    unset OLD_TMPDIR
-fi
+# Create the report directory in the directory in which make installcheck is called (do_tests.sh is run).
+# Use absolute pathnames, this is necessary for MUSIC tests which otherwis will not find the logfiles
+# while running in temporary directories.
+REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"

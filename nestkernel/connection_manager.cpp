@@ -41,8 +41,10 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
+#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
+#include "connection_manager_impl.h"
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
@@ -95,6 +97,20 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
 {
   if ( not adjust_number_of_threads_or_rng_only )
   {
+    // Add connection rules
+    register_conn_builder< OneToOneBuilder >( "one_to_one" );
+    register_conn_builder< AllToAllBuilder >( "all_to_all" );
+    register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+    register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+    register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+    register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
+    register_conn_builder< TripartiteBernoulliWithPoolBuilder >( "tripartite_bernoulli_with_pool" );
+    register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+    register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+#ifdef HAVE_LIBNEUROSIM
+    register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
+
     keep_source_table_ = true;
     connections_have_changed_ = false;
     get_connections_has_been_called_ = false;
@@ -137,7 +153,7 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
 }
 
 void
-nest::ConnectionManager::finalize( const bool )
+nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -146,6 +162,16 @@ nest::ConnectionManager::finalize( const bool )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    for ( auto cbf : connbuilder_factories_ )
+    {
+      delete cbf;
+    }
+    connbuilder_factories_.clear();
+    connruledict_->clear();
+  }
 }
 
 void

@@ -61,27 +61,83 @@ namespace nest
 IOManager::IOManager()
   : overwrite_files_( false )
 {
-  register_recording_backend< RecordingBackendASCII >( "ascii" );
-  register_recording_backend< RecordingBackendMemory >( "memory" );
-  register_recording_backend< RecordingBackendScreen >( "screen" );
-#ifdef HAVE_MPI
-  register_recording_backend< RecordingBackendMPI >( "mpi" );
-  register_stimulation_backend< StimulationBackendMPI >( "mpi" );
-#endif
-#ifdef HAVE_SIONLIB
-  register_recording_backend< RecordingBackendSIONlib >( "sionlib" );
-#endif
 }
 
 IOManager::~IOManager()
 {
-  for ( auto& it : recording_backends_ )
+}
+
+void
+IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
+{
+  if ( not adjust_number_of_threads_or_rng_only )
   {
-    delete it.second;
+    // Register backends again, since finalize cleans up
+    // so backends from external modules are unloaded
+    register_recording_backend< RecordingBackendASCII >( "ascii" );
+    register_recording_backend< RecordingBackendMemory >( "memory" );
+    register_recording_backend< RecordingBackendScreen >( "screen" );
+#ifdef HAVE_MPI
+    register_recording_backend< RecordingBackendMPI >( "mpi" );
+    register_stimulation_backend< StimulationBackendMPI >( "mpi" );
+#endif
+#ifdef HAVE_SIONLIB
+    register_recording_backend< RecordingBackendSIONlib >( "sionlib" );
+#endif
+
+    DictionaryDatum dict( new Dictionary );
+    // The properties data_path and data_prefix can be set via environment variables
+    char* data_path = std::getenv( "NEST_DATA_PATH" );
+    if ( data_path )
+    {
+      ( *dict )[ names::data_path ] = std::string( data_path );
+    }
+    char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
+    if ( data_prefix )
+    {
+      ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+    }
+
+    set_data_path_prefix_( dict );
+
+    overwrite_files_ = false;
   }
-  for ( auto& it : stimulation_backends_ )
+
+  for ( const auto& it : recording_backends_ )
   {
-    delete it.second;
+    it.second->initialize();
+  }
+  for ( const auto& it : stimulation_backends_ )
+  {
+    it.second->initialize();
+  }
+}
+
+void
+IOManager::finalize( const bool adjust_number_of_threads_or_rng_only )
+{
+  for ( const auto& it : recording_backends_ )
+  {
+    it.second->finalize();
+  }
+  for ( const auto& it : stimulation_backends_ )
+  {
+    it.second->finalize();
+  }
+
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    for ( const auto& it : recording_backends_ )
+    {
+      delete it.second;
+    }
+    recording_backends_.clear();
+
+    for ( const auto& it : stimulation_backends_ )
+    {
+      delete it.second;
+    }
+    stimulation_backends_.clear();
   }
 }
 
@@ -128,52 +184,6 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
     {
       LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
     }
-  }
-}
-
-void
-IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
-{
-  if ( not adjust_number_of_threads_or_rng_only )
-  {
-    DictionaryDatum dict( new Dictionary );
-    // The properties data_path and data_prefix can be set via environment variables
-    char* data_path = std::getenv( "NEST_DATA_PATH" );
-    if ( data_path )
-    {
-      ( *dict )[ names::data_path ] = std::string( data_path );
-    }
-    char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-    if ( data_prefix )
-    {
-      ( *dict )[ names::data_prefix ] = std::string( data_prefix );
-    }
-
-    set_data_path_prefix_( dict );
-
-    overwrite_files_ = false;
-  }
-
-  for ( const auto& it : recording_backends_ )
-  {
-    it.second->initialize();
-  }
-  for ( const auto& it : stimulation_backends_ )
-  {
-    it.second->initialize();
-  }
-}
-
-void
-IOManager::finalize( const bool )
-{
-  for ( const auto& it : recording_backends_ )
-  {
-    it.second->finalize();
-  }
-  for ( const auto& it : stimulation_backends_ )
-  {
-    it.second->finalize();
   }
 }
 

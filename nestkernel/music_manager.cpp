@@ -48,18 +48,8 @@ MUSICManager::MUSICManager()
 }
 
 void
-MUSICManager::initialize( const bool adjust_number_of_threads_or_rng_only )
+MUSICManager::initialize( const bool )
 {
-  if ( adjust_number_of_threads_or_rng_only )
-  {
-    return;
-  }
-
-#ifdef HAVE_MUSIC
-  // Reset music_in_portlist_ to its pristine state.
-  // See comment above pristine_music_in_portlist_ in the header.
-  music_in_portlist_ = pristine_music_in_portlist_;
-#endif
 }
 
 void
@@ -163,7 +153,7 @@ MUSICManager::advance_music_time()
 }
 
 void
-MUSICManager::register_music_in_port( std::string portname, bool pristine )
+MUSICManager::register_music_in_port( std::string portname )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
@@ -174,12 +164,6 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
   else
   {
     music_in_portlist_[ portname ].n_input_proxies++;
-  }
-
-  // pristine is true if we are building up the initial portlist
-  if ( pristine )
-  {
-    pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
   }
 }
 

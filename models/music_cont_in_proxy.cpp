@@ -38,6 +38,14 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_music_cont_in_proxy( const std::string& name )
+{
+  register_node_model< music_cont_in_proxy >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

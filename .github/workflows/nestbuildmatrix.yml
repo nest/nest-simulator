@@ -20,7 +20,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -66,7 +66,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -93,7 +93,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -125,7 +125,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -152,7 +152,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -175,7 +175,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -193,7 +193,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -220,7 +220,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -247,7 +247,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -313,7 +313,7 @@ jobs:
   #   needs: [build_macos]
   #   steps:
   #     - name: "Checkout repository content"
-  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+  #       uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
   #       with:
   #         fetch-depth: 0
 
@@ -340,7 +340,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -361,7 +361,7 @@ jobs:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -380,7 +380,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -399,7 +399,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -428,7 +428,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -474,7 +474,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -527,7 +527,7 @@ jobs:
           - "boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music"
 
     steps:
       - name: Harden Runner
@@ -537,7 +537,7 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
@@ -547,7 +547,7 @@ jobs:
           python-version: 3.9
 
       - name: "Restore apt cache"
-        uses: actions/cache@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         env:
           cache-name: "apt-cache"
         with:
@@ -588,7 +588,7 @@ jobs:
         # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
-        uses: actions/cache@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             $HOME/.ccache
@@ -604,7 +604,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -678,13 +678,22 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
+
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
 
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |
@@ -742,14 +751,14 @@ jobs:
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: "Install MacOS system dependencies"
         run: |
@@ -758,7 +767,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@ab5e6d0c87105b4c9c2047343972218f562e4319 # v4.0.1
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -798,13 +807,22 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
+
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
 
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |

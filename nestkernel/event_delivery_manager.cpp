@@ -497,7 +497,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
       ++num_spikes_per_rank[ rank ];
 
       // We do not break if condition is false, because there may be spikes that
-      // can be send to other ranks than the one that is full.
+      // can be sent to other ranks than the one that is full.
       if ( not send_buffer_position.is_chunk_filled( rank ) )
       {
         send_buffer[ send_buffer_position.idx( rank ) ] = emitted_spike.spike_data;

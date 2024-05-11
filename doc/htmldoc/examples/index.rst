@@ -80,6 +80,17 @@ PyNEST examples
 
            * :doc:`../auto_examples/Potjans_2014/index`
 
+
+
+    .. grid-item-card:: EI clustered network (Rostami et al)
+           :img-top: ../static/img/pynest/EI_clustered_network_schematic.png
+
+           :doc:`../auto_examples/EI_clustered_network/index`
+
+
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
 
@@ -87,22 +98,11 @@ PyNEST examples
            * :doc:`../auto_examples/glif_psc_neuron`
            * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
 
-
-
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Compartmental neurons
            :img-top: ../static/img/pynest/dendritic_synapse_conductances.png
 
            * :doc:`../auto_examples/compartmental_model/receptors_and_current`
            * :doc:`../auto_examples/compartmental_model/two_comps`
-
-
-    .. grid-item-card:: Rate neurons
-           :img-top: ../static/img/pynest/rate_neuron.png
-
-           * :doc:`../auto_examples/lin_rate_ipn_network`
-           * :doc:`../auto_examples/rate_neuron_dm`
 
 
 
@@ -116,6 +116,13 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: Rate neurons
+           :img-top: ../static/img/pynest/rate_neuron.png
+
+           * :doc:`../auto_examples/lin_rate_ipn_network`
+           * :doc:`../auto_examples/rate_neuron_dm`
+
+
     .. grid-item-card:: Hodgkin-Huxley
            :img-top: ../static/img/pynest/hh_phase.png
 
@@ -127,13 +134,13 @@ PyNEST examples
 
            * :doc:`../auto_examples/BrodyHopfield`
 
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
            * :doc:`../auto_examples/brette_gerstner_fig_2c`
            * :doc:`../auto_examples/brette_gerstner_fig_3d`
-
-.. grid:: 1 1 2 3
 
 
     .. grid-item-card:: Precise spiking
@@ -145,11 +152,6 @@ PyNEST examples
            :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`../auto_examples/CampbellSiegert`
-
-    .. grid-item-card:: SONATA network
-           :img-top: ../static/img/300_pointneurons.png
-
-           * :doc:`../auto_examples/sonata_example/sonata_network`
 
 
 .. grid:: 1 1 2 3
@@ -244,6 +246,11 @@ PyNEST examples
 
 
 .. grid:: 1 1 2 3
+
+    .. grid-item-card:: SONATA network
+           :img-top: ../static/img/300_pointneurons.png
+
+           * :doc:`../auto_examples/sonata_example/sonata_network`
 
     .. grid-item-card:: HPC benchmark
            :img-top: ../static/img/nest_logo-faded.png
@@ -345,6 +352,7 @@ PyNEST examples
    ../auto_examples/astrocytes/astrocyte_interaction
    ../auto_examples/astrocytes/astrocyte_small_network
    ../auto_examples/astrocytes/astrocyte_brunel
+   ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index
 
 .. toctree::

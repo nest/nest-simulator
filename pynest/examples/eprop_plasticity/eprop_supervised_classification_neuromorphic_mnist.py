@@ -134,15 +134,13 @@ steps.update(
     {
         "offset_gen": 1,  # offset since generator signals start from time step 1
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
-        "extension_sim": 3,  # extra time step to close right-open simulation time interval in Simulate()
+        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
 steps["delays"] = steps["delay_in_rec"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
-
-steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of simulation
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
@@ -249,8 +247,8 @@ params_mm_rec = {
 params_mm_out = {
     "interval": duration["step"],
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
-    "start": duration["total_offset"] - 1,
-    "stop": duration["total_offset"] + duration["task"] - 1,
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
 }
 
 params_wr = {
@@ -643,7 +641,7 @@ def evaluate(n_iteration, iter_start):
     return loss, accuracy, recall_errors
 
 
-nest.Simulate(duration["total_offset"])
+nest.Simulate(duration["total_offset"] + duration["extension_sim"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
@@ -772,7 +770,18 @@ def plot_spikes(ax, events, nrns, ylabel, xlims):
     ax.set_ylim(np.min(senders_subset) - margin, np.max(senders_subset) + margin)
 
 
-for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])]:
+total_offset = steps["total_offset"]
+extension_sim = steps["extension_sim"]
+sequence = steps["sequence"]
+task = steps["task"]
+
+t_iter_start = steps["total_offset"] + steps["extension_sim"]
+first_xlim = (t_iter_start, t_iter_start + steps["sequence"])
+second_xlim = (t_iter_start + task - steps["sequence"], t_iter_start + task)
+
+xlim_ranges = [first_xlim, second_xlim]
+
+for xlims in xlim_ranges:
     fig, axs = plt.subplots(9, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
 
     plot_spikes(axs[0], events_sr, nrns_in, r"$z_i$" + "\n", xlims)

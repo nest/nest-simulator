@@ -83,7 +83,7 @@ import nest
 import numpy as np
 import requests
 from cycler import cycler
-from IPython.display import HTML, Image
+from IPython.display import Image
 
 # %% ###########################################################################################################
 # Schematic of network architecture

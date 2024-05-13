@@ -108,6 +108,10 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
+# Even though each sample is processed independently during training, we aggregate predictions and true
+# labels across a group of samples during the evaluation phase. The number of samples in this group is
+# determined by the `group_size` parameter. This data is then used to assess the neural network's
+# performance metrics, such as average accuracy and mean error.
 
 group_size = 1  # number of instances over which to evaluate the learning performance
 n_iter = 5  # number of iterations, 2000 in reference [2]

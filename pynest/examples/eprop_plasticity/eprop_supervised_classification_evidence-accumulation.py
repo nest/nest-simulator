@@ -113,11 +113,10 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
-# Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
-# The variable `group_size` is utilized post-training to aggregate and analyze the performance
-# metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on
-# individual data points presented one at a time, the `group_size` specifies the number of instances
-# over which the network's output is collectively assessed to compute the mean accuracy and error.
+# Even though each sample is processed independently during training, we aggregate predictions and true
+# labels across a group of samples during the evaluation phase. The number of samples in this group is
+# determined by the `group_size` parameter. This data is then used to assess the neural network's
+# performance metrics, such as average accuracy and mean error.
 
 group_size = 1  # number of instances over which to evaluate the learning performance, 32 for convergence
 n_iter = 5  # number of iterations, 50 with group_size 32 converges

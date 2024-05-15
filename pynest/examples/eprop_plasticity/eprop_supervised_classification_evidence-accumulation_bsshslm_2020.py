@@ -92,7 +92,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
-    Image(filename="./eprop_supervised_classification_schematic_evidence-accumulation.png")
+    Image(filename="./eprop_supervised_classification_schematic_evidence-accumulation_bsshslm_2020.png")
 except Exception:
     pass
 

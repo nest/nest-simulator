@@ -86,7 +86,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_schematic_sine-waves.png")
+    Image(filename="./eprop_supervised_regression_schematic_sine-waves_bsshslm_2020.png")
 except Exception:
     pass
 

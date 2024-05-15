@@ -300,7 +300,7 @@ params_wr = {
 }
 
 params_sr = {
-    "start": duration["total_offset"],
+    "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
 }
 

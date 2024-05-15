@@ -300,7 +300,7 @@ params_wr = {
 }
 
 params_sr = {
-    "start": duration["total_offset"],
+    "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
 }
 
@@ -590,8 +590,8 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
 target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
-target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+readout_signal = readout_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
+target_signal = target_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
 
 readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 target_signal = target_signal[:, :, :, -steps["learning_window"] :]

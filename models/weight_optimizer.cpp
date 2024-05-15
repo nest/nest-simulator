@@ -148,7 +148,7 @@ double
 WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
   weight -= cp.eta_ * sum_gradients_;
-  sum_gradients_ = 0;
+  sum_gradients_ = 0.0;
   return weight;
 }
 

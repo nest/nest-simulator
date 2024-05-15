@@ -105,9 +105,9 @@ def test_eprop_regression():
         }
     )
 
-    steps["total_offset"] = (
-        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
-    )
+    steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+    steps["total_offset"] = steps["offset_gen"] + steps["delays"]
 
     steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
@@ -135,22 +135,6 @@ def test_eprop_regression():
     n_rec = 100
     n_out = 1
 
-    params_nrn_rec = {
-        "beta": 1.0,
-        "C_m": 1.0,
-        "c_reg": 300.0,
-        "gamma": 0.3,
-        "E_L": 0.0,
-        "f_target": 10.0,
-        "I_e": 0.0,
-        "regular_spike_arrival": False,
-        "surrogate_gradient_function": "piecewise_linear",
-        "t_ref": 0.0,
-        "tau_m": 30.0,
-        "V_m": 0.0,
-        "V_th": 0.03,
-    }
-
     params_nrn_out = {
         "C_m": 1.0,
         "E_L": 0.0,
@@ -159,6 +143,22 @@ def test_eprop_regression():
         "regular_spike_arrival": False,
         "tau_m": 30.0,
         "V_m": 0.0,
+    }
+
+    params_nrn_rec = {
+        "beta": 1.0,
+        "C_m": 1.0,
+        "c_reg": 300.0,
+        "E_L": 0.0,
+        "f_target": 10.0,
+        "gamma": 0.3,
+        "I_e": 0.0,
+        "regular_spike_arrival": False,
+        "surrogate_gradient_function": "piecewise_linear",
+        "t_ref": 0.0,
+        "tau_m": 30.0,
+        "V_m": 0.0,
+        "V_th": 0.03,
     }
 
     gen_spk_in = nest.Create("spike_generator", n_in)
@@ -173,25 +173,34 @@ def test_eprop_regression():
     n_record_w = 1
 
     params_mm_rec = {
+        "interval": duration["sequence"],
         "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
         "start": duration["offset_gen"] + duration["delay_in_rec"],
-        "interval": duration["sequence"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
     }
 
     params_mm_out = {
+        "interval": duration["step"],
         "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
-        "interval": duration["step"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     params_wr = {
         "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],
         "targets": nrns_rec[:n_record_w] + nrns_out,
+        "start": duration["total_offset"],
+        "stop": duration["total_offset"] + duration["task"],
+    }
+
+    params_sr = {
+        "start": duration["offset_gen"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     mm_rec = nest.Create("multimeter", params_mm_rec)
     mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", params_sr)
     wr = nest.Create("weight_recorder", params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]
@@ -216,30 +225,24 @@ def test_eprop_regression():
             "Wmin": -100.0,
             "Wmax": 100.0,
         },
-        "weight_recorder": wr,
         "average_gradient": False,
+        "weight_recorder": wr,
     }
 
-    params_syn_in = {
+    params_syn_base = {
         "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_in_rec,
     }
 
-    params_syn_rec = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_rec,
-    }
+    params_syn_in = params_syn_base.copy()
+    params_syn_in["weight"] = weights_in_rec
 
-    params_syn_out = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_out,
-    }
+    params_syn_rec = params_syn_base.copy()
+    params_syn_rec["weight"] = weights_rec_rec
+
+    params_syn_out = params_syn_base.copy()
+    params_syn_out["weight"] = weights_rec_out
 
     params_syn_feedback = {
         "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
@@ -277,14 +280,13 @@ def test_eprop_regression():
     input_spike_prob = 0.05
     dtype_in_spks = np.float32
 
-    input_spike_bools = np.random.rand(batch_size, steps["sequence"], n_in) < input_spike_prob
-    input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
+    input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
     input_spike_bools[:, 0] = 0
 
     sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
     params_gen_spk_in = []
     for input_spike_bool in input_spike_bools:
-        input_spike_times = np.arange(0.0, duration["sequence"] * batch_size, duration["step"])[input_spike_bool]
+        input_spike_times = np.arange(0.0, duration["sequence"], duration["step"])[input_spike_bool]
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
         params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
@@ -329,6 +331,10 @@ def test_eprop_regression():
 
     readout_signal = events_mm_out["readout_signal"]
     target_signal = events_mm_out["target_signal"]
+    senders = events_mm_out["senders"]
+
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
     readout_signal = readout_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
     target_signal = target_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
@@ -416,9 +422,9 @@ def test_eprop_classification():
         }
     )
 
-    steps["total_offset"] = (
-        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
-    )
+    steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+    steps["total_offset"] = steps["offset_gen"] + steps["delays"]
 
     steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
@@ -447,6 +453,16 @@ def test_eprop_classification():
     n_reg = 50
     n_rec = n_ad + n_reg
     n_out = 2
+
+    params_nrn_out = {
+        "C_m": 1.0,
+        "E_L": 0.0,
+        "I_e": 0.0,
+        "loss": "cross_entropy",
+        "regular_spike_arrival": False,
+        "tau_m": 20.0,
+        "V_m": 0.0,
+    }
 
     params_nrn_reg = {
         "beta": 1.0,
@@ -482,19 +498,10 @@ def test_eprop_classification():
         "V_th": 0.6,
     }
 
-    params_nrn_ad["adapt_beta"] = (
-        1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau_m"]))
+    params_nrn_ad["adapt_beta"] = 1.7 * (
+        (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
+        / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
     )
-
-    params_nrn_out = {
-        "C_m": 1.0,
-        "E_L": 0.0,
-        "I_e": 0.0,
-        "loss": "cross_entropy",
-        "regular_spike_arrival": False,
-        "tau_m": 20.0,
-        "V_m": 0.0,
-    }
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
@@ -510,29 +517,47 @@ def test_eprop_classification():
     n_record = 1
     n_record_w = 1
 
-    params_mm_rec = {
+    params_mm_reg = {
+        "interval": duration["step"],
         "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
         "start": duration["offset_gen"] + duration["delay_in_rec"],
-        "interval": duration["sequence"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
+    }
+
+    params_mm_ad = {
+        "interval": duration["step"],
+        "record_from": params_mm_reg["record_from"] + ["V_th_adapt", "adaptation"],
+        "start": duration["offset_gen"] + duration["delay_in_rec"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
     }
 
     params_mm_out = {
+        "interval": duration["step"],
         "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
-        "interval": duration["step"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     params_wr = {
         "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],
         "targets": nrns_rec[:n_record_w] + nrns_out,
+        "start": duration["total_offset"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
+    params_sr = {
+        "start": duration["offset_gen"],
+        "stop": duration["total_offset"] + duration["task"],
+    }
+
+    mm_reg = nest.Create("multimeter", params_mm_reg)
+    mm_ad = nest.Create("multimeter", params_mm_ad)
     mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", params_sr)
     wr = nest.Create("weight_recorder", params_wr)
 
-    nrns_rec_record = nrns_rec[:n_record]
+    nrns_reg_record = nrns_reg[:n_record]
+    nrns_ad_record = nrns_ad[:n_record]
 
     # Create connections
 
@@ -563,30 +588,24 @@ def test_eprop_classification():
             "Wmin": -100.0,
             "Wmax": 100.0,
         },
-        "weight_recorder": wr,
         "average_gradient": True,
+        "weight_recorder": wr,
     }
 
-    params_syn_in = {
+    params_syn_base = {
         "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_in_rec,
     }
 
-    params_syn_rec = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_rec,
-    }
+    params_syn_in = params_syn_base.copy()
+    params_syn_in["weight"] = weights_in_rec
 
-    params_syn_out = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_out,
-    }
+    params_syn_rec = params_syn_base.copy()
+    params_syn_rec["weight"] = weights_rec_rec
+
+    params_syn_out = params_syn_base.copy()
+    params_syn_out["weight"] = weights_rec_out
 
     params_syn_feedback = {
         "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
@@ -612,6 +631,13 @@ def test_eprop_classification():
         "delay": duration["step"],
     }
 
+    params_init_optimizer = {
+        "optimizer": {
+            "m": 0.0,
+            "v": 0.0,
+        }
+    }
+
     nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
@@ -624,8 +650,11 @@ def test_eprop_classification():
 
     nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
 
-    nest.Connect(mm_rec, nrns_rec_record, params_conn_all_to_all, params_syn_static)
+    nest.Connect(mm_reg, nrns_reg_record, params_conn_all_to_all, params_syn_static)
+    nest.Connect(mm_ad, nrns_ad_record, params_conn_all_to_all, params_syn_static)
     nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
+
+    nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
     # Create input and output
 
@@ -720,8 +749,8 @@ def test_eprop_classification():
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
-    target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+    readout_signal = readout_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
+    target_signal = target_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
 
     readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
     target_signal = target_signal[:, :, :, -steps["learning_window"] :]

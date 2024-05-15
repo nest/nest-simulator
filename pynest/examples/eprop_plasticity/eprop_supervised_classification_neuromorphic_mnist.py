@@ -83,7 +83,7 @@ import nest
 import numpy as np
 import requests
 from cycler import cycler
-from IPython.display import HTML, Image
+from IPython.display import Image
 
 # %% ###########################################################################################################
 # Schematic of network architecture
@@ -141,6 +141,7 @@ steps.update(
 steps["delays"] = steps["delay_in_rec"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
+steps["pre_sim"] = steps["total_offset"] + steps["extension_sim"]
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
@@ -259,7 +260,7 @@ params_wr = {
 }
 
 params_sr = {
-    "start": duration["total_offset"],
+    "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
 }
 
@@ -625,8 +626,8 @@ def evaluate(n_iteration, iter_start):
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, n_iteration, group_size, steps["sequence"]))
-    target_signal = target_signal.reshape((n_out, n_iteration, group_size, steps["sequence"]))
+    readout_signal = readout_signal.reshape(n_out, n_iteration, group_size, steps["sequence"])
+    target_signal = target_signal.reshape(n_out, n_iteration, group_size, steps["sequence"])
 
     readout_signal = readout_signal[:, iter_start:, :, -steps["learning_window"] :]
     target_signal = target_signal[:, iter_start:, :, -steps["learning_window"] :]
@@ -641,7 +642,7 @@ def evaluate(n_iteration, iter_start):
     return loss, accuracy, recall_errors
 
 
-nest.Simulate(duration["total_offset"] + duration["extension_sim"])
+nest.Simulate(duration["pre_sim"])
 
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
@@ -770,18 +771,10 @@ def plot_spikes(ax, events, nrns, ylabel, xlims):
     ax.set_ylim(np.min(senders_subset) - margin, np.max(senders_subset) + margin)
 
 
-total_offset = steps["total_offset"]
-extension_sim = steps["extension_sim"]
-sequence = steps["sequence"]
-task = steps["task"]
-
-t_iter_start = steps["total_offset"] + steps["extension_sim"]
-first_xlim = (t_iter_start, t_iter_start + steps["sequence"])
-second_xlim = (t_iter_start + task - steps["sequence"], t_iter_start + task)
-
-xlim_ranges = [first_xlim, second_xlim]
-
-for xlims in xlim_ranges:
+for xlims in [
+    (steps["pre_sim"], steps["pre_sim"] + steps["sequence"]),
+    (steps["pre_sim"] + steps["task"] - steps["sequence"], steps["pre_sim"] + steps["task"]),
+]:
     fig, axs = plt.subplots(9, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
 
     plot_spikes(axs[0], events_sr, nrns_in, r"$z_i$" + "\n", xlims)

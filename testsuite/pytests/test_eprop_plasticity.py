@@ -363,8 +363,8 @@ def test_eprop_regression(neuron_model, optimizer):
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
-    target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
+    readout_signal = readout_signal.reshape(n_out, n_iter, group_size, steps["sequence"])
+    target_signal = target_signal.reshape(n_out, n_iter, group_size, steps["sequence"])
 
     loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 

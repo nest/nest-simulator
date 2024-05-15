@@ -494,7 +494,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     grad += L * e_bar;
   }
 
-  weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
+  weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
 
   const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
 

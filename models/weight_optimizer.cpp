@@ -77,7 +77,14 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
   }
-  eta_ = new_eta;
+
+  eta_temp_ = new_eta;
+
+  if ( first_set_status_call_ )
+  {
+    eta_ = new_eta;
+    first_set_status_call_ = false;
+  }
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;
@@ -110,7 +117,7 @@ WeightOptimizer::set_status( const DictionaryDatum& d )
 }
 
 double
-WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
+WeightOptimizer::optimized_weight( WeightOptimizerCommonProperties& cp,
   const size_t idx_current_update,
   const double gradient,
   double weight )
@@ -127,6 +134,7 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   {
     sum_gradients_ /= cp.batch_size_;
     weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
+    cp.eta_ = cp.eta_temp_;
     optimization_step_ = current_optimization_step;
   }
   return weight;

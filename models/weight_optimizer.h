@@ -210,6 +210,12 @@ public:
   //! Learning rate.
   double eta_;
 
+  //! Temporary learning rate in case it is changed during an experiment.
+  double eta_temp_;
+
+  //! First call of set_status needed for setting a new eta during an experiment.
+  bool first_set_status_call_ = true;
+
   //! Minimal value for synaptic weight.
   double Wmin_;
 
@@ -252,7 +258,7 @@ public:
   virtual void set_status( const DictionaryDatum& d );
 
   //! Return optimized weight based on current weight.
-  double optimized_weight( const WeightOptimizerCommonProperties& cp,
+  double optimized_weight( WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
     const double gradient,
     double weight );

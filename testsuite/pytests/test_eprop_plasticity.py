@@ -161,9 +161,13 @@ def test_eprop_regression(neuron_model, optimizer):
 
     if neuron_model == "eprop_iaf_psc_delta":
         del params_nrn_rec["regular_spike_arrival"]
-        params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
+        params_nrn_rec["V_reset"] = -0.5
         params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
         params_nrn_rec["V_th"] = 0.5
+    elif neuron_model == "eprop_iaf_adapt":
+        params_nrn_rec["adapt_beta"] = 1.0
+        params_nrn_rec["adapt_tau"] = 10.0
+        params_nrn_rec["adaptation"] = 0.0
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
@@ -198,9 +202,14 @@ def test_eprop_regression(neuron_model, optimizer):
         "stop": duration["total_offset"] + duration["task"],
     }
 
+    params_sr = {
+        "start": duration["total_offset"],
+        "stop": duration["total_offset"] + duration["task"],
+    }
+
     mm_rec = nest.Create("multimeter", params_mm_rec)
     mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", params_sr)
     wr = nest.Create("weight_recorder", params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]

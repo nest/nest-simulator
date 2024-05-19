@@ -68,6 +68,8 @@ RecordablesMap< iaf_bw_2001_exact >::create()
   insert_( names::s_GABA, &iaf_bw_2001_exact::get_ode_state_elem_< iaf_bw_2001_exact::State_::s_GABA > );
   insert_( names::s_NMDA, &iaf_bw_2001_exact::get_s_NMDA_ );
   insert_( names::I_NMDA, &iaf_bw_2001_exact::get_I_NMDA_ );
+  insert_( names::I_AMPA, &iaf_bw_2001_exact::get_I_AMPA_ );
+  insert_( names::I_GABA, &iaf_bw_2001_exact::get_I_GABA_ );
 }
 }
 /* ---------------------------------------------------------------------------
@@ -405,9 +407,8 @@ nest::iaf_bw_2001_exact_dynamics( double, const double ode_state[], double f[], 
   // ode_state[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.ode_state[].
 
-  const double I_AMPA = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::s_AMPA ];
-
-  const double I_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
+  node.S_.I_AMPA_ = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::s_AMPA ];
+  node.S_.I_GABA_ = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
 
   // The sum of s_NMDA
   node.S_.s_NMDA_sum = 0;
@@ -419,7 +420,7 @@ nest::iaf_bw_2001_exact_dynamics( double, const double ode_state[], double f[], 
   node.S_.I_NMDA_ = ( ode_state[ State_::V_m ] - node.P_.E_ex )
     / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * node.S_.s_NMDA_sum;
 
-  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
+  const double I_syn = node.S_.I_AMPA_ + node.S_.I_GABA_ + node.S_.I_NMDA_;
 
   f[ State_::V_m ] =
     ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;

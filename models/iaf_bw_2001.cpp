@@ -73,6 +73,8 @@ RecordablesMap< iaf_bw_2001 >::create()
   insert_( names::s_GABA, &iaf_bw_2001::get_ode_state_elem_< iaf_bw_2001::State_::s_GABA > );
   insert_( names::s_NMDA, &iaf_bw_2001::get_ode_state_elem_< iaf_bw_2001::State_::s_NMDA > );
   insert_( names::I_NMDA, &iaf_bw_2001::get_I_NMDA_ );
+  insert_( names::I_AMPA, &iaf_bw_2001::get_I_AMPA_ );
+  insert_( names::I_GABA, &iaf_bw_2001::get_I_GABA_ );
 }
 }
 
@@ -89,13 +91,13 @@ nest::iaf_bw_2001_dynamics( double, const double y[], double f[], void* pnode )
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
-  const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
-  const double I_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
+  node.S_.I_AMPA_ = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
+  node.S_.I_GABA_ = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
   node.S_.I_NMDA_ = ( y[ S::V_m ] - node.P_.E_ex ) / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 )
     * y[ S::s_NMDA ];
 
-  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
+  const double I_syn = node.S_.I_AMPA_ + node.S_.I_GABA_ + node.S_.I_NMDA_;
 
   f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;
 
@@ -139,6 +141,8 @@ nest::iaf_bw_2001::State_::State_( const Parameters_& p )
   y_[ s_NMDA ] = 0.0;
   s_NMDA_pre = 0.0;
   I_NMDA_ = 0.0;
+  I_AMPA_ = 0.0;
+  I_GABA_ = 0.0;
 }
 
 nest::iaf_bw_2001::State_::State_( const State_& s )
@@ -150,6 +154,8 @@ nest::iaf_bw_2001::State_::State_( const State_& s )
   y_[ s_NMDA ] = s.y_[ s_NMDA ];
   s_NMDA_pre = s.s_NMDA_pre;
   I_NMDA_ = s.I_NMDA_;
+  I_AMPA_ = s.I_AMPA_;
+  I_GABA_ = s.I_GABA_;
 }
 
 nest::iaf_bw_2001::Buffers_::Buffers_( iaf_bw_2001& n )
@@ -255,6 +261,8 @@ nest::iaf_bw_2001::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_GABA, y_[ s_GABA ] );
   def< double >( d, names::s_NMDA, y_[ s_NMDA ] );
   def< double >( d, names::I_NMDA, I_NMDA_ );
+  def< double >( d, names::I_AMPA, I_AMPA_ );
+  def< double >( d, names::I_GABA, I_GABA_ );
 }
 
 void

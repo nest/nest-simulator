@@ -141,6 +141,8 @@ The following state variables evolve during simulation and are available either 
 ``s_GABA``           0               :math:`s_\mathrm{GABA}`    GABA gating variable 
 ``s_NMDA``           0               :math:`s_\mathrm{NMDA}`    NMDA gating variable 
 ``I_NMDA``           0 pA            :math:`I_\mathrm{NMDA}`    NMDA current
+``I_AMPA``           0 pA            :math:`I_\mathrm{AMPA}`    AMPA current
+``I_GABA``           0 pA            :math:`I_\mathrm{GABA}`    GABA current
 ================== ================= ========================== =================================
 
 .. note::
@@ -305,6 +307,8 @@ public:
 
     double s_NMDA_sum; // For recording NMDA gating variables
     double I_NMDA_;    // For recording NMDA currents
+    double I_AMPA_;    // For recording NMDA currents
+    double I_GABA_;    // For recording NMDA currents
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -404,6 +408,17 @@ private:
   {
     return S_.I_NMDA_;
   }
+  double
+  get_I_AMPA_() const
+  {
+    return S_.I_AMPA_;
+  }
+  double
+  get_I_GABA_() const
+  {
+    return S_.I_GABA_;
+  }
+
 
   // Data members -----------------------------------------------------------
 

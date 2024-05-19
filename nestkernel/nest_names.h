@@ -279,6 +279,8 @@ extern const Name I;
 extern const Name I_ahp;
 extern const Name I_e;
 extern const Name I_h;
+extern const Name I_AMPA;
+extern const Name I_GABA;
 extern const Name I_KNa;
 extern const Name I_NMDA;
 extern const Name I_NaP;

@@ -68,7 +68,7 @@ NodeManager::~NodeManager()
 }
 
 void
-NodeManager::initialize( const bool reset_kernel )
+NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
@@ -76,7 +76,7 @@ NodeManager::initialize( const bool reset_kernel )
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     sw_construction_create_.reset();
   }

@@ -204,7 +204,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
@@ -374,7 +374,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
 
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     # Confirm that we got node collections

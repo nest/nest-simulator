@@ -60,9 +60,9 @@ nest::RandomManager::~RandomManager()
 }
 
 void
-nest::RandomManager::initialize( const bool reset_kernel )
+nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     register_rng_type< std::mt19937 >( "mt19937" );
     register_rng_type< std::mt19937_64 >( "mt19937_64" );
@@ -97,7 +97,7 @@ nest::RandomManager::initialize( const bool reset_kernel )
 }
 
 void
-nest::RandomManager::finalize( const bool reset_kernel )
+nest::RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   // Delete existing RNGs
   auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
@@ -114,7 +114,7 @@ nest::RandomManager::finalize( const bool reset_kernel )
   vp_synced_rngs_.clear();
   vp_specific_rngs_.clear();
 
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     for ( auto& it : rng_types_ )
     {
@@ -171,8 +171,8 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 
   if ( rng_seed_updated or rng_type_updated )
   {
-    finalize( /* reset_kernel */ false );
-    initialize( /* reset_kernel */ false );
+    finalize( /* adjust_number_of_threads_or_rng_only */ true );
+    initialize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 }
 

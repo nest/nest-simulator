@@ -76,9 +76,9 @@ EventDeliveryManager::~EventDeliveryManager()
 }
 
 void
-EventDeliveryManager::initialize( const bool reset_kernel )
+EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     init_moduli();
     reset_timers_for_preparation();
@@ -497,7 +497,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
       ++num_spikes_per_rank[ rank ];
 
       // We do not break if condition is false, because there may be spikes that
-      // can be send to other ranks than the one that is full.
+      // can be sent to other ranks than the one that is full.
       if ( not send_buffer_position.is_chunk_filled( rank ) )
       {
         send_buffer[ send_buffer_position.idx( rank ) ] = emitted_spike.spike_data;
@@ -790,7 +790,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
   // assume all threads have some work to do
-  gather_completed_checker_[ tid ].set_false();
+  gather_completed_checker_.set_false( tid );
   assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
@@ -802,7 +802,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
   {
     // assume this is the last gather round and change to false
     // otherwise
-    gather_completed_checker_[ tid ].set_true();
+    gather_completed_checker_.set_true( tid );
 
 #pragma omp master
     {
@@ -819,7 +819,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
 
     const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
-    gather_completed_checker_[ tid ].logical_and( gather_completed );
+    gather_completed_checker_.logical_and( tid, gather_completed );
 
     if ( gather_completed_checker_.all_true() )
     {
@@ -842,7 +842,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 #pragma omp barrier
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
-    gather_completed_checker_[ tid ].logical_and( distribute_completed );
+    gather_completed_checker_.logical_and( tid, distribute_completed );
 
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
@@ -864,7 +864,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
   // assume all threads have some work to do
-  gather_completed_checker_[ tid ].set_false();
+  gather_completed_checker_.set_false( tid );
   assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
@@ -874,7 +874,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
   while ( gather_completed_checker_.any_false() )
   {
     // assume this is the last gather round and change to false otherwise
-    gather_completed_checker_[ tid ].set_true();
+    gather_completed_checker_.set_true( tid );
 
 #pragma omp master
     {
@@ -891,7 +891,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     const bool gather_completed =
       collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
 
-    gather_completed_checker_[ tid ].logical_and( gather_completed );
+    gather_completed_checker_.logical_and( tid, gather_completed );
 
     if ( gather_completed_checker_.all_true() )
     {
@@ -916,7 +916,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     // all data it is responsible for to buffers. Now combine with information on whether other ranks
     // have sent all their data. Note: All threads will return the same value for distribute_completed.
     const bool distribute_completed = distribute_target_data_buffers_( tid );
-    gather_completed_checker_[ tid ].logical_and( distribute_completed );
+    gather_completed_checker_.logical_and( tid, distribute_completed );
 
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )

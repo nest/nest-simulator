@@ -31,10 +31,10 @@
 /* BeginUserDocs: NOINDEX
 
 Recording backend `ascii` - Write data to plain text files
-##########################################################
+----------------------------------------------------------
 
 Description
-+++++++++++
+~~~~~~~~~~~
 
 The `ascii` recording backend writes collected data persistently to a
 plain text ASCII file. It can be used for small to medium sized
@@ -77,7 +77,7 @@ for avoiding name clashes is to set the kernel attributes
 ``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
-+++++++++++
+~~~~~~~~~~~
 
 Any file written by the `ascii` recording backend starts with an
 informational header. The first header line contains the NEST version,
@@ -105,7 +105,7 @@ point offset in ms from the next integer grid point.
    controlled using the recorder property ``precision``.
 
 Parameter summary
-+++++++++++++++++
+~~~~~~~~~~~~~~~~~
 
 file_extension
     A string (default: *"dat"*) that specifies the file name extension,

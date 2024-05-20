@@ -50,28 +50,30 @@ nest::KernelManager::KernelManager()
   , logging_manager()
   , mpi_manager()
   , vp_manager()
+  , module_manager()
   , random_manager()
   , simulation_manager()
   , modelrange_manager()
   , connection_manager()
   , sp_manager()
   , event_delivery_manager()
+  , io_manager()
   , model_manager()
   , music_manager()
   , node_manager()
-  , io_manager()
   , managers( { &logging_manager,
       &mpi_manager,
       &vp_manager,
+      &module_manager,
       &random_manager,
       &simulation_manager,
       &modelrange_manager,
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
+      &io_manager,
       &model_manager,
       &music_manager,
-      &io_manager,
       &node_manager } )
   , initialized_( false )
 {
@@ -86,7 +88,7 @@ nest::KernelManager::initialize()
 {
   for ( auto& manager : managers )
   {
-    manager->initialize();
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
 
   ++fingerprint_;
@@ -120,7 +122,7 @@ nest::KernelManager::finalize()
 
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
-    ( *m_it )->finalize();
+    ( *m_it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
   }
   initialized_ = false;
 }
@@ -145,7 +147,7 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalize in reverse order of initialization with old thread number set
   for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
   {
-    ( *mgr_it )->finalize( /* reset_kernel */ false );
+    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
   vp_manager.set_num_threads( new_num_threads );
@@ -153,8 +155,13 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
   {
-    manager->initialize( /* reset_kernel */ false );
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ true );
   }
+
+  // Finalizing deleted all register components. Now that all infrastructure
+  // is in place again, we can tell modules to re-register the components
+  // they provide.
+  module_manager.reinitialize_dynamic_modules();
 }
 
 void

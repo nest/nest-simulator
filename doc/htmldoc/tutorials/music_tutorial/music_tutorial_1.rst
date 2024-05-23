@@ -56,7 +56,7 @@ A NEST network consists of three types of elements: neurons, devices,
 and connections between them.
 
 Neurons are the basic building blocks, and in NEST they are generally
-spiking point neuron models. Devices are supporting units that for
+spiking :hxt_ref:`point neuron` models. Devices are supporting units that for
 instance generate inputs to neurons or record data from them. The
 Poisson spike generator, the spike recorder recording device, and the
 MUSIC input and output proxies are all devices. Neurons and devices are

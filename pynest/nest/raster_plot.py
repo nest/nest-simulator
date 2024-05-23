@@ -55,17 +55,16 @@ def extract_events(data, time=None, sel=None):
     """
     val = []
 
+    t_min, t_max = 0, float("inf")
     if time:
         t_max = time[-1]
         if len(time) > 1:
             t_min = time[0]
-        else:
-            t_min = 0
 
     for v in data:
         t = v[1]
         node_id = v[0]
-        if time and (t < t_min or t >= t_max):
+        if not (t_min <= t < t_max):
             continue
         if not sel or node_id in sel:
             val.append(v)
@@ -131,6 +130,7 @@ def from_file_pandas(fname, **kwargs):
     """Use pandas."""
     data = None
     for f in fname:
+        # pylint: disable=possibly-used-before-assignment
         dataFrame = pandas.read_table(f, header=2, skipinitialspace=True)
         newdata = dataFrame.values
 

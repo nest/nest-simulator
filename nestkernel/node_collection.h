@@ -325,7 +325,7 @@ public:
  * - For `period > 1`, the relation of `phase` to position in a given part can differ from part to part. Consider the
  * following node collection in a simulation with four threads (one MPI process). The table shows the GID of the neuron,
  * its thread (phase), the part_idx and the element_idx of a iterator pointing to the element. Finally, elements that
- * belong to thread 1 and 2 respectively, are marked with an asterisk:
+ * belong to thread 1 and 2 respectively, are marked with an asterisk (only 11 elements shown for brevity):
  *
  *         GID       1  2  3  4  5  6  7  8  9  10  11
  *         PartIdx   0  0  0  0  0  0  0  0  0   0   0
@@ -339,28 +339,28 @@ public:
  *
  *     Now consider a new node collection constructed by
  *
- *         nc2 = nc[:5] + nc[8:]
+ *         nc2 = nc[:5] + nc[7:]
  *
  *     This yields a node collection with two parts, marked with the vertical line (note that nodes 6 and 7 are not
  * included). We consider it once it its entirety and once sliced as `nc2[::3]`. The `1stInPt` line marks the elements
  * indexed by the `first_in_part_` vector.
  *
- *         GID            1  2  3  4  5  |  8  9  10  11  12  13  14  15  16
- *         PartIdx        0  0  0  0  0  |  1  1   1   1   1   1   1   1   1
- *         ElemIdx        0  1  2  3  4  |  0  1   2   3   4   5   6   7   8
- *         Phase          1  2  3  0  1  |  0  1   2   3   0   1   2   3   0
- *         -----------------------------------------------------------------
+ *         GID            1  2  3  4  5  |  8  9  10  11  12  13  14  15  16  17  18  19  20  21
+ *         PartIdx        0  0  0  0  0  |  1  1   1   1   1   1   1   1   1   1   1   1   1   1
+ *         ElemIdx        0  1  2  3  4  |  0  1   2   3   4   5   6   7   8   9  10  11  12  13
+ *         Phase          1  2  3  0  1  |  0  1   2   3   0   1   2   3   0   1   2   3   0   1
+ *         -------------------------------------------------------------------------------------
  *         All 1stInPt    #              |  #
- *         All thr 0               *     |  *              *               *
- *         All thr 1      *           *  |     *               *
- *         All thr 2         *           |         *               *
- *         All thr 3            *        |             *               *
- *         -----------------------------------------------------------------
- *         [::3] 1stInPt  #              |                     #
- *         [::3] thr 0             *     |                                 *
- *         [::3] thr 1    *              |                     *
- *         [::3] thr 2       *           |                         *
- *         [::3] thr 3          *        |                             *
+ *         All thr 0               *     |  *              *               *               *
+ *         All thr 1      *           *  |     *               *               *               *
+ *         All thr 2         *           |         *               *               *
+ *         All thr 3            *        |             *               *               *
+ *         -------------------------------------------------------------------------------------
+ *         [::3] 1stInPt  #              |     #
+ *         [::3] thr 0             *     |                 *
+ *         [::3] thr 1    *              |     *                                               *
+ *         [::3] thr 2                   |                                         *
+ *         [::3] thr 3                   |                             *
  *
  *     The phase relation is the same as above for the first part, but for the second part, the phase relation is
  *     `phase == element_idx % period + 0`, where `0` is the phase of the node with GID 8, the first node in the second

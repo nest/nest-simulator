@@ -84,6 +84,20 @@ def test_get_connections_with_sliced_node_collection():
     assert actual_sources == expected_sources
 
 
+def test_get_connections_with_sliced_node_collection_2():
+    """Test that ``GetConnections`` works with sliced ``NodeCollection``."""
+
+    nodes = nest.Create("iaf_psc_alpha", 11)
+    nest.Connect(nodes, nodes)
+
+    # ([ 2 3 4 ] + [ 8 9 10 11 ])[::3] -> [2 8 11]
+    conns = nest.GetConnections((nodes[1:4] + nodes[7:])[::3])
+    actual_sources = conns.get("source")
+
+    expected_sources = [2] * 11 + [8] * 11 + [11] * 11
+    assert actual_sources == expected_sources
+
+
 def test_get_connections_bad_source_raises():
     """Test that ``GetConnections`` raises an error when called with 0."""
 

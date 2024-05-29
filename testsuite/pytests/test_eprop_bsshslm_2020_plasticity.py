@@ -759,7 +759,7 @@ def test_eprop_classification():
 
     # Verify results
 
-    loss_NEST_reference = np.array(
+    loss_nest_reference = np.array(
         [
             0.741152550006,
             0.740388187700,
@@ -769,7 +769,7 @@ def test_eprop_classification():
         ]
     )
 
-    loss_TF_reference = np.array(
+    loss_tf_reference = np.array(
         [
             0.741152524948,
             0.740388214588,
@@ -779,5 +779,5 @@ def test_eprop_classification():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_reference, rtol=1e-6)
+    assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_tf_reference, rtol=1e-6)

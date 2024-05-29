@@ -371,7 +371,7 @@ def test_eprop_regression(neuron_model, optimizer):
     # Verify results
 
     if neuron_model == "eprop_iaf":
-        loss_NEST_reference = np.array(
+        loss_nest_reference = np.array(
             [
                 114.29762944769843,
                 116.08003945227834,
@@ -382,7 +382,7 @@ def test_eprop_regression(neuron_model, optimizer):
         )
 
     elif neuron_model == "eprop_iaf_adapt":
-        loss_NEST_reference = np.array(
+        loss_nest_reference = np.array(
             [
                 126.02165319146847,
                 111.64653843535355,
@@ -393,7 +393,7 @@ def test_eprop_regression(neuron_model, optimizer):
         )
 
     elif neuron_model == "eprop_iaf_psc_delta":
-        loss_NEST_reference = np.array(
+        loss_nest_reference = np.array(
             [
                 100.27605816999775,
                 99.17578232340864,
@@ -403,4 +403,4 @@ def test_eprop_regression(neuron_model, optimizer):
             ]
         )
 
-    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_nest_reference, rtol=1e-8)

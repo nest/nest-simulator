@@ -336,14 +336,14 @@ def test_eprop_regression():
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
-    target_signal = target_signal.reshape(n_out, n_iter, batch_size, steps["sequence"])
+    readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
 
     loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
     # Verify results
 
-    loss_NEST_reference = np.array(
+    loss_nest_reference = np.array(
         [
             101.964356999041,
             103.466731126205,
@@ -353,7 +353,7 @@ def test_eprop_regression():
         ]
     )
 
-    loss_TF_reference = np.array(
+    loss_tf_reference = np.array(
         [
             101.964363098144,
             103.466735839843,
@@ -363,8 +363,8 @@ def test_eprop_regression():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_reference, rtol=1e-7)
+    assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_tf_reference, rtol=1e-7)
 
 
 def test_eprop_classification():
@@ -703,12 +703,12 @@ def test_eprop_classification():
     input_spike_bools_list = []
     target_cues_list = []
 
-    for iteration in range(n_iter):
+    for _ in range(n_iter):
         input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
             batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
         )
         input_spike_bools_list.append(input_spike_bools)
-        target_cues_list.extend(target_cues.tolist())
+        target_cues_list.extend(target_cues)
 
     input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
     timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]

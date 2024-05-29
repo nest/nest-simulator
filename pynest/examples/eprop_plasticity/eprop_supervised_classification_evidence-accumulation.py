@@ -475,12 +475,12 @@ dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF res
 input_spike_bools_list = []
 target_cues_list = []
 
-for iteration in range(n_iter):
+for _ in range(n_iter):
     input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
         group_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     )
     input_spike_bools_list.append(input_spike_bools)
-    target_cues_list.extend(target_cues.tolist())
+    target_cues_list.extend(target_cues)
 
 input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
 timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]

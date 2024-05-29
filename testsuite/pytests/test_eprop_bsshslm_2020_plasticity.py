@@ -60,8 +60,7 @@ def test_unsupported_model_raises(target_model):
         nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse_bsshslm_2020"})
 
 
-@pytest.mark.parametrize("batch_size", [1, 2])
-def test_eprop_regression(batch_size):
+def test_eprop_regression():
     """
     Test correct computation of losses for a regression task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py)
@@ -343,45 +342,54 @@ def test_eprop_regression(batch_size):
     loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
     # Verify results
+    loss_nest_reference = [
+        101.964356999041,
+        103.466731126205,
+        103.340607074771,
+        103.680244037686,
+        104.412775748752,
+    ]
 
-    if batch_size == 1:
-        loss_nest_reference = np.array(
-            [
-                101.964356999041,
-                103.466731126205,
-                103.340607074771,
-                103.680244037686,
-                104.412775748752,
-            ]
-        )
+    loss_tf_reference = np.array(
+        [
+            101.964363098144,
+            103.466735839843,
+            103.340606689453,
+            103.680244445800,
+            104.412780761718,
+        ]
+    )
 
-        loss_tf_reference = np.array(
-            [
-                101.964363098144,
-                103.466735839843,
-                103.340606689453,
-                103.680244445800,
-                104.412780761718,
-            ]
-        )
-
-        assert np.allclose(loss, loss_tf_reference, rtol=1e-7)
-
-    elif batch_size == 2:
-        loss_nest_reference = np.array(
-            [
-                101.96435699904157,
-                103.46673112620579,
-                103.34060707477168,
-                103.68024403768638,
-                104.41277574875247,
-            ]
-        )
-
+    assert np.allclose(loss, loss_tf_reference, rtol=1e-7)
     assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
 
 
-def test_eprop_classification():
+@pytest.mark.parametrize(
+    "batch_size,loss_nest_reference",
+    [
+        (
+            1,
+            [
+                0.741152550006,
+                0.740388187700,
+                0.665785233177,
+                0.663644193322,
+                0.729428962844,
+            ],
+        ),
+        (
+            2,
+            [
+                0.702163370672,
+                0.735555303152,
+                0.740354864111,
+                0.683882815282,
+                0.707841122268,
+            ],
+        ),
+    ],
+)
+def test_eprop_classification(batch_size, loss_nest_reference):
     """
     Test correct computation of losses for a classification task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py)
@@ -407,7 +415,6 @@ def test_eprop_classification():
 
     # Define timing of task
 
-    batch_size = 1
     n_iter = 5
 
     n_input_symbols = 4
@@ -773,16 +780,6 @@ def test_eprop_classification():
 
     # Verify results
 
-    loss_nest_reference = np.array(
-        [
-            0.741152550006,
-            0.740388187700,
-            0.665785233177,
-            0.663644193322,
-            0.729428962844,
-        ]
-    )
-
     loss_tf_reference = np.array(
         [
             0.741152524948,
@@ -793,5 +790,6 @@ def test_eprop_classification():
         ]
     )
 
+    if batch_size == 1:
+        assert np.allclose(loss, loss_tf_reference, rtol=1e-6)
     assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
-    assert np.allclose(loss, loss_tf_reference, rtol=1e-6)

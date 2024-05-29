@@ -207,14 +207,14 @@ public:
   //! Size of an optimization batch.
   size_t batch_size_;
 
-  //! Learning rate.
+  //! Learning rate common to all synapses.
   double eta_;
 
-  //! Temporary learning rate in case it is changed during an experiment.
-  double eta_temp_;
+  //! First learning rate that differs from the default.
+  double eta_first_;
 
-  //! First call of set_status needed for setting a new eta during an experiment.
-  bool first_set_status_call_ = true;
+  //! Number of changes to the learning rate.
+  long n_eta_change_;
 
   //! Minimal value for synaptic weight.
   double Wmin_;
@@ -272,6 +272,12 @@ protected:
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
+
+  //! Learning rate private to the synapse.
+  double eta_;
+
+  //! Number of optimizations.
+  long n_optimize_;
 };
 
 /**

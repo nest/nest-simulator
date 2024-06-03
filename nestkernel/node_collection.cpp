@@ -1337,9 +1337,9 @@ NodeCollectionComposite::get_nc_index( const size_t node_id ) const
     }
   }
 
-  assert( lower == upper );
+  assert( lower >= upper );
 
-  if ( node_id < parts_[ lower ][ 0 ] or parts_[ lower ][ parts_[ lower ].size() - 1 ] < node_id )
+  if ( lower > upper or node_id < parts_[ lower ][ 0 ] or parts_[ lower ][ parts_[ lower ].size() - 1 ] < node_id )
   {
     // node_id is in a gap of nc
     return -1;

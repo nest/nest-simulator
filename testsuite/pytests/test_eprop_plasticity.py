@@ -61,14 +61,44 @@ def test_unsupported_model_raises(target_model):
 
 
 @pytest.mark.parametrize(
-    "neuron_model,optimizer",
+    "neuron_model,optimizer,loss_nest_reference",
     [
-        ("eprop_iaf", "adam"),
-        ("eprop_iaf_adapt", "gradient_descent"),
-        ("eprop_iaf_psc_delta", "gradient_descent"),
+        (
+            "eprop_iaf",
+            "adam",
+            [
+                114.29762944769843,
+                116.08003945227834,
+                105.74487210940589,
+                99.69964257381793,
+                93.77229239951700,
+            ],
+        ),
+        (
+            "eprop_iaf_adapt",
+            "gradient_descent",
+            [
+                126.02165319146847,
+                111.64653843535355,
+                87.16820207083737,
+                89.86582758486699,
+                90.17174743107725,
+            ],
+        ),
+        (
+            "eprop_iaf_psc_delta",
+            "gradient_descent",
+            [
+                100.27605816999775,
+                99.17578232340864,
+                99.27281716101166,
+                99.10199953950716,
+                97.38001407331586,
+            ],
+        ),
     ],
 )
-def test_eprop_regression(neuron_model, optimizer):
+def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     """
     Test correct computation of losses for a regression task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
@@ -369,38 +399,5 @@ def test_eprop_regression(neuron_model, optimizer):
     loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
     # Verify results
-
-    if neuron_model == "eprop_iaf":
-        loss_nest_reference = np.array(
-            [
-                114.29762944769843,
-                116.08003945227834,
-                105.74487210940589,
-                99.69964257381793,
-                93.77229239951700,
-            ]
-        )
-
-    elif neuron_model == "eprop_iaf_adapt":
-        loss_nest_reference = np.array(
-            [
-                126.02165319146847,
-                111.64653843535355,
-                87.16820207083737,
-                89.86582758486699,
-                90.17174743107725,
-            ]
-        )
-
-    elif neuron_model == "eprop_iaf_psc_delta":
-        loss_nest_reference = np.array(
-            [
-                100.27605816999775,
-                99.17578232340864,
-                99.27281716101166,
-                99.10199953950716,
-                97.38001407331586,
-            ]
-        )
 
     assert np.allclose(loss, loss_nest_reference, rtol=1e-8)

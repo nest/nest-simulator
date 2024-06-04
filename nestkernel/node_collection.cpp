@@ -1337,6 +1337,8 @@ NodeCollectionComposite::get_nc_index( const size_t node_id ) const
     }
   }
 
+  // If node_id is not in the NodeCollection, lower may pass upper in the loop above
+  // See test_regression_issue-3213.py for an example case.
   assert( lower >= upper );
 
   if ( lower > upper or node_id < parts_[ lower ][ 0 ] or parts_[ lower ][ parts_[ lower ].size() - 1 ] < node_id )

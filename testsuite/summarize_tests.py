@@ -41,12 +41,12 @@ def parse_result_file(fname):
         results = jp.JUnitXml.fromfile(fname)
     except Exception as err:
         return {
-            "Tests": 0,
+            "Tests": 1,
             "Skipped": 0,
             "Failures": 0,
-            "Errors": 0,
+            "Errors": 1,
             "Time": 0,
-            "Failed tests": [f"ERROR: {fname} not parsable with error {err}"],
+            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
         }
 
     if isinstance(results, jp.junitparser.JUnitXml):
@@ -108,13 +108,10 @@ if __name__ == "__main__":
     print(tline)
     for pn, pr in results.items():
         print(f"{pn:<{first_col_w}s}", end="")
-        if pr["Tests"] == 0 and pr["Failed tests"]:
-            print(f"{'--- XML Parsing Failure ---':^{len(cols) * col_w}}")
-        else:
-            for c in cols:
-                fmt = ".1f" if c == "Time" else "d"
-                print(f"{pr[c]:{col_w}{fmt}}", end="")
-            print()
+        for c in cols:
+            fmt = ".1f" if c == "Time" else "d"
+            print(f"{pr[c]:{col_w}{fmt}}", end="")
+        print()
 
     print(tline)
     print(f"{'Total':<{first_col_w}s}", end="")
@@ -126,7 +123,10 @@ if __name__ == "__main__":
     print()
 
     # Second condition handles xml parsing failures
-    if totals["Failures"] + totals["Errors"] > 0 or totals["Failed tests"]:
+    assert totals["Tests"] == totals["Skipped"] + totals["Failures"] + totals["Errors"]
+    assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
+
+    if totals["Failures"] + totals["Errors"] > 0:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
         print("    The following tests failed")
         for t in totals["Failed tests"]:

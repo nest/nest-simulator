@@ -130,8 +130,7 @@ if __name__ == "__main__":
     print(tline)
     print()
 
-    # Second condition handles xml parsing failures
-    assert totals["Tests"] == totals["Skipped"] + totals["Failures"] + totals["Errors"]
+    # Consistency check
     assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
 
     if totals["Failures"] + totals["Errors"] > 0:

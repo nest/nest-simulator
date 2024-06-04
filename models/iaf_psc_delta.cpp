@@ -154,7 +154,7 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
   if ( c_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be >0." );
+    throw BadProperty( "Capacitance must be > 0." );
   }
   if ( t_ref_ < 0 )
   {

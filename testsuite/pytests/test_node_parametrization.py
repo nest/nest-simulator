@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_nodeParametrization.py
+# test_node_parametrization.py
 #
 # This file is part of NEST.
 #

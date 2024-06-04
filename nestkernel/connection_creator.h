@@ -87,8 +87,6 @@ public:
    * - "mask": Mask definition (dictionary or masktype).
    * - "kernel": Kernel definition (dictionary, parametertype, or double).
    * - "synapse_model": The synapse model to use.
-   * - "targets": Which targets (model or lid) to select (dictionary).
-   * - "sources": Which targets (model or lid) to select (dictionary).
    * - "weight": Synaptic weight (dictionary, parametertype, or double).
    * - "delay": Synaptic delays (dictionary, parametertype, or double).
    * - other parameters are interpreted as synapse parameters, and may

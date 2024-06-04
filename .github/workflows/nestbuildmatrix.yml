@@ -707,6 +707,8 @@ jobs:
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
+        env:
+          DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES: ${{ contains(matrix.use, 'mpi') && contains(matrix.use, 'openmp') }}
         run: |
           pwd
           cd "$NEST_VPATH"
@@ -757,7 +759,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: "Install MacOS system dependencies"
         run: |

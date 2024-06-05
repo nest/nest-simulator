@@ -37,7 +37,18 @@ assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
 
 def parse_result_file(fname):
-    results = jp.JUnitXml.fromfile(fname)
+    try:
+        results = jp.JUnitXml.fromfile(fname)
+    except Exception as err:
+        return {
+            "Tests": 1,
+            "Skipped": 0,
+            "Failures": 0,
+            "Errors": 1,
+            "Time": 0,
+            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+        }
+
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more
         suites = list(results)
@@ -119,15 +130,17 @@ if __name__ == "__main__":
     print(tline)
     print()
 
-    # Second condition handles xml parsing failures
-    if totals["Failures"] + totals["Errors"] > 0 or totals["Failed tests"]:
+    # Consistency check
+    assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
+
+    if totals["Failures"] + totals["Errors"] > 0:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
         print("    The following tests failed")
         for t in totals["Failed tests"]:
             print(f"    | {t}")  # | marks line for parsing
         print()
         print("    Please report test failures by creating an issue at")
-        print("        https://github.com/nest/nest_simulator/issues")
+        print("        https://github.com/nest/nest-simulator/issues")
         print()
         print(tline)
         print()

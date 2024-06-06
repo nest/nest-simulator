@@ -397,7 +397,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       S_.z_ = 1.0;
     }
 
-    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 

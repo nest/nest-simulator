@@ -385,6 +385,7 @@ extern const Name offset;
 extern const Name offsets;
 extern const Name omega;
 extern const Name optimizer;
+extern const Name optimize_each_step;
 extern const Name order;
 extern const Name origin;
 extern const Name other;

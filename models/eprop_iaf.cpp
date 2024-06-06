@@ -395,6 +395,7 @@ eprop_iaf::compute_gradient( const long t_spike,
   double grad = 0.0;             // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+  const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
@@ -412,10 +413,22 @@ eprop_iaf::compute_gradient( const long t_spike,
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad += L * e_bar;
+
+    if ( optimize_each_step )
+    {
+      grad = L * e_bar;
+      weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+    }
+    else
+    {
+      grad += L * e_bar;
+    }
   }
 
-  weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+  if ( not optimize_each_step )
+  {
+    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+  }
 
   const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
 

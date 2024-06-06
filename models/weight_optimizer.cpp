@@ -36,6 +36,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
   , eta_( 1e-4 )
   , Wmin_( -100.0 )
   , Wmax_( 100.0 )
+  , optimize_each_step_( true )
 {
 }
 
@@ -44,6 +45,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
   , eta_( cp.eta_ )
   , Wmin_( cp.Wmin_ )
   , Wmax_( cp.Wmax_ )
+  , optimize_each_step_( cp.optimize_each_step_ )
 {
 }
 
@@ -55,6 +57,7 @@ WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );
   def< double >( d, names::Wmax, Wmax_ );
+  def< bool >( d, names::optimize_each_step, optimize_each_step_ );
 }
 
 void
@@ -86,6 +89,8 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   }
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
+
+  updateValue< bool >( d, names::optimize_each_step, optimize_each_step_ );
 }
 
 WeightOptimizer::WeightOptimizer()

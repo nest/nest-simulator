@@ -357,6 +357,7 @@ const Name offset( "offset" );
 const Name offsets( "offsets" );
 const Name omega( "omega" );
 const Name optimizer( "optimizer" );
+const Name optimize_each_step( "optimize_each_step" );
 const Name order( "order" );
 const Name origin( "origin" );
 const Name other( "other" );

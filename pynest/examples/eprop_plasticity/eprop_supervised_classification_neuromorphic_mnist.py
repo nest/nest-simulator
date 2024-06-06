@@ -329,6 +329,7 @@ params_common_syn_eprop = {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
         "eta": 5e-3,  # learning rate
+        "optimize_each_step": True,  # if True, call the optimizer in each time step
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },

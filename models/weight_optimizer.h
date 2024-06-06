@@ -73,16 +73,17 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-========== ==== ========================= ======= =================================
+================== ==== ========================= ======= =================================
 **Common optimizer parameters**
------------------------------------------------------------------------------------
-Parameter  Unit  Math equivalent          Default Description
-========== ==== ========================= ======= =================================
-batch_size                                      1 Size of batch
-eta             :math:`\eta`                 1e-4 Learning rate
-Wmax         pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
-Wmin         pA :math:`W_{ji}^\text{min}`  -100.0 Minimal value for synaptic weight
-========== ==== ========================= ======= =================================
+-------------------------------------------------------------------------------------------
+Parameter          Unit Math equivalent           Default Description
+================== ==== ========================= ======= =================================
+batch_size                                              1 Size of batch
+eta                     :math:`\eta`                 1e-4 Learning rate
+optimize_each_step                                   True
+Wmax                 pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
+Wmin                 pA :math:`W_{ji}^\text{min}`  -100.0 Minimal value for synaptic weight
+================== ==== ========================= ======= =================================
 
 ========= ==== =============== ================ ==============
 **Gradient descent parameters (default optimizer)**
@@ -205,6 +206,9 @@ public:
 
   //! Maximal value for synaptic weight.
   double Wmax_;
+
+  //! If true, optimize each step, else once per spike.
+  bool optimize_each_step_;
 };
 
 /**

@@ -46,7 +46,7 @@ function populateTags(data) {
     finalData.forEach(item => {
         const button = document.createElement('button');
         button.className = 'filter-button';
-        button.textContent = `${item.tag} (${item.count})`;
+        button.textContent = item.tag + ` (${item.count})`;
         button.onclick = function() {
             this.classList.toggle('is-active');
             updateModelDisplay();

@@ -79,7 +79,6 @@ def extract_model_text():
         yield match, file_path
 
 
-################################### config-inited ##############################
 # The following block of functions are called at Sphinx core event config-inited
 
 
@@ -196,7 +195,6 @@ def write_rst_files(doc, outdir, outname):
         outfile.write(doc)
 
 
-####################### env-before-read-docs ##################################
 # The following block of functions are called at Sphinx core event
 # env-before-read-docs
 
@@ -320,7 +318,6 @@ def find_models_in_tag_combinations(models_dict):
     return result_list
 
 
-##################################### source-read ###################################
 # The following function is called at Sphinx core even source read
 
 

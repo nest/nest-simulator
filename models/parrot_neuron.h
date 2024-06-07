@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, parrot, artificial
+/* BeginUserDocs: neuron, parrot
 
 Short description
 +++++++++++++++++

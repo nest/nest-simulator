@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, rate, artificial
+/* BeginUserDocs: neuron, rate
 
 Short description
 +++++++++++++++++

@@ -92,7 +92,7 @@ Welcome to the NEST Simulator documentation
 
         .. raw:: html
 
-           <object width="89%" height="89%" data="_static/img/excalidraw_nestconcept_dd.svg" type="image/svg+xml"></object>
+           <object width="89%" height="89%" data="_static/img/excalidraw_nestconcept.svg" type="image/svg+xml"></object>
 
 
     .. grid-item::

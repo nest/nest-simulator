@@ -51,7 +51,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
-    "extract_userdocs_cpp",
     "sphinx_carousel.carousel",
     "sphinxcontrib.plantuml",
     "add_button_notebook",

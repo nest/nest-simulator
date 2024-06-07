@@ -1,12 +1,24 @@
+// Wait for the DOM to be fully loaded before executing the script
 document.addEventListener('DOMContentLoaded', function() {
+    // Fetch the JSON data containing model tags and counts
     fetch('../_static/data/filter_model.json')
         .then(response => response.json())
         .then(data => {
+            // Populate the tags on the page with the fetched data
             populateTags(data);
         })
         .catch(error => console.error('Error loading the JSON data:', error));
 });
 
+/**
+ * Populates the tag buttons on the page.
+ *
+ * This function creates buttons for each tag in the provided data,
+ * giving priority to certain tags. Tags are sorted and displayed
+ * accordingly.
+ *
+ * @param {Array} data - Array of objects containing tags and their counts.
+ */
 function populateTags(data) {
     const container = document.getElementById('tag-container');
     container.innerHTML = ''; // Ensure no duplicates
@@ -30,11 +42,11 @@ function populateTags(data) {
     // Merge arrays for rendering
     const finalData = [...priorityData, ...otherData];
 
-    // Render buttons
+    // Render buttons for each tag
     finalData.forEach(item => {
         const button = document.createElement('button');
         button.className = 'filter-button';
-        button.textContent = item.tag + ` (${item.count})`;
+        button.textContent = `${item.tag} (${item.count})`;
         button.onclick = function() {
             this.classList.toggle('is-active');
             updateModelDisplay();
@@ -43,6 +55,12 @@ function populateTags(data) {
     });
 }
 
+/**
+ * Updates the model display based on the selected tags.
+ *
+ * This function fetches the JSON data again, filters the models based on
+ * the active tags, and then displays the filtered models.
+ */
 function updateModelDisplay() {
     const activeButtons = document.querySelectorAll('.filter-button.is-active');
     const selectedTags = Array.from(activeButtons).map(button => button.textContent.split(' ')[0]);
@@ -54,6 +72,15 @@ function updateModelDisplay() {
         });
 }
 
+/**
+ * Filters the models based on the selected tags.
+ *
+ * This function creates an intersection of models that match all selected tags.
+ *
+ * @param {Array} data - Array of objects containing tags and their models.
+ * @param {Array} selectedTags - Array of tags selected by the user.
+ * @returns {Array} - Array of models that match all selected tags.
+ */
 function filterModelsByTags(data, selectedTags) {
     const tagModelMap = new Map(data.map(item => [item.tag, item.models]));
     let intersection = selectedTags.reduce((acc, tag, index) => {
@@ -66,7 +93,14 @@ function filterModelsByTags(data, selectedTags) {
     return intersection;
 }
 
-
+/**
+ * Displays the filtered models on the page.
+ *
+ * This function updates the DOM to show the models that match the selected tags,
+ * fetching the HTML content for each model and displaying it as a list.
+ *
+ * @param {Array} models - Array of model URLs to be displayed.
+ */
 function displayModels(models) {
     const modelList = document.getElementById('model-list');
     modelList.innerHTML = '';  // Clear previous content

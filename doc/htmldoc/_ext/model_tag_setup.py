@@ -244,21 +244,34 @@ def get_model_tags(app, env, docname):
 
 def prepare_model_dict():
     """
-    Iterates through a list of file paths, opens each file, and extracts tags from the line
-    that contains 'BeginUserDocs'.
-    Tags are expected to be comma-separated right after 'BeginUserDocs'.
+    Extracts user documentation tags from header files and organizes them into a dictionary.
 
-    Parameters
-    ----------
+    This function iterates through the header files found by `extract_model_text()`, extracts
+    the tags from each file, and creates a dictionary where the keys are the filenames (with
+    the ".h" extension replaced by ".html") and the values are lists of tags.
 
-    directory_path : list
-        A list of strings, where each string is a path to a file.
+    The tags are expected to be comma-separated and will be stripped of whitespace. Tags
+    that are empty after stripping are excluded from the list.
 
     Returns
     -------
 
-    models_dict : dict
+    dict
         A dictionary with filenames as keys and lists of tags as values.
+
+    Example
+    -------
+
+    If a header file named "example.h" contains the following documentation block:
+
+        BeginUserDocs: neuron, adaptive threshold, integrate-and-fire
+        ...
+        EndUserDocs
+
+    The resulting dictionary will have an entry:
+        {
+            "example.html": ["neuron", "adaptive_threshold", "integrate-and-fire"]
+        }
     """
     models_dict = {}
 

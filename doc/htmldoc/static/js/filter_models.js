@@ -46,7 +46,8 @@ function populateTags(data) {
     finalData.forEach(item => {
         const button = document.createElement('button');
         button.className = 'filter-button';
-        button.textContent = item.tag + ` (${item.count})`;
+        button.textContent = `${item.tag} (${item.count})`;
+        button.dataset.tag = item.tag; // Store the tag as a data attribute
         button.onclick = function() {
             this.classList.toggle('is-active');
             updateModelDisplay();
@@ -63,7 +64,7 @@ function populateTags(data) {
  */
 function updateModelDisplay() {
     const activeButtons = document.querySelectorAll('.filter-button.is-active');
-    const selectedTags = Array.from(activeButtons).map(button => button.textContent.split(' ')[0]);
+    const selectedTags = Array.from(activeButtons).map(button => button.dataset.tag); // Use data attribute for tags
     fetch('../_static/data/filter_model.json')
         .then(response => response.json())
         .then(data => {

@@ -283,6 +283,8 @@ def prepare_model_dict():
         models_dict[formatted_path] = []
 
         tags = [t.strip() for t in match.group("tags").split(",")]
+        if "NOINDEX" in tags:
+            continue
         # Strip whitespace from each tag, replace spaces with underscores, and filter out empty strings
         tags = [tag.strip() for tag in tags if tag.strip()]
         models_dict[formatted_path] = tags

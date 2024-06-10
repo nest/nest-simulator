@@ -49,8 +49,8 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
 
 .. math::
 
-   &\;dV_m/dt = 0.04 V_m^2 + 5 V_m + 140 - u + I\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\; \\
-   &\;du/dt = a (b V_m - u)\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\;\; \\
+   &dV_m/dt = 0.04 V_m^2 + 5 V_m + 140 - u + I \\
+   &du/dt = a (b V_m - u) \\
 
 
 .. math::
@@ -86,7 +86,7 @@ The following parameters can be set in the status dictionary.
 
 ======================= =======  ==============================================
  V_m                    mV       Membrane potential
- U_m                    mV       Membrane potential recovery variable
+ V_u                    mV       Membrane potential recovery variable
  V_th                   mV       Spike threshold
  I_e                    pA       Constant input current (R=1)
  V_min                  mV       Absolute lower value for the membrane potential

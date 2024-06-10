@@ -93,7 +93,7 @@ The following parameters can be set in the status dictionary.
  a                      real     Describes time scale of recovery variable
  b                      real     Sensitivity of recovery variable
  c                      mV       After-spike reset value of V_m
- d                      mV       After-spike reset value of U_m
+ d                      mV       After-spike reset value of V_u
  consistent_integration boolean  Use standard integration technique
 ======================= =======  ==============================================
 

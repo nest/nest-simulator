@@ -17,7 +17,7 @@ Welcome to the NEST Simulator documentation
           NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
 
           The models describe single neuron and synapse behavior and their connections.
-          Different mechanisms of plasticity can be used to investigate artificial learning
+          Different mechanisms of plasticity can be used to investigate learning
           and help to shed light on the fundamental principles of how the brain works.
 
           NEST offers convenient and efficient commands to define and connect large networks,
@@ -101,14 +101,15 @@ Welcome to the NEST Simulator documentation
         **How NEST works - Conceptual approach**
 
         This diagram provides an overview of the components essential for building and simulating a network model with NEST:
-        The input from stimulation devices, neuron  and synapse models,
-        and connectivity rules.
-        You can choose what data to record with the recording device. After simulation, the
-        output is ready for analysis with external tools.
 
-        NEST offers a comprehensive set of predefined components, including over a 100 :doc:`neuron models </models/index_neuron>` and :doc:`synapse models </models/index_synapse>`,
-        a variety of :ref:`connection rules <connectivity_concepts>`, :doc:`stimulation devices </models/index_generator>`, and :doc:`recording devices </models/index_recorder>`. Plus,
-        NEST is flexible, allowing you to implement your own custom
+        A NEST simulation is created with input from :doc:`stimulation devices </models/index_generator>`,
+        :doc:`neuron models </models/index_neuron>`, and :doc:`synapse models </models/index_synapse>`,
+        along with  :ref:`connection rules <connectivity_concepts>`.
+        You can choose what data to record with :doc:`recording devices </models/index_recorder>`.
+        After simulation, the output is ready for analysis with external tools.
+
+
+        You can find these components in NEST or you can implement your own custom
         models and extend NEST's functionalities using :doc:`NESTML <nestml:index>` and the :doc:`NEST extension module <extmod:index>`, respectively.
         Check out our wide-ranging list of :doc:`network model <examples/index>` examples.
 

@@ -430,23 +430,23 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
 
 def generate_evidence_accumulation_input_output(
-    n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+    batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
 ):
     n_pop_nrn = n_in // n_input_symbols
 
     prob_choices = np.array([prob_group, 1 - prob_group], dtype=np.float32)
-    idx = np.random.choice([0, 1], n_batch)
-    probs = np.zeros((n_batch, 2), dtype=np.float32)
+    idx = np.random.choice([0, 1], batch_size)
+    probs = np.zeros((batch_size, 2), dtype=np.float32)
     probs[:, 0] = prob_choices[idx]
     probs[:, 1] = prob_choices[1 - idx]
 
-    batched_cues = np.zeros((n_batch, n_cues), dtype=int)
-    for b_idx in range(n_batch):
+    batched_cues = np.zeros((batch_size, n_cues), dtype=int)
+    for b_idx in range(batch_size):
         batched_cues[b_idx, :] = np.random.choice([0, 1], n_cues, p=probs[b_idx])
 
-    input_spike_probs = np.zeros((n_batch, steps["sequence"], n_in))
+    input_spike_probs = np.zeros((batch_size, steps["sequence"], n_in))
 
-    for b_idx in range(n_batch):
+    for b_idx in range(batch_size):
         for c_idx in range(n_cues):
             cue = batched_cues[b_idx, c_idx]
 
@@ -463,7 +463,7 @@ def generate_evidence_accumulation_input_output(
     input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
     input_spike_bools[:, 0, :] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-    target_cues = np.zeros(n_batch, dtype=int)
+    target_cues = np.zeros(batch_size, dtype=int)
     target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)
 
     return input_spike_bools, target_cues

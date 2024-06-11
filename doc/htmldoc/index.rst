@@ -82,8 +82,8 @@ Welcome to the NEST Simulator documentation!
              Discover all our examples!
 
 
-How NEST works - The Big Picture
---------------------------------
+How NEST works --- The Big Picture
+----------------------------------
 
 .. grid::
 

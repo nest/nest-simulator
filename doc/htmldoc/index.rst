@@ -81,38 +81,9 @@ Welcome to the NEST Simulator documentation!
 
              Discover all our examples!
 
-.. grid::
 
-    .. grid-item::
-        :columns: 6
-        :child-direction: row
-        :child-align: end
-
-        .. raw:: html
-
-           <object width="89%" height="89%" data="_static/img/excalidraw_nestconcept.svg" type="image/svg+xml"></object>
-
-
-    .. grid-item::
-        :columns: 5
-
-        **How NEST works - The Big Picture**
-
-        A NEST simulation is created with input from :doc:`stimulation devices </models/index_generator>`,
-        :doc:`neuron models </models/index_neuron>`, and :doc:`synapse models </models/index_synapse>`,
-        along with  :ref:`connection rules <connectivity_concepts>`.
-        You can choose what data to record with :doc:`recording devices </models/index_recorder>`.
-        After simulation, the output is ready for analysis with NEST's built in :py:mod:`.raster_plot` and :py:mod:`.voltage_trace`
-        modules or external tools such as :doc:`Elephant <elephant:index>`.
-
-
-        You can find these components in NEST or you can implement your own custom
-        models and extend NEST's functionalities using :doc:`NESTML <nestml:index>` and the :doc:`NEST extension module <extmod:index>`, respectively.
-        Check out our wide-ranging list of :doc:`network model <examples/index>` examples.
-
-----
-
-**How NEST works - The Big Picture**
+How NEST works - The Big Picture
+--------------------------------
 
 .. grid::
 

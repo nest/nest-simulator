@@ -122,7 +122,13 @@ section#kernel-attributes-nest-nestmodule dd {
   text-align: center;
   font-style: italic;
 }
-
+/* Provide a specific height to the svg object on index page
+ * Reason: Safari does not interpret percentages or max-content
+ * correctly
+ * there is an additional @media setting for <768px screens*/
+section#welcome-to-the-nest-simulator-documentation  object {
+  height: 400px;
+}
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/
@@ -983,7 +989,11 @@ This is for the larger monitors and possibly full screen viewers.
 @media only screen and (min-width: 1240px) {
 #hero h1{ font-size:2em;}
 }
-
+@media only screen and (max-width: 768px) {
+ section#welcome-to-the-nest-simulator-documentation  object {
+  height: 200px;
+ }
+}
 /*
 RETINA (2x RESOLUTION DEVICES)
 This applies to the retina iPhone (4s) and iPad (2,3) along with

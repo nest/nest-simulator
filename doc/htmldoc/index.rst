@@ -91,7 +91,7 @@ How NEST works --- The Big Picture
 
         .. raw:: html
 
-           <object width="99%" height="99%" data="_static/img/excalidraw_nestconcept_horiz.svg" type="image/svg+xml"></object>
+           <object data="_static/img/excalidraw_nestconcept_horiz.svg" type="image/svg+xml"></object>
 
 
 .. grid::

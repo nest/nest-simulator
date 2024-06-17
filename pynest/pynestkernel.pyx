@@ -297,7 +297,7 @@ cdef class NESTEngine:
         if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
             raise TypeError('delays must be a 1-dimensional NumPy array')
         if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
-                                              numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
+                                              numpy.issubdtype(syn_param_keys.dtype, numpy.bytes_)):
             raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
         if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
             raise TypeError('syn_param_values must be a 2-dimensional NumPy array')

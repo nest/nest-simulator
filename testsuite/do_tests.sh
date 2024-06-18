@@ -520,8 +520,16 @@ if test "${PYTHON}"; then
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+
+		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+		    PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"
+		fi
+
 		set +e
-                $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+
+		# We need to use eval here because $() splits run_command in weird ways
+                run_command="$(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only")"
+		eval "${run_command}" 2>&1 | tee -a "${TEST_LOGFILE}"
 		set -e
             done
         fi

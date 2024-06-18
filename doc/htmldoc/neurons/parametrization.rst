@@ -19,6 +19,16 @@ The following parameters and functionalities are provided:
 -  :ref:`Combination of parameters <combine_ex>`
 
 
+.. admonition:: Create parameters after setting number of threads!
+
+   For correct results, it is essential to create parameter objects
+   only *after* the number of threads (virtual processes) has been
+   set. If parameter objects are created first and the number of
+   threads changed afterwards, this will result incorrect behavior and
+   possibly a segmentation fault. Unfortunately, NEST cannot currently
+   detect existing parameter objects when the number of threads change.
+
+
 .. _random_ex:
 
 Random parameters

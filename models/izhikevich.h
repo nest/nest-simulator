@@ -48,9 +48,7 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]_. The dynamics are given by:
 
 .. math::
-
-   &dV_m/dt = 0.04 V_m^2 + 5 V_m + 140 - u + I \\
-   &du/dt = a (b V_m - u) \\
+   &dV_m/dt = 0.04 {V_m}^2 + 5 V_m + 140 - U_m + I \\
 
 
 .. math::
@@ -86,14 +84,14 @@ The following parameters can be set in the status dictionary.
 
 ======================= =======  ==============================================
  V_m                    mV       Membrane potential
- V_u                    mV       Membrane potential recovery variable
+ U_m                    mV       Membrane potential recovery variable
  V_th                   mV       Spike threshold
  I_e                    pA       Constant input current (R=1)
  V_min                  mV       Absolute lower value for the membrane potential
  a                      real     Describes time scale of recovery variable
  b                      real     Sensitivity of recovery variable
  c                      mV       After-spike reset value of V_m
- d                      mV       After-spike reset value of V_u
+ d                      mV       After-spike reset value of U_m
  consistent_integration boolean  Use standard integration technique
 ======================= =======  ==============================================
 

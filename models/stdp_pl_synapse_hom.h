@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cmath>
+#include <iomanip>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -115,13 +116,52 @@ public:
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
+  void init_exp_tau_plus();
+  void init_exp_tau_minus();
+
+  double get_exp_tau_plus( const long dt_steps ) const;
+  double get_exp_tau_minus( const long dt_steps ) const;
+
   // data members common to all connections
   double tau_plus_;
-  double tau_plus_inv_; //!< 1 / tau_plus for efficiency
+  double tau_minus_;
+  double minus_tau_plus_inv_;  //!< - 1 / tau_plus for efficiency
+  double minus_tau_minus_inv_; //!< - 1 / tau_minus for efficiency
   double lambda_;
   double alpha_;
   double mu_;
+
+  // look up table for the exponentials
+  // exp( -dt / tau_plus ) and exp( -dt / tau_minus )
+  std::vector< double > exp_tau_plus_;
+  std::vector< double > exp_tau_minus_;
 };
+
+inline double
+STDPPLHomCommonProperties::get_exp_tau_plus( const long dt_steps ) const
+{
+  if ( static_cast< size_t >( dt_steps ) < exp_tau_plus_.size() )
+  {
+    return exp_tau_plus_[ dt_steps ];
+  }
+  else
+  {
+    return std::exp( Time( Time::step( dt_steps ) ).get_ms() * minus_tau_plus_inv_ );
+  }
+}
+
+inline double
+STDPPLHomCommonProperties::get_exp_tau_minus( const long dt_steps ) const
+{
+  if ( static_cast< size_t >( dt_steps ) < exp_tau_minus_.size() )
+  {
+    return exp_tau_minus_[ dt_steps ];
+  }
+  else
+  {
+    return std::exp( Time( Time::step( dt_steps ) ).get_ms() * minus_tau_minus_inv_ );
+  }
+}
 
 
 /**
@@ -207,13 +247,13 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay_steps(), get_delay_steps(), cp.tau_minus_ );
   }
 
   void
@@ -239,7 +279,7 @@ private:
   // data members of each connection
   double weight_;
   double Kplus_;
-  double t_lastspike_;
+  long t_lastspike_;
 };
 
 template < typename targetidentifierT >
@@ -260,13 +300,13 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
 {
   // synapse STDP depressing/facilitation dynamics
 
-  const double t_spike = e.get_stamp().get_ms();
+  const long t_spike = e.get_stamp().get_steps();
 
   // t_lastspike_ = 0 initially
 
   Node* target = get_target( t );
 
-  double dendritic_delay = get_delay();
+  const long dendritic_delay = get_delay_steps();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
@@ -274,19 +314,21 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to postsynaptic spikes since last pre-synaptic spike
-  double minus_dt;
+  size_t dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
+    dt = ( start->t_ + dendritic_delay ) - t_lastspike_;
     start++;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+
+    weight_ = facilitate_( weight_, Kplus_ * cp.get_exp_tau_plus( dt ), cp );
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+
+  const auto k_val = target->get_K_value( t_spike - dendritic_delay, dt );
+  weight_ = depress_( weight_, k_val * cp.get_exp_tau_minus( dt ), cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -294,7 +336,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
+  Kplus_ = Kplus_ * cp.get_exp_tau_plus( t_spike - t_lastspike_ ) + 1.0;
 
   t_lastspike_ = t_spike;
 
@@ -306,7 +348,7 @@ stdp_pl_synapse_hom< targetidentifierT >::stdp_pl_synapse_hom()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
-  , t_lastspike_( 0.0 )
+  , t_lastspike_( 0 )
 {
 }
 
@@ -331,7 +373,6 @@ stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, 
   // base class properties
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-
   updateValue< double >( d, names::Kplus, Kplus_ );
 }
 

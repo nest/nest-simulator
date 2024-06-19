@@ -59,7 +59,7 @@ public:
    * When the trace is requested at the exact same time that the neuron emits a spike,
    * the trace value as it was just before the spike is returned.
    */
-  double get_K_value( double t ) override;
+  double get_K_value( long t, size_t& dt_steps ) override;
 
   /**
    * Write the different STDP K values at time t (in ms) to the provided locations.
@@ -81,8 +81,8 @@ public:
   /**
    * Return the spike times (in steps) of spikes which occurred in the range [t1,t2].
    */
-  void get_history( double t1,
-    double t2,
+  void get_history( long t1,
+    long t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish ) override;
 
@@ -92,7 +92,7 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read, double delay ) override;
+  void register_stdp_connection( size_t t_first_read, size_t delay, const double tau_minus ) override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -135,10 +135,10 @@ private:
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
 
-  double max_delay_;
+  size_t max_delay_;
   double trace_;
 
-  double last_spike_;
+  long last_spike_;
 
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
@@ -147,7 +147,7 @@ private:
 inline double
 ArchivingNode::get_spiketime_ms() const
 {
-  return last_spike_;
+  return Time(Time::step( last_spike_ )).get_ms();
 }
 
 } // of namespace

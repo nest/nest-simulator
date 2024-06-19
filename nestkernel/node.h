@@ -479,6 +479,8 @@ public:
    * @throws IllegalConnection
    *
    */
+  virtual void register_stdp_connection( size_t, size_t, const double tau_minus );
+
   virtual void register_stdp_connection( double, double );
 
   /**
@@ -761,7 +763,9 @@ public:
    * return the Kminus value at t (in ms).
    * @throws UnexpectedEvent
    */
-  virtual double get_K_value( double t );
+  virtual double get_K_value( long t, size_t& dt_steps );
+
+  virtual double get_K_value (double );
 
   virtual double get_LTD_value( double t );
 
@@ -777,6 +781,11 @@ public:
    * return the spike history for (t1,t2].
    * @throws UnexpectedEvent
    */
+  virtual void get_history( long t1,
+    long t2,
+    std::deque< histentry >::iterator* start,
+    std::deque< histentry >::iterator* finish );
+
   virtual void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,

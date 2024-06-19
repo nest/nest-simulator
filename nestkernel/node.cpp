@@ -211,9 +211,15 @@ Node::send_test_event( Node&, size_t, synindex, bool )
  * throws IllegalConnection
  */
 void
-Node::register_stdp_connection( double, double )
+Node::register_stdp_connection( size_t, size_t, const double )
 {
   throw IllegalConnection( "The target node does not support STDP synapses." );
+}
+
+void
+Node::register_stdp_connection( double, double )
+{
+  throw IllegalConnection( "The target node does not support non-STDP synapses." );
 }
 
 void
@@ -468,14 +474,25 @@ Node::get_LTD_value( double )
 }
 
 double
+Node::get_K_value( long, size_t& )
+{
+  throw UnexpectedEvent();
+}
+
+double
 Node::get_K_value( double )
 {
   throw UnexpectedEvent();
 }
 
-
 void
 Node::get_K_values( double, double&, double&, double& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::get_history( long, long, std::deque< histentry >::iterator*, std::deque< histentry >::iterator* )
 {
   throw UnexpectedEvent();
 }

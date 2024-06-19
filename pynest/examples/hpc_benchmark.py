@@ -171,7 +171,6 @@ brunel_params = {
         "tau_syn_ex": tau_syn,
         # time const. postsynaptic inhibitory currents(ms)
         "tau_syn_in": tau_syn,
-        "tau_minus": 30.0,  # time constant for STDP(depression)
         # V can be randomly initialized see below
         "V_m": 5.7,  # mean value of membrane potential
     },
@@ -193,6 +192,7 @@ brunel_params = {
         "lambda": 0.1,  # STDP step size
         "mu": 0.4,  # STDP weight dependence exponent(potentiation)
         "tau_plus": 15.0,  # time constant for potentiation
+        "tau_minus": 30.0,  # time constant for STDP(depression)
     },
     "eta": 1.685,  # scaling of external stimulus
     "filestem": params["path_name"],

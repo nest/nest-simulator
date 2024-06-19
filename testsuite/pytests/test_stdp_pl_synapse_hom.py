@@ -60,9 +60,11 @@ class TestSTDPPlSynapse:
             "alpha": 1.0,
             "mu": 0.4,
             "tau_plus": self.tau_pre,
+            "tau_minus": self.tau_post
         }
-        self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0, "weight": self.init_weight}
-        self.neuron_parameters = {"tau_minus": self.tau_post}
+        self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0,
+                                   "weight": self.init_weight, }
+        self.neuron_parameters = {}
 
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred. To
@@ -334,7 +336,6 @@ class TestSTDPPlSynapse:
     ):
         if not DEBUG_PLOTS:  # make pylint happy if no matplotlib
             return
-
         # pylint: disable=E0601
         fig, ax = plt.subplots(nrows=3)
 

@@ -22,7 +22,7 @@
 
 #include "histentry.h"
 
-nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter )
+nest::histentry::histentry( size_t t, double Kminus, double Kminus_triplet, size_t access_counter )
   : t_( t )
   , Kminus_( Kminus )
   , Kminus_triplet_( Kminus_triplet )

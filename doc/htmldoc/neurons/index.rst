@@ -3,6 +3,12 @@
 All about neurons in NEST
 =========================
 
+.. dendtirets representd as delays / ignore axonal delay matters stdp
+ all incoming conenctions to neuron on same thread
+   spike lifetime
+   update - neuron (spike emitted --> spike buffer) then communicated at fisec intervals to send buffer / receive buffer deliver to sy napse, ring buffer crated incoming sp9ike for time step
+   yellow bar presynapetic node geen par topost synapstic node, lifetime, availabe to synapses on post synaptic side
+   zero axonal delay spike imimediatley receiv by synapse, delay can be split into aonal and dendritic portion
 
 .. grid:: 1 1 3 3
    :gutter: 1
@@ -90,6 +96,7 @@ Types of neurons
 
      .. image:: /static/img/astrocyte.svg
 
+
 .. _spiking_neurons:
 
 Spiking neurons
@@ -101,30 +108,27 @@ Geometry
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-      :columns: 3
-
-      .. image:: /static/img/point_neurons.svg
-
    .. grid-item::
-      :columns: 9
+      :columns: 2
+
+      .. image:: /static/img/point_neurons_nn.svg
+
+   .. grid-item:: Point neurons
+      :columns: 4
 
       The most common type of neuron model in NEST.
       Point neurons are simplified models of biological neurons that represent
       the neuron as a single point where all inputs are processed,
       without considering their complex structure (such as dendrites and axons).
 
-.. grid:: 1 2 2 2
-
-   .. grid-item-card::
-      :columns: 3
-
-      .. image:: /static/img/mc_neurons.svg
 
    .. grid-item::
-      :columns: 9
+      :columns: 2
 
-      Multi-compartmental neurons
+      .. image:: /static/img/mc_neurons_nn.svg
+
+   .. grid-item:: Multi-compartment neurons
+      :columns: 4
 
       Neurons are subdivided into multiple compartments, like soma, dendrite, and axon, in which inputs can be received
       across all components.
@@ -142,15 +146,19 @@ Geometry
 Spiking mechanism
 ~~~~~~~~~~~~~~~~~
 
+Integrate-and-fire
+^^^^^^^^^^^^^^^^^^
+
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
-      .. image::  /static/img/integrate_and_fire.svg
+      .. image::  /static/img/integrate_and_fire_nn.svg
 
    .. grid-item::
-      :columns: 9
+      :columns: 10
 
       .. tab-set::
 
@@ -163,18 +171,22 @@ Spiking mechanism
 
         .. tab-item:: Integration details
 
-          * Exact integration guide?
-          * IAF_integration_singularity
+          * :ref:`exact_integration` put here?
+          * :doc:`/model_details/IAF_Integration_Singularity`
+
+Parrot neurons
+^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
-      .. image:: /static/img/parrot_neurons.svg
+      .. image:: /static/img/parrot_neurons_nn.svg
 
    .. grid-item::  Parrot neurons
-      :columns: 9
+      :columns: 10
 
       Neurons that repeat incoming spikes. Applications:
 
@@ -184,54 +196,55 @@ Spiking mechanism
 
         parrot_neuron_ps – Neuron that repeats incoming spikes - precise spike timing version
 
+Hodgkin Huxley
+^^^^^^^^^^^^^^
+
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
-      .. image::  /static/img/hodgkinhuxley.svg
+      .. image::  /static/img/hodgkinhuxley_nn.svg
 
    .. grid-item::
-      :columns: 9
+      :columns: 10
 
       .. tab-set::
 
           .. tab-item:: General info
+            :selected:
 
             Hodgkin-Huxley model provides a detailed representation of the electrical
             activity of neurons by explicitly modeling the ionic currents through
             voltage-gated sodium and potassium channels, along with a leak current.
             This model is particularly useful for studying the detailed mechanisms of action potential generation and propagation,
 
+            .. dropdown:: Hodgkin Huxley neurons
+
+               * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
+               * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
+               * hh_psc_alpha – Hodgkin-Huxley neuron model
+               * hh_psc_alpha_clopath – Hodgkin-Huxley neuron model with support for Clopath plasticity
+               * hh_psc_alpha_gap – Hodgkin-Huxley neuron model with gap-junction support
+
           .. tab-item:: Integration details
 
-            * hh_details
+            * :doc:`/model_details/hh_details`
 
-.. grid::
-
-   .. grid-item::
-     :class: sd-align-major-end
-     :columns: 9
-     :margin: 0 0 auto 0
-
-     .. dropdown:: Hodgkin Huxley neurons
-
-       * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
-       * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
-       * hh_psc_alpha – Hodgkin-Huxley neuron model
-       * hh_psc_alpha_clopath – Hodgkin-Huxley neuron model with support for Clopath plasticity
-       * hh_psc_alpha_gap – Hodgkin-Huxley neuron model with gap-junction support
-
+Point process
+^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
-      .. image::  /static/img/point_process.svg
+      .. image::  /static/img/point_process_nn.svg
 
    .. grid-item::
-      :columns: 9
+      :columns: 10
 
       a spike-response model with escape-noise?
 
@@ -257,6 +270,7 @@ Input mechanism
    .. grid-item::
      :columns: 9
 
+     NEST convention: psc (aka CUBA)
      Synaptic inputs are represented as fixed currents (I) injected into the neuron.
      These currents are independent of the membrane potential
      and are directly added to the neuron's equation governing voltage dynamics.
@@ -272,6 +286,7 @@ Input mechanism
    .. grid-item::
      :columns: 9
 
+     NEST convention: cond (aka COBA)
      Synaptic inputs are represented as changes in membrane conductance (`g`).
      These changes depend on the opening and closing of ion channels,
      which are often modeled based on voltage or neurotransmitter binding.
@@ -279,7 +294,9 @@ Input mechanism
      synaptic inputs depending on the membrane potential, which can change over time.
 
 Adaptation mechanism
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+
+NEST convention: aeif (aka AdEx)
 
 .. grid::
 
@@ -293,6 +310,7 @@ Adaptation mechanism
       .. tab-set::
 
         .. tab-item:: General info
+            :selected:
 
             Unlike a fixed threshold, an adaptive threshold increases temporarily following each spike and
             gradually returns to its baseline value over time. This mechanism models phenomena
@@ -317,10 +335,12 @@ Adaptation mechanism
 
         .. tab-item:: Implementation details
 
-           * aeif_models_implementation
+           * :doc:`/model_details/aeif_models_implementation`
 
 Precise spike timing
 ~~~~~~~~~~~~~~~~~~~~
+
+NEST convention: ps
 
 .. grid::
 
@@ -341,6 +361,37 @@ Precise spike timing
 
          * iaf_psc_exp_ps_lossless – Current-based leaky integrate-and-fire neuron with exponential-shaped postsynaptic currents predicting the exact number of spikes using a state space analysis
          * iaf_psc_delta_ps – Current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents - precise spike timing version
+
+
+Post-synaptic input currents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Synaptic input currents can be modeled using different functions to represent
+how the current changes over time after a synaptic event.
+
+.. grid:: 1 2 2 2
+
+   .. grid-item-card::
+      :columns: 3
+
+      .. image:: /static/img/delta.svg
+
+   .. grid-item-card::
+      :columns: 3
+
+      .. image:: /static/img/exp.svg
+
+   .. grid-item-card::
+      :columns: 3
+
+      .. image:: /static/img/alpha.svg
+
+
+   .. grid-item-card::
+      :columns: 3
+
+      .. image:: /static/img/beta.svg
+
 
 |
 
@@ -396,6 +447,7 @@ Rate neurons
      .. tab-set::
 
       .. tab-item:: General info
+        :selected:
 
         Mean-field theory
 
@@ -403,9 +455,8 @@ Rate neurons
 
       .. tab-item:: Integration details
 
-        * siegert_neuorn_integration
+        * :doc:`/model_details/siegert_neuron_integration`
 
-* rate_transormer_node (like parrot)
 
 .. dropdown:: Rate neurons
 
@@ -443,7 +494,7 @@ Multi-state neurons
      Neurons with two or three states. Simplest neuron models with threshold activation. Binary neurons have
      On / Off behavior   used in theoretical and disease theory.
 
-.. dropdown::
+.. dropdown:: Multi-state neurons
 
   *   mcculloch_pitts_neuron – Binary deterministic neuron with Heaviside activation function
   *   erfc_neuron – Binary stochastic neuron with complementary error function as activation function
@@ -472,10 +523,11 @@ Neuron-astrocyte interactions
      .. tab-set::
 
       .. tab-item:: General info
+         :selected:
 
          Astrocytes
 
-        .. dropdown:: Astrocyte models
+         .. dropdown:: Astrocyte models
 
              * aeif_cond_alpha_astro – Conductance based exponential integrate-and-fire neuron model with support for neuron-astrocyte interactions
              * astrocyte_lr_1994 – An astrocyte model based on Li & Rinzel (1994)
@@ -483,11 +535,9 @@ Neuron-astrocyte interactions
 
       .. tab-item:: Implementation details
 
-         * astrocyte_model_implementation
+         * :doc:`/model_details/astrocyte_model_implementation`
 
 
-Guides
-------
 
 .. toctree::
   :maxdepth: 1

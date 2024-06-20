@@ -118,9 +118,6 @@ on the synaptic time constant according to
 
    q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = \tau_{\text{syn, X}} \;.
 
-By default, :math:`V_\text{m}` is not bounded from below. To limit
-hyperpolarization to biophysically plausible values, set parameter
-:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
 .. note::
 

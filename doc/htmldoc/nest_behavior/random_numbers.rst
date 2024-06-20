@@ -299,7 +299,7 @@ node).
 We consider first an example setting a random membrane potential.
 We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/doc/stable/reference/random/>`__.
 
-.. admonition:: Don't do this in Python!
+.. warning:: Don't do this in Python!
 
    The randomization example below is shown only to demonstrate how you in principle could
    use random values generated at the Python level in a NEST simulation in a way consistent

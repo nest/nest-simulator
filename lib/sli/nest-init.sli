@@ -413,7 +413,7 @@ def
 
 /CreateParameter trie
 [/dictionarytype] /CreateParameter_D load addtotrie
-[/doubletype] /CreateParameter_D load addtotrie
+[/doubletype] { /val Set << /constant << /value val >> >> CreateParameter_D } addtotrie
 def
 
 /GetValue [/parametertype]
@@ -488,9 +488,14 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% add conversion from NodeCollection
-/cva [/nodecollectiontype]
-  /cva_g load
+% add new functions to trie if it exists, else create new
+/cva dup lookup not
+{
+  trie
+} if
+  [/connectiontype] /cva_C load addtotrie
+  [/nodecollectiontype] { /all cva_g_l } addtotrie
+  [/nodecollectiontype /literaltype] /cva_g_l load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1425,8 +1430,6 @@ def
 /TimeCommunicationAlltoallv trie
 [/integertype /integertype] /TimeCommunicationAlltoallv_i_i load addtotrie
 def
-
-/cva [/connectiontype] /cva_C load def
 
 /abort
 {

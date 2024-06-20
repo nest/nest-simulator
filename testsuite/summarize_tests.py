@@ -37,7 +37,18 @@ assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
 
 def parse_result_file(fname):
-    results = jp.JUnitXml.fromfile(fname)
+    try:
+        results = jp.JUnitXml.fromfile(fname)
+    except Exception as err:
+        return {
+            "Tests": 1,
+            "Skipped": 0,
+            "Failures": 0,
+            "Errors": 1,
+            "Time": 0,
+            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+        }
+
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more
         suites = list(results)
@@ -71,13 +82,22 @@ if __name__ == "__main__":
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, "*.xml"))):
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace("_", " ")
-        ph_res = parse_result_file(pfile)
-        results[ph_name] = ph_res
-        for k, v in ph_res.items():
-            totals[k] += v
+        try:
+            ph_res = parse_result_file(pfile)
+            results[ph_name] = ph_res
+            for k, v in ph_res.items():
+                totals[k] += v
+        except Exception as err:
+            msg = f"ERROR: {pfile} not parsable with error {err}"
+            results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
+            totals["Failed tests"].append(msg)
 
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
-    tline = "-" * (len(cols) * 10 + 20)
+
+    col_w = max(len(c) for c in cols) + 2
+    first_col_w = max(len(k) for k in results.keys())
+
+    tline = "-" * (len(cols) * col_w + first_col_w)
 
     print()
     print()
@@ -85,27 +105,33 @@ if __name__ == "__main__":
     print("NEST Testsuite Results")
 
     print(tline)
-    print("{:<20s}".format("Phase"), end="")
+    print(f"{'Phase':<{first_col_w}s}", end="")
     for c in cols:
-        print("{:>10s}".format(c), end="")
+        print(f"{c:>{col_w}s}", end="")
     print()
 
     print(tline)
     for pn, pr in results.items():
-        print("{:<20s}".format(pn), end="")
-        for c in cols:
-            fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-            print(fstr.format(pr[c]), end="")
-        print()
+        print(f"{pn:<{first_col_w}s}", end="")
+        if pr["Tests"] == 0 and pr["Failed tests"]:
+            print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
+        else:
+            for c in cols:
+                fmt = ".1f" if c == "Time" else "d"
+                print(f"{pr[c]:{col_w}{fmt}}", end="")
+            print()
 
     print(tline)
-    print("{:<20s}".format("Total"), end="")
+    print(f"{'Total':<{first_col_w}s}", end="")
     for c in cols:
-        fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-        print(fstr.format(totals[c]), end="")
+        fmt = ".1f" if c == "Time" else "d"
+        print(f"{totals[c]:{col_w}{fmt}}", end="")
     print()
     print(tline)
     print()
+
+    # Consistency check
+    assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
 
     if totals["Failures"] + totals["Errors"] > 0:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
@@ -114,7 +140,7 @@ if __name__ == "__main__":
             print(f"    | {t}")  # | marks line for parsing
         print()
         print("    Please report test failures by creating an issue at")
-        print("        https://github.com/nest/nest_simulator/issues")
+        print("        https://github.com/nest/nest-simulator/issues")
         print()
         print(tline)
         print()

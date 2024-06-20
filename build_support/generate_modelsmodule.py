@@ -27,6 +27,7 @@ compiled by CMake.
 """
 
 import argparse
+import itertools
 import os
 import sys
 from pathlib import Path
@@ -109,6 +110,7 @@ def get_models_from_file(model_file):
         "public Node": "node",
         "public ClopathArchivingNode": "clopath",
         "public UrbanczikArchivingNode": "urbanczik",
+        "public EpropArchivingNode": "neuron",
         "typedef binary_neuron": "binary",
         "typedef rate_": "rate",
     }
@@ -227,9 +229,7 @@ def generate_modelsmodule():
     1. the copyright header.
     2. a list of generic NEST includes
     3. the list of includes for the models to build into NEST
-    4. some boilerplate function implementations needed to fulfill the
-       Module interface
-    5. the list of model registration lines for the models to build
+    4. the list of model registration lines for the models to build
        into NEST
 
     The code is enriched by structured C++ comments as to make
@@ -246,7 +246,16 @@ def generate_modelsmodule():
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
         file.write(copyright_header.replace("{{file_name}}", fname))
-        file.write('\n#include "models.h"\n\n// Generated includes\n#include "config.h"\n')
+        file.write(
+            dedent(
+                """
+            #include "models.h"
+
+            // Generated includes
+            #include "config.h"
+        """
+            )
+        )
 
         for model_type, guards_fnames in includes.items():
             file.write(f"\n// {model_type.capitalize()} models\n")

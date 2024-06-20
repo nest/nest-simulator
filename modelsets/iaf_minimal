@@ -1,6 +1,5 @@
 # Minimal modelset for spiking neuron simulations with NEST
 
-
 dc_generator
 iaf_psc_alpha
 multimeter

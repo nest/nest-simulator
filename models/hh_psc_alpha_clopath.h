@@ -163,9 +163,7 @@ References
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
        Hodgkin-Huxley neuron on ModelDB:
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
-       =%2fmodeldb_package%2fstdp_cc.mod
-
+       https://modeldb.science/144566?tab=1
 
 Sends
 +++++

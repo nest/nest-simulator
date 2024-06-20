@@ -327,40 +327,34 @@ Layer< D >::dump_connections( std::ostream& out,
   // Print information about all local connections for current source
   for ( size_t i = 0; i < connectome.size(); ++i )
   {
-    ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-    const size_t source_node_id = con_id.get_source_node_id();
+    ConnectionDatum conn = getValue< ConnectionDatum >( connectome.get( i ) );
+    const size_t source_node_id = conn.get_source_node_id();
 
     // Search source_pos for source node only if it is a different node
     if ( source_node_id != previous_source_node_id )
     {
-      source_pos = src_vec->begin()->first;
-
-      for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-            ( src_iter != src_vec->end() ) && ( source_node_id != src_iter->second );
-            ++src_iter, source_pos = src_iter->first )
-        ;
-
+      const auto it = std::find_if( src_vec->begin(),
+        src_vec->end(),
+        [ source_node_id ]( const std::pair< Position< D >, size_t >& p ) { return p.second == source_node_id; } );
+      assert( it != src_vec->end() );
+      source_pos = it->first;
       previous_source_node_id = source_node_id;
     }
 
     DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
-      con_id.get_target_node_id(),
-      con_id.get_target_thread(),
-      con_id.get_synapse_model_id(),
-      con_id.get_port() );
-
-    long target_node_id = getValue< long >( result_dict, names::target );
-    double weight = getValue< double >( result_dict, names::weight );
-    double delay = getValue< double >( result_dict, names::delay );
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port() );
+    const long target_node_id = getValue< long >( result_dict, names::target );
+    const double weight = getValue< double >( result_dict, names::weight );
+    const double delay = getValue< double >( result_dict, names::delay );
+    const Layer< D >* const tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
+    const long tnode_lid = tgt_layer->node_collection_->get_nc_index( target_node_id );
+    assert( tnode_lid >= 0 );
 
     // Print source, target, weight, delay, rports
-    out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
-
-    Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
-
-    out << ' ';
-    const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
-    assert( tnode_lid >= 0 );
+    out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay << ' ';
     tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
     out << '\n';
   }

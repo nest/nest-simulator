@@ -232,8 +232,6 @@ More topics
 .. toctree::
    :hidden:
 
-   understand_index
-
 .. |nav| image:: static/img/GPS-Settings-256_nest.svg
 .. |script| image:: static/img/script_white.svg
       :scale: 20%

@@ -375,7 +375,7 @@ sz = (14 * np.cos(phi), 14 * np.sin(phi))
 fig.set_size_inches(sz)
 
 # selective populations
-num = NE * 0.15
+num = 0.15 * NE
 
 for j in range(3):
     # compute firing rates as moving averages over 50 ms windows with 5 ms strides

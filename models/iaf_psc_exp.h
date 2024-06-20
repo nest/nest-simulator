@@ -48,7 +48,7 @@ Description
 
 ``iaf_psc_exp``  a leaky integrate-and-fire model with
 
-* a hard threshold (if :math:`\delta=0, see below)
+* a hard threshold (if :math:`\delta=0`, see below)
 * a fixed refractory period,
 * no adaptation mechanisms,
 * exponential-shaped synaptic input currents according to [1]_.

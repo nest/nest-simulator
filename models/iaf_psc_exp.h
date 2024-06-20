@@ -51,7 +51,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponential shaped synaptic input currents according to [1]_
+* exponential-shaped synaptic input currents according to [1]_.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................

@@ -362,7 +362,7 @@ protected:
 /**
  * Class representing a connection builder which may be bi- or tripartite.
  *
- * A ConnBuilder alwyas has a primary BipartiteConnBuilder. It additionally can have a pair of third_in and third_out
+ * A ConnBuilder always has a primary BipartiteConnBuilder. It additionally can have a pair of third_in and third_out
  * Bipartite builders, where the third_in builder must perform one-to-one connections on given source-third pairs.
  */
 class ConnBuilder

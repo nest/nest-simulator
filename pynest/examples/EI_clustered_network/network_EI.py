@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# network.py
+# network_EI.py
 #
 # This file is part of NEST.
 #
@@ -58,8 +58,8 @@ class ClusteredNetwork:
     def __init__(self, sim_dict, net_dict, stim_dict):
         """Initialize the ClusteredNetwork object.
 
-        Parameters are given and explained in the files network_params.py,
-        sim_params.py and stimulus_params.py.
+        Parameters are given and explained in the files network_params_EI.py,
+        sim_params_EI.py and stimulus_params_EI.py.
 
         Parameters
         ----------

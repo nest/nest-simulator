@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# network_params.py
+# network_params_EI.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: Network Parameters
-------------------------------------------------
+--------------------------------------------------
 
 A dictionary with parameters defining the network and neuron parameters.
 

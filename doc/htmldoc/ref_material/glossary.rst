@@ -41,22 +41,19 @@ Units of measure
    Nanosiemens (nS).
 
  g_L
-   Leak conductance in Nanosiemens (nS).
+   Leak conductance in nanosiemens (nS).
 
  g_K
-   Potassium peak conductance in Nanosiemens (nS).
+   Potassium peak conductance in nanosiemens (nS).
 
  g_Na
-   Sodium peak conductance in Nanosiemens (nS).
+   Sodium peak conductance in nanosiemens (nS).
 
  spike rates
-   Spikes/second.
-
- modulation frequencies
-   Herz (Hz).
+   The number of spikes that occurred in a certain time interval, usually expressed in terms of spikes per second (spks/s or s^-1).
 
  frequency
-   Frequncy in Hertz (Hz).
+   Frequency in Hertz (Hz). Note that spike rates are often better expressed in terms of spikes per second (spks/s or s^-1).
 
  voltage
    Millivolts (mV).

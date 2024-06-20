@@ -36,7 +36,7 @@ namespace nest
 {
 
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, synapse, short-term plasticity
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, short-term plasticity
 
 Short description
 +++++++++++++++++

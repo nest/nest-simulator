@@ -47,7 +47,7 @@ a binary container file (or to a rather small set of such files). This
 is especially useful for large-scale simulations running in a
 distributed way on many MPI processes/OpenMP threads. In such usage
 scenarios, writing to plain text files (see :doc:`recording backend
-for ASCII files <recording_backend_ascii>`) would cause a large
+for ASCII files </models/recording_backend_ascii>`) would cause a large
 overhead because of the huge number of generated files and thus be
 very inefficient.
 

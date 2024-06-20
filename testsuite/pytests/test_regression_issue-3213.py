@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# sim_params.py
+# test_regression_issue-3213.py
 #
 # This file is part of NEST.
 #
@@ -19,23 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST EI-clustered network: Simulation Parameters
-------------------------------------------------
-
-A dictionary with parameters defining the simulation.
+import nest
+import pytest
 
 """
+Test that GetConnections works if NodeCollection with gaps is provided as source arg.
+"""
 
-sim_dict = {
-    # The full simulation time is the sum of a presimulation time and the main
-    # simulation time.
-    # presimulation time (in ms)
-    "warmup": 1000.0,
-    # simulation time (in ms)
-    "simtime": 10000.0,
-    # resolution of the simulation (in ms)
-    "dt": 0.1,
-    "randseed": 55,
-    # Number of virtual processes
-    "n_vp": 4,
-}
+
+def test_get_conns_works():
+    """Main concern is that GetConnections() passes, expected number of connections based on all-to-all."""
+
+    num_n = 12
+    n = nest.Create("parrot_neuron", num_n)
+    nest.Connect(n, n)
+    pick = [3, 7, 9, 11]
+    conns = nest.GetConnections(source=n[pick])
+    assert len(conns) == num_n * len(pick)

@@ -510,17 +510,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  NodeCollectionMetadataPTR meta = nc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-
-  // return empty dict if NC does not have metadata
-  if ( meta.get() )
-  {
-    meta->get_status( dict );
-    slice_positions_if_sliced_nc( dict, nc );
-
-    ( *dict )[ names::network_size ] = nc->size();
-  }
+  nc->get_metadata_status( dict );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -1054,13 +1045,16 @@ NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
+NestModule::Cva_g_lFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
-  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum node_ids = nodecollection->to_array();
+  i->assert_stack_load( 2 );
 
-  i->OStack.pop();
+  const std::string selection = getValue< std::string >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+
+  ArrayDatum node_ids = nodecollection->to_array( selection );
+
+  i->OStack.pop( 2 );
   i->OStack.push( node_ids );
   i->EStack.pop();
 }
@@ -1121,7 +1115,7 @@ NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = nodecollection->get_lid( node_id );
+  const auto res = nodecollection->get_nc_index( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -2161,7 +2155,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
   i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
   i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
-  i->createcommand( "cva_g", &cva_gfunction );
+  i->createcommand( "cva_g_l", &cva_g_lfunction );
   i->createcommand( "size_g", &size_gfunction );
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );

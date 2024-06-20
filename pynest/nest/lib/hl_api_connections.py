@@ -251,16 +251,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         }
 
         if len(reduced_processed_syn_spec) > 0:
-            syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
-
             for i, value in enumerate(reduced_processed_syn_spec.values()):
                 syn_param_values[i] = value
         else:
-            syn_param_keys = None
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+        connect_arrays(pre, post, weights, delays, synapse_model, reduced_processed_syn_spec.keys(), syn_param_values)
 
         return
 

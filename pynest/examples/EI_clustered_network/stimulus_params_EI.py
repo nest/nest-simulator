@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# stimulus_params.py
+# stimulus_params_EI.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """ PyNEST EI-clustered network: Stimulus Parameters
------------------------------------------------
+-----------------------------------------------------
 
 A dictionary with parameters for an optinal stimulation of clusters.
 

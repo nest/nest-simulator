@@ -191,6 +191,30 @@ def test_third_works_for_all_primary_rules(connspec, num_conns_expected):
     assert len(nest.GetConnections(third, post)) == num_conns_expected
 
 
+@pytest.mark.skipif_missing_threads
+def test_sliced_third():
+    """Test that connection works on multiple threads when using complex node collection as third factor."""
+
+    nest.local_num_threads = 4
+    nrn = nest.Create("parrot_neuron", 20)
+    third = (nrn[:3] + nrn[5:])[::3]
+
+    nest.TripartiteConnect(
+        nrn,
+        nrn,
+        third,
+        {"rule": "all_to_all"},
+        {"rule": "third_factor_bernoulli_with_pool", "pool_type": "random", "pool_size": 2},
+    )
+
+    t_in = nest.GetConnections(target=third)
+    t_out = nest.GetConnections(source=third)
+
+    assert len(t_in) == len(t_out)
+    assert set(t_in.targets()) <= set(third.global_id)
+    assert set(t_out.sources()) <= set(third.global_id)
+
+
 def test_connect_complex_synspecs():
     n_pre, n_post, n_third = 4, 2, 3
     pre = nest.Create("parrot_neuron", n_pre)

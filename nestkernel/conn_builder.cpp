@@ -870,7 +870,7 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
     if ( not random_pool_ )
     {
       // Here we can work in parallel since we just reset to invalid_index
-      for ( auto tgt_it = targets_->local_begin(); tgt_it != targets_->end(); ++tgt_it )
+      for ( auto tgt_it = targets_->thread_local_begin(); tgt_it != targets_->end(); ++tgt_it )
       {
         Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thrd );
         assert( not tgt->is_proxy() );
@@ -998,7 +998,7 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const long lid = targets_->get_lid( tnode_id );
+          const long lid = targets_->get_nc_index( tnode_id );
           if ( lid < 0 ) // Is local node in target list?
           {
             continue;
@@ -1198,7 +1198,7 @@ nest::AllToAllBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1482,7 +1482,7 @@ nest::FixedInDegreeBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1917,7 +1917,7 @@ nest::BernoulliBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -2034,7 +2034,7 @@ nest::PoissonBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -2085,21 +2085,6 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     }
   }
 }
-
-/*
-  nest::AuxiliaryBuilder::AuxiliaryBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_spec )
-  {
-  }
-
-  void nest::AuxiliaryBuilder::single_connect( size_t snode_id, Node & tgt, size_t tid, RngPtr rng )
-  {
-    single_connect_( snode_id, tgt, tid, rng );
-  }
-*/
 
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

@@ -342,7 +342,7 @@ def plot_dynamics(astro_data, neuron_data, start):
     print("Plotting dynamics ...")
     # get astrocyte data
     astro_times, astro_ip3_mean, astro_ip3_sd = get_plot_data(astro_data, "IP3")
-    astro_times, astro_ca_mean, astro_ca_sd = get_plot_data(astro_data, "Ca")
+    astro_times, astro_ca_mean, astro_ca_sd = get_plot_data(astro_data, "Ca_astro")
     # get neuron data
     neuron_times, neuron_sic_mean, neuron_sic_sd = get_plot_data(neuron_data, "I_SIC")
     # set plots
@@ -413,7 +413,7 @@ nest.TripartiteConnect(
 )
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
 mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})
-mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
+mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca_astro"]})
 nest.Connect(mm_pre_neurons, pre_neurons)
 nest.Connect(mm_post_neurons, post_neurons)
 nest.Connect(mm_astrocytes, astrocytes)

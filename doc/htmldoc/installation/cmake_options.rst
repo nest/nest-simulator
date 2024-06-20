@@ -40,6 +40,29 @@ NEST allows for several configuration options for custom builds:
 
 .. _modelset_config:
 
+Minimal configuration
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer.
+However, this implies several restrictions:
+
+- Some neuron and synapse models will not be available, as they depend on ODE solvers from the GNU Scientific Library.
+- The Python extension will not be available
+- Multi-threading and parallel computing facilities will be disabled.
+
+To configure NEST for compilation without external packages, use the following  command::
+
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
+          -Dwith-python=OFF \
+          -Dwith-gsl=OFF \
+          -Dwith-readline=OFF \
+          -Dwith-ltdl=OFF \
+          -Dwith-openmp=OFF \
+          </path/to/nest/source>
+
+See the :ref:`CMake Options <cmake_options>` to  further adjust settings for your system.
+
 Select built-in models
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -76,6 +99,37 @@ Use Python to build PyNEST
 
 For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
+.. _performance_cmake:
+
+Maximize performance, reduce energy consumption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+The following options help to optimize NEST for maximal performance and thus reduced energy consumption.
+
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-optimize="-O3 -march=native"``  | Activate most compiler options that do not    |
+|                                          | affect compliance with IEEE754 numerics and   |
+|                                          | optimize for CPU type used                    |
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-defines=-DNDEBUG``              | Disable all ``assert()`` statements in NEST   |
++------------------------------------------+-----------------------------------------------+
+
+.. note::
+
+   * In our experience, gains from these optimizations are not very large. It can still be sensible to test them,
+     especially if you are going to perform a large number of simulations.
+   * Your particular use case may contain edge cases during NEST execution that our extensive test suite has
+     not covered. Internal consistency tests in NEST in the form of ``assert()`` statements can help to detect such
+     edge cases. Using the optimization options above removes these internal checks and thus increases the
+     risk that NEST will produce incorrect results. Therefore, use these options *only after you have performed
+     multiple simulations of your specific model with default optimization settings* (i.e., ``-O2``), which leaves the assertions
+     in place.
+   * Using ``-march=native`` requires that you build NEST on the same CPU architecture as you will use to run it.
+   * For the technically minded: Even just using ``-O3`` removes some ``assert()`` statements from NEST since we
+     have wrapped some of them in functions, which get eliminated due to interprocedural optimization. 
+
+
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -104,7 +158,7 @@ Build documentation
 If either documentation build is toggled to `ON`, you can then run ``make docs`` if you only want to
 build the docs.
 
-See also the :ref:`documentation workflow <doc_workflow>` for user and developer docs.
+See also the :ref:`documentation workflow <doc_workflow>` for user-facing and technical docs.
 
 
 External libraries
@@ -142,9 +196,6 @@ NEST properties
 | ``-Dtics_per_ms=[number]``                    | Specify elementary unit of time [default=1000 tics per ms].    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
-+-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dexternal-modules=[OFF|<list;of;modules>]``| External NEST modules to be linked in, separated by ';',       |
-|                                               | [default=OFF].                                                 |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |
@@ -262,7 +313,7 @@ follwing switch for the invocation of ``cmake``. It expects either
     -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]
 
 For details on how to use the Connection Generator Interface, see the
-:ref:`guide on connection management <conn_builder_conngen>`.
+:ref:`guide on connection generation <connection_generator>`.
 
 .. _compile_with_python:
 

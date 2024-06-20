@@ -204,7 +204,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
@@ -251,16 +251,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         }
 
         if len(reduced_processed_syn_spec) > 0:
-            syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
-
             for i, value in enumerate(reduced_processed_syn_spec.values()):
                 syn_param_values[i] = value
         else:
-            syn_param_keys = None
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+        connect_arrays(pre, post, weights, delays, synapse_model, reduced_processed_syn_spec.keys(), syn_param_values)
 
         return
 
@@ -366,9 +363,15 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
      - any parameters specific to the selected synapse model.
 
 
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
+
+
     See Also
     ---------
-    :ref:`connection_management`
+    :ref:`connectivity_concepts`
     """
 
     # Confirm that we got node collections

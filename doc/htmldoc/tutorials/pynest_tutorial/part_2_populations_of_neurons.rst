@@ -202,7 +202,7 @@ Here we have just used very simple connection schemes. Connectivity
 patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
 containing the key ``rule`` and the key for parameters associated to the
-rule. Please see :ref:`Connection management <connection_management>`
+rule. Please see :ref:`Connectivity concepts <connectivity_concepts>`
 for an illustrated guide to the usage of :py:func:`.Connect`, as well as the example below.
 
 Connecting populations with random connections
@@ -267,8 +267,8 @@ Note that for all connectivity rules, it is perfectly legitimate to have
 the same population simultaneously in the role of ``pre`` and ``post``.
 
 For more information on connecting neurons, please read the
-documentation of the :py:func:`.Connect` function and consult the guide at
-:ref:`Connection management <connection_management>`.
+documentation of the :py:func:`.Connect` function and consult the guide on
+:ref:`connectivity concepts <connectivity_concepts>`.
 
 Specifying the behaviour of devices
 -----------------------------------

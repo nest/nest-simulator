@@ -29,7 +29,7 @@ Questions and answers about precise neurons
    models relevant to Computational Neuroscience the dynamics of the single
    neuron is not. Examples are integrate-and-fire models with linear
    :hxt_ref:`subthreshold dynamics` and the AdEx model considered in `Hanuschkin
-   (2010) <http://dx.doi.org/10.3389/fninf.2010.00113>`__. In these cases
+   (2010) <https://doi.org/10.3389/fninf.2010.00113>`__. In these cases
    it is possible to study the accuracy of a solution of the single neuron
    dynamics.
 
@@ -61,7 +61,7 @@ Questions and answers about precise neurons
    A: Although the networks dynamics is chaotic, in some cases mesoscopic
    measures of network activity can be affected by the quality of the
    single neuron solver. For example, `Hansel et al.
-   (1998) <http://dx.doi.org/10.1162/089976698300017845>`__ showed that a
+   (1998) <https://doi.org/10.1162/089976698300017845>`__ showed that a
    measure of network synchrony exhibits a considerable error if the single
    neuron dynamics is integrated using a grid-constrained algorithm.
    Without confidence in the precision of the single neuron solver we

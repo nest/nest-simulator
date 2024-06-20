@@ -46,6 +46,7 @@
 
 namespace nest
 {
+void register_music_cont_in_proxy( const std::string& name );
 
 /* BeginUserDocs: device, MUSIC
 

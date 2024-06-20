@@ -1,7 +1,10 @@
 .. _handling_connections:
 
-How to handle connections (synapses)
-=====================================
+Working with connections
+=========================
+
+Here, we describe how to inspect and modify already created connections.
+:ref:`connectivity_concepts` describes how to create new connections (for using an external library see :ref:`connection_generator`) and :ref:`synapse_spec` how to parameterize synapses as they are created.
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call :py:func:`.GetConnections` a

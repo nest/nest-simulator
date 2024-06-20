@@ -90,17 +90,9 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
 
 nest::ConnBuilder::~ConnBuilder()
 {
-  delete primary_builder_; // fully constructed CB has one
-
-  if ( third_in_builder_ )
-  {
-    delete third_in_builder_;
-  }
-
-  if ( third_out_builder_ )
-  {
-    delete third_out_builder_;
-  }
+  delete primary_builder_;
+  delete third_in_builder_;
+  delete third_out_builder_;
 }
 
 void

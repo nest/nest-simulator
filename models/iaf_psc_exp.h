@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with exponential shaped input currents.
+Leaky integrate-and-fire neuron model with exponential-shaped input currents
 
 Description
 +++++++++++
@@ -51,7 +51,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponential shaped synaptic input currents according to [1]_
+* exponential-shaped synaptic input currents according to [1]_.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -118,9 +118,6 @@ on the synaptic time constant according to
 
    q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = \tau_{\text{syn, X}} \;.
 
-By default, :math:`V_\text{m}` is not bounded from below. To limit
-hyperpolarization to biophysically plausible values, set parameter
-:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
 .. note::
 
@@ -171,7 +168,6 @@ The following parameters can be set in the status dictionary.
 ``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
 ``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
-``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
 =============== ================== =============================== ========================================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.

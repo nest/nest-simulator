@@ -65,7 +65,7 @@ Array parameters
 
 Array parameters can be used with the rules ``one_to_one``, ``all_to_all``,
 ``fixed_total_number``, ``fixed_indegree``, and ``fixed_outdegree``.
-For details on connection rules, see :ref:`connectivity_concept`.
+For details on connection rules, see :ref:`connectivity_concepts`.
 The arrays can be specified as NumPy arrays or Python
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.

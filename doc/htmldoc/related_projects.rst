@@ -90,10 +90,10 @@ real-time operation.
 TheVirtualBrain (TVB)
 ---------------------
 
-:ref:`TVB <tvb:top_basic>` is a framework for the simulation of the dynamics of large-scale brain networks with
+:ref:`TVB <tvb:index>` is a framework for the simulation of the dynamics of large-scale brain networks with
 biologically realistic connectivity.
 
-* :ref:`Get started with TVB <tvb:tutorial_0_gettingstarted>`
+* :ref:`Get started with TVB <tvb:tutorial_0_GettingStarted>`
 
 ConnPlotter
 -----------

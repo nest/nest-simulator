@@ -12,7 +12,7 @@ Guides on using devices in NEST
 
     .. grid-item-card::  Stimulate the network
        :class-title: sd-d-flex-row sd-align-minor-center
-       :link: stimuate_network
+       :link: stimulate_network
        :link-type: ref
 
     .. grid-item-card:: Get data from simulation

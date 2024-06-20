@@ -48,7 +48,7 @@ Description
 
 ``iaf_psc_exp``  a leaky integrate-and-fire model with
 
-* a hard threshold,
+* a hard threshold (if :math:`\delta=0, see below)
 * a fixed refractory period,
 * no adaptation mechanisms,
 * exponential-shaped synaptic input currents according to [1]_.
@@ -69,7 +69,7 @@ A spike is emitted at time step :math:`t^*=t_{k+1}` if
 
 .. math::
 
-   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
+   V_\text{m}(t_k) < V_{\text{th}} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
 
 Subsequently,
 
@@ -78,6 +78,15 @@ Subsequently,
    V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
 
 that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+.. note::
+
+	Spiking in this model can be either deterministic (:math:`\delta=0`) or stochastic (:math:`\delta > 0`).
+	In the stochastic case this model implements a type of spike response model with escape noise.
+	Spiking is given by an inhomogeneous Poisson process with rate
+
+	.. math::
+		\rho \exp \left( \frac{V_{\text{m}} - V_{\text{th}}}{\delta} \right).
 
 Synaptic input
 ..............
@@ -103,20 +112,20 @@ The individual post-synaptic currents (PSCs) are given by
 
 .. math::
 
-   i_{\text{syn, X}}(t) = e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
+   i_{\text{syn, X}}(t) = w \cdot e^{-\frac{t}{\tau_{\text{syn, X}}}} \cdot \Theta(t)
 
-where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, that is,
+where :math:`w` is a weight (excitatory if :math:`w > 0` or inhibitory if :math:`w < 0`), and :math:`\Theta(x)` is the Heaviside step function. The time dependent components of the PSCs are normalized to unit maximum, so that,
 
 .. math::
 
-   i_{\text{syn, X}}(t= 0) = 1 \;.
+   i_{\text{syn, X}}(t= 0) = w \;.
 
 As a consequence, the total charge :math:`q` transferred by a single PSC depends
 on the synaptic time constant according to
 
 .. math::
 
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = \tau_{\text{syn, X}} \;.
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = w \cdot \tau_{\text{syn, X}} \;.
 
 
 .. note::
@@ -168,6 +177,8 @@ The following parameters can be set in the status dictionary.
 ``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
 ``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
+``delta``       0 mV               :math:`\delta`                  Parameter scaling stochastic spiking
+``rho``         0.01 1/s           :math:`\rho`                    Baseline stochastic spiking
 =============== ================== =============================== ========================================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.

@@ -27,6 +27,7 @@ set( nestutil_sources
     lockptr.h
     logging_event.h logging_event.cpp
     logging.h
+    nest_types.h
     numerics.h numerics.cpp
     regula_falsi.h
     sort.h

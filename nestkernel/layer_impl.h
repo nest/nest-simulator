@@ -92,7 +92,7 @@ Layer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-Layer< D >::get_status( DictionaryDatum& d ) const
+Layer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
   ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
   ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
@@ -104,6 +104,13 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   else if ( periodic_.count() == D )
   {
     ( *d )[ names::edge_wrap ] = true;
+  }
+
+  if ( nc )
+  {
+    // This is for backward compatibility with some tests and scripts
+    // TODO: Rename parameter
+    ( *d )[ names::network_size ] = nc->size();
   }
 }
 
@@ -286,12 +293,12 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( NodeCollection::const_iterator it = this->node_collection_->MPI_local_begin();
+  for ( NodeCollection::const_iterator it = this->node_collection_->rank_local_begin();
         it < this->node_collection_->end();
         ++it )
   {
     out << ( *it ).node_id << ' ';
-    get_position( ( *it ).lid ).print( out );
+    get_position( ( *it ).nc_index ).print( out );
     out << std::endl;
   }
 }

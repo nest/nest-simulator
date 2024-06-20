@@ -88,15 +88,8 @@ public:
    *
    * This will increment the counter of the respective entry in the
    * music_in_portlist.
-   *
-   * The argument pristine should be set to true when a model
-   * registers the initial port name. This typically happens when the
-   * copy constructor of the model registers a port, as in
-   * models/music_event_in_proxy.cpp. Setting pristine = true causes
-   * the port to be also added to pristine_music_in_portlist. See
-   * also pristine_music_in_portlist_.
    */
-  void register_music_in_port( std::string portname, bool pristine = false );
+  void register_music_in_port( std::string portname );
 
   /**
    * Unregister a MUSIC input port (portname) from the port list.
@@ -157,16 +150,6 @@ public:
    * @see unregister_music_in_port()
    */
   std::map< std::string, MusicPortData > music_in_portlist_;
-
-  /**
-   * A copy of music_in_portlist_ at the pristine state.
-   *
-   * This is used to reset music_in_portlist_ to its pristine state in
-   * initialize (a default state). Pristine here refers to the
-   * initial state of music_in_portlist_ after the loading of the
-   * pristine_models_.
-   */
-  std::map< std::string, MusicPortData > pristine_music_in_portlist_;
 
   /**
    * The mapping between MUSIC input ports identified by portname

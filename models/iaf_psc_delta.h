@@ -121,6 +121,10 @@ hyperpolarization to biophysically plausible values, set parameter
 
 
 .. note::
+
+   NEST uses exact integration [1]_, [2]_ to integrate subthreshold membrane
+   dynamics.
+
    Spikes arriving while the neuron is refractory, are discarded by
    default. If the property ``refractory_input`` is set to True, such
    spikes are added to the membrane potential at the end of the

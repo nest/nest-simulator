@@ -8,7 +8,7 @@ on: [push, pull_request]
 
 jobs:
   clang-format:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     env:
       CLANG_REQUIRE_VERSION: 17.0.4
       CLANG_FORMAT_FILE: ".clang-format"
@@ -34,7 +34,7 @@ jobs:
           diff -u <(cat ${files}) <(clang-format ${files})
 
   cppcheck:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -57,7 +57,7 @@ jobs:
           cppcheck --enable=all --language=c++ --std=c++17 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   rstcheck:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -73,7 +73,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -84,7 +84,7 @@ jobs:
           rstcheck -r doc/
 
   vale:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -100,7 +100,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -116,7 +116,7 @@ jobs:
           ./vale doc
 
   copyright_headers:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -132,7 +132,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -143,7 +143,7 @@ jobs:
           python build_support/check_copyright_headers.py
 
   unused_names:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -159,14 +159,14 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Check for unused nest::names..."
         run: |
           python build_support/check_unused_names.py
 
   forbidden_types:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -184,7 +184,7 @@ jobs:
           ./build_support/check_forbidden_types.sh
 
   lychee_IGNORED:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -211,7 +211,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pydocstyle:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -227,7 +227,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -238,7 +238,7 @@ jobs:
           pydocstyle pynest/
 
   mypy:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -254,7 +254,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -265,7 +265,7 @@ jobs:
           mypy pynest/
 
   # pytest-linux:
-  #   runs-on: "ubuntu-20.04"
+  #   runs-on: "ubuntu-22.04"
   #   needs: [build_linux]
   #   env:
   #     NEST_VPATH: "build"
@@ -274,7 +274,7 @@ jobs:
   #   strategy:
   #     fail-fast: true
   #     matrix:
-  #       os: ["ubuntu-20.04"]
+  #       os: ["ubuntu-22.04"]
   #       cpp_compiler: ["gcc"]
 
   #       # available use flags (all default to "OFF"):
@@ -293,7 +293,7 @@ jobs:
   #     - name: "Set up Python 3.x"
   #       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
   #       with:
-  #         python-version: 3.9
+  #         python-version: "3.10"
 
   #     - name: "Install dependencies"
   #       run: |
@@ -320,7 +320,7 @@ jobs:
   #     - name: "Set up Python 3.x"
   #       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
   #       with:
-  #         python-version: 3.9
+  #         python-version: "3.10"
 
   #     - name: "Install dependencies"
   #       run: |
@@ -331,7 +331,7 @@ jobs:
   #         pytest pynest/
 
   pylint:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -347,7 +347,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -371,7 +371,7 @@ jobs:
           configuration: --profile=black --thirdparty="nest" --check-only --diff
 
   black:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -390,7 +390,7 @@ jobs:
           jupyter: true
 
   flake8:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
@@ -406,7 +406,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -418,7 +418,7 @@ jobs:
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
@@ -437,7 +437,7 @@ jobs:
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -463,7 +463,7 @@ jobs:
 
   sphinx-conda:
     # as close as possible to the suggested user docs build in the documentation
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     if: false
     needs: [pydocstyle, rstcheck, vale]
     steps:
@@ -482,7 +482,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@030178870c779d9e5e1b4e563269f3aa69b04081   # v3.0.3
         with:
           auto-update-conda: true
-          python-version: "3.7"
+          python-version: "3.10"
 
       - name: Install conda dependencies
         shell: bash -l {0}
@@ -518,7 +518,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-20.04"]
+        os: ["ubuntu-22.04"]
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
@@ -527,7 +527,7 @@ jobs:
           - "boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music"
 
     steps:
       - name: Harden Runner
@@ -544,7 +544,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Restore apt cache"
         uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
@@ -678,13 +678,22 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
+
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
 
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |
@@ -698,6 +707,8 @@ jobs:
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
+        env:
+          DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES: ${{ contains(matrix.use, 'mpi') && contains(matrix.use, 'openmp') }}
         run: |
           pwd
           cd "$NEST_VPATH"
@@ -710,9 +721,8 @@ jobs:
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+            build/install_manifest.txt
+            build/test_report_*/
 
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -749,7 +759,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: "Install MacOS system dependencies"
         run: |
@@ -798,13 +808,22 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
+
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
 
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |
@@ -830,6 +849,5 @@ jobs:
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
-            install_manifest.txt
-            **.log
-            build/reports/**
+            build/install_manifest.txt
+            build/test_report_*/

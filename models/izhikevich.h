@@ -49,7 +49,7 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
 
 .. math::
    &dV_m/dt = 0.04 {V_m}^2 + 5 V_m + 140 - U_m + I \\
-
+   &du/dt = a (b V_m - U_m) \\
 
 .. math::
 

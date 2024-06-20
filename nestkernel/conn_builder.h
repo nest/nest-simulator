@@ -207,7 +207,7 @@ protected:
   NodeCollectionPTR sources_;
   NodeCollectionPTR targets_;
 
-  ThirdOutBuilder* third_out_;
+  ThirdOutBuilder* third_out_; //!< to be triggered when primary connection is created
 
   bool allow_autapses_;
   bool allow_multapses_;

@@ -82,7 +82,7 @@ that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during th
 .. note::
 
 	Spiking in this model can be either deterministic (:math:`\delta=0`) or stochastic (:math:`\delta > 0`).
-	In the stochastic case this model implements a type of spike response model with escape noise.
+	In the stochastic case, this model implements a type of spike response model with escape noise.
 	Spiking is given by an inhomogeneous Poisson process with rate
 
 	.. math::

@@ -114,7 +114,7 @@ def run_sim(coherence, seed=123):
     }
     # fmt: on
 
-    # signals to the two different excitatory sub-populations
+    # Signals to the two different excitatory sub-populations
     # the signal is given by a time-inhomogeneous Poisson process,
     # where the expectations are constant over intervals of 50ms,
     # and then change. The values for each interval are normally

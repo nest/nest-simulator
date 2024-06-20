@@ -424,11 +424,11 @@ class Network:
                     conn_dict_rec = {"rule": "fixed_total_number", "N": self.num_synapses[i][j]}
 
                     if self.weight_matrix_mean[i][j] < 0:
-                        w_min = np.NINF
+                        w_min = -np.inf
                         w_max = 0.0
                     else:
                         w_min = 0.0
-                        w_max = np.Inf
+                        w_max = np.inf
 
                     syn_dict = {
                         "synapse_model": "static_synapse",
@@ -449,7 +449,7 @@ class Network:
                             # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
                             # /random_numbers.html#rounding-effects-when-randomizing-delays
                             min=nest.resolution - 0.5 * nest.resolution,
-                            max=np.Inf,
+                            max=np.inf,
                         ),
                     }
 
@@ -498,7 +498,7 @@ class Network:
                 "weight": nest.math.redraw(
                     nest.random.normal(mean=self.weight_th, std=self.weight_th * self.net_dict["weight_rel_std"]),
                     min=0.0,
-                    max=np.Inf,
+                    max=np.inf,
                 ),
                 "delay": nest.math.redraw(
                     nest.random.normal(
@@ -509,7 +509,7 @@ class Network:
                     # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
                     # /random_numbers.html#rounding-effects-when-randomizing-delays
                     min=nest.resolution - 0.5 * nest.resolution,
-                    max=np.Inf,
+                    max=np.inf,
                 ),
             }
 

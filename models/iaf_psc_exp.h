@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with exponential shaped input currents.
+Leaky integrate-and-fire neuron model with exponential-shaped input currents
 
 Description
 +++++++++++

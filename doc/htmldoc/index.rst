@@ -1,29 +1,35 @@
-Welcome to the NEST Simulator documentation
-===========================================
-
-
+Welcome to the NEST Simulator documentation!
+============================================
 
 
 .. grid::
+  :gutter: 2
 
   .. grid-item::
 
-    NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
+     .. grid:: 1 1 1 1
+       :gutter: 2
 
-    The models describe single neuron and synapse behavior and their connections.
-    Different mechanisms of plasticity can be used to investigate artificial learning
-    and help to shed light on the fundamental principles of how the brain works.
+       .. grid-item::
 
-    NEST offers convenient and efficient commands to define and connect large networks,
-    ranging from algorithmically determined connections to data-driven connectivity.
-    Create connections between neurons using numerous synapse models from STDP to gap junctions.
+          NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
 
-    .. button-ref:: tutorials_guides
-       :ref-type: ref
-       :shadow:
-       :color: primary
+          The models describe single neuron and synapse behavior and their connections.
+          Different mechanisms of plasticity can be used to investigate learning
+          and help to shed light on the fundamental principles of how the brain works.
 
-       Start exploring NEST
+          NEST offers convenient and efficient commands to define and connect large networks,
+          ranging from algorithmically determined connections to data-driven connectivity.
+          Create connections between neurons using numerous synapse models from STDP to gap junctions.
+
+       .. grid-item::
+
+          .. button-ref:: tutorials_guides
+             :ref-type: ref
+             :shadow:
+             :color: primary
+
+             Start exploring NEST
 
   .. grid-item::
 
@@ -47,7 +53,7 @@ Welcome to the NEST Simulator documentation
                 .. figure:: static/img/astrocyte_interaction.png
 
 
-                  Investigate neuron and astrocyte interactions
+                  Inspect neuron and astrocyte interactions
 
 
                 .. figure:: static/img/hpc_benchmark_connectivity.svg
@@ -58,7 +64,7 @@ Welcome to the NEST Simulator documentation
                 .. figure:: static/img/pong_sim.gif
 
 
-                  Play PONG with NEST
+                  Simulate a game of PONG with NEST
 
                 .. figure:: static/img/gapjunctions.png
 
@@ -74,6 +80,36 @@ Welcome to the NEST Simulator documentation
              :shadow:
 
              Discover all our examples!
+
+
+How NEST works --- The Big Picture
+----------------------------------
+
+.. grid::
+
+    .. grid-item::
+
+        .. raw:: html
+
+           <object data="_static/img/excalidraw_nestconcept_horiz.svg" type="image/svg+xml"></object>
+
+
+.. grid::
+
+    .. grid-item::
+
+
+        A NEST simulation is created with input from :doc:`stimulation devices </models/index_generator>`,
+        :doc:`neuron models </models/index_neuron>`, and :doc:`synapse models </models/index_synapse>`,
+        along with  :ref:`connection rules <connectivity_concepts>`.
+        You can choose what data to record with :doc:`recording devices </models/index_recorder>`.
+        After simulation, the output is ready for analysis with NEST's built in :py:mod:`.raster_plot` and :py:mod:`.voltage_trace`
+        modules or external tools such as :doc:`Elephant <elephant:index>`.
+
+
+        You can find these components in NEST or you can implement your own custom
+        models and extend NEST's functionalities using :doc:`NESTML <nestml:index>` and the :doc:`NEST extension module <extmod:index>`, respectively.
+        Check out our wide-ranging list of :doc:`network model <examples/index>` examples.
 
 
 .. toctree::

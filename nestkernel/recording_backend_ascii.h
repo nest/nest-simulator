@@ -46,7 +46,7 @@ each MPI process. This can cause a high load on the file system in
 large simulations. This backend can become prohibitively inefficient,
 particularly on machines with distributed filesystems. In case you
 experience such scaling problems, the :doc:`recording backend for
-SIONlib <recording_backend_sionlib>` may be a possible alternative.
+SIONlib </models/recording_backend_sionlib>` may be a possible alternative.
 
 Filenames of data files are determined according to the following
 pattern:

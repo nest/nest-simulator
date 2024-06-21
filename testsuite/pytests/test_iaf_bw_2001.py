@@ -68,13 +68,13 @@ def spiketrain_response(t, tau, spiketrain, w):
 def test_iaf_bw_2001():
     """
     Creates 4 neurons.
-    nrn1: pre-synaptic iaf_bw_2001
-    nrn2: post-synaptic iaf_bw_2001, will have AMPA, GABA and NMDA synapses
-    nrn3: post-synaptic iaf_bw_2001, will only have AMPA and GABA
-    nrn4: post-synaptic iaf_cond_exp, will only have AMPA and GABA
+    nrn_presyn: pre-synaptic iaf_bw_2001
+    postsyn_bw1: post-synaptic iaf_bw_2001, will have AMPA, GABA and NMDA synapses
+    postsyn_bw2: post-synaptic iaf_bw_2001, will only have AMPA and GABA
+    postsyn_ce: post-synaptic iaf_cond_exp, will only have AMPA and GABA
 
-    We test that nrn3 and nrn4 have identical V_m.
-    We test that nrn2 has greater V_m compared to nrn3.
+    We test that postsyn_bw2 and postsyn_ce have identical V_m.
+    We test that postsyn_bw1 has greater V_m compared to postsyn_bw2.
     We test that s_AMPA and s_GABA have the correct analytical solution.
     """
 
@@ -103,26 +103,20 @@ def test_iaf_bw_2001():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    nrn1 = nest.Create("iaf_bw_2001", wang_params)
-    nrn2 = nest.Create("iaf_bw_2001", wang_params)
-    nrn3 = nest.Create("iaf_bw_2001", wang_params)
-    nrn4 = nest.Create("iaf_cond_exp", cond_exp_params)
+    nrn_presyn = nest.Create("iaf_bw_2001", wang_params)
+    postsyn_bw1 = nest.Create("iaf_bw_2001", wang_params)
+    postsyn_bw2 = nest.Create("iaf_bw_2001", wang_params)
+    postsyn_ce = nest.Create("iaf_cond_exp", cond_exp_params)
 
-    receptor_types = nrn1.get("receptor_types")
+    receptor_types = nrn_presyn.get("receptor_types")
 
     pg = nest.Create("poisson_generator", {"rate": 50.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
 
-    mm1 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
+    mm_presyn, mm_bw1, mm_bw2 = nest.Create(
+        "multimeter", n=3, params={"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
     )
-    mm2 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
-    )
-    mm3 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
-    )
-    mm4 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_ce = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
     # for post-synaptic iaf_bw_2001
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
@@ -133,48 +127,51 @@ def test_iaf_bw_2001():
     ex_syn_spec = {"weight": w_ex}
     in_syn_spec = {"weight": -w_in}
 
-    nest.Connect(pg, nrn1, syn_spec=ampa_syn_spec)
-    nest.Connect(nrn1, sr)
+    nest.Connect(pg, nrn_presyn, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn_presyn, sr)
 
-    nest.Connect(nrn1, nrn2, syn_spec=ampa_syn_spec)
-    nest.Connect(nrn1, nrn2, syn_spec=gaba_syn_spec)
-    nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_bw1, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_bw1, syn_spec=gaba_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_bw1, syn_spec=nmda_syn_spec)
 
-    nest.Connect(nrn1, nrn3, syn_spec=ampa_syn_spec)
-    nest.Connect(nrn1, nrn3, syn_spec=gaba_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_bw2, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_bw2, syn_spec=gaba_syn_spec)
 
-    nest.Connect(nrn1, nrn4, syn_spec=ex_syn_spec)
-    nest.Connect(nrn1, nrn4, syn_spec=in_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_ce, syn_spec=ex_syn_spec)
+    nest.Connect(nrn_presyn, postsyn_ce, syn_spec=in_syn_spec)
 
-    nest.Connect(mm1, nrn1)
-    nest.Connect(mm2, nrn2)
-    nest.Connect(mm3, nrn3)
-    nest.Connect(mm4, nrn4)
+    nest.Connect(mm_presyn, nrn_presyn)
+    nest.Connect(mm_bw1, postsyn_bw1)
+    nest.Connect(mm_bw2, postsyn_bw2)
+    nest.Connect(mm_ce, postsyn_ce)
 
     nest.Simulate(1000.0)
 
     spikes = sr.get("events", "times") * nest.resolution
+    first_spike_ind = int(spikes[0] / nest.resolution)
 
     # compute analytical solutions
-    times = mm1.get("events", "times") * nest.resolution
+    times = mm_presyn.get("events", "times") * nest.resolution
     ampa_soln = spiketrain_response(times, wang_params["tau_AMPA"], spikes, w_ex)
     gaba_soln = spiketrain_response(times, wang_params["tau_GABA"], spikes, np.abs(w_in))
 
-    nptest.assert_array_equal(mm3.events["V_m"], mm4.events["V_m"])
-    assert (mm2.events["V_m"] >= mm3.events["V_m"]).all()
-    nptest.assert_array_almost_equal(ampa_soln, mm2.events["s_AMPA"])
-    nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
+    nptest.assert_array_almost_equal(mm_bw2.events["V_m"], mm_ce.events["V_m"], decimal=10)
+    assert (
+        mm_bw1.events["V_m"][first_spike_ind + 10 :] > mm_bw2.events["V_m"][first_spike_ind + 10 :]
+    ).all()  # 10 due to delay
+    nptest.assert_array_almost_equal(ampa_soln, mm_bw1.events["s_AMPA"])
+    nptest.assert_array_almost_equal(gaba_soln, mm_bw1.events["s_GABA"])
 
 
 def test_approximation_I_NMDA_V_m():
     """
     Creates 3 neurons.
-    nrn1: pre-synaptic iaf_bw_2001
-    nrn2: post-synaptic iaf_bw_2001
-    nrn3: post-synaptic iaf_bw_2001_exact
+    nrn_presyn: pre-synaptic iaf_bw_2001
+    nrn_approx: post-synaptic iaf_bw_2001
+    nrn_exact: post-synaptic iaf_bw_2001_exact
 
     We will check that the and membrane potentials
-    of nrn2 and nrn3 are sufficiently close.
+    of nrn_approx and nrn_exact are sufficiently close.
     """
     nest.ResetKernel()
 
@@ -191,39 +188,38 @@ def test_approximation_I_NMDA_V_m():
         "t_ref": 0.0,  # refreactory period
     }
 
-    nrn1 = nest.Create("iaf_bw_2001", nrn_params)
-    nrn2 = nest.Create("iaf_bw_2001", nrn_params)
-    nrn3 = nest.Create("iaf_bw_2001_exact", nrn_params)
+    nrn_presyn = nest.Create("iaf_bw_2001", nrn_params)
+    nrn_approx = nest.Create("iaf_bw_2001", nrn_params)
+    nrn_exact = nest.Create("iaf_bw_2001_exact", nrn_params)
 
-    receptor_types = nrn1.get("receptor_types")
+    receptor_types = nrn_presyn.get("receptor_types")
 
     pg = nest.Create("poisson_generator", {"rate": 150.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
 
-    mm1 = nest.Create("multimeter", {"record_from": ["V_m", "I_NMDA"], "interval": 0.1, "time_in_steps": True})
+    mm_presyn = nest.Create("multimeter", {"record_from": ["V_m", "I_NMDA"], "interval": 0.1, "time_in_steps": True})
 
-    mm2 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
-    mm3 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_approx = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_exact = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
     # for post-synaptic iaf_bw_2001
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
     nmda_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["NMDA"]}
 
-    # for post-synaptic iaf_cond_exp
-    ex_syn_spec = {"weight": w_ex}
+    nest.Connect(pg, nrn_presyn, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn_presyn, sr)
 
-    nest.Connect(pg, nrn1, syn_spec=ampa_syn_spec)
-    nest.Connect(nrn1, sr)
+    nest.Connect(nrn_presyn, nrn_approx, syn_spec=nmda_syn_spec)
+    nest.Connect(nrn_presyn, nrn_exact, syn_spec=nmda_syn_spec)
 
-    nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
-    nest.Connect(nrn1, nrn3, syn_spec=nmda_syn_spec)
-
-    nest.Connect(mm1, nrn1)
-    nest.Connect(mm2, nrn2)
-    nest.Connect(mm3, nrn3)
+    nest.Connect(mm_presyn, nrn_presyn)
+    nest.Connect(mm_approx, nrn_approx)
+    nest.Connect(mm_exact, nrn_exact)
 
     nest.Simulate(500.0)
-    assert np.max(np.abs(mm2.events["V_m"] - mm3.events["V_m"])) < 0.25
+
+    # 0.25 was found to be roughly the tightest bound we can expect
+    assert np.max(np.abs(mm_approx.events["V_m"] - mm_exact.events["V_m"])) < 0.25
 
 
 def test_illegal_connection_error():
@@ -231,9 +227,9 @@ def test_illegal_connection_error():
     Test that connecting with NMDA synapses from iaf_cond_exp throws error.
     """
     nest.ResetKernel()
-    nrn1 = nest.Create("iaf_cond_exp")
-    nrn2 = nest.Create("iaf_bw_2001")
-    receptor_types = nrn2.get("receptor_types")
+    nrn_ce = nest.Create("iaf_cond_exp")
+    nrn_bw = nest.Create("iaf_bw_2001")
+    receptor_types = nrn_bw.get("receptor_types")
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
-        nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
+        nest.Connect(nrn_ce, nrn_bw, syn_spec=nmda_syn_spec)

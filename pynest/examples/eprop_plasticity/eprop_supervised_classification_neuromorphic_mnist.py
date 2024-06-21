@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning mnist classification with e-prop
+Tutorial on learning N-MNIST classification with e-prop
 -------------------------------------------------------
 
 Training a classification model using supervised e-prop plasticity to classify the Neuromorphic MNIST (N-MNIST) dataset.

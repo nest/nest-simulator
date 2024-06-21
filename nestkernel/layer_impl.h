@@ -310,24 +310,22 @@ Layer< D >::dump_connections( std::ostream& out,
   AbstractLayerPTR target_layer,
   const Token& syn_model )
 {
-  std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
-
-  // Dictionary with parameters for get_connections()
+  // Find all connections for given sources, targets and synapse model
   DictionaryDatum conn_filter( new Dictionary );
-  def( conn_filter, names::synapse_model, syn_model );
-  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
   def( conn_filter, names::source, NodeCollectionDatum( node_collection ) );
-
+  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
+  def( conn_filter, names::synapse_model, syn_model );
   ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
 
-  // Get variables for loop
-  size_t previous_source_node_id = getValue< ConnectionDatum >( connectome.get( 0 ) ).get_source_node_id();
-  Position< D > source_pos = src_vec->begin()->first;
+  // Get positions of remote nodes
+  std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
 
-  // Print information about all local connections for current source
-  for ( size_t i = 0; i < connectome.size(); ++i )
+  // Iterate over connectome and write every connection, looking up source position only if source neuron changes
+  size_t previous_source_node_id = 0; // dummy initial value, cannot be node_id of any node
+  Position< D > source_pos;           // dummy value
+  for ( const auto& entry : connectome )
   {
-    ConnectionDatum conn = getValue< ConnectionDatum >( connectome.get( i ) );
+    ConnectionDatum conn = getValue< ConnectionDatum >( entry );
     const size_t source_node_id = conn.get_source_node_id();
 
     // Search source_pos for source node only if it is a different node
@@ -336,7 +334,8 @@ Layer< D >::dump_connections( std::ostream& out,
       const auto it = std::find_if( src_vec->begin(),
         src_vec->end(),
         [ source_node_id ]( const std::pair< Position< D >, size_t >& p ) { return p.second == source_node_id; } );
-      assert( it != src_vec->end() );
+      assert( it != src_vec->end() ); // internal error if node not found
+
       source_pos = it->first;
       previous_source_node_id = source_node_id;
     }

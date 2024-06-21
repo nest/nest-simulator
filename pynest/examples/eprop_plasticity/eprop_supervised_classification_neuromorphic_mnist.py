@@ -50,7 +50,7 @@ Each input generator is assigned to a pixel of the input image; when an event is
 `t`, the corresponding input generator (connected to an input neuron) emits a spike at that time. Each readout neuron compares the
 network signal :math:`y_k` with the teacher signal :math:`y_k^*`, which it receives from a rate generator
 representing the respective digit class.
-Unlike conventional neural network classifiers that may employ softmax functions and cross-entropy loss for classification, this  network model utilizes a mean-squared error loss to evaluate the training error
+Unlike conventional neural network classifiers that may employ softmax functions and cross-entropy loss for classification, this network model utilizes a mean-squared error loss to evaluate the training error
 and perform digit classification.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.

@@ -102,12 +102,10 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     """
     Test correct computation of losses for a regression task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
-    by comparing the simulated losses with
-
-        1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
-           potential future changes to the NEST code base or a faulty installation). These reference losses
-           were obtained from a simulation with the verified NEST e-prop implementation run with
-           Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and NEST@9b65de4bf.
+    by comparing the simulated losses with NEST reference losses to catch scenarios in which the e-prop model does not
+    work as intended (e.g., potential future changes to the NEST code base or a faulty installation). These reference
+    losses were obtained from a simulation with the verified NEST e-prop implementation run with
+    Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and NEST@9b65de4bf.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator

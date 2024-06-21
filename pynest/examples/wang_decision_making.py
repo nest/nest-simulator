@@ -46,9 +46,6 @@ import nest
 import numpy as np
 from matplotlib.gridspec import GridSpec
 
-np.random.seed(1234)
-rng = np.random.default_rng()
-
 # Use approximate model, can be replaced by "iaf_bw_2001_exact"
 model = "iaf_bw_2001"
 

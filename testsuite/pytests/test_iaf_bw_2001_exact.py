@@ -106,14 +106,8 @@ def test_iaf_bw_2001_exact():
     pg = nest.Create("poisson_generator", {"rate": 50.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
 
-    mm1 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
-    )
-    mm2 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
-    )
-    mm3 = nest.Create(
-        "multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
+    mm1, mm2, mm3 = nest.Create(
+        "multimeter", n=3, params={"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
     )
     mm4 = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 

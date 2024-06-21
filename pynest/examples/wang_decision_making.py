@@ -136,10 +136,20 @@ def run_sim(coherence, seed=123):
 
     # for p ... below allows us to create a local variable in the iterator which is created once
     rates_a = np.fromiter(
-        (p.GetValue() for _ in range(n) for p in [nest.CreateParameter("normal", {"mean": mu_a, "std": sigma})]), float
+        (
+            p.GetValue()
+            for _ in range(num_updates)
+            for p in [nest.CreateParameter("normal", {"mean": mu_a, "std": sigma})]
+        ),
+        float,
     )
     rates_b = np.fromiter(
-        (p.GetValue() for _ in range(n) for p in [nest.CreateParameter("normal", {"mean": mu_b, "std": sigma})]), float
+        (
+            p.GetValue()
+            for _ in range(num_updates)
+            for p in [nest.CreateParameter("normal", {"mean": mu_b, "std": sigma})]
+        ),
+        float,
     )
 
     # synaptic weights

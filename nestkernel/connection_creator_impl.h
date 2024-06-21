@@ -264,7 +264,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
         if ( not tgt->is_proxy() )
         {
-          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+          const Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
 
           if ( mask_.get() )
           {
@@ -339,7 +339,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
     {
-      NodeCollection::const_iterator target_begin = target_nc->local_begin();
+      NodeCollection::const_iterator target_begin = target_nc->thread_local_begin();
       NodeCollection::const_iterator target_end = target_nc->end();
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
@@ -348,7 +348,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
         assert( not tgt->is_proxy() );
 
-        const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+        const Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
 
         if ( mask_.get() )
         {
@@ -423,7 +423,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
 
         if ( not tgt->is_proxy() )
         {
-          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+          const Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
 
           if ( mask_.get() )
           {
@@ -477,7 +477,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
   }
 
-  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_begin = target_nc->rank_local_begin();
   NodeCollection::const_iterator target_end = target_nc->end();
 
   // protect against connecting to devices without proxies
@@ -504,7 +504,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
 
       size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
 
       // We create a source pos vector here that can be updated with the
       // source position. This is done to avoid creating and destroying
@@ -637,7 +637,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
 
       unsigned long target_number_connections = std::round( number_of_connections_->value( rng, tgt ) );
 
@@ -769,7 +769,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
   }
 
-  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_begin = target_nc->rank_local_begin();
   NodeCollection::const_iterator target_end = target_nc->end();
 
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )

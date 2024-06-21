@@ -623,7 +623,7 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const long lid = targets_->get_lid( tnode_id );
+          const long lid = targets_->get_nc_index( tnode_id );
           if ( lid < 0 ) // Is local node in target list?
           {
             continue;
@@ -823,7 +823,7 @@ nest::AllToAllBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1106,7 +1106,7 @@ nest::FixedInDegreeBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1538,7 +1538,7 @@ nest::BernoulliBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1654,7 +1654,7 @@ nest::PoissonBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->get_lid( tnode_id ) < 0 )
+          if ( targets_->get_nc_index( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1847,7 +1847,8 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
         }
         else
         {
-          std::copy_n( third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( pool ) );
+          std::copy_n(
+            third_->begin() + get_first_pool_index_( target.nc_index ), pool_size_, std::back_inserter( pool ) );
         }
 
         // step 3, iterate through indegree to make connections for this target

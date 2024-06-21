@@ -99,6 +99,37 @@ Use Python to build PyNEST
 
 For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
+.. _performance_cmake:
+
+Maximize performance, reduce energy consumption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+The following options help to optimize NEST for maximal performance and thus reduced energy consumption.
+
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-optimize="-O3 -march=native"``  | Activate most compiler options that do not    |
+|                                          | affect compliance with IEEE754 numerics and   |
+|                                          | optimize for CPU type used                    |
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-defines=-DNDEBUG``              | Disable all ``assert()`` statements in NEST   |
++------------------------------------------+-----------------------------------------------+
+
+.. note::
+
+   * In our experience, gains from these optimizations are not very large. It can still be sensible to test them,
+     especially if you are going to perform a large number of simulations.
+   * Your particular use case may contain edge cases during NEST execution that our extensive test suite has
+     not covered. Internal consistency tests in NEST in the form of ``assert()`` statements can help to detect such
+     edge cases. Using the optimization options above removes these internal checks and thus increases the
+     risk that NEST will produce incorrect results. Therefore, use these options *only after you have performed
+     multiple simulations of your specific model with default optimization settings* (i.e., ``-O2``), which leaves the assertions
+     in place.
+   * Using ``-march=native`` requires that you build NEST on the same CPU architecture as you will use to run it.
+   * For the technically minded: Even just using ``-O3`` removes some ``assert()`` statements from NEST since we
+     have wrapped some of them in functions, which get eliminated due to interprocedural optimization. 
+
+
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -282,7 +313,7 @@ follwing switch for the invocation of ``cmake``. It expects either
     -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]
 
 For details on how to use the Connection Generator Interface, see the
-:ref:`guide on connection management <conn_builder_conngen>`.
+:ref:`guide on connection generation <connection_generator>`.
 
 .. _compile_with_python:
 

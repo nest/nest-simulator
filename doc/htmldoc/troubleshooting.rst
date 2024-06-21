@@ -118,7 +118,7 @@ This error message means something in your environment is not set correctly, dep
 
 1. Check which Python version you are running
 
-   You must use **Python 3.8** or newer if you installed NEST with
+   You must use Python :version:`python` or newer if you installed NEST with
 
    a. the Ubuntu PPA,
    b. the conda-forge package,

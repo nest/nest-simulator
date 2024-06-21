@@ -562,7 +562,7 @@ def create_input_output(loader, target_signal_value=1.0):
     return params_gen_spk_in, params_gen_rate_target
 
 
-save_path = "/home/agneskg/ownCloud/inm6/projects/eprop/code/nest/nmnist_data"  # path to save the N-MNIST dataset to
+save_path = "./"  # path to save the N-MNIST dataset to
 train_path, test_path = download_and_extract_nmnist_dataset(save_path)
 
 selected_labels = [label for label in range(n_out)]

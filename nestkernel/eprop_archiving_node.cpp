@@ -281,7 +281,7 @@ EpropArchivingNodeReadout::emplace_new_eprop_history_entry( const long time_step
 
   const long shift = has_norm_step ? delay_out_norm_ : 0;
 
-  eprop_history_.emplace_back( time_step - shift, 5.0 );
+  eprop_history_.emplace_back( time_step - shift, 0.0 );
 }
 
 void

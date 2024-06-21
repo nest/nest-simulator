@@ -135,11 +135,12 @@ def run_sim(coherence, seed=123):
     update_times[0] = 0.1
 
     # for p ... below allows us to create a local variable in the iterator which is created once
-    rates = lambda mu, sig, n: np.fromiter(
-        (p.GetValue() for _ in range(n) for p in [nest.CreateParameter("normal", {"mean": mu, "std": sig})]), float
+    rates_a = np.fromiter(
+        (p.GetValue() for _ in range(n) for p in [nest.CreateParameter("normal", {"mean": mu_a, "std": sigma})]), float
     )
-    rates_a = rates(mu_a, sigma, num_updates)
-    rates_b = rates(mu_b, sigma, num_updates)
+    rates_b = np.fromiter(
+        (p.GetValue() for _ in range(n) for p in [nest.CreateParameter("normal", {"mean": mu_b, "std": sigma})]), float
+    )
 
     # synaptic weights
     w_plus = 1.7  # strong connections in selective populations

@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: e-prop plasticity
+/* BeginUserDocs: e-prop plasticity, synapse
 
 Short description
 +++++++++++++++++

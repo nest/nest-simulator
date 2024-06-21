@@ -266,7 +266,7 @@ nrns_rec = nrns_reg + nrns_ad
 # default, recordings are stored in memory but can also be written to file.
 
 n_record = 1  # number of neurons per type to record dynamic variables from - this script requires n_record >= 1
-n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+n_record_w = 5  # number of senders and targets to record weights from - this script requires n_record_w >=1
 
 if n_record == 0 or n_record_w == 0:
     raise ValueError("n_record and n_record_w >= 1 required")
@@ -276,6 +276,7 @@ params_mm_reg = {
     "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
+    "label": "multimeter_reg",
 }
 
 params_mm_ad = {
@@ -283,6 +284,7 @@ params_mm_ad = {
     "record_from": params_mm_reg["record_from"] + ["V_th_adapt", "adaptation"],
     "start": duration["offset_gen"] + duration["delay_in_rec"],
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
+    "label": "multimeter_ad",
 }
 
 params_mm_out = {
@@ -290,6 +292,7 @@ params_mm_out = {
     "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "multimeter_out",
 }
 
 params_wr = {
@@ -297,11 +300,25 @@ params_wr = {
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "weight_recorder",
 }
 
-params_sr = {
+params_sr_in = {
     "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_in",
+}
+
+params_sr_reg = {
+    "start": duration["offset_gen"],
+    "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_reg",
+}
+
+params_sr_ad = {
+    "start": duration["offset_gen"],
+    "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_ad",
 }
 
 ####################
@@ -309,7 +326,9 @@ params_sr = {
 mm_reg = nest.Create("multimeter", params_mm_reg)
 mm_ad = nest.Create("multimeter", params_mm_ad)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder", params_sr)
+sr_in = nest.Create("spike_recorder", params_sr_in)
+sr_reg = nest.Create("spike_recorder", params_sr_reg)
+sr_ad = nest.Create("spike_recorder", params_sr_ad)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_reg_record = nrns_reg[:n_record]
@@ -413,7 +432,9 @@ nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  #
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
 
-nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_in, sr_in, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_reg, sr_reg, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_ad, sr_ad, params_conn_all_to_all, params_syn_static)
 
 nest.Connect(mm_reg, nrns_reg_record, params_conn_all_to_all, params_syn_static)
 nest.Connect(mm_ad, nrns_ad_record, params_conn_all_to_all, params_syn_static)
@@ -574,7 +595,9 @@ weights_post_train = {
 events_mm_reg = mm_reg.get("events")
 events_mm_ad = mm_ad.get("events")
 events_mm_out = mm_out.get("events")
-events_sr = sr.get("events")
+events_sr_in = sr_in.get("events")
+events_sr_reg = sr_reg.get("events")
+events_sr_ad = sr_ad.get("events")
 events_wr = wr.get("events")
 
 # %% ###########################################################################################################
@@ -665,11 +688,10 @@ def plot_recordable(ax, events, recordable, ylabel, xlims):
     ax.set_ylim(np.min(events[recordable]) - margin, np.max(events[recordable]) + margin)
 
 
-def plot_spikes(ax, events, nrns, ylabel, xlims):
+def plot_spikes(ax, events, ylabel, xlims):
     idc_times = (events["times"] > xlims[0]) & (events["times"] < xlims[1])
-    idc_sender = np.isin(events["senders"][idc_times], nrns.tolist())
-    senders_subset = events["senders"][idc_times][idc_sender]
-    times_subset = events["times"][idc_times][idc_sender]
+    senders_subset = events["senders"][idc_times]
+    times_subset = events["times"][idc_times]
 
     ax.scatter(times_subset, senders_subset, s=0.1)
     ax.set_ylabel(ylabel)
@@ -680,14 +702,14 @@ def plot_spikes(ax, events, nrns, ylabel, xlims):
 for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])]:
     fig, axs = plt.subplots(14, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
 
-    plot_spikes(axs[0], events_sr, nrns_in, r"$z_i$" + "\n", xlims)
-    plot_spikes(axs[1], events_sr, nrns_reg, r"$z_j$" + "\n", xlims)
+    plot_spikes(axs[0], events_sr_in, r"$z_i$" + "\n", xlims)
+    plot_spikes(axs[1], events_sr_reg, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[2], events_mm_reg, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[3], events_mm_reg, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
     plot_recordable(axs[4], events_mm_reg, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
-    plot_spikes(axs[5], events_sr, nrns_ad, r"$z_j$" + "\n", xlims)
+    plot_spikes(axs[5], events_sr_ad, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[6], events_mm_ad, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[7], events_mm_ad, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)

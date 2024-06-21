@@ -233,7 +233,7 @@ gen_learning_window = nest.Create("step_rate_generator")
 # default, recordings are stored in memory but can also be written to file.
 
 n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
-n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+n_record_w = 5  # number of senders and targets to record weights from - this script requires n_record_w >=1
 
 if n_record == 0 or n_record_w == 0:
     raise ValueError("n_record and n_record_w >= 1 required")
@@ -243,6 +243,7 @@ params_mm_rec = {
     "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
+    "label": "multimeter_rec",
 }
 
 params_mm_out = {
@@ -250,6 +251,7 @@ params_mm_out = {
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "multimeter_out",
 }
 
 params_wr = {
@@ -257,18 +259,27 @@ params_wr = {
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "weight_recorder",
 }
 
-params_sr = {
+params_sr_in = {
     "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_in",
+}
+
+params_sr_rec = {
+    "start": duration["offset_gen"],
+    "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_rec",
 }
 
 ####################
 
 mm_rec = nest.Create("multimeter", params_mm_rec)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder", params_sr)
+sr_in = nest.Create("spike_recorder", params_sr_in)
+sr_rec = nest.Create("spike_recorder", params_sr_rec)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_rec_record = nrns_rec[:n_record]
@@ -390,7 +401,8 @@ nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  #
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection 7
 
-nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_in, sr_in, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_rec, sr_rec, params_conn_all_to_all, params_syn_static)
 
 nest.Connect(mm_rec, nrns_rec_record, params_conn_all_to_all, params_syn_static)
 nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
@@ -549,7 +561,7 @@ def create_input_output(loader, target_signal_value=1.0):
     return params_gen_spk_in, params_gen_rate_target
 
 
-save_path = "./"  # path to save the N-MNIST dataset to
+save_path = "/home/agneskg/ownCloud/inm6/projects/eprop/code/nest/nmnist_data"  # path to save the N-MNIST dataset to
 train_path, test_path = download_and_extract_nmnist_dataset(save_path)
 
 selected_labels = [label for label in range(n_out)]
@@ -686,7 +698,8 @@ weights_post_train = {
 
 events_mm_rec = mm_rec.get("events")
 events_mm_out = mm_out.get("events")
-events_sr = sr.get("events")
+events_sr_in = sr_in.get("events")
+events_sr_rec = sr_rec.get("events")
 events_wr = wr.get("events")
 
 # %% ###########################################################################################################
@@ -759,11 +772,10 @@ def plot_recordable(ax, events, recordable, ylabel, xlims):
     ax.set_ylim(np.min(events[recordable]) - margin, np.max(events[recordable]) + margin)
 
 
-def plot_spikes(ax, events, nrns, ylabel, xlims):
+def plot_spikes(ax, events, ylabel, xlims):
     idc_times = (events["times"] > xlims[0]) & (events["times"] < xlims[1])
-    idc_sender = np.isin(events["senders"][idc_times], nrns.tolist())
-    senders_subset = events["senders"][idc_times][idc_sender]
-    times_subset = events["times"][idc_times][idc_sender]
+    senders_subset = events["senders"][idc_times]
+    times_subset = events["times"][idc_times]
 
     ax.scatter(times_subset, senders_subset, s=0.1)
     ax.set_ylabel(ylabel)
@@ -777,8 +789,8 @@ for xlims in [
 ]:
     fig, axs = plt.subplots(9, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
 
-    plot_spikes(axs[0], events_sr, nrns_in, r"$z_i$" + "\n", xlims)
-    plot_spikes(axs[1], events_sr, nrns_rec, r"$z_j$" + "\n", xlims)
+    plot_spikes(axs[0], events_sr_in, r"$z_i$" + "\n", xlims)
+    plot_spikes(axs[1], events_sr_rec, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[2], events_mm_rec, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[3], events_mm_rec, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)

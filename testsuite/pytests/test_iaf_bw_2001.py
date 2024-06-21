@@ -36,7 +36,6 @@ import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-from scipy.special import gamma, gammaincc
 
 w_ex = 40.0
 w_in = 15.0

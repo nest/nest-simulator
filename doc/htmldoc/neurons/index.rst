@@ -262,13 +262,13 @@ Input mechanism
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-     :columns: 3
+   .. grid-item::
+     :columns: 2
 
-     .. image::  /static/img/current_based.svg
+     .. image::  /static/img/current_based_nn.svg
 
    .. grid-item::
-     :columns: 9
+     :columns: 10
 
      NEST convention: psc (aka CUBA)
      Synaptic inputs are represented as fixed currents (I) injected into the neuron.
@@ -278,13 +278,13 @@ Input mechanism
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
-     :columns: 3
+   .. grid-item::
+     :columns: 2
 
-     .. image::  /static/img/conductance_based.svg
+     .. image::  /static/img/conductance_based_nn.svg
 
    .. grid-item::
-     :columns: 9
+     :columns: 10
 
      NEST convention: cond (aka COBA)
      Synaptic inputs are represented as changes in membrane conductance (`g`).
@@ -294,18 +294,19 @@ Input mechanism
      synaptic inputs depending on the membrane potential, which can change over time.
 
 Adaptation mechanism
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 NEST convention: aeif (aka AdEx)
 
 .. grid::
 
-  .. grid-item-card::
-      :columns: 3
+  .. grid-item::
+      :columns: 2
 
-      .. image:: /static/img/adaptive_threshold.svg
+      .. image:: /static/img/adaptive_threshold_ nn.svg
 
   .. grid-item::
+      :columns: 10
 
       .. tab-set::
 
@@ -344,10 +345,10 @@ NEST convention: ps
 
 .. grid::
 
-  .. grid-item-card::
-      :columns: 3
+  .. grid-item::
+      :columns: 2
 
-      .. image:: /static/img/precise_spiking.svg
+      .. image:: /static/img/precise_spiking_nn.svg
 
   .. grid-item::
 
@@ -371,26 +372,26 @@ how the current changes over time after a synaptic event.
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card::
+   .. grid-item-card:: Delta
       :columns: 3
 
-      .. image:: /static/img/delta.svg
+      .. image:: /static/img/delta_nn.svg
 
-   .. grid-item-card::
+   .. grid-item-card:: Exp
       :columns: 3
 
-      .. image:: /static/img/exp.svg
+      .. image:: /static/img/exp_nn.svg
 
-   .. grid-item-card::
+   .. grid-item-card:: Alpha
       :columns: 3
 
-      .. image:: /static/img/alpha.svg
+      .. image:: /static/img/alpha_nn.svg
 
 
-   .. grid-item-card::
+   .. grid-item-card:: Beta
       :columns: 3
 
-      .. image:: /static/img/beta.svg
+      .. image:: /static/img/beta_nn.svg
 
 
 |
@@ -407,10 +408,10 @@ Rate neurons
 
 .. grid::
 
-   .. grid-item-card::
-     :columns: 3
+   .. grid-item::
+     :columns: 2
 
-     .. image:: /static/img/rate_neurons.svg
+     .. image:: /static/img/rate_neurons_nn.svg
 
    .. grid-item::
 
@@ -484,10 +485,10 @@ Multi-state neurons
 
 .. grid::
 
-   .. grid-item-card::
-     :columns: 3
+   .. grid-item::
+     :columns: 2
 
-     .. image:: /static/img/multistate.svg
+     .. image:: /static/img/multistate_nn.svg
 
    .. grid-item::
 
@@ -508,15 +509,15 @@ Multi-state neurons
 
 .. _neuron_astrocyte:
 
-Neuron-astrocyte interactions
------------------------------
+Astrocytes
+----------
 
 .. grid::
 
-   .. grid-item-card::
-     :columns: 3
+   .. grid-item::
+     :columns: 2
 
-     .. image:: /static/img/astrocyte.svg
+     .. image:: /static/img/astrocyte_nn.svg
 
    .. grid-item::
 

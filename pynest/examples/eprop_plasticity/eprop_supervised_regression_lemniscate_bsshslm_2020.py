@@ -40,7 +40,7 @@ which encode the x and y coordinates of a lemniscate.
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_lemniscate.png
    :width: 70 %
-   :alt: See Figure 1 below.
+   :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.

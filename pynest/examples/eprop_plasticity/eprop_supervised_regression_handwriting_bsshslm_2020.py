@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to generate handwritten text with e-prop (_bsshslm_2020)
------------------------------------------------------------------------------
+Tutorial on learning to generate handwritten text with e-prop after Bellec et al. (2020)
+----------------------------------------------------------------------------------------
 
 Training a regression model using supervised e-prop plasticity to generate handwritten text
 

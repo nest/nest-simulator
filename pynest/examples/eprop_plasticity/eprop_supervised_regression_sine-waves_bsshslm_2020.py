@@ -526,6 +526,7 @@ plt.rcParams.update(
 # We begin with a plot visualizing the training error of the network: the loss plotted against the iterations.
 
 fig, ax = plt.subplots()
+fig.suptitle("Training error")
 
 ax.plot(range(1, n_iter + 1), loss)
 ax.set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
@@ -563,8 +564,12 @@ def plot_spikes(ax, events, ylabel, xlims):
     ax.set_ylim(np.min(senders_subset) - margin, np.max(senders_subset) + margin)
 
 
-for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])]:
+for title, xlims in zip(
+    ["Dynamic variables before training", "Dynamic variables after training"],
+    [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])],
+):
     fig, axs = plt.subplots(9, 1, sharex=True, figsize=(6, 8), gridspec_kw={"hspace": 0.4, "left": 0.2})
+    fig.suptitle(title)
 
     plot_spikes(axs[0], events_sr_in, r"$z_i$" + "\n", xlims)
     plot_spikes(axs[1], events_sr_rec, r"$z_j$" + "\n", xlims)
@@ -609,6 +614,7 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
+fig.suptitle("Weight time courses")
 
 plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
 plot_weight_time_course(
@@ -634,6 +640,7 @@ cmap = mpl.colors.LinearSegmentedColormap.from_list(
 )
 
 fig, axs = plt.subplots(3, 2, sharex="col", sharey="row")
+fig.suptitle("Weight matrices")
 
 all_w_extrema = []
 
@@ -656,8 +663,8 @@ axs[1, 0].set_ylabel("recurrent\nneurons")
 axs[2, 0].set_ylabel("readout\nneurons")
 fig.align_ylabels(axs[:, 0])
 
-axs[0, 0].text(0.5, 1.1, "pre-training", transform=axs[0, 0].transAxes, ha="center")
-axs[0, 1].text(0.5, 1.1, "post-training", transform=axs[0, 1].transAxes, ha="center")
+axs[0, 0].text(0.5, 1.1, "before training", transform=axs[0, 0].transAxes, ha="center")
+axs[0, 1].text(0.5, 1.1, "after training", transform=axs[0, 1].transAxes, ha="center")
 
 axs[2, 0].yaxis.get_major_locator().set_params(integer=True)
 

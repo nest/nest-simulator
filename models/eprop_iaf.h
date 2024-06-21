@@ -322,7 +322,6 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-protected:
 private:
   void init_buffers_() override;
   void pre_run_hook() override;

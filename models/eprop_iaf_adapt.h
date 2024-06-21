@@ -356,7 +356,6 @@ private:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-
   long get_eprop_isi_trace_cutoff() override;
 
   //! Compute the surrogate gradient.

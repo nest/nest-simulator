@@ -159,7 +159,7 @@ def test_iaf_bw_2001_exact():
 def test_connect_NMDA_after_simulate():
     """
     Test that error is thrown if we try to make a connection after running
-    nest.Simulate and the buffers have already been created.
+    nest.Simulate() and the buffers have already been created.
     """
     presyn = nest.Create("iaf_bw_2001_exact")
     postsyn = nest.Create("iaf_bw_2001_exact")

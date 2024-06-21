@@ -123,7 +123,8 @@ References
        https://proceedings.neurips.cc/paper_files/paper/2018/hash/185e65bc40581880c4f2c82958de8cfe-Abstract.html
 
 .. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
-       arXiv preprint, 1412.6980. https://doi.org/10.48550/arXiv.1412.6980
+       Proceedings of 3rd International Conference for Learning Representations (ICLR).
+       https://doi.org/10.48550/arXiv.1412.6980
 
 .. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
 

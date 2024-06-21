@@ -64,7 +64,7 @@ def test_iaf_bw_2001_exact():
     nrn1: pre-synaptic iaf_bw_2001_exact
     nrn2: post-synaptic iaf_bw_2001_exact, will have AMPA, GABA and NMDA synapses
     nrn3: post-synaptic iaf_bw_2001_exact, will only have AMPA and GABA
-    nrn4: post-synaptic iaf_psc_exp, will only have AMPA and GABA
+    nrn4: post-synaptic iaf_cond_exp, will only have AMPA and GABA
 
     We test that nrn3 and nrn4 have identical V_m.
     We test that nrn2 has greater V_m compared to nrn3.

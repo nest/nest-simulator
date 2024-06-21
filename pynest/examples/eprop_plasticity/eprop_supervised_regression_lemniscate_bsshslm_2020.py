@@ -110,9 +110,10 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
+# Increasing the number of iterations enhances learning performance.
 
 batch_size = 1  # batch size
-n_iter = 5  # number of iterations, 5000 for good convergence
+n_iter = 200  # number of iterations, 5000 to reach convergence as in the figure
 
 steps = {
     "sequence": 1258,  # time steps of one full sequence

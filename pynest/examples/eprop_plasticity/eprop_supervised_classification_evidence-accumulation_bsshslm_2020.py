@@ -114,10 +114,11 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
-# The original number of iterations requires distributed computing.
+# The original number of iterations requires distributed computing. Increasing the number of iterations
+# enhances learning performance up to the point where overfitting occurs.
 
-batch_size = 1  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 5  # number of iterations, 2000 in reference [2], 50 with batch_size 32 converges
+batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
+n_iter = 50  # number of iterations, 2000 in reference [2]
 
 n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall, noise
 n_cues = 7  # number of cues given before decision

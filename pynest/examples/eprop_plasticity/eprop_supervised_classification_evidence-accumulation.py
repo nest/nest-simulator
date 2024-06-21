@@ -116,10 +116,11 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Even though each sample is processed independently during training, we aggregate predictions and true
 # labels across a group of samples during the evaluation phase. The number of samples in this group is
 # determined by the `group_size` parameter. This data is then used to assess the neural network's
-# performance metrics, such as average accuracy and mean error.
+# performance metrics, such as average accuracy and mean error. Increasing the number of iterations enhances
+# learning performance up to the point where overfitting occurs.
 
-group_size = 1  # number of instances over which to evaluate the learning performance, 32 for convergence
-n_iter = 5  # number of iterations, 50 with group_size 32 converges
+group_size = 32  # number of instances over which to evaluate the learning performance
+n_iter = 50  # number of iterations
 
 n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall, noise
 n_cues = 7  # number of cues given before decision

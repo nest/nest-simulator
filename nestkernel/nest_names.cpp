@@ -350,7 +350,6 @@ const Name noise( "noise" );
 const Name noisy_rate( "noisy_rate" );
 const Name num_connections( "num_connections" );
 const Name num_corrections( "num_corrections" );
-const Name num_pre_spikes( "num_pre_spikes" );
 const Name num_processes( "num_processes" );
 const Name number_of_connections( "number_of_connections" );
 

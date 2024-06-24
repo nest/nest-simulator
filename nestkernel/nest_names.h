@@ -378,7 +378,6 @@ extern const Name noise;
 extern const Name noisy_rate;
 extern const Name num_connections;
 extern const Name num_corrections;
-extern const Name num_pre_spikes;
 extern const Name num_processes;
 extern const Name number_of_connections;
 

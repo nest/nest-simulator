@@ -147,7 +147,8 @@ struct TotalDelay
     delay_ = Time::delay_ms_to_steps( d );
   }
 
-  void calibrate( const TimeConverter& tc )
+  void
+  calibrate( const TimeConverter& tc )
   {
     Time t = tc.from_old_steps( delay_ );
     delay_ = t.get_steps();
@@ -194,7 +195,7 @@ struct AxonalDendriticDelay
   unsigned int axonal_delay_ : NUM_BITS_AXONAL_DELAY;
 
   explicit AxonalDendriticDelay( double d )
-  : axonal_delay_( 0 )
+    : axonal_delay_( 0 )
   {
     set_dendritic_delay_ms( d );
   }
@@ -307,7 +308,8 @@ struct AxonalDendriticDelay
     set_dendritic_delay_ms( d );
   }
 
-  void calibrate( const TimeConverter& tc )
+  void
+  calibrate( const TimeConverter& tc )
   {
     Time ax_delay_t = tc.from_old_steps( axonal_delay_ );
     Time dend_delay_t = tc.from_old_steps( dendritic_delay_ );
@@ -355,7 +357,8 @@ struct AxonalDendriticDelay
 
     // Update delay values
     double dendritic_delay = Time::delay_steps_to_ms( dendritic_delay_ );
-    if ( updateValue< double >( d, names::delay, dendritic_delay ) or updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
+    if ( updateValue< double >( d, names::delay, dendritic_delay )
+      or updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
     {
       set_dendritic_delay_ms( dendritic_delay );
     }

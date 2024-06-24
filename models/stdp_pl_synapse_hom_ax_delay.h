@@ -127,7 +127,7 @@ void register_stdp_pl_synapse_hom_ax_delay( const std::string& name );
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
-template < typename targetidentifierT>
+template < typename targetidentifierT >
 class stdp_pl_synapse_hom_ax_delay : public Connection< targetidentifierT, AxonalDendriticDelay >
 {
 
@@ -156,10 +156,10 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_dendritic_delay_ms;
-  using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_axonal_delay_ms;
   using ConnectionBase::get_axonal_delay_steps;
+  using ConnectionBase::get_dendritic_delay_ms;
+  using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -231,7 +231,9 @@ public:
     {
       throw BadProperty( "Combination of axonal and dendritic delay has to be more than 0." );
     }
-    t.register_stdp_connection( t_lastspike_ - get_dendritic_delay_ms() + get_axonal_delay_ms(), get_dendritic_delay_ms(), get_axonal_delay_ms() );
+    t.register_stdp_connection( t_lastspike_ - get_dendritic_delay_ms() + get_axonal_delay_ms(),
+      get_dendritic_delay_ms(),
+      get_axonal_delay_ms() );
 
     CorrectionSpikeEvent e;
     t.handles_test_event( e, receptor_type );
@@ -325,7 +327,8 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   // TODO: Move dynamic array pointer (per timestep) into handle-ringbuffer
 
   // axonal_delay-dendritic_delay = total_delay-2*dendritic_delay
-  const long time_until_uncritical = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) - 2 * get_dendritic_delay_steps() + 1;
+  const long time_until_uncritical =
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) - 2 * get_dendritic_delay_steps() + 1;
   // Only add correction entry if there could potentially be any post-synaptic spike that occurs before the
   // pre-synaptic one arrives at the synapse. Has to be strictly greater than min_delay, because a post-synaptic spike
   // at time slice_origin+min_delay corresponds to the last update step in the current slice (before delivery) and was

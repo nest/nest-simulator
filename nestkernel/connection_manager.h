@@ -895,7 +895,9 @@ ConnectionManager::send( const size_t tid,
   Event& e )
 {
   if ( syn_id == 44 )
+  {
     ++num_pre_spikes_;
+  }
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
 }
 

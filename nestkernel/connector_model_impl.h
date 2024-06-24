@@ -214,26 +214,24 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   bool default_delay_used = true;
 
   if ( not numerics::is_nan( delay ) and ( p->known( names::delay ) or p->known( names::dendritic_delay ) ) )
-    {
-      throw BadParameter(
-        "Parameter dictionary must not contain delay if delay is given explicitly." );
+  {
+    throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
   }
 
   if ( not numerics::is_nan( axonal_delay ) and p->known( names::axonal_delay ) )
   {
-    throw BadParameter(
-      "Parameter dictionary must not contain delay if delay is given explicitly." );
+    throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
   }
 
   if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
   {
-    if( not numerics::is_nan( axonal_delay ) or p->known( names::axonal_delay ) )
+    if ( not numerics::is_nan( axonal_delay ) or p->known( names::axonal_delay ) )
     {
       double actual_axonal_delay = axonal_delay;
       updateValue< double >( p, names::axonal_delay, actual_axonal_delay );
       connection.set_axonal_delay_ms( axonal_delay );
 
-      if( not numerics::is_nan( delay ) or p->known( names::dendritic_delay ) )
+      if ( not numerics::is_nan( delay ) or p->known( names::dendritic_delay ) )
       {
         double actual_dendritic_delay = delay;
         updateValue< double >( p, names::dendritic_delay, actual_dendritic_delay );
@@ -243,7 +241,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
 
     double actual_delay = delay;
-    if( updateValue< double >( p, names::delay, actual_delay) or not numerics::is_nan( delay ) )
+    if ( updateValue< double >( p, names::delay, actual_delay ) or not numerics::is_nan( delay ) )
     {
       connection.set_delay_ms( actual_delay );
       default_delay_used = false;
@@ -263,7 +261,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( connection.get_delay_ms() );
 
-  if (default_delay_used)
+  if ( default_delay_used )
   {
     used_default_delay();
   }

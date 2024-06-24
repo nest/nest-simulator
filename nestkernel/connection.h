@@ -374,7 +374,11 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, const synindex syn_id, const size_t receptor_type );
+  void check_connection_( Node& dummy_target,
+    Node& source,
+    Node& target,
+    const synindex syn_id,
+    const size_t receptor_type );
 
   targetidentifierT target_;
   bool more_targets_ : 1;
@@ -384,8 +388,9 @@ protected:
   // be reduced even more as well.
 };
 
-using success_connection_target_ptr_size = StaticAssert< sizeof( Connection<TargetIdentifierPtrRport> ) == 24 >::success;
-using success_connection_target_idx_size = StaticAssert< sizeof( Connection<TargetIdentifierIndex> ) == 8 >::success;
+using success_connection_target_ptr_size =
+  StaticAssert< sizeof( Connection< TargetIdentifierPtrRport > ) == 24 >::success;
+using success_connection_target_idx_size = StaticAssert< sizeof( Connection< TargetIdentifierIndex > ) == 8 >::success;
 
 template < typename targetidentifierT, typename DelayTypeT >
 constexpr ConnectionModelProperties Connection< targetidentifierT, DelayTypeT >::properties;

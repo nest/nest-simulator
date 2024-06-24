@@ -85,7 +85,9 @@ ArchivingNode::pre_run_hook_()
 }
 
 void
-ArchivingNode::register_stdp_connection( const double t_first_read, const double dendritic_delay, const double axonal_delay )
+ArchivingNode::register_stdp_connection( const double t_first_read,
+  const double dendritic_delay,
+  const double axonal_delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of

@@ -92,7 +92,9 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( const double t_first_read, const double dendritic_delay, const double axonal_delay ) override;
+  void register_stdp_connection( const double t_first_read,
+    const double dendritic_delay,
+    const double axonal_delay ) override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -166,7 +168,10 @@ private:
    */
   struct CorrectionEntrySTDPAxDelay
   {
-    CorrectionEntrySTDPAxDelay( const size_t lcid, const synindex syn_id, const double t_last_pre_spike, const double weight_revert )
+    CorrectionEntrySTDPAxDelay( const size_t lcid,
+      const synindex syn_id,
+      const double t_last_pre_spike,
+      const double weight_revert )
       : lcid_( lcid )
       , syn_id_( syn_id )
       , t_last_pre_spike_( t_last_pre_spike )
@@ -174,10 +179,10 @@ private:
     {
     }
 
-    unsigned int lcid_;        //!< local connection index
-    synindex syn_id_;          //!< synapse-type index
-    double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
-    double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
+    unsigned int lcid_;       //!< local connection index
+    synindex syn_id_;         //!< synapse-type index
+    double t_last_pre_spike_; //!< time of the last pre-synaptic spike before this spike
+    double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
   };
 
   //! check for correct correction entry size

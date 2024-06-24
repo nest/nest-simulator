@@ -117,9 +117,9 @@ public:
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_ms;
   using ConnectionBase::get_delay_steps;
-  using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
+  using ConnectionBase::set_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void
@@ -199,11 +199,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    const size_t receptor_type,
-    const synindex syn_id,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, syn_id, receptor_type );

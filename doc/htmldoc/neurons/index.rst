@@ -169,32 +169,10 @@ Integrate-and-fire
           When the membrane potential reaches a certain threshold,
           the neuron "fires" an action potential
 
-        .. tab-item:: Integration details
+        .. tab-item:: Technical details
 
-          * :ref:`exact_integration` put here?
+          * :ref:`exact_integration`
           * :doc:`/model_details/IAF_Integration_Singularity`
-
-Parrot neurons
-^^^^^^^^^^^^^^
-
-.. grid:: 1 2 2 2
-
-   .. grid-item::
-      :columns: 2
-      :class: sd-d-flex-row sd-align-major-center
-
-      .. image:: /static/img/parrot_neurons_nn.svg
-
-   .. grid-item::  Parrot neurons
-      :columns: 10
-
-      Neurons that repeat incoming spikes. Applications:
-
-      .. dropdown:: Parrot neurons
-
-        parrot_neuron – Neuron that repeats incoming spikes
-
-        parrot_neuron_ps – Neuron that repeats incoming spikes - precise spike timing version
 
 Hodgkin Huxley
 ^^^^^^^^^^^^^^
@@ -228,7 +206,7 @@ Hodgkin Huxley
                * hh_psc_alpha_clopath – Hodgkin-Huxley neuron model with support for Clopath plasticity
                * hh_psc_alpha_gap – Hodgkin-Huxley neuron model with gap-junction support
 
-          .. tab-item:: Integration details
+          .. tab-item:: Technical details
 
             * :doc:`/model_details/hh_details`
 
@@ -254,6 +232,28 @@ Point process
 
         pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
 
+
+Parrot neurons
+^^^^^^^^^^^^^^
+
+.. grid:: 1 2 2 2
+
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
+
+      .. image:: /static/img/parrot_neurons_nn.svg
+
+   .. grid-item::
+      :columns: 10
+
+      Neurons that repeat incoming spikes. Applications:
+
+      .. dropdown:: Parrot neurons
+
+        parrot_neuron – Neuron that repeats incoming spikes
+
+        parrot_neuron_ps – Neuron that repeats incoming spikes - precise spike timing version
 
 
 
@@ -334,7 +334,7 @@ NEST convention: aeif (aka AdEx)
                   * ht_neuron – Neuron model after Hill & Tononi (2005)
 
 
-        .. tab-item:: Implementation details
+        .. tab-item:: Technical details
 
            * :doc:`/model_details/aeif_models_implementation`
 
@@ -348,7 +348,7 @@ NEST convention: ps
   .. grid-item::
       :columns: 2
 
-      .. image:: /static/img/precise_spiking_nn.svg
+      .. image:: /static/img/precise_nn.svg
 
   .. grid-item::
 
@@ -425,22 +425,30 @@ Rate neurons
 
 .. grid::
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
 
-      Input noise
+      **Input noise**
 
-   .. grid-item-card::
-      :columns: 3
+      .. image:: /static/img/input_noise_nn.svg
 
-      Output noise
+
+
+   .. grid-item::
+      :columns: 2
+
+      **Output noise**
+
+      .. image:: /static/img/output_noise_nn.svg
 
 .. grid::
 
-   .. grid-item-card::
-      :columns: 3
+   .. grid-item::
+      :columns: 2
 
-      Mean-field theory
+      **Mean-field theory**
+
+      .. image:: /static/img/siegert_neuron_nn.svg
 
    .. grid-item::
 
@@ -454,7 +462,7 @@ Rate neurons
 
         * siegert neuron
 
-      .. tab-item:: Integration details
+      .. tab-item:: Technical details
 
         * :doc:`/model_details/siegert_neuron_integration`
 
@@ -534,7 +542,7 @@ Astrocytes
              * astrocyte_lr_1994 – An astrocyte model based on Li & Rinzel (1994)
              * sic_connection – Synapse type for astrocyte-neuron connections
 
-      .. tab-item:: Implementation details
+      .. tab-item:: Technical details
 
          * :doc:`/model_details/astrocyte_model_implementation`
 

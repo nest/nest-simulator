@@ -247,6 +247,14 @@ Node::handles_test_event( SpikeEvent&, size_t )
     "  Note that volt/multimeters must be connected as Connect(meter, neuron)." );
 }
 
+size_t
+Node::handles_test_event( CorrectionSpikeEvent&, size_t )
+{
+  throw IllegalConnection(
+    "The target node or synapse model does not support spike input with axonal delays.\n"
+    "  Note that volt/multimeters must be connected as Connect(meter, neuron)." );
+}
+
 void
 Node::handle( WeightRecorderEvent& )
 {

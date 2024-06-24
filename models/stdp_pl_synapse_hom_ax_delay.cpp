@@ -46,7 +46,7 @@ namespace nest
 //
 
 STDPPLHomAxDelayCommonProperties::STDPPLHomAxDelayCommonProperties()
-  : CommonHomAxonalDelaySynapseProperties()
+  : CommonSynapseProperties()
   , tau_plus_( 20.0 )
   , tau_plus_inv_( 1. / tau_plus_ )
   , lambda_( 0.1 )
@@ -58,7 +58,7 @@ STDPPLHomAxDelayCommonProperties::STDPPLHomAxDelayCommonProperties()
 void
 STDPPLHomAxDelayCommonProperties::get_status( DictionaryDatum& d ) const
 {
-  CommonHomAxonalDelaySynapseProperties::get_status( d );
+  CommonSynapseProperties::get_status( d );
 
   def< double >( d, names::tau_plus, tau_plus_ );
   def< double >( d, names::lambda, lambda_ );
@@ -69,7 +69,7 @@ STDPPLHomAxDelayCommonProperties::get_status( DictionaryDatum& d ) const
 void
 STDPPLHomAxDelayCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  CommonHomAxonalDelaySynapseProperties::set_status( d, cm );
+  CommonSynapseProperties::set_status( d, cm );
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
   if ( tau_plus_ > 0. )

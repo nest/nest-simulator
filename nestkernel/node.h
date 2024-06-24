@@ -398,6 +398,7 @@ public:
    * @throws IllegalConnection
    */
   virtual size_t handles_test_event( SpikeEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( CorrectionSpikeEvent&, size_t receptor_type );
   virtual size_t handles_test_event( WeightRecorderEvent&, size_t receptor_type );
   virtual size_t handles_test_event( RateEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DataLoggingRequest&, size_t receptor_type );

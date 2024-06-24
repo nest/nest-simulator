@@ -106,7 +106,6 @@ def get_models_from_file(model_file):
         "public RecordingDevice": "recorder",
         "public DeviceNode": "devicelike",
         "public Connection": "connection",
-        "public AxonalDelayConnection": "axonal_delay_connection",
         "public Node": "node",
         "public ClopathArchivingNode": "clopath",
         "public UrbanczikArchivingNode": "urbanczik",

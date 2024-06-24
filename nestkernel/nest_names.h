@@ -152,6 +152,7 @@ extern const Name delta_IP3;
 extern const Name delta_P;
 extern const Name delta_tau;
 extern const Name dendritic_curr;
+extern const Name dendritic_delay;
 extern const Name dendritic_exc;
 extern const Name dendritic_inh;
 extern const Name dg;

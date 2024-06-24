@@ -107,12 +107,12 @@ public:
   // Since ConnectionBase depends on the template parameter, they are not
   // automatically
   // found in the base class.
-  using ConnectionBase::get_dendritic_delay_steps;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, const size_t receptor_type, const long, const long, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     DelayedRateConnectionEvent ge;
 
@@ -131,7 +131,7 @@ public:
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
-    e.set_delay_steps( get_dendritic_delay_steps() );
+    e.set_delay_steps( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();

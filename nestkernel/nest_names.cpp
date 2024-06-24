@@ -126,6 +126,7 @@ const Name delta_IP3( "delta_IP3" );
 const Name delta_P( "delta_P" );
 const Name delta_tau( "delta_tau" );
 const Name dendritic_curr( "dendritic_curr" );
+const Name dendritic_delay( "dendritic_delay" );
 const Name dendritic_exc( "dendritic_exc" );
 const Name dendritic_inh( "dendritic_inh" );
 const Name dg( "dg" );

@@ -111,7 +111,7 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_dendritic_delay_steps;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -119,8 +119,7 @@ public:
   check_connection( Node& s,
     Node& t,
     const size_t receptor_type,
-    const long dendritic_delay,
-    const long axonal_delay,
+    const synindex syn_id,
     const CommonPropertiesType& )
   {
     GapJunctionEvent ge;
@@ -157,13 +156,13 @@ public:
   }
 
   void
-  set_dendritic_delay( double )
+  set_delay_ms( double )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
 
   void
-  set_dendritic_delay_steps( long )
+  set_delay_steps( long )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }

@@ -187,18 +187,16 @@ class TestSTDPNNSynapses:
                 t = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
 
                 # Evaluating the depression rule.
-                if self.synapse_parameters["synapse_model"] == "stdp_nn_restr_synapse":
-                    current_nearest_neighbour_pair_is_suitable = t_previous_post > t_previous_pre
-                    # If '<', t_previous_post has already been paired
-                    # with t_previous_pre, thus due to the restricted
-                    # pairing scheme we do not account it.
-                if (
-                    self.synapse_parameters["synapse_model"] == "stdp_nn_symm_synapse"
-                    or self.synapse_parameters["synapse_model"] == "stdp_nn_pre_centered_synapse"
-                ):
-                    # The current pre-spike is simply paired with the
-                    # nearest post-spike.
-                    current_nearest_neighbour_pair_is_suitable = True
+                # For the first two rules below, simply pair current pre-spike with nearest post-spike.
+                # For "nn_restr" and `post < pre`, the previous post has already been paired, thus due
+                #   to the restricted pairing scheme, we do not account it.
+                current_nearest_neighbour_pair_is_suitable = self.synapse_parameters["synapse_model"] in [
+                    "stdp_nn_symm_synapse",
+                    "stdp_nn_pre_centered_synapse",
+                ] or (
+                    self.synapse_parameters["synapse_model"] == "stdp_nn_restr_synapse"
+                    and t_previous_post > t_previous_pre
+                )
 
                 if current_nearest_neighbour_pair_is_suitable and t_previous_post != -1:
                     # Otherwise, if == -1, there have been
@@ -260,8 +258,7 @@ class TestSTDPNNSynapses:
             * ((1 - w / self.synapse_parameters["Wmax"]) ** self.synapse_parameters["mu_plus"])
             * exp(-1 * _delta_t / self.synapse_parameters["tau_plus"])
         )
-        if w > self.synapse_parameters["Wmax"]:
-            w = self.synapse_parameters["Wmax"]
+        w = min(w, self.synapse_parameters["Wmax"])
         return w
 
     def depress(self, _delta_t, w):
@@ -273,8 +270,7 @@ class TestSTDPNNSynapses:
             * ((w / self.synapse_parameters["Wmax"]) ** self.synapse_parameters["mu_minus"])
             * exp(_delta_t / self.neuron_parameters["tau_minus"])
         )
-        if w < 0:
-            w = 0
+        w = max(0, w)
         return w
 
     def test_nn_symm_synapse(self):

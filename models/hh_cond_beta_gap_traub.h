@@ -78,24 +78,24 @@ based on a model of hippocampal pyramidal cells by Traub and Miles [1]_.
 The key differences between the current model and the model in [1]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
+- Following [2]_, this model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
   in [1]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
+- The model incorporates gap junctions [3]_.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
 
-See also [2]_.
 
 Postsynaptic currents
 ---------------------
 
 Incoming spike events induce a postsynaptic change of conductance modelled by a
-beta function as outlined in [3]_ [4]_. The beta function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
-where xx is ex or in.
+beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
+event of weight 1.0 results in a peak conductance of 1 nS at :math:`t = \tau_{rise,xx}`
+where xx is `ex` or `in`.
 
 Spike Detection
 ---------------
@@ -151,11 +151,17 @@ References
 
 .. [1] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
        Cambridge University Press, Cambridge UK.
-.. [2] http://modeldb.yale.edu/83319
-.. [3] Rotter S and Diesmann M (1999). Exact digital simulation of
+.. [2] Brette R, et al (2007). Simulation of networks of spiking neurons:
+       A review of tools and strategies. J Comput Neurosci, 23, 349–398
+       DOI: https://doi.org/10.1007/s10827-007-0038-6
+.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A,
+       and Diesmann M. (2015). A unified framework for spiking and gap-junction
+       interactions in distributed neuronal network simulations.
+       Frontiers in Neuroinformatics, 9. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. [4] Rotter S and Diesmann M (1999). Exact digital simulation of
        time-invariant linear systems with applications to neuronal modeling.
        Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
-.. [4] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
+.. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
 

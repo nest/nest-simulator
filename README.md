@@ -3,7 +3,7 @@
 [![Documentation](https://img.shields.io/readthedocs/nest-simulator?logo=readthedocs&logo=Read%20the%20Docs&label=Documentation)](https://nest-simulator.org/documentation)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8069926.svg)](https://doi.org/10.5281/zenodo.8069926)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10834751.svg)](https://doi.org/10.5281/zenodo.10834751)
 
 [![Latest release](https://img.shields.io/github/release/nest/nest-simulator.svg?color=brightgreen&label=latest%20release)](https://github.com/nest/nest-simulator/releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)
@@ -14,7 +14,7 @@
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
 [![Docker Image Version](https://img.shields.io/docker/v/nest/nest-simulator?color=blue&label=docker&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/nest/nest-simulator)
-[![Virtual applicance](https://img.shields.io/badge/VM-v3.4-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
+[![Virtual applicance](https://img.shields.io/badge/VM-v3.7-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)

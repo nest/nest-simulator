@@ -97,6 +97,7 @@ class Node;
  * @see DiffusionConnectionEvent
  * @see GapJunctionEvent
  * @see InstantaneousRateConnectionEvent
+ * @see LearningSignalConnectionEvent
 
  * @ingroup event_interface
  */

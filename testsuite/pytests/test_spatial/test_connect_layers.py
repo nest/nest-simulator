@@ -154,7 +154,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         else:
             self.assertEqual(num_nonunique_conns, 0)
 
-    def _assert_connect_sliced(self, pre, post):
+    def _assert_connect_sliced(self, pre, post, kind):
         """Helper function which asserts that connecting with ConnectLayers on the SLI level
         gives the expected number of connections."""
         # Using distance based probability with zero weight to
@@ -165,7 +165,9 @@ class ConnectLayersTestCase(unittest.TestCase):
 
         nest.Connect(pre, post, conn_spec)
         conns = nest.GetConnections()
-        result = "{} ({}), pre length={}, post length={}".format(len(conns), expected_conns, len(pre), len(post))
+        result = "{} ({}), pre length={}, post length={} (kind {})".format(
+            len(conns), expected_conns, len(pre), len(post), kind
+        )
         print(result)
         self.assertEqual(len(conns), expected_conns, "pre length={}, post length={}".format(len(pre), len(post)))
 
@@ -422,12 +424,12 @@ class ConnectLayersTestCase(unittest.TestCase):
             layers = self._reset_and_create_sliced(positions)
             layer = layers["layer"]
             sliced_pre = layers[sliced]
-            self._assert_connect_sliced(sliced_pre, layer)
+            self._assert_connect_sliced(sliced_pre, layer, f"{sliced} pre")
         for sliced in ["single", "range", "step"]:
             layers = self._reset_and_create_sliced(positions)
             layer = layers["layer"]
             sliced_post = layers[sliced]
-            self._assert_connect_sliced(layer, sliced_post)
+            self._assert_connect_sliced(layer, sliced_post, f"{sliced} post")
 
     def test_connect_sliced_free_layer(self):
         """Connecting with sliced free layer"""
@@ -436,12 +438,12 @@ class ConnectLayersTestCase(unittest.TestCase):
             layers = self._reset_and_create_sliced(positions)
             layer = layers["layer"]
             sliced_pre = layers[sliced]
-            self._assert_connect_sliced(sliced_pre, layer)
+            self._assert_connect_sliced(sliced_pre, layer, f"{sliced} pre")
         for sliced in ["single", "range", "step"]:
             layers = self._reset_and_create_sliced(positions)
             layer = layers["layer"]
             sliced_post = layers[sliced]
-            self._assert_connect_sliced(layer, sliced_post)
+            self._assert_connect_sliced(layer, sliced_post, f"{sliced} post")
 
     def test_connect_synapse_label(self):
         indegree = 10

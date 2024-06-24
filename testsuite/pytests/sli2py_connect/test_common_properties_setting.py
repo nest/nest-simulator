@@ -37,18 +37,18 @@ def set_volume_transmitter():
 
 
 def set_default_delay_resolution():
-    nest.resolution = nest.GetDefaults("eprop_synapse")["delay"]
+    nest.resolution = nest.GetDefaults("eprop_synapse_bsshslm_2020")["delay"]
 
 
 # This list shall contain all synapse models extending the CommonSynapseProperties class.
 # For each model, specify which parameter to test with and which test value to use. A
 # setup function can be provided if preparations are required. Provide also supported neuron model.
 common_prop_models = {
-    "eprop_synapse": {
-        "parameter": "batch_size",
-        "value": 10,
+    "eprop_synapse_bsshslm_2020": {
+        "parameter": "average_gradient",
+        "value": not nest.GetDefaults("eprop_synapse_bsshslm_2020")["average_gradient"],
         "setup": set_default_delay_resolution,
-        "neuron": "eprop_iaf_psc_delta",
+        "neuron": "eprop_iaf_bsshslm_2020",
     },
     "jonke_synapse": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
     "stdp_dopamine_synapse": {

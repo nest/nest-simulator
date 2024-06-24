@@ -389,6 +389,15 @@ public:
     void execute( SLIInterpreter* ) const override;
   } copymodel_l_l_Dfunction;
 
+  /** @BeginDocumentation
+   *  Name: Install - install dynamically loaded module
+   */
+  class Install_sFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const override;
+  } install_sfunction;
+
   class GetConnections_DFunction : public SLIFunction
   {
   public:
@@ -838,10 +847,10 @@ public:
     void execute( SLIInterpreter* ) const override;
   } cvnodecollection_ivfunction;
 
-  class Cva_gFunction : public SLIFunction
+  class Cva_g_lFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const override;
-  } cva_gfunction;
+  } cva_g_lfunction;
 
   class Size_gFunction : public SLIFunction
   {
@@ -1457,35 +1466,6 @@ public:
    * value, with the help of a dictionary, or in an array (only for fixed
    * grid layers). The dictionary can be of type gaussian, 2D gaussian,
    * linear, exponential and other.
-   *
-   *
-   * Parameter name: source
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * The source dictionary enables us to give further detail on
-   * how the nodes in the source layer used in the connection function
-   * should be processed.
-   *
-   * Parameters:
-   * model*             literal
-   * lid^               integer
-   *
-   * *modeltype (i.e. /iaf_psc_alpha) of nodes that should be connected to
-   * in the layer. All nodes are used if this variable isn't set.
-   * ^Nesting depth of nodes that should be connected to. All layers are used
-   * if this variable isn't set.
-   *
-   *
-   * Parameter name: target
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * See description for source dictionary.
    *
    *
    * Parameter name: number_of_connections

@@ -1,4 +1,4 @@
-/* 
+/*
  * Customize css to define NEST specific colors, style and format
  *
    primary styles, for custom index.html and layout.html pages (see templates/ folder)
@@ -8,7 +8,7 @@
 
    Sphinx theme: sphinx-material
    https://bashtage.github.io/sphinx-material/index.html
-   Sphinx material theme properties use 'md' in variable names 
+   Sphinx material theme properties use 'md' in variable names
    Extesion for grid / cards in reStructured Text see sphinx-design
    https://sphinx-design.readthedocs.io/
    Sphinx design properties use the sd in variable names
@@ -16,13 +16,17 @@
 /* Define colors*/
 :root {
     --nest-orange: #ff6633;
-    --nest-blue: #1281B3;
-    --nest-green: #36B34F;
+    --nest-blue: #0E6A93;
+    --nest-dkblue: #072f42;
+    --nest-brown: #4b210c;
     --sd-color-primary: var(--nest-orange);
+    --sd-color-secondary: #666;
+    --sd-color-warning: #f22;
+    --sd-color-success: var(--nest-brown);
+    --sd-color-dark: var(--nest-dkblue);
     --sd-color-primary-highlight: #e05a2d;
     --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
-    --sd-color-success: var(--nest-green);
     --sd-color-card-border-hover: var(--nest-orange);
 }
 /* Define base font color and style */
@@ -30,17 +34,11 @@ body{
 	background:#fff;
 	color:#666;
 	font-family: 'Droid Sans', Arial, Helvetica, sans-serif;
-	/*font-size: medium;
-	line-height:1.5em;
-	font-weight:normal;*/
 }
+
 h1, h2, h3, h4, h5, h6{
-  /*font-size: 1.5em;*/
 	font-weight:600;
 	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-	/*line-height:1.5em;
-	margin:.45em 0;
-	padding:0;*/
 }
 
 /* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
@@ -95,16 +93,47 @@ section#kernel-attributes-nest-nestmodule dd {
         border: none;
         border-bottom: 1px solid #ddd;
 }
+.imgbutton {
 
-.menuselection {
-   font-weight: bold;
+  background-color: white;
+	outline-color: lightgray !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-right: 1px !important;
+	padding-right: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px lightgray !important;
+}
+.imgbutton:hover {
+
+  background-color: white;
+	outline-color: var(--nest-orange) !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px var(--nest-orange) !important;
 }
 
+
+.center {
+
+  text-align: center;
+  font-style: italic;
+}
+/* Provide a specific height to the svg object on index page
+ * Reason: Safari does not interpret percentages or max-content
+ * correctly
+ * there is an additional @media setting for <768px screens*/
+section#welcome-to-the-nest-simulator-documentation  object {
+  height: 400px;
+}
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/
 
-.mermaid .cluster rect {
+section#user-level-documentation-workflow .mermaid .cluster rect {
 	fill: #47555B21 !important;
 	stroke: None !important;
 	stroke-width: None !important;
@@ -127,7 +156,15 @@ figure.align-default {
 }
 
 /**************************************************************************************
- Settings for overriding material design theme 
+ * Rules for carousel
+ * ***********************************************************************************/
+.scbs-carousel-dark .scbs-carousel-caption {
+   color: #666;
+   background-color: #fff9;
+   position: initial;
+}
+/**************************************************************************************
+ Settings for overriding material design theme
  Setting nest colors to override sphinx material "orange" and other default colors
 
 **************************************************************************************/
@@ -142,7 +179,7 @@ figure.align-default {
    font-weight: 600;
 }
 .md-typeset h1[id]:before,
-.md-typeset h2[id]:before, 
+.md-typeset h2[id]:before,
 .md-typeset h3[id]:before,
 .md-typeset h4[id]:before {
    margin-top: -3.4rem;
@@ -179,7 +216,15 @@ div[role="main"] .md-source {
 }
 [data-md-color-primary="orange"] .md-typeset a {
   color: var(--nest-orange);
+	background-color: #ffffff8a;
+	border-radius: 5px;
 }
+/* Add padding around buttons on index page */
+#welcome-to-the-nest-simulator-documentation [data-md-color-primary="orange"] .sd-button {
+   padding: 6px;
+}
+
+
 .md-typeset details {
    background-color: white;
 }
@@ -190,18 +235,25 @@ div[role="main"] .md-source {
   display: none;
 }
 
-/* settings for icons */
-.md-typeset .sd-card-title img {
-  border: none;
-  opacity: 0.75;
-  width: 64px;
-  height: auto;
-  margin-right: 0.7em;
+#learn-and-explore-nest .sd-mb-4 {
+  margin-bottom: 0px !important;
 }
-div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
+/* settings for icons */
+.md-typeset .sd-card-title img, .md-typeset .sd-card-header img{
+  border: none;
+  opacity: 0.9;
+  height: 60px;
+  margin-right: 1.2em;
+  margin-bottom: 0.5em;
+
+}
+.md-typeset .sd-summary-title img {
+  border: none;
+  opacity: 0.9;
+  width: auto;
+  height: 64px;
  margin-right: 2em;
  margin-bottom: 0.5em;
- 
 }
 
 .md-typeset .admonition, .md-typeset .admonition.tip {
@@ -223,14 +275,14 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
    margin-right: 15px;
 }
 .md-typeset .admonition.seealso > .admonition-title, .md-typeset .admonition.important > .admonition-title {
-   background-color: var(--nest-green);
+   background-color: var(--nest-dkblue);
 }
 .md-typeset .admonition.seealso, .md-typeset .admonition.important {
-  border-left: .2rem solid var(--nest-green);
+  border-left: .2rem solid var(--nest-dkblue);
 }
 .md-typeset .admonition.warning {
    border-left-color: #be1717;
-} 
+}
 .md-typeset .admonition.warning > .admonition-title {
    background-color: #be1717;
 }
@@ -259,6 +311,12 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
   color: #fff;
 }
 
+span.md-nav__link.caption {
+
+  padding-top: 0.6rem;
+  padding-bottom: 0.1rem;
+}
+
 /*remove logo from header */
 .md-header-nav__button {
   display: none;
@@ -268,6 +326,26 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
  padding-top: 0px;
 }
 
+/* dropdowns */
+.md-typeset details > summary {
+   background-color: #ff663310;
+}
+
+.md-typeset details {
+  border-left: none;
+}
+
+nav.md-nav.md-nav--secondary label.md-nav__title{
+    visibility: hidden;
+}
+nav.md-nav.md-nav--secondary label.md-nav__title:after{
+
+  content: "Page Contents";
+  visibility: visible;
+  display: block;
+  position: static;
+}
+
 
 /***********************************
  * Adjust settings for sphinx design
@@ -275,18 +353,26 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
 .sd-card-header .sd-card-text {
   color: white;
   text-align: center;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+
 }
+
+#welcome-to-the-nest-simulator-documentation .sd-row-cols-lg-1 > *{
+width: 85%;
+}
+
 #pynest-examples img.sd-card-img-top {
   width: auto;
   height: max-content;
 }
-
 .sd-card-body {
    padding: 0.6rem;
 }
-.sd-btn {
+#welcome .sd-btn {
 	font-size: 1em;
-	padding: .375em .75em;
+	padding: .75em .75em;
 }
 .sd-container-fluid {
   padding-left: 0;
@@ -295,6 +381,12 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
 .sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
 	padding-left: 0;
 	padding-right: 0;
+}
+.scbs-carousel-control-next-icon{
+  background-image: url('../img/arrow_right.svg')
+}
+.scbs-carousel-control-prev-icon{
+  background-image: url('../img/arrow_left.svg')
 }
 
 /* ************************************
@@ -353,11 +445,6 @@ header{
 .flexslider{
 	display:none;
 }
-/*#content,
-aside,
-.vertical-padding{
-	padding:40px 0;
-}*/
 
 p{ margin:0 0 1.5em;}
 
@@ -430,7 +517,7 @@ p{ margin:0 0 1.5em;}
 .grid_10,
 .grid_11,
 .grid_12 {
-	margin-bottom:40px;
+	margin-bottom:5px;
 	/*positioning and padding*/
 	position: relative;
     min-height: 1px;
@@ -441,28 +528,6 @@ p{ margin:0 0 1.5em;}
 
   margin-top: auto;
 }
-/*FOOTER*/
-footer{
-	background:#333;
-	color:#ccc;
-	padding:20px 0;
-}
-footer ul{
-	margin:0 0 0 8%;
-	padding:0;
-}
-
-footer a, footer a:visited, footer a:active{
-    color:#777;
-    text-decoration: none;
-}
-
-footer a:hover{
-    color:#888;
-    text-decoration: underline;
-}
-
-
 
 /*Some more colored elements*/
 a.buttonlink{
@@ -491,7 +556,7 @@ a.buttonlink:hover{
 }
 
 .greenelement{
-    background: var(--nest-green);
+    background: var(--nest-brown);
     color:#fff;
 }
 
@@ -510,7 +575,7 @@ a.buttonlink:hover{
 }
 
 .green {
-   color: var(--nest-green);
+   color: #007f00;
 }
 
 .darkgreen {
@@ -652,8 +717,8 @@ MEDIAQUERIES
 @media only screen and (min-width: 2048px) {
 
 .md-typeset .sd-card-title img {
- width: 128px;
- height: auto;
+ width: auto;
+ height: 60px;
   }
 }
 @media only screen and (min-width: 1024px) {
@@ -662,13 +727,13 @@ MEDIAQUERIES
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 240px;
+  height: 180px;
  }
 
 header{
   background-color: var(--nest-orange);
   padding:15px 0;
-  height: 240px;
+  height: 180px;
  }
 .tsparticles-canvas-el {
     margin-top: -275px;
@@ -679,15 +744,15 @@ header{
 @media only screen and (max-width: 1023px) {
  .particle-img
  {
-  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.3)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 210px;
+  height: 180px;
 
  }
 header{
   background-color: var(--nest-orange);
   padding:0 0;
-  height: 210px;
+  height: 180px;
 }
  #banner{
    padding-top: 50px;
@@ -924,7 +989,11 @@ This is for the larger monitors and possibly full screen viewers.
 @media only screen and (min-width: 1240px) {
 #hero h1{ font-size:2em;}
 }
-
+@media only screen and (max-width: 768px) {
+ section#welcome-to-the-nest-simulator-documentation  object {
+  height: 200px;
+ }
+}
 /*
 RETINA (2x RESOLUTION DEVICES)
 This applies to the retina iPhone (4s) and iPad (2,3) along with

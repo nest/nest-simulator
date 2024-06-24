@@ -198,6 +198,13 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 }
 
 template < typename ConnectionT >
+size_t
+GenericConnectorModel< ConnectionT >::get_syn_id() const
+{
+  return default_connection_.get_syn_id();
+}
+
+template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
@@ -291,7 +298,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   assert( connector );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
-  vc->push_back( connection );
+  vc->push_back( std::move( connection ) );
 }
 
 } // namespace nest

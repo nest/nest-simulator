@@ -304,13 +304,11 @@ cdef class NESTEngine:
         if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
             raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
 
-        if not len(sources) == len(targets):
+        if len(sources) != len(targets):
             raise ValueError('Sources and targets must be arrays of the same length.')
-        if weights is not None:
-            if not len(sources) == len(weights):
+        if weights is not None and len(sources) != len(weights):
                 raise ValueError('weights must be an array of the same length as sources and targets.')
-        if delays is not None:
-            if not len(sources) == len(delays):
+        if delays is not None and len(sources) != len(delays):
                 raise ValueError('delays must be an array of the same length as sources and targets.')
         if axonal_delays is not None:
             if not len(sources) == len(axonal_delays):
@@ -349,8 +347,8 @@ cdef class NESTEngine:
         # Storing parameter keys in a vector of strings
         cdef vector[string] param_keys_ptr
         if syn_param_keys is not None:
-            for i, key in enumerate(syn_param_keys):
-                param_keys_ptr.push_back(key)
+            for key in syn_param_keys:
+                param_keys_ptr.push_back(key.encode('utf8'))
 
         cdef double[:, ::1] param_values_mv
         cdef double* param_values_ptr = NULL

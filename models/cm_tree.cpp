@@ -31,11 +31,11 @@ Compartment::Compartment( const long compartment_index, const long parent_index 
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( 0.0 )
   , ca( 1.0 )
   , gc( 0.01 )
   , gl( 0.1 )
   , el( -70. )
+  , v_comp( el )
   , gg0( 0.0 )
   , ca__div__dt( 0.0 )
   , gl__div__2( 0.0 )
@@ -45,11 +45,12 @@ Compartment::Compartment( const long compartment_index, const long parent_index 
   , gg( 0.0 )
   , hh( 0.0 )
   , n_passed( 0 )
+  , compartment_currents( v_comp )
 {
-  v_comp = el;
-
-  compartment_currents = CompartmentCurrents();
+  compartment_currents = CompartmentCurrents( v_comp );
 }
+
+nest::Compartment::Compartment( const long compartment_index,
 Compartment::Compartment( const long compartment_index,
   const long parent_index,
   const DictionaryDatum& compartment_params )
@@ -58,11 +59,11 @@ Compartment::Compartment( const long compartment_index,
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( 0.0 )
   , ca( 1.0 )
   , gc( 0.01 )
   , gl( 0.1 )
   , el( -70. )
+  , v_comp( el )
   , gg0( 0.0 )
   , ca__div__dt( 0.0 )
   , gl__div__2( 0.0 )
@@ -72,15 +73,19 @@ Compartment::Compartment( const long compartment_index,
   , gg( 0.0 )
   , hh( 0.0 )
   , n_passed( 0 )
+  , compartment_currents( v_comp )
 {
+  compartment_params->clear_access_flags();
+
   updateValue< double >( compartment_params, names::C_m, ca );
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
   updateValue< double >( compartment_params, names::e_L, el );
+  updateValue< double >( compartment_params, names::v_comp, v_comp );
 
-  v_comp = el;
+  compartment_currents = CompartmentCurrents( v_comp, compartment_params );
 
-  compartment_currents = CompartmentCurrents( compartment_params );
+  ALL_ENTRIES_ACCESSED( *compartment_params, "compartment_params", "Unread dictionary entries: " );
 }
 
 void

@@ -1,9 +1,0 @@
-0 0 6303932 # virt_mem_0 
-1 0 0.33699464797973633 # build_time_nodes 
-2 0 6773452 # virt_mem_after_nodes 
-3 0 34.76895546913147 # build_edge_time 
-4 0 9411472 # virt_mem_after_edges 
-5 0 9418748 # virt_mem_after_presim 
-6 0 30.287606477737427 # presim_time 
-7 0 9419172 # virt_mem_after_sim 
-8 0 95.22946524620056 # sim_time 

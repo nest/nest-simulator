@@ -152,6 +152,7 @@ extern const Name delta_IP3;
 extern const Name delta_P;
 extern const Name delta_tau;
 extern const Name dendritic_curr;
+extern const Name dendritic_delay;
 extern const Name dendritic_exc;
 extern const Name dendritic_inh;
 extern const Name dg;
@@ -356,6 +357,7 @@ extern const Name noise;
 extern const Name noisy_rate;
 extern const Name num_connections;
 extern const Name num_corrections;
+extern const Name num_pre_spikes;
 extern const Name num_processes;
 extern const Name number_of_connections;
 

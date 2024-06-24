@@ -144,8 +144,8 @@ ConnectionManager::finalize( const bool )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+  num_corrections_ = 0;
 }
-
 
 void
 ConnectionManager::set_status( const DictionaryDatum& d )

@@ -37,6 +37,10 @@ if DEBUG_PLOTS:
         DEBUG_PLOTS = False
 
 
+# Defined here so we can use it in init_params() and in parametrization
+RESOLUTION = 0.1  # [ms]
+
+
 @nest.ll_api.check_stack
 class TestSTDPPlSynapse:
     """
@@ -47,7 +51,6 @@ class TestSTDPPlSynapse:
     """
 
     def init_params(self):
-        self.resolution = 0.1  # [ms]
         self.simulation_duration = 1e2  # [ms]
         self.synapse_model = "stdp_pl_synapse_hom_ax_delay"
         self.presynaptic_firing_rate = 100.0  # [ms^-1]
@@ -137,7 +140,7 @@ class TestSTDPPlSynapse:
         """
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
-        nest.SetKernelStatus({"resolution": self.resolution, "min_delay": self.min_delay, "max_delay": self.max_delay})
+        nest.SetKernelStatus({"resolution": RESOLUTION, "min_delay": self.min_delay, "max_delay": self.max_delay})
 
         presynaptic_neuron, postsynaptic_neuron = nest.Create(self.nest_neuron_model, 2, params=self.neuron_parameters)
 
@@ -169,8 +172,10 @@ class TestSTDPPlSynapse:
                 {"spike_times": self.hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length},
             ),
         )
+
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
+
         # The recorder is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
 
@@ -289,7 +294,7 @@ class TestSTDPPlSynapse:
                         # if time when next pre-synaptic spike is being communicated is before post-synaptic spike
                         # occurs, a correction will be required in NEST
                         if (
-                            t_next_pre_spike - self.resolution - self.axonal_delay + self.min_delay
+                            t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
                         ) // self.min_delay * self.min_delay < t_next_post_spike:
                             allowed_to_deviate.append(True)
                         else:
@@ -303,14 +308,14 @@ class TestSTDPPlSynapse:
                         # before the pre-synaptic spike arrives at the synapse, a correction will be required in NEST
                         if (
                             abs(t_next_post_spike - t_next_pre_spike) < eps
-                            and (t_next_pre_spike - self.resolution - self.axonal_delay + self.min_delay)
+                            and (t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay)
                             // self.min_delay
                             * self.min_delay
                             < t_next_post_spike - self.dendritic_delay
                         ):
                             pass
                         elif (
-                            t_next_pre_spike - self.resolution - self.axonal_delay + self.min_delay
+                            t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
                         ) // self.min_delay * self.min_delay < t_last_post_spike:
                             allowed_to_deviate.append(True)
                         else:
@@ -391,29 +396,35 @@ class TestSTDPPlSynapse:
         fig.savefig("./tmp/nest_stdp_pl_synapse_hom_test" + fname_snip + ".png", dpi=300)
         plt.close(fig)
 
-    def test_stdp_synapse(self):
+    @pytest.mark.parametrize(["dend_delay", "ax_delay"], ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)))
+    @pytest.mark.parametrize("model", ("iaf_psc_alpha",))
+    @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
+    @pytest.mark.parametrize("max_delay", (1.0, 3.0))
+    @pytest.mark.parametrize("t_ref", (RESOLUTION, 0.5, 1.0, 1.1, 2.5))
+    def test_stdp_synapse(self, dend_delay, ax_delay, model, min_delay, max_delay, t_ref):
         self.init_params()
-        for self.dendritic_delay, self.axonal_delay in (
-            (1.0, 0.0),
-            (0.5, 0.5),
-            (0.0, 1.0),
-            (self.resolution, 0.0),
-            (0.0, self.resolution),
-        ):
-            self.synapse_parameters["delay"] = self.dendritic_delay
-            self.synapse_common_properties["axonal_delay"] = self.axonal_delay
+        self.synapse_parameters["dendritic_delay"] = self.dendritic_delay = dend_delay
+        self.synapse_parameters["axonal_delay"] = self.axonal_delay = ax_delay
+        self.nest_neuron_model = model
+        self.min_delay = min(min_delay, max_delay, self.dendritic_delay + self.axonal_delay)
+        self.max_delay = max(min_delay, max_delay, self.dendritic_delay + self.axonal_delay)
+        self.neuron_parameters["t_ref"] = t_ref
 
-            for self.min_delay in (1.0, 0.4, self.resolution):
-                for self.max_delay in (3.0, 1.0):
-                    self.min_delay = min(self.min_delay, self.max_delay, self.dendritic_delay + self.axonal_delay)
-                    self.max_delay = max(self.min_delay, self.max_delay, self.dendritic_delay + self.axonal_delay)
+        fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+        fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
+        fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
+        self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
 
-                    for self.nest_neuron_model in ("iaf_psc_alpha",):
-                        for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
-                            fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
-                            fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
-                            fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
-                            self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+    def manual(self):
+        self.init_params()
+        self.synapse_parameters["dendritic_delay"] = self.dendritic_delay = 1.
+        self.synapse_parameters["axonal_delay"] = self.axonal_delay = 0.
+        self.nest_neuron_model = "iaf_psc_alpha"
+        self.min_delay = min(1., 1.0, self.dendritic_delay + self.axonal_delay)
+        self.max_delay = max(1., 1.0, self.dendritic_delay + self.axonal_delay)
+        self.neuron_parameters["t_ref"] = RESOLUTION
 
-
-TestSTDPPlSynapse().test_stdp_synapse()
+        fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+        fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
+        fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
+        self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)

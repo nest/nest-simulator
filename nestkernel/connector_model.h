@@ -121,20 +121,6 @@ public:
 
   virtual SecondaryEvent* get_secondary_event() = 0;
 
-  virtual void set_syn_id( synindex syn_id ) = 0;
-
-  long
-  get_default_delay() const
-  {
-    return default_delay_;
-  }
-
-  long
-  get_default_axonal_delay() const
-  {
-    return default_axonal_delay_;
-  }
-
   std::string
   get_name() const
   {
@@ -156,8 +142,6 @@ public:
 protected:
   std::string name_;               //!< name of the ConnectorModel
   bool default_delay_needs_check_; //!< indicates whether the default delay must be checked
-  long default_delay_;
-  long default_axonal_delay_;
   ConnectionModelProperties properties_; //!< connection properties
 };
 
@@ -207,8 +191,6 @@ public:
   {
     return cp_;
   }
-
-  void set_syn_id( synindex syn_id ) override;
 
   void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
 

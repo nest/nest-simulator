@@ -696,6 +696,7 @@ private:
 
   //! Number of weight corrections required for STDP synapses with predominant axonal delays during the whole simulation
   size_t num_corrections_;
+  size_t num_pre_spikes_;
 };
 
 inline bool
@@ -893,6 +894,8 @@ ConnectionManager::send( const size_t tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
+  if ( syn_id == 44 )
+    ++num_pre_spikes_;
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
 }
 

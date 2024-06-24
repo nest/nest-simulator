@@ -108,12 +108,12 @@ public:
   // Since ConnectionBase depends on the template parameter, they are not
   // automatically
   // found in the base class.
-  using ConnectionBase::get_dendritic_delay_steps;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, const size_t receptor_type, const long, const long, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     InstantaneousRateConnectionEvent ge;
 
@@ -149,13 +149,13 @@ public:
   }
 
   void
-  set_dendritic_delay( double )
+  set_delay_ms( double )
   {
     throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   void
-  set_dendritic_delay_steps( long )
+  set_delay_steps( long )
   {
     throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }

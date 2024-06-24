@@ -409,6 +409,9 @@ public:
       e.set_port( lcid + lcid_offset );
       if ( not conn.is_disabled() )
       {
+        // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+        // only if needed, as this is computationally costly
+        e.set_sender_node_id_info( tid, syn_id_, lcid + lcid_offset );
         // Some synapses, e.g., bernoulli_synapse, may not send an event after all
         const bool event_sent = conn.send( e, tid, cp );
         if ( event_sent )

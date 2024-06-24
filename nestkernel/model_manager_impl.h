@@ -101,7 +101,6 @@ ModelManager::register_specific_connection_model_( const std::string& name )
 #pragma omp parallel
   {
     ConnectorModel* conn_model = new GenericConnectorModel< CompleteConnectionT >( name );
-    conn_model->set_syn_id( new_syn_id );
     if ( not conn_model->has_property( ConnectionModelProperties::IS_PRIMARY ) )
     {
       conn_model->get_secondary_event()->add_syn_id( new_syn_id );

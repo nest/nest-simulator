@@ -27,7 +27,7 @@ set ( nestkernel_sources
       connection.h
       connection_label.h
       common_properties_hom_w.h
-      syn_id_delay.h
+      delay_types.h
       connector_base.h connector_base_impl.h
       connector_model.h connector_model_impl.h connector_model.cpp
       connection_id.h connection_id.cpp
@@ -114,7 +114,6 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
-      axonal_delay_connection.h
       buffer_resize_log.h buffer_resize_log.cpp
       )
 

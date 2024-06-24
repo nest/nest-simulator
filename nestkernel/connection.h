@@ -28,6 +28,7 @@
 #include "connection_label.h"
 #include "connector_base_impl.h"
 #include "delay_checker.h"
+#include "delay_types.h"
 #include "event.h"
 #include "kernel_manager.h"
 #include "nest.h"
@@ -37,13 +38,13 @@
 #include "nest_types.h"
 #include "node.h"
 #include "spikecounter.h"
-#include "syn_id_delay.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+#include "target_identifier.h"
 
 namespace nest
 {
@@ -111,7 +112,7 @@ class ConnTestDummyNodeBase : public Node
  * or if needs to be changed, everything has to be reset after sending
  * (i.e. after Event::operator() has been called).
  */
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT = TotalDelay >
 class Connection
 {
 
@@ -121,12 +122,15 @@ public:
 
   Connection()
     : target_()
-    , syn_id_delay_( 1.0 )
+    , more_targets_( false )
+    , disabled_( false )
+    , delay_( 1.0 )
   {
+    delay_.set_delay_ms( 1.0 );
   }
 
-  Connection( const Connection< targetidentifierT >& rhs ) = default;
-  Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
+  Connection( const Connection< targetidentifierT, DelayTypeT >& rhs ) = default;
+  Connection& operator=( const Connection< targetidentifierT, DelayTypeT >& rhs ) = default;
 
   /**
    * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
@@ -180,74 +184,111 @@ public:
     const CommonSynapseProperties& );
 
   /**
-   * Return the delay of the connection in ms
+   * Return the proportion of the transmission delay attributed to the dendrite.
    */
   double
-  get_dendritic_delay() const
+  get_dendritic_delay_ms() const
   {
-    return syn_id_delay_.get_delay_ms();
+    return delay_.get_dendritic_delay_ms();
   }
 
   /**
-   * Return the delay of the connection in steps
+   * Return the proportion of the transmission delay attributed to the dendrite.
    */
   long
   get_dendritic_delay_steps() const
   {
-    return syn_id_delay_.delay;
+    return delay_.get_dendritic_delay_steps();
   }
 
   /**
-   * Set the delay of the connection
+   * Set the proportion of the transmission delay attributed to the dendrite.
    */
   void
-  set_dendritic_delay( const double delay )
+  set_dendritic_delay_ms( const double d )
   {
-    syn_id_delay_.set_delay_ms( delay );
+    delay_.set_dendritic_delay_ms( d );
   }
 
   /**
-   * Set the delay of the connection in steps
+   * Set the proportion of the transmission delay attributed to the dendrite.
    */
   void
-  set_dendritic_delay_steps( const long delay )
+  set_dendritic_delay_steps( const long d )
   {
-    syn_id_delay_.delay = delay;
+    delay_.set_dendritic_delay_steps( d );
   }
 
   /**
    * Set the proportion of the transmission delay attributed to the axon.
    */
   void
-  set_axonal_delay( const double )
+  set_axonal_delay_ms( const double d )
   {
+    delay_.set_axonal_delay_ms( d );
   }
 
   /**
    * Get the proportion of the transmission delay attributed to the axon.
    */
   double
-  get_axonal_delay() const
+  get_axonal_delay_ms() const
   {
-    return 0.;
+    return delay_.get_axonal_delay_ms();
   }
 
   /**
-   * Set the synapse id of the connection
+   * Set the proportion of the transmission delay attributed to the axon.
    */
   void
-  set_syn_id( synindex syn_id )
+  set_axonal_delay_steps( const long d )
   {
-    syn_id_delay_.syn_id = syn_id;
+    delay_.set_axonal_delay_steps( d );
   }
 
   /**
-   * Get the synapse id of the connection
+   * Get the proportion of the transmission delay attributed to the axon.
    */
-  synindex
-  get_syn_id() const
+  double
+  get_axonal_delay_steps() const
   {
-    return syn_id_delay_.syn_id;
+    return delay_.get_axonal_delay_steps();
+  }
+
+  /**
+   * Return the delay of the connection in ms
+   */
+  double
+  get_delay_ms() const
+  {
+    return delay_.get_delay_ms();
+  }
+
+  /**
+   * Return the delay of the connection in steps
+   */
+  long
+  get_delay_steps() const
+  {
+    return delay_.get_delay_steps();
+  }
+
+  /**
+   * Set the delay of the connection
+   */
+  void
+  set_delay_ms( const double d )
+  {
+    delay_.set_delay_ms( d );
+  }
+
+  /**
+   * Set the delay of the connection in steps
+   */
+  void
+  set_delay_steps( const long d )
+  {
+    delay_.set_delay_steps( d );
   }
 
   long
@@ -286,7 +327,7 @@ public:
   void
   set_source_has_more_targets( const bool more_targets )
   {
-    syn_id_delay_.set_source_has_more_targets( more_targets );
+    more_targets_ = more_targets;
   }
 
   /**
@@ -298,29 +339,29 @@ public:
   bool
   source_has_more_targets() const
   {
-    return syn_id_delay_.source_has_more_targets();
+    return more_targets_;
   }
 
   /**
-   * Disables the connection.
+   * Disables the synapse.
    *
    * @see is_disabled
    */
   void
   disable()
   {
-    syn_id_delay_.disable();
+    disabled_ = true;
   }
 
   /**
-   * Returns a flag denoting if the connection is disabled.
+   * Returns a flag denoting if the synapse is disabled.
    *
    * @see disable
    */
   bool
   is_disabled() const
   {
-    return syn_id_delay_.is_disabled();
+    return disabled_;
   }
 
 protected:
@@ -333,39 +374,40 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, const size_t receptor_type );
+  void check_connection_( Node& dummy_target, Node& source, Node& target, const synindex syn_id, const size_t receptor_type );
 
-  // The order of the members below is critical as it influcences the size of the object.
-  // Please leave unchanged!
   targetidentifierT target_;
-  // syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
-  SynIdDelay syn_id_delay_;
+  bool more_targets_ : 1;
+  bool disabled_ : 1;
+  DelayTypeT delay_;
+  // There are still 14 bits to spare here. If more bits are required, the sizes of the delays in the delay struct could
+  // be reduced even more as well.
 };
 
-template < typename targetidentifierT >
-constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
+using success_connection_target_ptr_size = StaticAssert< sizeof( Connection<TargetIdentifierPtrRport> ) == 24 >::success;
+using success_connection_target_idx_size = StaticAssert< sizeof( Connection<TargetIdentifierIndex> ) == 8 >::success;
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
+constexpr ConnectionModelProperties Connection< targetidentifierT, DelayTypeT >::properties;
+
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::check_connection_( Node& dummy_target,
+Connection< targetidentifierT, DelayTypeT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
+  const synindex syn_id,
   const size_t receptor_type )
 {
-  // 1. does this connection support the event type sent by source
-  // try to send event from source to dummy_target
-  // this line might throw an exception
-  source.send_test_event( dummy_target, receptor_type, get_syn_id(), true );
+  // 1. does this connection support the event type sent by source try to send event from source to dummy_target this
+  // line might throw an exception
+  source.send_test_event( dummy_target, receptor_type, syn_id, true );
 
-  // 2. does the target accept the event type sent by source
-  // try to send event from source to target
-  // this returns the port of the incoming connection
-  // p must be stored in the base class connection
+  // 2. does the target accept the event type sent by source try to send event from source to target
+  // this returns the port of the incoming connection p must be stored in the base class connection
   // this line might throw an exception
-  target_.set_rport( source.send_test_event( target, receptor_type, get_syn_id(), false ) );
+  target_.set_rport( source.send_test_event( target, receptor_type, syn_id, false ) );
 
-  // 3. do the events sent by source mean the same thing as they are
-  // interpreted in target?
+  // 3. do the events sent by source mean the same thing as they are interpreted in target?
   // note that we here use a bitwise and operation (&), because we interpret
   // each bit in the signal type as a collection of individual flags
   if ( not( source.sends_signal() & target.receives_signal() ) )
@@ -376,50 +418,38 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   target_.set_target( &target );
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+Connection< targetidentifierT, DelayTypeT >::get_status( DictionaryDatum& d ) const
 {
-  def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
+  delay_.get_status( d );
   target_.get_status( d );
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Connection< targetidentifierT, DelayTypeT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  double dendritic_delay;
-  if ( updateValue< double >( d, names::delay, dendritic_delay ) )
-  {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      dendritic_delay + Time::delay_steps_to_ms( cm.get_default_axonal_delay() ) );
-    syn_id_delay_.set_delay_ms( dendritic_delay );
-  }
+  delay_.set_status( d, cm );
   // no call to target_.set_status() because target and rport cannot be changed
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
+Connection< targetidentifierT, DelayTypeT >::check_synapse_params( const DictionaryDatum& ) const
 {
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
+Connection< targetidentifierT, DelayTypeT >::calibrate( const TimeConverter& tc )
 {
-  Time t = tc.from_old_steps( syn_id_delay_.delay );
-  syn_id_delay_.delay = t.get_steps();
-
-  if ( syn_id_delay_.delay == 0 )
-  {
-    syn_id_delay_.delay = 1;
-  }
+  delay_.calibrate( tc );
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t,
+Connection< targetidentifierT, DelayTypeT >::correct_synapse_stdp_ax_delay( const size_t,
   const double,
   double*,
   const double,
@@ -428,9 +458,9 @@ Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t,
   throw IllegalConnection( "Connection does not support correction in case of STDP with predominantly axonal delays." );
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT >::trigger_update_weight( const size_t,
+Connection< targetidentifierT, DelayTypeT >::trigger_update_weight( const size_t,
   const std::vector< spikecounter >&,
   const double,
   const CommonSynapseProperties& )
@@ -438,9 +468,9 @@ Connection< targetidentifierT >::trigger_update_weight( const size_t,
   throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
 }
 
-template < typename targetidentifierT >
+template < typename targetidentifierT, typename DelayTypeT >
 SecondaryEvent*
-Connection< targetidentifierT >::get_secondary_event()
+Connection< targetidentifierT, DelayTypeT >::get_secondary_event()
 {
   assert( false and "Non-primary connections have to provide get_secondary_event()" );
   return nullptr;

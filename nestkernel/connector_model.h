@@ -158,11 +158,13 @@ private:
 
   ConnectionT default_connection_;
   size_t receptor_type_;
+  synindex syn_id_;
 
 public:
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
     , receptor_type_( 0 )
+    , syn_id_( invalid_synindex )
   {
   }
 
@@ -171,6 +173,7 @@ public:
     , cp_( cm.cp_ )
     , default_connection_( cm.default_connection_ )
     , receptor_type_( cm.receptor_type_ )
+    , syn_id_( cm.syn_id_ )
   {
   }
 
@@ -215,8 +218,7 @@ public:
 
 private:
   void used_default_delay();
-
-}; // GenericConnectorModel
+};
 
 } // namespace nest
 

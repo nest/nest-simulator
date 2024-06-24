@@ -54,7 +54,7 @@ namespace nest
 // double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
 // {
 //   //std::cout << "standard implementation of get_default_delay" << std::endl;
-//   return cm.get_default_connection().get_delay();
+//   return cm.get_default_connection().get_delay_ms();
 // }
 
 
@@ -63,6 +63,7 @@ ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
+  new_cm->set_syn_id( syn_id );
 
   const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
   if ( not is_primary )
@@ -201,7 +202,14 @@ template < typename ConnectionT >
 size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const
 {
-  return default_connection_.get_syn_id();
+  return syn_id_;
+}
+
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
+{
+  syn_id_ = syn_id;
 }
 
 template < typename ConnectionT >

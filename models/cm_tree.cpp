@@ -50,7 +50,6 @@ Compartment::Compartment( const long compartment_index, const long parent_index 
   compartment_currents = CompartmentCurrents( v_comp );
 }
 
-nest::Compartment::Compartment( const long compartment_index,
 Compartment::Compartment( const long compartment_index,
   const long parent_index,
   const DictionaryDatum& compartment_params )

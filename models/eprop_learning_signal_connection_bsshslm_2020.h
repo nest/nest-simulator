@@ -152,7 +152,7 @@ public:
 
   //! Check if the target accepts the event and receptor type requested by the sender.
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const synindex, const CommonPropertiesType& )
   {
     LearningSignalConnectionEvent ge;
 

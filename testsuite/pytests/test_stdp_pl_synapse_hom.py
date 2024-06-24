@@ -36,7 +36,6 @@ if DEBUG_PLOTS:
     except Exception:
         DEBUG_PLOTS = False
 
-
 # Defined here so we can use it in init_params() and in parametrization
 RESOLUTION = 0.1  # [ms]
 
@@ -96,9 +95,9 @@ class TestSTDPPlSynapse:
         assert len(weight_by_nest) > 0
 
         difference_matrix = (
-            t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
-            + self.axonal_delay
-            - t_weight_reproduced_independently.reshape(-1, 1)
+                t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
+                + self.axonal_delay
+                - t_weight_reproduced_independently.reshape(-1, 1)
         )
         pre_spike_reproduced_indices = np.abs(difference_matrix).argmin(axis=0)
         time_differences = np.diagonal(difference_matrix[pre_spike_reproduced_indices])
@@ -218,7 +217,7 @@ class TestSTDPPlSynapse:
 
         def depress(w, Kminus):
             new_weight = (
-                w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
+                    w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
             )
             return new_weight if new_weight > 0.0 else 0.0
 
@@ -294,7 +293,7 @@ class TestSTDPPlSynapse:
                         # if time when next pre-synaptic spike is being communicated is before post-synaptic spike
                         # occurs, a correction will be required in NEST
                         if (
-                            t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
+                                t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
                         ) // self.min_delay * self.min_delay < t_next_post_spike:
                             allowed_to_deviate.append(True)
                         else:
@@ -307,15 +306,15 @@ class TestSTDPPlSynapse:
                         # if the next post-synaptic spike occurs after the pre-synaptic is being communicated, but
                         # before the pre-synaptic spike arrives at the synapse, a correction will be required in NEST
                         if (
-                            abs(t_next_post_spike - t_next_pre_spike) < eps
-                            and (t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay)
-                            // self.min_delay
-                            * self.min_delay
-                            < t_next_post_spike - self.dendritic_delay
+                                abs(t_next_post_spike - t_next_pre_spike) < eps
+                                and (t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay)
+                                // self.min_delay
+                                * self.min_delay
+                                < t_next_post_spike - self.dendritic_delay
                         ):
                             pass
                         elif (
-                            t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
+                                t_next_pre_spike - RESOLUTION - self.axonal_delay + self.min_delay
                         ) // self.min_delay * self.min_delay < t_last_post_spike:
                             allowed_to_deviate.append(True)
                         else:
@@ -349,16 +348,16 @@ class TestSTDPPlSynapse:
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log, np.array(allowed_to_deviate)
 
     def plot_weight_evolution(
-        self,
-        pre_spikes,
-        post_spikes,
-        t_log,
-        w_log,
-        Kpre_log=None,
-        Kpost_log=None,
-        pre_indices=slice(-1),
-        fname_snip="",
-        title_snip="",
+            self,
+            pre_spikes,
+            post_spikes,
+            t_log,
+            w_log,
+            Kpre_log=None,
+            Kpost_log=None,
+            pre_indices=slice(-1),
+            fname_snip="",
+            title_snip="",
     ):
         if not DEBUG_PLOTS:  # make pylint happy if no matplotlib
             return
@@ -396,7 +395,8 @@ class TestSTDPPlSynapse:
         fig.savefig("./tmp/nest_stdp_pl_synapse_hom_test" + fname_snip + ".png", dpi=300)
         plt.close(fig)
 
-    @pytest.mark.parametrize(["dend_delay", "ax_delay"], ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)))
+    @pytest.mark.parametrize(["dend_delay", "ax_delay"],
+                             ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)))
     @pytest.mark.parametrize("model", ("iaf_psc_alpha",))
     @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
     @pytest.mark.parametrize("max_delay", (1.0, 3.0))

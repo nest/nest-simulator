@@ -140,7 +140,7 @@ def test_iaf_bw_2001_exact():
 
     nest.Simulate(1000.0)
 
-    spikes = sr.get("events", "times") * nest.resolution
+    spikes = sr.events["times"] * nest.resolution
     first_spike_ind = int(spikes[0] / nest.resolution)
 
     # compute analytical solutions

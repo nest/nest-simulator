@@ -207,7 +207,7 @@ def run_sim(coherence, seed=123):
     ##################################################
     # Define synapse specifications
 
-    receptor_types = selective_pop1[0].get("receptor_types")
+    receptor_types = selective_pop1[0].receptor_types
 
     syn_spec_pot_AMPA = {
         "synapse_model": "static_synapse",

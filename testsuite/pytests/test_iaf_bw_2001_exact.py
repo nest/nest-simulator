@@ -101,7 +101,7 @@ def test_iaf_bw_2001_exact():
     bw_postsyn_2 = nest.Create("iaf_bw_2001_exact", wang_params)
     cond_exp_postsyn = nest.Create("iaf_cond_exp", cond_exp_params)
 
-    receptor_types = bw_presyn.get("receptor_types")
+    receptor_types = bw_presyn.receptor_types
 
     pg = nest.Create("poisson_generator", {"rate": 50.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
@@ -144,7 +144,7 @@ def test_iaf_bw_2001_exact():
     first_spike_ind = int(spikes[0] / nest.resolution)
 
     # compute analytical solutions
-    times = mm_presyn.get("events", "times") * nest.resolution
+    times = mm_presyn.events["times"] * nest.resolution
     ampa_soln = spiketrain_response(times, wang_params["tau_AMPA"], spikes, w_ex)
     gaba_soln = spiketrain_response(times, wang_params["tau_GABA"], spikes, np.abs(w_in))
 
@@ -164,7 +164,7 @@ def test_connect_NMDA_after_simulate():
     presyn = nest.Create("iaf_bw_2001_exact")
     postsyn = nest.Create("iaf_bw_2001_exact")
 
-    receptor_types = presyn.get("receptor_types")
+    receptor_types = presyn.receptor_types
     nmda_syn_spec = {"weight": 1.0, "receptor_type": receptor_types["NMDA"]}
 
     nest.Connect(presyn, postsyn, syn_spec=nmda_syn_spec)

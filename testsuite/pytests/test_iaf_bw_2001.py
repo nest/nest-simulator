@@ -107,7 +107,7 @@ def test_iaf_bw_2001():
     postsyn_bw2 = nest.Create("iaf_bw_2001", wang_params)
     postsyn_ce = nest.Create("iaf_cond_exp", cond_exp_params)
 
-    receptor_types = nrn_presyn.get("receptor_types")
+    receptor_types = nrn_presyn.receptor_types
 
     pg = nest.Create("poisson_generator", {"rate": 50.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
@@ -150,7 +150,7 @@ def test_iaf_bw_2001():
     first_spike_ind = int(spikes[0] / nest.resolution)
 
     # compute analytical solutions
-    times = mm_presyn.get("events", "times") * nest.resolution
+    times = mm_presyn.events["times"] * nest.resolution
     ampa_soln = spiketrain_response(times, wang_params["tau_AMPA"], spikes, w_ex)
     gaba_soln = spiketrain_response(times, wang_params["tau_GABA"], spikes, np.abs(w_in))
 
@@ -191,7 +191,7 @@ def test_approximation_I_NMDA_V_m():
     nrn_approx = nest.Create("iaf_bw_2001", nrn_params)
     nrn_exact = nest.Create("iaf_bw_2001_exact", nrn_params)
 
-    receptor_types = nrn_presyn.get("receptor_types")
+    receptor_types = nrn_presyn.receptor_types
 
     pg = nest.Create("poisson_generator", {"rate": 150.0})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
@@ -228,7 +228,7 @@ def test_illegal_connection_error():
     nest.ResetKernel()
     nrn_ce = nest.Create("iaf_cond_exp")
     nrn_bw = nest.Create("iaf_bw_2001")
-    receptor_types = nrn_bw.get("receptor_types")
+    receptor_types = nrn_bw.receptor_types
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
         nest.Connect(nrn_ce, nrn_bw, syn_spec=nmda_syn_spec)

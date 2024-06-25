@@ -354,10 +354,10 @@ def run_sim(coherence, seed=123):
 
     ##################################################
     # Collect data from simulation
-    spikes_nonselective = sr_nonselective.get("events", "times")
-    spikes_selective1 = sr_selective1.get("events", "times")
-    spikes_selective2 = sr_selective2.get("events", "times")
-    spikes_inhibitory = sr_inhibitory.get("events", "times")
+    spikes_nonselective = sr_nonselective.events["times"]
+    spikes_selective1 = sr_selective1.events["times"]
+    spikes_selective2 = sr_selective2.events["times"]
+    spikes_inhibitory = sr_inhibitory.events["times"]
 
     spikes_selective1_raster = sr_selective1_raster.get("events", "times")
     spikes_selective2_raster = sr_selective2_raster.get("events", "times")

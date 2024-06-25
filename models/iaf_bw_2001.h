@@ -104,7 +104,7 @@ The specification of this model differs slightly from the one in [1]_. The param
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population are not separated from the recurrent AMPA-synapses.
 
-For more implementation details and a comparison to the exact version see:
+For more implementation details and a comparison to the exact version, see:
 
 - `Brunel_Wang_2001_Model_Approximation <../model_details/Brunel_Wang_2001_Model_Approximation.ipynb>`_
 

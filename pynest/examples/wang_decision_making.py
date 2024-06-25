@@ -134,7 +134,12 @@ def run_sim(coherence, seed=123):
     update_times = np.arange(0, signal_duration, signal_update_interval)
     update_times[0] = 0.1
 
-    # for p ... below allows us to create a local variable in the iterator which is created once
+    # We could have written the generator expressions passed to `np.fromiter()` below as
+    #
+    #    ( nest.CreateParameter(...).GetValue() for _ in range(num_updates) )
+    #
+    # but that would create a new Parameter object for each iteration. We avoid this by
+    # wrapping the iterator in an outer loop in which `p` assumes only a single value.
     rates_a = np.fromiter(
         (
             p.GetValue()

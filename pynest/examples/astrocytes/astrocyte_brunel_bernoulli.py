@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_brunel.py
+# astrocyte_brunel_bernoulli.py
 #
 # This file is part of NEST.
 #
@@ -33,6 +33,9 @@ The simulation results show how astrocytes affect neuronal excitability. The
 astrocytic dynamics, the slow inward current in the neurons induced by the
 astrocytes, and the raster plot of neuronal firings are shown in the created
 figures.
+
+In this version of the model, primary connections between populations are
+created with the pairwise bernoulli rule.
 
 References
 ~~~~~~~~~~
@@ -77,7 +80,7 @@ sim_params = {
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of neurons to record from with spike recorder
     "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
-    "n_threads": 4,  # number of threads for NEST
+    "n_vp": 4,  # number of VPs for NEST
     "seed": 100,  # seed for the random module
 }
 
@@ -192,10 +195,10 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     print("Connecting neurons and astrocytes ...")
     # excitatory connections are paired with astrocytes
     # conn_spec and syn_spec according to the "tripartite_bernoulli_with_pool" rule
-    conn_params_e = {
-        "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": network_params["p_primary"] / scale,
-        "p_third_if_primary": network_params[
+    conn_params_e = {"rule": "pairwise_bernoulli", "p": network_params["p_primary"] / scale}
+    conn_params_astro = {
+        "rule": "third_factor_bernoulli_with_pool",
+        "p": network_params[
             "p_third_if_primary"
         ],  # "p_third_if_primary" is scaled along with "p_primary", so no further scaling is required
         "pool_size": network_params["pool_size"],
@@ -216,7 +219,14 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         },
         "third_out": {"synapse_model": "sic_connection", "weight": syn_params["w_a2n"]},
     }
-    nest.TripartiteConnect(nodes_ex, nodes_ex + nodes_in, nodes_astro, conn_spec=conn_params_e, syn_specs=syn_params_e)
+    nest.TripartiteConnect(
+        nodes_ex,
+        nodes_ex + nodes_in,
+        nodes_astro,
+        conn_spec=conn_params_e,
+        third_factor_conn_spec=conn_params_astro,
+        syn_specs=syn_params_e,
+    )
     # inhibitory connections are not paired with astrocytes
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p_primary"] / scale}
     syn_params_i = {
@@ -311,7 +321,7 @@ def run_simulation():
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
-    nest.local_num_threads = sim_params["n_threads"]
+    nest.total_num_virtual_procs = sim_params["n_vp"]
     nest.print_time = True
     nest.overwrite_files = True
 

@@ -69,7 +69,7 @@ namespace nest
  * interface MPI aware and communicating the masks during connection
  * setup.
  */
-class ConnectionGeneratorBuilder : public ConnBuilder
+class ConnectionGeneratorBuilder : public BipartiteConnBuilder
 {
   typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
   typedef ConnectionGenerator::ClosedInterval Range;
@@ -77,6 +77,7 @@ class ConnectionGeneratorBuilder : public ConnBuilder
 public:
   ConnectionGeneratorBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder*,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 

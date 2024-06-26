@@ -53,104 +53,66 @@ public:
   /**
    * Factory method for builders for bipartite connection rules (the default).
    */
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder*,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
-
-  /**
-   * Factory method for builders for tripartite connection rules.
-   */
-  virtual ConnBuilder* create( NodeCollectionPTR,
-    NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::map< Name, std::vector< DictionaryDatum > >& ) const = 0;
 };
 
 /**
  * Factory class for ConnBuilders
- *
- * This template class provides an interface with bipartite and tripartite `create()` methods.
- * Implementation is delegated to explicit template specialisations below, which only implement
- * the `create()` method with the proper arity depending on the `is_tripartite` flag of
- * the pertaining conn builder.
  */
-template < typename ConnBuilderType, bool is_tripartite = ConnBuilderType::is_tripartite >
+template < typename ConnBuilderType >
 class ConnBuilderFactory : public GenericConnBuilderFactory
 {
 public:
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    assert( false ); // only specialisations should be called
-  }
-
-  //! create tripartite builder
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    assert( false ); // only specialisations should be called
+    return new ConnBuilderType( sources, targets, third_out, conn_spec, syn_specs );
   }
 };
 
-
-// Specialisation for bipartite ConnBuilders
-template < typename ConnBuilderType >
-class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFactory
+class GenericThirdConnBuilderFactory
 {
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
+public:
+  virtual ~GenericThirdConnBuilderFactory()
   {
-    return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }
 
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    throw IllegalConnection( String::compose(
-      "Connection rule '%1' does not support tripartite connections.", ( *conn_spec )[ names::rule ] ) );
-  }
+  /**
+   * Factory method for builders for bipartite connection rules (the default).
+   */
+  virtual ThirdOutBuilder* create( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdInBuilder*,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& ) const = 0;
 };
 
-// Specialisation for tripartite ConnBuilders
-template < typename ConnBuilderType >
-class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFactory
+/**
+ * Factory class for Third-factor ConnBuilders
+ */
+template < typename ThirdConnBuilderType >
+class ThirdConnBuilderFactory : public GenericThirdConnBuilderFactory
 {
-  ConnBuilder*
+public:
+  ThirdOutBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    throw BadProperty(
-      String::compose( "Connection rule %1 only supports tripartite connections.", ( *conn_spec )[ names::rule ] ) );
-  }
-
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    return new ConnBuilderType( sources, targets, third, conn_spec, syn_specs );
+    return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
+
 
 } // namespace nest
 

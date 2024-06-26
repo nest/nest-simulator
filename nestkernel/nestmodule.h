@@ -554,11 +554,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } ConnectSonata_D_Function;
 
-  class ConnectTripartite_g_g_g_D_DFunction : public SLIFunction
+  class ConnectTripartite_g_g_g_D_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const override;
-  } connect_tripartite_g_g_g_D_Dfunction;
+  } connect_tripartite_g_g_g_D_D_Dfunction;
 
   class ResetKernelFunction : public SLIFunction
   {

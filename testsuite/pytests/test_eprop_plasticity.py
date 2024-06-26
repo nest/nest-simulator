@@ -259,6 +259,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
             "type": optimizer,
             "batch_size": 1,
             "eta": 1e-4,
+            "optimize_each_step": True,
             "Wmin": -100.0,
             "Wmax": 100.0,
         },

@@ -67,33 +67,33 @@ def test_unsupported_model_raises(target_model):
             "eprop_iaf",
             "adam",
             [
-                114.29762944769843,
-                116.08003945227834,
-                105.74487210940589,
-                99.69964257381793,
-                93.77229239951700,
+                0.13126137747586,
+                0.09395562983704,
+                0.00735134264487,
+                0.02696743852790,
+                0.00191004540573,
             ],
         ),
         (
             "eprop_iaf_adapt",
             "gradient_descent",
             [
-                126.02165319146847,
-                111.64653843535355,
-                87.16820207083737,
-                89.86582758486699,
-                90.17174743107725,
+                0.04298221363883,
+                0.03100545785399,
+                0.00930311104052,
+                0.00455478436740,
+                0.00017408818078,
             ],
         ),
         (
             "eprop_iaf_psc_delta",
             "gradient_descent",
             [
-                100.27605816999775,
-                99.17578232340864,
-                99.27281716101166,
-                99.10199953950716,
-                97.38001407331586,
+                0.32286231964124,
+                0.57204702111242,
+                0.62441034722776,
+                0.56523810285121,
+                0.53138251996805,
             ],
         ),
     ],
@@ -118,7 +118,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     n_iter = 5
 
     steps = {
-        "sequence": 1000,
+        "sequence": 100,
     }
 
     steps["learning_window"] = steps["sequence"]
@@ -193,8 +193,8 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
         params_nrn_rec["V_th"] = 0.5
     elif neuron_model == "eprop_iaf_adapt":
-        params_nrn_rec["adapt_beta"] = 1.0
-        params_nrn_rec["adapt_tau"] = 10.0
+        params_nrn_rec["adapt_beta"] = 0.0174
+        params_nrn_rec["adapt_tau"] = 2000.0
         params_nrn_rec["adaptation"] = 0.0
 
     gen_spk_in = nest.Create("spike_generator", n_in)

@@ -228,11 +228,11 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
   count_covariance_.clear();
   count_covariance_.resize( p.N_channels_ );
 
-  for ( long i = 0; i < p.N_channels_; ++i )
+  for ( decltype( p.N_channels_ ) i = 0; i < p.N_channels_; ++i )
   {
     covariance_[ i ].resize( p.N_channels_ );
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long j = 0; j < p.N_channels_; ++j )
+    for ( decltype( p.N_channels_ ) j = 0; j < p.N_channels_; ++j )
     {
       covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
       count_covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
@@ -349,7 +349,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
         size_t bin;
-        long other = spike_j->receptor_channel_;
+        decltype( sender ) other = spike_j->receptor_channel_;
         long sender_ind, other_ind;
 
         if ( spike_i < spike_j->timestep_ )

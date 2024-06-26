@@ -36,7 +36,6 @@ All about neurons in NEST
        * :ref:`param_ex`: explore how to use parameter objects in NEST
 
        How to handle neurons as Python objects in NEST scripts.
-       PyNEST scripts, handling neurons, Python
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
@@ -270,7 +269,8 @@ Input mechanism
    .. grid-item::
      :columns: 10
 
-     NEST convention: psc (aka CUBA)
+     Current-based. NEST convention: ``psc`` (aka CUBA)
+
      Synaptic inputs are represented as fixed currents (I) injected into the neuron.
      These currents are independent of the membrane potential
      and are directly added to the neuron's equation governing voltage dynamics.
@@ -286,7 +286,8 @@ Input mechanism
    .. grid-item::
      :columns: 10
 
-     NEST convention: cond (aka COBA)
+     Conductance-based. NEST convention: ``cond`` (aka COBA)
+
      Synaptic inputs are represented as changes in membrane conductance (`g`).
      These changes depend on the opening and closing of ion channels,
      which are often modeled based on voltage or neurotransmitter binding.
@@ -311,6 +312,7 @@ Adaptation mechanism
 
         .. tab-item:: General info
             :selected:
+
 
             Unlike a fixed threshold, an adaptive threshold increases temporarily following each spike and
             gradually returns to its baseline value over time. This mechanism models phenomena
@@ -340,7 +342,6 @@ Adaptation mechanism
 Precise spike timing
 ~~~~~~~~~~~~~~~~~~~~
 
-NEST convention: ps
 
 .. grid::
 
@@ -350,6 +351,8 @@ NEST convention: ps
       .. image:: /static/img/precise_nn.svg
 
   .. grid-item::
+
+      NEST convention: ``ps``
 
       More computataionally heavy, but provide better resolution to spike times than a non-precise model.
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.

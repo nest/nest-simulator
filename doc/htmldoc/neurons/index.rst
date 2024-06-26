@@ -296,7 +296,6 @@ Input mechanism
 Adaptation mechanism
 ~~~~~~~~~~~~~~~~~~~~
 
-NEST convention: aeif (aka AdEx)
 
 .. grid::
 
@@ -433,6 +432,11 @@ Rate neurons
       .. image:: /static/img/input_noise_nn.svg
 
 
+   .. grid-item::
+
+     Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
+     (aka recurrent neural networks RNNs)
+
 
    .. grid-item::
       :columns: 2
@@ -440,6 +444,12 @@ Rate neurons
       **Output noise**
 
       .. image:: /static/img/output_noise_nn.svg
+
+   .. grid-item::
+
+     Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
+     (aka recurrent neural networks RNNs)
+
 
 .. grid::
 

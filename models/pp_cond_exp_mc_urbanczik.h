@@ -115,6 +115,11 @@ Two-compartment point process neuron with conductance-based synapses
 Description
 +++++++++++
 
+.. admonition:: Deprecated model
+
+   ``pp_cond_exp_mc_urbanczik`` is deprecated because cm_default is an improved
+    implementation of compartmental models in NEST (see :doc:`cm_default`).
+
 pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
 in [1]_. It is capable of connecting to an :doc:`Urbanczik synapse

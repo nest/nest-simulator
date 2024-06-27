@@ -139,7 +139,13 @@ def compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wr
 
     assert np.all(stored_src == src_layer_ref)
     assert np.all(stored_target == target_layer_ref)
-    assert np.all(stored_connections == connections_ref)
+
+    # The order in which connections are written to file is implementation dependent. Therefore, we need to
+    # sort results and expectations here. We use lexsort to sort entire rows of the arrays. We need to
+    # transpose the array to provide it properly as keys to lexsort.
+    np.testing.assert_equal(
+        stored_connections[np.lexsort(stored_connections.T), :], connections_ref[np.lexsort(connections_ref.T), :]
+    )
 
 
 @pytest.mark.parametrize(

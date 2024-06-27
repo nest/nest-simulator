@@ -68,6 +68,13 @@ The TensorFlow implementation deviates from [1]_ in that it assumes
 :math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas [1]_
 assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
 
+When `optimize_each_step` is set to `True`, the weights are optimized at every
+time step. If set to `False`, optimization occurs once per spike, resulting in a
+significant speed-up. For gradient descent, both settings yield the same
+results. However, for the Adam optimizer, only setting `optimize_each_step` to
+`True` precisely implements the algorithm as described in [2]_. The impact of
+this setting on learning performance may vary depending on the task.
+
 Parameters
 ++++++++++
 

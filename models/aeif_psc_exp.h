@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, adaptation, current-based
 
 Short description
 +++++++++++++++++

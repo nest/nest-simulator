@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, point process, current-based
+/* BeginUserDocs: neuron, point process, current-based, adaptation
 
 Short description
 +++++++++++++++++

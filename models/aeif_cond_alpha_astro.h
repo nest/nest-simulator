@@ -68,7 +68,7 @@ extern "C" int aeif_cond_alpha_astro_dynamics( double, const double*, double*, v
  */
 extern "C" int aeif_cond_alpha_astro_dynamics_DT0( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based, astrocyte
+/* BeginUserDocs: neuron, integrate-and-fire, adaptation, conductance-based, astrocyte
 
 Short description
 +++++++++++++++++

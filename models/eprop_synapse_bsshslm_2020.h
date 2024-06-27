@@ -411,7 +411,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
 {
 }
 
-// This assignment operator is used to write a connection into the connection array.
+// This copy assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_bsshslm_2020& es )
@@ -452,7 +452,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( epr
   es.optimizer_ = nullptr;
 }
 
-// This assignment operator is used to write a connection into the connection array.
+// This move assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshslm_2020&& es )
@@ -596,6 +596,13 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
+    auto optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
+    auto it = optimizer_dict->find( names::optimize_each_step );
+    if ( it != optimizer_dict->end() )
+    {
+      throw BadProperty(
+        "Optimization in every time step optimize_each_step is not available for eprop_synapse_bsshslm_2020." );
+    }
     if ( optimizer_ )
     {
       optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );

@@ -3,8 +3,8 @@
 
 <svg
    width="87.895927mm"
-   height="94.560753mm"
-   viewBox="0 0 87.895927 94.560753"
+   height="94.560768mm"
+   viewBox="0 0 87.895927 94.560768"
    version="1.1"
    id="svg1"
    xml:space="preserve"
@@ -27,64 +27,60 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showguides="true"
-     inkscape:zoom="0.45131744"
-     inkscape:cx="3727.9747"
-     inkscape:cy="561.6889"
-     inkscape:window-width="1504"
-     inkscape:window-height="1289"
-     inkscape:window-x="26"
-     inkscape:window-y="23"
-     inkscape:window-maximized="0"
+     inkscape:zoom="1.8052698"
+     inkscape:cx="1282.3568"
+     inkscape:cy="769.41408"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
      showgrid="false"><sodipodi:guide
-       position="-839.48799,317.64317"
+       position="-839.48799,317.64315"
        orientation="0,-1"
        id="guide44"
        inkscape:locked="false" /><sodipodi:guide
-       position="-683.46628,189.09433"
-       orientation="1,0"
-       id="guide45"
-       inkscape:locked="false" /><sodipodi:guide
-       position="-595.16023,432.44355"
+       position="-595.16023,432.44353"
        orientation="0,-1"
        id="guide46"
        inkscape:locked="false" /><sodipodi:guide
-       position="-554.48651,435.81028"
+       position="-554.48651,435.81026"
        orientation="0,-1"
        id="guide47"
        inkscape:locked="false" /><sodipodi:guide
-       position="-224.35411,420.45493"
+       position="-224.35411,420.45491"
        orientation="0,-1"
        id="guide48"
        inkscape:locked="false" /><sodipodi:guide
-       position="-618.81971,378.24183"
+       position="-618.81971,378.24181"
        orientation="0,-1"
        id="guide49"
        inkscape:locked="false" /><sodipodi:guide
-       position="53.18697,201.74788"
+       position="53.18697,201.74786"
        orientation="0,-1"
        id="guide53"
        inkscape:locked="false" /><sodipodi:guide
-       position="95.46431,278.97328"
+       position="95.46431,278.97326"
        orientation="0,-1"
        id="guide57"
        inkscape:locked="false" /><sodipodi:guide
-       position="-133.19441,103.41682"
+       position="-133.19441,103.41681"
        orientation="0,-1"
        id="guide58"
        inkscape:locked="false" /><sodipodi:guide
-       position="-393.29193,394.95736"
+       position="-393.29193,394.95734"
        orientation="1,0"
        id="guide43"
        inkscape:locked="false" /><sodipodi:guide
-       position="-204.33447,358.16925"
+       position="-204.33447,358.16923"
        orientation="1,0"
        id="guide50"
        inkscape:locked="false" /><inkscape:grid
        id="grid52"
        units="px"
        originx="-904.89917"
-       originy="-163.46929"
+       originy="-163.46927"
        spacingx="0.26458333"
        spacingy="0.26458334"
        empcolor="#0099e5"
@@ -96,18 +92,22 @@
        gridanglex="30"
        gridanglez="30"
        visible="false" /><sodipodi:guide
-       position="-431.30078,325.05861"
+       position="-431.30078,325.05859"
        orientation="1,0"
        id="guide66"
        inkscape:locked="false" /><sodipodi:guide
-       position="-463.83633,302.91664"
+       position="-463.83633,302.91662"
        orientation="1,0"
        id="guide68"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-814.37218,195.91059"
+       orientation="0,-1"
+       id="guide79"
        inkscape:locked="false" /><inkscape:page
        x="-5.6574584e-07"
-       y="-1.5430064e-06"
+       y="4.4309755e-07"
        width="87.895927"
-       height="94.560753"
+       height="94.560768"
        id="page3"
        margin="0"
        bleed="0" /></sodipodi:namedview><defs
@@ -505,11 +505,176 @@
         font-family: &quot;Assistant&quot;;
         src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
       }
+    </style><style
+       class="style-fonts"
+       id="style1-908">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-216">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-6753">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-75">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-30">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-68">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-20">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-378">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-53">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-99">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-04">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
     </style></defs><g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-904.89919,-163.46928)"><!-- svg-source:excalidraw --><mask
+     transform="translate(-904.89919,-163.46926)"><!-- svg-source:excalidraw --><mask
        id="mask4" /><mask
        id="mask6" /><mask
        id="mask8" /><mask
@@ -619,7 +784,11 @@
        id="mask16-8" /><!-- svg-source:excalidraw --><mask
        id="mask4-3" /><mask
        id="mask8-75" /><mask
-       id="mask10-8" /><mask
+       id="mask10-8" /><!-- svg-source:excalidraw --><mask
+       id="mask4-62" /><mask
+       id="mask8-8" /><mask
+       id="mask10-24" /><mask
+       id="mask12-21" /><mask
        id="mask12-1" /><!-- svg-source:excalidraw --><mask
        id="mask2-03" /><mask
        id="mask6-6" /><mask
@@ -781,7 +950,10 @@
        id="mask88" /><!-- svg-source:excalidraw --><g
        stroke-linecap="round"
        transform="matrix(0.09764981,0,0,0.09764981,906.1658,188.94843)"
-       id="g2-56"><path
+       id="g2-56"
+       inkscape:export-filename="./siegert_neuron_nn.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><path
          d="m 48.28,41.97 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 M 12.99,94.77 C 25.81,77.81 42.07,63.7 72.69,26.09 M 12.99,94.77 C 32.6,72.21 53.29,47.83 72.69,26.09 M 5.91,115.11 C 38.19,77.47 72.48,36.42 94.47,13.22 M 5.91,115.11 C 26.93,91.08 46.38,69.55 94.47,13.22 M 3.41,130.17 C 42.48,85.44 80.24,39.84 108.38,9.42 M 3.41,130.17 C 35.45,92.58 69.47,54.28 108.38,9.42 M 2.89,142.96 C 36.17,103.75 71.38,64.49 122.29,5.61 M 2.89,142.96 C 46.61,92.21 90.62,41.23 122.29,5.61 M 2.37,155.76 C 41.03,111.28 81.2,63.36 136.2,1.8 M 2.37,155.76 C 34.5,119.66 69.21,80.51 136.2,1.8 M 2.5,167.8 C 45.6,115.76 90.43,64.51 147.49,1.01 M 2.5,167.8 C 58.3,100.9 115.6,36.02 147.49,1.01 M 4.6,177.58 C 50.89,125.67 94.06,76.46 157.46,1.73 M 4.6,177.58 C 53.38,121.33 100.91,65.69 157.46,1.73 M 8.02,185.85 C 53.89,133.71 95.73,82.02 168.09,1.7 M 8.02,185.85 C 51.07,137.68 92.8,86.98 168.09,1.7 M 10.77,194.87 C 71.64,127.47 132.98,55.14 178.07,2.42 M 10.77,194.87 C 59.65,137.51 109.5,81.62 178.07,2.42 M 13.53,203.89 C 60.88,151.97 105.04,101.57 188.04,3.14 M 13.53,203.89 C 72.18,137.74 130.22,70.18 188.04,3.14 M 16.94,212.16 C 65.78,159.68 110.56,103.11 196.7,5.37 M 16.94,212.16 C 61.57,157.86 109.1,103.85 196.7,5.37 M 21.01,219.67 C 70.42,167.74 117.1,112.86 205.37,7.6 M 21.01,219.67 C 90.18,137.98 159.9,58.81 205.37,7.6 M 26.4,225.67 C 76.33,167.7 125.2,112.27 213.37,10.58 M 26.4,225.67 C 78.03,165.3 129.95,103.82 213.37,10.58 M 31.12,232.43 C 82.51,171.02 137.07,109.68 222.03,12.81 M 31.12,232.43 C 95.16,160.58 158.73,87.27 222.03,12.81 M 36.5,238.43 C 107.07,158.55 173.86,78.57 230.04,15.79 M 36.5,238.43 C 100.69,166.53 162.1,94.8 230.04,15.79 M 41.23,245.19 C 96.38,182.98 150.33,122.52 238.05,18.78 M 41.23,245.19 C 116.17,158.36 190.63,74.23 238.05,18.78 M 46.61,251.19 C 100.64,190.48 154.55,130.54 244.74,23.27 M 46.61,251.19 C 119.99,169.92 192.2,86.69 244.74,23.27 M 53.3,255.69 C 97.3,206.82 140.5,154.64 251.43,27.77 M 53.3,255.69 C 102.06,200.12 148.55,145.02 251.43,27.77 M 60,260.18 C 105.64,208.4 151.96,156.03 258.13,32.26 M 60,260.18 C 110.72,201.49 162.25,140.96 258.13,32.26 M 66.04,265.43 c 42.31,-51.18 85.3,-99.62 198.78,-228.68 M 66.04,265.43 C 127.34,194.07 188.15,125.44 264.82,36.75 M 72.73,269.92 C 120.98,211.34 170.07,154.78 271.51,41.25 M 72.73,269.92 C 130.83,205.67 187.81,140.61 271.51,41.25 M 79.42,274.42 C 158.65,187.13 234.81,99.74 278.21,45.74 M 79.42,274.42 C 136.7,208.55 194.55,141.23 278.21,45.74 M 86.12,278.91 C 163.68,188.94 241.1,102.23 282.93,52.5 M 86.12,278.91 C 166.62,189.17 244.04,100.23 282.93,52.5 M 94.78,281.14 C 168.08,195.29 241.27,109.53 288.32,58.5 M 94.78,281.14 C 170.16,195.42 243.56,110.65 288.32,58.5 M 102.78,284.13 C 165.97,215.85 226.98,145.09 293.04,65.26 M 102.78,284.13 C 172.64,204.2 240.3,125.8 293.04,65.26 M 110.79,287.11 C 162.84,225.21 214.69,164.22 298.42,71.26 M 110.79,287.11 C 167.83,223.88 224.17,158.89 298.42,71.26 M 119.45,289.34 C 184.67,213.98 250.34,138.52 303.8,77.27 M 119.45,289.34 C 163.09,240.28 207.26,190.98 303.8,77.27 M 127.46,292.32 C 182.38,231.87 233.53,171.15 308.53,84.02 M 127.46,292.32 C 164.43,248.6 203.27,204.71 308.53,84.02 M 135.46,295.31 c 35.62,-42.07 72.12,-85.5 175.83,-202.26 M 135.46,295.31 C 182.48,238.29 232.15,182.25 311.29,93.05 m -165.2,202.22 c 43.86,-47.44 82.74,-95.15 167.95,-193.2 m -167.95,193.2 c 41.09,-45.32 80.46,-91.48 167.95,-193.2 M 156.72,295.24 C 200.1,247.31 242.36,196.91 316.8,111.09 M 156.72,295.24 C 198.04,251.08 238.03,204.86 316.8,111.09 M 166.7,295.96 C 212.38,241.85 257.08,189.52 319.56,120.11 M 166.7,295.96 C 221.47,234.68 274.31,172.18 319.56,120.11 M 177.33,295.93 c 40.02,-47.33 80.26,-94.36 144.99,-166.8 m -144.99,166.8 c 42.34,-49.54 84.9,-99.55 144.99,-166.8 M 189.27,294.38 c 31.27,-36.5 64.41,-73.23 133.18,-153.2 m -133.18,153.2 c 36.78,-39.88 72,-82.24 133.18,-153.2 M 203.84,289.82 C 238.51,250.2 271.03,211.04 321.93,153.97 M 203.84,289.82 c 35.6,-38.24 69.54,-78.35 118.09,-135.85 M 217.75,286.01 c 41.28,-49.17 81.3,-95.41 104.31,-120 m -104.31,120 c 36.21,-43.15 74.75,-86.65 104.31,-120 m -90.4,116.19 c 26.98,-32.82 53.77,-63.61 86.6,-99.62 m -86.6,99.62 c 23.18,-27.35 46.03,-52.1 86.6,-99.62 m -63.51,85.25 c 14.71,-16.73 29.53,-35.11 54.46,-62.64 m -54.46,62.64 c 17.89,-19.4 35.38,-39.82 54.46,-62.64 M 45.74,250.71 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 m 46,29.39 C 70.61,261.82 50.5,243.09 19.29,217.12 M 91.74,280.1 C 66.36,258.73 41.97,236.26 19.29,217.12 m 92.04,69.41 C 78.09,257.55 44.04,228.48 12.46,200.59 m 98.87,85.94 C 79.62,258.69 49.14,231.4 12.46,200.59 m 118.45,92.37 C 83.48,255.1 36.43,214.3 7.9,186.02 M 130.91,292.96 C 96.01,263.25 58.53,230.71 7.9,186.02 M 144.47,294.14 C 105.17,258.87 63.33,225.79 2.58,170.8 M 144.47,294.14 C 112.27,267 80.81,238.64 2.58,170.8 M 157.26,294.66 C 96.42,244.57 39.07,189.33 2.55,160.17 M 157.26,294.66 C 104.94,249.11 51.44,204.83 2.55,160.17 M 169.3,294.53 C 104.95,239.22 42.51,183.68 2.51,149.54 M 169.3,294.53 C 122.91,256.21 76.07,214.91 2.51,149.54 M 182.1,295.05 C 126.17,244.81 70.48,196.12 3.23,139.56 M 182.1,295.05 C 120.93,242.27 59.22,189.64 3.23,139.56 M 191.87,292.95 C 121.83,230.29 54.24,171.23 3.2,128.93 M 191.87,292.95 C 116.01,227.62 43.01,162.07 3.2,128.93 M 200.9,290.19 C 156.22,251.03 110.29,208.8 4.67,119.61 M 200.9,290.19 C 140.49,237.56 82.07,187.15 4.67,119.61 m 206,168.48 C 159.99,243.58 112.31,200.77 6.9,110.95 M 210.67,288.09 C 156.19,240.08 102.74,193.85 6.9,110.95 M 219.69,285.33 C 176.43,248.36 132.87,213.2 9.89,102.95 m 209.8,182.38 C 169.32,241.86 119.58,197.85 9.89,102.95 M 228.72,282.57 C 156.21,222 88.39,160.91 12.87,94.94 M 228.72,282.57 C 171.92,233.93 114.89,185.12 12.87,94.94 M 236.98,279.16 C 192.17,238.16 144.36,197.66 15.85,86.94 M 236.98,279.16 C 170.79,220.57 103.7,163.12 15.85,86.94 m 227.89,187.5 C 198.27,237.26 151.34,195.94 18.84,78.93 m 224.9,195.51 C 169.18,207.17 93.57,141.04 18.84,78.93 M 250.5,269.71 C 204.23,229.69 155.13,190.14 23.33,72.24 M 250.5,269.71 C 192.46,219.45 135.32,170.45 23.33,72.24 m 234.68,193.4 C 209.88,225.16 164.5,186.17 28.58,66.2 M 258.01,265.64 C 188.82,205.25 117.74,143.51 28.58,66.2 M 264.77,260.91 C 202.6,204.47 140.86,150.41 33.83,60.16 M 264.77,260.91 C 219.92,221.48 173.38,180.82 33.83,60.16 m 237.7,196.03 C 200.3,192.98 129.12,130.61 39.08,54.12 M 271.53,256.19 C 185.06,179.94 97.15,104.15 39.08,54.12 M 277.53,250.81 C 216.37,197.06 156.5,144.38 43.57,47.43 M 277.53,250.81 C 215.62,197.78 152.2,142.01 43.57,47.43 M 282.78,244.77 C 225.92,195.47 168.62,147.12 48.82,41.39 M 282.78,244.77 C 232.46,200.07 180.44,155.15 48.82,41.39 M 287.27,238.08 C 207.48,170.51 127.89,100.11 55.58,36.67 M 287.27,238.08 C 215.02,176.52 143.2,113.67 55.58,36.67 M 292.52,232.04 C 207.29,155.92 120.72,81.64 63.09,32.6 M 292.52,232.04 C 225.45,173.98 157.04,116.22 63.09,32.6 M 297.02,225.34 C 232.57,170.23 171.44,113.47 69.85,27.87 M 297.02,225.34 C 251.58,186.39 204.96,145.56 69.85,27.87 M 302.26,219.31 C 249.66,171.51 194.84,122.81 76.61,23.15 M 302.26,219.31 C 228.66,155.57 155.59,91.96 76.61,23.15 M 306,211.96 C 234.64,147.36 159.62,84.07 83.36,18.42 M 306,211.96 C 227.48,140.47 146.66,71.57 83.36,18.42 M 308.99,203.95 C 266.34,162.18 220.94,124.23 90.88,14.35 m 218.11,189.6 C 260.62,162.09 213.13,120.99 90.88,14.35 m 221.09,181.6 C 237.86,129.24 160.81,65.1 99.9,11.59 M 311.97,195.95 C 268.17,156.53 225.63,119.51 99.9,11.59 M 315.71,188.6 C 234.62,116.6 153.91,47.85 108.92,8.84 M 315.71,188.6 C 240.59,123.02 165.93,58.32 108.92,8.84 M 318.7,180.59 C 257.58,127.42 197.25,76.12 117.94,6.08 M 318.7,180.59 C 259.89,127.11 200.86,75.44 117.94,6.08 M 320.93,171.93 C 250.02,110.78 180.88,52.27 127.72,3.98 M 320.93,171.93 C 261.91,120.97 202.24,68.96 127.72,3.98 M 321.65,161.95 C 258.57,106.42 196.45,52.22 136.74,1.22 M 321.65,161.95 C 279.56,128.11 239.72,92.06 136.74,1.22 m 184.87,150.1 C 279.5,115.45 235.89,77.43 148.03,0.43 M 321.61,151.32 C 267.34,105.32 215.69,60.13 148.03,0.43 M 321.58,140.69 C 269.14,96.3 218.21,53.74 160.82,0.95 M 321.58,140.69 C 274.68,98.2 227.29,56.88 160.82,0.95 M 322.3,130.72 C 263.63,79.3 205.72,29.76 173.62,1.48 M 322.3,130.72 C 270.81,84.97 219,39.14 173.62,1.48 M 319.24,117.47 C 282.24,83.52 243.49,51.08 186.41,2 M 319.24,117.47 C 287.18,90.04 252.1,59.38 186.41,2 M 314.68,102.9 C 276.96,70.99 241.65,38.18 203.74,6.46 M 314.68,102.9 C 275.28,68.41 238.09,35.68 203.74,6.46 M 310.12,88.33 C 273.55,57.03 241.58,26.47 222.57,12.23 m 87.55,76.1 C 279.38,59.49 247.61,32.71 222.57,12.23 m 67.89,48.41 C 280.23,53.76 272.45,46.1 251.97,27.19 m 38.49,33.45 C 277.5,49.36 262.38,36.14 251.97,27.19"
          stroke="#fff4e6"
          stroke-width="1"
@@ -1247,60 +1419,40 @@
            stroke-width="4"
            fill="none"
            id="path72-60" /></g></g><mask
-       id="mask74-2" /><g
-       stroke-linecap="round"
-       id="g77-5"
-       transform="matrix(0.09764981,0,0,0.09764981,902.56726,189.67864)"><g
-         transform="matrix(1.179327,0,0,1.179327,372.15272,353.45255)"
-         id="g75-8"><path
-           d="m 1.11,0.79 c 12.72,-0.72 51.4,-4.38 75.63,-5.69 24.23,-1.3 58.3,-1.97 69.75,-2.12 M 0.23,0.17 c 12.48,-0.56 51.02,-3.04 75.32,-4.04 24.29,-1 58.81,-1.3 70.45,-1.97"
-           stroke="#1e1e1e"
-           stroke-width="4"
-           fill="none"
-           id="path74-9" /></g><g
-         transform="matrix(1.179327,0,0,1.179327,372.15272,353.45255)"
-         id="g76-5"><path
-           d="m 145.22,-6.95 -13.81,7.34 -0.43,-11.24 14.29,5.32"
-           stroke="none"
-           stroke-width="0"
-           fill="#1e1e1e"
-           fill-rule="evenodd"
-           id="path75-0" /><path
-           d="m 146,-5.84 c -3.53,1.83 -10.23,5.36 -13.37,6.79 M 146,-5.84 c -3.85,1.51 -7.32,3.41 -13.37,6.79 m 0,0 c 0.38,-4.76 -0.95,-6.8 -0.43,-12.67 m 0.43,12.67 c -0.41,-2.18 -0.2,-5.07 -0.43,-12.67 m 0,0 c 4.64,1.32 7.76,4.82 13.8,5.88 m -13.8,-5.88 c 4.67,2.38 9.37,3.89 13.8,5.88 m 0,0 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0"
-           stroke="#1e1e1e"
-           stroke-width="4"
-           fill="none"
-           id="path76-6" /></g><text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:79.4789px;font-family:'Virgil 3 YOFF';-inkscape-font-specification:'Virgil 3 YOFF';text-align:center;letter-spacing:-0.596093px;word-spacing:-4.01008px;text-anchor:middle;fill:#ff6633;fill-opacity:1;stroke:none;stroke-width:9.35998;stroke-linecap:round;stroke-dasharray:9.35998, 18.72;stroke-dashoffset:28.08;stroke-opacity:1"
-         x="162.5833"
-         y="-191.80122"
-         id="text75"><tspan
-           sodipodi:role="line"
-           id="tspan75"
-           style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:9.35998"
-           x="162.5833"
-           y="-191.80122">Neuron </tspan><tspan
-           sodipodi:role="line"
-           style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:9.35998"
-           x="162.28525"
-           y="-92.452599"
-           id="tspan78">level</tspan></text><text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:79.4789px;font-family:'Virgil 3 YOFF';-inkscape-font-specification:'Virgil 3 YOFF';text-align:center;letter-spacing:-0.596093px;word-spacing:-4.01008px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:9.35998;stroke-linecap:round;stroke-dasharray:9.35998, 18.72;stroke-dashoffset:28.08;stroke-opacity:1"
-         x="633.06598"
-         y="-198.06273"
-         id="text77"><tspan
-           sodipodi:role="line"
-           id="tspan76"
-           style="stroke-width:9.35998"
-           x="633.06598"
-           y="-198.06273">Population </tspan><tspan
-           sodipodi:role="line"
-           style="stroke-width:9.35998"
-           x="632.76794"
-           y="-98.714104"
-           id="tspan77">level</tspan></text></g><mask
+       id="mask74-2" /><text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.7611px;font-family:'Virgil 3 YOFF';-inkscape-font-specification:'Virgil 3 YOFF';text-align:center;letter-spacing:-0.0582084px;word-spacing:-0.391584px;text-anchor:middle;fill:#ff6633;fill-opacity:1;stroke:none;stroke-width:0.914;stroke-linecap:round;stroke-dasharray:0.914, 1.828;stroke-dashoffset:2.74201;stroke-opacity:1"
+       x="918.44348"
+       y="170.94928"
+       id="text75"><tspan
+         sodipodi:role="line"
+         id="tspan75"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.914"
+         x="918.44348"
+         y="170.94928">Neuron </tspan><tspan
+         sodipodi:role="line"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.914"
+         x="918.41437"
+         y="180.65065"
+         id="tspan78">level</tspan></text><text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.7611px;font-family:'Virgil 3 YOFF';-inkscape-font-specification:'Virgil 3 YOFF';text-align:center;letter-spacing:-0.0582084px;word-spacing:-0.391584px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.914;stroke-linecap:round;stroke-dasharray:0.914, 1.828;stroke-dashoffset:2.74201;stroke-opacity:1"
+       x="964.38605"
+       y="170.33784"
+       id="text77"><tspan
+         sodipodi:role="line"
+         id="tspan76"
+         style="stroke-width:0.914"
+         x="964.38605"
+         y="170.33784">Population </tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.914"
+         x="964.35693"
+         y="180.03922"
+         id="tspan77">level</tspan></text><path
+       style="fill:#ffffff;stroke:#ff6633;stroke-width:1.59117;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:2.74201;stroke-opacity:1"
+       d="m 939.30777,223.48351 12.4655,-0.96168"
+       id="path25" /><mask
        id="mask77-0" /><g
        stroke-linecap="round"
        transform="matrix(0.09764981,0,0,0.09764981,948.56656,190.65514)"
@@ -1377,4 +1529,47 @@
            stroke-width="4"
            fill="none"
            id="path86-9" /></g></g><mask
-       id="mask88-1" /></g></svg>
+       id="mask88-1" /><!-- svg-source:excalidraw --><mask
+       id="mask2-3" /><mask
+       id="mask6-7" /><mask
+       id="mask10-20" /><mask
+       id="mask12-44" /><path
+       style="fill:#ff6633;fill-opacity:1;stroke:none;stroke-width:0.914;stroke-linecap:round;stroke-dasharray:0.914, 1.828;stroke-dashoffset:2.74201;stroke-opacity:1"
+       d="m 949.20855,218.84453 0.83698,7.42386 3.64928,-4.28972 z"
+       id="path29"
+       sodipodi:nodetypes="cccc" /><!-- svg-source:excalidraw --><mask
+       id="mask4-84" /><mask
+       id="mask6-63" /><mask
+       id="mask10-37" /><mask
+       id="mask12-74" /><!-- svg-source:excalidraw --><mask
+       id="mask4-4" /><mask
+       id="mask6-17" /><mask
+       id="mask10-91" /><mask
+       id="mask12-77" /><mask
+       id="mask14-6" /><!-- svg-source:excalidraw --><mask
+       id="mask6-10" /><mask
+       id="mask10-28" /><mask
+       id="mask14-74" /><mask
+       id="mask19" /><mask
+       id="mask21-6" /><!-- svg-source:excalidraw --><mask
+       id="mask10-01" /><mask
+       id="mask14-29" /><mask
+       id="mask18-04" /><mask
+       id="mask22-5" /><!-- svg-source:excalidraw --><mask
+       id="mask6-79" /><mask
+       id="mask10-17" /><mask
+       id="mask14-16" /><mask
+       id="mask19-7" /><mask
+       id="mask21-60" /><!-- svg-source:excalidraw --><mask
+       id="mask6-46" /><mask
+       id="mask10-02" /><mask
+       id="mask14-8" /><mask
+       id="mask19-1" /><!-- svg-source:excalidraw --><mask
+       id="mask10-34" /><mask
+       id="mask14-86" /><mask
+       id="mask18-2" /><mask
+       id="mask22-33" /><!-- svg-source:excalidraw --><mask
+       id="mask6-67" /><mask
+       id="mask10-374" /><mask
+       id="mask14-72" /><mask
+       id="mask19-16" /></g></svg>

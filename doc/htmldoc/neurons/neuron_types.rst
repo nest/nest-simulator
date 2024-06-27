@@ -1,5 +1,16 @@
 .. _types_neurons:
 
+
+
+.. {% for items in tag_dict %}
+   {% if items.tag == "integrate-and-fire" %}
+   {% for item in items.models | sort %}
+   * :doc:`/models/{{ item | replace(".html", "") }}`
+   {% endfor %}
+   {% endif %}
+   {% endfor %}
+
+
 Types of neurons
 ================
 

@@ -74,7 +74,7 @@ Description
 .. admonition:: Deprecated model
 
    ``iaf_cond_alpha_mc`` is deprecated because ``cm_default`` is an improved
-    implementation of compartmental models in NEST (see :doc:`cm_default`).
+   implementation of compartmental models in NEST (see :doc:`cm_default`).
 
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!

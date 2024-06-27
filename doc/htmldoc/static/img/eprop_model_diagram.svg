@@ -25,7 +25,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -45,9 +45,9 @@
      inkscape:pagecheckerboard="false"
      inkscape:measure-start="0,0"
      inkscape:measure-end="0,0"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="293.44618"
-     inkscape:cy="59.246213"
+     inkscape:zoom="2"
+     inkscape:cx="269.63288"
+     inkscape:cy="78.02"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -907,7 +907,7 @@
        y="7.7354169"
        style="font-size:10.66666698px">Full e-prop model</tspan></text>
   <g
-     transform="matrix(0.10810289,0,0,0.13502733,377.32467,188.05219)"
+     transform="matrix(0.10810289,0,0,0.13502733,377.32467,189.10948)"
      id="g87-8"
      inkscape:export-xdpi="300"
      inkscape:export-ydpi="300">
@@ -930,7 +930,7 @@
          id="tspan5479-9">Bellec et al. (2020)</tspan></text>
   </g>
   <g
-     transform="matrix(0.10810289,0,0,0.13502733,482.60629,181.96106)"
+     transform="matrix(0.10810289,0,0,0.13502733,482.60629,183.01835)"
      id="g87-7-3"
      inkscape:export-xdpi="300"
      inkscape:export-ydpi="300">
@@ -1127,32 +1127,7 @@
      sodipodi:nodetypes="cc"
      inkscape:export-xdpi="300"
      inkscape:export-ydpi="300" />
-  <flowRoot
-     inkscape:export-ydpi="300"
-     inkscape:export-xdpi="300"
-     xml:space="preserve"
-     id="flowRoot12584-5"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start"
-     transform="translate(265.27621,-28.535251)"><flowRegion
-       id="flowRegion12586-0"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start"><rect
-         id="rect12588-7"
-         width="85.118141"
-         height="111.85054"
-         x="-10"
-         y="113.45557"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start"
-         ry="0" /></flowRegion><flowPara
-       id="flowPara12599-2"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;text-anchor:middle">+ biological features</flowPara><flowPara
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start"
-       id="flowPara3403-4" /><flowPara
-       id="flowPara1074-9"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start" /><flowPara
-       id="flowPara12603-3"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start" /><flowPara
-       id="flowPara12605-3"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:0.69999999;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;text-anchor:start" /></flowRoot>  <path
+  <path
      inkscape:connector-curvature="0"
      id="path3466-4"
      d="M 198.5613,125.82344 V 102.75408"
@@ -1506,26 +1481,14 @@
      sodipodi:nodetypes="cc"
      inkscape:export-xdpi="300"
      inkscape:export-ydpi="300" />
-  <flowRoot
+  <text
      xml:space="preserve"
-     id="flowRoot10637"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
-     transform="translate(20,-240)"><flowRegion
-       id="flowRegion10639"><rect
-         id="rect10641"
-         width="710"
-         height="260"
-         x="-65.438683"
-         y="-50.231606" /></flowRegion><flowPara
-       id="flowPara10643"></flowPara></flowRoot>  <flowRoot
-     xml:space="preserve"
-     id="flowRoot10645"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.66666651px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
-     transform="translate(20,-240)"><flowRegion
-       id="flowRegion10647"><rect
-         id="rect10649"
-         width="590"
-         height="240"
-         x="-25.438681"
-         y="219.76839" /></flowRegion><flowPara
-       id="flowPara10651"></flowPara></flowRoot></svg>
+     x="266.56134"
+     y="90.268326"
+     id="text1480"><tspan
+       sodipodi:role="line"
+       id="tspan1478"
+       x="266.56134"
+       y="90.268326">+ biological features</tspan></text>
+</svg>

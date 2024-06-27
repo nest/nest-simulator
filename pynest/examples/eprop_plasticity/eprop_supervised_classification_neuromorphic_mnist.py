@@ -31,12 +31,11 @@ Description
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
 plasticity mechanism by Bellec et al. [1]_ with additional biological features described in [3]_.
 
-The primary objective of this task is to classify the N-MNIST dataset [2]_, an adaptation of the
-traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing.
-The N-MNIST dataset captures changes in pixel intensity through a dynamic vision sensor,
-converting static images into sequences of binary events, which we interpret as spike trains.
-This conversion closely emulates biological neural processing, making it a fitting challenge for
-an e-prop-equipped spiking neural network (SNN).
+The primary objective of this task is to classify the N-MNIST dataset [2]_, an adaptation of the traditional
+MNIST dataset of handwritten digits specifically designed for neuromorphic computing. The N-MNIST dataset
+captures changes in pixel intensity through a dynamic vision sensor, converting static images into sequences of
+binary events, which we interpret as spike trains. This conversion closely emulates biological neural
+processing, making it a fitting challenge for an e-prop-equipped spiking neural network (SNN).
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_schematic_evidence-accumulation.png
    :width: 70 %
@@ -45,13 +44,13 @@ an e-prop-equipped spiking neural network (SNN).
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
 This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
-consists of a recurrent network that receives input from Poisson generators and projects onto multiple readout neurons - one for each class.
-Each input generator is assigned to a pixel of the input image; when an event is detected in a pixel at time
-`t`, the corresponding input generator (connected to an input neuron) emits a spike at that time. Each readout neuron compares the
-network signal :math:`y_k` with the teacher signal :math:`y_k^*`, which it receives from a rate generator
-representing the respective digit class.
-Unlike conventional neural network classifiers that may employ softmax functions and cross-entropy loss for classification, this network model utilizes a mean-squared error loss to evaluate the training error
-and perform digit classification.
+consists of a recurrent network that receives input from Poisson generators and projects onto multiple readout
+neurons - one for each class. Each input generator is assigned to a pixel of the input image; when an event is
+detected in a pixel at time `t`, the corresponding input generator (connected to an input neuron) emits a spike
+at that time. Each readout neuron compares the network signal :math:`y_k` with the teacher signal :math:`y_k^*`,
+which it receives from a rate generator representing the respective digit class. Unlike conventional neural
+network classifiers that may employ softmax functions and cross-entropy loss for classification, this network
+model utilizes a mean-squared error loss to evaluate the training error and perform digit classification.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
 
@@ -290,14 +289,14 @@ nrns_rec_record = nrns_rec[:n_record]
 # ~~~~~~~~~~~~~~~~~~
 # Now, we define the connectivity and set up the synaptic parameters, with the synaptic weights drawn from
 # normal distributions. After these preparations, we establish the enumerated connections of the core network,
-# as well as additional connections to the recorders.
-# For this task, we implement a method characterized by sparse connectivity designed to enhance resource efficiency
-# during the learning phase. This method involves the creation of binary masks that reflect predetermined levels of
-# sparsity across various network connections, namely from input-to-recurrent, recurrent-to-recurrent, and
-# recurrent-to-output. These binary masks are applied directly to the corresponding weight matrices. Subsequently,
-# we activate only connections corresponding to non-zero weights to achieve the targeted
-# sparsity level. For instance, a sparsity level of 0.9 means that most connections are turned off. This approach
-# reduces resource consumption and, ideally, boosts the learning process's efficiency.
+# as well as additional connections to the recorders. For this task, we implement a method characterized by
+# sparse connectivity designed to enhance resource efficiency during the learning phase. This method involves
+# the creation of binary masks that reflect predetermined levels of sparsity across various network connections,
+# namely from input-to-recurrent, recurrent-to-recurrent, and recurrent-to-output. These binary masks are
+# applied directly to the corresponding weight matrices. Subsequently, we activate only connections
+# corresponding to non-zero weights to achieve the targeted sparsity level. For instance, a sparsity level of
+# 0.9 means that most connections are turned off. This approach reduces resource consumption and, ideally,
+# boosts the learning process's efficiency.
 
 params_conn_all_to_all = {"rule": "all_to_all", "allow_autapses": False}
 params_conn_one_to_one = {"rule": "one_to_one"}
@@ -416,20 +415,20 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # %% ###########################################################################################################
 # Create input and output
 # ~~~~~~~~~~~~~~~~~~~~~~~
-# This section involves downloading the N-MNIST dataset, extracting it, and preparing it for
-# neural network training and testing. The dataset consists of two main components: training and test sets.
+# This section involves downloading the N-MNIST dataset, extracting it, and preparing it for neural network
+# training and testing. The dataset consists of two main components: training and test sets.
 
-# The `download_and_extract_nmnist_dataset` function retrieves the dataset from its public repository and extracts
-# it into a specified directory. It checks for the presence of the dataset to avoid re-downloading. After downloading,
-# it extracts the main dataset zip file, followed by further extraction of nested zip files for training and test data,
-# ensuring that the dataset is ready for loading and processing.
+# The `download_and_extract_nmnist_dataset` function retrieves the dataset from its public repository and
+# extracts it into a specified directory. It checks for the presence of the dataset to avoid re-downloading.
+# After downloading, it extracts the main dataset zip file, followed by further extraction of nested zip files
+# for training and test data, ensuring that the dataset is ready for loading and processing.
 
 # The `load_image` function reads a single image file from the dataset, converting the event-based neuromorphic
-# data into a format suitable for processing by spiking neural networks. It filters events based on specified pixel
-# blocklists, arranging the remaining events into a structured format representing the image.
+# data into a format suitable for processing by spiking neural networks. It filters events based on specified
+# pixel blocklists, arranging the remaining events into a structured format representing the image.
 
-# The `DataLoader` class facilitates the loading of the dataset for neural network training and testing.
-# It supports selecting specific labels for inclusion, allowing for targeted training on subsets of the dataset.
+# The `DataLoader` class facilitates the loading of the dataset for neural network training and testing. It
+# supports selecting specific labels for inclusion, allowing for targeted training on subsets of the dataset.
 # The class also includes functionality for random shuffling and grouping of data, ensuring diverse and
 # representative samples are used throughout the training process.
 

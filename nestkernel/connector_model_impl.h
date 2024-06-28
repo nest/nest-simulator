@@ -261,6 +261,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       connection.set_delay_ms( actual_delay );
       default_delay_used = false;
     }
+  } else if( p->known( names::delay ) or p->known( names::dendritic_delay ) or p->known( names::axonal_delay ) or not numerics::is_nan( delay )  or not numerics::is_nan( axonal_delay ) )
+  {
+    throw BadProperty( "Delay specified for a connection type which doesn't use delays." );
   }
 
   if ( not numerics::is_nan( weight ) )

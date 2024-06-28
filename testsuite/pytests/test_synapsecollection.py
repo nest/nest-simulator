@@ -110,16 +110,19 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is a string
         target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(["delay", "port", "weight"])
+        dpw = conns.get(["axonal_delay", "delay", "dendritic_delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
         expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         target_ref = [1, 2, 1, 2]
-        dpw_ref = {"delay": [1.0, 1.0, 1.0, 1.0], "port": [0, 1, 2, 3], "weight": [1.0, 1.0, 1.0, 1.0]}
+        dpw_ref = {"axonal_delay": [0.0, 0.0, 0.0, 0.0], "delay": [1.0, 1.0, 1.0, 1.0],
+                   "dendritic_delay": [1.0, 1.0, 1.0, 1.0], "port": [0, 1, 2, 3], "weight": [1.0, 1.0, 1.0, 1.0]}
         all_ref = {
+            "axonal_delay": [0.0, 0.0, 0.0, 0.0],
             "delay": [1.0, 1.0, 1.0, 1.0],
+            "dendritic_delay": [1.0, 1.0, 1.0, 1.0],
             "port": [0, 1, 2, 3],
             "receptor": [0, 0, 0, 0],
             "sizeof": [32, 32, 32, 32],
@@ -147,14 +150,16 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is a string
         target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(["delay", "port", "weight"])
+        dpw = conns.get(["axonal_delay", "delay", "dendritic_delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
         target_ref = 1
-        dpw_ref = {"delay": 1.0, "port": 0, "weight": 1.0}
+        dpw_ref = {"axonal_delay": 0.0, "delay": 1.0, "dendritic_delay": 1.0, "port": 0, "weight": 1.0}
         all_ref = {
+            "axonal_delay": 0.0,
             "delay": 1.0,
+            "dendritic_delay": 1.0,
             "port": 0,
             "receptor": 0,
             "sizeof": 32,
@@ -283,7 +288,9 @@ class TestSynapseCollection(unittest.TestCase):
         conns_val = conns.get(output="pandas")
         pnds_ref = pandas.DataFrame(
             {
+                "axonal_delay": 0.0,
                 "delay": 1.0,
+                "dendritic_delay": 1.0,
                 "port": 0,
                 "receptor": 0,
                 "sizeof": 32,
@@ -313,7 +320,9 @@ class TestSynapseCollection(unittest.TestCase):
         conns_val = conns.get(output="pandas")
         pnds_ref = pandas.DataFrame(
             {
+                "axonal_delay": [0.0, 0.0, 0.0, 0.0],
                 "delay": [1.0, 1.0, 1.0, 1.0],
+                "dendritic_delay": [1.0, 1.0, 1.0, 1.0],
                 "port": [0, 1, 2, 3],
                 "receptor": [0, 0, 0, 0],
                 "sizeof": [32, 32, 32, 32],
@@ -362,14 +371,14 @@ class TestSynapseCollection(unittest.TestCase):
         Test the str functionality of SynapseCollection
         """
         ref_str = (
-            " source   target   synapse model   weight   delay \n"
-            + "-------- -------- --------------- -------- -------\n"
-            + "      1        4  static_synapse    1.000   1.000\n"
-            + "      2        4  static_synapse    2.000   1.000\n"
-            + "      1        3    stdp_synapse    4.000   1.000\n"
-            + "      1        4    stdp_synapse    3.000   1.000\n"
-            + "      2        3    stdp_synapse    3.000   1.000\n"
-            + "      2        4    stdp_synapse    2.000   1.000"
+                " source   target   synapse model   weight   delay \n"
+                + "-------- -------- --------------- -------- -------\n"
+                + "      1        4  static_synapse    1.000   1.000\n"
+                + "      2        4  static_synapse    2.000   1.000\n"
+                + "      1        3    stdp_synapse    4.000   1.000\n"
+                + "      1        4    stdp_synapse    3.000   1.000\n"
+                + "      2        3    stdp_synapse    3.000   1.000\n"
+                + "      2        4    stdp_synapse    2.000   1.000"
         )
 
         s_nodes = nest.Create("iaf_psc_alpha", 2)

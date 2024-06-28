@@ -151,7 +151,7 @@ class TestSTDPSynapse:
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
-                "resolution": self.resolution,
+                "resolution": RESOLUTION,
                 "min_delay": min(self.min_delay, self.dendritic_delay),
                 "max_delay": max(self.max_delay, self.dendritic_delay),
             }

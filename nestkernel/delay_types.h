@@ -124,8 +124,9 @@ struct TotalDelay
    * Set the delay of the connection specified in ms
    */
   void
-  set_delay_steps( const double d )
+  set_delay_steps( const long d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) );
     delay_ = d;
   }
 
@@ -144,6 +145,7 @@ struct TotalDelay
   void
   set_delay_ms( const double d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
     delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -162,8 +164,6 @@ struct TotalDelay
   void
   get_status( DictionaryDatum& d ) const
   {
-    def< double >( d, names::dendritic_delay, Time::delay_steps_to_ms( delay_ ) );
-    def< double >( d, names::axonal_delay, 0. );
     def< double >( d, names::delay, Time::delay_steps_to_ms( delay_ ) );
   }
 
@@ -213,8 +213,9 @@ struct AxonalDendriticDelay
    * Set the dendritic delay of the connection specified in ms
    */
   void
-  set_dendritic_delay_steps( const double d )
+  set_dendritic_delay_steps( const long d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) + get_axonal_delay_ms() );
     dendritic_delay_ = d;
   }
 
@@ -233,6 +234,7 @@ struct AxonalDendriticDelay
   void
   set_dendritic_delay_ms( const double d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d + get_axonal_delay_ms() );
     dendritic_delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -249,8 +251,9 @@ struct AxonalDendriticDelay
    * Set the axonal delay of the connection specified in ms
    */
   void
-  set_axonal_delay_steps( const double d )
+  set_axonal_delay_steps( const long d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) + get_dendritic_delay_ms() );
     axonal_delay_ = d;
   }
 
@@ -269,6 +272,7 @@ struct AxonalDendriticDelay
   void
   set_axonal_delay_ms( const double d )
   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d + get_dendritic_delay_ms() );
     axonal_delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -285,9 +289,11 @@ struct AxonalDendriticDelay
    * Set the delay of the connection specified in ms
    */
   void
-  set_delay_steps( const double d )
+  set_delay_steps( const long d )
   {
-    set_dendritic_delay_steps( d );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) );
+    dendritic_delay_ = d;
+    axonal_delay_ = 0;
   }
 
   /**
@@ -305,7 +311,9 @@ struct AxonalDendriticDelay
   void
   set_delay_ms( const double d )
   {
-    set_dendritic_delay_ms( d );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
+    dendritic_delay_ = Time::delay_ms_to_steps( d );
+    axonal_delay_ = 0;
   }
 
   void

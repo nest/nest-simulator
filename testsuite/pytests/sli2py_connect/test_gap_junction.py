@@ -72,7 +72,7 @@ def test_neuron_gap_connect_with_delay_fails(conn_spec):
     leads to an error.
     """
     syn_spec = {"synapse_model": "gap_junction", "delay": 2.0}
-    with pytest.raises(nest.kernel.NESTError, match="gap_junction connection has no delay"):
+    with pytest.raises(nest.kernel.NESTError, match="Delay specified for a connection type which doesn't use delays."):
         nest.Connect(pytest.neuron_gap, pytest.neuron_gap, conn_spec=conn_spec, syn_spec=syn_spec)
 
 

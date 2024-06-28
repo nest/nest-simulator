@@ -279,7 +279,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_status( p, *this );
   }
 
-  kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( connection.get_delay_ms() );
+  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( connection.get_delay_ms() );
+  }
 
   if ( default_delay_used )
   {

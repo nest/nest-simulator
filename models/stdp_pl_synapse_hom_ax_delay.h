@@ -237,6 +237,11 @@ public:
 
     CorrectionSpikeEvent e;
     t.handles_test_event( e, receptor_type );
+
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() )
+    {
+      throw IllegalConnection( "Structural plasticity is not supported in combination with axonal delays." );
+    }
   }
 
   void

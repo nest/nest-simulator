@@ -126,7 +126,6 @@ struct TotalDelay
   void
   set_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) );
     delay_ = d;
   }
 
@@ -145,7 +144,6 @@ struct TotalDelay
   void
   set_delay_ms( const double d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
     delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -180,9 +178,10 @@ struct TotalDelay
     double delay;
     if ( updateValue< double >( d, names::delay, delay ) )
     {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       set_delay_ms( delay );
     }
+
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( get_delay_ms() );
   }
 };
 
@@ -215,8 +214,6 @@ struct AxonalDendriticDelay
   void
   set_dendritic_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      Time::delay_steps_to_ms( d ) + get_axonal_delay_ms() );
     dendritic_delay_ = d;
   }
 
@@ -235,7 +232,6 @@ struct AxonalDendriticDelay
   void
   set_dendritic_delay_ms( const double d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d + get_axonal_delay_ms() );
     dendritic_delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -254,8 +250,6 @@ struct AxonalDendriticDelay
   void
   set_axonal_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      Time::delay_steps_to_ms( d ) + get_dendritic_delay_ms() );
     axonal_delay_ = d;
   }
 
@@ -274,7 +268,6 @@ struct AxonalDendriticDelay
   void
   set_axonal_delay_ms( const double d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d + get_dendritic_delay_ms() );
     axonal_delay_ = Time::delay_ms_to_steps( d );
   }
 
@@ -293,7 +286,6 @@ struct AxonalDendriticDelay
   void
   set_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) );
     dendritic_delay_ = d;
     axonal_delay_ = 0;
   }
@@ -313,7 +305,6 @@ struct AxonalDendriticDelay
   void
   set_delay_ms( const double d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
     dendritic_delay_ = Time::delay_ms_to_steps( d );
     axonal_delay_ = 0;
   }
@@ -378,7 +369,7 @@ struct AxonalDendriticDelay
       set_axonal_delay_ms( dendritic_delay );
     }
 
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( dendritic_delay + axonal_delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( get_delay_ms() );
   }
 };
 

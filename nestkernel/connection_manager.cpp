@@ -511,9 +511,9 @@ ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // If the user explicitly set min/max_delay, this happened on all MPI ranks,
   // so all ranks are up to date already. Also, once the user has set min/max_delay
-  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // explicitly, Connect() cannot induce new extrema. Thus, we only need to communicate
   // with other ranks if the user has not set the extrema and connections may have
   // been created.
   if ( not kernel().connection_manager.get_user_set_delay_extrema()

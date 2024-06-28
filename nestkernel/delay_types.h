@@ -215,7 +215,8 @@ struct AxonalDendriticDelay
   void
   set_dendritic_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) + get_axonal_delay_ms() );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      Time::delay_steps_to_ms( d ) + get_axonal_delay_ms() );
     dendritic_delay_ = d;
   }
 
@@ -253,7 +254,8 @@ struct AxonalDendriticDelay
   void
   set_axonal_delay_steps( const long d )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( Time::delay_steps_to_ms( d ) + get_dendritic_delay_ms() );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      Time::delay_steps_to_ms( d ) + get_dendritic_delay_ms() );
     axonal_delay_ = d;
   }
 

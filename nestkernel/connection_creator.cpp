@@ -220,7 +220,7 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
     else
     {
       double axonal_delay = numerics::nan;
-      updateValue< double >( syn_defaults, names::axonal_delay, axonal_delay);
+      updateValue< double >( syn_defaults, names::axonal_delay, axonal_delay );
       axonal_delay_.push_back( NestModule::create_parameter( axonal_delay ) );
     }
   }

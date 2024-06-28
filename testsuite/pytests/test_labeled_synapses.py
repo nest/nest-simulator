@@ -55,7 +55,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.clopath_synapses = ["clopath_synapse", "clopath_synapse_lbl", "clopath_synapse_hpc"]
 
-        self.axonal_delay_synapses = ["stdp_pl_synapse_hom_ax_delay", "stdp_pl_synapse_hom_ax_delay_lbl", "stdp_pl_synapse_hom_ax_delay_hpc"]
+        self.axonal_delay_synapses = [
+            "stdp_pl_synapse_hom_ax_delay",
+            "stdp_pl_synapse_hom_ax_delay_lbl",
+            "stdp_pl_synapse_hom_ax_delay_hpc",
+        ]
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 

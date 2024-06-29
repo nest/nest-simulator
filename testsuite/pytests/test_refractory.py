@@ -89,6 +89,8 @@ ignore_model = [
     "eprop_readout_bsshslm_2020",  # This one does not spike
     "eprop_readout",  # This one does not spike
     "iaf_tum_2000",  # Hijacks the offset field, see #2912
+    "iaf_bw_2001",  # Hijacks the offset field, see #2912
+    "iaf_bw_2001_exact",  # Hijacks the offset field, see #2912
 ]
 
 tested_models = [

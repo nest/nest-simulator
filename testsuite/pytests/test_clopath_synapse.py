@@ -127,6 +127,9 @@ class ClopathSynapseTestCase(unittest.TestCase):
                     "tau_u_bar_plus": 114.0,
                     "delay_u_bars": 5.0,
                 }
+            else:
+                raise ValueError(f"Unsupported neuron model '{nrn_model}'")
+
             syn_weights = []
             # Loop over pairs of spike trains
             for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
@@ -146,6 +149,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                     conn_weight = 80.0
                 elif nrn_model == "hh_psc_alpha_clopath":
                     conn_weight = 2000.0
+                else:
+                    raise ValueError(f"Unsupported neuron model '{nrn_model}'")
 
                 spike_gen_post = nest.Create("spike_generator", 1, {"spike_times": s_t_post})
 
@@ -176,6 +181,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 correct_weights = [57.82638722, 72.16730112, 149.43359357, 103.30408341, 124.03640668, 157.02882555]
             elif nrn_model == "hh_psc_alpha_clopath":
                 correct_weights = [70.14343863, 99.49206222, 178.1028757, 119.63314118, 167.37750688, 178.83111685]
+            else:
+                raise ValueError(f"Unsupported neuron model '{nrn_model}'")
 
             self.assertTrue(np.allclose(syn_weights, correct_weights, rtol=1e-7))
 

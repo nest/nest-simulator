@@ -48,26 +48,24 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]_. The dynamics are given by:
 
 .. math::
-
-   dV_m/dt &= 0.04 V_m^2 + 5 V_m + 140 - u + I
-   du/dt &= a (b V_m - u)
-
+   &dV_m/dt = 0.04 {V_m}^2 + 5 V_m + 140 - U_m + I \\
+   &du/dt = a (b V_m - U_m) \\
 
 .. math::
 
    &\text{if}\;\;\; V_m \geq V_{th}:\\
    &\;\;\;\; V_m \text{ is set to } c\\
-   &\;\;\;\; u \text{ is incremented by } d\\
+   &\;\;\;\; U_m \text{ is incremented by } d\\
    & \, \\
-   &v \text{ jumps on each spike arrival by the weight of the spike}
+   &V_m \text{ jumps on each spike arrival by the weight of the spike}
 
 As published in [1]_, the numerics differs from the standard forward Euler
 technique in two ways:
 
-1) the new value of :math:`u` is calculated based on the new value of
+1) the new value of :math:`U_m` is calculated based on the new value of
    :math:`V_m`, rather than the previous value
 2) the variable :math:`V_m` is updated using a time step half the size of that
-   used to update variable :math:`u`.
+   used to update variable :math:`U_m`.
 
 This model offers both forms of integration, they can be selected using the
 boolean parameter ``consistent_integration``. To reproduce some results

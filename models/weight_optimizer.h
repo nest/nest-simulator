@@ -71,7 +71,7 @@ assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
 When `optimize_each_step` is set to `True`, the weights are optimized at every
 time step. If set to `False`, optimization occurs once per spike, resulting in a
 significant speed-up. For gradient descent, both settings yield the same
-results under exact arithmetic; however, small numerical differences may be 
+results under exact arithmetic; however, small numerical differences may be
 observed due to floating point precision. For the Adam optimizer, only setting
 `optimize_each_step` to `True` precisely implements the algorithm as described
 in [2]_. The impact of this setting on learning performance may vary depending

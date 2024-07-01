@@ -110,7 +110,7 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is a string
         target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(["axonal_delay", "delay", "dendritic_delay", "port", "weight"])
+        dpw = conns.get(["delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
@@ -118,16 +118,12 @@ class TestSynapseCollection(unittest.TestCase):
 
         target_ref = [1, 2, 1, 2]
         dpw_ref = {
-            "axonal_delay": [0.0, 0.0, 0.0, 0.0],
             "delay": [1.0, 1.0, 1.0, 1.0],
-            "dendritic_delay": [1.0, 1.0, 1.0, 1.0],
             "port": [0, 1, 2, 3],
             "weight": [1.0, 1.0, 1.0, 1.0],
         }
         all_ref = {
-            "axonal_delay": [0.0, 0.0, 0.0, 0.0],
             "delay": [1.0, 1.0, 1.0, 1.0],
-            "dendritic_delay": [1.0, 1.0, 1.0, 1.0],
             "port": [0, 1, 2, 3],
             "receptor": [0, 0, 0, 0],
             "sizeof": [32, 32, 32, 32],
@@ -155,16 +151,14 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is a string
         target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(["axonal_delay", "delay", "dendritic_delay", "port", "weight"])
+        dpw = conns.get(["delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
         target_ref = 1
-        dpw_ref = {"axonal_delay": 0.0, "delay": 1.0, "dendritic_delay": 1.0, "port": 0, "weight": 1.0}
+        dpw_ref = {"delay": 1.0, "port": 0, "weight": 1.0}
         all_ref = {
-            "axonal_delay": 0.0,
             "delay": 1.0,
-            "dendritic_delay": 1.0,
             "port": 0,
             "receptor": 0,
             "sizeof": 32,
@@ -293,9 +287,7 @@ class TestSynapseCollection(unittest.TestCase):
         conns_val = conns.get(output="pandas")
         pnds_ref = pandas.DataFrame(
             {
-                "axonal_delay": 0.0,
                 "delay": 1.0,
-                "dendritic_delay": 1.0,
                 "port": 0,
                 "receptor": 0,
                 "sizeof": 32,
@@ -325,9 +317,7 @@ class TestSynapseCollection(unittest.TestCase):
         conns_val = conns.get(output="pandas")
         pnds_ref = pandas.DataFrame(
             {
-                "axonal_delay": [0.0, 0.0, 0.0, 0.0],
                 "delay": [1.0, 1.0, 1.0, 1.0],
-                "dendritic_delay": [1.0, 1.0, 1.0, 1.0],
                 "port": [0, 1, 2, 3],
                 "receptor": [0, 0, 0, 0],
                 "sizeof": [32, 32, 32, 32],

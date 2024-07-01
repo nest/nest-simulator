@@ -343,13 +343,14 @@ struct AxonalDendriticDelay
         + names::dendritic_delay.toString() + " or " + names::axonal_delay.toString() + "." );
     }
     // Case 2: User sets delay, but axonal delay has been set before
-    if ( d->known( names::delay ) and axonal_delay_ != 0 )
+    if ( d->known( names::delay ) and get_axonal_delay_steps() != 0 )
     {
       throw BadProperty( "Trying to set the total transmission delay via " + names::delay.toString() + ", but axonal "
         "delay has been set before, which is ambiguous." );
     }
     // Case 3: User sets axonal delay, but dendritic delay has been set before
-    if ( d->known( names::axonal_delay ) and not d->known( names::dendritic_delay ) and dendritic_delay_ != 0 )
+    if ( d->known( names::axonal_delay ) and not d->known( names::dendritic_delay )
+      and get_dendritic_delay_steps() != 0 )
     {
       throw BadProperty( "When setting " + names::axonal_delay.toString() + " and dendritic delay has been set before, "
         + names::dendritic_delay.toString() + " has to be set as well to make it unambiguous whether the dendritic "
@@ -357,13 +358,13 @@ struct AxonalDendriticDelay
     }
 
     // Update delay values
-    double dendritic_delay = Time::delay_steps_to_ms( dendritic_delay_ );
+    double dendritic_delay = get_dendritic_delay_ms();
     if ( updateValue< double >( d, names::delay, dendritic_delay )
       or updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
     {
       set_dendritic_delay_ms( dendritic_delay );
     }
-    double axonal_delay = Time::delay_steps_to_ms( axonal_delay_ );
+    double axonal_delay = get_axonal_delay_ms();
     if ( updateValue< double >( d, names::axonal_delay, axonal_delay ) )
     {
       set_axonal_delay_ms( dendritic_delay );

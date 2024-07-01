@@ -476,7 +476,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
           edge_type_id_2_syn_model_.at( edge_type_id ),
           edge_type_id_2_param_dicts_.at( edge_type_id ).at( tid ),
           delay,
-          0,
+          numerics::nan,
           weight );
 
       } // end for

@@ -240,8 +240,6 @@ nest::music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type,
 void
 nest::music_cont_out_proxy::pre_run_hook()
 {
-  ArchivingNode::pre_run_hook_();
-
   // only publish the output port once,
   if ( S_.published_ == false )
   {

@@ -574,7 +574,7 @@ const Name tau_u_bar_bar( "tau_u_bar_bar" );
 const Name tau_u_bar_minus( "tau_u_bar_minus" );
 const Name tau_u_bar_plus( "tau_u_bar_plus" );
 const Name tau_v( "tau_v" );
-const Name tau_vacant( "tau_vacant" );
+const Name decay_vacant( "decay_vacant" );
 const Name tau_w( "tau_w" );
 const Name tau_x( "tau_x" );
 const Name tau_z( "tau_z" );

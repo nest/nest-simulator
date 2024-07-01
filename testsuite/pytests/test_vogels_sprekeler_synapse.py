@@ -29,7 +29,6 @@ import nest
 
 @nest.ll_api.check_stack
 class VogelsSprekelerConnectionTestCase(unittest.TestCase):
-
     """Check vogels_sprekeler_synapse model properties."""
 
     def setUp(self):

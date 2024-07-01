@@ -27,7 +27,6 @@ import numpy as np
 
 @nest.ll_api.check_stack
 class StepRateGeneratorTestCase(unittest.TestCase):
-
     """
     Test whether the step_rate_generator produces and
     communicates the desired rates

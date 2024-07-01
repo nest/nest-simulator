@@ -144,7 +144,7 @@ public:
 
 
   /** Clear the entire cache.
-   * This should be  called whenever a dictionary is pushed or poped.
+   * This should be  called whenever a dictionary is pushed or popped.
    * Alternative, one could just clear the names from the moved dictionary.
    */
   void

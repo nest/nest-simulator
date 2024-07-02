@@ -1,0 +1,90 @@
+.. _nest_benchmark_results:
+
+NEST performance benchmarks
+===========================
+
+
+NEST performance is continuously monitored and improved across various network sizes.
+Here we show benchmarking results for NEST version 3.8 on Jureca-DC.
+
+
+.. grid:: 1 1 2 2
+
+   .. grid-item::
+       :columns:  5
+       :class: sd-align-major-center
+
+       .. figure:: /static/img/replace_me.png
+
+           Wall time versus number of nodes
+
+           some more text
+
+   .. grid-item::
+       :columns:  7
+
+       **Strong scaling experiment of the Microcircuit model** [1]_
+
+       * The model has ~80 000 neurons and ~300 million synapses
+       * Increasing number of computing resources decrease simulation time
+       * The model runs faster than real time when using more than 2 nodes
+
+
+   .. grid-item::
+       :columns: 5
+       :class: sd-align-major-center
+
+       .. figure:: /static/img/replace_me.png
+
+           Wall time versus number of nodes
+
+   .. grid-item::
+       :columns: 7
+
+       **Strong scaling experiment of the Multi-area-model** [2]_
+
+       * The model has ~3.2 million neurons and ~10 billion synapses
+       * Steady decrease of run time with additional compute resources
+
+
+   .. grid-item::
+       :columns: 5
+       :class: sd-align-major-center
+
+       .. figure:: /static/img/replace_me.png
+
+         Wall time versus number of nodes
+
+   .. grid-item::
+       :columns: 7
+
+       **Weak scaling experiment of the HPC benchmark model** [3]_
+
+       * The size of network scales proportionally with the computational resources used
+       * Largest network size: ~5.6 million neurons and ~61 billion synapses
+       * The figure shows that NEST can handle massive networks and simulate them efficiently
+
+
+.. seealso::
+
+   Example networks:
+
+   * :doc:`/auto_examples/Potjans_2014/index`
+   * `Multi-area model <https://inm-6.github.io/multi-area-model/>`_
+   * :doc:`/auto_examples/hpc_benchmark`
+
+References
+----------
+
+.. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
+        microcircuit: relating structure and activity in a full-scale spiking
+        network model. Cerebral Cortex. 24(3):785–806. DOI: `10.1093/cercor/bhs358 <https://doi.org/10.1093/cercor/bhs358>`__.
+
+
+.. [2] Schmidt M, Bakker R, Hilgetag CC, Diesmann M and van Albada SJ. 2018. Multi-scale
+       account of the network structure of macaque visual cortex. Brain Structure
+       and Function. 223: 1409 https://doi.org/10.1007/s00429-017-1554-4
+
+.. [3] Jordan J, Ippen T, Helias M, Kitayama I, Sato M, Igarashi J, Diesmann M, Kunkel S. 2018.
+       Extremely scalable spiking neuronal network simulation code: From laptops to exacale computers.
+       Frontiers in Neuroinformatics. 12. https://www.frontiersin.org/journals/neuroinformatics/articles/10.3389/fninf.2018.00002

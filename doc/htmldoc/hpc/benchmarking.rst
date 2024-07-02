@@ -7,6 +7,12 @@ Benchmarking NEST
 
    When compiling NEST to perform benchmarks, see :ref:`our cmake options <performance_cmake>` for improved performance and energy saving.
 
+NEST performance
+~~~~~~~~~~~~~~~~
+
+We regulary test NEST performance at various network sizes.
+For results of these experiments see our :ref:`nest_benchmark_results` page.
+
 beNNch
 ~~~~~~
 

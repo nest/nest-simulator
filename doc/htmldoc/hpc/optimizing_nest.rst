@@ -18,7 +18,7 @@ hardware and software of the HPC system you are using for improving the overall
 performance.
 
 
-Although there will be some variation between scripts and HPC systems, in general, we recommend that 
+Although there will be some variation between scripts and HPC systems, in general, we recommend that
 
  * resources are fully utilized (e.g., all available cores are used).
  * one thread pinned to one core (no simultaneous multithreading)
@@ -59,7 +59,11 @@ Although there will be some variation between scripts and HPC systems, in genera
 
 .. seealso::
 
-   See our other guides on 
+   See our other guides on
 
    * :ref:`parallel_computing`
    * :ref:`benchmark`
+
+   or see our performance results:
+
+   * :ref:`nest_benchmark_results`

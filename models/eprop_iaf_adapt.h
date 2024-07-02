@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_bsshslm_2020.h
+ *  eprop_iaf_adapt.h
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef EPROP_IAF_BSSHSLM_2020_H
-#define EPROP_IAF_BSSHSLM_2020_H
+#ifndef EPROP_IAF_ADAPT_H
+#define EPROP_IAF_ADAPT_H
 
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -35,32 +36,28 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire
+/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire, adaptive threshold
 
 Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-postsynaptic currents for e-prop plasticity
+postsynaptic currents and threshold adaptation for e-prop plasticity
 
 Description
 +++++++++++
 
-``eprop_iaf_bsshslm_2020`` is an implementation of a leaky integrate-and-fire
-neuron model with delta-shaped postsynaptic currents used for eligibility
-propagation (e-prop) plasticity.
+``eprop_iaf_adapt`` is an implementation of a leaky integrate-and-fire
+neuron model with delta-shaped postsynaptic currents and threshold adaptation
+used for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
-.. note::
-  The neuron dynamics of the ``eprop_iaf_bsshslm_2020`` model (excluding e-prop
-  plasticity) are similar to the neuron dynamics of the ``iaf_psc_delta`` model,
-  with minor differences, such as the propagator of the post-synaptic current
-  and the voltage reset upon a spike.
+ .. note::
+   The neuron dynamics of the ``eprop_iaf_adapt`` model (excluding
+   e-prop plasticity and the threshold adaptation) are similar to the neuron
+   dynamics of the ``iaf_psc_delta`` model, with minor differences, such as the
+   propagator of the post-synaptic current and the voltage reset upon a spike.
 
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
@@ -80,12 +77,19 @@ state variable, while :math:`x_i^t` represents the input at time :math:`t`.
 
 Descriptions of further parameters and variables can be found in the table below.
 
+The threshold adaptation is given by:
+
+.. math::
+  A_j^t &= v_\text{th} + \beta a_j^t \,, \\
+  a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
+  \rho &= e^{-\frac{ \Delta t }{ \tau_\text{a} }} \,. \\
+
 The spike state variable is expressed by a Heaviside function:
 
 .. math::
-  z_j^t = H \left( v_j^t - v_\text{th} \right) \,. \\
+  z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
-If the membrane voltage crosses the threshold voltage :math:`v_\text{th}`, a spike is
+If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
 time step. After the time step of the spike emission, the neuron is not
 able to spike for an absolute refractory period :math:`t_\text{ref}`.
@@ -96,57 +100,83 @@ represents a piecewise constant external current.
 See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
 for more information on the integration of the subthreshold dynamics.
 
-The change of the synaptic weight is calculated from the gradient :math:`g` of
-the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
+The change of the synaptic weight is calculated from the gradient :math:`g^t` of
+the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
 which depends on the presynaptic
-spikes :math:`z_i^{t-1}`, the surrogate gradient or pseudo-derivative
+spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
 of the spike state variable with respect to the postsynaptic membrane
-voltage :math:`\psi_j^t` (the product of which forms the eligibility
-trace :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted
+voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
+trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
 See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
 gradients functions.
 
+In the interval between two presynaptic spikes, the gradient is calculated
+at each time step until the cutoff time point. This computation occurs over
+the time range:
+
+:math:`t \in \left[ t_\text{spk,prev}, \min \left( t_\text{spk,prev} + \Delta t_\text{c}, t_\text{spk,curr} \right)
+\right]`.
+
+Here, :math:`t_\text{spk,prev}` represents the time of the previous spike that
+passed the synapse, while :math:`t_\text{spk,curr}` is the time of the
+current spike, which triggers the application of the learning rule and the
+subsequent synaptic weight update. The cutoff :math:`\Delta t_\text{c}`
+defines the maximum allowable interval for integration between spikes.
+The expression for the gradient is given by:
+
 .. math::
-  \frac{ \text{d} E }{ \text{d} W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
-   e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1} \,, \\
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  e_{ji}^{t-1} &= \psi_j^{t-1} \left( \bar{z}_i^{t-2} - \beta \epsilon_{ji,a}^{t-2} \right) \,, \\
+  \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with the following exponential kernels:
 
 .. math::
-  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right) \,, \\
-  \kappa &= e^{ -\frac{\Delta t }{ \tau_\text{m,out} }} \,, \\
-  \bar{z}_i^t &= \mathcal{F}_\alpha(z_i^t) \,, \\
-  \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
-  \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
+    = \kappa \bar{e}_{ji}^{t-1} + \left( 1 - \kappa \right) e_{ji}^t \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
-whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
-
-Furthermore, a firing rate regularization mechanism keeps the average firing
-rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
-:math:`f^\text{target}`. The gradient :math:`g_\text{reg}` of the regularization loss :math:`E_\text{reg}`
+Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
+neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
+:math:`f^\text{target}`. The gradient :math:`g_\text{reg}^t` of the regularization loss :math:`E_\text{reg}^t`
 with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
-  \frac{ \text{d} E_\text{reg} }{ \text{d} W_{ji} }
-    = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
-    \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
+  \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
+    &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 
-whereby :math:`c_\text{reg}` is a constant scaling factor and the average
-is taken over the time that passed since the previous update, that is, the number of
-trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
+whereby :math:`c_\text{reg}` is a constant scaling factor.
 
 The overall gradient is given by the addition of the two gradients.
 
+As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
+for more information on the available optimizers):
+
+.. math::
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
+
+After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
+the next spike:
+
+.. math::
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
+  \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
+  \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,, \\
+  \epsilon^{t+p} &= \epsilon^t \rho^p \,. \\
+
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
- * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+ * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_readout<../models/eprop_readout/>`
+ * :doc:`eprop_synapse<../models/eprop_synapse/>`
+ * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -160,13 +190,17 @@ The following parameters can be set in the status dictionary.
 ----------------------------------------------------------------------------------------------------------------
 Parameter                   Unit    Math equivalent         Default          Description
 =========================== ======= ======================= ================ ===================================
+adapt_beta                          :math:`\beta`                        1.0 Prefactor of the threshold
+                                                                             adaptation
+adapt_tau                   ms      :math:`\tau_\text{a}`               10.0 Time constant of the threshold
+                                                                             adaptation
 C_m                         pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
 I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
 regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
-                                                                             the end of the time step, if
-                                                                             False at the beginning (determines
-                                                                             PSC scale)
+                                                                             the end of the time step, if False
+                                                                             at the beginning (determines PSC
+                                                                             scale)
 t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
 tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 V_min                       mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
@@ -177,49 +211,56 @@ V_min                       mV      :math:`v_\text{min}`    negative maximum Abs
 V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-=========================== ======= ======================= ================ ===================================
+=========================== ======= =========================== ================ ===============================
 **E-prop parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter                   Unit    Math equivalent         Default          Description
-=========================== ======= ======================= ================ ===================================
-c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
-                                                                             regularization
-f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
-                                                                             regularization
-beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
-                                                                             / pseudo-derivative of membrane
-                                                                             voltage
-gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
-                                                                             gradient / pseudo-derivative of
-                                                                             membrane voltage
-surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
-                                                                             pseudo-derivative function
-                                                                             ["piecewise_linear", "exponential",
-                                                                             "fast_sigmoid_derivative",
-                                                                             "arctan"]
-=========================== ======= ======================= ================ ===================================
+Parameter                   Unit    Math equivalent             Default          Description
+=========================== ======= =========================== ================ ===============================
+c_reg                               :math:`c_\text{reg}`                     0.0 Prefactor of firing rate
+                                                                                 regularization
+eprop_isi_trace_cutoff      ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
+                                                                representable    e-prop update between two
+                                                                by a ``long``    spikes
+                                                                type in C++
+f_target                    Hz      :math:`f^\text{target}`                 10.0 Target firing rate of rate
+                                                                                 regularization
+beta                                :math:`\beta`                            1.0 Width scaling of surrogate
+                                                                                 gradient / pseudo-derivative of
+                                                                                 membrane voltage
+gamma                               :math:`\gamma`                           0.3 Height scaling of surrogate
+                                                                                 gradient / pseudo-derivative of
+                                                                                 membrane voltage
+surrogate_gradient_function         :math:`\psi`                piecewise_linear Surrogate gradient /
+                                                                                 pseudo-derivative function
+                                                                                 ["piecewise_linear",
+                                                                                 "exponential",
+                                                                                 "fast_sigmoid_derivative",
+                                                                                 "arctan"]
+=========================== ======= =========================== ================ ===============================
 
 Recordables
 +++++++++++
 
 The following state variables evolve during simulation and can be recorded.
 
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
 **Neuron state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-V_m                mV   :math:`v_j`             -70.0 Membrane voltage
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
+adaptation              :math:`a_j`               0.0 Adaptation variable
+V_m                  mV :math:`v_j`             -70.0 Membrane voltage
+V_th_adapt           mV :math:`A_j`             -55.0 Adapting spike threshold
+================== ==== =============== ============= ========================
 
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
 **E-prop state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-learning_signal    pA   :math:`L_j`               0.0 Learning signal
-surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane voltage
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
+learning_signal         :math:`L_j`               0.0 Learning signal
+surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
+================== ==== =============== ============= ========================
 
 Usage
 +++++
@@ -258,25 +299,26 @@ See also
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_iaf_bsshslm_2020
+.. listexamples:: eprop_iaf_adapt
 
 EndUserDocs */
 
-void register_eprop_iaf_bsshslm_2020( const std::string& name );
+void register_eprop_iaf_adapt( const std::string& name );
 
 /**
- * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
- * e-prop plasticity according to Bellec et al. (2020).
+ * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
+ * threshold adaptation for e-prop plasticity according to Bellec et al. (2020) with additional biological features
+ * described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
-class eprop_iaf_bsshslm_2020 : public EpropArchivingNodeRecurrent
+class eprop_iaf_adapt : public EpropArchivingNodeRecurrent
 {
 
 public:
   //! Default constructor.
-  eprop_iaf_bsshslm_2020();
+  eprop_iaf_adapt();
 
   //! Copy constructor.
-  eprop_iaf_bsshslm_2020( const eprop_iaf_bsshslm_2020& );
+  eprop_iaf_adapt( const eprop_iaf_adapt& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -302,27 +344,38 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  double compute_gradient( std::vector< long >& presyn_isis,
-    const long t_previous_update,
-    const long t_previous_trigger_spike,
-    const double kappa,
-    const bool average_gradient ) override;
+  void compute_gradient( const long t_spike,
+    const long t_spike_previous,
+    double& z_previous_buffer,
+    double& z_bar,
+    double& e_bar,
+    double& epsilon,
+    double& weight,
+    const CommonSynapseProperties& cp,
+    WeightOptimizer* optimizer ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
+  long get_eprop_isi_trace_cutoff() override;
 
   //! Compute the surrogate gradient.
-  double ( eprop_iaf_bsshslm_2020::*compute_surrogate_gradient )( double, double, double, double, double, double );
+  double ( eprop_iaf_adapt::*compute_surrogate_gradient )( double, double, double, double, double, double );
 
   //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_iaf_bsshslm_2020 >;
+  friend class RecordablesMap< eprop_iaf_adapt >;
 
   //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
-  friend class UniversalDataLogger< eprop_iaf_bsshslm_2020 >;
+  friend class UniversalDataLogger< eprop_iaf_adapt >;
 
   //! Structure of parameters.
   struct Parameters_
   {
+    //! Prefactor of the threshold adaptation.
+    double adapt_beta_;
+
+    //! Time constant of the threshold adaptation (ms).
+    double adapt_tau_;
+
     //! Capacitance of the membrane (pF).
     double C_m_;
 
@@ -363,6 +416,13 @@ private:
     //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
+    //! Low-pass filter of the eligibility trace.
+    double kappa_;
+
+    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
+    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
+    long eprop_isi_trace_cutoff_;
+
     //! Default constructor.
     Parameters_();
 
@@ -376,6 +436,12 @@ private:
   //! Structure of state variables.
   struct State_
   {
+    //! Adaptation variable.
+    double adapt_;
+
+    //! Adapting spike threshold voltage.
+    double v_th_adapt_;
+
     //! Learning signal. Sum of weighted error signals coming from the readout neurons.
     double learning_signal_;
 
@@ -411,10 +477,10 @@ private:
   struct Buffers_
   {
     //! Default constructor.
-    Buffers_( eprop_iaf_bsshslm_2020& );
+    Buffers_( eprop_iaf_adapt& );
 
     //! Copy constructor.
-    Buffers_( const Buffers_&, eprop_iaf_bsshslm_2020& );
+    Buffers_( const Buffers_&, eprop_iaf_adapt& );
 
     //! Buffer for incoming spikes.
     RingBuffer spikes_;
@@ -423,7 +489,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for universal data.
-    UniversalDataLogger< eprop_iaf_bsshslm_2020 > logger_;
+    UniversalDataLogger< eprop_iaf_adapt > logger_;
   };
 
   //! Structure of general variables.
@@ -438,6 +504,9 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
+
+    //! Propagator matrix entry for evolving the adaptation (mathematical symbol "rho" in user documentation).
+    double P_adapt_;
 
     //! Total refractory steps.
     int RefractoryCounts_;
@@ -464,6 +533,20 @@ private:
     return S_.learning_signal_;
   }
 
+  //! Get the current value of the adapting threshold.
+  double
+  get_v_th_adapt_() const
+  {
+    return S_.v_th_adapt_ + P_.E_L_;
+  }
+
+  //! Get the current value of the adaptation.
+  double
+  get_adaptation_() const
+  {
+    return S_.adapt_;
+  }
+
   // the order in which the structure instances are defined is important for speed
 
   //! Structure of parameters.
@@ -479,11 +562,17 @@ private:
   Buffers_ B_;
 
   //! Map storing a static set of recordables.
-  static RecordablesMap< eprop_iaf_bsshslm_2020 > recordablesMap_;
+  static RecordablesMap< eprop_iaf_adapt > recordablesMap_;
 };
 
+inline long
+eprop_iaf_adapt::get_eprop_isi_trace_cutoff()
+{
+  return P_.eprop_isi_trace_cutoff_;
+}
+
 inline size_t
-eprop_iaf_bsshslm_2020::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_iaf_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -491,7 +580,7 @@ eprop_iaf_bsshslm_2020::send_test_event( Node& target, size_t receptor_type, syn
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_iaf_adapt::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -502,7 +591,7 @@ eprop_iaf_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_iaf_adapt::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -513,7 +602,7 @@ eprop_iaf_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type 
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
+eprop_iaf_adapt::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -524,7 +613,7 @@ eprop_iaf_bsshslm_2020::handles_test_event( LearningSignalConnectionEvent&, size
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_iaf_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -535,7 +624,7 @@ eprop_iaf_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t rece
 }
 
 inline void
-eprop_iaf_bsshslm_2020::get_status( DictionaryDatum& d ) const
+eprop_iaf_adapt::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -543,7 +632,7 @@ eprop_iaf_bsshslm_2020::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-eprop_iaf_bsshslm_2020::set_status( const DictionaryDatum& d )
+eprop_iaf_adapt::set_status( const DictionaryDatum& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
@@ -559,4 +648,4 @@ eprop_iaf_bsshslm_2020::set_status( const DictionaryDatum& d )
 
 } // namespace nest
 
-#endif // EPROP_IAF_BSSHSLM_2020_H
+#endif // EPROP_IAF_ADAPT_H

@@ -1,5 +1,5 @@
 /*
- *  eprop_synapse_bsshslm_2020.h
+ *  eprop_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_SYNAPSE_BSSHSLM_2020_H
-#define EPROP_SYNAPSE_BSSHSLM_2020_H
+#ifndef EPROP_SYNAPSE_H
+#define EPROP_SYNAPSE_H
 
 // nestkernel
 #include "connection.h"
@@ -43,32 +43,29 @@ Synapse type for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_synapse_bsshslm_2020`` is an implementation of a connector model to create synapses between postsynaptic
-neurons :math:`j` and presynaptic neurons :math:`i` for eligibility propagation (e-prop) plasticity.
+``eprop_synapse`` is an implementation of a connector model to create synapses between postsynaptic
+neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
-The e-prop synapse collects the presynaptic spikes needed for calculating the
-weight update. When it is time to update, it triggers the calculation of the
-gradient which is specific to the post-synaptic neuron and is thus defined there.
+The e-prop synapse triggers the calculation of the gradient at each spike
+over an interval that begins at the previous spike and ends at a cutoff specified by the user or the
+current spike, depending on which of the two time points is earlier.
+The gradient calculation is specific to the post-synaptic neuron and thus defined there.
 
 Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of
-archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
-``eprop_iaf_adapt_bsshslm_2020``, and ``eprop_readout_bsshslm_2020``.
+archiving. So far, compatible models are ``eprop_iaf``,
+``eprop_iaf_adapt``, and ``eprop_readout``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
- * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+ * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
+ * :doc:`eprop_readout<../models/eprop_readout/>`
+ * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 For more information on the optimizers, see the documentation of the weight optimizer:
 
@@ -88,14 +85,13 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-================ ======= =============== ======= ======================================================
+================ ==== =============== ======= ======================================================
 **Common e-prop synapse parameters**
--------------------------------------------------------------------------------------------------------
-Parameter        Unit    Math equivalent Default Description
-================ ======= =============== ======= ======================================================
-average_gradient Boolean                   False If True, average the gradient over the learning window
-optimizer                                     {} Dictionary of optimizer parameters
-================ ======= =============== ======= ======================================================
+----------------------------------------------------------------------------------------------------
+Parameter        Unit Math equivalent Default Description
+================ ==== =============== ======= ======================================================
+optimizer                                  {} Dictionary of optimizer parameters
+================ ==== =============== ======= ======================================================
 
 ============= ==== ========================= ======= =========================================================
 **Individual synapse parameters**
@@ -104,14 +100,6 @@ Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
-============= ==== ========================= ======= =========================================================
-
-============= ==== ========================= ======= =========================================================
-**Individual e-prop synapse parameters**
---------------------------------------------------------------------------------------------------------------
-Parameter     Unit Math equivalent           Default Description
-============= ==== ========================= ======= =========================================================
-tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 ============= ==== ========================= ======= =========================================================
 
 Recordables
@@ -159,12 +147,14 @@ See also
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_synapse_bsshslm_2020
+.. listexamples:: eprop_synapse
 
 EndUserDocs */
 
 /**
- * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020).
+ * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
+ * (in preparation).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -174,29 +164,26 @@ EndUserDocs */
  *
  * @see WeightOptimizerCommonProperties
  */
-class EpropSynapseBSSHSLM2020CommonProperties : public CommonSynapseProperties
+class EpropSynapseCommonProperties : public CommonSynapseProperties
 {
 public:
   // Default constructor.
-  EpropSynapseBSSHSLM2020CommonProperties();
+  EpropSynapseCommonProperties();
 
   //! Copy constructor.
-  EpropSynapseBSSHSLM2020CommonProperties( const EpropSynapseBSSHSLM2020CommonProperties& );
+  EpropSynapseCommonProperties( const EpropSynapseCommonProperties& );
 
   //! Assignment operator.
-  EpropSynapseBSSHSLM2020CommonProperties& operator=( const EpropSynapseBSSHSLM2020CommonProperties& ) = delete;
+  EpropSynapseCommonProperties& operator=( const EpropSynapseCommonProperties& ) = delete;
 
   //! Destructor.
-  ~EpropSynapseBSSHSLM2020CommonProperties();
+  ~EpropSynapseCommonProperties();
 
   //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
 
   //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-  //! If True, average the gradient over the learning window.
-  bool average_gradient_;
 
   /**
    * Pointer to common properties object for weight optimizer.
@@ -207,20 +194,18 @@ public:
 };
 
 //! Register the eprop synapse model.
-void register_eprop_synapse_bsshslm_2020( const std::string& name );
+void register_eprop_synapse( const std::string& name );
 
 /**
- * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
- *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al.
- * (2020).
+ * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
+ * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
  * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
  * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchanging the
  * `optimizer_cp_` pointer. Individual optimizer objects are created by `check_connection()` when a synapse is actually
- * created. It is important that the constructors of `eprop_synapse_bsshslm_2020` **do not** create optimizer objects
+ * created. It is important that the constructors of `eprop_synapse` **do not** create optimizer objects
  * and that the destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's
  * `spreadsort()` due to use of the copy constructor where it should suffice to use the move constructor. Therefore,
  * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connector()`
@@ -230,16 +215,16 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
  *
  * @note If we can find a way to modify our co-sorting of source and target tables in Boost's `spreadsort()` to only use
  * move operations, it should be possible to create the individual optimizers in the copy constructor of
- * `eprop_synapse_bsshslm_2020` and to delete it in the destructor. The `default_connection` can then own an optimizer
+ * `eprop_synapse` and to delete it in the destructor. The `default_connection` can then own an optimizer
  * and default values could be set on it.
  */
 template < typename targetidentifierT >
-class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT >
+class eprop_synapse : public Connection< targetidentifierT >
 {
 
 public:
   //! Type of the common synapse properties.
-  typedef EpropSynapseBSSHSLM2020CommonProperties CommonPropertiesType;
+  typedef EpropSynapseCommonProperties CommonPropertiesType;
 
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -254,22 +239,22 @@ public:
     | ConnectionModelProperties::SUPPORTS_HPC;
 
   //! Default constructor.
-  eprop_synapse_bsshslm_2020();
+  eprop_synapse();
 
   //! Destructor
-  ~eprop_synapse_bsshslm_2020();
+  ~eprop_synapse();
 
   //! Parameterized copy constructor.
-  eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& );
+  eprop_synapse( const eprop_synapse& );
 
   //! Assignment operator
-  eprop_synapse_bsshslm_2020& operator=( const eprop_synapse_bsshslm_2020& );
+  eprop_synapse& operator=( const eprop_synapse& );
 
   //! Move constructor
-  eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& );
+  eprop_synapse( eprop_synapse&& );
 
   //! Move assignment operator
-  eprop_synapse_bsshslm_2020& operator=( eprop_synapse_bsshslm_2020&& );
+  eprop_synapse& operator=( eprop_synapse&& );
 
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
@@ -283,7 +268,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   //! Send the spike event.
-  bool send( Event& e, size_t thread, const EpropSynapseBSSHSLM2020CommonProperties& cp );
+  bool send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp );
 
   //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -326,28 +311,22 @@ private:
   double weight_;
 
   //! The time step when the previous spike arrived.
-  long t_spike_previous_;
-
-  //! The time step when the previous e-prop update was.
-  long t_previous_update_;
-
-  //! The time step when the next e-prop update will be.
-  long t_next_update_;
+  long t_spike_previous_ = 0;
 
   //! The time step when the spike arrived that triggered the previous e-prop update.
-  long t_previous_trigger_spike_;
+  long t_previous_trigger_spike_ = 0;
 
-  //! %Time constant for low-pass filtering the eligibility trace.
-  double tau_m_readout_;
+  //! Low-pass filtered spiking variable.
+  double z_bar_ = 0.0;
 
-  //! Low-pass filter of the eligibility trace.
-  double kappa_;
+  //! Low-pass filtered eligibility trace.
+  double e_bar_ = 0.0;
 
-  //! If this connection is between two recurrent neurons.
-  bool is_recurrent_to_recurrent_conn_;
+  //! Adaptive threshold component of the eligibility vector.
+  double epsilon_ = 0.0;
 
-  //! Vector of presynaptic inter-spike-intervals.
-  std::vector< long > presyn_isis_;
+  //! Value of spiking variable one time step before t_previous_spike_.
+  double z_previous_buffer_ = 0.0;
 
   /**
    *  Optimizer
@@ -358,63 +337,51 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties eprop_synapse_bsshslm_2020< targetidentifierT >::properties;
+constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properties;
 
-// Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse_bsshslm_2020
+// Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse
 template <>
-void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
-
-template <>
-void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
+void Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
 
 template <>
-Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector();
+void Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
 
 template <>
-Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
+Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
+
+template <>
+Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
 
 
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
+eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_spike_previous_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( 10.0 )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
-  , is_recurrent_to_recurrent_conn_( false )
   , optimizer_( nullptr )
 {
 }
 
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >::~eprop_synapse_bsshslm_2020()
+eprop_synapse< targetidentifierT >::~eprop_synapse()
 {
 }
 
 // This copy constructor is used to create instances from prototypes.
 // Therefore, only parameter values are copied.
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
+eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_spike_previous_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
-  , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( es.tau_m_readout_ )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
-  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
 }
 
-// This copy assignment operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >&
-eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_bsshslm_2020& es )
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 {
   if ( this == &es )
   {
@@ -425,37 +392,34 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
-  t_previous_update_ = es.t_previous_update_;
-  t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  tau_m_readout_ = es.tau_m_readout_;
-  kappa_ = es.kappa_;
-  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
+  z_bar_ = es.z_bar_;
+  e_bar_ = es.e_bar_;
+  epsilon_ = es.epsilon_;
+  z_previous_buffer_ = es.z_previous_buffer_;
   optimizer_ = es.optimizer_;
 
   return *this;
 }
 
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
+eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_spike_previous_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( es.t_next_update_ )
-  , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( es.tau_m_readout_ )
-  , kappa_( es.kappa_ )
-  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
+  , t_spike_previous_( es.t_spike_previous_ )
+  , t_previous_trigger_spike_( es.t_spike_previous_ )
+  , z_bar_( es.z_bar_ )
+  , e_bar_( es.e_bar_ )
+  , epsilon_( es.epsilon_ )
   , optimizer_( es.optimizer_ )
 {
   es.optimizer_ = nullptr;
 }
 
-// This move assignment operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
-eprop_synapse_bsshslm_2020< targetidentifierT >&
-eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshslm_2020&& es )
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 {
   if ( this == &es )
   {
@@ -466,12 +430,11 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
-  t_previous_update_ = es.t_previous_update_;
-  t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  tau_m_readout_ = es.tau_m_readout_;
-  kappa_ = es.kappa_;
-  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
+  z_bar_ = es.z_bar_;
+  e_bar_ = es.e_bar_;
+  epsilon_ = es.epsilon_;
+  z_previous_buffer_ = es.z_previous_buffer_;
 
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
@@ -481,7 +444,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
+eprop_synapse< targetidentifierT >::check_connection( Node& s,
   Node& t,
   size_t receptor_type,
   const CommonPropertiesType& cp )
@@ -495,14 +458,14 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  t.register_eprop_connection();
+  t.register_eprop_connection( false );
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse_bsshslm_2020< targetidentifierT >::delete_optimizer()
+eprop_synapse< targetidentifierT >::delete_optimizer()
 {
   delete optimizer_;
   // do not set to nullptr to allow detection of double deletion
@@ -510,52 +473,21 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::delete_optimizer()
 
 template < typename targetidentifierT >
 bool
-eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
-  size_t thread,
-  const EpropSynapseBSSHSLM2020CommonProperties& cp )
+eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp )
 {
   Node* target = get_target( thread );
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long shift = target->get_shift();
 
-  const long interval_step = ( t_spike - shift ) % update_interval;
-
-  if ( target->is_eprop_recurrent_node() and interval_step == 0 )
+  if ( t_spike_previous_ != 0 )
   {
-    return false;
+    target->compute_gradient(
+      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
   }
 
-  if ( t_previous_trigger_spike_ == 0 )
-  {
-    t_previous_trigger_spike_ = t_spike;
-  }
-
-  if ( t_spike_previous_ > 0 )
-  {
-    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_spike_previous_ );
-  }
-
-  if ( t_spike > t_next_update_ + shift )
-  {
-    const long idx_current_update = ( t_spike - shift ) / update_interval;
-    const long t_current_update = idx_current_update * update_interval;
-
-    target->write_update_to_history( t_previous_update_, t_current_update );
-
-    const double gradient = target->compute_gradient(
-      presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
-
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
-
-    t_previous_update_ = t_current_update;
-    t_next_update_ = t_current_update + update_interval;
-
-    t_previous_trigger_spike_ = t_spike;
-  }
+  const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
+  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff, false );
 
   t_spike_previous_ = t_spike;
 
@@ -570,11 +502,10 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
 template < typename targetidentifierT >
 void
-eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 
   DictionaryDatum optimizer_dict = new Dictionary();
@@ -589,20 +520,13 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d 
 
 template < typename targetidentifierT >
 void
-eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   if ( d->known( names::optimizer ) )
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
-    auto optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
-    auto it = optimizer_dict->find( names::optimize_each_step );
-    if ( it != optimizer_dict->end() )
-    {
-      throw BadProperty(
-        "Optimization in every time step optimize_each_step is not available for eprop_synapse_bsshslm_2020." );
-    }
     if ( optimizer_ )
     {
       optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
@@ -611,17 +535,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
 
   updateValue< double >( d, names::weight, weight_ );
 
-  if ( updateValue< double >( d, names::tau_m_readout, tau_m_readout_ ) )
-  {
-    if ( tau_m_readout_ <= 0 )
-    {
-      throw BadProperty( "Membrane time constant of readout neuron tau_m_readout > 0 required." );
-    }
-    kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
-  }
-
-  const auto& gcm =
-    dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {
@@ -636,4 +550,4 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
 
 } // namespace nest
 
-#endif // EPROP_SYNAPSE_BSSHSLM_2020_H
+#endif // EPROP_SYNAPSE_H

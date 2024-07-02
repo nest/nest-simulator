@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_adapt_bsshslm_2020.cpp
+ *  eprop_iaf_adapt.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 // nest models
-#include "eprop_iaf_adapt_bsshslm_2020.h"
+#include "eprop_iaf_adapt.h"
 
 // C++
 #include <limits>
@@ -43,33 +43,33 @@ namespace nest
 {
 
 void
-register_eprop_iaf_adapt_bsshslm_2020( const std::string& name )
+register_eprop_iaf_adapt( const std::string& name )
 {
-  register_node_model< eprop_iaf_adapt_bsshslm_2020 >( name );
+  register_node_model< eprop_iaf_adapt >( name );
 }
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< eprop_iaf_adapt_bsshslm_2020 > eprop_iaf_adapt_bsshslm_2020::recordablesMap_;
+RecordablesMap< eprop_iaf_adapt > eprop_iaf_adapt::recordablesMap_;
 
 template <>
 void
-RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >::create()
+RecordablesMap< eprop_iaf_adapt >::create()
 {
-  insert_( names::adaptation, &eprop_iaf_adapt_bsshslm_2020::get_adaptation_ );
-  insert_( names::V_th_adapt, &eprop_iaf_adapt_bsshslm_2020::get_v_th_adapt_ );
-  insert_( names::learning_signal, &eprop_iaf_adapt_bsshslm_2020::get_learning_signal_ );
-  insert_( names::surrogate_gradient, &eprop_iaf_adapt_bsshslm_2020::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_adapt_bsshslm_2020::get_v_m_ );
+  insert_( names::adaptation, &eprop_iaf_adapt::get_adaptation_ );
+  insert_( names::V_th_adapt, &eprop_iaf_adapt::get_v_th_adapt_ );
+  insert_( names::learning_signal, &eprop_iaf_adapt::get_learning_signal_ );
+  insert_( names::surrogate_gradient, &eprop_iaf_adapt::get_surrogate_gradient_ );
+  insert_( names::V_m, &eprop_iaf_adapt::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
-eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
+eprop_iaf_adapt::Parameters_::Parameters_()
   : adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 )
   , C_m_( 250.0 )
@@ -85,10 +85,12 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
+  , kappa_( 0.97 )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
 
-eprop_iaf_adapt_bsshslm_2020::State_::State_()
+eprop_iaf_adapt::State_::State_()
   : adapt_( 0.0 )
   , v_th_adapt_( 15.0 )
   , learning_signal_( 0.0 )
@@ -101,12 +103,12 @@ eprop_iaf_adapt_bsshslm_2020::State_::State_()
 {
 }
 
-eprop_iaf_adapt_bsshslm_2020::Buffers_::Buffers_( eprop_iaf_adapt_bsshslm_2020& n )
+eprop_iaf_adapt::Buffers_::Buffers_( eprop_iaf_adapt& n )
   : logger_( n )
 {
 }
 
-eprop_iaf_adapt_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_adapt_bsshslm_2020& n )
+eprop_iaf_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_adapt& n )
   : logger_( n )
 {
 }
@@ -116,7 +118,7 @@ eprop_iaf_adapt_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_ada
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
@@ -133,10 +135,12 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
+  def< double >( d, names::kappa, kappa_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
-eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -163,6 +167,8 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::kappa, kappa_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
   {
@@ -204,11 +210,21 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
+  if ( kappa_ < 0.0 or kappa_ > 1.0 )
+  {
+    throw BadProperty( "Eligibility trace low-pass filter kappa from range [0, 1] required." );
+  }
+
+  if ( eprop_isi_trace_cutoff_ < 0 )
+  {
+    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
+  }
+
   return delta_EL;
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::adaptation, adapt_ );
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
@@ -218,7 +234,7 @@ eprop_iaf_adapt_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 
@@ -239,7 +255,7 @@ eprop_iaf_adapt_bsshslm_2020::State_::set( const DictionaryDatum& d, const Param
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020()
+eprop_iaf_adapt::eprop_iaf_adapt()
   : EpropArchivingNodeRecurrent()
   , P_()
   , S_()
@@ -248,7 +264,7 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020()
   recordablesMap_.create();
 }
 
-eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adapt_bsshslm_2020& n )
+eprop_iaf_adapt::eprop_iaf_adapt( const eprop_iaf_adapt& n )
   : EpropArchivingNodeRecurrent( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -261,7 +277,7 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adap
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_adapt_bsshslm_2020::init_buffers_()
+eprop_iaf_adapt::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
@@ -269,7 +285,7 @@ eprop_iaf_adapt_bsshslm_2020::init_buffers_()
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
+eprop_iaf_adapt::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
@@ -288,13 +304,13 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 }
 
 long
-eprop_iaf_adapt_bsshslm_2020::get_shift() const
+eprop_iaf_adapt::get_shift() const
 {
   return offset_gen_ + delay_in_rec_;
 }
 
 bool
-eprop_iaf_adapt_bsshslm_2020::is_eprop_recurrent_node() const
+eprop_iaf_adapt::is_eprop_recurrent_node() const
 {
   return true;
 }
@@ -304,31 +320,11 @@ eprop_iaf_adapt_bsshslm_2020::is_eprop_recurrent_node() const
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const long to )
+eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 {
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  const long shift = get_shift();
-
   for ( long lag = from; lag < to; ++lag )
   {
     const long t = origin.get_steps() + lag;
-    const long interval_step = ( t - shift ) % update_interval;
-
-    if ( interval_step == 0 )
-    {
-      erase_used_firing_rate_reg_history();
-      erase_used_update_history();
-      erase_used_eprop_history();
-
-      if ( with_reset )
-      {
-        S_.v_m_ = 0.0;
-        S_.adapt_ = 0.0;
-        S_.r_ = 0;
-        S_.z_ = 0.0;
-      }
-    }
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
@@ -350,8 +346,6 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
 
     if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
-      count_spike();
-
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
 
@@ -363,13 +357,9 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       }
     }
 
-    if ( interval_step == update_interval - 1 )
-    {
-      write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
-      reset_spike_count();
-    }
+    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
-    S_.learning_signal_ = get_learning_signal_from_history( t );
+    S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
     if ( S_.r_ > 0 )
     {
@@ -387,7 +377,7 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_adapt_bsshslm_2020::handle( SpikeEvent& e )
+eprop_iaf_adapt::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -396,7 +386,7 @@ eprop_iaf_adapt_bsshslm_2020::handle( SpikeEvent& e )
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::handle( CurrentEvent& e )
+eprop_iaf_adapt::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -405,7 +395,7 @@ eprop_iaf_adapt_bsshslm_2020::handle( CurrentEvent& e )
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::handle( LearningSignalConnectionEvent& e )
+eprop_iaf_adapt::handle( LearningSignalConnectionEvent& e )
 {
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
@@ -414,70 +404,79 @@ eprop_iaf_adapt_bsshslm_2020::handle( LearningSignalConnectionEvent& e )
     const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
-    write_learning_signal_to_history( time_step, learning_signal );
+    write_learning_signal_to_history( time_step, learning_signal, false );
   }
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::handle( DataLoggingRequest& e )
+eprop_iaf_adapt::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-double
-eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
-  const long t_previous_update,
-  const long t_previous_trigger_spike,
-  const double kappa,
-  const bool average_gradient )
+void
+eprop_iaf_adapt::compute_gradient( const long t_spike,
+  const long t_spike_previous,
+  double& z_previous_buffer,
+  double& z_bar,
+  double& e_bar,
+  double& epsilon,
+  double& weight,
+  const CommonSynapseProperties& cp,
+  WeightOptimizer* optimizer )
 {
-  auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
+  double e = 0.0;                // eligibility trace
+  double z = 0.0;                // spiking variable
+  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
+  double psi = 0.0;              // surrogate gradient
+  double L = 0.0;                // learning signal
+  double grad = 0.0;             // gradient
 
-  double e = 0.0;       // eligibility trace
-  double e_bar = 0.0;   // low-pass filtered eligibility trace
-  double epsilon = 0.0; // adaptive component of eligibility vector
-  double grad = 0.0;    // gradient value to be calculated
-  double L = 0.0;       // learning signal
-  double psi = 0.0;     // surrogate gradient
-  double sum_e = 0.0;   // sum of eligibility traces
-  double z = 0.0;       // spiking variable
-  double z_bar = 0.0;   // low-pass filtered spiking variable
+  const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+  const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
 
-  for ( long presyn_isi : presyn_isis )
+  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
+
+  const long t_compute_until = std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
+
+  for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    z = z_previous_buffer;
+    z_previous_buffer = z_current_buffer;
+    z_current_buffer = 0.0;
 
-    for ( long t = 0; t < presyn_isi; ++t )
+    psi = eprop_hist_it->surrogate_gradient_;
+    L = eprop_hist_it->learning_signal_;
+
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
+    epsilon = V_.P_adapt_ * epsilon + e;
+    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+
+    if ( optimize_each_step )
     {
-      assert( eprop_hist_it != eprop_history_.end() );
-
-      psi = eprop_hist_it->surrogate_gradient_;
-      L = eprop_hist_it->learning_signal_;
-
-      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = V_.P_adapt_ * epsilon + e;
-      e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+      grad = L * e_bar;
+      weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
+    }
+    else
+    {
       grad += L * e_bar;
-      sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
-
-      ++eprop_hist_it;
     }
   }
-  presyn_isis.clear();
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
-  grad += it_reg_hist->firing_rate_reg_ * sum_e;
-
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  if ( average_gradient )
+  if ( not optimize_each_step )
   {
-    grad /= learning_window;
+    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
   }
 
-  return grad;
+  const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
+
+  if ( power > 0 )
+  {
+    z_bar *= std::pow( V_.P_v_m_, power );
+    e_bar *= std::pow( P_.kappa_, power );
+    epsilon *= std::pow( V_.P_adapt_, power );
+  }
 }
 
 } // namespace nest

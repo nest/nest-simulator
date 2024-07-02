@@ -33,14 +33,99 @@ namespace nest
 
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
   : EpropArchivingNode()
+  , firing_rate_reg_( 0.0 )
+  , f_av_( 0.0 )
   , n_spikes_( 0 )
 {
 }
 
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& n )
   : EpropArchivingNode( n )
+  , firing_rate_reg_( n.firing_rate_reg_ )
+  , f_av_( n.f_av_ )
   , n_spikes_( n.n_spikes_ )
 {
+}
+
+double
+EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma * std::max( 0.0, 1.0 - beta * std::fabs( ( v_m - v_th_adapt ) / V_th ) ) / V_th;
+}
+
+double
+EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  if ( fabs( V_th ) < 1e-6 )
+  {
+    throw BadProperty(
+      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
+  }
+
+  return gamma * std::exp( -beta * std::fabs( v_m - v_th_adapt ) );
+}
+
+double
+EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma * std::pow( 1.0 + beta * std::fabs( v_m - v_th_adapt ), -2 );
+}
+
+double
+EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th_adapt ), 2 ) ) );
+}
+
+void
+EpropArchivingNodeRecurrent::emplace_new_eprop_history_entry( const long time_step )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  eprop_history_.emplace_back( time_step, 0.0, 0.0 );
 }
 
 void
@@ -52,18 +137,27 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
     return;
   }
 
-  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
+  auto it_hist = get_eprop_history( time_step );
+  it_hist->surrogate_gradient_ = surrogate_gradient;
 }
 
 void
-EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step, const double learning_signal )
+EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step,
+  const double learning_signal,
+  const bool has_norm_step )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
+  long shift = delay_rec_out_ + delay_out_rec_;
+
+  if ( has_norm_step )
+  {
+    shift += delay_out_norm_;
+  }
+
 
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
@@ -95,6 +189,30 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_curr
   firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
 }
 
+void
+EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
+  const double z,
+  const double f_target,
+  const double kappa,
+  const double c_reg )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const double dt = Time::get_resolution().get_ms();
+
+  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+
+  f_av_ = kappa * f_av_ + ( 1.0 - kappa ) * z / dt;
+
+  firing_rate_reg_ = c_reg * ( f_av_ - f_target_ );
+
+  auto it_hist = get_eprop_history( t );
+  it_hist->learning_signal_ += firing_rate_reg_;
+}
+
 std::vector< HistEntryEpropFiringRateReg >::iterator
 EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 {
@@ -105,9 +223,14 @@ EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 }
 
 double
-EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step )
+EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step, const bool has_norm_step )
 {
-  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
+  long shift = delay_rec_out_ + delay_out_rec_;
+
+  if ( has_norm_step )
+  {
+    shift += delay_out_norm_;
+  }
 
   const auto it = get_eprop_history( time_step - shift );
   if ( it == eprop_history_.end() )
@@ -149,16 +272,32 @@ EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeRe
 }
 
 void
-EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step, const double error_signal )
+EpropArchivingNodeReadout::emplace_new_eprop_history_entry( const long time_step, const bool has_norm_step )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = delay_out_norm_;
+  const long shift = has_norm_step ? delay_out_norm_ : 0;
 
-  eprop_history_.emplace_back( time_step - shift, error_signal );
+  eprop_history_.emplace_back( time_step - shift, 0.0 );
+}
+
+void
+EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step,
+  const double error_signal,
+  const bool has_norm_step )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const long shift = has_norm_step ? delay_out_norm_ : 0;
+
+  auto it_hist = get_eprop_history( time_step - shift );
+  it_hist->error_signal_ = error_signal;
 }
 
 

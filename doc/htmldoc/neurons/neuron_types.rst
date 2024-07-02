@@ -1,6 +1,7 @@
 .. _types_neurons:
 
-
+Types of neurons
+================
 
 .. {% for items in tag_dict %}
    {% if items.tag == "integrate-and-fire" %}
@@ -10,9 +11,6 @@
    {% endif %}
    {% endfor %}
 
-
-Types of neurons
-================
 
 .. grid::
    :gutter: 1
@@ -226,6 +224,7 @@ Current-based
 
    .. grid-item::
      :columns: 2
+     :class: sd-d-flex-row sd-align-major-center
 
      .. image::  /static/img/current_based_nn.svg
 
@@ -246,6 +245,7 @@ Conductance-based
 
    .. grid-item::
      :columns: 2
+     :class: sd-d-flex-row sd-align-major-center
 
      .. image::  /static/img/conductance_based_nn.svg
 
@@ -268,6 +268,7 @@ Adaptation mechanism
 
   .. grid-item::
       :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
       .. image:: /static/img/adaptive_threshold_ nn.svg
 
@@ -313,6 +314,7 @@ Precise spike timing
 
   .. grid-item::
       :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
       .. image:: /static/img/precise_nn.svg
 
@@ -378,6 +380,7 @@ Rate neurons
 
    .. grid-item::
      :columns: 2
+     :class: sd-d-flex-row sd-align-major-center
 
      .. image:: /static/img/rate_neurons_nn.svg
 
@@ -395,6 +398,7 @@ Rate neurons
 
    .. grid-item::
       :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
       **Input noise**
 
@@ -409,6 +413,7 @@ Rate neurons
 
    .. grid-item::
       :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
       **Output noise**
 
@@ -424,6 +429,7 @@ Rate neurons
 
    .. grid-item::
       :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
 
       **Mean-field theory**
 
@@ -474,6 +480,7 @@ Multi-state neurons
 
    .. grid-item::
      :columns: 2
+     :class: sd-d-flex-row sd-align-major-center
 
      .. image:: /static/img/multistate_nn.svg
 
@@ -503,6 +510,7 @@ Astrocytes
 
    .. grid-item::
      :columns: 2
+     :class: sd-d-flex-row sd-align-major-center
 
      .. image:: /static/img/astrocyte_nn.svg
 

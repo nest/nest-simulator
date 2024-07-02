@@ -179,7 +179,7 @@ nest.set_verbosity("M_FATAL")
 pixels_blocklist = np.loadtxt("./NMNIST_pixels_blocklist.txt")
 
 n_in = 2 * 34 * 34 - len(pixels_blocklist)  # number of input neurons
-n_rec = 100  # number of recurrent neurons
+n_rec = 150  # number of recurrent neurons
 n_out = 10  # number of readout neurons
 
 params_nrn_out = {
@@ -320,8 +320,8 @@ np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding we
 weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights)
 weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
-weights_in_rec *= create_mask(weights_in_rec, 0.9)
-weights_rec_rec *= create_mask(weights_rec_rec, 0.98)
+weights_in_rec *= create_mask(weights_in_rec, 0.75)
+weights_rec_rec *= create_mask(weights_rec_rec, 0.99)
 weights_rec_out *= create_mask(weights_rec_out, 0.0)
 
 params_common_syn_eprop = {

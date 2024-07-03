@@ -536,7 +536,7 @@ class DataLoader:
         return images_group, labels_group
 
 
-def create_input_output(loader, target_signal_value=1.0):
+def create_input_output(loader, t_start_iteration, t_end_iteration, target_signal_value=1.0):
     img_group, targets_group = loader.get_new_evaluation_group()
 
     spike_times = [[] for _ in range(n_in)]
@@ -672,7 +672,7 @@ for iteration in range(n_iter):
     params_common_syn_eprop["optimizer"]["eta"] = eta
     nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
-    params_gen_spk_in, params_gen_rate_target = create_input_output(loader)
+    params_gen_spk_in, params_gen_rate_target = create_input_output(loader, t_start_iteration, t_end_iteration)
 
     nest.SetStatus(gen_spk_in, params_gen_spk_in)
     nest.SetStatus(gen_rate_target, params_gen_rate_target)

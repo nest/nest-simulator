@@ -28,7 +28,7 @@ Synopsis: (test_stdp_pl_synapse_hom) run
 
 Description:
   A parrot_neuron that repeats the spikes from a poisson generator is
-  connected to an iaf_psc_alpha that is driven by inh. and exc. poisson input.
+  connected to an iaf_psc_alpha_hom that is driven by inh. and exc. poisson input.
   The synapse is an stdp_pl_synapse_hom. After the simulation, we go through
   the pre- and postsyn. spike-trains spike by spike and try to reproduce the STDP
   results. The final weight obtained after simulation is compared to the final
@@ -40,11 +40,11 @@ Author: Kunkel, Dec 2017
 
 (unittest) run
 /unittest using
- 
+
 ResetKernel
- 
+
 /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
-0 << /resolution resolution >> SetStatus %/tics_per_ms 10000.0 >> SetStatus
+0 << /resolution resolution >> SetKernelStatus %/tics_per_ms 10000.0 >> SetStatus
 
 
 %%% input parameters %%%
@@ -82,15 +82,14 @@ ResetKernel
 /pg_pre /poisson_generator << /rate nu >> Create def
 
 /parrot /parrot_neuron Create def
-/neuron /iaf_psc_alpha Create def
+/neuron /iaf_psc_alpha_hom Create def
 
-/spike_detector << /to_file       false
-                   /to_memory     true
+/spike_recorder << /to_file       false
 		   %/precision 15
 		   /time_in_steps true
                 >> SetDefaults
-/sd_pre  /spike_detector Create def
-/sd_post /spike_detector Create def
+/sd_pre  /spike_recorder Create def
+/sd_post /spike_recorder Create def
 
 
 %%% connect %%%
@@ -116,12 +115,13 @@ neuron sd_post Connect
 
 10000.0 Simulate
 
-/pre_spikes  sd_pre  GetStatus /events get /times get cva { axonal_delay add } Map def
-/post_spikes sd_post GetStatus /events get /times get cva { backpr_delay add } Map def
+/pre_spikes sd_pre /events get /times get cva { axonal_delay add } Map def
+/post_spikes sd_post /events get /times get cva { backpr_delay add } Map def
 
-/final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get /weight get def
+% TODO: HOW TO FIX THIS
+/final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get GetStatus /weight get def
 
-
+== cta goes meow
 %%% check final weight %%%
 
 cout 15 setprecision
@@ -157,7 +157,7 @@ def
 {
   j 1 add /j Set
   pre_spike /last_pre Set
-  pre_spikes j get /pre_spike Set  
+  pre_spikes j get /pre_spike Set
 }
 def
 
@@ -206,7 +206,7 @@ def
         if
       }
       {
-        exit  
+        exit
       }
       ifelse
     }

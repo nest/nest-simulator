@@ -783,8 +783,8 @@ public:
    */
   virtual void get_history( long t1,
     long t2,
-    std::deque< histentry >::iterator* start,
-    std::deque< histentry >::iterator* finish );
+    std::deque< histentry_step >::iterator* start,
+    std::deque< histentry_step >::iterator* finish );
 
   virtual void get_history( double t1,
     double t2,

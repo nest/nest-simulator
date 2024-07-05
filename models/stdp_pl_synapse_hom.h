@@ -309,8 +309,8 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
   const long dendritic_delay = get_delay_steps();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
-  std::deque< histentry >::iterator start;
-  std::deque< histentry >::iterator finish;
+  std::deque< histentry_step >::iterator start;
+  std::deque< histentry_step >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to postsynaptic spikes since last pre-synaptic spike

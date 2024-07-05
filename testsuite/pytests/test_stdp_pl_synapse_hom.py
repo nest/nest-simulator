@@ -18,12 +18,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
+import unittest
 from math import exp
 
 import nest
 import numpy as np
-import pytest
+from nest.lib.hl_api_exceptions import NESTErrors
 
 DEBUG_PLOTS = False
 
@@ -38,7 +38,7 @@ if DEBUG_PLOTS:
 
 
 @nest.ll_api.check_stack
-class TestSTDPPlSynapse:
+class TestSTDPPlSynapse(unittest.TestCase):
     """
     Compare the STDP power-law synaptic plasticity model against a self-contained Python reference.
 
@@ -65,6 +65,7 @@ class TestSTDPPlSynapse:
         self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0,
                                    "weight": self.init_weight, }
         self.neuron_parameters = {}
+        self.nest_neuron_model = "iaf_psc_alpha_hom"
 
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred. To
@@ -218,7 +219,7 @@ class TestSTDPPlSynapse:
 
         def depress(w, Kminus):
             new_weight = (
-                w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
+                    w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
             )
             return new_weight if new_weight > 0.0 else 0.0
 
@@ -323,16 +324,16 @@ class TestSTDPPlSynapse:
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
     def plot_weight_evolution(
-        self,
-        pre_spikes,
-        post_spikes,
-        t_log,
-        w_log,
-        Kpre_log=None,
-        Kpost_log=None,
-        pre_indices=slice(-1),
-        fname_snip="",
-        title_snip="",
+            self,
+            pre_spikes,
+            post_spikes,
+            t_log,
+            w_log,
+            Kpre_log=None,
+            Kpost_log=None,
+            pre_indices=slice(-1),
+            fname_snip="",
+            title_snip="",
     ):
         if not DEBUG_PLOTS:  # make pylint happy if no matplotlib
             return
@@ -377,9 +378,28 @@ class TestSTDPPlSynapse:
                 for self.max_delay in (3.0, 1.0):
                     self.min_delay = min(self.min_delay, self.max_delay)
                     self.max_delay = max(self.min_delay, self.max_delay)
-                    for self.nest_neuron_model in ("iaf_psc_exp", "iaf_cond_exp"):
-                        for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
-                            fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
-                            fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
-                            fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
-                            self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+                    for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
+                        fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+                        fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
+                        fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
+                        self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+
+    def test_hom_node_illegal_connections(self):
+        node = nest.Create("iaf_psc_alpha")
+        node_hom = nest.Create("iaf_psc_alpha_hom")
+
+        nest.Connect(node, node)
+        nest.Connect(node_hom, node_hom)
+
+        with self.assertRaisesRegex(nest.NESTError, "IllegalConnection"):
+            nest.Connect(node_hom, node, syn_spec={"synapse_model": "stdp_pl_synapse_hom"})
+
+        with self.assertRaisesRegex(nest.NESTError, "IllegalConnection"):
+            nest.Connect(node_hom, node_hom, syn_spec={"synapse_model": "stdp_synapse_hom"})
+
+    def test_hom_node_illegal_update(self):
+        # assert tau_minus is read-only
+        node_hom = nest.Create("iaf_psc_alpha_hom")
+        with self.assertRaises(NESTErrors.DictError):
+            nest.SetStatus(node_hom, {"tau_minus": 16.0})
+        nest.GetStatus(node_hom, "tau_minus")

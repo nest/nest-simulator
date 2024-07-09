@@ -98,6 +98,7 @@ EndUserDocs */
  */
 class STDPPLHomCommonProperties : public CommonSynapseProperties
 {
+  constexpr static size_t EXP_LOOKUP_SIZE = 10000;
 
 public:
   /**
@@ -122,11 +123,11 @@ public:
   double get_exp_tau_plus( const long dt_steps ) const;
   double get_exp_tau_minus( const long dt_steps ) const;
 
+  void calibrate( const TimeConverter& );
+
   // data members common to all connections
   double tau_plus_;
   double tau_minus_;
-  double minus_tau_plus_inv_;  //!< - 1 / tau_plus for efficiency
-  double minus_tau_minus_inv_; //!< - 1 / tau_minus for efficiency
   double lambda_;
   double alpha_;
   double mu_;
@@ -146,6 +147,7 @@ STDPPLHomCommonProperties::get_exp_tau_plus( const long dt_steps ) const
   }
   else
   {
+    const auto minus_tau_plus_inv_ = -1. / tau_plus_;
     return std::exp( Time( Time::step( dt_steps ) ).get_ms() * minus_tau_plus_inv_ );
   }
 }
@@ -159,6 +161,7 @@ STDPPLHomCommonProperties::get_exp_tau_minus( const long dt_steps ) const
   }
   else
   {
+    const auto minus_tau_minus_inv_ = -1. / tau_minus_;
     return std::exp( Time( Time::step( dt_steps ) ).get_ms() * minus_tau_minus_inv_ );
   }
 }

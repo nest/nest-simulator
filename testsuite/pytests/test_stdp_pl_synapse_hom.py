@@ -403,3 +403,5 @@ class TestSTDPPlSynapse(unittest.TestCase):
         with self.assertRaises(NESTErrors.DictError):
             nest.SetStatus(node_hom, {"tau_minus": 16.0})
         nest.GetStatus(node_hom, "tau_minus")
+
+# todo: add res change test

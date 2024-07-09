@@ -48,8 +48,6 @@ STDPPLHomCommonProperties::STDPPLHomCommonProperties()
   : CommonSynapseProperties()
   , tau_plus_( 20.0 )
   , tau_minus_( 20.0 )
-  , minus_tau_plus_inv_( -1. / tau_plus_ )
-  , minus_tau_minus_inv_( -1. / tau_minus_ )
   , lambda_( 0.1 )
   , alpha_( 1.0 )
   , mu_( 0.4 )
@@ -79,7 +77,6 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel&
   {
     if ( tau_plus_ > 0. )
     {
-      minus_tau_plus_inv_ = -1. / tau_plus_;
       init_exp_tau_plus();
     }
     else
@@ -92,7 +89,6 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel&
   {
     if ( tau_minus_ > 0. )
     {
-      minus_tau_minus_inv_ = -1. / tau_minus_;
       init_exp_tau_minus();
     }
     else
@@ -109,23 +105,30 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel&
 void
 STDPPLHomCommonProperties::init_exp_tau_plus()
 {
-  // TODO if resolution is changed, the look-up table needs to be recomputed
-  exp_tau_plus_.resize( 10000, 0.0 );
-  for ( unsigned long dt = 0 ; dt < exp_tau_plus_.size() ; ++dt )
+  const auto minus_tau_plus_inv_ = -1. / tau_plus_;
+  exp_tau_plus_.resize( EXP_LOOKUP_SIZE, 0.0 );
+  for ( unsigned long dt = 0; dt < exp_tau_plus_.size(); ++dt )
   {
-    exp_tau_plus_[dt] = std::exp( Time( Time::step(dt) ).get_ms() * minus_tau_plus_inv_ );
+    exp_tau_plus_[ dt ] = std::exp( Time( Time::step( dt ) ).get_ms() * minus_tau_plus_inv_ );
   }
 }
 
 void
 STDPPLHomCommonProperties::init_exp_tau_minus()
 {
-  // TODO if resolution is changed, the look-up table needs to be recomputed
-  exp_tau_minus_.resize( 10000, 0.0 );
-  for ( unsigned long dt = 0 ; dt < exp_tau_minus_.size() ; ++dt )
+  const auto minus_tau_minus_inv_ = -1. / tau_minus_;
+  exp_tau_minus_.resize( EXP_LOOKUP_SIZE, 0.0 );
+  for ( unsigned long dt = 0; dt < exp_tau_minus_.size(); ++dt )
   {
-    exp_tau_minus_[dt] = std::exp( Time( Time::step( dt ) ).get_ms() * minus_tau_minus_inv_ );
+    exp_tau_minus_[ dt ] = std::exp( Time( Time::step( dt ) ).get_ms() * minus_tau_minus_inv_ );
   }
+}
+
+void
+STDPPLHomCommonProperties::calibrate( const TimeConverter& )
+{
+  init_exp_tau_minus();
+  init_exp_tau_plus();
 }
 
 } // of namespace nest

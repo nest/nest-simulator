@@ -1,5 +1,5 @@
 /*
- *  archiving_node.cpp
+ *  archiving_node_hom.cpp
  *
  *  This file is part of NEST.
  *

@@ -59,10 +59,13 @@ class TestSTDPPlSynapse(unittest.TestCase):
             "alpha": 1.0,
             "mu": 0.4,
             "tau_plus": self.tau_pre,
-            "tau_minus": self.tau_post
+            "tau_minus": self.tau_post,
         }
-        self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0,
-                                   "weight": self.init_weight, }
+        self.synapse_parameters = {
+            "synapse_model": self.synapse_model,
+            "receptor_type": 0,
+            "weight": self.init_weight,
+        }
         self.neuron_parameters = {}
         self.nest_neuron_model = "iaf_psc_alpha_hom"
 
@@ -224,7 +227,7 @@ class TestSTDPPlSynapse(unittest.TestCase):
 
         def depress(w, Kminus):
             new_weight = (
-                    w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
+                w - self.synapse_common_properties["alpha"] * self.synapse_common_properties["lambda"] * w * Kminus
             )
             return new_weight if new_weight > 0.0 else 0.0
 
@@ -329,16 +332,16 @@ class TestSTDPPlSynapse(unittest.TestCase):
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
     def plot_weight_evolution(
-            self,
-            pre_spikes,
-            post_spikes,
-            t_log,
-            w_log,
-            Kpre_log=None,
-            Kpost_log=None,
-            pre_indices=slice(-1),
-            fname_snip="",
-            title_snip="",
+        self,
+        pre_spikes,
+        post_spikes,
+        t_log,
+        w_log,
+        Kpre_log=None,
+        Kpost_log=None,
+        pre_indices=slice(-1),
+        fname_snip="",
+        title_snip="",
     ):
         if not DEBUG_PLOTS:  # make pylint happy if no matplotlib
             return

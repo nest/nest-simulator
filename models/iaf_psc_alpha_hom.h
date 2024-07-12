@@ -1,24 +1,24 @@
 /*
-*  iaf_psc_alpha_hom.h
-*
-*  This file is part of NEST.
-*
-*  Copyright (C) 2004 The NEST Initiative
-*
-*  NEST is free software: you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation, either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  NEST is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ *  iaf_psc_alpha_hom.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
 #ifndef IAF_PSC_ALPHA_HOM_H
 #define IAF_PSC_ALPHA_HOM_H
@@ -215,271 +215,271 @@ class iaf_psc_alpha_hom : public ArchivingNodeHom
 {
 
 public:
- iaf_psc_alpha_hom();
- iaf_psc_alpha_hom( const iaf_psc_alpha_hom& );
+  iaf_psc_alpha_hom();
+  iaf_psc_alpha_hom( const iaf_psc_alpha_hom& );
 
- /**
-  * Import sets of overloaded virtual functions.
-  * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-  * Hiding
-  */
- using Node::handle;
- using Node::handles_test_event;
+  /**
+   * Import sets of overloaded virtual functions.
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
+   */
+  using Node::handle;
+  using Node::handles_test_event;
 
- size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
- void handle( SpikeEvent& ) override;
- void handle( CurrentEvent& ) override;
- void handle( DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
- size_t handles_test_event( SpikeEvent&, size_t ) override;
- size_t handles_test_event( CurrentEvent&, size_t ) override;
- size_t handles_test_event( DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
- void get_status( DictionaryDatum& ) const override;
- void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
- void init_buffers_() override;
- void pre_run_hook() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
- void update( Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long ) override;
 
- // The next two classes need to be friends to access the State_ class/member
- friend class RecordablesMap< iaf_psc_alpha_hom >;
- friend class UniversalDataLogger< iaf_psc_alpha_hom >;
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< iaf_psc_alpha_hom >;
+  friend class UniversalDataLogger< iaf_psc_alpha_hom >;
 
- // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
- struct Parameters_
- {
-   /** Membrane time constant in ms. */
-   double Tau_;
+  struct Parameters_
+  {
+    /** Membrane time constant in ms. */
+    double Tau_;
 
-   /** Membrane capacitance in pF. */
-   double C_;
+    /** Membrane capacitance in pF. */
+    double C_;
 
-   /** Refractory period in ms. */
-   double TauR_;
+    /** Refractory period in ms. */
+    double TauR_;
 
-   /** Resting potential in mV. */
-   double E_L_;
+    /** Resting potential in mV. */
+    double E_L_;
 
-   /** External current in pA */
-   double I_e_;
+    /** External current in pA */
+    double I_e_;
 
-   /** Reset value of the membrane potential */
-   double V_reset_;
+    /** Reset value of the membrane potential */
+    double V_reset_;
 
-   /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-       I.e. the real threshold is (E_L_+Theta_). */
-   double Theta_;
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
+        I.e. the real threshold is (E_L_+Theta_). */
+    double Theta_;
 
-   /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
-       I.e. the real lower bound is (LowerBound_+E_L_). */
-   double LowerBound_;
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
+        I.e. the real lower bound is (LowerBound_+E_L_). */
+    double LowerBound_;
 
-   /** Time constant of excitatory synaptic current in ms. */
-   double tau_ex_;
+    /** Time constant of excitatory synaptic current in ms. */
+    double tau_ex_;
 
-   /** Time constant of inhibitory synaptic current in ms. */
-   double tau_in_;
+    /** Time constant of inhibitory synaptic current in ms. */
+    double tau_in_;
 
-   Parameters_(); //!< Sets default parameter values
+    Parameters_(); //!< Sets default parameter values
 
-   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-   /** Set values from dictionary.
-    * @returns Change in reversal potential E_L, to be passed to State_::set()
-    */
-   double set( const DictionaryDatum&, Node* node );
- };
+    /** Set values from dictionary.
+     * @returns Change in reversal potential E_L, to be passed to State_::set()
+     */
+    double set( const DictionaryDatum&, Node* node );
+  };
 
- // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
- struct State_
- {
-   double y0_; //!< Constant current
-   double dI_ex_;
-   double I_ex_;
-   double dI_in_;
-   double I_in_;
-   //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-   double y3_;
+  struct State_
+  {
+    double y0_; //!< Constant current
+    double dI_ex_;
+    double I_ex_;
+    double dI_in_;
+    double I_in_;
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y3_;
 
-   int r_; //!< Number of refractory steps remaining
+    int r_; //!< Number of refractory steps remaining
 
-   State_(); //!< Default initialization
+    State_(); //!< Default initialization
 
-   void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( DictionaryDatum&, const Parameters_& ) const;
 
-   /** Set values from dictionary.
-    * @param dictionary to take data from
-    * @param current parameters
-    * @param Change in reversal potential E_L specified by this dict
-    */
-   void set( const DictionaryDatum&, const Parameters_&, double, Node* node );
- };
+    /** Set values from dictionary.
+     * @param dictionary to take data from
+     * @param current parameters
+     * @param Change in reversal potential E_L specified by this dict
+     */
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* node );
+  };
 
- // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
- struct Buffers_
- {
+  struct Buffers_
+  {
 
-   Buffers_( iaf_psc_alpha_hom& );
-   Buffers_( const Buffers_&, iaf_psc_alpha_hom& );
+    Buffers_( iaf_psc_alpha_hom& );
+    Buffers_( const Buffers_&, iaf_psc_alpha_hom& );
 
-   //! Indices for access to different channels of input_buffer_
-   enum
-   {
-     SYN_IN = 0,
-     SYN_EX,
-     I0,
-     NUM_INPUT_CHANNELS
-   };
+    //! Indices for access to different channels of input_buffer_
+    enum
+    {
+      SYN_IN = 0,
+      SYN_EX,
+      I0,
+      NUM_INPUT_CHANNELS
+    };
 
-   /** buffers and sums up incoming spikes/currents */
-   MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
+    /** buffers and sums up incoming spikes/currents */
+    MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
-   //! Logger for all analog data
-   UniversalDataLogger< iaf_psc_alpha_hom > logger_;
- };
+    //! Logger for all analog data
+    UniversalDataLogger< iaf_psc_alpha_hom > logger_;
+  };
 
- // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
- struct Variables_
- {
+  struct Variables_
+  {
 
-   /** Amplitude of the synaptic current.
-       This value is chosen such that a postsynaptic potential with
-       weight one has an amplitude of 1 mV.
-    */
-   double EPSCInitialValue_;
-   double IPSCInitialValue_;
-   int RefractoryCounts_;
+    /** Amplitude of the synaptic current.
+        This value is chosen such that a postsynaptic potential with
+        weight one has an amplitude of 1 mV.
+     */
+    double EPSCInitialValue_;
+    double IPSCInitialValue_;
+    int RefractoryCounts_;
 
-   double P11_ex_;
-   double P21_ex_;
-   double P22_ex_;
-   double P31_ex_;
-   double P32_ex_;
-   double P11_in_;
-   double P21_in_;
-   double P22_in_;
-   double P31_in_;
-   double P32_in_;
-   double P30_;
-   double P33_;
-   double expm1_tau_m_;
+    double P11_ex_;
+    double P21_ex_;
+    double P22_ex_;
+    double P31_ex_;
+    double P32_ex_;
+    double P11_in_;
+    double P21_in_;
+    double P22_in_;
+    double P31_in_;
+    double P32_in_;
+    double P30_;
+    double P33_;
+    double expm1_tau_m_;
 
-   double weighted_spikes_ex_;
-   double weighted_spikes_in_;
- };
+    double weighted_spikes_ex_;
+    double weighted_spikes_in_;
+  };
 
- // Access functions for UniversalDataLogger -------------------------------
+  // Access functions for UniversalDataLogger -------------------------------
 
- //! Read out the real membrane potential
- inline double
- get_V_m_() const
- {
-   return S_.y3_ + P_.E_L_;
- }
+  //! Read out the real membrane potential
+  inline double
+  get_V_m_() const
+  {
+    return S_.y3_ + P_.E_L_;
+  }
 
- inline double
- get_I_syn_ex_() const
- {
-   return S_.I_ex_;
- }
+  inline double
+  get_I_syn_ex_() const
+  {
+    return S_.I_ex_;
+  }
 
- inline double
- get_I_syn_in_() const
- {
-   return S_.I_in_;
- }
+  inline double
+  get_I_syn_in_() const
+  {
+    return S_.I_in_;
+  }
 
- // Data members -----------------------------------------------------------
+  // Data members -----------------------------------------------------------
 
- /**
-  * Instances of private data structures for the different types
-  * of data pertaining to the model.
-  * @note The order of definitions is important for speed.
-  * @{
-  */
- Parameters_ P_;
- State_ S_;
- Variables_ V_;
- Buffers_ B_;
- /** @} */
+  /**
+   * Instances of private data structures for the different types
+   * of data pertaining to the model.
+   * @note The order of definitions is important for speed.
+   * @{
+   */
+  Parameters_ P_;
+  State_ S_;
+  Variables_ V_;
+  Buffers_ B_;
+  /** @} */
 
- //! Mapping of recordables names to access functions
- static RecordablesMap< iaf_psc_alpha_hom > recordablesMap_;
+  //! Mapping of recordables names to access functions
+  static RecordablesMap< iaf_psc_alpha_hom > recordablesMap_;
 };
 
 inline size_t
 nest::iaf_psc_alpha_hom::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
- SpikeEvent e;
- e.set_sender( *this );
- return target.handles_test_event( e, receptor_type );
+  SpikeEvent e;
+  e.set_sender( *this );
+  return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
 iaf_psc_alpha_hom::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
- if ( receptor_type != 0 )
- {
-   throw UnknownReceptorType( receptor_type, get_name() );
- }
- return 0;
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
 }
 
 inline size_t
 iaf_psc_alpha_hom::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
- if ( receptor_type != 0 )
- {
-   throw UnknownReceptorType( receptor_type, get_name() );
- }
- return 0;
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
 }
 
 inline size_t
 iaf_psc_alpha_hom::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
- if ( receptor_type != 0 )
- {
-   throw UnknownReceptorType( receptor_type, get_name() );
- }
- return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
 inline void
 iaf_psc_alpha_hom::get_status( DictionaryDatum& d ) const
 {
- P_.get( d );
- S_.get( d, P_ );
- ArchivingNodeHom::get_status( d );
+  P_.get( d );
+  S_.get( d, P_ );
+  ArchivingNodeHom::get_status( d );
 
- ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
 iaf_psc_alpha_hom::set_status( const DictionaryDatum& d )
 {
- Parameters_ ptmp = P_;                       // temporary copy in case of errors
- const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
- State_ stmp = S_;                            // temporary copy in case of errors
- stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
- // We now know that (ptmp, stmp) are consistent. We do not
- // write them back to (P_, S_) before we are also sure that
- // the properties to be set in the parent class are internally
- // consistent.
- ArchivingNodeHom::set_status( d );
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  ArchivingNodeHom::set_status( d );
 
- // if we get here, temporaries contain consistent set of properties
- P_ = ptmp;
- S_ = stmp;
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
 }
 
 } // namespace

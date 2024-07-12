@@ -765,7 +765,7 @@ public:
    */
   virtual double get_K_value( long t, size_t& dt_steps );
 
-  virtual double get_K_value (double );
+  virtual double get_K_value( double );
 
   virtual double get_LTD_value( double t );
 

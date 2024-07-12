@@ -219,7 +219,8 @@ nest::ArchivingNodeHom::set_spiketime( Time const& t_sp, double offset )
     // update spiking history
     Kminus_ = Kminus_ * std::exp( Time( Time::step( last_spike_ - t_sp_steps ) ).get_ms() * tau_minus_inv_ ) + 1.0;
     Kminus_triplet_ =
-      Kminus_triplet_ * std::exp( Time( Time::step( last_spike_ - t_sp_steps ) ).get_ms() * tau_minus_triplet_inv_ ) + 1.0;
+      Kminus_triplet_ * std::exp( Time( Time::step( last_spike_ - t_sp_steps ) ).get_ms() * tau_minus_triplet_inv_ )
+      + 1.0;
     last_spike_ = t_sp_steps;
     history_.push_back( histentry_step( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
   }

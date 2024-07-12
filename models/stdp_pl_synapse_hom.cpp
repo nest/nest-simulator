@@ -52,8 +52,6 @@ STDPPLHomCommonProperties::STDPPLHomCommonProperties()
   , alpha_( 1.0 )
   , mu_( 0.4 )
 {
-  init_exp_tau_plus();
-  init_exp_tau_minus();
 }
 
 void

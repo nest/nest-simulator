@@ -105,6 +105,11 @@ setting V_peak too high.
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
+.. note::
+
+   A maximum integration step size of 10 μs is enforced, regardless of the
+   resolution set in the NEST kernel.
+
 See also [1]_.
 
 

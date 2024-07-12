@@ -47,7 +47,6 @@ class TestSTDPPlSynapse(unittest.TestCase):
     """
 
     def init_params(self):
-        self.resolution = 0.1  # [ms]
         self.simulation_duration = 1e3  # [ms]
         self.synapse_model = "stdp_pl_synapse_hom"
         self.presynaptic_firing_rate = 100.0  # [ms^-1]
@@ -78,6 +77,12 @@ class TestSTDPPlSynapse(unittest.TestCase):
         self.hardcoded_post_times = np.array(
             [2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float
         )
+
+        # scale hardcoded times to resolution; this is a temporary fix to test stdp_pl_synapse_hom's calibrate()
+        # and should be refactored along with the test setup, see #3250
+        self.hardcoded_pre_times = np.round(self.hardcoded_pre_times / self.resolution) * self.resolution
+        self.hardcoded_post_times = np.round(self.hardcoded_post_times / self.resolution) * self.resolution
+
         self.hardcoded_trains_length = 5.0 + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
@@ -371,18 +376,19 @@ class TestSTDPPlSynapse(unittest.TestCase):
         plt.close(fig)
 
     def test_stdp_synapse(self):
-        self.init_params()
-        for self.dendritic_delay in (1.0, 0.5, self.resolution):
-            self.synapse_parameters["delay"] = self.dendritic_delay
-            for self.min_delay in (1.0, 0.4, self.resolution):
-                for self.max_delay in (3.0, 1.0):
-                    self.min_delay = min(self.min_delay, self.max_delay)
-                    self.max_delay = max(self.min_delay, self.max_delay)
-                    for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
-                        fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
-                        fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
-                        fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
-                        self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+        for self.resolution in (0.1, 0.125):
+            self.init_params()
+            for self.dendritic_delay in (1.0, 0.5, self.resolution):
+                self.synapse_parameters["delay"] = self.dendritic_delay
+                for self.min_delay in (1.0, 0.4, self.resolution):
+                    for self.max_delay in (3.0, 1.0):
+                        self.min_delay = min(self.min_delay, self.max_delay)
+                        self.max_delay = max(self.min_delay, self.max_delay)
+                        for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
+                            fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+                            fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
+                            fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
+                            self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
 
     def test_hom_node_illegal_connections(self):
         node = nest.Create("iaf_psc_alpha")
@@ -403,5 +409,3 @@ class TestSTDPPlSynapse(unittest.TestCase):
         with self.assertRaises(NESTErrors.DictError):
             nest.SetStatus(node_hom, {"tau_minus": 16.0})
         nest.GetStatus(node_hom, "tau_minus")
-
-# todo: add res change test

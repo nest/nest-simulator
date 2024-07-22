@@ -124,15 +124,17 @@ function displayModels(models) {
                     // Use DOMParser to parse the HTML content
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(htmlContent, "text/html");
-                    const firstHeading = doc.querySelector("h1") ? doc.querySelector("h1").textContent : "No Heading";
+                    let firstHeading = doc.querySelector("h1") ? doc.querySelector("h1").textContent : "No Heading";
 
+                    // Remove pilcrow character
+                    firstHeading = firstHeading.replace(/\W$/g, '');
                     // Create the link with model name and first heading
                     const link = document.createElement('a');
                     const modelBaseName = model.split('/').pop().replace('.html', ''); // Extract base name for display
                     link.href = model;  // Use the full model path directly
                     link.textContent = `${firstHeading}`; // Include the first heading
                     link.className = 'model-link'; // For CSS styling
-                    link.target = '_blank'; // Opens link in a new tab
+                    // link.target = '_blank'; // Opens link in a new tab
 
                     // Create a list item and append the link
                     const li = document.createElement('li');

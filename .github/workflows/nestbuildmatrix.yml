@@ -632,7 +632,8 @@ jobs:
 
       - name: "Install Python dependencies"
         run: |
-          python -m pip install --upgrade pip setuptools cython
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --force-reinstall --upgrade cython  # this finds a broken preinstall if not explicitly forced
           python -c "import setuptools; print('package location:', setuptools.__file__)"
           pip list
 

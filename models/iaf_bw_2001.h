@@ -27,6 +27,7 @@
 #include "config.h"
 
 #ifdef HAVE_GSL
+#ifdef HAVE_BOOST
 
 // C includes:
 #include <gsl/gsl_errno.h>
@@ -516,5 +517,6 @@ iaf_bw_2001::set_status( const DictionaryDatum& d )
 };
 } // namespace
 
+#endif // HAVE_BOOST
 #endif // HAVE_GSL
 #endif // IAF_BW_2001

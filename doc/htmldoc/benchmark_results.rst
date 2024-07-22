@@ -8,57 +8,73 @@ NEST performance is continuously monitored and improved across various network s
 Here we show benchmarking results for NEST version 3.8 on Jureca-DC.
 
 
-.. grid:: 1 1 2 2
+Strong scaling experiment of the Microcircuit model [1]_
+---------------------------------------------------------
+
+.. grid:: 1 1 1 1
 
    .. grid-item::
-       :columns:  5
+       :columns: 10
        :class: sd-align-major-center
 
-       .. figure:: /static/img/replace_me.png
+       .. image:: /static/img/mc_benchmark.png
 
-           Wall time versus number of nodes
-
-           some more text
+.. grid:: 1 1 1 1
 
    .. grid-item::
-       :columns:  7
+       :columns: 10
+       :class: sd-align-minor-center
 
-       **Strong scaling experiment of the Microcircuit model** [1]_
 
        * The model has ~80 000 neurons and ~300 million synapses
        * Increasing number of computing resources decrease simulation time
-       * The model runs faster than real time when using more than 2 nodes
+       * The model runs faster than real time
 
 
-   .. grid-item::
-       :columns: 5
+
+
+Strong scaling experiment of the Multi-area-model [2]_
+-------------------------------------------------------
+
+.. grid:: 1 1 1 1
+
+ .. grid-item::
        :class: sd-align-major-center
+       :columns: 10
 
-       .. figure:: /static/img/replace_me.png
+       .. image:: /static/img/mam_benchmark.png
 
-           Wall time versus number of nodes
 
-   .. grid-item::
-       :columns: 7
+.. grid:: 1 1 1 1
 
-       **Strong scaling experiment of the Multi-area-model** [2]_
+ .. grid-item::
+       :columns: 10
+       :class: sd-align-minor-center
 
        * The model has ~3.2 million neurons and ~10 billion synapses
        * Steady decrease of run time with additional compute resources
 
 
+
+
+Weak scaling experiment of the HPC benchmark model [3]_
+--------------------------------------------------------
+
+.. grid:: 1 1 1 1
+
    .. grid-item::
-       :columns: 5
+       :columns: 10
        :class: sd-align-major-center
 
-       .. figure:: /static/img/replace_me.png
+       .. image:: /static/img/hpc_benchmark.png
 
-         Wall time versus number of nodes
+
+.. grid:: 1 1 1 1
 
    .. grid-item::
-       :columns: 7
+       :columns: 10
+       :class: sd-align-minor-center
 
-       **Weak scaling experiment of the HPC benchmark model** [3]_
 
        * The size of network scales proportionally with the computational resources used
        * Largest network size: ~5.6 million neurons and ~61 billion synapses

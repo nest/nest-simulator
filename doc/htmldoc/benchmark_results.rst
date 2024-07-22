@@ -77,7 +77,7 @@ Weak scaling experiment of the HPC benchmark model [3]_
 
 
        * The size of network scales proportionally with the computational resources used
-       * Largest network size: ~5.6 million neurons and ~61 billion synapses
+       * Largest network size in this diagram: ~5.6 million neurons and ~61 billion synapses
        * The figure shows that NEST can handle massive networks and simulate them efficiently
 
 

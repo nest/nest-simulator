@@ -522,7 +522,7 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music, readline
         use:
           - "optimize, warning"
           - "boost, optimize, warning"
@@ -565,24 +565,42 @@ jobs:
         run: |
           sudo apt-get update
           # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install ccache
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
-          sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
+          sudo apt-get install \
+                           ccache \
+                           python3-all-dev jq libpcre3 libpcre3-dev \
+                           pkg-config
+
+          # not sure why these would be required:
+          #   sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
+          
           # Install MPI dependencies regardless of whether we compile NEST with or without MPI, so the installation of MPI4Py works
-          sudo apt-get install openmpi-bin libopenmpi-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install pkg-config
+          sudo apt-get install openmpi-bin
+
           sudo ldconfig
+
+      - name: "Install Readline dependencies"
+        if: "${{ contains(matrix.use, 'readline') }}"
+        run: "sudo apt-get install libreadline6-dev libncurses5-dev"
+
+      - name: "Install LTDL dependencies"
+        if: "${{ contains(matrix.use, 'ltdl') }}"
+        run: "sudo apt-get install libltdl-dev"
+
+      - name: "Install Boost dependencies"
+        if: "${{ contains(matrix.use, 'boost') }}"
+        run: "sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev"
+
+      - name: "Install OpenMPI development dependencies"
+        if: "${{ contains(matrix.use, 'mpi') }}"
+        run: "sudo apt-get install libopenmpi-dev"
 
       - name: "Install GSL system dependencies"
         if: "${{ contains(matrix.use, 'gsl') }}"
-        run: |
-          sudo apt-get install libgsl0-dev
+        run: "sudo apt-get install libgsl0-dev"
 
       - name: "Install HDF5 system dependencies"
         if: "${{ contains(matrix.use, 'hdf5') }}"
-        run: |
-          sudo apt-get install libhdf5-dev
+        run: "sudo apt-get install libhdf5-dev"
 
       - name: "Restore ccache"
         # Using CCache to re-use compiled objects from prior runs that have the same

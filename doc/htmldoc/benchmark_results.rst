@@ -51,7 +51,7 @@ Strong scaling experiment of the Multi-area-model [2]_
        :columns: 10
        :class: sd-align-minor-center
 
-       * The model has ~3.2 million neurons and ~10 billion synapses
+       * The model has ~4.1 million neurons and ~24 billion synapses
        * Steady decrease of run time with additional compute resources
 
 
@@ -77,7 +77,7 @@ Weak scaling experiment of the HPC benchmark model [3]_
 
 
        * The size of network scales proportionally with the computational resources used
-       * Largest network size in this diagram: ~5.6 million neurons and ~61 billion synapses
+       * Largest network size in this diagram: ~5.8 million neurons and ~65 billion synapses
        * The figure shows that NEST can handle massive networks and simulate them efficiently
 
 

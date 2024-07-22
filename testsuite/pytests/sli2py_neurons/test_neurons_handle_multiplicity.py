@@ -87,6 +87,8 @@ extra_params = {
         "receptor_type": 1,
     },
     "ht_neuron": {"receptor_type": 1},
+    "iaf_bw_2001": {"receptor_type": 1},  # cannot test NMDA port since pre-synaptic
+    "iaf_bw_2001_exact": {"receptor_type": 1},  # also must be of same neuron type in that case
 }
 
 

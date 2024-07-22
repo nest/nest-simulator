@@ -5,44 +5,7 @@ Model directory
 ===============
 
 
-
-Find a model
-------------
-
 NEST has over 100 models, choose an option for finding the one you need!
-
-.. grid:: 1 1 2 2
-  :gutter: 1
-
-  .. grid-item::
-
-     .. grid:: 1 1 1 1
-         :gutter: 1
-
-         .. grid-item-card:: Model selector
-
-            * Filter models by tags with our :ref:`model_selector`
-
-         .. grid-item-card:: A-Z list
-
-            * Get the :ref:`full_list`
-
-  .. grid-item::
-
-     .. grid:: 1 1 1 1
-         :gutter: 1
-
-
-         .. grid-item-card:: Learn more about
-
-
-            * :ref:`neuron models <neurons_index>`
-
-            * :ref:`synapse models <synapse_index>`
-
-            * :ref:`device models <device_index>`
-
-            * :ref:`creating and customizing models with NESTML <nestml_ad>`
 
 .. _model_selector:
 
@@ -111,9 +74,30 @@ Complete A-Z list of models
 
 
 
+Learn more about . . .
+-----------------------
+
+.. grid:: 1 1 2 2
+  :gutter: 1
+
+  .. grid-item-card::
+
+      * :ref:`neuron models <neurons_index>`
+
+      * :ref:`synapse models <synapse_index>`
+
+      * :ref:`devices <device_index>`
+
+      * :ref:`creating and customizing models with NESTML <nestml_ad>`
+
+      * :ref:`Model terminology <model_meaning>`
+
 
 
 ----
+
+.. _model_meaning:
+
 
 What we mean by `models`
 ------------------------
@@ -126,13 +110,15 @@ The term `models` in the context of NEST (and the field of computational neurosc
    NEST, the terms neuron and synapse models are also used for the C++
    implementations of these conceptual entities. Most of the models in
    NEST are based on either peer-reviewed publications or text books
-   like [1]_.
+   like [1]_. This is what we mean for models in our model directory.
+
 2. **Network models**. These models are created from individual neuron
    and synapse models using the different commands provided by the
    :ref:`PyNEST API <pynest_api>`. Examples for such network models
    are the :doc:`microcircuit model
    <../auto_examples/Potjans_2014/index>` or the `multi-area model
    <https://inm-6.github.io/multi-area-model/>`_).
+   You can also explore :doc:`all our example networks </examples/index>`.
 
 .. seealso::
 
@@ -151,10 +137,6 @@ written in Python with high simulation performance through the automated generat
 .. seealso::
 
   See the :doc:`NESTML docs for installation details <nestml:index>`.
-
-.. note::
-
-  NESTML is also available as part of NEST's official :ref:`docker image <docker>`.
 
 References
 ~~~~~~~~~~

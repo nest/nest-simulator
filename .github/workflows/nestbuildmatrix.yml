@@ -814,6 +814,13 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
+      - name: "List available packages"
+        run: |
+          gcc --version
+          python --version
+          apt list
+          pip list
+
       - name: "Configure NEST build"
         run: |
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"

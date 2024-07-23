@@ -676,6 +676,13 @@ jobs:
           PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
           ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
 
+      - name: "List available packages"
+        run: |
+          gcc --version
+          python --version
+          apt list
+          pip list
+
       - name: "Configure NEST build"
         env:
           CMAKE_C_COMPILER_LAUNCHER: ccache
@@ -812,13 +819,6 @@ jobs:
           python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py h5py cython matplotlib terminaltables pandoc pandas
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
-
-      - name: "List available packages"
-        run: |
-          gcc --version
-          python --version
-          apt list
           pip list
 
       - name: "Configure NEST build"

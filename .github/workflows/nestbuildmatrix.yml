@@ -583,6 +583,12 @@ jobs:
         if: "${{ contains(matrix.use, 'ltdl') }}"
         run: "sudo apt-get install libltdl-dev"
 
+      - name: "Uninstall Boost development libraries"
+        if: "${{ ! contains(matrix.use, 'boost') }}"
+        run: |
+          apt list --installed 'libboost*'
+          sudo apt-get remove --autoremove 'libboost*-dev'
+
       - name: "Install Boost dependencies"
         if: "${{ contains(matrix.use, 'boost') }}"
         run: "sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev"

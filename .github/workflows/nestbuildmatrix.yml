@@ -454,7 +454,7 @@ jobs:
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
           name: "sphinx-rtd output"
           path: |
@@ -500,7 +500,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         with:
           path: |
             build/sphinx-output.log
@@ -716,7 +716,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
@@ -844,7 +844,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
         if: ${{ always() }}
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"

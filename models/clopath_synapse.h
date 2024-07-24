@@ -247,16 +247,17 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   std::deque< histentry_extended >::iterator start;
   std::deque< histentry_extended >::iterator finish;
 
+  // facilitation due to postsynaptic activity since last pre-synaptic spike
+
   // For a new synapse, t_lastspike_ contains the point in time of the last
   // spike. So we initially read the
   // history(t_last_spike - dendritic_delay, ..., T_spike-dendritic_delay]
   // which increases the access counter for these entries.
-  // At registration, all entries' access counters of
-  // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
-  // details.
+
+  // Note that in the STDP synapse, this loop iterates over post spikes,
+  // whereas here we loop over continuous-time history entries (see
+  // histentry_extended).
   target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to postsynaptic activity since last pre-synaptic spike
   while ( start != finish )
   {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );

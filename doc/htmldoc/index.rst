@@ -123,6 +123,7 @@ How NEST works --- The Big Picture
    Models <models/index>
    Python API <ref_material/pynest_api/index>
    ref_material/glossary
+   benchmark_results
    Cite NEST <citing-nest>
    License <license>
 

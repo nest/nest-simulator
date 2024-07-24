@@ -271,11 +271,6 @@ ac_generator::local_receiver() const
   return true;
 }
 
-// inline StimulationDevice::Type
-// ac_generator::get_type() const
-// {
-//   return StimulationDevice::Type::CURRENT_GENERATOR;
-// }
 
 } // namespace
 

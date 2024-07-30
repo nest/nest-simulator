@@ -160,7 +160,7 @@ brunel_params = {
     "NE": int(9000 * params["scale"]),  # number of excitatory neurons
     "NI": int(2250 * params["scale"]),  # number of inhibitory neurons
     "Nrec": 1000,  # number of neurons to record spikes from
-    "model_params": {  # Set variables for iaf_psc_alpha
+    "model_params": {  # Set variables for iaf_psc_alpha_hom
         "E_L": 0.0,  # Resting membrane potential(mV)
         "C_m": 250.0,  # Capacity of the membrane(pF)
         "tau_m": 10.0,  # Membrane time constant(ms)
@@ -171,7 +171,6 @@ brunel_params = {
         "tau_syn_ex": tau_syn,
         # time const. postsynaptic inhibitory currents(ms)
         "tau_syn_in": tau_syn,
-        "tau_minus": 30.0,  # time constant for STDP(depression)
         # V can be randomly initialized see below
         "V_m": 5.7,  # mean value of membrane potential
     },
@@ -193,6 +192,7 @@ brunel_params = {
         "lambda": 0.1,  # STDP step size
         "mu": 0.4,  # STDP weight dependence exponent(potentiation)
         "tau_plus": 15.0,  # time constant for potentiation
+        "tau_minus": 30.0,  # time constant for STDP(depression)
     },
     "eta": 1.685,  # scaling of external stimulus
     "filestem": params["path_name"],
@@ -224,10 +224,10 @@ def build_network(logger):
     nest.overwrite_files = True
 
     nest.message(M_INFO, "build_network", "Creating excitatory population.")
-    E_neurons = nest.Create("iaf_psc_alpha", NE, params=model_params)
+    E_neurons = nest.Create("iaf_psc_alpha_hom", NE, params=model_params)
 
     nest.message(M_INFO, "build_network", "Creating inhibitory population.")
-    I_neurons = nest.Create("iaf_psc_alpha", NI, params=model_params)
+    I_neurons = nest.Create("iaf_psc_alpha_hom", NI, params=model_params)
 
     if brunel_params["randomize_Vm"]:
         nest.message(M_INFO, "build_network", "Randomizing membrane potentials.")

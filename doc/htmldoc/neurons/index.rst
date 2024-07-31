@@ -54,20 +54,6 @@ All about neurons in NEST
 
 ----
 
-NEST simulation neuron state update
-------------------------------------
-
-.. grid:: 1 1 2 2
-   :gutter: 2
-
-   .. grid-item::
-
-      .. image:: /static/img/neuron_state.svg
-
-   .. grid-item::
-
-      .. image:: /static/img/neuron_state_comp.svg
-
 .. |nav| image:: /static/img/GPS-Settings-256_nest.svg
 .. |script| image:: /static/img/script_white.svg
       :scale: 20%

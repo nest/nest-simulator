@@ -29,14 +29,26 @@ simulation and allow the efficient use of computer clusters, NEST uses a
 following figure shows the basic loop that is run upon a call to
 :py:func:`.Simulate`:
 
-.. figure:: ../static/img/simulation_loop-241x300.png
+.. figure:: ../static/img/simulation_update.png
    :alt: Simulation Loop
+   :width: 35%
 
    Simulation Loop
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark
 gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
+
+.. grid:: 1 1 2 2
+   :gutter: 2
+
+   .. grid-item::
+
+      .. image:: /static/img/deliver_events.svg
+
+   .. grid-item::
+
+      .. image:: /static/img/call_USt.svg
 
 .. _simulation_resolution:
 

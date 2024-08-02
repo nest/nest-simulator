@@ -281,7 +281,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    // store rate in Hz
+    // store rate in spks/s
     B_.logger_.record_data( origin.get_steps() + lag );
   }
 }

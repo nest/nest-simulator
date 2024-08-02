@@ -217,7 +217,7 @@ soma_inh_inp = g_inh(ampl_inh, t_start, t_end)
 # poisson generators. The recorded spike times are then given to spike
 # generators.
 n_pg = 200  # number of poisson generators
-p_rate = 10.0  # rate in Hz
+p_rate = 10.0  # rate in spks/s
 
 pgs = nest.Create("poisson_generator", n=n_pg, params={"rate": p_rate})
 

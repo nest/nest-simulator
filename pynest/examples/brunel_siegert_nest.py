@@ -202,5 +202,5 @@ data = multimeter.events
 rates_ex = data["rate"][numpy.where(data["senders"] == siegert_ex.global_id)]
 rates_in = data["rate"][numpy.where(data["senders"] == siegert_in.global_id)]
 times = data["times"][numpy.where(data["senders"] == siegert_in.global_id)]
-print(f"Excitatory rate   : {rates_ex[-1]:.2f} Hz")
-print(f"Inhibitory rate   : {rates_in[-1]:.2f} Hz")
+print(f"Excitatory rate   : {rates_ex[-1]:.2f} spks/s")
+print(f"Inhibitory rate   : {rates_in[-1]:.2f} spks/s")

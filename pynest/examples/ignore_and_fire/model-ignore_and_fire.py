@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #  model-ignore_and_fire.py
 #

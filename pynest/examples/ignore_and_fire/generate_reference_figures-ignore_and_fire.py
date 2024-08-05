@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # generate_references_figures-ignore_and_fire.py
 #

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 #  parameter_dict-ignore_and_fire.py
 #

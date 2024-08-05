@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # generate_reference_data-ignore_and_fire.py
 #

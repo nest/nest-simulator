@@ -1,17 +1,35 @@
+#
+# scaling-ignore_and_fire.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 """
 Scaling experiment
-==================
+------------------
 
 * demonstrates scaling experiments with a plastic two-population network,
 * illustrates problems arising with standard ``integrate-and-fire`` dynamics, and
 * describes how to perform exact scaling experiments by using ``ignore_and_fire`` neurons.
 """
 
+import json
 import os
 import sys
 import time
-
-import json
 
 import matplotlib.pyplot as plt
 import model
@@ -21,12 +39,12 @@ from matplotlib import gridspec
 ##########################################################
 ## parameters
 neuron_models = ["iaf_psc_alpha", "ignore_and_fire"]  ## neuron models
-Ns = numpy.arange(1250, 15000, 1250)                  ## network sizes
+Ns = numpy.arange(1250, 15000, 1250)  ## network sizes
 
-data_path_root = "./data"                             ## root of path to simulation data
+data_path_root = "./data/"  ## root of path to simulation data
 
 simulate = True
-simulate = False
+# simulate = False
 analyse = True
 # analyse = False
 
@@ -51,7 +69,7 @@ def run_model(neuron_model, N, data_path_root):
     ## create and simulate network
     model_instance = model.Model(parameters)
 
-    start = time.time()    
+    start = time.time()
     model_instance.create()
     model_instance.connect()
     stop = time.time()
@@ -169,7 +187,6 @@ def save_dict_as_json(data_dict, filename_root, path):
     return
 
 
-##########################################################
 def load_data(neuron_model, N, data_path_root):
     """
     Loads a data dictionary from a json file.
@@ -177,14 +194,12 @@ def load_data(neuron_model, N, data_path_root):
     data = {}
 
     ## read data from json file
-    data_path = data_path_root + "/N" + str(N)  + "/" + neuron_model
+    data_path = data_path_root + "/N" + str(N) + "/" + neuron_model
     with open(data_path + "/data.json") as f:
         data = json.load(f)
 
     return data
 
-
-##########################################################
 
 if analyse:
     build_time = numpy.zeros((len(neuron_models), len(Ns)))
@@ -224,16 +239,17 @@ if analyse:
     ## plotting
 
     from matplotlib import rcParams
-    rcParams['figure.figsize']  = (3,4)
-    rcParams['figure.dpi']      = 300
-    rcParams['font.family']     = 'sans-serif'
-    rcParams['font.size']       = 8
-    rcParams['legend.fontsize'] = 8
-    rcParams['axes.titlesize']  = 8
-    rcParams['axes.labelsize']  = 8
-    rcParams['ytick.labelsize'] = 8
-    rcParams['xtick.labelsize'] = 8
-    rcParams['text.usetex']     = True
+
+    rcParams["figure.figsize"] = (3, 4)
+    rcParams["figure.dpi"] = 300
+    rcParams["font.family"] = "sans-serif"
+    rcParams["font.size"] = 8
+    rcParams["legend.fontsize"] = 8
+    rcParams["axes.titlesize"] = 8
+    rcParams["axes.labelsize"] = 8
+    rcParams["ytick.labelsize"] = 8
+    rcParams["xtick.labelsize"] = 8
+    rcParams["text.usetex"] = True
 
     fig = plt.figure(num=3)
     plt.clf()
@@ -269,18 +285,26 @@ if analyse:
         ax1.set_xlim(Ns[0], Ns[-1])
         ax1.set_xticklabels([])
         ax1.set_ylabel(r"simulation time (s)")
-        #ax1.set_title(r"fixed in-degree $K=1250$")
+        # ax1.set_title(r"fixed in-degree $K=1250$")
         ax1.legend(loc=2)
-        
+
         ## firing rate
         ax2.plot(
-            Ns, rate[cm, :], "-o", mfc=clrs[cm], mec=clrs[cm], ms=ms, lw=lw, color=clrs[cm], label=r"\texttt{%s}" % neuron_model
+            Ns,
+            rate[cm, :],
+            "-o",
+            mfc=clrs[cm],
+            mec=clrs[cm],
+            ms=ms,
+            lw=lw,
+            color=clrs[cm],
+            label=r"\texttt{%s}" % neuron_model,
         )
         ax2.set_xlim(Ns[0], Ns[-1])
         ax2.set_xticklabels([])
         ax2.set_ylim(0.5, 2)
         ax2.set_ylabel(r"firing rate (1/s)")
-        #ax2.legend(loc=1)
+        # ax2.legend(loc=1)
 
         ## weight stat
         if cm == 0:
@@ -309,4 +333,4 @@ if analyse:
         ax3.legend(loc=1)
 
     plt.subplots_adjust(left=0.17, bottom=0.1, right=0.95, top=0.95, hspace=0.1)
-    plt.savefig("../figures/scaling.png")
+    plt.savefig("figures/scaling.png")

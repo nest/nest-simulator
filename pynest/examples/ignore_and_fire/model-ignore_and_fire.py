@@ -1,3 +1,22 @@
+#
+#  model-ignore_and_fire.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 """
 Scalable two population STDP network model
 ------------------------------------------
@@ -8,7 +27,7 @@ a single cortical layer. It is derived from the model proposed in
 (Brunel [1]_), but accounts for the synaptic weight dynamics for
 connections between excitatory neurons. The weight dynamics are
 described by the spike-timing-dependent plasticity (STDP) model derived
-by Morrison et al. ( [7]_). The model provides a mechanism underlying the
+by Morrison et al. ( [2]_). The model provides a mechanism underlying the
 formation of broad distributions of synaptic weights in combination with
 asynchronous irregular spiking activity (see figure below). A detailed
 
@@ -26,6 +45,17 @@ activity. The plasticity dynamics remains intact.
 Default parameters are provided in "parameter_dicts.py".
 For more information see :doc:`/auto_examples/ignore_and_fire/index`.
 
+References
+~~~~~~~~~~
+
+.. [1] Brunel N (2000). Dynamics of networks of randomly connected excitatory
+       and inhibitory spiking neurons. Journal of Physiology-Paris
+       94(5-6):445-463. <https://doi.org/10.1023/A:1008925309027>
+
+.. [2] Morrison A. Aertsen, A. and Diesmann M. 2007.
+       Spike-timing-dependent plasticity in balanced random networks.
+       Neural Computation. 19(6):1437–1467.
+
 """
 
 import copy
@@ -36,9 +66,9 @@ import nest
 import numpy as np
 import scipy.special
 
-##############################################
-#    Instantiation of the TwoPopulationNetworkPlastic model and its PyNEST implementation.
-#
+###############################################################################
+# Instantiation of the TwoPopulationNetworkPlastic model
+# and its PyNEST implementation.
 
 
 class Model:
@@ -75,7 +105,7 @@ class Model:
 
         # create data directory (if necessary)
         os.system("mkdir -p " + self.pars["data_path"])
-    
+
         # initialize NEST kernel
         nest.ResetKernel()
         nest.SetKernelStatus(
@@ -112,7 +142,6 @@ class Model:
         elif self.pars["neuron_model"] == "ignore_and_fire":
             self.__neuron_params = {}
 
-    ##############################################
     def __derived_parameters(self, parameters):
         """
         Set additional parameters derived from base parameters.
@@ -154,10 +183,9 @@ class Model:
         # number of neurons spikes are recorded from
         if self.pars["N_rec_spikes"] == "all":
             self.pars["N_rec_spikes"] = self.pars["N"]
-                    
+
         return
 
-    ##############################################
     def create(self):
         """
         Create and configure all network nodes (neurons + recording and stimulus devices),
@@ -238,7 +266,6 @@ class Model:
 
         return
 
-    ##############################################
     def connect(self):
         """
         Connect network and devices.
@@ -313,7 +340,6 @@ class Model:
 
         return
 
-    ##############################################
     def simulate(self, t_sim):
         """
         Run simulation.
@@ -331,7 +357,6 @@ class Model:
 
         return
 
-    ##############################################
     def save_parameters(self, filename_root, path):
         """
         Save model-instance parameters to file.
@@ -352,7 +377,6 @@ class Model:
 
         return
 
-    ##############################################
     def get_connectivity(self, pop_pre, pop_post, filename=None):
         """
         Extract connectivity for subpopulations pop_pre and pop_post
@@ -400,7 +424,6 @@ class Model:
         return C
 
 
-##############################################
 def get_default_parameters():
     """
     Import default model-parameter file.
@@ -419,7 +442,6 @@ def get_default_parameters():
     return pars
 
 
-##############################################
 def get_data_file_list(path, label):
     """
     Searches for files with extension "*.dat" in directory "path" with names starting with "label",
@@ -453,8 +475,6 @@ def get_data_file_list(path, label):
     return files
 
 
-##############################################
-# def load_spike_data(path, label, skip_rows = 3):
 def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
     """
     Load spike data from files.
@@ -537,7 +557,6 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
     return spikes
 
 
-##############################################
 def load_connectivity_data(path, label, skip_rows=1):
     """
     Load connectivity data (weights and delays) from files.
@@ -586,9 +605,6 @@ def load_connectivity_data(path, label, skip_rows=1):
     return C
 
 
-#############################################
-
-
 def unit_psp_amplitude(tau_m, C_m, tau_s):
     """
     Compute PSP maximum (mV) for LIF with alpha-shaped PSCs with unit amplitude 1.
@@ -628,14 +644,12 @@ def unit_psp_amplitude(tau_m, C_m, tau_s):
     return J_unit
 
 
-##############################################
 def LambertWm1(x):
     y = scipy.special.lambertw(x, k=-1 if x < 0 else 0).real
 
     return y
 
 
-##############################################
 def get_index(x, y):
     """
     Return indices of x where x==y.
@@ -655,7 +669,6 @@ def get_index(x, y):
     return np.where(x == y)[0]
 
 
-##############################################
 def get_connectivity_matrix(connectivity, pop_pre=[], pop_post=[]):
     """
     Generate connectivity matrix from connectivity data in "connectivity"
@@ -705,9 +718,5 @@ def get_connectivity_matrix(connectivity, pop_pre=[], pop_post=[]):
     return W, pop_pre, pop_post
 
 
-##############################################
 def get_weight_distribution(connectivity, weights):
     return np.histogram(connectivity[:, 2], weights, density=True)[0]
-
-
-##############################################

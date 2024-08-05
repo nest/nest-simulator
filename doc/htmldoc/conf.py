@@ -81,7 +81,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
-    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg",
+    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile",
 }
 
 # General information about the project.

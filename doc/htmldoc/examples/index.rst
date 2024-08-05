@@ -243,7 +243,7 @@ PyNEST examples
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Performance testing
-           :img-top: ../static/img/nest_logo-faded.png
+           :img-top: ../static/img/NetworkSketch_TwoPopulationNetworkPlastic.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
            * :doc:`../auto_examples/ignore_and_fire/index`

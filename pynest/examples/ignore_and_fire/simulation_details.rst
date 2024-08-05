@@ -1,8 +1,5 @@
-Two population STDP network model simulation
-============================================
-
 Simulation details
-------------------
+==================
 
 By default, this implementation is based on the LIF neuron,
 :doc:`iaf_psc_alpha </models/iaf_psc_alpha>` and the

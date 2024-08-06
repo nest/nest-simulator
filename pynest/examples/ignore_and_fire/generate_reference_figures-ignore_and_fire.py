@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# generate_references_figures-ignore_and_fire.py
+# generate_reference_figures-ignore_and_fire.py
 #
 # This file is part of NEST.
 #

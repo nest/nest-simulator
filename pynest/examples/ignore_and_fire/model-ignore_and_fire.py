@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#  model-ignore_and_fire.py
+# model-ignore_and_fire.py
 #
 # This file is part of NEST.
 #

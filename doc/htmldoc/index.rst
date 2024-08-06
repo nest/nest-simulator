@@ -99,10 +99,10 @@ How NEST works --- The Big Picture
     .. grid-item::
 
 
-        A NEST simulation is created with input from :doc:`stimulation devices </models/index_generator>`,
-        :doc:`neuron models </models/index_neuron>`, and :doc:`synapse models </models/index_synapse>`,
+        A NEST simulation is created with input from :doc:`stimulation devices </devices/index>`,
+        :doc:`neuron models </neurons/index>`, and :doc:`synapse models </synapses/index>`,
         along with  :ref:`connection rules <connectivity_concepts>`.
-        You can choose what data to record with :doc:`recording devices </models/index_recorder>`.
+        You can choose what data to record with :doc:`recording devices </devices/index>`.
         After simulation, the output is ready for analysis with NEST's built in :py:mod:`.raster_plot` and :py:mod:`.voltage_trace`
         modules or external tools such as :doc:`Elephant <elephant:index>`.
 

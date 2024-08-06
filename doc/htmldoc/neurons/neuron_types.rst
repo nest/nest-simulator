@@ -63,7 +63,7 @@ Spiking neurons
 Geometry
 ~~~~~~~~
 
-.. grid:: 1 2 2 2
+ grid:: 1 2 2 2
 
    .. grid-item::
       :columns: 2

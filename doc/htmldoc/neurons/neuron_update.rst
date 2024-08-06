@@ -20,11 +20,58 @@ subthreshold dynamics are integrated throughout the alorithm ??
 
 What about other parameters?
 
+.. grid::
 
-.. image:: /static/img/neuron_update.svg
+   .. grid-item::
+      :columns: 6
+
+        .. image:: /static/img/neuron_update.svg
 
 Where ``y`` is a vector of state variables, which is updated according to the homogeneous differetial
 equation, that is, in the absence of input.
+
+Point process
+-------------
+
+.. grid::
+
+   .. grid-item::
+      :columns: 6
+
+        .. image:: /static/img/pp_workflow.png
+
+
+Rate neurons
+------------
+
+
+.. grid::
+
+   .. grid-item::
+      :columns: 6
+
+        .. image:: /static/img/rate_neuron_workflow.png
+
+
+Compartmental neurons
+---------------------
+
+.. grid::
+
+   .. grid-item::
+      :columns: 6
+
+        .. image:: /static/img/cm_default_workflow.png
+
+Binary neurons
+--------------
+
+.. grid::
+
+   .. grid-item::
+      :columns: 6
+
+        .. image:: /static/img/binary_workflow.png
 
 
 pp_psc_delta

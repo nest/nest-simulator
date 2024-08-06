@@ -26,14 +26,14 @@ morphology of individual neurons. The development of NEST is coordinated by the
 NEST Initiative.
 
 A NEST simulation tries to follow the logic of an electrophysiological
-experiment that takes place inside a computer with the difference, that the
+experiment that takes place inside a computer with the difference that the
 neural system to be investigated must be defined by the experimenter.
 
 NEST is ideal for networks of spiking neurons of any size, for example:
 
-- Models of information processing e.g. in the visual or auditory cortex of
+- Models of information processing, e.g., in the visual or auditory cortex of
   mammals,
-- Models of network activity dynamics, e.g. laminar cortical networks or
+- Models of network activity dynamics, e.g., laminar cortical networks or
   balanced random networks,
 - Models of learning and plasticity.
 
@@ -45,21 +45,21 @@ its homepage at https://www.nest-initiative.org.
 
 ## Key features of NEST
 
-* NEST provides a Python interface or stand alone application
+* NEST provides a Python interface or a stand-alone application
 * NEST provides a large collection of neurons and synapse models
 * NEST provides numerous example network scripts along with tutorials and guides to help you
-  develop your simulation.
-* NEST has a large community of experienced developers and users. NEST was first released in 1994 under the name SYNOD, and has been extended and improved ever since.
+  develop your simulation
+* NEST has a large community of experienced developers and users; NEST was first released in 1994 under the name SYNOD, and has been extended and improved ever since
 * NEST is extensible: you can extend NEST by adding your own modules
 * NEST is scalable: Use NEST on your laptop or the largest supercomputers
-* NEST is memory efficient: It makes best use of your multi-core computer and compute clusters with minimal user intervention.
-* NEST is ian open source project and is licensed under the GNU General Public License v2 or later.
-* NEST employs continuous integration workflows in order to maintain high code quality standards for correct and reproducible simulations.
+* NEST is memory efficient: It makes the best use of your multi-core computer and compute clusters with minimal user intervention
+* NEST is an open source project and is licensed under the GNU General Public License v2 or later
+* NEST employs continuous integration workflows in order to maintain high code quality standards for correct and reproducible simulations
 
 
 ## Documentation
 
-Please visit our [online documentation](https://nest-simulator.readthedocs.io/en/stable/) for details on instaling and using NEST
+Please visit our [online documentation](https://nest-simulator.readthedocs.io/en/stable/) for details on installing and using NEST.
 
 
 ## Cite NEST
@@ -75,12 +75,21 @@ For general citations, please use
 
 
 If you need help or would like to discuss an idea or issue,
-you can find [ways to get in touch here](https://nest-simulator.readthedocs.io/en/stable/community.html)
+you can find [ways to get in touch here](https://nest-simulator.readthedocs.io/en/stable/community.html).
+
+
+## Contribute
+
+NEST is built on an active community and we welcome contributions to our code and documentation.
+
+You can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose), for bug reports, feature requests, documentation improvements, or other issues.
+
+For working with NEST code and documentation, [see our documentation](https://nest-simulator.readthedocs.io/en/stable/developer_space/index.html#contribute-to-nest)
 
 
 ## Publications
 
-You can find a list of NEST [related publications here](https://www.nest-simulator.org/publications/)
+You can find a list of NEST [related publications here](https://www.nest-simulator.org/publications/).
 
 ## License
 

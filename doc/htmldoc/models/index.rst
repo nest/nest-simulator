@@ -82,11 +82,11 @@ Learn more about . . .
 
   .. grid-item-card::
 
-      * :ref:`neuron models <neurons_index>`
+      * :doc:`neuron models </neurons/index>`
 
-      * :ref:`synapse models <synapse_index>`
+      * :doc:`synapse models </synapses/index>`
 
-      * :ref:`devices <device_index>`
+      * :doc:`devices </devices/index>`
 
       * :ref:`creating and customizing models with NESTML <nestml_ad>`
 

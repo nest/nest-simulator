@@ -61,9 +61,10 @@ Next steps: Create your own network model
 
          |random| Connect neurons, synapses, and devices
          ^^^
-
-         * :ref:`connection_management`: A guide to building connections in NEST
+         * :ref:`connectivity_concepts`: A guide to define network connectivity in NEST
          * :ref:`spatial_networks`: A deep dive into building 2D and 3D networks
+         * :ref:`connection_generator`: Using an external library for generating connections
+         * :ref:`synapse_spec`: Details on parameterizing synapses
 
     .. grid-item-card::
          :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
@@ -220,7 +221,7 @@ More topics
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
    High performance computing <hpc/index>
-   NEST models <models/models-main>
+   NEST models <models/index>
    NEST and SONATA <nest_sonata/nest_sonata_guide>
    Simulation behavior <nest_behavior/running_simulations>
    Randomness in NEST <nest_behavior/random_numbers>
@@ -230,8 +231,6 @@ More topics
 
 .. toctree::
    :hidden:
-
-   understand_index
 
 .. |nav| image:: static/img/GPS-Settings-256_nest.svg
 .. |script| image:: static/img/script_white.svg

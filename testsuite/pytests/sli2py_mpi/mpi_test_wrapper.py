@@ -139,8 +139,11 @@ class MPITestWrapper:
         return ", ".join(
             part
             for part in (
-                ", ".join(f"{arg}" for arg in args),
-                ", ".join(f"{key}={value}" for key, value in kwargs.items()),
+                ", ".join(f"{arg if not inspect.isfunction(arg) else arg.__name__}" for arg in args),
+                ", ".join(
+                    f"{key}={value if not inspect.isfunction(value) else value.__name__}"
+                    for key, value in kwargs.items()
+                ),
             )
             if part
         )

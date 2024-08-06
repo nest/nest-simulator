@@ -76,9 +76,9 @@ EventDeliveryManager::~EventDeliveryManager()
 }
 
 void
-EventDeliveryManager::initialize( const bool reset_kernel )
+EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     init_moduli();
     reset_timers_for_preparation();
@@ -497,7 +497,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
       ++num_spikes_per_rank[ rank ];
 
       // We do not break if condition is false, because there may be spikes that
-      // can be send to other ranks than the one that is full.
+      // can be sent to other ranks than the one that is full.
       if ( not send_buffer_position.is_chunk_filled( rank ) )
       {
         send_buffer[ send_buffer_position.idx( rank ) ] = emitted_spike.spike_data;

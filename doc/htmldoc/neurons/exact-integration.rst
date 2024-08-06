@@ -22,9 +22,9 @@ The leaky integrate-and fire model
 In the leaky integrate-and-fire model, the memory problem is solved by adding a "leak" term :math:`\frac{-1}{R}V` (:math:`R` is the resistance and :math:`\tau=RC`) to the membrane potential:
 
 .. math::
+    :label: membrane
 
     \frac{dV}{dt}=\frac{-1}{\tau}V+\frac{1}{C}I.
-    :label: membrane
 
 This reflects the diffusion of ions that occurs through the membrane when some equilibrium is not reached in the cell.
 

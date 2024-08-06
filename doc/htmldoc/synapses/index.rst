@@ -9,7 +9,7 @@ Guides on using synapses in NEST
 
 .. grid:: 1 1 2 2
 
-   .. grid-item-card:: Managing coonnections
+  .. grid-item-card:: Managing coonnections
 
       * :ref:`connectivity_concepts`
       * :ref:`connection_generator`

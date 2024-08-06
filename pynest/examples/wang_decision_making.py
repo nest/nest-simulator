@@ -36,8 +36,8 @@ one of the sub-population is suppressed.
 References
 ~~~~~~~~~~
 .. [1] Wang X-J (2002). Probabilistic Decision Making by Slow Reverberation in
-Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968.
-https://doi.org/10.1016/S0896-6273(02)01092-9.
+       Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968.
+       https://doi.org/10.1016/S0896-6273(02)01092-9.
 
 """
 

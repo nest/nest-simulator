@@ -135,6 +135,9 @@ on the synaptic time constant according to
   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
+  NEST uses exact integration [2]_, [3]_ to integrate subthreshold membrane dynamics
+  with  maximum precision.
+
   For implementation details see the
   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 

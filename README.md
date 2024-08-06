@@ -68,7 +68,8 @@ If you use NEST as part of your research, please cite the *version* of NEST you 
 The full citation for each release can be found on [Zenodo](https://zenodo.org/search?q=title%3ANEST%20AND%20-description%3Agraphical%20AND%20simulator&l=list&p=1&s=10&sort=publication-desc)
 
 For general citations, please use
-Gewaltig M-O & Diesmann M (2007) NEST (Neural Simulation Tool) Scholarpedia 2(4):1430.
+
+`Gewaltig M-O & Diesmann M (2007) NEST (Neural Simulation Tool) Scholarpedia 2(4):1430.`
 
 ## Contact
 

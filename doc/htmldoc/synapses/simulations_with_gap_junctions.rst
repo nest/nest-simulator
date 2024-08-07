@@ -114,7 +114,10 @@ general the following parameters can be set via kernel parameters:
 For a detailed description of the parameters and their function see
 [3]_, Table 2.
 
+.. seealso::
 
+   * :doc:`/auto_examples/gap_junctions_inhibitory_network`
+   * :doc:`/auto_examples/gap_junctions_two_neurons`
 
 References
 ----------

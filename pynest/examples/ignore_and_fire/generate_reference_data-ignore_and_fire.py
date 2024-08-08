@@ -37,12 +37,6 @@ def generate_reference_data(neuron_model="ignore_and_fire"):
              parameters = model.get_default_parameters()
              spikes = model.load_spike_data("./")
 
-    Arguments
-    ---------
-
-    Returns
-    -------
-
     """
 
     parameters = model.get_default_parameters()
@@ -76,8 +70,6 @@ def generate_reference_data(neuron_model="ignore_and_fire"):
     C = model_instance.get_connectivity(
         pop_pre, pop_post, model_instance.pars["data_path"] + "/" + "connectivity_postsim.dat"
     )
-
-    return None
 
 
 generate_reference_data(neuron_model=sys.argv[1])

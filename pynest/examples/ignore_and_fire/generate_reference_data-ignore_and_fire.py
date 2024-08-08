@@ -77,5 +77,7 @@ def generate_reference_data(neuron_model="ignore_and_fire"):
         pop_pre, pop_post, model_instance.pars["data_path"] + "/" + "connectivity_postsim.dat"
     )
 
+    return None
+
 
 generate_reference_data(neuron_model=sys.argv[1])

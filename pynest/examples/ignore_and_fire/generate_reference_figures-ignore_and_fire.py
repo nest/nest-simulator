@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 import model
 import nest
 import numpy as np
-from matplotlib import gridspec
+from matplotlib import gridspec, rcParams
 
 
 def time_and_population_averaged_spike_rate(spikes, time_interval, pop_size):
@@ -197,8 +197,6 @@ def generate_reference_figures(neuron_model="ignore_and_fire"):
     # plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars["data_path"])
     plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars, "figures")
 
-
-from matplotlib import rcParams
 
 rcParams["figure.figsize"] = (4, 3)
 rcParams["figure.dpi"] = 300

@@ -145,9 +145,6 @@ class Model:
         elif self.pars["neuron_model"] == "ignore_and_fire":
             self.__neuron_params = {}
 
-        else:
-            return None
-
     def __derived_parameters(self, parameters):
         """
         Set additional parameters derived from base parameters.
@@ -503,7 +500,7 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
 
     """
 
-    if type(time_interval) == tuple:
+    if type(time_interval) is tuple:
         print("Loading spike data in interval (%.1f ms, %.1f ms] ..." % (time_interval[0], time_interval[1]))
     else:
         print("Loading spike data...")
@@ -529,13 +526,13 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
 
     # extract spikes in specified time interval
     if time_interval is not None:
-        if type(time_interval) == tuple:
+        if type(time_interval) is tuple:
             ind = (spikes[:, 1] >= time_interval[0]) * (spikes[:, 1] <= time_interval[1])
             spikes = spikes[ind, :]
         else:
             print("Warning: time_interval must be a tuple or None. All spikes are loaded.")
 
-    if type(pop) == nest.NodeCollection:
+    if type(pop) is nest.NodeCollection:
         spikes_subset = []
         for cn, nid in enumerate(pop):  # loop over all neurons
             print(

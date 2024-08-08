@@ -93,7 +93,7 @@ def run_model(neuron_model, N, data_path_root):
     )
 
     # data analysis
-    ## time and population averaged firing rate
+    # time and population averaged firing rate
     spikes = model.load_spike_data(
         model_instance.pars["data_path"], "spikes-%d" % (numpy.array(model_instance.nodes["spike_recorder"])[0])
     )
@@ -101,7 +101,7 @@ def run_model(neuron_model, N, data_path_root):
         spikes, (0.0, model_instance.pars["T"]), model_instance.pars["N_rec_spikes"]
     )
 
-    ## synaptic weight statistics after simulation
+    # synaptic weight statistics after simulation
     connectivity_postsim = model.load_connectivity_data(model_instance.pars["data_path"], "connectivity_postsim")
     weight_stats = data_statistics(connectivity_postsim[:, 2])
     # weights = numpy.arange(0.,150.1,0.5)
@@ -180,8 +180,6 @@ def save_dict_as_json(data_dict, filename_root, path):
                    File path
 
     """
-
-    import json
 
     json.dump(data_dict, open("%s/%s.json" % (path, filename_root), "w"))
 

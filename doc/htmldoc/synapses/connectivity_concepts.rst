@@ -508,12 +508,12 @@ and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection 
 created according to the ``conn_spec`` parameter passed to
 ``TripariteConnect``; any one-directional connection specification can
 be used. The connections created between ``S`` and ``T`` are the
-'primary' connections.
+*primary* connections.
 
 For each primary connection, a
 third-party connection pair involving a node from a third ``NodeCollection``
 (e.g., an astrocyte population ``A``) is created according to the
-``third_factor_conn_spec`` provide. This connection pair includes a connection
+``third_factor_conn_spec`` provided. This connection pair includes a connection
 from the ``S`` node to the ``A`` node, and a connection from the ``A`` node to the
 ``T`` node.
 

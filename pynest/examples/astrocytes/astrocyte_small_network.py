@@ -29,15 +29,17 @@ with ``astrocyte_lr_1994``, implemented according to [1]_, [2]_, and [3]_. The
 neurons are modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
 integrate-and-fire neuron supporting neuron-astrocyte interactions.
 
-The network is created with the ``TripartiteConnect()`` function and the
-``tripartite_bernoulli_with_pool`` rule (see :ref:`tripartite_connectivity` for
-detailed descriptions). This rule creates a tripartite Bernoulli connectivity
-with the following principles:
+Neurons are connected with each other and with astrocytes using the ``TripartiteConnect()``
+function. Neuron populations are connected using NEST's standard ``pairwise_bernoulli``
+connection and connections with astrocytes are added according to the
+``third_factor_bernoulli_with_pool`` rule (see :ref:`tripartite_connectivity` for detailed
+descriptions). This creates a tripartite Bernoulli connectivity with the following
+principles:
 
-1. For each pair of neurons, a Bernoulli trial with a probability ``p_primary``
+1. For each pair of neurons, a Bernoulli trial with probability ``p_primary``
 determines if a ``tsodyks_synapse`` will be created between them.
 
-2. For each neuron-neuron connection created, a Bernoulli trial with a
+2. For each neuron-neuron connection created, a Bernoulli trial with
 probability ``p_third_if_primary`` determines if it will be paired with one astrocyte.
 The selection of this particular astrocyte is confined by ``pool_size`` and
 ``pool_type`` (see below).
@@ -49,11 +51,13 @@ is created, and a ``sic_connection`` from the astrocyte to the postsynaptic
 
 The available connectivity parameters are as follows:
 
-* ``conn_spec`` parameters
+* ``conn_spec``: any NEST one-directional connection rule
 
-  * ``p_primary``: Connection probability between neurons.
+* ``third_factor_conn_spec``
 
-  * ``p_third_if_primary``: Probability of each created neuron-neuron connection to be
+  * ``rule``: a third-factor connectivity rule
+
+  * ``p``: Probability of each created neuron-neuron connection to be
     paired with one astrocyte.
 
   * ``pool_size``: The size of astrocyte pool for each target neuron. The
@@ -77,17 +81,19 @@ The available connectivity parameters are as follows:
 
   * ``third_out``: ``syn_spec`` specifications for the connections from astrocytes to neurons.
 
-In this script, the network is created with the ``pool_type`` being ``"block"``.
-``p_primary`` and ``p_third_if_primary`` are both set to one to include as many
-connections as possible. One of the created figures shows the connections between
-neurons and astrocytes as a result (note that multiple connections may exist
-between a pair of nodes; this is not obvious in the figure since connections
-drawn later cover previous ones). It can be seen from the figure that ``"block"``
-results in astrocytes being connected to postsynaptic neurons in non-overlapping
-blocks. The ``pool_size`` should be compatible with this arrangement; in the case
-here, a ``pool_size`` of one is required. Users can try different parameters
-(e.g. ``p_primary`` = 0.5 and ``p_third_if_primary`` = 0.5) to see changes in
-connections.
+In this script, the network is created with the ``pool_type`` being
+``"block"``.  Probabilities for the primary and the third-factor
+connections are both set to 1 to include as many connections as
+possible. One of the created figures shows the connections between
+neurons and astrocytes as a result (note that multiple connections may
+exist between a pair of nodes; this is not obvious in the figure since
+connections drawn later cover previous ones). It can be seen from the
+figure that ``"block"`` results in astrocytes being connected to
+postsynaptic neurons in non-overlapping blocks. The ``pool_size``
+should be compatible with this arrangement; in the case here, a
+``pool_size`` of 1 is required. Users can try different parameters
+(e.g. ``conn_spec["p"]`` = 0.5 and ``third_factor_conn_spec["p"]`` =
+0.5) to see changes in connections.
 
 With the created network, neuron-astrocyte interactions can be observed. The
 presynaptic spikes induce the generation of IP3, which then changes the calcium
@@ -101,7 +107,7 @@ astrocyte pools. In that case, the ``pool_size`` can be any from one to the
 total number of astrocytes.
 
 See :ref:`tripartite_connectivity` for more details about the
-``TripartiteConnect()`` function and the ``tripartite_bernoulli_with_pool``
+``TripartiteConnect()`` function and the ``third_factor_bernoulli_with_pool``
 rule.
 
 References

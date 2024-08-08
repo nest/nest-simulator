@@ -53,7 +53,8 @@ Author: Hans Ekkehard Plesser, 2010-05-05
                  /aeif_psc_exp /aeif_psc_alpha /aeif_psc_delta /aeif_cond_beta_multisynapse /hh_cond_exp_traub
                  /hh_cond_beta_gap_traub /hh_psc_alpha /hh_psc_alpha_clopath /hh_psc_alpha_gap /ht_neuron /ht_neuron_fs
                  /iaf_cond_exp_sfa_rr /izhikevich
-		 /eprop_iaf_bsshslm_2020 /eprop_iaf_adapt_bsshslm_2020 /eprop_readout_bsshslm_2020] def
+		             /eprop_iaf_bsshslm_2020 /eprop_iaf_adapt_bsshslm_2020 /eprop_readout_bsshslm_2020
+		             /eprop_iaf /eprop_iaf_adapt /eprop_iaf_psc_delta /eprop_readout] def
 
 % use power-of-two resolution to avoid round-off problems
 /res -3 dexp def

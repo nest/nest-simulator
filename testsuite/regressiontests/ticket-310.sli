@@ -40,8 +40,12 @@
 /skip_list [ /iaf_chxk_2008                 % non-standard spiking conditions
              /correlospinmatrix_detector    % not a neuron
              /eprop_iaf_bsshslm_2020        % no ArchivingNode, thus no t_spike
-	     /eprop_iaf_adapt_bsshslm_2020  % no ArchivingNode, thus no t_spike
-	     /eprop_readout_bsshslm_2020    % no ArchivingNode, thus no t_spike
+	           /eprop_iaf_adapt_bsshslm_2020  % no ArchivingNode, thus no t_spike
+	           /eprop_readout_bsshslm_2020    % no ArchivingNode, thus no t_spike
+             /eprop_iaf                     % no ArchivingNode, thus no t_spike
+	           /eprop_iaf_adapt               % no ArchivingNode, thus no t_spike
+	           /eprop_iaf_psc_delta           % no ArchivingNode, thus no t_spike
+	           /eprop_readout                 % no ArchivingNode, thus no t_spike
 	   ] def
 
 {

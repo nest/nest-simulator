@@ -217,7 +217,7 @@ Node::register_stdp_connection( double, double )
 }
 
 void
-Node::register_eprop_connection()
+Node::register_eprop_connection( const bool )
 {
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }
@@ -229,7 +229,16 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long t_previous_update, const long t_current_update )
+Node::write_update_to_history( const long t_previous_update,
+  const long t_current_update,
+  const long eprop_isi_trace_cutoff,
+  const bool is_bsshslm_2020_model )
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+long
+Node::get_eprop_isi_trace_cutoff()
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
@@ -539,6 +548,20 @@ double
 nest::Node::get_tau_syn_in( int )
 {
   throw UnexpectedEvent();
+}
+
+void
+nest::Node::compute_gradient( const long,
+  const long,
+  double&,
+  double&,
+  double&,
+  double&,
+  double&,
+  const CommonSynapseProperties&,
+  WeightOptimizer* )
+{
+  throw IllegalConnection( "The target node does not support compute_gradient()." );
 }
 
 double

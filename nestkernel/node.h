@@ -32,6 +32,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
@@ -39,6 +40,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
+#include "weight_optimizer.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -486,7 +488,7 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection();
+  virtual void register_eprop_connection( const bool is_bsshslm_2020_model = true );
 
   /**
    * Get the number of steps the time-point of the signal has to be shifted to
@@ -506,7 +508,18 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
+  virtual void write_update_to_history( const long t_previous_update,
+    const long t_current_update,
+    const long eprop_isi_trace_cutoff = 0,
+    const bool is_bsshslm_2020_model = true );
+
+  /**
+   * Get maximum number of time steps integrated between two consecutive spikes.
+   *
+   * @throws IllegalConnection
+   */
+
+  virtual long get_eprop_isi_trace_cutoff();
 
   /**
    * Return if the node is part of the recurrent network (and thus not a readout neuron).
@@ -800,6 +813,23 @@ public:
   virtual double get_tau_s( int comp );
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
+
+  /**
+   * Compute gradient change for eprop synapses.
+   *
+   * This method is called from an eprop synapse on the eprop target neuron and returns the change in gradient.
+   *
+   * @params presyn_isis  is cleared during call
+   */
+  virtual void compute_gradient( const long t_spike,
+    const long t_spike_previous,
+    double& z_previous_buffer,
+    double& z_bar,
+    double& e_bar,
+    double& epsilon,
+    double& weight,
+    const CommonSynapseProperties& cp,
+    WeightOptimizer* optimizer );
 
   /**
    * Compute gradient change for eprop synapses.

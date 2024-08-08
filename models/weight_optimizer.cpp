@@ -36,6 +36,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
   , eta_( 1e-4 )
   , Wmin_( -100.0 )
   , Wmax_( 100.0 )
+  , optimize_each_step_( true )
 {
 }
 
@@ -44,6 +45,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
   , eta_( cp.eta_ )
   , Wmin_( cp.Wmin_ )
   , Wmax_( cp.Wmax_ )
+  , optimize_each_step_( cp.optimize_each_step_ )
 {
 }
 
@@ -55,6 +57,7 @@ WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );
   def< double >( d, names::Wmax, Wmax_ );
+  def< bool >( d, names::optimize_each_step, optimize_each_step_ );
 }
 
 void
@@ -86,6 +89,8 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   }
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
+
+  updateValue< bool >( d, names::optimize_each_step, optimize_each_step_ );
 }
 
 WeightOptimizer::WeightOptimizer()
@@ -111,6 +116,11 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   double weight )
 {
   sum_gradients_ += gradient;
+
+  if ( optimization_step_ == 0 )
+  {
+    optimization_step_ = idx_current_update;
+  }
 
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )
@@ -143,7 +153,7 @@ double
 WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
   weight -= cp.eta_ * sum_gradients_;
-  sum_gradients_ = 0;
+  sum_gradients_ = 0.0;
   return weight;
 }
 
@@ -151,7 +161,7 @@ WeightOptimizerCommonPropertiesAdam::WeightOptimizerCommonPropertiesAdam()
   : WeightOptimizerCommonProperties()
   , beta_1_( 0.9 )
   , beta_2_( 0.999 )
-  , epsilon_( 1e-8 )
+  , epsilon_( 1e-7 )
 {
 }
 
@@ -207,6 +217,8 @@ WeightOptimizerAdam::WeightOptimizerAdam()
   : WeightOptimizer()
   , m_( 0.0 )
   , v_( 0.0 )
+  , beta_1_power_( 1.0 )
+  , beta_2_power_( 1.0 )
 {
 }
 
@@ -236,10 +248,10 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
-    const double beta_1_factor = 1.0 - std::pow( acp.beta_1_, optimization_step_ );
-    const double beta_2_factor = 1.0 - std::pow( acp.beta_2_, optimization_step_ );
+    beta_1_power_ *= acp.beta_1_;
+    beta_2_power_ *= acp.beta_2_;
 
-    const double alpha = cp.eta_ * std::sqrt( beta_2_factor ) / beta_1_factor;
+    const double alpha = cp.eta_ * std::sqrt( 1.0 - beta_2_power_ ) / ( 1.0 - beta_1_power_ );
 
     m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
     v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;

@@ -63,7 +63,7 @@ def test_unsupported_model_raises(target_model):
 def test_eprop_regression():
     """
     Test correct computation of losses for a regression task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
@@ -85,7 +85,7 @@ def test_eprop_regression():
 
     # Define timing of task
 
-    n_batch = 1
+    batch_size = 1
     n_iter = 5
 
     steps = {
@@ -93,7 +93,7 @@ def test_eprop_regression():
     }
 
     steps["learning_window"] = steps["sequence"]
-    steps["task"] = n_iter * n_batch * steps["sequence"]
+    steps["task"] = n_iter * batch_size * steps["sequence"]
 
     steps.update(
         {
@@ -105,9 +105,9 @@ def test_eprop_regression():
         }
     )
 
-    steps["total_offset"] = (
-        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
-    )
+    steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+    steps["total_offset"] = steps["offset_gen"] + steps["delays"]
 
     steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
@@ -135,21 +135,6 @@ def test_eprop_regression():
     n_rec = 100
     n_out = 1
 
-    params_nrn_rec = {
-        "C_m": 1.0,
-        "c_reg": 300.0,
-        "gamma": 0.3,
-        "E_L": 0.0,
-        "f_target": 10.0,
-        "I_e": 0.0,
-        "regular_spike_arrival": False,
-        "surrogate_gradient_function": "piecewise_linear",
-        "t_ref": 0.0,
-        "tau_m": 30.0,
-        "V_m": 0.0,
-        "V_th": 0.03,
-    }
-
     params_nrn_out = {
         "C_m": 1.0,
         "E_L": 0.0,
@@ -158,6 +143,22 @@ def test_eprop_regression():
         "regular_spike_arrival": False,
         "tau_m": 30.0,
         "V_m": 0.0,
+    }
+
+    params_nrn_rec = {
+        "beta": 1.0,
+        "C_m": 1.0,
+        "c_reg": 300.0,
+        "E_L": 0.0,
+        "f_target": 10.0,
+        "gamma": 0.3,
+        "I_e": 0.0,
+        "regular_spike_arrival": False,
+        "surrogate_gradient_function": "piecewise_linear",
+        "t_ref": 0.0,
+        "tau_m": 30.0,
+        "V_m": 0.0,
+        "V_th": 0.03,
     }
 
     gen_spk_in = nest.Create("spike_generator", n_in)
@@ -172,25 +173,34 @@ def test_eprop_regression():
     n_record_w = 1
 
     params_mm_rec = {
+        "interval": duration["sequence"],
         "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
         "start": duration["offset_gen"] + duration["delay_in_rec"],
-        "interval": duration["sequence"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
     }
 
     params_mm_out = {
+        "interval": duration["step"],
         "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
-        "interval": duration["step"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     params_wr = {
         "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],
         "targets": nrns_rec[:n_record_w] + nrns_out,
+        "start": duration["total_offset"],
+        "stop": duration["total_offset"] + duration["task"],
+    }
+
+    params_sr = {
+        "start": duration["offset_gen"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     mm_rec = nest.Create("multimeter", params_mm_rec)
     mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", params_sr)
     wr = nest.Create("weight_recorder", params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]
@@ -210,35 +220,29 @@ def test_eprop_regression():
     params_common_syn_eprop = {
         "optimizer": {
             "type": "gradient_descent",
-            "batch_size": n_batch,
+            "batch_size": batch_size,
             "eta": 1e-4,
             "Wmin": -100.0,
             "Wmax": 100.0,
         },
-        "weight_recorder": wr,
         "average_gradient": False,
+        "weight_recorder": wr,
     }
 
-    params_syn_in = {
+    params_syn_base = {
         "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_in_rec,
     }
 
-    params_syn_rec = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_rec,
-    }
+    params_syn_in = params_syn_base.copy()
+    params_syn_in["weight"] = weights_in_rec
 
-    params_syn_out = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_out,
-    }
+    params_syn_rec = params_syn_base.copy()
+    params_syn_rec["weight"] = weights_rec_rec
+
+    params_syn_out = params_syn_base.copy()
+    params_syn_out["weight"] = weights_rec_out
 
     params_syn_feedback = {
         "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
@@ -276,14 +280,13 @@ def test_eprop_regression():
     input_spike_prob = 0.05
     dtype_in_spks = np.float32
 
-    input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spike_prob
-    input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
+    input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
     input_spike_bools[:, 0] = 0
 
     sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
     params_gen_spk_in = []
     for input_spike_bool in input_spike_bools:
-        input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]
+        input_spike_times = np.arange(0.0, duration["sequence"], duration["step"])[input_spike_bool]
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
         params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
@@ -311,7 +314,7 @@ def test_eprop_regression():
 
     params_gen_rate_target = {
         "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
-        "amplitude_values": np.tile(target_signal, n_iter * n_batch),
+        "amplitude_values": np.tile(target_signal, n_iter * batch_size),
     }
 
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
@@ -328,23 +331,26 @@ def test_eprop_regression():
 
     readout_signal = events_mm_out["readout_signal"]
     target_signal = events_mm_out["target_signal"]
+    senders = events_mm_out["senders"]
 
-    error = (readout_signal - target_signal) ** 2
-    loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+    readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+
+    loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
     # Verify results
+    loss_nest_reference = [
+        101.964356999041,
+        103.466731126205,
+        103.340607074771,
+        103.680244037686,
+        104.412775748752,
+    ]
 
-    loss_NEST_reference = np.array(
-        [
-            101.964356999041,
-            103.466731126205,
-            103.340607074771,
-            103.680244037686,
-            104.412775748752,
-        ]
-    )
-
-    loss_TF_reference = np.array(
+    loss_tf_reference = np.array(
         [
             101.964363098144,
             103.466735839843,
@@ -354,14 +360,39 @@ def test_eprop_regression():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_reference, rtol=1e-7)
+    assert np.allclose(loss, loss_tf_reference, rtol=1e-7)
+    assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
 
 
-def test_eprop_classification():
+@pytest.mark.parametrize(
+    "batch_size,loss_nest_reference",
+    [
+        (
+            1,
+            [
+                0.741152550006,
+                0.740388187700,
+                0.665785233177,
+                0.663644193322,
+                0.729428962844,
+            ],
+        ),
+        (
+            2,
+            [
+                0.702163370672,
+                0.735555303152,
+                0.740354864111,
+                0.683882815282,
+                0.707841122268,
+            ],
+        ),
+    ],
+)
+def test_eprop_classification(batch_size, loss_nest_reference):
     """
     Test correct computation of losses for a classification task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
@@ -384,7 +415,6 @@ def test_eprop_classification():
 
     # Define timing of task
 
-    n_batch = 1
     n_iter = 5
 
     n_input_symbols = 4
@@ -401,7 +431,7 @@ def test_eprop_classification():
     steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])
     steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]
     steps["learning_window"] = steps["recall"]
-    steps["task"] = n_iter * n_batch * steps["sequence"]
+    steps["task"] = n_iter * batch_size * steps["sequence"]
 
     steps.update(
         {
@@ -413,9 +443,9 @@ def test_eprop_classification():
         }
     )
 
-    steps["total_offset"] = (
-        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
-    )
+    steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+    steps["total_offset"] = steps["offset_gen"] + steps["delays"]
 
     steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
@@ -445,9 +475,20 @@ def test_eprop_classification():
     n_rec = n_ad + n_reg
     n_out = 2
 
-    params_nrn_reg = {
+    params_nrn_out = {
         "C_m": 1.0,
-        "c_reg": 2.0,
+        "E_L": 0.0,
+        "I_e": 0.0,
+        "loss": "cross_entropy",
+        "regular_spike_arrival": False,
+        "tau_m": 20.0,
+        "V_m": 0.0,
+    }
+
+    params_nrn_reg = {
+        "beta": 1.0,
+        "C_m": 1.0,
+        "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "gamma": 0.3,
@@ -461,10 +502,11 @@ def test_eprop_classification():
     }
 
     params_nrn_ad = {
+        "beta": 1.0,
         "adapt_tau": 2000.0,
         "adaptation": 0.0,
         "C_m": 1.0,
-        "c_reg": 2.0,
+        "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "gamma": 0.3,
@@ -477,19 +519,10 @@ def test_eprop_classification():
         "V_th": 0.6,
     }
 
-    params_nrn_ad["adapt_beta"] = (
-        1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau_m"]))
+    params_nrn_ad["adapt_beta"] = 1.7 * (
+        (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
+        / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
     )
-
-    params_nrn_out = {
-        "C_m": 1.0,
-        "E_L": 0.0,
-        "I_e": 0.0,
-        "loss": "cross_entropy",
-        "regular_spike_arrival": False,
-        "tau_m": 20.0,
-        "V_m": 0.0,
-    }
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
@@ -505,29 +538,47 @@ def test_eprop_classification():
     n_record = 1
     n_record_w = 1
 
-    params_mm_rec = {
+    params_mm_reg = {
+        "interval": duration["step"],
         "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
         "start": duration["offset_gen"] + duration["delay_in_rec"],
-        "interval": duration["sequence"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
+    }
+
+    params_mm_ad = {
+        "interval": duration["step"],
+        "record_from": params_mm_reg["record_from"] + ["V_th_adapt", "adaptation"],
+        "start": duration["offset_gen"] + duration["delay_in_rec"],
+        "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
     }
 
     params_mm_out = {
+        "interval": duration["step"],
         "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
-        "interval": duration["step"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
     params_wr = {
         "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],
         "targets": nrns_rec[:n_record_w] + nrns_out,
+        "start": duration["total_offset"],
+        "stop": duration["total_offset"] + duration["task"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
+    params_sr = {
+        "start": duration["offset_gen"],
+        "stop": duration["total_offset"] + duration["task"],
+    }
+
+    mm_reg = nest.Create("multimeter", params_mm_reg)
+    mm_ad = nest.Create("multimeter", params_mm_ad)
     mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", params_sr)
     wr = nest.Create("weight_recorder", params_wr)
 
-    nrns_rec_record = nrns_rec[:n_record]
+    nrns_reg_record = nrns_reg[:n_record]
+    nrns_ad_record = nrns_ad[:n_record]
 
     # Create connections
 
@@ -550,7 +601,7 @@ def test_eprop_classification():
     params_common_syn_eprop = {
         "optimizer": {
             "type": "adam",
-            "batch_size": n_batch,
+            "batch_size": batch_size,
             "beta_1": 0.9,
             "beta_2": 0.999,
             "epsilon": 1e-8,
@@ -558,30 +609,24 @@ def test_eprop_classification():
             "Wmin": -100.0,
             "Wmax": 100.0,
         },
-        "weight_recorder": wr,
         "average_gradient": True,
+        "weight_recorder": wr,
     }
 
-    params_syn_in = {
+    params_syn_base = {
         "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_in_rec,
     }
 
-    params_syn_rec = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_rec,
-    }
+    params_syn_in = params_syn_base.copy()
+    params_syn_in["weight"] = weights_in_rec
 
-    params_syn_out = {
-        "synapse_model": "eprop_synapse_bsshslm_2020",
-        "delay": duration["step"],
-        "tau_m_readout": params_nrn_out["tau_m"],
-        "weight": weights_rec_out,
-    }
+    params_syn_rec = params_syn_base.copy()
+    params_syn_rec["weight"] = weights_rec_rec
+
+    params_syn_out = params_syn_base.copy()
+    params_syn_out["weight"] = weights_rec_out
 
     params_syn_feedback = {
         "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
@@ -607,6 +652,13 @@ def test_eprop_classification():
         "delay": duration["step"],
     }
 
+    params_init_optimizer = {
+        "optimizer": {
+            "m": 0.0,
+            "v": 0.0,
+        }
+    }
+
     nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
@@ -619,29 +671,32 @@ def test_eprop_classification():
 
     nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
 
-    nest.Connect(mm_rec, nrns_rec_record, params_conn_all_to_all, params_syn_static)
+    nest.Connect(mm_reg, nrns_reg_record, params_conn_all_to_all, params_syn_static)
+    nest.Connect(mm_ad, nrns_ad_record, params_conn_all_to_all, params_syn_static)
     nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
+
+    nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
     # Create input and output
 
     def generate_evidence_accumulation_input_output(
-        n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+        batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     ):
         n_pop_nrn = n_in // n_input_symbols
 
         prob_choices = np.array([prob_group, 1 - prob_group], dtype=np.float32)
-        idx = np.random.choice([0, 1], n_batch)
-        probs = np.zeros((n_batch, 2), dtype=np.float32)
+        idx = np.random.choice([0, 1], batch_size)
+        probs = np.zeros((batch_size, 2), dtype=np.float32)
         probs[:, 0] = prob_choices[idx]
         probs[:, 1] = prob_choices[1 - idx]
 
-        batched_cues = np.zeros((n_batch, n_cues), dtype=int)
-        for b_idx in range(n_batch):
+        batched_cues = np.zeros((batch_size, n_cues), dtype=int)
+        for b_idx in range(batch_size):
             batched_cues[b_idx, :] = np.random.choice([0, 1], n_cues, p=probs[b_idx])
 
-        input_spike_probs = np.zeros((n_batch, steps["sequence"], n_in))
+        input_spike_probs = np.zeros((batch_size, steps["sequence"], n_in))
 
-        for b_idx in range(n_batch):
+        for b_idx in range(batch_size):
             for c_idx in range(n_cues):
                 cue = batched_cues[b_idx, c_idx]
 
@@ -658,7 +713,7 @@ def test_eprop_classification():
         input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
         input_spike_bools[:, 0, :] = 0
 
-        target_cues = np.zeros(n_batch, dtype=int)
+        target_cues = np.zeros(batch_size, dtype=int)
         target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)
 
         return input_spike_bools, target_cues
@@ -669,12 +724,12 @@ def test_eprop_classification():
     input_spike_bools_list = []
     target_cues_list = []
 
-    for iteration in range(n_iter):
+    for _ in range(n_iter):
         input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
-            n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
+            batch_size, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
         )
         input_spike_bools_list.append(input_spike_bools)
-        target_cues_list.extend(target_cues.tolist())
+        target_cues_list.extend(target_cues)
 
     input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
     timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]
@@ -684,8 +739,8 @@ def test_eprop_classification():
         for nrn_in_idx in range(n_in)
     ]
 
-    target_rate_changes = np.zeros((n_out, n_batch * n_iter))
-    target_rate_changes[np.array(target_cues_list), np.arange(n_batch * n_iter)] = 1
+    target_rate_changes = np.zeros((n_out, batch_size * n_iter))
+    target_rate_changes[np.array(target_cues_list), np.arange(batch_size * n_iter)] = 1
 
     params_gen_rate_target = [
         {
@@ -715,27 +770,17 @@ def test_eprop_classification():
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
-    readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+    readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
 
-    target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+    readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
     target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
     loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 
     # Verify results
 
-    loss_NEST_reference = np.array(
-        [
-            0.741152550006,
-            0.740388187700,
-            0.665785233177,
-            0.663644193322,
-            0.729428962844,
-        ]
-    )
-
-    loss_TF_reference = np.array(
+    loss_tf_reference = np.array(
         [
             0.741152524948,
             0.740388214588,
@@ -745,5 +790,6 @@ def test_eprop_classification():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_reference, rtol=1e-6)
+    if batch_size == 1:
+        assert np.allclose(loss, loss_tf_reference, rtol=1e-6)
+    assert np.allclose(loss, loss_nest_reference, rtol=1e-8)

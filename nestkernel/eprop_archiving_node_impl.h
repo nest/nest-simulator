@@ -50,17 +50,17 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::register_eprop_connection()
+EpropArchivingNode< HistEntryT >::register_eprop_connection( const bool is_bsshslm_2020_model )
 {
   ++eprop_indegree_;
 
-  const long shift = get_shift();
+  const long t_first_entry = is_bsshslm_2020_model ? get_shift() : -delay_rec_out_;
 
-  const auto it_hist = get_update_history( shift );
+  const auto it_hist = get_update_history( t_first_entry );
 
-  if ( it_hist == update_history_.end() or it_hist->t_ != shift )
+  if ( it_hist == update_history_.end() or it_hist->t_ != t_first_entry )
   {
-    update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
+    update_history_.insert( it_hist, HistEntryEpropUpdate( t_first_entry, 1 ) );
   }
   else
   {
@@ -70,14 +70,17 @@ EpropArchivingNode< HistEntryT >::register_eprop_connection()
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update, const long t_current_update )
+EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
+  const long t_current_update,
+  const long eprop_isi_trace_cutoff,
+  const bool is_bsshslm_2020_model )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = get_shift();
+  const long shift = is_bsshslm_2020_model ? get_shift() : -delay_rec_out_;
 
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
@@ -88,6 +91,10 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   else
   {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+    if ( not is_bsshslm_2020_model )
+    {
+      erase_used_eprop_history( eprop_isi_trace_cutoff );
+    }
   }
 
   const auto it_hist_prev = get_update_history( t_previous_update + shift );
@@ -96,6 +103,11 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   {
     // If an entry exists for the previous update time, decrement its access counter
     --it_hist_prev->access_counter_;
+  }
+
+  if ( not is_bsshslm_2020_model )
+  {
+    erase_used_update_history();
   }
 }
 
@@ -138,14 +150,40 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
     else
     {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+      const auto it_eprop_hist_from_1 = get_eprop_history( t );
+      const auto it_eprop_hist_to_1 = get_eprop_history( t + update_interval );
+      eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
     }
   }
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+  const auto it_eprop_hist_from_2 = get_eprop_history( 0 );
+  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ );
+  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
+}
+
+template < typename HistEntryT >
+void
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
+{
+  if ( eprop_history_.empty()     // nothing to remove
+    or update_history_.size() < 2 // no time markers to check
+  )
+  {
+    return;
+  }
+
+  const long t_prev = ( update_history_.end() - 2 )->t_;
+  const long t_curr = ( update_history_.end() - 1 )->t_;
+
+  if ( t_prev + eprop_isi_trace_cutoff < t_curr )
+  {
+    const auto it_eprop_hist_from_1 = get_eprop_history( t_prev + eprop_isi_trace_cutoff );
+    const auto it_eprop_hist_to_1 = get_eprop_history( t_curr );
+    eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
+  }
+
+  const auto it_eprop_hist_from_2 = get_eprop_history( std::numeric_limits< long >::min() );
+  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ - 1 );
+  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
 }
 
 template < typename HistEntryT >

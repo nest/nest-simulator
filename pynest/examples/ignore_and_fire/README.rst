@@ -24,7 +24,7 @@ exact scaling experiments with arbitrary types of networks.
 Network model
 -------------
 
-In this :doc:`example </auto_examples/ignore_and_fire/index>`, we employ a simple network model describing the dynamics
+In this example, we employ a simple network model describing the dynamics
 of a local cortical circuit at the spatial scale of ~1mm within a single cortical layer. It is derived from the model
 proposed in [2]_, but accounts for the synaptic weight dynamics for connections between excitatory neurons. The weight
 dynamics are described by the spike-timing-dependent plasticity (STDP) model derived in [8]_. The model provides a
@@ -67,8 +67,8 @@ remains intact (see figure below).
 
 Spiking activity (top) and distributions of excitatory synaptic weights (bottom) for the network with integrate-and-fire
 (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures
-generated using :doc:`code/generate_reference_data-ignore_and_fire.py </auto_examples/ignore_and_fire/generate_reference_data-ignore_and_fire>`
-and :doc:`code generate_reference_figuresi-ignore_and_fire.py </auto_examples/ignore_and_fire/generate_reference_figures-ignore_and_fire>`.
+generated using :doc:`generate_reference_data-ignore_and_fire.py </auto_examples/ignore_and_fire/generate_reference_data-ignore_and_fire>`
+and :doc:`generate_reference_figures-ignore_and_fire.py </auto_examples/ignore_and_fire/generate_reference_figures-ignore_and_fire>`.
 
 
 Scaling experiments
@@ -113,8 +113,8 @@ You can run the simulations by using the provided Snakefile:
 
     * :doc:`Detailed description of the network model and parameters <twopop_stdp_network_model>`
     * :doc:`NEST simulation details <simulation_details>`
-    * :doc:`model.py </auto_examples/ignore_and_fire/model-ignore_and_fire>`: NEST implementation of the network model
-    * :doc:`parameter_dicts.py <parameter_dict-ignore_and_fire>`: parameter setting
+    * :doc:`model-ignore_and_fire.py </auto_examples/ignore_and_fire/model-ignore_and_fire>`: NEST implementation of the network model
+    * :doc:`parameter_dicts-ignore_and_fire.py <parameter_dict-ignore_and_fire>`: parameter setting
     * :doc:`ignore_and_fire model documentation </models/ignore_and_fire>`
 
 

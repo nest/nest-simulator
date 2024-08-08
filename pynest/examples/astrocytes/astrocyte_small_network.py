@@ -132,6 +132,8 @@ See Also
 ###############################################################################
 # Import all necessary modules.
 
+from collections.abc import Iterable
+
 import matplotlib.pyplot as plt
 import nest
 import numpy as np
@@ -195,10 +197,17 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n, pre_id_list, post_id_list, as
     """
     print("Plotting connections ...")
 
+    # helper to ensure data can be converted to np.array
+    def _ensure_iterable(data):
+        if isinstance(data, Iterable):
+            return data
+        else:
+            return [data]
+
     # helper function to create lists of connection positions
     def get_conn_positions(dict_in, source_center, target_center):
-        source_list = np.array(dict_in["source"]) - source_center
-        target_list = np.array(dict_in["target"]) - target_center
+        source_list = np.array(_ensure_iterable(dict_in["source"])) - source_center
+        target_list = np.array(_ensure_iterable(dict_in["target"])) - target_center
         return source_list.tolist(), target_list.tolist()
 
     # prepare data (lists of node positions, list of connection positions)

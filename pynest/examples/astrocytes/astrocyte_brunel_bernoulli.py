@@ -30,9 +30,9 @@ implemented according to [1]_, [2]_, and [3]_. The neurons are modeled with
 supporting neuron-astrocyte interactions.
 
 The simulation results show how astrocytes affect neuronal excitability. The
-astrocytic dynamics, the slow inward current in the neurons induced by the
-astrocytes, and the raster plot of neuronal firings are shown in the created
-figures.
+figures displayed at the end of the simulation show the astrocytic dynamics,
+the slow inward current induced by the astrocytes in the postsynaptic neurons,
+and a raster plot of neuronal firings, respectively.
 
 In this version of the model, primary connections between populations are
 created with the pairwise bernoulli rule.
@@ -171,7 +171,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     """Connect the nodes in a neuron-astrocyte network.
 
     Nodes in a neuron-astrocyte network are connected. The connection
-    probability between neurons is divided by a the given scale to preserve
+    probability between neurons is divided by the given scale to preserve
     the expected number of connections for each node. The astrocytes are paired
     with excitatory connections only.
 
@@ -364,7 +364,6 @@ def run_simulation():
     nest.Simulate(sim_time)
 
     # read out recordings
-    neuron_spikes = sr_neuron.events
     neuron_data = mm_neuron.events
     astro_data = mm_astro.events
 

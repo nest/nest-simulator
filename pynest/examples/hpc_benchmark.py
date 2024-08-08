@@ -37,7 +37,7 @@ This is the standard network investigated in [1]_, [2]_, [3]_.
 A note on connectivity
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. image:: ../examples/hpc_benchmark_connectivity.svg
+.. image:: hpc_benchmark_connectivity.svg
    :width: 50 %
    :alt: HPC Benchmark network architecture
    :align: right

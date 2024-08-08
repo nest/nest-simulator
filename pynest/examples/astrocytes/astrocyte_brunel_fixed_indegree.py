@@ -172,7 +172,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     """Connect the nodes in a neuron-astrocyte network.
 
     Nodes in a neuron-astrocyte network are connected. The connection
-    probability between neurons is divided by a the given scale to preserve
+    probability between neurons is divided by the given scale to preserve
     the expected number of connections for each node. The astrocytes are paired
     with excitatory connections only.
 

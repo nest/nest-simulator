@@ -253,7 +253,7 @@ def plot_dynamics(astro_data, neuron_data, start):
 
     The dynamics in the given neuron and astrocyte nodes are plotted. The
     dynamics include IP3 and calcium in the astrocytes, and the SIC input to
-    the neurons.
+    the postsynaptic neurons.
 
     Parameters
     ---------

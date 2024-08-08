@@ -95,6 +95,8 @@ class Model:
         Returns
         -------
 
+        none
+
         """
 
         print("\nInitialising model and simulation...")
@@ -143,6 +145,9 @@ class Model:
         elif self.pars["neuron_model"] == "ignore_and_fire":
             self.__neuron_params = {}
 
+        else:
+            return None
+
     def __derived_parameters(self, parameters):
         """
         Set additional parameters derived from base parameters.
@@ -185,8 +190,6 @@ class Model:
         if self.pars["N_rec_spikes"] == "all":
             self.pars["N_rec_spikes"] = self.pars["N"]
 
-        return
-
     def create(self):
         """
         Create and configure all network nodes (neurons + recording and stimulus devices),
@@ -207,10 +210,12 @@ class Model:
             nest.GetLocalNodeCollection(pop_all).V_m = random_vm
         elif self.pars["neuron_model"] == "ignore_and_fire":
             # pop_all = nest.Create("ignore_and_fire", self.pars["N"]) # overall population
-            # pop_all.rate = np.random.uniform(low=self.pars["ignore_and_fire_pars"]["rate_dist"][0],high=self.pars["ignore_and_fire_pars"]["rate_dist"][1],size=self.pars["N"])
-            # pop_all.phase = np.random.uniform(low=self.pars["ignore_and_fire_pars"]["phase_dist"][0],high=self.pars["ignore_and_fire_pars"]["phase_dist"][1],size=self.pars["N"])
+            # pop_all.rate = np.random.uniform(low=self.pars["ignore_and_fire_pars"]["rate_dist"][0],high=self.pars
+            # ["ignore_and_fire_pars"]["rate_dist"][1],size=self.pars["N"])
+            # pop_all.phase = np.random.uniform(low=self.pars["ignore_and_fire_pars"]["phase_dist"][0],
+            # high=self.pars["ignore_and_fire_pars"]["phase_dist"][1],size=self.pars["N"])
 
-            ## better, but not working yet:
+            # better, but not working yet:
             pop_all.rate = nest.random.uniform(
                 min=self.pars["ignore_and_fire_pars"]["rate_dist"][0],
                 max=self.pars["ignore_and_fire_pars"]["rate_dist"][1],
@@ -265,8 +270,6 @@ class Model:
         self.nodes["spike_recorder"] = spike_recorder
         # self.nodes["weight_recorder"] = weight_recorder
 
-        return
-
     def connect(self):
         """
         Connect network and devices.
@@ -274,7 +277,7 @@ class Model:
         """
 
         print("\nConnecting network and devices...")
-        ## fetch neuron populations and device ids
+        # fetch neuron populations and device ids
         pop_all = self.nodes["pop_all"]
         pop_E = self.nodes["pop_E"]
         pop_I = self.nodes["pop_I"]
@@ -282,7 +285,7 @@ class Model:
         spike_recorder = self.nodes["spike_recorder"]
 
         # connect network
-        ## EE connections (plastic)
+        # EE connections (plastic)
         nest.Connect(
             pop_E,
             pop_E,
@@ -295,7 +298,7 @@ class Model:
             syn_spec="excitatory_plastic",
         )
 
-        ## EI connections (static)
+        # EI connections (static)
         nest.Connect(
             pop_E,
             pop_I,
@@ -308,7 +311,7 @@ class Model:
             syn_spec="excitatory_static",
         )
 
-        ## IE and II connections (static)
+        # IE and II connections (static)
         nest.Connect(
             pop_I,
             pop_all,
@@ -339,8 +342,6 @@ class Model:
         nest.Prepare()
         nest.Cleanup()
 
-        return
-
     def simulate(self, t_sim):
         """
         Run simulation.
@@ -355,8 +356,6 @@ class Model:
         print("\nSimulating...")
 
         nest.Simulate(t_sim)
-
-        return
 
     def save_parameters(self, filename_root, path):
         """
@@ -375,8 +374,6 @@ class Model:
         import json
 
         json.dump(self.pars, open("%s/%s.json" % (path, filename_root), "w"), indent=4)
-
-        return
 
     def get_connectivity(self, pop_pre, pop_post, filename=None):
         """
@@ -464,7 +461,7 @@ def get_data_file_list(path, label):
 
     """
 
-    ## get list of files names
+    # get list of files names
     files = []
     for file_name in os.listdir(path):
         if file_name.endswith(".dat") and file_name.startswith(label):
@@ -513,14 +510,14 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
 
     files = get_data_file_list(path, label)
 
-    ## open spike files and read data
+    # open spike files and read data
     spikes = []
     for file_name in files:
         try:
             spikes += [
                 np.loadtxt("%s/%s" % (path, file_name), skiprows=skip_rows)
-            ]  ## load spike file while skipping the header
-        except:
+            ]  # load spike file while skipping the header
+        except ValueError:
             print("Error: %s" % sys.exc_info()[1])
             print(
                 "Remove non-numeric entries from file %s (e.g. in file header) \
@@ -530,8 +527,8 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
 
     spikes = np.concatenate(spikes)
 
-    ## extract spikes in specified time interval
-    if time_interval != None:
+    # extract spikes in specified time interval
+    if time_interval is not None:
         if type(time_interval) == tuple:
             ind = (spikes[:, 1] >= time_interval[0]) * (spikes[:, 1] <= time_interval[1])
             spikes = spikes[ind, :]
@@ -540,7 +537,7 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
 
     if type(pop) == nest.NodeCollection:
         spikes_subset = []
-        for cn, nid in enumerate(pop):  ## loop over all neurons
+        for cn, nid in enumerate(pop):  # loop over all neurons
             print(
                 "Spike extraction from %d/%d (%d%%) neurons completed"
                 % (cn + 1, len(pop), 1.0 * (cn + 1) / len(pop) * 100),
@@ -549,7 +546,7 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
             ind = np.where(spikes[:, 0] == nid)[0]
             spikes_subset += list(spikes[ind, :])
         spikes = np.array(spikes_subset)
-    elif pop == None:
+    elif pop is None:
         pass
     else:
         print("Warning: pop must be a NEST NodeCollection or None. All spikes are loaded.")
@@ -571,7 +568,8 @@ def load_connectivity_data(path, label, skip_rows=1):
                     Connectivity file label (file name root).
 
     skip_rows:      int, optional
-                    Number of rows to be skipped while reading connectivity files (to remove file headers). The default is 1.
+                    Number of rows to be skipped while reading connectivity files (to remove file headers).
+                    The default is 1.
 
     Returns
     -------
@@ -589,15 +587,16 @@ def load_connectivity_data(path, label, skip_rows=1):
 
     files = get_data_file_list(path, label)
 
-    ## open weight files and read data
+    # open weight files and read data
     C = []
     for file_name in files:
         try:
-            C += [np.loadtxt("%s/%s" % (path, file_name), skiprows=skip_rows)]  ## load file while skipping the header
-        except:
+            C += [np.loadtxt("%s/%s" % (path, file_name), skiprows=skip_rows)]  # load file while skipping the header
+        except ValueError:
             print("Error: %s" % sys.exc_info()[1])
             print(
-                "Remove non-numeric entries from file %s (e.g. in file header) by specifying (optional) parameter 'skip_rows'.\n"
+                "Remove non-numeric entries from file %s (e.g. in file header) by specifying (optional) parameter \
+                'skip_rows'.\n"
                 % (file_name)
             )
 
@@ -709,10 +708,10 @@ def get_connectivity_matrix(connectivity, pop_pre=[], pop_post=[]):
     if len(pop_post) == 0:
         pop_post = np.unique(connectivity[:, 1])
 
-    ## initialise weight matrix
-    W = np.zeros([len(pop_post), len(pop_pre)])  ## convention: pre = columns, post = rows
+    # initialise weight matrix
+    W = np.zeros([len(pop_post), len(pop_pre)])  # convention: pre = columns, post = rows
 
-    ## fill weight matrix
+    # fill weight matrix
     for c in range(connectivity.shape[0]):
         W[get_index(pop_post, connectivity[c, 1]), get_index(pop_pre, connectivity[c, 0])] = connectivity[c, 2]
 

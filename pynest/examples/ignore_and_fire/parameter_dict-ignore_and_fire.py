@@ -51,7 +51,7 @@ pars["t_ref"] = 2.0  # duration of refractory period (ms)
 pars["theta"] = 20.0  # spike threshold(mV)
 pars["V_reset"] = 0.0  # reset potential(mV)
 
-## needed for ignore_and_fire version of the model
+# needed for ignore_and_fire version of the model
 pars["ignore_and_fire_pars"] = {}
 pars["ignore_and_fire_pars"]["rate_dist"] = [0.5, 1.5]
 pars["ignore_and_fire_pars"]["phase_dist"] = [0.01, 1.0]

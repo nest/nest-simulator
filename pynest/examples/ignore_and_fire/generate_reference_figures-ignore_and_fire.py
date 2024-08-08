@@ -147,7 +147,7 @@ def plot_weight_distributions(whist_presim, whist_postsim, weights, pars, path="
 def generate_reference_figures(neuron_model="ignore_and_fire"):
     """Generate and store set of reference data"""
 
-    ## raster plot
+    # raster plot
     parameters = model.get_default_parameters()
 
     parameters["neuron_model"] = neuron_model
@@ -155,14 +155,14 @@ def generate_reference_figures(neuron_model="ignore_and_fire"):
     parameters["record_spikes"] = True
     parameters["record_weights"] = True
 
-    ## fetch node ids
+    # fetch node ids
     model_instance = model.Model(parameters)
     model_instance.create()
 
-    ## create subfolder for figures (if necessary)
+    # create subfolder for figures (if necessary)
     os.system("mkdir -p " + model_instance.pars["data_path"])
 
-    ## load spikes from reference data
+    # load spikes from reference data
     spikes = model.load_spike_data(
         model_instance.pars["data_path"],
         "spikes-%d" % (np.array(model_instance.nodes["spike_recorder"])[0]),
@@ -170,30 +170,30 @@ def generate_reference_figures(neuron_model="ignore_and_fire"):
     # plot_spikes(spikes, model_instance.nodes, model_instance.pars, model_instance.pars["data_path"])
     plot_spikes(spikes, model_instance.nodes, model_instance.pars, "figures")
 
-    ## load connectivity from reference data
+    # load connectivity from reference data
     connectivity_presim = model.load_connectivity_data(model_instance.pars["data_path"], "connectivity_presim")
     connectivity_postsim = model.load_connectivity_data(model_instance.pars["data_path"], "connectivity_postsim")
 
-    ## create connectivity matrices before and after simulation for a subset of neurons
+    # create connectivity matrices before and after simulation for a subset of neurons
     subset_size = 100
     pop_pre = np.array(model_instance.nodes["pop_E"])[:subset_size]
     pop_post = np.array(model_instance.nodes["pop_E"])[:subset_size]
     W_presim, pop_pre, pop_post = model.get_connectivity_matrix(connectivity_presim, pop_pre, pop_post)
     W_postsim, pop_pre, pop_post = model.get_connectivity_matrix(connectivity_postsim, pop_pre, pop_post)
 
-    ## plot connectivity matrices
+    # plot connectivity matrices
     # plot_connectivity_matrix(W_presim, pop_pre, pop_post, "_presim", model_instance.pars["data_path"])
     # plot_connectivity_matrix(W_postsim, pop_pre, pop_post, "_postsim", model_instance.pars["data_path"])
     plot_connectivity_matrix(W_presim, pop_pre, pop_post, model_instance.pars, "_presim", "figures")
     plot_connectivity_matrix(W_postsim, pop_pre, pop_post, model_instance.pars, "_postsim", "figures")
 
-    ## compute weight distributions
+    # compute weight distributions
     # weights = np.arange(29.5,34.1,0.05)
     weights = np.arange(0.0, 150.1, 0.5)
     whist_presim = model.get_weight_distribution(connectivity_presim, weights)
     whist_postsim = model.get_weight_distribution(connectivity_postsim, weights)
 
-    ## plot weight distributions
+    # plot weight distributions
     # plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars["data_path"])
     plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars, "figures")
 

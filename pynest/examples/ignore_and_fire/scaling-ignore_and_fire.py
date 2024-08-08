@@ -38,11 +38,11 @@ import numpy
 from matplotlib import gridspec
 
 ##########################################################
-## parameters
-neuron_models = ["iaf_psc_alpha", "ignore_and_fire"]  ## neuron models
-Ns = numpy.arange(1250, 15000, 1250)  ## network sizes
+# parameters
+neuron_models = ["iaf_psc_alpha", "ignore_and_fire"]  # neuron models
+Ns = numpy.arange(1250, 15000, 1250)  # network sizes
 
-data_path_root = "./data/"  ## root of path to simulation data
+data_path_root = "./data/"  # root of path to simulation data
 
 simulate = True
 # simulate = False
@@ -51,7 +51,7 @@ analyse = True
 
 
 ##########################################################
-## network construction and simulation
+# network construction and simulation
 def run_model(neuron_model, N, data_path_root):
     """
     Builds an instance of the model for a given network size and neuron model,
@@ -61,13 +61,13 @@ def run_model(neuron_model, N, data_path_root):
 
     parameters = model.get_default_parameters()
 
-    ## overwrite default parameters
+    # overwrite default parameters
     parameters["record_spikes"] = True
-    parameters["neuron_model"] = neuron_model  ## choose model flavor
-    parameters["N"] = N  ## specify scale (network sizes)
+    parameters["neuron_model"] = neuron_model  # choose model flavor
+    parameters["N"] = N  # specify scale (network sizes)
     parameters["data_path"] = data_path_root + "/N" + str(N)
 
-    ## create and simulate network
+    # create and simulate network
     model_instance = model.Model(parameters)
 
     start = time.time()
@@ -81,19 +81,19 @@ def run_model(neuron_model, N, data_path_root):
     stop = time.time()
     sim_time = stop - start
 
-    ## store model instance parameters
+    # store model instance parameters
     model_instance.save_parameters("model_instance_parameters", model_instance.pars["data_path"])
 
-    ## record connectivity at end of simulation
-    subset_size = 200  ## number of pre- and post-synaptic neurons weights are extracted from
+    # record connectivity at end of simulation
+    subset_size = 200  # number of pre- and post-synaptic neurons weights are extracted from
     pop_pre = model_instance.nodes["pop_E"][:subset_size]
     pop_post = model_instance.nodes["pop_E"][:subset_size]
     C = model_instance.get_connectivity(
         pop_pre, pop_post, model_instance.pars["data_path"] + "/" + "connectivity_postsim.dat"
     )
 
-    ## data analysis
-    ### time and population averaged firing rate
+    # data analysis
+    ## time and population averaged firing rate
     spikes = model.load_spike_data(
         model_instance.pars["data_path"], "spikes-%d" % (numpy.array(model_instance.nodes["spike_recorder"])[0])
     )
@@ -101,7 +101,7 @@ def run_model(neuron_model, N, data_path_root):
         spikes, (0.0, model_instance.pars["T"]), model_instance.pars["N_rec_spikes"]
     )
 
-    ### synaptic weight statistics after simulation
+    ## synaptic weight statistics after simulation
     connectivity_postsim = model.load_connectivity_data(model_instance.pars["data_path"], "connectivity_postsim")
     weight_stats = data_statistics(connectivity_postsim[:, 2])
     # weights = numpy.arange(0.,150.1,0.5)
@@ -185,8 +185,6 @@ def save_dict_as_json(data_dict, filename_root, path):
 
     json.dump(data_dict, open("%s/%s.json" % (path, filename_root), "w"))
 
-    return
-
 
 def load_data(neuron_model, N, data_path_root):
     """
@@ -194,7 +192,7 @@ def load_data(neuron_model, N, data_path_root):
     """
     data = {}
 
-    ## read data from json file
+    # read data from json file
     data_path = data_path_root + "/N" + str(N) + "/" + neuron_model
     with open(data_path + "/data.json") as f:
         data = json.load(f)
@@ -237,7 +235,7 @@ for cm, neuron_model in enumerate(neuron_models):
     print()
 
 if analyse:
-    ## plotting
+    # plotting
 
     from matplotlib import rcParams
 
@@ -257,13 +255,13 @@ if analyse:
 
     gs = gridspec.GridSpec(3, 1)
 
-    ## build and sim times
+    # build and sim times
     ax1 = fig.add_subplot(gs[0, 0])
 
-    ## firing rate
+    # firing rate
     ax2 = fig.add_subplot(gs[1, 0])
 
-    ## weight stat
+    # weight stat
     ax3 = fig.add_subplot(gs[2, 0])
 
     ms = 4
@@ -271,7 +269,7 @@ if analyse:
     clrs = ["0", "0.8"]
 
     for cm, neuron_model in enumerate(neuron_models):
-        ## sim time
+        # sim time
         ax1.plot(
             Ns,
             sim_time[cm, :],
@@ -289,7 +287,7 @@ if analyse:
         # ax1.set_title(r"fixed in-degree $K=1250$")
         ax1.legend(loc=2)
 
-        ## firing rate
+        # firing rate
         ax2.plot(
             Ns,
             rate[cm, :],
@@ -307,7 +305,7 @@ if analyse:
         ax2.set_ylabel(r"firing rate (1/s)")
         # ax2.legend(loc=1)
 
-        ## weight stat
+        # weight stat
         if cm == 0:
             lbl1 = "mean"
             lbl2 = "mean + SD"

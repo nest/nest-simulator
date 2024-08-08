@@ -64,6 +64,8 @@ iaf_psc_exp_multisynapse
 iaf_psc_exp_ps
 iaf_psc_exp_ps_lossless
 iaf_tum_2000
+iaf_bw_2001
+iaf_bw_2001_exact
 ignore_and_fire
 izhikevich
 jonke_synapse

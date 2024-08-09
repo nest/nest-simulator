@@ -60,7 +60,8 @@ PyNEST examples
            * :doc:`../auto_examples/astrocytes/astrocyte_single`
            * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
            * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
-           * :doc:`../auto_examples/astrocytes/astrocyte_brunel`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_bernoulli`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_fixed_indegree`
 
 
 .. grid:: 1 1 2 3

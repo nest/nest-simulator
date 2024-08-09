@@ -41,6 +41,9 @@
 
 #include "recording_backend_sionlib.h"
 
+namespace nest
+{
+
 const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
 const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
 const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 32;
@@ -703,3 +706,5 @@ nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, 
 {
   // nothing to do
 }
+
+} // namespace nest

@@ -99,6 +99,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay = NAN,
+    const double axonal_delay = NAN,
     const double weight = NAN ) = 0;
 
   virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
@@ -157,11 +158,13 @@ private:
 
   ConnectionT default_connection_;
   size_t receptor_type_;
+  synindex syn_id_;
 
 public:
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
     , receptor_type_( 0 )
+    , syn_id_( invalid_synindex )
   {
   }
 
@@ -170,6 +173,7 @@ public:
     , cp_( cm.cp_ )
     , default_connection_( cm.default_connection_ )
     , receptor_type_( cm.receptor_type_ )
+    , syn_id_( cm.syn_id_ )
   {
   }
 
@@ -179,6 +183,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
+    const double axonal_delay,
     const double weight ) override;
 
   ConnectorModel* clone( std::string, synindex ) const override;
@@ -213,15 +218,7 @@ public:
 
 private:
   void used_default_delay();
-
-  void add_connection_( Node& src,
-    Node& tgt,
-    std::vector< ConnectorBase* >& hetconn,
-    const synindex syn_id,
-    ConnectionT& c,
-    const size_t receptor_type );
-
-}; // GenericConnectorModel
+};
 
 } // namespace nest
 

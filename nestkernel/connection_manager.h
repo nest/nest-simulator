@@ -145,8 +145,9 @@ public:
     size_t target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay = numerics::nan,
-    const double weight = numerics::nan );
+    const double delay,
+    const double axonal_delay,
+    const double weight );
 
   /**
    * Connect two nodes.
@@ -166,6 +167,7 @@ public:
     long* targets,
     double* weights,
     double* delays,
+    double* axonal_delays,
     std::vector< std::string >& p_keys,
     double* p_values,
     size_t n,
@@ -297,6 +299,13 @@ public:
     const size_t lcid,
     const std::vector< ConnectorModel* >& cm,
     Event& e );
+
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -528,6 +537,7 @@ private:
     const synindex syn_id,
     const DictionaryDatum& params,
     const double delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
   /**
@@ -683,6 +693,9 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+
+  //! Number of weight corrections required for STDP synapses with predominant axonal delays during the whole simulation
+  size_t num_corrections_;
 };
 
 inline bool
@@ -881,6 +894,19 @@ ConnectionManager::send( const size_t tid,
   Event& e )
 {
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
+  const double t_last_pre_spike,
+  double* weight_revert,
+  const double t_post_spike )
+{
+  ++num_corrections_;
+  connections_[ tid ][ syn_id ]->correct_synapse_stdp_ax_delay(
+    tid, syn_id, lcid, t_last_pre_spike, weight_revert, t_post_spike );
 }
 
 inline void

@@ -398,6 +398,7 @@ public:
    * @throws IllegalConnection
    */
   virtual size_t handles_test_event( SpikeEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( CorrectionSpikeEvent&, size_t receptor_type );
   virtual size_t handles_test_event( WeightRecorderEvent&, size_t receptor_type );
   virtual size_t handles_test_event( RateEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DataLoggingRequest&, size_t receptor_type );
@@ -479,7 +480,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double, double );
+  virtual void register_stdp_connection( double, double, double );
 
   /**
    * Initialize the update history and register the eprop synapse.
@@ -532,6 +533,7 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+  virtual void handle( CorrectionSpikeEvent& );
 
   /**
    * Handle incoming weight recording events.
@@ -947,6 +949,11 @@ public:
    */
   virtual size_t get_local_device_id() const;
 
+  /**
+   * Framework for STDP with predominantly axonal delays:
+   * Buffer a correction entry for a short time window.
+   */
+  virtual void add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double );
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
    * deprecated.

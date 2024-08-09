@@ -56,10 +56,12 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
       it->second.set_access_flag();
     }
 
-    if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay ) )
+    if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay )
+      or syn_specs[ 0 ]->known( names::axonal_delay ) )
     {
       throw BadProperty(
-        "Properties weight and delay cannot be specified in syn_spec if the ConnectionGenerator has values." );
+        "Properties weight, delay and axonal_delay cannot be specified in syn_spec if the ConnectionGenerator has "
+        "values." );
     }
   }
   if ( syn_specs.size() > 1 )
@@ -91,26 +93,30 @@ ConnectionGeneratorBuilder::connect_()
       single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
   }
-  else if ( num_parameters == 2 )
+  else if ( num_parameters == 3 )
   {
-    if ( not params_map_->known( names::weight ) or not params_map_->known( names::delay ) )
+    if ( not params_map_->known( names::weight ) or not params_map_->known( names::delay )
+      or not params_map_->known( names::axonal_delay ) )
     {
-      throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
+      throw BadProperty( "The parameter map has to contain the indices of weight, delay, and axonal_delay." );
     }
 
     const size_t d_idx = ( *params_map_ )[ names::delay ];
+    const size_t a_idx = ( *params_map_ )[ names::axonal_delay ];
     const size_t w_idx = ( *params_map_ )[ names::weight ];
 
     const bool d_idx_is_0_or_1 = d_idx == 0 or ( d_idx == 1 );
+    const bool a_idx_is_0_or_1 = a_idx == 0 or ( a_idx == 1 );
     const bool w_idx_is_0_or_1 = w_idx == 0 or ( w_idx == 1 );
     const bool indices_differ = ( w_idx != d_idx );
-    if ( not( d_idx_is_0_or_1 and w_idx_is_0_or_1 and indices_differ ) )
+    if ( not( d_idx_is_0_or_1 and a_idx_is_0_or_1 and w_idx_is_0_or_1 and indices_differ ) )
     {
-      throw BadProperty( "The indices for weight and delay have to be either 0 or 1 and cannot be the same." );
+      throw BadProperty(
+        "The indices for weight, delay, and axonal_delay have to be either 0 or 1 and cannot be the same." );
     }
 
     // connect source to target with weight and delay
-    std::vector< double > params( 2 );
+    std::vector< double > params( 3 );
     while ( cg_->next( source, target, &params[ 0 ] ) )
     {
       // No need to check for locality of the target node, as the mask
@@ -127,12 +133,13 @@ ConnectionGeneratorBuilder::connect_()
         synapse_model_id_[ 0 ],
         param_dicts_[ 0 ][ target_thread ],
         params[ d_idx ],
+        params[ a_idx ],
         params[ w_idx ] );
     }
   }
   else
   {
-    LOG( M_ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
+    LOG( M_ERROR, "Connect", "Either three or no parameters in the ConnectionGenerator expected." );
     throw DimensionMismatch();
   }
 }

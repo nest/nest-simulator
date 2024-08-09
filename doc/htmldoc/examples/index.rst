@@ -250,16 +250,16 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: Performance testing
+           :img-top: ../static/img/NetworkSketch_TwoPopulationNetworkPlastic.svg
+
+           * :doc:`../auto_examples/hpc_benchmark`
+           * :doc:`../auto_examples/ignore_and_fire/index`
+
     .. grid-item-card:: SONATA network
            :img-top: ../static/img/300_pointneurons.png
 
            * :doc:`../auto_examples/sonata_example/sonata_network`
-
-    .. grid-item-card:: HPC benchmark
-           :img-top: ../static/img/nest_logo-faded.png
-
-           * :doc:`../auto_examples/hpc_benchmark`
-
 
     .. grid-item-card:: Connection set algebra
            :img-top: ../static/img/nest_logo-faded.png
@@ -368,7 +368,9 @@ PyNEST examples
 
 .. toctree::
    :hidden:
+   :glob:
 
+   ../auto_examples/ignore_and_fire/*
    ../auto_examples/pong/run_simulations
    ../auto_examples/pong/pong
    ../auto_examples/pong/generate_gif

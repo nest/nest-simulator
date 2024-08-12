@@ -786,8 +786,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   , random_pool_( true )
   , pool_size_( third->size() )
   , targets_per_third_( targets->size() / third->size() )
-  , previous_target_( kernel().vp_manager.get_num_threads(), nullptr )
-  , pool_( kernel().vp_manager.get_num_threads(), nullptr )
+  , pools_( kernel().vp_manager.get_num_threads(), nullptr )
 {
   updateValue< double >( conn_spec, names::p, p_ );
   updateValue< long >( conn_spec, names::pool_size, pool_size_ );
@@ -831,8 +830,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
 #pragma omp parallel
   {
     const size_t thrd = kernel().vp_manager.get_thread_id();
-    pool_[ thrd ] = new std::vector< NodeIDTriple >();
-    pool_[ thrd ]->reserve( pool_size_ );
+    pools_[ thrd ] = new TgtPoolMap_();
   }
 
   if ( not random_pool_ )
@@ -857,7 +855,7 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 #pragma omp parallel
   {
     const size_t thrd = kernel().vp_manager.get_thread_id();
-    delete pool_[ thrd ];
+    delete pools_[ thrd ];
 
     if ( not random_pool_ )
     {
@@ -886,25 +884,29 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
   }
 
   // step 2, build pool if new target
-  if ( &primary_target != previous_target_[ tid ] )
+  const size_t tgt_gid = primary_target.get_node_id();
+  auto pool_it = pools_[ tid ]->find( tgt_gid );
+  if ( pool_it == pools_[ tid ]->end() )
   {
-    pool_[ tid ]->clear();
+    const auto [ new_pool_it, emplace_ok ] = pools_[ tid ]->emplace( tgt_gid, PoolType_() );
+    assert( emplace_ok );
+
     if ( random_pool_ )
     {
-      rng->sample( sources_->begin(), sources_->end(), std::back_inserter( *pool_[ tid ] ), pool_size_ );
+      rng->sample( sources_->begin(), sources_->end(), std::back_inserter( new_pool_it->second ), pool_size_ );
     }
     else
     {
       std::copy_n( sources_->begin() + get_first_pool_index_( primary_target.get_tmp_nc_index() ),
         pool_size_,
-        std::back_inserter( *( pool_[ tid ] ) ) );
+        std::back_inserter( new_pool_it->second ) );
     }
-    previous_target_[ tid ] = &primary_target;
+    pool_it = new_pool_it;
   }
 
   // select third-factor neuron randomly from pool for this target
   const auto third_index = pool_size_ == 1 ? 0 : rng->ulrand( pool_size_ );
-  const auto third_node_id = ( *pool_[ tid ] )[ third_index ].node_id;
+  const auto third_node_id = ( pool_it->second )[ third_index ].node_id;
 
   single_connect_( third_node_id, primary_target, tid, rng );
 

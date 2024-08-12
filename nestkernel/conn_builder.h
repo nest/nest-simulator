@@ -461,8 +461,10 @@ private:
   bool random_pool_;
   size_t pool_size_;
   size_t targets_per_third_;
-  std::vector< Node* > previous_target_;             // TODO: cache thrashing possibility
-  std::vector< std::vector< NodeIDTriple >* > pool_; // outer: threads
+
+  typedef std::vector< NodeIDTriple > PoolType_;
+  typedef std::map< size_t, PoolType_ > TgtPoolMap_;
+  std::vector< TgtPoolMap_* > pools_; // outer: threads
 };
 
 

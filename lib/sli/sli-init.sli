@@ -2239,6 +2239,7 @@ special prerequisites.
 SeeAlso: exit_test_gracefully
 */
 
+/skip_if_without_boost { statusdict/have_boost :: not { /skipped_no_boost exit_test_gracefully } if } def
 /skip_if_no_mpi { statusdict/is_mpi :: not { /skipped_no_mpi exit_test_gracefully } if } def
 /skip_if_have_mpi { statusdict/is_mpi :: { /skipped_have_mpi exit_test_gracefully } if } def
 /skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def

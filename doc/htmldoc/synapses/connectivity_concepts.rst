@@ -69,6 +69,7 @@ Projections are created in NEST with the :py:func:`.Connect` function:
     nest.Connect(pre, post)
     nest.Connect(pre, post, conn_spec)
     nest.Connect(pre, post, conn_spec, syn_spec)
+    nest.Connect(pre, post, conn_spec, syn_spec, return_synapsecollection=True)
 
 In the simplest case, the function just takes the ``NodeCollections`` ``pre`` and ``post``, defining the nodes of
 origin (`sources`) and termination (`targets`) for the connections to be established with the default rule ``all-to-all`` and the synapse model :ref:`static_synapse`.

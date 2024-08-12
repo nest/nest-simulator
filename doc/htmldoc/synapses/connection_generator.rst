@@ -1,7 +1,7 @@
 .. _connection_generator:
 
 Connection generator interface
-------------------------------
+==============================
 
 .. admonition:: Availability
 

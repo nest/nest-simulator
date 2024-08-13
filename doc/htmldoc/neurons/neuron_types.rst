@@ -389,10 +389,12 @@ Rate neurons
      Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
      (aka recurrent neural networks RNNs)
 
+     Most rate neurons in NEST are implemented as templates based on the non-linearity and noise type.
 
-     Averaged Activity: Rate neuron models focus on the average level of neural activity over time, rather than individual spikes.
-     They are useful for studying steady-state behaviors, population dynamics, and the
-     overall flow of information in neural networks without requiring detailed temporal resolution.
+
+
+Noise application
+~~~~~~~~~~~~~~~~~
 
 .. grid::
 
@@ -407,9 +409,9 @@ Rate neurons
 
    .. grid-item::
 
-     Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
-     (aka recurrent neural networks RNNs)
+     ``ipn``: Noise is added to the input rate
 
+       :doc:`/models/rate_neuron_ipn`
 
    .. grid-item::
       :columns: 2
@@ -421,8 +423,59 @@ Rate neurons
 
    .. grid-item::
 
-     Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
-     (aka recurrent neural networks RNNs)
+     ``opn``: Noise is applied to the output rate
+
+       :doc:`/models/rate_neuron_opn`
+
+
+Alternatively, you can use the :doc:`rate_transformer_node </models/rate_transformer_node>` (applies a non-linearity
+to a sum of incoming rates, transforming them before passing on to other nodes.)
+
+Where is Non-linearity applied? ``linear_summation``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+The boolean parameter ``linear_summation`` determines whether the
+input from different presynaptic neurons is first summed linearly and
+then transformed by a nonlinearity (``True``), or if the input from
+individual presynaptic neurons is first nonlinearly transformed and
+then summed up (``False``). Default is ``True``.
+
+You can set this parameter in the parameter dictionary of the rate neuron.
+
+
+Type of non-linearity
+~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify the type of non-linearity, which in NEST are provided as C++ templates.
+
+The following non-linearity types are available:
+
+*    gauss_rate – Rate neuron model with Gaussian gain function
+*    lin_rate – Linear rate model
+*    sigmoid_rate – Rate neuron model with sigmoidal gain function
+*    sigmoid_rate_gg_1998 – rate model with sigmoidal gain function
+*    tanh_rate – rate model with hyperbolic tangent non-linearity
+*    threshold_lin_rate – Rate model with threshold-linear gain function
+
+Use rate neurons in your simulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use a rate neuron, the naming convention is ``<non-linearity>_rate_<noise_type>``
+
+For example::
+
+   nest.Create("gauss_rate_opn")
+
+If using the  ``rate_transformer_node``, you can use the following syntax ``rate_transformer_<non-linearity>``
+
+Example::
+
+    nest.Create("rate_transformer_tanh")
+
+
+Mean field theory
+~~~~~~~~~~~~~~~~~
 
 
 .. grid::
@@ -430,8 +483,6 @@ Rate neurons
    .. grid-item::
       :columns: 2
       :class: sd-d-flex-row sd-align-major-center
-
-      **Mean-field theory**
 
       .. image:: /static/img/siegert_neuron_nn.svg
 

@@ -547,6 +547,21 @@ nest::SimulationManager::prepare()
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
+  // If we simulated already and we use axonal delays, we have to make sure connectivity didn't change, as this would
+  // invalidate the correction entries in the neurons that are required for connections with predominant axonal delays.
+  if ( simulated_ and kernel().connection_manager.have_nonzero_axonal_delays()
+    and kernel().connection_manager.connections_have_changed() )
+  {
+    throw KernelException(
+      "Connections have changed during simulation, which is not allowed when using axonal delays!" );
+  }
+
+  if ( kernel().connection_manager.have_nonzero_axonal_delays()
+    and kernel().sp_manager.is_structural_plasticity_enabled() )
+  {
+    throw KernelException( "Structural plasticity is not compatible with axonal delays!" );
+  }
+
   if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
   {
 #pragma omp parallel

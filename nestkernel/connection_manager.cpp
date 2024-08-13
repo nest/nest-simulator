@@ -123,6 +123,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   compressed_spike_data_.resize( 0 );
+  have_nonzero_axonal_delays_.resize( num_threads, false );
 
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
@@ -162,6 +163,7 @@ ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
   num_corrections_ = 0;
+  have_nonzero_axonal_delays_.clear();
 
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -918,6 +920,8 @@ nest::ConnectionManager::connect_( Node& source,
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );
+
+  have_nonzero_axonal_delays_[ tid ] = have_nonzero_axonal_delays_[ tid ] | ( axonal_delay > 0. );
 
   // We do not check has_primary_connections_ and secondary_connections_exist_
   // directly as this led to worse performance on the supercomputer Piz Daint.

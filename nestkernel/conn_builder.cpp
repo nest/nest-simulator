@@ -691,6 +691,10 @@ nest::ThirdInBuilder::connect_()
 {
   kernel().vp_manager.assert_single_threaded();
 
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_count.start();
+#endif
+
   // count up how many source-third pairs we need to send to each rank
   const size_t num_ranks = kernel().mpi_manager.get_num_processes();
   std::vector< size_t > source_third_per_rank( num_ranks, 0 );
@@ -703,6 +707,11 @@ nest::ThirdInBuilder::connect_()
     }
   }
 
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_count.stop();
+  kernel().connection_manager.sw_construction_connect_third_inner_max.start();
+#endif
+
   // now find global maximum; for simplicity, we will use this to configure buffers
   std::vector< long > max_stc( num_ranks ); // MPIManager does not support size_t
   max_stc[ kernel().mpi_manager.get_rank() ] =
@@ -710,6 +719,11 @@ nest::ThirdInBuilder::connect_()
   kernel().mpi_manager.communicate( max_stc );
   const size_t global_max_stc = *std::max_element( max_stc.begin(), max_stc.end() );
   const size_t slots_per_rank = 2 * global_max_stc;
+
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_max.stop();
+  kernel().connection_manager.sw_construction_connect_third_inner_fill.start();
+#endif
 
   // create and fill send buffer, entries per pair
   std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 );
@@ -727,14 +741,23 @@ nest::ThirdInBuilder::connect_()
   }
 
   std::vector< size_t > recv_stg( num_ranks * slots_per_rank, 0 );
-
   const size_t send_recv_count = sizeof( size_t ) / sizeof( unsigned int ) * slots_per_rank;
+
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_fill.stop();
+  kernel().connection_manager.sw_construction_connect_third_inner_communicate.start();
+#endif
 
   // force to master thread for compatibility with MPI standard
 #pragma omp master
   {
     kernel().mpi_manager.communicate_Alltoall( send_stg, recv_stg, send_recv_count );
   }
+
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_communicate.stop();
+  kernel().connection_manager.sw_construction_connect_third_inner_connect.start();
+#endif
 
   // Now recv_stg contains all source-third pairs where third is on current rank
   // Create connections in parallel
@@ -757,6 +780,9 @@ nest::ThirdInBuilder::connect_()
       }
     }
   }
+#ifdef TIMER_DETAILED
+  kernel().connection_manager.sw_construction_connect_third_inner_connect.stop();
+#endif
 }
 
 nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,

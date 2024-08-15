@@ -61,7 +61,7 @@ class Parser
 public:
   Parser();
   Parser( std::istream& );
-  ~Parser() { if (s) delete s; }
+  ~Parser() { delete s; }
 
   bool operator()( Token& );
   bool

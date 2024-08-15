@@ -30,6 +30,16 @@
 #include "manager_interface.h"
 #include "stopwatch.h"
 
+#ifdef HAVE_BOOST
+#ifdef __cpp_lib_hardware_interference_size
+using std::hardware_destructive_interference_size;
+#else
+constexpr std::size_t hardware_destructive_interference_size = 64;
+#endif
+#include <boost/align/aligned_allocator.hpp>
+#include <new>
+#endif
+
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "connection_id.h"
@@ -52,6 +62,16 @@
 
 namespace nest
 {
+
+#ifdef HAVE_BOOST
+template < typename T >
+using aligned_vector =
+  std::vector< T, boost::alignment::aligned_allocator< T, hardware_destructive_interference_size > >;
+#else
+template < typename T >
+using aligned_vector = std::vector< T >;
+#endif
+
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
@@ -633,7 +653,8 @@ private:
    * A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  std::vector< std::vector< size_t > > num_connections_;
+
+  std::vector< aligned_vector< size_t > > num_connections_;
 
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 

@@ -214,7 +214,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    std::string myarg = argv[i];
+    const std::string myarg = argv[ i ];
 
     if ( myarg == "-d" or myarg == "--debug" )
     {

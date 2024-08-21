@@ -1,5 +1,5 @@
 Managers
-=======
+========
 
 
 .. button-ref:: iomanager

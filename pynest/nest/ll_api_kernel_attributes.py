@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from .ll_api import sr, stack_checker, sps, spp
+from .ll_api import spp, sps, sr, stack_checker
 
 
 class KernelAttribute:
@@ -27,9 +27,7 @@ class KernelAttribute:
     Descriptor that dispatches attribute access to the nest kernel.
     """
 
-    def __init__(
-        self, typehint, description, readonly=False, default=None, localonly=False
-    ):
+    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
         self._readonly = readonly
         self._localonly = localonly
         self._default = default

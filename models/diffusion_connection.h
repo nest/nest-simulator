@@ -28,7 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, instantaneous rate
+/* BeginUserDocs: synapse, instantaneous, rate
 
 Short description
 +++++++++++++++++
@@ -82,10 +82,17 @@ See also
 
 siegert_neuron, rate_connection_instantaneous
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: diffusion_connection
+
 EndUserDocs */
 
+void register_diffusion_connection( const std::string& name );
+
 template < typename targetidentifierT >
-class DiffusionConnection : public Connection< targetidentifierT >
+class diffusion_connection : public Connection< targetidentifierT >
 {
 public:
   // this line determines which common properties to use
@@ -98,7 +105,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  DiffusionConnection()
+  diffusion_connection()
     : ConnectionBase()
     , drift_factor_( 1.0 )
     , diffusion_factor_( 1.0 )
@@ -118,7 +125,7 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     DiffusionConnectionEvent ge;
 
@@ -133,14 +140,16 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  bool
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_drift_factor( drift_factor_ );
     e.set_diffusion_factor( diffusion_factor_ );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;
@@ -168,11 +177,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties DiffusionConnection< targetidentifierT >::properties;
+constexpr ConnectionModelProperties diffusion_connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-DiffusionConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+diffusion_connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -183,7 +192,7 @@ DiffusionConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -206,7 +215,7 @@ DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
 template < typename targetidentifierT >
 SecondaryEvent*
-DiffusionConnection< targetidentifierT >::get_secondary_event()
+diffusion_connection< targetidentifierT >::get_secondary_event()
 {
   return new DiffusionConnectionEvent();
 }

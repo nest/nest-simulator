@@ -38,7 +38,7 @@
 
 class Parser
 {
-  Scanner* s;
+  Scanner* s = nullptr;
 
   Token arraytoken;
   Token proctoken;
@@ -61,6 +61,10 @@ class Parser
 public:
   Parser();
   Parser( std::istream& );
+  ~Parser()
+  {
+    delete s;
+  }
 
   bool operator()( Token& );
   bool

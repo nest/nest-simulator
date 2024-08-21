@@ -88,10 +88,17 @@ See also
 
 music_rate_out_proxy, music_cont_in_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_rate_in_proxy
+
 EndUserDocs*/
 
 namespace nest
 {
+void register_music_rate_in_proxy( const std::string& name );
+
 /**
  * Emit rate at times received from another application via a
  * MUSIC port.

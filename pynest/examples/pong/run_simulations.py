@@ -59,14 +59,13 @@ import argparse
 import datetime
 import gzip
 import logging
-import nest
 import os
+import pickle
 import sys
 import time
 
+import nest
 import numpy as np
-import pickle
-
 import pong
 from networks import POLL_TIME, PongNetDopa, PongNetRSTDP
 
@@ -87,7 +86,7 @@ class AIPong:
         self.player2 = p2
 
         if out_dir == "":
-            out_dir = '{0:%Y-%m-%d-%H-%M-%S}'.format(datetime.datetime.now())
+            out_dir = "{0:%Y-%m-%d-%H-%M-%S}".format(datetime.datetime.now())
         if os.path.exists(out_dir):
             print(f"output folder {out_dir} already exists!")
             sys.exit()
@@ -110,32 +109,27 @@ class AIPong:
         self.run = 0
         biological_time = 0
 
-        logging.info(f"Starting simulation of {max_runs} iterations of "
-                     f"{POLL_TIME}ms each.")
+        logging.info(f"Starting simulation of {max_runs} iterations of " f"{POLL_TIME}ms each.")
         while self.run < max_runs:
             logging.debug("")
             logging.debug(f"Iteration {self.run}:")
             self.input_index = self.game.ball.get_cell()[1]
-            self.player1.set_input_spiketrain(
-                self.input_index, biological_time)
-            self.player2.set_input_spiketrain(
-                self.input_index, biological_time)
+            self.player1.set_input_spiketrain(self.input_index, biological_time)
+            self.player2.set_input_spiketrain(self.input_index, biological_time)
 
             if self.run % 100 == 0:
                 logging.info(
                     f"{round(time.time() - start_time, 2)}: Run "
                     f"{self.run}, score: {l_score, r_score}, mean rewards: "
                     f"{round(np.mean(self.player1.mean_reward), 3)}, "
-                    f"{round(np.mean(self.player2.mean_reward), 3)}")
+                    f"{round(np.mean(self.player2.mean_reward), 3)}"
+                )
 
             logging.debug("Running simulation...")
             nest.Simulate(POLL_TIME)
             biological_time = nest.GetKernelStatus("biological_time")
 
-            for network, paddle in zip(
-                    [self.player1, self.player2],
-                    [self.game.l_paddle, self.game.r_paddle]):
-
+            for network, paddle in zip([self.player1, self.player2], [self.game.l_paddle, self.game.r_paddle]):
                 network.apply_synaptic_plasticity(biological_time)
                 network.reset()
 
@@ -150,10 +144,13 @@ class AIPong:
             self.game.step()
             self.run += 1
             self.game_data.append(
-                [self.game.ball.get_pos(),
-                 self.game.l_paddle.get_pos(),
-                 self.game.r_paddle.get_pos(),
-                 (l_score, r_score)])
+                [
+                    self.game.ball.get_pos(),
+                    self.game.l_paddle.get_pos(),
+                    self.game.r_paddle.get_pos(),
+                    (l_score, r_score),
+                ]
+            )
 
             if self.game.result == pong.RIGHT_SCORE:
                 self.game.reset_ball(False)
@@ -164,8 +161,8 @@ class AIPong:
 
         end_time = time.time()
         logging.info(
-            f"Simulation of {max_runs} runs complete after: "
-            f"{datetime.timedelta(seconds=end_time - start_time)}")
+            f"Simulation of {max_runs} runs complete after: " f"{datetime.timedelta(seconds=end_time - start_time)}"
+        )
 
         self.game_data = np.array(self.game_data)
 
@@ -181,11 +178,9 @@ class AIPong:
 
         logging.info("saving network data...")
 
-        for net, filename in zip([self.player1, self.player2],
-                                 ["data_left.pkl.gz", "data_right.pkl.gz"]):
+        for net, filename in zip([self.player1, self.player2], ["data_left.pkl.gz", "data_right.pkl.gz"]):
             with gzip.open(os.path.join(self.out_dir, filename), "w") as file:
-                output = {"network_type": repr(net),
-                          "with_noise": net.apply_noise}
+                output = {"network_type": repr(net), "with_noise": net.apply_noise}
                 performance_data = net.get_performance_data()
                 output["rewards"] = performance_data[0]
                 output["weights"] = performance_data[1]
@@ -198,40 +193,43 @@ if __name__ == "__main__":
     nest.set_verbosity("M_WARNING")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--runs",
-                        type=int,
-                        default=5000,
-                        help="Number of game steps to simulate.")
-    parser.add_argument("--debug",
-                        action="store_true",
-                        help="Verbose debugging output.")
-    parser.add_argument("--out_dir",
-                        type=str,
-                        default="",
-                        help="Directory to save experiments to. Defaults to \
-                        current time stamp (YYYY-mm-dd-HH-MM-SS)")
+    parser.add_argument("--runs", type=int, default=5000, help="Number of game steps to simulate.")
+    parser.add_argument("--debug", action="store_true", help="Verbose debugging output.")
     parser.add_argument(
-        "--players", nargs=2, type=str, choices=["r", "rn", "d", "dn"],
+        "--out_dir",
+        type=str,
+        default="",
+        help="Directory to save experiments to. Defaults to \
+                        current time stamp (YYYY-mm-dd-HH-MM-SS)",
+    )
+    parser.add_argument(
+        "--players",
+        nargs=2,
+        type=str,
+        choices=["r", "rn", "d", "dn"],
         default=["r", "rn"],
         help="""Types of networks that compete against each other. four learning
         rule configuations are available: r:  r-STDP without noise, rn: r-STDP
         with noisy input, d:  dopaminergic synapses without noise,
-        dn: dopaminergic synapses with noisy input.""")
+        dn: dopaminergic synapses with noisy input.""",
+    )
 
     args, unknown = parser.parse_known_args()
 
     level = logging.DEBUG if args.debug else logging.INFO
-    format = '%(asctime)s - %(message)s'
-    datefmt = '%H:%M:%S'
+    format = "%(asctime)s - %(message)s"
+    datefmt = "%H:%M:%S"
     logging.basicConfig(level=level, format=format, datefmt=datefmt)
 
     p1, p2 = args.players
-    if p1[0] == p2[0] == 'd':
-        logging.error("""Nest currently (August 2022) does not support
+    if p1[0] == p2[0] == "d":
+        logging.error(
+            """Nest currently (August 2022) does not support
         addressing multiple populations of dopaminergic synapses because all of
         them recieve their signal from a single volume transmitter. For this
         reason, no two dopaminergic networks can be trained simultaneously. One
-        of the players needs to be changed to the R-STDP type.""")
+        of the players needs to be changed to the R-STDP type."""
+        )
         sys.exit()
 
     apply_noise = len(p1) > 1

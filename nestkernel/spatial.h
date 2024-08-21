@@ -60,9 +60,9 @@ public:
   void set_status( const DictionaryDatum&, bool ) override {};
 
   void
-  get_status( DictionaryDatum& d ) const override
+  get_status( DictionaryDatum& d, NodeCollection const* nc ) const override
   {
-    layer_->get_status( d );
+    layer_->get_status( d, nc );
   }
 
   //! Returns pointer to object with layer representation
@@ -80,12 +80,12 @@ public:
   }
 
   void
-  set_first_node_id( index node_id ) override
+  set_first_node_id( size_t node_id ) override
   {
     first_node_id_ = node_id;
   }
 
-  index
+  size_t
   get_first_node_id() const override
   {
     return first_node_id_;
@@ -102,20 +102,23 @@ public:
     // Compare status dictionaries of this layer and rhs layer
     DictionaryDatum dict( new Dictionary() );
     DictionaryDatum rhs_dict( new Dictionary() );
-    get_status( dict );
-    rhs_layer_metadata->get_status( rhs_dict );
+
+    // Since we do not have access to the node collection here, we
+    // compare based on all metadata, irrespective of any slicing
+    get_status( dict, /* nc */ nullptr );
+    rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
     return *dict == *rhs_dict;
   }
 
 private:
   const AbstractLayerPTR layer_; //!< layer object
-  index first_node_id_;
+  size_t first_node_id_;
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
 NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( NodeCollectionPTR layer_nc );
-std::vector< double > get_position( const index node_id );
+std::vector< double > get_position( const size_t node_id );
 ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );

@@ -27,12 +27,14 @@ the spikes have arrived must be identical in both cases.
 """
 
 import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
+# The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
+    "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
     "erfc_neuron",  # binary neuron
     "lin_rate_ipn",  # rate neuron
@@ -64,61 +66,51 @@ skip_list = [
     "music_message_in_proxy",  # music device
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
-    "music_rate_out_proxy"  # music device
+    "music_rate_out_proxy",  # music device
+    "astrocyte_lr_1994",  # does not have V_m
 ]
 
 extra_params = {
-    "iaf_psc_alpha_multisynapse": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
+    "iaf_psc_alpha_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "iaf_psc_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "gif_psc_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "gif_cond_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "glif_cond": {"params": {"tau_syn": [1.0], "E_rev": [-85.0]}, "receptor_type": 1},
+    "glif_psc": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "glif_psc_double_alpha": {
+        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]},
+        "receptor_type": 1,
     },
-    "iaf_psc_exp_multisynapse": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
-    },
-    "gif_psc_exp_multisynapse": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
-    },
-    "gif_cond_exp_multisynapse": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
-    },
-    "glif_cond": {
-        "params": {"tau_syn": [1.0], "E_rev": [-85.]},
-        "receptor_type": 1
-    },
-    "glif_psc": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
-    },
-    "aeif_cond_alpha_multisynapse": {
-        "params": {"tau_syn": [1.0]},
-        "receptor_type": 1
-    },
+    "aeif_cond_alpha_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "aeif_cond_beta_multisynapse": {
         "params": {"E_rev": [0.0], "tau_rise": [1.0], "tau_decay": [1.0]},
-        "receptor_type": 1
+        "receptor_type": 1,
     },
-    "ht_neuron": {
-        "receptor_type": 1
-    }
+    "ht_neuron": {"receptor_type": 1},
+    "iaf_bw_2001": {"receptor_type": 1},  # cannot test NMDA port since pre-synaptic
+    "iaf_bw_2001_exact": {"receptor_type": 1},  # also must be of same neuron type in that case
 }
 
 
-def test_spike_multiplicity_parrot_neuron():
+@pytest.fixture(autouse=True)
+def reset():
     nest.ResetKernel()
+
+
+def test_spike_multiplicity_parrot_neuron():
     multiplicities = [1, 3, 2]
-    spikes = [1., 2., 3.]
-    sg = nest.Create("spike_generator", {"spike_times": spikes,
-                                         "spike_multiplicities": multiplicities})
+    spikes = [1.0, 2.0, 3.0]
+    sg = nest.Create(
+        "spike_generator",
+        {"spike_times": spikes, "spike_multiplicities": multiplicities},
+    )
     pn = nest.Create("parrot_neuron")
     sr = nest.Create("spike_recorder")
 
     nest.Connect(sg, pn)
     nest.Connect(pn, sr)
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     spike_times = sr.get("events")["times"]
     expected_spike_times = []
@@ -127,13 +119,15 @@ def test_spike_multiplicity_parrot_neuron():
     nptest.assert_array_equal(spike_times, expected_spike_times)
 
 
-@pytest.mark.parametrize("model", [model for model in nest.node_models
-                                   if model not in skip_list and
-                                   nest.GetDefaults(model)["element_type"] == "neuron"])
+@pytest.mark.parametrize(
+    "model",
+    [
+        model
+        for model in nest.node_models
+        if model not in skip_list and nest.GetDefaults(model)["element_type"] == "neuron"
+    ],
+)
 def test_spike_multiplicity(model):
-    print("model name:", model)
-    nest.ResetKernel()
-
     n1 = nest.Create(model)
     n2 = nest.Create(model)
 
@@ -171,7 +165,7 @@ def test_spike_multiplicity(model):
     assert v1_0 == pytest.approx(v2_0)
 
     # Simulate
-    nest.Simulate(8.)
+    nest.Simulate(8.0)
 
     v1 = n1.get("V_m")
     v2 = n2.get("V_m")

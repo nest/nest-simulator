@@ -76,12 +76,12 @@ The following parameters can be set in the status dictionary:
 
 ========  ======  ========================================================
  U        real    Parameter determining the increase in u with each spike
-                  (U1) [0,1], default=0.5
+                  (U1) [0,1], default = 0.5
  u        real    The probability of release (U_se) [0,1],
-                  default=0.5
- x        real    Current scaling factor of the weight, default=U
- tau_fac  ms      Time constant for facilitation, default = 0(off)
- tau_rec  ms      Time constant for depression, default = 800ms
+                  default = U
+ x        real    Current scaling factor of the weight, default = 1.0
+ tau_fac  ms      Time constant for facilitation, default = 0 (off)
+ tau_rec  ms      Time constant for depression, default = 800
 ========  ======  ========================================================
 
 References
@@ -109,7 +109,14 @@ See also
 
 tsodyks_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks2_synapse
+
 EndUserDocs */
+
+void register_tsodyks2_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks2_synapse : public Connection< targetidentifierT >
@@ -166,8 +173,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
-
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -175,8 +181,8 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
@@ -184,7 +190,7 @@ public:
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -216,8 +222,8 @@ constexpr ConnectionModelProperties tsodyks2_synapse< targetidentifierT >::prope
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-tsodyks2_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
@@ -238,6 +244,8 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyn
   u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >
@@ -246,7 +254,7 @@ tsodyks2_synapse< targetidentifierT >::tsodyks2_synapse()
   , weight_( 1.0 )
   , U_( 0.5 )
   , u_( U_ )
-  , x_( 1 )
+  , x_( 1.0 )
   , tau_rec_( 800.0 )
   , tau_fac_( 0.0 )
   , t_lastspike_( 0.0 )
@@ -278,25 +286,25 @@ tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Con
   updateValue< double >( d, names::dU, U_ );
   if ( U_ > 1.0 or U_ < 0.0 )
   {
-    throw BadProperty( "U must be in [0,1]." );
+    throw BadProperty( "'U' must be in [0,1]." );
   }
 
   updateValue< double >( d, names::u, u_ );
   if ( u_ > 1.0 or u_ < 0.0 )
   {
-    throw BadProperty( "u must be in [0,1]." );
+    throw BadProperty( "'u' must be in [0,1]." );
   }
 
   updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
-    throw BadProperty( "tau_rec must be > 0." );
+    throw BadProperty( "'tau_rec' must be > 0." );
   }
 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
-    throw BadProperty( "tau_fac must be >= 0." );
+    throw BadProperty( "'tau_fac' must be >= 0." );
   }
 
   updateValue< double >( d, names::x, x_ );

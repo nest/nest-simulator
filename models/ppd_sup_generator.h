@@ -99,7 +99,14 @@ See also
 
 gamma_sup_generator, poisson_generator_ps, spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ppd_sup_generator
+
 EndUserDocs */
+
+void register_ppd_sup_generator( const std::string& name );
 
 class ppd_sup_generator : public StimulationDevice
 {
@@ -117,7 +124,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -235,8 +242,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+ppd_sup_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -250,7 +257,7 @@ ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex 
   {
     SpikeEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
+    const size_t p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_; // count number of targets

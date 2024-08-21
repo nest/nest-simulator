@@ -23,8 +23,14 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import sli_func, sps, sr, spp, take_array_index
+import json
+import numbers
+from math import floor, log
+
+import numpy
+
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr, take_array_index
 from .hl_api_helper import (
     broadcast,
     get_parameters,
@@ -33,29 +39,27 @@ from .hl_api_helper import (
     is_literal,
     restructure_data,
 )
+from .hl_api_parallel_computing import Rank
 from .hl_api_simulation import GetKernelStatus
-
-import numpy
-import json
-from math import floor, log
 
 try:
     import pandas
+
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    'CollocatedSynapses',
-    'Compartments',
-    'CreateParameter',
-    'Mask',
-    'NodeCollection',
-    'Parameter',
-    'Receptors',
-    'serializable',
-    'SynapseCollection',
-    'to_json',
+    "CollocatedSynapses",
+    "Compartments",
+    "CreateParameter",
+    "Mask",
+    "NodeCollection",
+    "Parameter",
+    "Receptors",
+    "serialize_data",
+    "SynapseCollection",
+    "to_json",
 ]
 
 
@@ -81,7 +85,8 @@ def CreateParameter(parametertype, specs):
 
     Notes
     -----
-    - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
+
+    Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
     instance :py:func:`.uniform`.
 
     **Parameter types**
@@ -90,11 +95,14 @@ def CreateParameter(parametertype, specs):
     acceptable keys for their corresponding specification dictionaries:
 
     * Constant
+
         ::
 
             'constant' :
                 {'value' : float} # constant value
+
     * Randomization
+
         ::
 
             # random parameter with uniform distribution in [min,max)
@@ -111,8 +119,9 @@ def CreateParameter(parametertype, specs):
             'lognormal' :
                 {'mean' : float, # mean value of logarithm, default: 0.0
                  'std'  : float} # standard deviation of log, default: 1.0
+
     """
-    return sli_func('CreateParameter', {parametertype: specs})
+    return sli_func("CreateParameter", {parametertype: specs})
 
 
 class NodeCollectionIterator:
@@ -136,7 +145,7 @@ class NodeCollectionIterator:
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take_g_a', self._nc._datum, [self._increment, self._increment + 1, 1])
+        val = sli_func("Take_g_a", self._nc._datum, [self._increment, self._increment + 1, 1])
         self._increment += 1
         return val
 
@@ -202,7 +211,7 @@ class NodeCollection:
             # Data from user, must be converted to datum
             # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            nc = sli_func('cvnodecollection', data)
+            nc = sli_func("cvnodecollection", data)
             self._datum = nc._datum
 
     def __iter__(self):
@@ -210,9 +219,15 @@ class NodeCollection:
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
-            raise NotImplementedError()
+            if isinstance(other, numbers.Number) and other == 0:
+                other = NodeCollection()
+            else:
+                raise TypeError(f"Cannot add object of type '{type(other).__name__}' to 'NodeCollection'")
 
-        return sli_func('join', self._datum, other._datum)
+        return sli_func("join", self._datum, other._datum)
+
+    def __radd__(self, other):
+        return self + other
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -221,65 +236,65 @@ class NodeCollection:
             else:
                 start = key.start
                 if abs(start) > self.__len__():
-                    raise IndexError('slice start value outside of the NodeCollection')
+                    raise IndexError("slice start value outside of the NodeCollection")
             if key.stop is None:
                 stop = self.__len__()
             else:
                 stop = key.stop
                 if abs(stop) > self.__len__():
-                    raise IndexError('slice stop value outside of the NodeCollection')
+                    raise IndexError("slice stop value outside of the NodeCollection")
             step = 1 if key.step is None else key.step
             if step < 1:
-                raise IndexError('slicing step for NodeCollection must be strictly positive')
+                raise IndexError("slicing step for NodeCollection must be strictly positive")
 
-            return sli_func('Take_g_a', self._datum, [start, stop, step])
+            return sli_func("Take_g_a", self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
             if key >= self.__len__() or key + self.__len__() < 0:
-                raise IndexError('index value outside of the NodeCollection')
-            return sli_func('Take_g_a', self._datum, [key, key + 1, 1])
+                raise IndexError("index value outside of the NodeCollection")
+            return sli_func("Take_g_a", self._datum, [key, key + 1, 1])
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
                 return NodeCollection([])
             # Must check if elements are bool first, because bool inherits from int
             if all(isinstance(x, bool) for x in key):
                 if len(key) != len(self):
-                    raise IndexError('Bool index array must be the same length as NodeCollection')
+                    raise IndexError("Bool index array must be the same length as NodeCollection")
                 np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
-            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+            elif all(isinstance(x, (int, numpy.integer)) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
                 if len(numpy.unique(np_key)) != len(np_key):
-                    raise ValueError('All node IDs in a NodeCollection have to be unique')
+                    raise ValueError("All node IDs in a NodeCollection have to be unique")
             else:
-                raise TypeError('Indices must be integers or bools')
+                raise TypeError("Indices must be integers or bools")
             return take_array_index(self._datum, np_key)
         elif isinstance(key, numpy.ndarray):
             if len(key) == 0:
                 return NodeCollection([])
             if len(key.shape) != 1:
-                raise TypeError('NumPy indices must one-dimensional')
+                raise TypeError("NumPy indices must one-dimensional")
             is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
             if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
-                raise TypeError('NumPy indices must be an array of integers or bools')
+                raise TypeError("NumPy indices must be an array of integers or bools")
             if is_booltype and len(key) != len(self):
-                raise IndexError('Bool index array must be the same length as NodeCollection')
+                raise IndexError("Bool index array must be the same length as NodeCollection")
             if not is_booltype and len(numpy.unique(key)) != len(key):
-                raise ValueError('All node IDs in a NodeCollection have to be unique')
+                raise ValueError("All node IDs in a NodeCollection have to be unique")
             return take_array_index(self._datum, key)
         else:
-            raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
+            raise IndexError("only integers, slices, lists, tuples, and numpy arrays are valid indices")
 
     def __contains__(self, node_id):
-        return sli_func('InCollection', self._datum, node_id)
+        return sli_func("InCollection", self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):
-            raise NotImplementedError('Cannot compare NodeCollection to {}'.format(type(other).__name__))
+            raise NotImplementedError("Cannot compare NodeCollection to {}".format(type(other).__name__))
 
         if self.__len__() != other.__len__():
             return False
 
-        return sli_func('eq', self, other)
+        return sli_func("eq", self, other)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):
@@ -288,13 +303,13 @@ class NodeCollection:
         return not self == other
 
     def __len__(self):
-        return sli_func('size', self._datum)
+        return sli_func("size", self._datum)
 
     def __str__(self):
-        return sli_func('pcvs', self._datum)
+        return sli_func("pcvs", self._datum)
 
     def __repr__(self):
-        return sli_func('pcvs', self._datum)
+        return sli_func("pcvs", self._datum)
 
     def get(self, *params, **kwargs):
         """
@@ -311,7 +326,7 @@ class NodeCollection:
               This is for hierarchical addressing.
         output : str, ['pandas','json'], optional
              If the returned data should be in a Pandas DataFrame or in a
-             JSON serializable format.
+             JSON string format.
 
         Returns
         -------
@@ -366,38 +381,38 @@ class NodeCollection:
         """
 
         if not self:
-            raise ValueError('Cannot get parameter of empty NodeCollection')
+            raise ValueError("Cannot get parameter of empty NodeCollection")
 
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
         if not kwargs:
-            output = ''
-        elif 'output' in kwargs:
-            output = kwargs['output']
-            if output == 'pandas' and not HAVE_PANDAS:
-                raise ImportError('Pandas could not be imported')
+            output = ""
+        elif "output" in kwargs:
+            output = kwargs["output"]
+            if output == "pandas" and not HAVE_PANDAS:
+                raise ImportError("Pandas could not be imported")
         else:
-            raise TypeError('Got unexpected keyword argument')
+            raise TypeError("Got unexpected keyword argument")
 
-        pandas_output = output == 'pandas'
+        pandas_output = output == "pandas"
 
         if len(params) == 0:
             # get() is called without arguments
-            result = sli_func('get', self._datum)
+            result = sli_func("get", self._datum)
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])
-            if params[0] == 'compartments':
+            if params[0] == "compartments":
                 result = Compartments(self, result)
-            elif params[0] == 'receptors':
+            elif params[0] == "receptors":
                 result = Receptors(self, result)
         else:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
 
         if pandas_output:
-            index = self.get('global_id')
+            index = self.get("global_id")
             if len(params) == 1 and is_literal(params[0]):
                 # params is a string
                 result = {params[0]: result}
@@ -408,7 +423,7 @@ class NodeCollection:
                 index = [index]
                 result = {key: [val] for key, val in result.items()}
             result = pandas.DataFrame(result, index=index)
-        elif output == 'json':
+        elif output == "json":
             result = to_json(result)
 
         return result
@@ -453,25 +468,26 @@ class NodeCollection:
 
         local_nodes = [self.local] if len(self) == 1 else self.local
 
-        if isinstance(params, dict) and 'compartments' in params:
-            if isinstance(params['compartments'], Compartments):
-                params['compartments'] = params['compartments'].get_tuple()
-            elif params['compartments'] is None:
+        if isinstance(params, dict) and "compartments" in params:
+            if isinstance(params["compartments"], Compartments):
+                params["compartments"] = params["compartments"].get_tuple()
+            elif params["compartments"] is None:
                 # Adding compartments has been handled by the += operator, so we can remove the entry.
-                params.pop('compartments')
+                params.pop("compartments")
 
-        if isinstance(params, dict) and 'receptors' in params:
-            if isinstance(params['receptors'], Receptors):
-                params['receptors'] = params['receptors'].get_tuple()
-            elif params['receptors'] is None:
+        if isinstance(params, dict) and "receptors" in params:
+            if isinstance(params["receptors"], Receptors):
+                params["receptors"] = params["receptors"].get_tuple()
+            elif params["receptors"] is None:
                 # Adding receptors has been handled by the += operator, so we can remove the entry.
-                params.pop('receptors')
+                params.pop("receptors")
 
         if isinstance(params, dict) and all(local_nodes):
-
             node_params = self[0].get()
-            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
-                             key, vals in params.items()]
+            contains_list = [
+                is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
+                for key, vals in params.items()
+            ]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -485,10 +501,10 @@ class NodeCollection:
                             temp_dict[key] = vals[i]
                 params = temp_param
 
-        if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
+        if isinstance(params, (list, tuple)) and self.__len__() != len(params):
             raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
-        sli_func('SetStatus', self._datum, params)
+        sli_func("SetStatus", self._datum, params)
 
     def tolist(self):
         """
@@ -497,8 +513,41 @@ class NodeCollection:
         if self.__len__() == 0:
             return []
 
-        return (list(self.get('global_id')) if len(self) > 1
-                else [self.get('global_id')])
+        return list(self.get("global_id")) if len(self) > 1 else [self.get("global_id")]
+
+    def _to_array(self, selection="all"):
+        """
+        Debugging helper to extract GIDs from node collections.
+
+        `selection` can be `"all"`, `"rank"` or `"thread"` and extracts either all
+        nodes or those on the rank or thread on which it is executed. For `"thread"`,
+        separate lists are returned for all local threads independently.
+        """
+
+        res = sli_func("cva_g_l", self, selection)
+
+        if selection == "all":
+            return {"All": res}
+        elif selection == "rank":
+            return {f"Rank {Rank()}": res}
+        elif selection == "thread":
+            t_res = {}
+            thr = None
+            ix = 0
+            while ix < len(res):
+                while ix < len(res) and res[ix] != 0:
+                    t_res[thr].append(res[ix])
+                    ix += 1
+                assert ix == len(res) or ix + 3 <= len(res)
+                if ix < len(res):
+                    assert res[ix] == 0 and res[ix + 2] == 0
+                    thr = res[ix + 1]
+                    assert thr not in t_res
+                    t_res[thr] = []
+                    ix += 3
+            return t_res
+        else:
+            return res
 
     def index(self, node_id):
         """
@@ -514,10 +563,10 @@ class NodeCollection:
         ValueError
             If the node ID is not in the `NodeCollection`.
         """
-        index = sli_func('Find', self._datum, node_id)
+        index = sli_func("Find", self._datum, node_id)
 
         if index == -1:
-            raise ValueError('{} is not in NodeCollection'.format(node_id))
+            raise ValueError("{} is not in NodeCollection".format(node_id))
 
         return index
 
@@ -531,10 +580,17 @@ class NodeCollection:
 
     def __getattr__(self, attr):
         if not self:
-            raise AttributeError('Cannot get attribute of empty NodeCollection')
+            raise AttributeError("Cannot get attribute of empty NodeCollection")
 
-        if attr == 'spatial':
-            metadata = sli_func('GetMetadata', self._datum)
+        # IPython looks up this method when doing pretty printing
+        # As long as we do not provide special methods to support IPython prettyprinting,
+        # HTML-rendering, etc, we stop IPython from time-consuming checks by raising an
+        # exception here. The exception must *not* be AttributeError.
+        if attr == "_ipython_canary_method_should_not_exist_":
+            raise NotImplementedError("_ipython_canary_method_should_not_exist_")
+
+        if attr == "spatial":
+            metadata = sli_func("GetMetadata", self._datum)
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
@@ -543,7 +599,7 @@ class NodeCollection:
         # raises AttributeError to tell NumPy that interfaces other than
         # __array__ are not available (otherwise get_parameters would be
         # queried, KeyError would be raised, and all would crash)
-        if attr.startswith('__array_'):
+        if attr.startswith("__array_"):
             raise AttributeError
 
         return self.get(attr)
@@ -551,7 +607,7 @@ class NodeCollection:
     def __setattr__(self, attr, value):
         # `_datum` is the only property of NodeCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum':
+        if attr == "_datum":
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -587,19 +643,16 @@ class SynapseCollection:
     _datum = None
 
     def __init__(self, data):
-
         if isinstance(data, list):
             for datum in data:
-                if (not isinstance(datum, kernel.SLIDatum) or
-                        datum.dtype != "connectiontype"):
+                if not isinstance(datum, kernel.SLIDatum) or datum.dtype != "connectiontype":
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
         elif data is None:
             # We can have an empty SynapseCollection if there are no connections.
             self._datum = data
         else:
-            if (not isinstance(data, kernel.SLIDatum) or
-                    data.dtype != "connectiontype"):
+            if not isinstance(data, kernel.SLIDatum) or data.dtype != "connectiontype":
                 raise TypeError("Expected Connection Datum.")
             # self._datum needs to be a list of Connection datums.
             self._datum = [data]
@@ -620,10 +673,8 @@ class SynapseCollection:
 
         if self.__len__() != other.__len__():
             return False
-        self_get = self.get(['source', 'target', 'target_thread',
-                             'synapse_id', 'port'])
-        other_get = other.get(['source', 'target', 'target_thread',
-                               'synapse_id', 'port'])
+        self_get = self.get(["source", "target", "target_thread", "synapse_id", "port"])
+        other_get = other.get(["source", "target", "target_thread", "synapse_id", "port"])
         if self_get != other_get:
             return False
         return True
@@ -664,23 +715,23 @@ class SynapseCollection:
 
         def format_row_(s, t, sm, w, dly):
             try:
-                return f'{s:>{src_len-1}d} {t:>{trg_len}d} {sm:>{sm_len}s} {w:>#{w_len}.{4}g} {dly:>#{d_len}.{4}g}'
+                return f"{s:>{src_len-1}d} {t:>{trg_len}d} {sm:>{sm_len}s} {w:>#{w_len}.{4}g} {dly:>#{d_len}.{4}g}"
             except ValueError:
                 # Used when we have many connections and print_full=False
-                return f'{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}'
+                return f"{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}"
 
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
 
         params = self.get()
 
         if len(params) == 0:
-            return 'The synapse collection does not contain any connections.'
+            return "The synapse collection does not contain any connections."
 
-        srcs = params['source']
-        trgt = params['target']
-        wght = params['weight']
-        dlay = params['delay']
-        s_model = params['synapse_model']
+        srcs = params["source"]
+        trgt = params["target"]
+        wght = params["weight"]
+        dlay = params["delay"]
+        s_model = params["synapse_model"]
 
         if isinstance(srcs, int):
             srcs = [srcs]
@@ -689,11 +740,11 @@ class SynapseCollection:
             dlay = [dlay]
             s_model = [s_model]
 
-        src_h = 'source'
-        trg_h = 'target'
-        sm_h = 'synapse model'
-        w_h = 'weight'
-        d_h = 'delay'
+        src_h = "source"
+        trg_h = "target"
+        sm_h = "synapse model"
+        w_h = "weight"
+        d_h = "delay"
 
         # Find maximum number of characters for each column, used to determine width of column
         src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
@@ -705,22 +756,24 @@ class SynapseCollection:
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
             # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
-            srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
-            trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
-            wght = wght[:15] + [u'\u22EE '] + wght[-15:]
-            dlay = dlay[:15] + [u'\u22EE '] + dlay[-15:]
-            s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
+            srcs = srcs[:15] + ["\u22EE "] + srcs[-15:]
+            trgt = trgt[:15] + ["\u22EE "] + trgt[-15:]
+            wght = wght[:15] + ["\u22EE "] + wght[-15:]
+            dlay = dlay[:15] + ["\u22EE "] + dlay[-15:]
+            s_model = s_model[:15] + ["\u22EE "] + s_model[-15:]
 
-        headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
-        borders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
-        output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
+        headers = f"{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}" + "\n"
+        borders = (
+            "-" * src_len + " " + "-" * trg_len + " " + "-" * sm_len + " " + "-" * w_len + " " + "-" * d_len + "\n"
+        )
+        output = "\n".join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
         result = headers + borders + output
 
         return result
 
     def __getattr__(self, attr):
-        if attr == 'distance':
-            dist = sli_func('Distance', self._datum)
+        if attr == "distance":
+            dist = sli_func("Distance", self._datum)
             super().__setattr__(attr, dist)
             return self.distance
 
@@ -729,26 +782,26 @@ class SynapseCollection:
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or attr == 'print_full':
+        if attr == "_datum" or attr == "print_full":
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
 
     def sources(self):
         """Returns iterator containing the source node IDs of the `SynapseCollection`."""
-        sources = self.get('source')
+        sources = self.get("source")
         if not isinstance(sources, (list, tuple)):
             sources = (sources,)
         return iter(sources)
 
     def targets(self):
         """Returns iterator containing the target node IDs of the `SynapseCollection`."""
-        targets = self.get('target')
+        targets = self.get("target")
         if not isinstance(targets, (list, tuple)):
             targets = (targets,)
         return iter(targets)
 
-    def get(self, keys=None, output=''):
+    def get(self, keys=None, output=""):
         """
         Return a parameter dictionary of the connections.
 
@@ -765,7 +818,7 @@ class SynapseCollection:
             belonging to the given `keys`.
         output : str, ['pandas','json'], optional
             If the returned data should be in a Pandas DataFrame or in a
-            JSON serializable format.
+            JSON string format.
 
         Returns
         -------
@@ -805,24 +858,27 @@ class SynapseCollection:
                {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
                 'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
-        pandas_output = output == 'pandas'
-        if pandas_output and not HAVE_PANDAS:
-            raise ImportError('Pandas could not be imported')
 
-        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
-        num_conns = GetKernelStatus('num_connections')  # Has to be called first because it involves MPI communication.
-        if self.__len__() == 0 or num_conns == 0:
+        pandas_output = output == "pandas"
+        if pandas_output and not HAVE_PANDAS:
+            raise ImportError("Pandas could not be imported")
+
+        # Return empty dictionary if we have no connections
+        # We also return if the network is empty after a ResetKernel.
+        # This avoids problems with invalid SynapseCollections.
+        # See also #3100.
+        if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             # Return empty tuple if get is called with an argument
             return {} if keys is None else ()
 
         if keys is None:
-            cmd = 'GetStatus'
+            cmd = "GetStatus"
         elif is_literal(keys):
             #  Extracting the correct values will be done in restructure_data below
-            cmd = 'GetStatus'
+            cmd = "GetStatus"
         elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
-            cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+            cmd = "GetStatus {{ [ [ {0} ] ] get }} Map".format(keys_str)
         else:
             raise TypeError("keys should be either a string or an iterable")
 
@@ -834,12 +890,11 @@ class SynapseCollection:
         final_result = restructure_data(result, keys)
 
         if pandas_output:
-            index = (self.get('source') if self.__len__() > 1 else
-                     (self.get('source'),))
+            index = self.get("source") if self.__len__() > 1 else (self.get("source"),)
             if is_literal(keys):
                 final_result = {keys: final_result}
             final_result = pandas.DataFrame(final_result, index=index)
-        elif output == 'json':
+        elif output == "json":
             final_result = to_json(final_result)
 
         return final_result
@@ -875,12 +930,13 @@ class SynapseCollection:
 
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
-        # SynapseCollection, or after having done a nest.ResetKernel().
-        if self.__len__() == 0 or GetKernelStatus('network_size') == 0:
+        # SynapseCollection. We also return if the network is empty after a
+        # reset kernel. This avoids problems with invalid SynapseCollections.
+        # See also #3100.
+        if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             return
 
-        if (isinstance(params, (list, tuple)) and
-                self.__len__() != len(params)):
+        if isinstance(params, (list, tuple)) and self.__len__() != len(params):
             raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
@@ -890,8 +946,10 @@ class SynapseCollection:
 
         if isinstance(params, dict):
             node_params = self[0].get()
-            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
-                             key, vals in params.items()]
+            contains_list = [
+                is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
+                for key, vals in params.items()
+            ]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -910,15 +968,15 @@ class SynapseCollection:
         sps(self._datum)
         sps(params)
 
-        sr('2 arraystore')
-        sr('Transpose { arrayload pop SetStatus } forall')
+        sr("2 arraystore")
+        sr("Transpose { arrayload pop SetStatus } forall")
 
     def disconnect(self):
         """
         Disconnect the connections in the `SynapseCollection`.
         """
         sps(self._datum)
-        sr('Disconnect_a')
+        sr("Disconnect_a")
 
 
 class CollocatedSynapses:
@@ -931,6 +989,7 @@ class CollocatedSynapses:
     -------
 
     ::
+
         nodes = nest.Create('iaf_psc_alpha', 3)
         syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
                                        {'synapse_model': 'stdp_synapse'},
@@ -941,6 +1000,7 @@ class CollocatedSynapses:
 
         print(conns.alpha)
         print(len(syn_spec))
+
     """
 
     def __init__(self, *args):
@@ -1015,15 +1075,14 @@ class Parameter:
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum,
-                          kernel.SLIDatum) or datum.dtype != "parametertype":
+        if not isinstance(datum, kernel.SLIDatum) or datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
 
     # Generic binary operation
     def _binop(self, op, rhs, params=None):
         if isinstance(rhs, (int, float)):
-            rhs = CreateParameter('constant', {'value': float(rhs)})
+            rhs = CreateParameter("constant", {"value": float(rhs)})
         if not isinstance(rhs, Parameter):
             raise NotImplementedError()
 
@@ -1060,8 +1119,7 @@ class Parameter:
         return self._binop("div", rhs)
 
     def __rtruediv__(self, lhs):
-        rhs_inv = CreateParameter('constant', {'value': 1 / float(self.GetValue())})
-        return rhs_inv._binop("mul", lhs)
+        return self**-1 * lhs
 
     def __pow__(self, exponent):
         try:
@@ -1075,22 +1133,22 @@ class Parameter:
         raise TypeError("unsupported operand type for **: only int and float allow as exponent")
 
     def __lt__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 0})
+        return self._binop("compare", rhs, {"comparator": 0})
 
     def __le__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 1})
+        return self._binop("compare", rhs, {"comparator": 1})
 
     def __eq__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 2})
+        return self._binop("compare", rhs, {"comparator": 2})
 
     def __ne__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 3})
+        return self._binop("compare", rhs, {"comparator": 3})
 
     def __ge__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 4})
+        return self._binop("compare", rhs, {"comparator": 4})
 
     def __gt__(self, rhs):
-        return self._binop("compare", rhs, {'comparator': 5})
+        return self._binop("compare", rhs, {"comparator": 5})
 
     def GetValue(self):
         """
@@ -1120,31 +1178,30 @@ class Parameter:
         return sli_func("GetValue", self._datum)
 
     def is_spatial(self):
-        return sli_func('ParameterIsSpatial', self._datum)
+        return sli_func("ParameterIsSpatial", self._datum)
 
     def apply(self, spatial_nc, positions=None):
         if positions is None:
-            return sli_func('Apply', self._datum, spatial_nc)
+            return sli_func("Apply", self._datum, spatial_nc)
         else:
             if len(spatial_nc) != 1:
-                raise ValueError('The NodeCollection must contain a single node ID only')
+                raise ValueError("The NodeCollection must contain a single node ID only")
             if not isinstance(positions, (list, tuple)):
-                raise TypeError('Positions must be a list or tuple of positions')
+                raise TypeError("Positions must be a list or tuple of positions")
             for pos in positions:
                 if not isinstance(pos, (list, tuple, numpy.ndarray)):
-                    raise TypeError('Each position must be a list or tuple')
+                    raise TypeError("Each position must be a list or tuple")
                 if len(pos) != len(positions[0]):
-                    raise ValueError('All positions must have the same number of dimensions')
-            return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+                    raise ValueError("All positions must have the same number of dimensions")
+            return sli_func("Apply", self._datum, {"source": spatial_nc, "targets": positions})
 
 
 class CmBase:
-
     def __init__(self, node_collection, elements):
         if not isinstance(node_collection, NodeCollection):
-            raise TypeError(f'node_collection must be a NodeCollection, got {type(node_collection)}')
+            raise TypeError(f"node_collection must be a NodeCollection, got {type(node_collection)}")
         if not isinstance(elements, tuple):
-            raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
+            raise TypeError(f"elements must be a tuple of dicts, got {type(elements)}")
         self._elements = elements
         self._node_collection = node_collection
 
@@ -1155,14 +1212,17 @@ class CmBase:
         elif isinstance(other, (tuple, list)):
             if not all(isinstance(d, dict) for d in other):
                 raise TypeError(
-                    f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
-                    f'or other {self.__class__.__name__}')
+                    f"{self.__class__.__name__} can only be added with dicts, lists of dicts, "
+                    f"or other {self.__class__.__name__}"
+                )
             new_elements += list(other)
         elif isinstance(other, self.__class__):
             new_elements += list(other._elements)
         else:
-            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
-                                      f' or other {self.__class__.__name__}, got {type(other)}')
+            raise NotImplementedError(
+                f"{self.__class__.__name__} can only be added with dicts, lists of dicts,"
+                f" or other {self.__class__.__name__}, got {type(other)}"
+            )
 
         return self.__class__(self._node_collection, tuple(new_elements))
 
@@ -1171,15 +1231,19 @@ class CmBase:
             new_elements = [other]
         elif isinstance(other, (tuple, list)):
             if not all(isinstance(d, dict) for d in other):
-                raise TypeError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts, '
-                                f'or other {self.__class__.__name__}')
+                raise TypeError(
+                    f"{self.__class__.__name__} can only be added with dicts, lists of dicts, "
+                    f"or other {self.__class__.__name__}"
+                )
             new_elements = list(other)
         elif isinstance(other, self.__class__):
             new_elements = list(other._elements)
         else:
-            raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
-                                      f' or other {self.__class__.__name__}, got {type(other)}')
-        self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
+            raise NotImplementedError(
+                f"{self.__class__.__name__} can only be added with dicts, lists of dicts,"
+                f" or other {self.__class__.__name__}, got {type(other)}"
+            )
+        self._node_collection.set({f"add_{self.__class__.__name__.lower()}": new_elements})
         # implicit `return None` to flag elements as added by returning None
 
     def __getitem__(self, key):
@@ -1202,8 +1266,8 @@ class Receptors(CmBase):
     pass
 
 
-def serializable(data):
-    """Make data serializable for JSON.
+def serialize_data(data):
+    """Serialize data for JSON.
 
     Parameters
     ----------
@@ -1217,21 +1281,21 @@ def serializable(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
-    if isinstance(data, SynapseCollection):
+    elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        return serializable(data.get())
-    if isinstance(data, kernel.SLILiteral):
+        return serialize_data(data.get())
+    elif isinstance(data, kernel.SLILiteral):
         # Get name of SLILiteral.
         return data.name
-    if isinstance(data, (list, tuple)):
-        return [serializable(d) for d in data]
-    if isinstance(data, dict):
-        return dict([(key, serializable(value)) for key, value in data.items()])
+    elif isinstance(data, (list, tuple)):
+        return [serialize_data(d) for d in data]
+    elif isinstance(data, dict):
+        return dict([(key, serialize_data(value)) for key, value in data.items()])
     return data
 
 
 def to_json(data, **kwargs):
-    """Serialize data to JSON.
+    """Convert the object to a JSON string.
 
     Parameters
     ----------
@@ -1242,9 +1306,9 @@ def to_json(data, **kwargs):
     Returns
     -------
     data_json : str
-        JSON format of the data
+        JSON string format of the data
     """
 
-    data_serialized = serializable(data)
+    data_serialized = serialize_data(data)
     data_json = json.dumps(data_serialized, **kwargs)
     return data_json

@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, adaptation, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
@@ -165,7 +165,14 @@ See also
 
 iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_delta
+
 EndUserDocs */
+
+void register_aeif_psc_delta( const std::string& name );
 
 class aeif_psc_delta : public ArchivingNode
 {
@@ -183,15 +190,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -364,8 +371,8 @@ public:
   static RecordablesMap< aeif_psc_delta > recordablesMap_;
 };
 
-inline port
-aeif_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+aeif_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -373,8 +380,8 @@ aeif_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bo
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+aeif_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -383,8 +390,8 @@ aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+aeif_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -393,8 +400,8 @@ aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -24,12 +24,26 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 namespace nest
 {
+void
+register_multimeter( const std::string& name )
+{
+  register_node_model< multimeter >( name );
+}
+
+void
+register_voltmeter( const std::string& name )
+{
+  register_node_model< voltmeter >( name );
+}
+
 
 multimeter::multimeter()
   : RecordingDevice()
@@ -45,12 +59,12 @@ multimeter::multimeter( const multimeter& n )
 {
 }
 
-port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+size_t
+multimeter::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
+  size_t p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;

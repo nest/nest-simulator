@@ -49,6 +49,7 @@
 
 namespace nest
 {
+void register_music_cont_out_proxy( const std::string& name );
 
 /* BeginUserDocs: device, MUSIC
 
@@ -106,6 +107,11 @@ See also
 
 music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_cont_out_proxy
+
 EndUserDocs */
 
 class music_cont_out_proxy : public DeviceNode
@@ -139,7 +145,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_signal;
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool );
 
   void handle( DataLoggingReply& );
 

@@ -24,6 +24,7 @@ Weights given as lists with the different connection rules
 """
 
 import unittest
+
 import nest
 
 
@@ -37,14 +38,14 @@ class WeightsAsListTestCase(unittest.TestCase):
     def test_OneToOneWeight(self):
         """Weight given as list, when connection rule is one_to_one"""
 
-        src = nest.Create('iaf_psc_alpha', 3)
-        tgt = nest.Create('iaf_psc_delta', 3)
+        src = nest.Create("iaf_psc_alpha", 3)
+        tgt = nest.Create("iaf_psc_delta", 3)
 
         # weight has to be a list with dimension (n_sources x 1) when one_to_one is used
         ref_weights = [1.2, -3.5, 0.4]
 
-        conn_dict = {'rule': 'one_to_one'}
-        syn_dict = {'weight': ref_weights}
+        conn_dict = {"rule": "one_to_one"}
+        syn_dict = {"weight": ref_weights}
         nest.Connect(src, tgt, conn_dict, syn_dict)
 
         conns = nest.GetConnections()
@@ -55,14 +56,14 @@ class WeightsAsListTestCase(unittest.TestCase):
     def test_AllToAllWeight(self):
         """Weight given as list of lists, when connection rule is all_to_all"""
 
-        src = nest.Create('iaf_psc_alpha', 3)
-        tgt = nest.Create('iaf_psc_delta', 2)
+        src = nest.Create("iaf_psc_alpha", 3)
+        tgt = nest.Create("iaf_psc_delta", 2)
 
         # weight has to be a list of lists with dimension (n_target x n_sources) when all_to_all is used
         ref_weights = [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]
 
-        conn_dict = {'rule': 'all_to_all'}
-        syn_dict = {'weight': ref_weights}
+        conn_dict = {"rule": "all_to_all"}
+        syn_dict = {"weight": ref_weights}
         nest.Connect(src, tgt, conn_dict, syn_dict)
 
         conns = nest.GetConnections()
@@ -76,14 +77,14 @@ class WeightsAsListTestCase(unittest.TestCase):
     def test_FixedIndegreeWeight(self):
         """Weight given as list of list, when connection rule is fixed_indegree"""
 
-        src = nest.Create('iaf_psc_alpha', 5)
-        tgt = nest.Create('iaf_psc_delta', 3)
+        src = nest.Create("iaf_psc_alpha", 5)
+        tgt = nest.Create("iaf_psc_delta", 3)
 
         # weight has to be a list of lists with dimension (n_target x indegree) when fixed_indegree is used
         ref_weights = [[1.2, -3.5], [0.4, -0.2], [0.6, 2.2]]
 
-        conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
-        syn_dict = {'weight': ref_weights}
+        conn_dict = {"rule": "fixed_indegree", "indegree": 2}
+        syn_dict = {"weight": ref_weights}
         nest.Connect(src, tgt, conn_dict, syn_dict)
 
         conns = nest.GetConnections()
@@ -97,14 +98,14 @@ class WeightsAsListTestCase(unittest.TestCase):
     def test_FixedOutdegreeWeight(self):
         """Weight given as list of lists, when connection rule is fixed_outdegree"""
 
-        src = nest.Create('iaf_psc_alpha', 2)
-        tgt = nest.Create('iaf_psc_delta', 5)
+        src = nest.Create("iaf_psc_alpha", 2)
+        tgt = nest.Create("iaf_psc_delta", 5)
 
         # weight has to be a list of lists with dimension (n_source x outegree) when fixed_outdegree is used
         ref_weights = [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]
 
-        conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
-        syn_dict = {'weight': ref_weights}
+        conn_dict = {"rule": "fixed_outdegree", "outdegree": 3}
+        syn_dict = {"weight": ref_weights}
         nest.Connect(src, tgt, conn_dict, syn_dict)
 
         conns = nest.GetConnections()
@@ -118,14 +119,14 @@ class WeightsAsListTestCase(unittest.TestCase):
     def test_FixedTotalNumberWeight(self):
         """Weight given as list, when connection rule is fixed_total_number"""
 
-        src = nest.Create('iaf_psc_alpha', 3)
-        tgt = nest.Create('iaf_psc_delta', 4)
-        conn_dict = {'rule': 'fixed_total_number', 'N': 4}
+        src = nest.Create("iaf_psc_alpha", 3)
+        tgt = nest.Create("iaf_psc_delta", 4)
+        conn_dict = {"rule": "fixed_total_number", "N": 4}
 
         # weight has to be a list with dimension (n_conns x 1) when fixed_total_number is used
         ref_weights = [1.2, -3.5, 0.4, -0.2]
 
-        syn_dict = {'weight': ref_weights}
+        syn_dict = {"weight": ref_weights}
         nest.Connect(src, tgt, conn_dict, syn_dict)
 
         conns = nest.GetConnections()
@@ -135,7 +136,7 @@ class WeightsAsListTestCase(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(WeightsAsListTestCase, 'test')
+    suite = unittest.makeSuite(WeightsAsListTestCase, "test")
     return suite
 
 

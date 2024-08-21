@@ -99,6 +99,7 @@ class ConnTestDummyNodeBase : public Node
 
 /**
  * Base class for representing connections.
+ *
  * It provides the mandatory properties receiver port and target,
  * as well as the functions get_status() and set_status()
  * to read and write them. A suitable Connector containing these
@@ -157,6 +158,8 @@ public:
    *
    * @note Classes requiring checks need to override the function with their own
    * implementation, as this base class implementation does not do anything.
+   *
+   * @see ConnectorModel::check_synapse_params
    */
   void check_synapse_params( const DictionaryDatum& d ) const;
 
@@ -226,20 +229,21 @@ public:
   }
 
   /**
-   * triggers an update of a synaptic weight
-   * this function is needed for neuromodulated synaptic plasticity
+   * Triggers an update of a synaptic weight
+   *
+   * This function is needed for neuromodulated synaptic plasticity
    */
-  void trigger_update_weight( const thread,
+  void trigger_update_weight( const size_t,
     const std::vector< spikecounter >&,
     const double,
     const CommonSynapseProperties& );
 
   Node*
-  get_target( const thread tid ) const
+  get_target( const size_t tid ) const
   {
     return target_.get_target_ptr( tid );
   }
-  rport
+  size_t
   get_rport() const
   {
     return target_.get_rport();
@@ -301,15 +305,12 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
+  void check_connection_( Node& dummy_target, Node& source, Node& target, const size_t receptor_type );
 
-  /* the order of the members below is critical as it influcences the size of the object.
-   * Please leave unchanged as:
-   *   targetidentifierT target_;
-   *   SynIdDelay syn_id_delay_;
-   */
+  // The order of the members below is critical as it influcences the size of the object.
+  // Please leave unchanged!
   targetidentifierT target_;
-  //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
+  // syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 
@@ -321,7 +322,7 @@ inline void
 Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
-  const rport receptor_type )
+  const size_t receptor_type )
 {
   // 1. does this connection support the event type sent by source
   // try to send event from source to dummy_target
@@ -389,7 +390,7 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::trigger_update_weight( const thread,
+Connection< targetidentifierT >::trigger_update_weight( const size_t,
   const std::vector< spikecounter >&,
   const double,
   const CommonSynapseProperties& )
@@ -401,9 +402,10 @@ template < typename targetidentifierT >
 SecondaryEvent*
 Connection< targetidentifierT >::get_secondary_event()
 {
-  assert( false );
+  assert( false and "Non-primary connections have to provide get_secondary_event()" );
+  return nullptr;
 }
 
 } // namespace nest
 
-#endif // CONNECTION_H
+#endif /* CONNECTION_H */

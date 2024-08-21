@@ -48,20 +48,20 @@ public:
   {
   }
 
-  void set_local_device_id( const index ldid ) override;
-  index get_local_device_id() const override;
+  void set_local_device_id( const size_t ldid ) override;
+  size_t get_local_device_id() const override;
 
 protected:
-  index local_device_id_;
+  size_t local_device_id_;
 };
 
 inline void
-DeviceNode::set_local_device_id( const index ldid )
+DeviceNode::set_local_device_id( const size_t ldid )
 {
   local_device_id_ = ldid;
 }
 
-inline index
+inline size_t
 DeviceNode::get_local_device_id() const
 {
   return local_device_id_;

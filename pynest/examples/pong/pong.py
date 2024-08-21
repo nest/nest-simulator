@@ -48,8 +48,7 @@ DONT_MOVE = 0
 
 
 class GameObject:
-    def __init__(self, game, x_pos=0.5, y_pos=0.5, velocity=0.2,
-                 direction=(0, 0)):
+    def __init__(self, game, x_pos=0.5, y_pos=0.5, velocity=0.2, direction=(0, 0)):
         """Base class for Ball and Paddle that contains basic functionality for
         an object inside a game.
 
@@ -75,26 +74,22 @@ class GameObject:
         return self.x_pos, self.y_pos
 
     def update_cell(self):
-        """Updates the cell in the game grid based on position.
-        """
-        x_cell = int(np.floor(
-            (self.x_pos / self.game.x_length) * self.game.x_grid))
-        y_cell = int(np.floor(
-            (self.y_pos / self.game.y_length) * self.game.y_grid))
+        """Updates the cell in the game grid based on position."""
+        x_cell = int(np.floor((self.x_pos / self.game.x_length) * self.game.x_grid))
+        y_cell = int(np.floor((self.y_pos / self.game.y_length) * self.game.y_grid))
         self.cell = [x_cell, y_cell]
 
 
 class Ball(GameObject):
     """Class representing the ball.
 
-        Args:
-            radius (float): Radius of ball in unit length.
+    Args:
+        radius (float): Radius of ball in unit length.
 
-        For other args, see :class:`GameObject`.
+    For other args, see :class:`GameObject`.
     """
 
-    def __init__(self, game, x_pos=0.8, y_pos=0.5, velocity=0.025,
-                 direction=(-1 / 2., 1 / 2.), radius=0.025):
+    def __init__(self, game, x_pos=0.8, y_pos=0.5, velocity=0.025, direction=(-1 / 2.0, 1 / 2.0), radius=0.025):
         super().__init__(game, x_pos, y_pos, velocity, direction)
         self.ball_radius = radius  # Unit length
         self.update_cell()
@@ -103,20 +98,20 @@ class Ball(GameObject):
 class Paddle(GameObject):
     """Class representing the paddles on either end of the playing field.
 
-        Args:
-            direction (int, optional): Either -1, 0, or 1 for downward, neutral
-            or upwards motion, respectively. Defaults to 0.
-            left (boolean): If True, paddle is placed on the left side of the
-            board, otherwise on the right side.
+    Args:
+        direction (int, optional): Either -1, 0, or 1 for downward, neutral
+        or upwards motion, respectively. Defaults to 0.
+        left (boolean): If True, paddle is placed on the left side of the
+        board, otherwise on the right side.
 
-        For other args, see :class:`GameObject`.
+    For other args, see :class:`GameObject`.
     """
+
     length = 0.2  # Paddle length in the scale of GameOfPong.y_length
 
     def __init__(self, game, left, y_pos=0.5, velocity=0.05, direction=0):
-        x_pos = 0. if left else game.x_length
-        super().__init__(game, x_pos, y_pos, velocity,
-                         direction)
+        x_pos = 0.0 if left else game.x_length
+        super().__init__(game, x_pos, y_pos, velocity, direction)
         self.update_cell()
 
     def move_up(self):
@@ -133,6 +128,7 @@ class GameOfPong(object):
     """Class representing a game of Pong. Playing field is 1.6 by 1.0 units
     in size, discretized into x_grid*y_grid cells.
     """
+
     x_grid = 32
     y_grid = 20
     x_length = 1.6
@@ -154,10 +150,10 @@ class GameOfPong(object):
             the right. Defaults to False.
         """
         initial_vx = 0.5 + 0.5 * np.random.random()
-        initial_vy = 1. - initial_vx
+        initial_vy = 1.0 - initial_vx
         if towards_left:
             initial_vx *= -1
-        initial_vy *= np.random.choice([-1., 1.])
+        initial_vy *= np.random.choice([-1.0, 1.0])
 
         self.ball = Ball(self, direction=[initial_vx, initial_vy])
         self.ball.y_pos = np.random.random() * self.y_length
@@ -194,14 +190,10 @@ class GameOfPong(object):
         return GAME_CONTINUES
 
     def propagate_ball_and_paddles(self):
-        """Updates ball and paddle coordinates based on direction and velocity.
-        """
+        """Updates ball and paddle coordinates based on direction and velocity."""
         for paddle in [self.r_paddle, self.l_paddle]:
             paddle.y_pos += paddle.direction * paddle.velocity
-            if paddle.y_pos < 0:
-                paddle.y_pos = 0
-            if paddle.y_pos > self.y_length:
-                paddle.y_pos = self.y_length
+            paddle.y_pos = min(max(0, paddle.y_pos), self.y_length)
             paddle.update_cell()
         self.ball.y_pos += self.ball.velocity * self.ball.direction[1]
         self.ball.x_pos += self.ball.velocity * self.ball.direction[0]

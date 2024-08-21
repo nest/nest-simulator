@@ -35,6 +35,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -67,6 +69,12 @@ nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urba
 
 namespace nest
 {
+void
+register_pp_cond_exp_mc_urbanczik( const std::string& name )
+{
+  register_node_model< pp_cond_exp_mc_urbanczik >( name );
+}
+
 // specialization must be place in namespace
 
 template <>
@@ -691,7 +699,7 @@ void
 nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( 0 <= e.get_rport() and e.get_rport() < 2 * NCOMP );
+  assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
@@ -702,7 +710,7 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
-  assert( 0 <= e.get_rport() and e.get_rport() < NCOMP );
+  assert( e.get_rport() < NCOMP );
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(

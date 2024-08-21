@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Showcase of PlotTargets, PlotSources, GetTargetNodes, GetSourceNodes
---------------------------------------------------------------------
+Spatial networks: Showcase of PlotTargets, PlotSources, GetTargetNodes, GetSourceNodes
+--------------------------------------------------------------------------------------
 
 Anno Christopher Kurth, INM-6
 """
@@ -30,15 +30,13 @@ import nest
 from matplotlib import pyplot as plt
 
 # create a spatial population
-s_nodes = nest.Create('iaf_psc_alpha',
-                      positions=nest.spatial.grid(shape=[11, 11],
-                                                  extent=[11., 11.]))
+s_nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[11, 11], extent=[11.0, 11.0]))
 # connectivity specifications with a mask
-conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
-            'mask': {'rectangular': {'lower_left': [-1.0, -1.0],
-                                     'upper_right': [1.0, 1.0]},
-                     'anchor': [3., 3.]}
-            }
+conndict = {
+    "rule": "pairwise_bernoulli",
+    "p": 1.0,
+    "mask": {"rectangular": {"lower_left": [-1.0, -1.0], "upper_right": [1.0, 1.0]}, "anchor": [3.0, 3.0]},
+}
 
 # get center element
 center_neuron = nest.FindCenterElement(s_nodes)
@@ -48,25 +46,25 @@ center_neuron = nest.FindCenterElement(s_nodes)
 nest.Connect(s_nodes, s_nodes, conndict)
 
 # Plot target neurons of center neuron
-fig = nest.PlotLayer(s_nodes, nodesize=80, nodecolor='coral')
+fig = nest.PlotLayer(s_nodes, nodesize=80, nodecolor="coral")
 nest.PlotTargets(center_neuron, s_nodes, fig=fig)
-plt.title('Target neurons of center neuron')
+plt.title("Target neurons of center neuron")
 plt.show()
 
 # Plot source neurons of center neuron
-fig = nest.PlotLayer(s_nodes, nodesize=80, nodecolor='coral')
+fig = nest.PlotLayer(s_nodes, nodesize=80, nodecolor="coral")
 nest.PlotSources(s_nodes, center_neuron, fig=fig)
-plt.title('Source neurons of center neuron')
+plt.title("Source neurons of center neuron")
 plt.show()
 
-print('Target neurons of center neuron')
+print("Target neurons of center neuron")
 print(nest.GetTargetNodes(center_neuron, s_nodes))
 
-print('Source neurons of center neuron')
+print("Source neurons of center neuron")
 print(nest.GetSourceNodes(s_nodes, center_neuron))
 
-print('Positions of target neurons of center neuron')
+print("Positions of target neurons of center neuron")
 print(nest.GetTargetPositions(center_neuron, s_nodes))
 
-print('Positions of source neurons of center neuron')
+print("Positions of source neurons of center neuron")
 print(nest.GetSourcePositions(s_nodes, center_neuron))

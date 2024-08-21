@@ -49,7 +49,7 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_dryrun_mode( const index n_procs );
+void enable_dryrun_mode( const size_t n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
@@ -59,29 +59,50 @@ void register_logger_client( const deliver_logging_event_ptr client_callback );
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name );
 
+/**
+ * Register node model (i.e. an instance of a class inheriting from `Node`).
+ */
+template < typename NodeModelT >
+void register_node_model( const std::string& name, std::string deprecation_info = std::string() );
+
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();
-RngPtr get_vp_synced_rng( thread tid );
-RngPtr get_vp_specific_rng( thread tid );
+RngPtr get_vp_synced_rng( size_t tid );
+RngPtr get_vp_specific_rng( size_t tid );
 
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();
 
-void set_node_status( const index node_id, const DictionaryDatum& dict );
-DictionaryDatum get_node_status( const index node_id );
+void set_node_status( const size_t node_id, const DictionaryDatum& dict );
+DictionaryDatum get_node_status( const size_t node_id );
 
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-NodeCollectionPTR create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const size_t n );
 
 NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
+/**
+ * Create bipartite connections.
+ */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const std::vector< DictionaryDatum >& synapse_params );
+
+/**
+ * Create tripartite connections
+ *
+ * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+ * entries are optional.
+ */
+void connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -170,15 +191,6 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
 
-/**
- * @brief Get only positions of the sliced nodes if metadata contains node positions and the NodeCollection is sliced.
- *
- * Puts an array of positions sliced the same way as a sliced NodeCollection into dict.
- * Positions have to be sliced on introspection because metadata of a sliced NodeCollection
- * for internal consistency and efficiency points to the metadata of the original
- * NodeCollection.
- */
-void slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc );
 }
 
 

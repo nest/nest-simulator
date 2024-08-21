@@ -33,11 +33,20 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::register_correlomatrix_detector( const std::string& name )
+{
+  register_node_model< correlomatrix_detector >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -290,11 +299,11 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
-  const rport sender = e.get_rport();
+  const size_t sender = e.get_rport();
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= sender and sender <= P_.N_channels_ - 1 );
+  assert( sender <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -318,7 +327,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // throw away all spikes which are too old to
     // enter the correlation window
-    const delay min_delay = kernel().connection_manager.get_min_delay();
+    const long min_delay = kernel().connection_manager.get_min_delay();
     while ( not otherSpikes.empty() and ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
     {
       otherSpikes.pop_front();

@@ -222,43 +222,6 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_EXTERNAL_MODULES )
-  if ( external-modules )
-    # headers from external modules will be installed here
-    include_directories( "${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
-
-    # put all external libs into this variable
-    set( EXTERNAL_MODULE_LIBRARIES )
-    # put all external headers into this variable
-    set( EXTERNAL_MODULE_INCLUDES )
-    foreach ( mod ${external-modules} )
-      # find module header
-      find_file( ${mod}_EXT_MOD_INCLUDE
-          NAMES ${mod}module.h
-          HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module"
-          )
-      if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
-         printError( "Cannot find header for external module '${mod}'. "
-          "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module/${mod}module.h' ." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
-
-      # find module library
-      find_library( ${mod}_EXT_MOD_LIBRARY
-          NAMES ${mod}module
-          HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
-          )
-      if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
-        printError( "Cannot find library for external module '${mod}'." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}" )
-    endforeach ()
-
-    set( EXTERNAL_MODULE_LIBRARIES ${EXTERNAL_MODULE_LIBRARIES} PARENT_SCOPE )
-    set( EXTERNAL_MODULE_INCLUDES ${EXTERNAL_MODULE_INCLUDES} PARENT_SCOPE )
-  endif ()
-endfunction()
-
 function( NEST_PROCESS_TICS_PER_MS )
   # Set tics per ms / step
   if ( tics_per_ms )
@@ -280,7 +243,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" )
+      set( LTDL_ROOT "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )
@@ -304,7 +267,7 @@ function( NEST_PROCESS_WITH_READLINE )
   if ( with-readline )
     if ( NOT ${with-readline} STREQUAL "ON" )
       # a path is set
-      set( READLINE_ROOT_DIR "${with-readline}" )
+      set( Readline_ROOT "${with-readline}" )
     endif ()
 
     find_package( Readline )
@@ -328,7 +291,7 @@ function( NEST_PROCESS_WITH_GSL )
   if ( with-gsl )
     if ( NOT ${with-gsl} STREQUAL "ON" )
       # if set, use this prefix
-      set( GSL_ROOT_DIR "${with-gsl}" )
+      set( GSL_ROOT "${with-gsl}" )
     endif ()
 
     find_package( GSL )
@@ -428,6 +391,7 @@ function( NEST_PROCESS_WITH_OPENMP )
       set( OPENMP_FOUND ON )
       set( OpenMP_C_FLAGS "${with-openmp}" )
       set( OpenMP_CXX_FLAGS "${with-openmp}" )
+      set( OpenMP_CXX_LIBRARIES "${with-openmp}" )
     else ()
       find_package( OpenMP )
     endif ()
@@ -436,6 +400,7 @@ function( NEST_PROCESS_WITH_OPENMP )
       set( OPENMP_FOUND "${OPENMP_FOUND}" PARENT_SCOPE )
       set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+      set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
@@ -455,7 +420,11 @@ endfunction()
 function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
-  if ( with-mpi )
+  if ( NOT "${with-mpi}" STREQUAL "OFF" )
+    if ( NOT ${with-mpi} STREQUAL "ON" )
+      # if set, use this prefix
+      set( MPI_ROOT "${with-mpi}" )
+    endif ()
     find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )
@@ -501,7 +470,7 @@ function( NEST_PROCESS_WITH_LIBNEUROSIM )
   if ( with-libneurosim )
     if ( NOT ${with-libneurosim} STREQUAL "ON" )
       # a path is set
-      set( LIBNEUROSIM_ROOT ${with-libneurosim} )
+      set( LibNeurosim_ROOT ${with-libneurosim} )
     endif ()
 
     find_package( LibNeurosim )
@@ -525,7 +494,7 @@ function( NEST_PROCESS_WITH_MUSIC )
   if ( with-music )
     if ( NOT ${with-music} STREQUAL "ON" )
       # a path is set
-      set( MUSIC_ROOT_DIR "${with-music}" )
+      set( Music_ROOT "${with-music}" )
     endif ()
 
     if ( NOT HAVE_MPI )
@@ -551,7 +520,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
+      set( SIONlib_ROOT "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )
@@ -574,7 +543,7 @@ function( NEST_PROCESS_WITH_BOOST )
   if ( with-boost )
     if ( NOT ${with-boost} STREQUAL "ON" )
       # a path is set
-      set( BOOST_ROOT "${with-boost}" )
+      set( Boost_ROOT "${with-boost}" )
     endif ()
 
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
@@ -596,6 +565,31 @@ function( NEST_PROCESS_WITH_BOOST )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_HDF5 )
+
+  set( HAVE_HDF5 OFF PARENT_SCOPE )
+  if ( with-hdf5 )
+    if ( NOT ${with-hdf5} STREQUAL "ON" )
+      # a path is set
+      set( HDF5_ROOT "${with-hdf5}" )
+    endif ()
+
+    find_package( HDF5 REQUIRED COMPONENTS C CXX )
+    if ( HDF5_FOUND )
+      # export found variables to parent scope
+      set( HAVE_HDF5 ON PARENT_SCOPE )
+      set( HDF5_FOUND "${HDF5_FOUND}" PARENT_SCOPE )
+      set( HDF5_LIBRARIES "${HDF5_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_INCLUDE_DIR "${HDF5_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( HDF5_VERSION "${HDF5_VERSION}" PARENT_SCOPE )
+      set( HDF5_HL_LIBRARIES "${HDF5_HL_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_DEFINITIONS "${HDF5_DEFINITIONS}" PARENT_SCOPE )
+      include_directories( ${HDF5_INCLUDE_DIRS} )
+
+    endif ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_TARGET_BITS_SPLIT )
   if ( target-bits-split )
     # set to value according to defines in config.h
@@ -609,17 +603,41 @@ function( NEST_PROCESS_TARGET_BITS_SPLIT )
   endif()
 endfunction()
 
-function( NEST_DEFAULT_MODULES )
-    # requires HAVE_LIBNEUROSIM set
-    # Static modules
-    set( SLI_MODULES models )
-    set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
+function( NEST_PROCESS_MODELS )
+  # check mutual exclusivity of -Dwith-models and -Dwith-modelset
+  if ( ( NOT with-modelset STREQUAL "full" ) AND  with-models )
+    printError( "Only one of -Dwith-modelset or -Dwith-models can be specified." )
+  endif ()
 
-    set( SLI_MODULE_INCLUDE_DIRS )
-    foreach ( mod ${SLI_MODULES} )
-      list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
-    endforeach ()
-    set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
+  # get the list of models to be built in either from the commandline
+  # argument directly or by reading the provided modelset file
+  if ( with-models )
+    set( BUILTIN_MODELS ${with-models} )
+  else()
+    if ( NOT EXISTS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" )
+      printError( "Cannot find modelset configuration 'modelsets/${with-modelset}'" )
+    endif ()
+    file(STRINGS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" BUILTIN_MODELS)
+  endif()
+
+  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
+  # or Python_EXECUTABLE set properly.
+  execute_process(
+    COMMAND "python3" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    OUTPUT_VARIABLE MODELS_SOURCES
+    ERROR_VARIABLE MODELS_SOURCES_ERROR
+    # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
+  if ( MODELS_SOURCES_ERROR )
+    printError( ${MODELS_SOURCES_ERROR} )
+  endif()
+
+  set( BUILTIN_MODELS ${BUILTIN_MODELS} PARENT_SCOPE )
+  set( MODELS_SOURCES_GENERATED ${MODELS_SOURCES} PARENT_SCOPE )
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI4PY )
@@ -635,7 +653,7 @@ function( NEST_PROCESS_WITH_MPI4PY )
 endfunction ()
 
 function( NEST_PROCESS_USERDOC )
-  if ( with-userdoc )
+  if ( ${with-userdoc} STREQUAL "ON")
     message( STATUS "Configuring user documentation" )
     find_package( Sphinx REQUIRED)
     find_package( Pandoc REQUIRED)
@@ -646,10 +664,17 @@ function( NEST_PROCESS_USERDOC )
 endfunction ()
 
 function( NEST_PROCESS_DEVDOC )
-  if ( with-devdoc )
+  if ( ${with-devdoc} STREQUAL "ON" )
     message( STATUS "Configuring developer documentation" )
     find_package( Doxygen REQUIRED dot )
     set( BUILD_DOXYGEN_DOCS ON PARENT_SCOPE )
     set( BUILD_DOCS ON PARENT_SCOPE )
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_FULL_LOGGING )
+  if ( ${with-full-logging} STREQUAL "ON" )
+    message( STATUS "Configuring full logging" )
+    set( ENABLE_FULL_LOGGING ON PARENT_SCOPE )
   endif ()
 endfunction ()

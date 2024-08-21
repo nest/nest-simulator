@@ -23,58 +23,63 @@
 Test multimeter recording in stepwise simulation.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-import nest
-
 skip_models = [
-    'gauss_rate_ipn',
-    'lin_rate_ipn',
-    'sigmoid_rate_ipn',
-    'sigmoid_rate_gg_1998_ipn',
-    'tanh_rate_ipn',
-    'threshold_lin_rate_ipn',
-    'lin_rate_opn',
-    'tanh_rate_opn',
-    'threshold_lin_rate_opn',
-    'rate_transformer_gauss',
-    'rate_transformer_lin',
-    'rate_transformer_sigmoid',
-    'rate_transformer_sigmoid_gg_1998',
-    'rate_transformer_tanh',
-    'rate_transformer_threshold_lin',
-    'ac_generator',
-    'dc_generator',
-    'noise_generator',
-    'step_current_generator',
-    'step_rate_generator',
-    'sinusoidal_poisson_generator',
-    'erfc_neuron',
-    'ginzburg_neuron',
-    'mcculloch_pitts_neuron',
-    'sinusoidal_gamma_generator',
-    'siegert_neuron',
+    "eprop_readout_bsshslm_2020",  # extra timestep added to some recordables in update function
+    "erfc_neuron",  # binary neuron
+    "ginzburg_neuron",  # binary neuron
+    "mcculloch_pitts_neuron",  # binary neuron
+    "gauss_rate_ipn",  # rate neuron
+    "lin_rate_ipn",  # rate neuron
+    "lin_rate_opn",  # rate neuron
+    "siegert_neuron",  # rate neuron
+    "sigmoid_rate_gg_1998_ipn",  # rate neuron
+    "sigmoid_rate_ipn",  # rate neuron
+    "tanh_rate_ipn",  # rate neuron
+    "tanh_rate_opn",  # rate neuron
+    "threshold_lin_rate_ipn",  # rate neuron
+    "threshold_lin_rate_opn",  # rate neuron
+    "rate_transformer_gauss",  # rate transformer
+    "rate_transformer_lin",  # rate transformer
+    "rate_transformer_sigmoid",  # rate transformer
+    "rate_transformer_sigmoid_gg_1998",  # rate transformer
+    "rate_transformer_tanh",  # rate transformer
+    "rate_transformer_threshold_lin",  # rate transformer
+    "ac_generator",  # generator device, does not support spike input
+    "dc_generator",  # generator device, does not support spike input
+    "noise_generator",  # generator device, does not support spike input
+    "step_current_generator",  # generator device, does not support spike input
+    "step_rate_generator",  # generator device, does not support spike input
+    "sinusoidal_poisson_generator",  # generator device, does not support spike input
+    "sinusoidal_gamma_generator",  # generator device, does not support spike input
 ]
 
+# The following models require connections to rport 1:
 extra_params = {
-    'iaf_psc_alpha_multisynapse': {'receptor_type': 1},
-    'iaf_psc_exp_multisynapse': {'receptor_type': 1},
-    'gif_psc_exp_multisynapse': {'receptor_type': 1},
-    'gif_cond_exp_multisynapse': {'receptor_type': 1},
-    'glif_psc': {'receptor_type': 1},
-    'iaf_cond_alpha_mc': {'receptor_type': 1},
-    'glif_cond': {'receptor_type': 1},
-    'ht_neuron': {'receptor_type': 1},
-    'aeif_cond_alpha_multisynapse': {'receptor_type': 1},
-    'aeif_cond_beta_multisynapse': {'receptor_type': 1},
-    'pp_cond_exp_mc_urbanczik': {'receptor_type': 1}
+    "iaf_psc_alpha_multisynapse": {"receptor_type": 1},
+    "iaf_psc_exp_multisynapse": {"receptor_type": 1},
+    "gif_psc_exp_multisynapse": {"receptor_type": 1},
+    "gif_cond_exp_multisynapse": {"receptor_type": 1},
+    "glif_psc": {"receptor_type": 1},
+    "glif_psc_double_alpha": {"receptor_type": 1},
+    "iaf_cond_alpha_mc": {"receptor_type": 1},
+    "glif_cond": {"receptor_type": 1},
+    "ht_neuron": {"receptor_type": 1},
+    "aeif_cond_alpha_multisynapse": {"receptor_type": 1},
+    "aeif_cond_beta_multisynapse": {"receptor_type": 1},
+    "pp_cond_exp_mc_urbanczik": {"receptor_type": 1},
+    "iaf_bw_2001": {"receptor_type": 1},
+    "iaf_bw_2001_exact": {"receptor_type": 1},
 }
 
 # Obtain all models with non-empty recordables list
-models = (model for model in nest.node_models
-          if (nest.GetDefaults(model).get('recordables') and model not in skip_models))
+models = (
+    model for model in nest.node_models if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
+)
 
 
 def build_net(model):
@@ -86,11 +91,9 @@ def build_net(model):
     """
 
     nest.ResetKernel()
-
     nrn = nest.Create(model)
-    pg = nest.Create('poisson_generator', params={'rate': 1e4})
-    mm = nest.Create('multimeter', {'interval': 0.1,
-                                    'record_from': nrn.recordables})
+    pg = nest.Create("poisson_generator", params={"rate": 1e4})
+    mm = nest.Create("multimeter", {"interval": nest.resolution, "record_from": nrn.recordables})
 
     receptor_type = 0
     if model in extra_params.keys():
@@ -102,7 +105,7 @@ def build_net(model):
     return mm
 
 
-@pytest.mark.parametrize('model', models)
+@pytest.mark.parametrize("model", models)
 def test_multimeter_stepping(model):
     """
     Test multimeter recording in stepwise simulation.

@@ -40,6 +40,13 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_music_event_out_proxy( const std::string& name )
+{
+  register_node_model< music_event_out_proxy >( name );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -217,7 +224,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
 #pragma omp critical( insertevent )
   {
 #endif
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
       V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
     }

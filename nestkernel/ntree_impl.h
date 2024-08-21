@@ -167,12 +167,6 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree<
         }
       }
     }
-    /*
-          for(int i=0;i<anchors_.size();++i) {
-            std::cout << anchors_[i] << std::endl;
-          }
-          std::cout << "---" << std::endl;
-    */
   }
 
   init_();
@@ -461,10 +455,9 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
 {
   if ( periodic_.any() )
   {
-    // Map position into standard range when using periodic b.c.
-    // Only necessary when inserting positions during source driven connect when
-    // target has periodic b.c. May be inefficient.
-
+    // Map position into standard range when using periodic b.c. Only necessary when
+    // inserting positions during source driven connect when target has periodic b.c.
+    // May be inefficient.
     for ( int i = 0; i < D; ++i )
     {
       if ( periodic_[ i ] )

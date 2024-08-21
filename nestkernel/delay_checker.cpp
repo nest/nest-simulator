@@ -78,7 +78,7 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
   // additional test.
 
   Time new_min_delay;
-  delay new_min_delay_steps = Time( Time::ms_stamp( min_d ) ).get_steps();
+  long new_min_delay_steps = Time( Time::ms_stamp( min_d ) ).get_steps();
   if ( Time( Time::step( new_min_delay_steps ) ).get_ms() > min_d )
   {
     new_min_delay_steps -= 1;
@@ -145,7 +145,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 void
 nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 {
-  const delay new_delay = Time::delay_ms_to_steps( requested_new_delay );
+  const long new_delay = Time::delay_ms_to_steps( requested_new_delay );
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
 
   if ( new_delay < Time::get_resolution().get_steps() )
@@ -206,10 +206,10 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 }
 
 void
-nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1, delay new_delay2 )
+nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_delay2 )
 {
-  const delay ldelay = std::min( new_delay1, new_delay2 );
-  const delay hdelay = std::max( new_delay1, new_delay2 );
+  const long ldelay = std::min( new_delay1, new_delay2 );
+  const long hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
   {

@@ -9,15 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'nest' }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0d381219ddf674d61a7572ddd19d7941e271515c # v2.9.0
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
       - name: sycnmaster
-        uses: wei/git-sync@v3
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
         with:
           source_repo: "nest/nest-simulator"
           source_branch: "master"
           destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/nest/nest-simulator.git"
           destination_branch: "master"
       - name: synctags
-        uses: wei/git-sync@v3
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
         with:
           source_repo: "nest/nest-simulator"
           source_branch: "refs/tags/*"

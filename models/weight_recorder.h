@@ -63,7 +63,7 @@ synapses that fulfill the given criteria.
 
 ::
 
-   >>> wr = nest.Create('weight_recorder')
+   >>> wr = nest.Create("weight_recorder")
    >>> nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
 
    >>> pre = nest.Create("iaf_psc_alpha", 10)
@@ -76,10 +76,18 @@ synapses that fulfill the given criteria.
 See also
 ++++++++
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: weight_recorder
+
 EndUserDocs */
 
 namespace nest
 {
+
+void register_weight_recorder( const std::string& name );
 
 class weight_recorder : public RecordingDevice
 {
@@ -117,7 +125,7 @@ public:
 
   void handle( WeightRecorderEvent& ) override;
 
-  port handles_test_event( WeightRecorderEvent&, rport ) override;
+  size_t handles_test_event( WeightRecorderEvent&, size_t ) override;
 
   Type get_type() const override;
   SignalType receives_signal() const override;
@@ -144,8 +152,8 @@ private:
   Parameters_ P_;
 };
 
-inline port
-weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
+inline size_t
+weight_recorder::handles_test_event( WeightRecorderEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

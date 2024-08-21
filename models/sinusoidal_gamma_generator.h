@@ -60,42 +60,44 @@ The instantaneous rate of the process is given by
 
 .. math::
 
- f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase \cdot \pi/180 )
+ f(t) = \mathrm{rate} + \mathrm{amplitude} \cdot \sin \left(
+    2 \pi \cdot \mathrm{frequency} \cdot t + \mathrm{phase} \cdot
+    \frac{\pi}{180} \right)
 
 .. note::
 
-   - The gamma generator requires 0 <= amplitude <= rate.
+   - The gamma generator requires
+     :math:`0 \leq \mathrm{amplitude} \leq \mathrm{rate}`.
    - The state of the generator is reset on calibration.
    - The generator does not support precise spike timing.
    - You can use the multimeter to sample the rate of the generator.
    - The generator will create different trains if run at different
      temporal resolutions.
 
-Individual spike trains vs single spike train:
 By default, the generator sends a different spike train to each of its
-targets. If /individual_spike_trains is set to false using either
-SetDefaults or CopyModel before a generator node is created, the generator
-will send the same spike train to all of its targets.
+targets. If ``individual_spike_trains`` is set to ``False`` using either
+:py:func:`.SetDefaults` or :py:func:`.CopyModel` before a generator node
+is created, the generator will send the same spike train to all of its targets.
 
 .. include:: ../models/stimulation_device.rst
 
 rate
-    Mean firing rate, default: 0 spikes/s
+    Mean firing rate in spikes/second. Default: ``0.0``.
 
 amplitude
-    Firing rate modulation amplitude, default: 0 s^-1
+    Firing rate modulation amplitude in spikes/second. Default: ``0.0``.
 
 frequency
-    Modulation frequency, default: 0 Hz
+    Modulation frequency in Hz. Default: ``0.0``.
 
 phase
-    Modulation phase in degree [0-360], default: 0
+    Modulation phase in degree [0-360]. Default: ``0.0``.
 
 order
-    Gamma order (>= 1), default: 1
+    Gamma order (>= 1). Default: ``1``.
 
 individual_spike_trains
-    See note above, default: true
+    See note above. Default: ``True``.
 
 See also [1]_.
 
@@ -136,6 +138,12 @@ See also
 ++++++++
 
 sinusoidal_poisson_generator, gamma_sup_generator
+
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_gamma_generator
 
 EndUserDocs */
 
@@ -186,6 +194,8 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
+void register_sinusoidal_gamma_generator( const std::string& name );
+
 class sinusoidal_gamma_generator : public StimulationDevice
 {
 
@@ -193,7 +203,7 @@ public:
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -206,7 +216,7 @@ public:
 
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -337,7 +347,7 @@ private:
   double deltaLambda_( const Parameters_&, double, double ) const;
 
   //! compute hazard for given target index, including time-step factor
-  double hazard_( port ) const;
+  double hazard_( size_t ) const;
 
   static RecordablesMap< sinusoidal_gamma_generator > recordablesMap_;
 
@@ -347,8 +357,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+sinusoidal_gamma_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -366,7 +376,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
     {
       SpikeEvent e;
       e.set_sender( *this );
-      const rport r = target.handles_test_event( e, receptor_type );
+      const size_t r = target.handles_test_event( e, receptor_type );
       if ( r != invalid_port and not is_model_prototype() )
       {
         ++P_.num_trains_;
@@ -384,8 +394,8 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
   }
 }
 
-inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

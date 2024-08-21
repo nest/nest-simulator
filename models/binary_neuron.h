@@ -94,15 +94,15 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   SignalType sends_signal() const override;
   SignalType receives_signal() const override;
@@ -211,7 +211,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -229,8 +228,8 @@ private:
 
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+binary_neuron< TGainfunction >::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -239,8 +238,8 @@ binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_ty
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -250,8 +249,8 @@ binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -261,8 +260,8 @@ binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport recepto
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -19,11 +19,20 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "cm_default.h"
 
+// Includes from nestkernel:
+#include "nest_impl.h"
 
 namespace nest
 {
+void
+register_cm_default( const std::string& name )
+{
+  register_node_model< cm_default >( name );
+}
+
 
 /*
  * For some reason this code block is needed. However, I have found no
@@ -214,6 +223,8 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
 void
 nest::cm_default::add_compartment_( DictionaryDatum& dd )
 {
+  dd->clear_access_flags();
+
   if ( dd->known( names::params ) )
   {
     c_tree_.add_compartment(
@@ -223,10 +234,14 @@ nest::cm_default::add_compartment_( DictionaryDatum& dd )
   {
     c_tree_.add_compartment( getValue< long >( dd, names::parent_idx ) );
   }
+
+  ALL_ENTRIES_ACCESSED( *dd, "cm_default::add_compartment_", "Unread dictionary entries: " );
 }
 void
 nest::cm_default::add_receptor_( DictionaryDatum& dd )
 {
+  dd->clear_access_flags();
+
   const long compartment_idx = getValue< long >( dd, names::comp_idx );
   const std::string receptor_type = getValue< std::string >( dd, names::receptor_type );
 
@@ -248,6 +263,8 @@ nest::cm_default::add_receptor_( DictionaryDatum& dd )
   {
     compartment->compartment_currents.add_synapse( receptor_type, syn_idx );
   }
+
+  ALL_ENTRIES_ACCESSED( *dd, "cm_default::add_receptor_", "Unread dictionary entries: " );
 }
 
 void
@@ -333,7 +350,7 @@ nest::cm_default::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) and ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
+  assert( e.get_rport() < syn_buffers_.size() );
 
   syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

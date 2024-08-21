@@ -193,7 +193,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       int tmp;
       while ( *in >> tmp and not in->eof() )
       {
-        image.push_back( ( long ) tmp );
+        image.push_back( static_cast< long >( tmp ) );
       }
     }
     else if ( std::string( magic ) == std::string( "P5" )
@@ -211,7 +211,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       while ( in->read( &tmp, 1 ) and not( in->eof() ) )
       {
         tmp2 = ( unsigned char ) tmp;
-        image.push_back( ( long ) tmp2 );
+        image.push_back( static_cast< long >( tmp2 ) );
       }
     }
     else
@@ -277,9 +277,9 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* image = dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
   StringDatum* filename = dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
 
-  long width = ( long ) w->get();
-  long height = ( long ) h->get();
-  long maxval = ( long ) m->get();
+  long width = static_cast< long >( w->get() );
+  long height = static_cast< long >( h->get() );
+  long maxval = static_cast< long >( m->get() );
 
   std::ostream* out = nullptr;
 
@@ -292,7 +292,7 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
       throw std::string( "Error when opening file for writing." );
     }
 
-    if ( ( long ) image->size() != width * height )
+    if ( static_cast< long >( image->size() ) != width * height )
     {
       throw std::string( "Array size does not match given dimensions." );
     }

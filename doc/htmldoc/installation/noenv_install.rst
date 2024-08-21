@@ -4,7 +4,7 @@ Install from source without a virtual environment
 =================================================
 
 The following are the basic steps to compile and install NEST from source code. See the
-:ref:`CMake Options <cmake_options>` or the :ref:`High Performance Computing <hpc_install>` instructions to
+:ref:`CMake Options <cmake_options>` instructions to
 further adjust settings for your system.
 
 * If not already installed on your system, the following packages are recommended.
@@ -41,7 +41,8 @@ further adjust settings for your system.
     python3-pip \
     python3-pytest \
     python3-pytest-timeout \
-    python3-pytest-xdist
+    python3-pytest-xdist \
+    python3-pandas
 
 * Create an install directory
 
@@ -94,6 +95,3 @@ sourcing the script:
 .. code-block:: sh
 
    source <nest_install_dir>/bin/nest_vars.sh
-
-
-

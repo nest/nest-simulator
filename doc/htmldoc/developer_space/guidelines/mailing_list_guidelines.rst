@@ -8,10 +8,15 @@ Guidelines for contributing to the mailing list
 To ensure community members provide accurate and quick responses to questions on the mailing list,
 please follow the guidelines below:
 
+#. Check the `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
+   users@nest-simulator.org/>`_ and `GitHub issues <https://github.com/nest/nest-simulator/issues>`_ to see if your
+   question has already been addressed.
+
+   You can also look at our :ref:`troubleshooting page <troubleshooting>` for installation issues.
 
 #. Write an informative subject to your email regarding your question or problem.
 
-#. **DO NOT** copy and paste lengthy log or error output without context.
+#. **DO NOT** copy and paste lengthy log or error output *without context*.
 
    Remember you are addressing human beings, and we do not have time to read through pages of logs, especially if we don't understand
    what you want.
@@ -25,7 +30,7 @@ please follow the guidelines below:
 
       * the steps you took that lead to the problem.
       * the specific error messages you get.
-      * relevant system and version information (e.g.,  Ubuntu 18.04/ NEST 2.20 installed using Conda).
+      * relevant system and version information (e.g.,  Ubuntu 22.04/ NEST 3.5 installed using the Conda package).
 
 #. Keep topics separate.
 
@@ -36,7 +41,7 @@ please follow the guidelines below:
 .. grid:: 2
 
    .. grid-item-card:: |mailicon| Access the mailing list
-       :link-type: url 
+       :link-type: url
        :link: https://www.nest-initiative.org/mailinglist/
 
 

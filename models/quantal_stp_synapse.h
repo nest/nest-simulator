@@ -66,13 +66,12 @@ The following parameters can be set in the status dictionary:
 
 ==========  ======= =========================================================
  U          real    Maximal fraction of available resources [0,1],
-                    default=0.5
- u          real    Available fraction of resources [0,1], default=0.5
- p          real    Probability that a vesicle is available, default = 1.0
+                    default = 0.5
+ u          real    Available fraction of resources [0,1], default = U
  n          integer Total number of release sites, default = 1
  a          integer Number of available release sites, default = n
- tau_rec    ms      Time constant for depression, default=800 ms
- tau_rec    ms      Time constant for facilitation, default=0 (off)
+ tau_fac    ms      Time constant for facilitation, default = 0 (off)
+ tau_rec    ms      Time constant for depression, default = 800
 ==========  ======= =========================================================
 
 References
@@ -100,7 +99,14 @@ See also
 
 tsodyks2_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: quantal_stp_synapse
+
 EndUserDocs */
+
+void register_quantal_stp_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class quantal_stp_synapse : public Connection< targetidentifierT >
@@ -150,7 +156,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -158,15 +164,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -199,8 +205,8 @@ constexpr ConnectionModelProperties quantal_stp_synapse< targetidentifierT >::pr
  * \param cp Common properties object, containing the quantal_stp parameters.
  */
 template < typename targetidentifierT >
-inline void
-quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -219,7 +225,9 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
     }
   }
 
-  if ( n_release > 0 )
+  const bool send_spike = n_release > 0;
+
+  if ( send_spike )
   {
     e.set_receiver( *get_target( t ) );
     e.set_weight( n_release * weight_ );
@@ -242,6 +250,8 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   }
 
   t_lastspike_ = t_spike;
+
+  return send_spike;
 }
 
 } // namespace

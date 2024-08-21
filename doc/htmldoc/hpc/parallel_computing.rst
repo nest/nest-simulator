@@ -161,7 +161,7 @@ Spikes between neurons and devices
 Synaptic plasticity models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For synapse models supporting plasticity, synapse dynamics in the
+For synapse models supporting :hxt_ref:`plasticity`, synapse dynamics in the
 ``Connection`` object are always handled by the virtual process of the
 `target node`.
 
@@ -188,12 +188,22 @@ command for this is
 Usually, a good choice for `T` is the number of processor cores available
 on your machine.
 
-.. note::
+In some situations, `oversubscribing` (i.e., to specify a
+``local_num_threads`` that is higher than available cores on your
+machine) can yield 20–30% improvement in simulation speed. Finding the
+optimal thread number for a specific situation might require a bit of
+experimenting.
 
- In some situations, `oversubscribing` (i.e., to specify a ``local_num_threads`` that is higher than available cores on your machine)
- can yield 20-30% improvement in simulation speed. Finding the optimal thread number for a
- specific situation might require a bit of experimenting.
+.. admonition:: NEST ignores OMP_NUM_THREADS
 
+   NEST ignores ``OMP_NUM_THREADS`` environment
+   variable, which may be set by mpi4py, Slurm or similar runtime
+   environments. NEST will always start running on a single thread
+   until the number of threads is changed by setting either the
+   ``local_num_threads`` or the ``total_num_virtual_procs``
+   :ref:`kernel attribute<sec_kernel_attributes>`.
+
+   
 Multiprocessing
 ---------------
 

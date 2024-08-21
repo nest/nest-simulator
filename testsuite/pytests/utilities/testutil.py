@@ -20,15 +20,31 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import dataclasses
+import sys
+
 import numpy as np
 import pytest
-import sys
 
 
 def parameter_fixture(name, default_factory=lambda: None):
-    return pytest.fixture(autouse=True, name=name)(
-        lambda request: getattr(request, "param", default_factory())
-    )
+    return pytest.fixture(autouse=True, name=name)(lambda request: getattr(request, "param", default_factory()))
+
+
+def dict_is_subset_of(small, big):
+    """
+    Return true if dict `small` is subset of dict `big`.
+
+    `small` must contain all keys in `big` with the same values.
+    """
+
+    # See
+    # https://stackoverflow.com/questions/20050913/python-unittests-assertdictcontainssubset-recommended-alternative
+    # https://peps.python.org/pep-0584/
+    #
+    # Note: | is **not** a symmetric operator for dicts. `small` must be the second operand to | as it determines
+    #       the value of joint keys in the merged dictionary.
+
+    return big == big | small
 
 
 def isin_approx(A, B, tol=1e-06):
@@ -54,9 +70,7 @@ def isin_approx(A, B, tol=1e-06):
 def get_comparable_timesamples(actual, expected):
     simulated_points = isin_approx(actual[:, 0], expected[:, 0])
     expected_points = isin_approx(expected[:, 0], actual[:, 0])
-    assert (
-        len(actual[simulated_points]) > 0
-    ), "The recorded data did not contain any relevant timesamples"
+    assert len(actual[simulated_points]) > 0, "The recorded data did not contain any relevant timesamples"
     return actual[simulated_points], pytest.approx(expected[expected_points])
 
 

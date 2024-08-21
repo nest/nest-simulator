@@ -75,7 +75,14 @@ See also
 
 poisson_generator_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: poisson_generator
+
 EndUserDocs */
+
+void register_poisson_generator( const std::string& name );
 
 class poisson_generator : public StimulationDevice
 {
@@ -95,7 +102,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -139,8 +146,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+poisson_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

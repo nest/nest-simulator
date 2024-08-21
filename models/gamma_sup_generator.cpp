@@ -32,10 +32,17 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "doubledatum.h"
+
+void
+nest::register_gamma_sup_generator( const std::string& name )
+{
+  register_node_model< gamma_sup_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------
@@ -253,10 +260,10 @@ void
 nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.internal_states_.size() );
+  assert( prt < B_.internal_states_.size() );
 
   // age_distribution object propagates one time step and returns number of spikes
   unsigned long n_spikes =

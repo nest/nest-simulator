@@ -1,17 +1,17 @@
 .. _userdoc_workflow:
 
 User-level documentation workflow
-#################################
+=================================
 
-What you need to know
-+++++++++++++++++++++
+Overview of workflow
+--------------------
 
 We use `Sphinx <https://www.sphinx-doc.org/en/master/>`_ to generate
 documentation and `Read the Docs <https://readthedocs.org/>`_ to
 publish it. Sphinx uses reStructuredText as the base format for the
 documentation. To learn more about the syntax, check out this `quick
 reference
-<https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_.
 
 The NEST Simulator documentation lives alongside its code. It is
 contained in the ``doc/htmldoc`` directory within the `NEST source
@@ -21,35 +21,73 @@ We work with `GitHub <https://www.github.com>`_ as a web-based hosting
 service for Git. Git allows us to keep our versions under control,
 with each release of NEST having its own documentation.
 
-This workflow aims for the concept of **user-correctable documentation**.
+.. mermaid::
+   :zoom:
+   :caption: Overview of documentation build. Drag and zoom to explore.
 
-.. image:: ../../../static/img/documentation_workflow.png
-  :width: 500
-  :alt: Alternative text
+   flowchart TB
 
-.. note::
-   This workflow shows you how to create **user-level documentation**
-   for NEST. For the **developer documentation**, please refer to our
-   :ref:`Developer documentation workflow
-   <devdoc_workflow>`.
+      sphinx:::TextPosition
 
-Changing the documentation
-++++++++++++++++++++++++++
+      classDef TextPosition padding-right:25em;
+      classDef orangeFill color:#fff, stroke:#f63, stroke-width:2px, fill:#f63;
+      classDef blueFill color:#fff, stroke:#072f42, stroke-width:2px, fill:#072f42;
+      classDef brownFill color:#fff, stroke:#652200, stroke-width:2px, fill:#652200;
 
-If you notice any errors or weaknesses in the documentation, please
-submit an `Issue <https://github.com/nest/nest-simulator/issues>`_ in
-our GitHub repository.
+      subgraph sphinx[SPHINX]
+        read(Read source files):::blueFill-->ext
+        read-->custom
+       subgraph Parse_rst ["Parse rst"]
+          ext(sphinx_extensions):::blueFill
+          custom(custom_extensions):::blueFill
+        end
+      Parse_rst-->build
+      build(Build output formats):::blueFill
+      end
+    subgraph EDIT SOURCE FILES
+      source(repo: nest/nest-simulator):::orangeFill-- sphinx-build-->read
+     end
 
-You can also make changes directly to your forked copy of the `NEST source
+     subgraph OUTPUT["REVIEW OUTPUT"]
+       direction TB
+       build--local filesystem-->local(_build directory):::brownFill
+       build--hosting platform-->rtd(Read the Docs):::brownFill
+       local-->HTML(HTML):::brownFill
+       rtd-->HTML
+     end
+
+
+Contribute to the documentation
+-------------------------------
+
+You can make changes directly to your forked copy of the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
 request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the
 workflow below!
 
-Setting up your environment
-+++++++++++++++++++++++++++
+If you have not done so alrealdy first
 
-We recommend that you set up a full NEST developer environment using
-Conda (for details on Conda, see :ref:`conda_tips`):
+* Fork the nest-simulator repository (see :ref:`here <fork>` for details on first time setup)
+
+* Clone the nest-simulator:
+
+.. code-block:: bash
+
+   git clone git@github.com:<my-username>/nest-simulator
+
+* Create a branch to a make your changes
+
+.. code-block:: bash
+
+   git checkout -b <my-new-feature>
+
+Set up your environment
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Using the Conda package (includes everything to build NEST, including documentation)
+````````````````````````````````````````````````````````````````````````````````````
+
+For details on Conda, see :ref:`conda_tips`
 
 .. code-block:: bash
 
@@ -64,6 +102,9 @@ If you later on want to deactivate or delete the build environment:
    conda deactivate
    rm -rf conda/
 
+Using pip (includes packages for documentation only)
+````````````````````````````````````````````````````
+
 If you want to install only a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:
 
@@ -77,42 +118,88 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
 
     sudo apt-get install pandoc
 
+.. admonition::  Building plantuml diagrams locally
 
-Generating documentation with Sphinx
-++++++++++++++++++++++++++++++++++++
+   The plantuml diagrams require additional requirements
+   to make them work in a local build.
 
-Now that you activated your environment, you can generate HTML files using
-Sphinx.
+   You will need to
 
-Rendering HTML
-~~~~~~~~~~~~~~
+   - check if you have Java installed. The minimum version needed is Java 8.
+     (e.g., to install the latest available version on Ubuntu: ``apt install jre-default``)
+   - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
+   - Move the jar file to ``/tmp/plantuml.jar``
 
-You can build and preview the documentation locally by running the following
-commands.
+   - To see if plantuml diagrams render correctly after building the documentation you can take a look
+     at our :ref:`test_uml`.
 
-1. Clone the NEST repository:
 
-.. code-block:: bash
+Edit and create pages
+~~~~~~~~~~~~~~~~~~~~~~
 
-  git clone git@github.com:nest/nest-simulator
+You can now edit or add new files with your editor of choice. Most documentation files are
+written in reStructuredText and are found in the ``doc/htmldoc`` directory. There are some exceptions, detailed below.
+If you're unfamiliar with reStructuredText, you can find some
+`helpful hints here <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_.
 
-2. Navigate to the ``doc/htmldoc`` folder:
+Please see our :ref:`documentation style guide <doc_styleguide>` for information on how to write good documentation in NEST.
 
-.. code-block:: bash
 
-   cd nest-simulator/doc/htmldoc
+Where to find documentation in the repository
+`````````````````````````````````````````````
 
-3. Build the docs:
+Most documentation is located in ``doc/htmldoc`` with some exceptions.
 
-.. code-black:: bash
+If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will need to edit the source files:
 
-   sphinx-build . ../_build/html -b html
+.. list-table::
+   :header-rows: 1
 
-4. Preview files. They are located in ``doc/_build/html``
+   * - Type of documentation
+     - Source location
+   * - Model docs
+     - ``nest-simulator/models/*.h`` in the section `BeginUserDocs`
+   * - PyNEST API
+     - ``nest-simulator/pynest/nest/**/*.py``
+   * - PyNEST examples
+     - ``nest-simulator/pynest/examples/**/*.py``
 
-.. code-block:: bash
 
-   browser ../_build/html/index.html
+.. note::
+
+
+  Also consider that any new pages you create need to be referenced in the relevant
+  table of contents.
+
+
+
+Review changes you made
+~~~~~~~~~~~~~~~~~~~~~~~
+
+To check that the changes you made are correct in the HTML output,
+you will need to build the documentation locally with Sphinx.
+
+#. Navigate to the ``doc/htmldoc`` folder:
+
+   .. code-block:: bash
+
+      cd nest-simulator/doc/htmldoc
+
+#. Build the docs:
+
+   .. code-block:: bash
+
+      sphinx-build . ../_build/html -b html
+
+
+#. Preview files. They are located in ``doc/_build/html``
+
+   .. code-block:: bash
+
+      cd ../_build/html/
+      python3 -m http.server
+
+   Open the provided URL in your browser.
 
 .. tip::
 
@@ -123,61 +210,45 @@ commands.
        cmake -Dwith-userdoc=ON </path/to/NEST/src>
        make docs
 
-Editing and creating pages
-~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To edit existing `reStructuredText <https://thomas-cokelaer.info/tutorials/
-sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
+Create a pull request
+~~~~~~~~~~~~~~~~~~~~~
 
-1. You can edit and/or add ``.rst`` files in the ``doc/htmldoc`` directory using your
-   editor of choice.
+Once you're happy with the changes, you can submit a pull request on Github from your fork.
+Github has a nice help page that outlines the process for
+`submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
 
-2. If you create a new page, open ``index.rst`` in the ``doc/htmldoc`` directory
-   and add the file name under ``.. toctree::``. This will ensure it appears on
-   the NEST Simulator documentation's table of contents.
+Reviewers will be assigned and go through your changes.
 
-3. If you rename or move a file, please make sure you update all the
-   corresponding cross-references.
+If you are a first time contributor, we ask that you fill out the
+:download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>`
+form to transfer your copyright to the NEST initiative and send it to *info [at] nest-initiative.org*.
 
-4. Save your changes.
+.. tip::
 
-5. Re-render documentation as described above.
+   If you notice any errors or weaknesses in the documentation, you can
+   also submit an `Issue <https://github.com/nest/nest-simulator/issues>`_ on
+   GitHub.
 
-.. note::
 
-   Please see our :ref:`documentation style guide <doc_styleguide>` for information on how to write good documentation in the NEST style.
+.. seealso::
 
-Proceed as follows to preview your version of the documentation on Read the
-Docs.
+   This workflow shows you how to create **user-level documentation**
+   for NEST. For the **developer documentation**, please refer to our
+   :ref:`Developer documentation workflow
+   <devdoc_workflow>`.
 
-1. Check that unwanted directories are listed in ``.gitignore``:
 
-.. code-block:: bash
+Read the Docs
+``````````````
 
-   _build
-   _static
-   _templates
+NEST documentation is hosted on Read the Docs. If you would like to view the documentation
+on Read the Docs, you can set up your own account and link it with your Github account.
 
-2. Add, commit and push your changes to GitHub.
+See `this guide <https://docs.readthedocs.io/en/stable/intro/import-guide.html>`_
+for more information.
 
-3. Go to `Read the Docs <https://readthedocs.org/>`_. Sign up for an account
-   if you don't have one.
+.. toctree::
+   :hidden:
 
-4. `Import <https://readthedocs.org/dashboard/import/>`_ the project.
-
-5. Enter the details of your project in the ``repo`` field and hit ``Create``.
-
-6. `Build <https://docs.readthedocs.io/en/stable/intro/
-   import-guide.html#building-your-documentation>`_ your documentation.
-
-This allows you to preview your work on your Read the Docs account. In order
-to see the changes on the official NEST Simulator documentation, please submit
-a pull request.
-
-Creating pull request
-+++++++++++++++++++++
-
-Once your documentation work is finished, you can create a
-:ref:`pull request <git_workflow>` to the ``master``
-branch of the NEST Source Code Repository. Your pull request will be reviewed
-by the NEST Documentation Team!
+   /testuml

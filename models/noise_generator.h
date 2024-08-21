@@ -89,7 +89,7 @@ changes must be a multiple of the time step.
 
    You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step
    if simulating on a single thread; multiple MPI processes with one thread each also work. In this case,
-   the recording interval of the multimeter should be the equal to the simulation resolution to avoid confusing effects
+   the recording interval of the multimeter should be equal to the simulation resolution to avoid confusing effects
    due to offset or drift between the recording times of the multimeter and the switching times of the
    noise generator. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
 
@@ -139,7 +139,14 @@ See also
 
 step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: noise_generator
+
 EndUserDocs */
+
+void register_noise_generator( const std::string& name );
 
 class noise_generator : public StimulationDevice
 {
@@ -162,13 +169,13 @@ public:
   using Node::handles_test_event;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   SignalType sends_signal() const override;
 
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -290,8 +297,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+noise_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {

@@ -39,7 +39,6 @@ def prepare():
 
 
 def create_network(num_threads, conn_dict):
-
     nest.total_num_virtual_procs = num_threads
     pop1 = nest.Create("iaf_psc_alpha", 10)
     pop2 = nest.Create("iaf_psc_alpha", 10)
@@ -48,7 +47,7 @@ def create_network(num_threads, conn_dict):
     nest.Connect(pop1, pop2, conn_dict, syn_dict)
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_one_to_one(num_threads):
     conn_dict = {"rule": "one_to_one"}
     create_network(num_threads, conn_dict)
@@ -56,7 +55,7 @@ def test_one_to_one(num_threads):
     assert nest.num_connections == 10
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_all_to_all(num_threads):
     conn_dict = {"rule": "all_to_all"}
     create_network(num_threads, conn_dict)
@@ -64,7 +63,7 @@ def test_all_to_all(num_threads):
     assert nest.num_connections == 100
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_fixed_indegree(num_threads):
     conn_dict = {"rule": "fixed_indegree", "indegree": 5}
     create_network(num_threads, conn_dict)
@@ -72,7 +71,7 @@ def test_fixed_indegree(num_threads):
     assert nest.num_connections == 50
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_fixed_outdegree(num_threads):
     conn_dict = {"rule": "fixed_outdegree", "outdegree": 5}
     create_network(num_threads, conn_dict)
@@ -80,7 +79,7 @@ def test_fixed_outdegree(num_threads):
     assert nest.num_connections == 50
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_fixed_total_number(num_threads):
     conn_dict = {"rule": "fixed_total_number", "N": 5}
     create_network(num_threads, conn_dict)
@@ -88,7 +87,7 @@ def test_fixed_total_number(num_threads):
     assert nest.num_connections == 5
 
 
-@pytest.mark.parametrize('num_threads', range(1, 26))
+@pytest.mark.parametrize("num_threads", range(1, 26))
 def test_pairwise_bernoulli(num_threads):
     nest.rng_seed = 100
     conn_dict = {"rule": "pairwise_bernoulli", "p": 0.1}

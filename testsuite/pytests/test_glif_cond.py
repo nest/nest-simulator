@@ -20,10 +20,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 try:
     import scipy.stats
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
@@ -31,10 +33,9 @@ except ImportError:
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
+@unittest.skipIf(not HAVE_GSL, "GSL is not available")
+@unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
 class GLIFCONDTestCase(unittest.TestCase):
-
     def setUp(self):
         """
         Clean up and initialize NEST before each test.
@@ -64,11 +65,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         pn = nest.Create("parrot_neuron")
 
-        cg_params = {
-            "amplitude_values": [100.0],
-            "amplitude_times": [600.0],
-            "start": 600.0, "stop": 900.0
-        }
+        cg_params = {"amplitude_values": [100.0], "amplitude_times": [600.0], "start": 600.0, "stop": 900.0}
         cg = nest.Create("step_current_generator", params=cg_params)
 
         nest.Connect(espikes, nrn, syn_spec={"receptor_type": 1})
@@ -79,18 +76,18 @@ class GLIFCONDTestCase(unittest.TestCase):
         nest.Connect(cg, nrn, syn_spec={"weight": 3.0})
 
         # For recording spikes and voltage traces
-        sr = nest.Create('spike_recorder')
+        sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
 
         mm_params = {"record_from": ["V_m"], "interval": nest.resolution}
         mm = nest.Create("multimeter", params=mm_params)
         nest.Connect(mm, nrn)
 
-        nest.Simulate(1000.)
+        nest.Simulate(1000.0)
 
-        times = nest.GetStatus(mm, 'events')[0]['times']
-        V_m = nest.GetStatus(mm, 'events')[0]['V_m']
-        spikes = nest.GetStatus(sr, 'events')[0]['times']
+        times = nest.GetStatus(mm, "events")[0]["times"]
+        V_m = nest.GetStatus(mm, "events")[0]["V_m"]
+        spikes = nest.GetStatus(sr, "events")[0]["times"]
 
         return times, V_m, spikes
 
@@ -101,7 +98,7 @@ class GLIFCONDTestCase(unittest.TestCase):
         """
         p_value_lim = 0.1
         d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
-        print(f'd={d}, p_value={p_value}')
+        print(f"d={d}, p_value={p_value}")
         self.assertGreater(p_value, p_value_lim)
 
     def test_lif(self):
@@ -112,14 +109,31 @@ class GLIFCONDTestCase(unittest.TestCase):
             "spike_dependent_threshold": False,
             "after_spike_currents": False,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_params)
         spikes_expected = [
-            388.04, 612.99, 628.73, 644.47, 660.21, 675.95, 691.69,
-            707.14, 722.88, 738.62, 754.36, 770.1, 785.84, 801.85,
-            817.76, 833.5, 849.24, 864.98, 880.72, 896.46
+            388.04,
+            612.99,
+            628.73,
+            644.47,
+            660.21,
+            675.95,
+            691.69,
+            707.14,
+            722.88,
+            738.62,
+            754.36,
+            770.1,
+            785.84,
+            801.85,
+            817.76,
+            833.5,
+            849.24,
+            864.98,
+            880.72,
+            896.46,
         ]
         self.ks_assert_spikes(spikes, spikes_expected)
         self.assertAlmostEqual(V_m[0], -78.85)
@@ -132,14 +146,37 @@ class GLIFCONDTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": False,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
         times, V_m, spikes = self.simulate_w_stim(lif_r_params)
         expected_spikes = [
-            388.04, 613.06, 620.66, 628.7, 637.19, 646.12, 655.48, 665.26,
-            675.44, 686., 696.91, 707.68, 719.21, 731., 743.01, 755.21,
-            767.57, 780.07, 792.69, 811.13, 823.56, 836.09, 848.74, 861.48,
-            874.3, 887.18, 900.12
+            388.04,
+            613.06,
+            620.66,
+            628.7,
+            637.19,
+            646.12,
+            655.48,
+            665.26,
+            675.44,
+            686.0,
+            696.91,
+            707.68,
+            719.21,
+            731.0,
+            743.01,
+            755.21,
+            767.57,
+            780.07,
+            792.69,
+            811.13,
+            823.56,
+            836.09,
+            848.74,
+            861.48,
+            874.3,
+            887.18,
+            900.12,
         ]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
@@ -152,13 +189,11 @@ class GLIFCONDTestCase(unittest.TestCase):
             "spike_dependent_threshold": False,
             "after_spike_currents": True,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
-        expected_spikes = [
-            388.04, 613.71, 644.97, 679.45, 716.83, 758.15, 814.83, 863.82
-        ]
+        expected_spikes = [388.04, 613.71, 644.97, 679.45, 716.83, 758.15, 814.83, 863.82]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -170,13 +205,11 @@ class GLIFCONDTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": True,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
-        expected_spikes = [
-            388.04, 613.79, 645.19, 681.34, 722.24, 769.22, 825.66, 885.68
-        ]
+        expected_spikes = [388.04, 613.79, 645.19, 681.34, 722.24, 769.22, 825.66, 885.68]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -188,11 +221,11 @@ class GLIFCONDTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": True,
             "adapting_threshold": True,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_a_params)
-        expected_spikes = [388.06, 615.24, 653.66, 701.1,  767.58, 858.97]
+        expected_spikes = [388.06, 615.24, 653.66, 701.1, 767.58, 858.97]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -206,5 +239,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -135,6 +135,10 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       type_ = Pairwise_bernoulli_on_source;
     }
   }
+  else if ( connection_type == names::pairwise_poisson )
+  {
+    type_ = Pairwise_poisson;
+  }
   else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
 
@@ -163,7 +167,7 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   std::string syn_name = ( *dict_datum )[ names::synapse_model ];
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+  const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );

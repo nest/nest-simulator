@@ -36,13 +36,16 @@ def test_synapse_defaults_unchanged_after_usage_in_connection():
     synapse_defaults = nest.GetDefaults("static_synapse")
 
     population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
-    nest.Connect(population, population,
-                 syn_spec={'synapse_model': 'static_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 2},
-                 conn_spec={'rule': 'one_to_one'})
+    nest.Connect(
+        population,
+        population,
+        syn_spec={"synapse_model": "static_synapse", "delay": 2.3, "weight": 1234.0, "receptor_type": 2},
+        conn_spec={"rule": "one_to_one"},
+    )
 
     updated_synapse_defaults = nest.GetDefaults("static_synapse")
 
-    params = ['delay', 'weight', 'receptor_type']
+    params = ["delay", "weight", "receptor_type"]
     for param in params:
         assert synapse_defaults[param] == updated_synapse_defaults[param]
 
@@ -52,14 +55,17 @@ def test_synapse_defaults_unchanged_after_usage_in_connection_with_error():
 
     population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
     try:
-        nest.Connect(population, population,
-                     syn_spec={'synapse_model': 'static_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 5},
-                     conn_spec={'rule': 'one_to_one'})
+        nest.Connect(
+            population,
+            population,
+            syn_spec={"synapse_model": "static_synapse", "delay": 2.3, "weight": 1234.0, "receptor_type": 5},
+            conn_spec={"rule": "one_to_one"},
+        )
     except nest.NESTErrors.IncompatibleReceptorType:
         pass
 
     updated_synapse_defaults = nest.GetDefaults("static_synapse")
-    params = ['delay', 'weight', 'receptor_type']
+    params = ["delay", "weight", "receptor_type"]
     for param in params:
         assert synapse_defaults[param] == updated_synapse_defaults[param]
 
@@ -68,12 +74,25 @@ def test_synapse_defaults_unchanged_after_usage_in_connection_with_additional_pa
     synapse_defaults = nest.GetDefaults("stdp_synapse")
 
     population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
-    nest.Connect(population, population,
-                 syn_spec={'synapse_model': 'stdp_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 2,
-                           'alpha': 7., 'lambda': 0.05, 'mu_minus': 2., 'mu_plus': 3., 'tau_plus': 50., 'Wmax': 99.},
-                 conn_spec={'rule': 'one_to_one'})
+    nest.Connect(
+        population,
+        population,
+        syn_spec={
+            "synapse_model": "stdp_synapse",
+            "delay": 2.3,
+            "weight": 1234.0,
+            "receptor_type": 2,
+            "alpha": 7.0,
+            "lambda": 0.05,
+            "mu_minus": 2.0,
+            "mu_plus": 3.0,
+            "tau_plus": 50.0,
+            "Wmax": 99.0,
+        },
+        conn_spec={"rule": "one_to_one"},
+    )
 
     updated_synapse_defaults = nest.GetDefaults("stdp_synapse")
-    params = ['delay', 'weight', 'receptor_type', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus', 'Wmax']
+    params = ["delay", "weight", "receptor_type", "alpha", "lambda", "mu_minus", "mu_plus", "tau_plus", "Wmax"]
     for param in params:
         assert synapse_defaults[param] == updated_synapse_defaults[param]

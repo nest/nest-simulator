@@ -45,10 +45,9 @@ reset appropriately between the trials, we do the following steps:
 # Importing all necessary modules for simulation, analysis and plotting.
 
 
-import numpy
 import matplotlib.pyplot as plt
 import nest
-
+import numpy
 
 ###############################################################################
 # Here we define all parameters necessary for building and simulating the
@@ -57,11 +56,11 @@ import nest
 # We start with the global network parameters.
 
 
-NE = 1000      # number of excitatory neurons
-NI = 250       # number of inhibitory neurons
-N = NE + NI    # total number of neurons
-KE = 100       # excitatory in-degree
-KI = 25        # inhibitory in-degree
+NE = 1000  # number of excitatory neurons
+NI = 250  # number of inhibitory neurons
+N = NE + NI  # total number of neurons
+KE = 100  # excitatory in-degree
+KI = 25  # inhibitory in-degree
 
 
 ###############################################################################
@@ -70,10 +69,10 @@ KI = 25        # inhibitory in-degree
 # the limits of the initial potential of the neurons.
 
 
-neuron_model = 'iaf_psc_delta'
+neuron_model = "iaf_psc_delta"
 neuron_params = nest.GetDefaults(neuron_model)
-Vmin = neuron_params['E_L']   # minimum of initial potential distribution (mV)
-Vmax = neuron_params['V_th']  # maximum of initial potential distribution (mV)
+Vmin = neuron_params["E_L"]  # minimum of initial potential distribution (mV)
+Vmax = neuron_params["V_th"]  # maximum of initial potential distribution (mV)
 
 
 ###############################################################################
@@ -87,33 +86,33 @@ Vmax = neuron_params['V_th']  # maximum of initial potential distribution (mV)
 # behavior for strong weights (e.g. ``J = 5.4``).
 
 
-J = 0.5                   # excitatory synaptic weight (mV)
-g = 6.                    # relative inhibitory weight
-delay = 0.1               # spike transmission delay (ms)
+J = 0.5  # excitatory synaptic weight (mV)
+g = 6.0  # relative inhibitory weight
+delay = 0.1  # spike transmission delay (ms)
 
 
 # External input parameters.
 
 
-Jext = 0.2                # PSP amplitude for external Poisson input (mV)
-rate_ext = 6500.          # rate of the external Poisson input
+Jext = 0.2  # PSP amplitude for external Poisson input (mV)
+rate_ext = 6500.0  # rate of the external Poisson input
 
 
 # Perturbation parameters.
 
 
-t_stim = 400.             # perturbation time (time of the extra spike)
-Jstim = Jext              # perturbation amplitude (mV)
+t_stim = 400.0  # perturbation time (time of the extra spike)
+Jstim = Jext  # perturbation amplitude (mV)
 
 
 # Simulation parameters.
 
 
-T = 1000.                 # simulation time per trial (ms)
-fade_out = 2. * delay     # fade out time (ms)
-dt = 0.01                 # simulation time resolution (ms)
-seed_NEST = 30            # seed of random number generator in Nest
-seed_numpy = 30           # seed of random number generator in NumPy
+T = 1000.0  # simulation time per trial (ms)
+fade_out = 2.0 * delay  # fade out time (ms)
+dt = 0.01  # simulation time resolution (ms)
+seed_NEST = 30  # seed of random number generator in Nest
+seed_numpy = 30  # seed of random number generator in NumPy
 
 senders = []
 spiketimes = []
@@ -124,7 +123,6 @@ spiketimes = []
 # sender ids and spiketimes are stored in a list (``senders``, ``spiketimes``).
 
 for trial in [0, 1]:
-
     ###############################################################################
     # Before we build the network, we reset the simulation kernel to ensure
     # that previous NEST simulations in the Python shell will not disturb this
@@ -144,12 +142,15 @@ for trial in [0, 1]:
     nodes_in = nest.Create(neuron_model, NI)
     allnodes = nodes_ex + nodes_in
 
-    nest.Connect(nodes_ex, allnodes,
-                 conn_spec={'rule': 'fixed_indegree', 'indegree': KE},
-                 syn_spec={'weight': J, 'delay': dt})
-    nest.Connect(nodes_in, allnodes,
-                 conn_spec={'rule': 'fixed_indegree', 'indegree': KI},
-                 syn_spec={'weight': -g * J, 'delay': dt})
+    nest.Connect(
+        nodes_ex, allnodes, conn_spec={"rule": "fixed_indegree", "indegree": KE}, syn_spec={"weight": J, "delay": dt}
+    )
+    nest.Connect(
+        nodes_in,
+        allnodes,
+        conn_spec={"rule": "fixed_indegree", "indegree": KI},
+        syn_spec={"weight": -g * J, "delay": dt},
+    )
 
     ###############################################################################
     # Afterwards we create a ``poisson_generator`` that provides spikes (the external
@@ -160,14 +161,10 @@ for trial in [0, 1]:
     # The ``fade_out`` period has to last at least twice as long as the simulation
     # resolution to suppress the neurons from firing.
 
-    ext = nest.Create("poisson_generator",
-                      params={'rate': rate_ext, 'stop': T})
-    nest.Connect(ext, allnodes,
-                 syn_spec={'weight': Jext, 'delay': dt})
+    ext = nest.Create("poisson_generator", params={"rate": rate_ext, "stop": T})
+    nest.Connect(ext, allnodes, syn_spec={"weight": Jext, "delay": dt})
 
-    suppr = nest.Create("dc_generator",
-                        params={'amplitude': -1e16, 'start': T,
-                                'stop': T + fade_out})
+    suppr = nest.Create("dc_generator", params={"amplitude": -1e16, "start": T, "stop": T + fade_out})
     nest.Connect(suppr, allnodes)
 
     spikerecorder = nest.Create("spike_recorder")
@@ -203,8 +200,7 @@ for trial in [0, 1]:
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
-        nest.Connect(stimulus, nest.NodeCollection(id_stim),
-                     syn_spec={'weight': Jstim, 'delay': dt})
+        nest.Connect(stimulus, nest.NodeCollection(id_stim), syn_spec={"weight": Jstim, "delay": dt})
         stimulus.spike_times = [t_stim]
 
     # Now we simulate the network and add a fade out period to discard
@@ -215,8 +211,8 @@ for trial in [0, 1]:
 
     # Storing the data.
 
-    senders += [spikerecorder.get('events', 'senders')]
-    spiketimes += [spikerecorder.get('events', 'times')]
+    senders += [spikerecorder.get("events", "senders")]
+    spiketimes += [spikerecorder.get("events", "times")]
 
 ###############################################################################
 # We plot the spiking activity of the network (first trial in red, second trial
@@ -224,10 +220,10 @@ for trial in [0, 1]:
 
 plt.figure(1)
 plt.clf()
-plt.plot(spiketimes[0], senders[0], 'ro', ms=4.)
-plt.plot(spiketimes[1], senders[1], 'ko', ms=2.)
-plt.xlabel('time (ms)')
-plt.ylabel('neuron id')
+plt.plot(spiketimes[0], senders[0], "ro", ms=4.0)
+plt.plot(spiketimes[1], senders[1], "ko", ms=2.0)
+plt.xlabel("time (ms)")
+plt.ylabel("neuron id")
 plt.xlim((0, T))
 plt.ylim((0, N))
 plt.show()

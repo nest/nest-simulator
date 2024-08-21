@@ -25,10 +25,9 @@ import pytest
 
 
 @pytest.mark.skipif_missing_gsl
-@pytest.mark.parametrize("model", ["gif_psc_exp",
-                                   "gif_cond_exp",
-                                   "gif_psc_exp_multisynapse",
-                                   "gif_cond_exp_multisynapse"])
+@pytest.mark.parametrize(
+    "model", ["gif_psc_exp", "gif_cond_exp", "gif_psc_exp_multisynapse", "gif_cond_exp_multisynapse"]
+)
 class TestGifModels:
     r"""
     Test of gif_cond_exp_multisynapse and gif_psc_exp with external DC current and spike generators
@@ -43,7 +42,7 @@ class TestGifModels:
 
     def run_simulation(self, model, params=None):
         nest.ResetKernel()
-        nest.resolution = .1
+        nest.resolution = 0.1
         nest.rng_seed = 1
 
         if not params:
@@ -56,7 +55,7 @@ class TestGifModels:
 
         neuron = nest.Create(model, params=params)
 
-        dc_gen = nest.Create("dc_generator", params={"amplitude": 170.})
+        dc_gen = nest.Create("dc_generator", params={"amplitude": 170.0})
         nest.Connect(dc_gen, neuron)
 
         sg = nest.Create("spike_generator", params={"spike_times": [10.0, 20.0, 30.0]})
@@ -82,8 +81,7 @@ class TestGifModels:
 
     def test_gif_exp_wrong_params2(self, model):
         """Test for wrong parameters (unequal size of arrays)"""
-        params = {"tau_sfa": 120.0,
-                  "q_sfa": [10.0, 25.0]}
+        params = {"tau_sfa": 120.0, "q_sfa": [10.0, 25.0]}
         with pytest.raises(nest.kernel.NESTError):
             self.run_simulation(model, params)
 
@@ -101,12 +99,14 @@ class TestGifModels:
 
     def test_gif_exp_defined_params(self, model):
         """Test defined parameters"""
-        params = {"C_m": 40.0,
-                  "Delta_V": 0.2,
-                  "tau_sfa": [120.0, 10.0],
-                  "q_sfa": [10.0, 25.0],
-                  "tau_stc": [10.0, 20.0],
-                  "q_stc": [20.0, -5.0]}
+        params = {
+            "C_m": 40.0,
+            "Delta_V": 0.2,
+            "tau_sfa": [120.0, 10.0],
+            "q_sfa": [10.0, 25.0],
+            "tau_stc": [10.0, 20.0],
+            "q_stc": [20.0, -5.0],
+        }
 
         if "multisynapse" not in model:
             params["tau_syn_ex"] = 8.0

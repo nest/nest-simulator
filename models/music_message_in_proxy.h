@@ -51,6 +51,8 @@
 
 namespace nest
 {
+void register_music_message_in_proxy( const std::string& name );
+
 /* BeginUserDocs: device, MUSIC
 
 Short description
@@ -95,6 +97,11 @@ See also
 ++++++++
 
 music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_message_in_proxy
 
 EndUserDocs */
 

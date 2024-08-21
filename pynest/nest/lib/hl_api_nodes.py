@@ -26,17 +26,18 @@ Functions for node handling
 import warnings
 
 import nest
-from ..ll_api import check_stack, sli_func, sps, sr, spp
+
 from .. import pynestkernel as kernel
+from ..ll_api import check_stack, sli_func, spp, sps, sr
 from .hl_api_helper import is_iterable, model_deprecation_warning
 from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
-    'Create',
-    'GetLocalNodeCollection',
-    'GetNodes',
-    'PrintNodes',
+    "Create",
+    "GetLocalNodeCollection",
+    "GetNodes",
+    "PrintNodes",
 ]
 
 
@@ -68,6 +69,7 @@ def Create(model, n=1, params=None, positions=None):
           The single values will be applied to all nodes, while the lists will be distributed across
           the nodes. Both single values and lists can be given at the same time.
         - A list with n dictionaries, one dictionary for each node.
+
         Values may be :py:class:`.Parameter` objects. If omitted,
         the model's defaults are used.
     positions: :py:class:`.grid` or :py:class:`.free` object, optional
@@ -102,33 +104,33 @@ def Create(model, n=1, params=None, positions=None):
         spatial = getattr(nest.NestModule, "spatial")
         # We only accept positions as either a free object or a grid object.
         if not isinstance(positions, (spatial.free, spatial.grid)):
-            raise TypeError('`positions` must be either a nest.spatial.free or a nest.spatial.grid object')
-        layer_specs = {'elements': model}
-        layer_specs['edge_wrap'] = positions.edge_wrap
+            raise TypeError("`positions` must be either a nest.spatial.free or a nest.spatial.grid object")
+        layer_specs = {"elements": model}
+        layer_specs["edge_wrap"] = positions.edge_wrap
         if isinstance(positions, spatial.free):
-            layer_specs['positions'] = positions.pos
+            layer_specs["positions"] = positions.pos
             # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
-                layer_specs['n'] = n
+                layer_specs["n"] = n
         else:
             # If positions is not a free object, it must be a grid object.
             if n > 1:
-                raise kernel.NESTError('Cannot specify number of nodes with grid positions')
-            layer_specs['shape'] = positions.shape
+                raise kernel.NESTError("Cannot specify number of nodes with grid positions")
+            layer_specs["shape"] = positions.shape
             if positions.center is not None:
-                layer_specs['center'] = positions.center
+                layer_specs["center"] = positions.center
         if positions.extent is not None:
-            layer_specs['extent'] = positions.extent
+            layer_specs["extent"] = positions.extent
 
         if not iterable_or_parameter_in_params:
             if params is None:
                 # For compatibility with SLI.
                 params = {}
-            node_ids = sli_func('CreateLayerParams', layer_specs, params)
+            node_ids = sli_func("CreateLayerParams", layer_specs, params)
         else:
             # If node params contains iterable of Parameter, set after nodes are created. Empty dictionary
             # needed for SLI
-            node_ids = sli_func('CreateLayerParams', layer_specs, {})
+            node_ids = sli_func("CreateLayerParams", layer_specs, {})
     else:
         # Nodes without positions
         if not iterable_or_parameter_in_params:
@@ -147,8 +149,9 @@ def Create(model, n=1, params=None, positions=None):
             SetStatus(node_ids, params)
         except Exception:
             warnings.warn(
-                "SetStatus() call failed, but nodes have already been " +
-                "created! The node IDs of the new nodes are: {0}.".format(node_ids))
+                "SetStatus() call failed, but nodes have already been "
+                + "created! The node IDs of the new nodes are: {0}.".format(node_ids)
+            )
             raise
 
     return node_ids
@@ -186,7 +189,7 @@ def GetNodes(properties={}, local_only=False):
         `NodeCollection` of nodes
     """
 
-    return sli_func('GetNodes', properties, local_only)
+    return sli_func("GetNodes", properties, local_only)
 
 
 @check_stack

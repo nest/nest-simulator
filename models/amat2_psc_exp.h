@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -128,6 +128,9 @@ The following parameters can be set in the status dictionary:
      implementation to avoid a degenerate case of the ODE describing the
      model [1]_.  For very similar values, numerics will be unstable.
 
+   - Some parameter values given in Table 1 of [4]_ are incorrect. For
+     correct values, see Table 4 of [5]_.
+
 References
 ++++++++++
 
@@ -147,6 +150,10 @@ References
        for reproducing diverse firing patterns and predicting precise
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
+.. [5] Heiberg T, Kriener B, Tetzlaff T, Einevoll GT, Plesser HE (2018).
+       Firing-rate model for neurons with a broad repertoire of spiking behaviors.
+       J Comput Neurosci, 45:103.
+       DOI: https://doi.org/10.1007/s10827-018-0693-9
 
 Sends
 +++++
@@ -158,7 +165,14 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: amat2_psc_exp
+
 EndUserDocs */
+
+void register_amat2_psc_exp( const std::string& name );
 
 class amat2_psc_exp : public ArchivingNode
 {
@@ -175,11 +189,11 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -382,7 +396,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup amat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -399,8 +412,8 @@ private:
 };
 
 
-inline port
-amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+amat2_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -408,8 +421,8 @@ amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -418,8 +431,8 @@ amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -428,8 +441,8 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

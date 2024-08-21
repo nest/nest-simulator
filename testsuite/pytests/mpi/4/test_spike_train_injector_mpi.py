@@ -32,9 +32,7 @@ def reset_kernel():
     nest.ResetKernel()
 
 
-@pytest.mark.parametrize('times, multiplicities, precise',
-                         [[[1, 2], [3, 5], False],
-                          [[1.007, 1.993], [2, 7], True]])
+@pytest.mark.parametrize("times, multiplicities, precise", [[[1, 2], [3, 5], False], [[1.007, 1.993], [2, 7], True]])
 def test_spike_train_injector_multiplicities(times, multiplicities, precise):
     """
     Test spike train multiplicity with spike_train_injector model.
@@ -44,18 +42,17 @@ def test_spike_train_injector_multiplicities(times, multiplicities, precise):
     properties.
     """
 
-    inj = nest.Create("spike_train_injector",
-                      params={"spike_times": times,
-                              "spike_multiplicities": multiplicities,
-                              "precise_times": precise
-                              })
+    inj = nest.Create(
+        "spike_train_injector",
+        params={"spike_times": times, "spike_multiplicities": multiplicities, "precise_times": precise},
+    )
 
     parrots = nest.Create("parrot_neuron" if not precise else "parrot_neuron_ps", 4)
     srec = nest.Create("spike_recorder", 4)
 
     delay = 1.3
-    nest.Connect(inj, parrots, syn_spec={'delay': delay})
-    nest.Connect(parrots, srec, 'one_to_one')
+    nest.Connect(inj, parrots, syn_spec={"delay": delay})
+    nest.Connect(parrots, srec, "one_to_one")
 
     nest.Simulate(4.0)
 

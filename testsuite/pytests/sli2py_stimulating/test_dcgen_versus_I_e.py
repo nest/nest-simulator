@@ -28,8 +28,9 @@ Any model which supports current events and setting I_e is checked, other models
 import nest
 import pytest
 
-models = [model for model in nest.get("node_models") if
-          "V_m" in nest.GetDefaults(model) and "I_e" in nest.GetDefaults(model)]
+models = [
+    model for model in nest.get("node_models") if "V_m" in nest.GetDefaults(model) and "I_e" in nest.GetDefaults(model)
+]
 
 
 @pytest.mark.parametrize("model", models)
@@ -39,29 +40,28 @@ def test_dcgen_vs_I_e(model):
 
     # Models requiring special parameters
     if model in ["gif_psc_exp", "gif_cond_exp", "gif_psc_exp_multisynapse", "gif_cond_exp_multisynapse"]:
-        nest.SetDefaults(model, params={"lambda_0": 0.})
-
-    if model == "pp_psc_delta":
-        nest.SetDefaults(model, params={"c_2": 0.})
+        nest.SetDefaults(model, params={"lambda_0": 0.0})
+    elif model == "pp_psc_delta":
+        nest.SetDefaults(model, params={"c_2": 0.0})
 
     # Create two neurons
     n1 = nest.Create(model)
     n2 = nest.Create(model)
 
     # Connect dc generator to one neuron (n1)
-    dc_gen = nest.Create("dc_generator", params={"start": 99.})
+    dc_gen = nest.Create("dc_generator", params={"start": 99.0})
     nest.Connect(dc_gen, n1)
     dc_gen.set(amplitude=amp)
 
     # Simulate
-    nest.Simulate(100.)
+    nest.Simulate(100.0)
 
     # Set the "I_e" with a constant current equal to the
     # amplitude of the dc current to another neuron (n2)
     n2.set(I_e=amp)
 
     # Simulate
-    nest.Simulate(300.)
+    nest.Simulate(300.0)
 
     # Compare membrane potentials of the two neurons
     v1 = n1.get("V_m")

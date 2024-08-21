@@ -25,22 +25,19 @@ Example network using generalized IAF neuron with postsynaptic conductances
 
 """
 
+import nest
 import numpy as np
 
-import nest
+neuron = nest.Create("gif_cond_exp_multisynapse", params={"E_rev": [0.0, -85.0], "tau_syn": [4.0, 8.0]})
 
-neuron = nest.Create('gif_cond_exp_multisynapse',
-                     params={'E_rev': [0.0, -85.0],
-                             'tau_syn': [4.0, 8.0]})
+spike = nest.Create("spike_generator", params={"spike_times": np.array([10.0])})
 
-spike = nest.Create('spike_generator', params={'spike_times':
-                                               np.array([10.0])})
-
-delays = [1., 30.]
-w = [1., 5.]
+delays = [1.0, 30.0]
+w = [1.0, 5.0]
 for syn in range(2):
-    nest.Connect(spike, neuron, syn_spec={'synapse_model': 'static_synapse',
-                                          'receptor_type': 1 + syn,
-                                          'weight': w[syn],
-                                          'delay': delays[syn]})
-nest.Simulate(100.)
+    nest.Connect(
+        spike,
+        neuron,
+        syn_spec={"synapse_model": "static_synapse", "receptor_type": 1 + syn, "weight": w[syn], "delay": delays[syn]},
+    )
+nest.Simulate(100.0)

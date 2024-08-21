@@ -63,7 +63,7 @@ reset_kernel()
 }
 
 void
-enable_dryrun_mode( const index n_procs )
+enable_dryrun_mode( const size_t n_procs )
 {
   kernel().mpi_manager.set_num_processes( n_procs );
 }
@@ -87,13 +87,13 @@ get_rank_synced_rng()
 }
 
 RngPtr
-get_vp_synced_rng( thread tid )
+get_vp_synced_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_synced_rng( tid );
 }
 
 RngPtr
-get_vp_specific_rng( thread tid )
+get_vp_specific_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
@@ -118,13 +118,13 @@ get_kernel_status()
 }
 
 void
-set_node_status( const index node_id, const DictionaryDatum& dict )
+set_node_status( const size_t node_id, const DictionaryDatum& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
 DictionaryDatum
-get_node_status( const index node_id )
+get_node_status( const size_t node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
@@ -133,11 +133,11 @@ void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
-  const index source_node_id = getValue< long >( conn_dict, nest::names::source );
-  const index target_node_id = getValue< long >( conn_dict, nest::names::target );
-  const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
+  const size_t source_node_id = getValue< long >( conn_dict, nest::names::source );
+  const size_t target_node_id = getValue< long >( conn_dict, nest::names::target );
+  const size_t tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  const port p = getValue< long >( conn_dict, nest::names::port );
+  const size_t p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
@@ -161,14 +161,14 @@ get_connection_status( const ConnectionDatum& conn )
 }
 
 NodeCollectionPTR
-create( const Name& model_name, const index n_nodes )
+create( const Name& model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
     throw RangeCheck();
   }
 
-  const index model_id = kernel().model_manager.get_node_model_id( model_name );
+  const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -185,6 +185,16 @@ connect( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+}
+
+void
+connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
+{
+  kernel().connection_manager.connect_tripartite( sources, targets, third, connectivity, synapse_specs );
 }
 
 void
@@ -295,7 +305,7 @@ get_model_defaults( const std::string component )
 {
   try
   {
-    const index model_id = kernel().model_manager.get_node_model_id( component );
+    const size_t model_id = kernel().model_manager.get_node_model_id( component );
     return kernel().model_manager.get_node_model( model_id )->get_status();
   }
   catch ( UnknownModelName& )
@@ -305,7 +315,7 @@ get_model_defaults( const std::string component )
 
   try
   {
-    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
     return kernel().model_manager.get_connector_defaults( synapse_model_id );
   }
   catch ( UnknownSynapseType& )
@@ -377,7 +387,7 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() >= n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
@@ -392,7 +402,7 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() == n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   auto nc_it = node_collection->begin();
@@ -405,32 +415,5 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   }
   return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
 }
-
-void
-slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& nc )
-{
-  // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
-  if ( dict->known( names::positions ) )
-  {
-    const auto positions = getValue< TokenArray >( dict, names::positions );
-    if ( nc->size() != positions.size() )
-    {
-      TokenArray sliced_points;
-      // Iterate only local nodes
-      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
-      NodeCollection::const_iterator nc_end = nc->end();
-      for ( auto node = nc_begin; node < nc_end; ++node )
-      {
-        // Because the local ID also includes non-local nodes, it must be adapted to represent
-        // the index for the local node position.
-        const auto index =
-          static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
-        sliced_points.push_back( positions[ index ] );
-      }
-      def2< TokenArray, ArrayDatum >( dict, names::positions, sliced_points );
-    }
-  }
-}
-
 
 } // namespace nest

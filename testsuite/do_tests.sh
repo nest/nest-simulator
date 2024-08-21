@@ -50,11 +50,10 @@ usage ()
     fi
 
     cat <<EOF
-Usage: $0 --prefix=<path> --report-dir=<path> [options]
+Usage: $0 --prefix=<path> [options]
 
 Required arguments:
     --prefix=<path>        The base installation path of NEST
-    --report-dir=<path>    The directory to store the output to
 
 Options:
     --with-python=<exe>    The Python executable to use
@@ -66,7 +65,6 @@ EOF
 }
 
 PREFIX=""
-REPORTDIR=""
 PYTHON=""
 MUSIC=""
 while test $# -gt 0 ; do
@@ -76,9 +74,6 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-            ;;
-        --report-dir=*)
-            REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -95,10 +90,6 @@ done
 
 if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
-fi
-
-if test ! "${REPORTDIR:-}"; then
-    usage 2 "--report-dir";
 fi
 
 if test "${PYTHON}"; then
@@ -121,12 +112,14 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-if test -d "${REPORTDIR}"; then
-    rm -rf "${REPORTDIR}"
-fi
-mkdir "${REPORTDIR}"
-
+# Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
+
+# Create the report directory in the directory in which make installcheck is called (do_tests.sh is run).
+# Use absolute pathnames, this is necessary for MUSIC tests which otherwis will not find the logfiles
+# while running in temporary directories.
+REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
+
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
@@ -143,6 +136,7 @@ ls -la "${TEST_BASEDIR}"
 
 NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+HAVE_OPENMP="$(sli -c 'is_threaded =only')"
 
 if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
@@ -331,9 +325,12 @@ if test "${PYTHON}"; then
   tests_collect="$tests_collect py"
 fi
 for test_ext in ${tests_collect} ; do
-      for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-          run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-      done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/sli2py_ignore/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
 done
 
 junit_close
@@ -347,6 +344,9 @@ junit_open '04_regressiontests'
 for test_ext in ${tests_collect} ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/sli2py_ignore/" | grep ".*\.${test_ext}$") ; do
+        run_test "regressiontests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
 
@@ -392,7 +392,7 @@ if test "${MUSIC}"; then
 
     # Create a temporary directory with a unique name.
     BASEDIR="$PWD"
-    tmpdir="$(mktemp -d)"
+    TMPDIR_MUSIC="$(mktemp -d)"
 
     TESTDIR="${TEST_BASEDIR}/musictests/"
 
@@ -421,16 +421,16 @@ if test "${MUSIC}"; then
         echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Copy everything to 'tmpdir'.
+        # Copy everything to TMPDIR_MUSIC.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
-        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${tmpdir} 2>/dev/null || true
+        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${TMPDIR_MUSIC} 2>/dev/null || true
 
-        # Create the runner script in 'tmpdir'.
-        cd "${tmpdir}"
+        # Create the runner script in TMPDIR_MUSIC.
+        cd "${TMPDIR_MUSIC}"
         echo "#!/bin/sh" >  runner.sh
         echo "set +e" >> runner.sh
-        echo "NEST_DATA_PATH=\"${tmpdir}\"" >> runner.sh
+        echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\"" >> runner.sh
         echo "${test_command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
         if test -n "${sh_file}"; then
             chmod 755 "$(basename "${sh_file}")"
@@ -481,8 +481,6 @@ if test "${MUSIC}"; then
         cd "${BASEDIR}"
     done
 
-    rm -rf "$tmpdir"
-
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
@@ -497,22 +495,41 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
+    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
     set -e
 
-    # Run tests in the mpi* subdirectories, grouped by number of processes
+    # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
+    if test "${HAVE_MPI}" = "true" && test "${HAVE_OPENMP}" = "true" ; then
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+	env
+	set +e
+	"${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+		    "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+	set -e
+    fi
+
+    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
+	    # Loop over subdirectories whose names are the number of mpi procs to use
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+
+		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+		    PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"
+		fi
+
 		set +e
-                $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+
+		# We need to use eval here because $() splits run_command in weird ways
+                run_command="$(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only")"
+		eval "${run_command}" 2>&1 | tee -a "${TEST_LOGFILE}"
 		set -e
             done
         fi

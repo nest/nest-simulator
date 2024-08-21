@@ -23,11 +23,10 @@
 This set of tests verify the behavior of the offset attribute of multimeter.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)
@@ -41,17 +40,21 @@ def test_recorded_times_relative_to_offset():
     """
 
     nest.resolution = 2**-3  # Set to power of two to avoid rounding issues.
-    nrn = nest.Create('iaf_psc_alpha')
-    mm = nest.Create('multimeter', params={'interval': 3.,  # different from default
-                                           'offset': 5.,    # different from default
-                                           'record_from': ['V_m']
-                                           })
+    nrn = nest.Create("iaf_psc_alpha")
+    mm = nest.Create(
+        "multimeter",
+        params={
+            "interval": 3.0,  # different from default
+            "offset": 5.0,  # different from default
+            "record_from": ["V_m"],
+        },
+    )
 
     nest.Connect(mm, nrn)
-    nest.Simulate(15.)
+    nest.Simulate(15.0)
 
-    actual_times = mm.events['times']
-    expected_times = [5., 8., 11., 14.]
+    actual_times = mm.events["times"]
+    expected_times = [5.0, 8.0, 11.0, 14.0]
 
     nptest.assert_array_equal(actual_times, expected_times)
 
@@ -64,32 +67,26 @@ def test_correct_data_logger_initialization():
     nest.resolution = 2**-3  # Set to power of two to avoid rounding issues.
 
     # Create and connect one multimeter and simulate
-    nrn = nest.Create('iaf_psc_alpha')
-    mm1 = nest.Create('multimeter', params={'start': 20.,
-                                            'stop': 30.,
-                                            'interval': 3.,
-                                            'offset': 5.,
-                                            'record_from': ['V_m']
-                                            })
+    nrn = nest.Create("iaf_psc_alpha")
+    mm1 = nest.Create(
+        "multimeter", params={"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    )
 
     nest.Connect(mm1, nrn)
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     # Create and connect a second multimeter then simulate further
-    mm2 = nest.Create('multimeter', params={'start': 20.,
-                                            'stop': 30.,
-                                            'interval': 3.,
-                                            'offset': 5.,
-                                            'record_from': ['V_m']
-                                            })
+    mm2 = nest.Create(
+        "multimeter", params={"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    )
 
     nest.Connect(mm2, nrn)
-    nest.Simulate(20.)
+    nest.Simulate(20.0)
 
     # Compare recordings with reference data
-    expected_times = [23., 26., 29.]
-    mm1_actual_times = mm1.events['times']
-    mm2_actual_times = mm2.events['times']
+    expected_times = [23.0, 26.0, 29.0]
+    mm1_actual_times = mm1.events["times"]
+    mm2_actual_times = mm2.events["times"]
 
     nptest.assert_array_equal(mm1_actual_times, expected_times)
     nptest.assert_array_equal(mm2_actual_times, expected_times)
@@ -100,12 +97,12 @@ def test_offset_cannot_be_changed_after_connect():
     Ensure offset cannot be changed after connecting to a node.
     """
 
-    nrn = nest.Create('iaf_psc_exp')
-    mm = nest.Create('multimeter')
+    nrn = nest.Create("iaf_psc_exp")
+    mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty):
-        mm.offset = 5.
+        mm.offset = 5.0
 
 
 def test_offset_wrt_origin_start_stop():
@@ -117,33 +114,30 @@ def test_offset_wrt_origin_start_stop():
     simulate again and check for consistency.
     """
 
-    expected_times_1 = [5., 8., 11., 14.]
-    expected_times_2 = [5., 8., 11., 14., 26., 29., 32., 35.]
+    expected_times_1 = [5.0, 8.0, 11.0, 14.0]
+    expected_times_2 = [5.0, 8.0, 11.0, 14.0, 26.0, 29.0, 32.0, 35.0]
 
     nest.resolution = 2**-3  # Set to power of two to avoid rounding issues.
 
     # Create and connect one multimeter and simulate
-    nrn = nest.Create('iaf_psc_exp')
-    mm = nest.Create('multimeter', params={'start': 3.,
-                                           'stop': 15.,
-                                           'interval': 3.,
-                                           'offset': 5.,
-                                           'record_from': ['V_m']
-                                           })
+    nrn = nest.Create("iaf_psc_exp")
+    mm = nest.Create(
+        "multimeter", params={"start": 3.0, "stop": 15.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    )
 
     nest.Connect(mm, nrn)
-    nest.Simulate(20.)
+    nest.Simulate(20.0)
 
     # Compare to first reference data
-    actual_times_1 = mm.events['times']
+    actual_times_1 = mm.events["times"]
     nptest.assert_array_equal(actual_times_1, expected_times_1)
 
     # Change origin; this shouldn't affect the offset but only shift start-stop window
-    mm.origin = 20.
-    nest.Simulate(20.)
+    mm.origin = 20.0
+    nest.Simulate(20.0)
 
     # Compare to extended reference
-    actual_times_2 = mm.events['times']
+    actual_times_2 = mm.events["times"]
     nptest.assert_array_equal(actual_times_2, expected_times_2)
 
 
@@ -159,32 +153,27 @@ def test_creation_after_initial_simulation():
 
     nest.resolution = 0.1
 
-    mm_params = {'start': 20.,
-                 'stop': 30.,
-                 'interval': 3.,
-                 'offset': 5.,
-                 'record_from': ['V_m']
-                 }
-    conn_spec = {'rule': 'all_to_all'}
-    syn_spec = {'delay': 0.1}
+    mm_params = {"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    conn_spec = {"rule": "all_to_all"}
+    syn_spec = {"delay": 0.1}
 
     # Create and connect one multimeter and simulate
-    nrn = nest.Create('iaf_psc_exp')
-    mm1 = nest.Create('multimeter', mm_params)
+    nrn = nest.Create("iaf_psc_exp")
+    mm1 = nest.Create("multimeter", mm_params)
 
     nest.Connect(mm1, nrn, conn_spec, syn_spec)
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     # Create and connect a second multimeter then simulate further
-    mm2 = nest.Create('multimeter', mm_params)
+    mm2 = nest.Create("multimeter", mm_params)
 
     nest.Connect(mm2, nrn, conn_spec, syn_spec)
-    nest.Simulate(20.)
+    nest.Simulate(20.0)
 
     # Compare multimeter recordings
-    mm1_times = mm1.events['times']
-    mm2_times = mm2.events['times']
+    mm1_times = mm1.events["times"]
+    mm2_times = mm2.events["times"]
 
     nptest.assert_array_equal(mm1_times, mm2_times)
 
@@ -199,32 +188,29 @@ def test_offset_after_initial_simulation():
 
     nest.resolution = 0.1
 
-    init_sim_time = 110.
-    sim_time = 250.
-    interval = 60.
+    init_sim_time = 110.0
+    sim_time = 250.0
+    interval = 60.0
     offset = 170.3
 
     expected_times = np.arange(offset, init_sim_time + sim_time, interval)
 
     # Create neuron and perform initial simulation
-    nrn = nest.Create('iaf_psc_exp')
+    nrn = nest.Create("iaf_psc_exp")
     nest.Simulate(init_sim_time)
 
     # Create multimeter and continue simulation
-    mm_params = {'interval': interval,
-                 'offset': offset,
-                 'record_from': ['V_m']
-                 }
-    conn_spec = {'rule': 'all_to_all'}
-    syn_spec = {'delay': 0.1}
+    mm_params = {"interval": interval, "offset": offset, "record_from": ["V_m"]}
+    conn_spec = {"rule": "all_to_all"}
+    syn_spec = {"delay": 0.1}
 
-    mm = nest.Create('multimeter', mm_params)
+    mm = nest.Create("multimeter", mm_params)
 
     nest.Connect(mm, nrn, conn_spec, syn_spec)
     nest.Simulate(sim_time)
 
     # Compare to reference data
-    actual_times = mm.events['times']
+    actual_times = mm.events["times"]
     nptest.assert_array_equal(actual_times, expected_times)
 
 
@@ -237,30 +223,27 @@ def test_initial_simulation_longer_than_offset():
 
     nest.resolution = 0.1
 
-    init_sim_time = 250.
-    sim_time = 250.
-    interval = 60.
+    init_sim_time = 250.0
+    sim_time = 250.0
+    interval = 60.0
     offset = 170.3
 
     expected_times = np.arange(offset + 2 * interval, init_sim_time + sim_time, interval)
 
     # Create neuron and perform initial simulation
-    nrn = nest.Create('iaf_psc_exp')
+    nrn = nest.Create("iaf_psc_exp")
     nest.Simulate(init_sim_time)
 
     # Create multimeter and continue simulation
-    mm_params = {'interval': interval,
-                 'offset': offset,
-                 'record_from': ['V_m']
-                 }
-    conn_spec = {'rule': 'all_to_all'}
-    syn_spec = {'delay': 0.1}
+    mm_params = {"interval": interval, "offset": offset, "record_from": ["V_m"]}
+    conn_spec = {"rule": "all_to_all"}
+    syn_spec = {"delay": 0.1}
 
-    mm = nest.Create('multimeter', mm_params)
+    mm = nest.Create("multimeter", mm_params)
 
     nest.Connect(mm, nrn, conn_spec, syn_spec)
     nest.Simulate(sim_time)
 
     # Compare to reference data
-    actual_times = mm.events['times']
+    actual_times = mm.events["times"]
     nptest.assert_array_equal(actual_times, expected_times)

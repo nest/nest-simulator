@@ -87,13 +87,13 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     {
       double d = ad->get( 0 );
       ad->erase();
-      long n = ( long ) std::floor( d );
+      long n = static_cast< long >( std::floor( d ) );
       if ( n > 0 )
       {
         ad->reserve( n );
         for ( long j = 1; j <= n; ++j )
         {
-          ad->push_back( ( double ) j );
+          ad->push_back( static_cast< double >( j ) );
         }
       }
       i->EStack.pop();
@@ -262,7 +262,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     else
     {
       double d = ad->get( 0 );
-      long n = ( long ) std::floor( d );
+      long n = static_cast< long >( std::floor( d ) );
       if ( n < 0 )
       {
         i->raiseerror( "RangeCheck" );
@@ -1019,7 +1019,7 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
     }
   }
 
-  if ( ( size_t ) procc->get() < proclimit )
+  if ( static_cast< size_t >( procc->get() ) < proclimit )
   {
     /* we are still evaluating the procedure. */
     i->EStack.push( proc->get( pos ) ); // get next command from the procedure
@@ -1046,7 +1046,7 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
       } while ( true );
     }
   }
-  if ( ( size_t ) procc->get() >= proclimit )
+  if ( static_cast< size_t >( procc->get() ) >= proclimit )
   {
     ( *procc ) = 0;
   }
@@ -1157,7 +1157,7 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
     }
   }
 
-  if ( ( size_t ) procc->get() < proclimit )
+  if ( static_cast< size_t >( procc->get() ) < proclimit )
   {
     /* we are still evaluating the procedure. */
     i->EStack.push( proc->get( pos ) ); // get next command from the procedure
@@ -1184,7 +1184,7 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
       } while ( true );
     }
   }
-  if ( ( size_t ) procc->get() >= proclimit )
+  if ( static_cast< size_t >( procc->get() ) >= proclimit )
   {
     ( *procc ) = 0;
   }
@@ -1292,7 +1292,7 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
     }
   }
 
-  if ( ( size_t ) procc->get() < proclimit )
+  if ( static_cast< size_t >( procc->get() ) < proclimit )
   {
     /* we are still evaluating the procedure. */
     i->EStack.push( proc->get( pos ) ); // get next command from the procedure
@@ -1319,7 +1319,7 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
       } while ( true );
     }
   }
-  if ( ( size_t ) procc->get() >= proclimit )
+  if ( static_cast< size_t >( procc->get() ) >= proclimit )
   {
     ( *procc ) = 0;
   }
@@ -1522,7 +1522,7 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
     }
   }
 
-  if ( ( size_t ) procc->get() < proclimit )
+  if ( static_cast< size_t >( procc->get() ) < proclimit )
   {
     /* we are still evaluating the procedure. */
     i->EStack.push( proc->get( pos ) ); // get next command from the procedure
@@ -1548,7 +1548,7 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
       } while ( true );
     }
   }
-  if ( ( size_t ) procc->get() >= proclimit )
+  if ( static_cast< size_t >( procc->get() ) >= proclimit )
   {
     ( *procc ) = 0;
   }
@@ -1687,7 +1687,7 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
     }
   }
 
-  if ( ( size_t ) proccountd->get() < proclimit )
+  if ( static_cast< size_t >( proccountd->get() ) < proclimit )
   {
     /* we are still evaluating the procedure. */
     // get next command from the procedure
@@ -1715,7 +1715,7 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
       } while ( true );
     }
   }
-  if ( ( size_t ) proccountd->get() >= proclimit )
+  if ( static_cast< size_t >( proccountd->get() ) >= proclimit )
   {
     ( *proccountd ) = 0;
   }
@@ -1865,7 +1865,7 @@ SLIArrayModule::Put_a_a_tFunction::execute( SLIInterpreter* i ) const
       return;
     }
 
-    if ( j >= ( int ) source->size() )
+    if ( j >= static_cast< int >( source->size() ) )
     {
       i->message( SLIInterpreter::M_ERROR, "Put", "Index out of range." );
       i->message( SLIInterpreter::M_ERROR, "Put", "Source array is unchanged." );
@@ -2756,10 +2756,10 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
   result.reserve( nrow );
 
   std::vector< double > col( ncol );
-  for ( size_t r = 0; r < ( size_t ) nrow; ++r )
+  for ( size_t r = 0; r < static_cast< size_t >( nrow ); ++r )
   {
     const double y = ymin + r * dy;
-    for ( size_t c = 0; c < ( size_t ) ncol; ++c )
+    for ( size_t c = 0; c < static_cast< size_t >( ncol ); ++c )
     {
       const double x = xmin + c * dx;
       const double x1 = x * cos_phi - y * sin_phi;
@@ -2862,11 +2862,11 @@ SLIArrayModule::Gauss2dFunction::execute( SLIInterpreter* i ) const
   result.reserve( nrow );
 
   std::vector< double > col( ncol );
-  for ( size_t r = 0; r < ( size_t ) nrow; ++r )
+  for ( size_t r = 0; r < static_cast< size_t >( nrow ); ++r )
   {
     const double y = ymin + r * dy;
     col.assign( ncol, 0.0 ); // clear contents
-    for ( size_t c = 0; c < ( size_t ) ncol; ++c )
+    for ( size_t c = 0; c < static_cast< size_t >( ncol ); ++c )
     {
       const double x = xmin + c * dx;
       const double x1 = x * cos_phi - y * sin_phi;

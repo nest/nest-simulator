@@ -84,6 +84,7 @@ to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
 .. note::
+
    In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
    has fallen during the current time step.
 
@@ -91,6 +92,9 @@ simulators covered is available from ModelDB [3]_.
    spike, it is essential to choose a sufficiently long refractory period.
    Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
    :math:`t_{ref} = 2` ms in [2]_.
+
+   For further details on asynchronicity in spike and firing events with Hodgkin Huxley models
+   see :ref:`here <hh_details>`.
 
 Parameters
 ++++++++++
@@ -144,7 +148,14 @@ See also
 
 hh_psc_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_cond_exp_traub
+
 EndUserDocs */
+
+void register_hh_cond_exp_traub( const std::string& name );
 
 class hh_cond_exp_traub : public ArchivingNode
 {
@@ -162,15 +173,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -329,8 +340,8 @@ public:
   static RecordablesMap< hh_cond_exp_traub > recordablesMap_;
 };
 
-inline port
-hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_cond_exp_traub::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -339,8 +350,8 @@ hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex,
 }
 
 
-inline port
-hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -349,8 +360,8 @@ hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -359,8 +370,8 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

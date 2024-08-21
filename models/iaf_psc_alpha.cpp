@@ -30,6 +30,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
@@ -41,6 +42,12 @@ nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_
 
 namespace nest
 {
+void
+register_iaf_psc_alpha( const std::string& name )
+{
+  register_node_model< iaf_psc_alpha >( name );
+}
+
 
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
@@ -321,7 +328,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.dI_ex_ *= V_.P11_ex_;
 
     // get read access to the correct input-buffer slot
-    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
@@ -369,7 +376,7 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double s = e.get_weight() * e.get_multiplicity();
@@ -383,7 +390,7 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double I = e.get_current();

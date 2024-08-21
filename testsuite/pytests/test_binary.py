@@ -34,7 +34,7 @@ class TestBinary:
         r"""Test, whether the communication mechanism for binary neurons works. Two spikes indicate an up-transition,
         a single spike indicate a down transition."""
 
-        h = .1    # resolution [ms]
+        h = 0.1  # resolution [ms]
 
         nest.ResetKernel()
         nest.resolution = h
@@ -45,16 +45,16 @@ class TestBinary:
         # down transition
 
         # expected read out at target neuron
-        expected = [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 1., 1., 1., 0., 0., 0., 0.]
+        expected = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
 
         nrn = nest.Create(neuron_model)
         sg = nest.Create("spike_generator")
-        sg.spike_times = [10., 10., 15.]
+        sg.spike_times = [10.0, 10.0, 15.0]
         nest.Connect(sg, nrn)
         multi = nest.Create("multimeter", {"record_from": ["h"]})
         nest.Connect(multi, nrn)
 
-        nest.Simulate(20.)
+        nest.Simulate(20.0)
 
         h_recorded = multi.events["h"]
         np.testing.assert_allclose(expected, h_recorded)
@@ -63,7 +63,7 @@ class TestBinary:
     def test_binary_neuron_state_change(self, neuron_model):
         r"""check, if binary_neuron correctly transmits its state change"""
 
-        h = .1    # resolution [ms]
+        h = 0.1  # resolution [ms]
 
         nest.ResetKernel()
         nest.SetKernelStatus({"resolution": h})
@@ -72,12 +72,12 @@ class TestBinary:
         sr = nest.Create("spike_recorder")
 
         # set threshold so that neuron makes transition to 1
-        nrn1.theta = -10.
-        nrn1.tau_m = 1.
+        nrn1.theta = -10.0
+        nrn1.tau_m = 1.0
 
         nest.Connect(nrn1, sr)
 
-        nest.Simulate(100.)
+        nest.Simulate(100.0)
 
         # should have two events
         assert len(sr.events["senders"]) == 2
@@ -88,9 +88,9 @@ class TestBinary:
         assert len(sr.events["senders"]) == 2
 
         # set threshold so that neuron makes transition to 0
-        nrn1.theta = 10.
+        nrn1.theta = 10.0
 
-        nest.Simulate(100.)
+        nest.Simulate(100.0)
 
         # should have one more event now
         assert len(sr.events["senders"]) == 3
@@ -126,4 +126,4 @@ class TestBinary:
         nest.Connect(ginzburg, mcculloch)
 
         with pytest.raises(nest.kernel.NESTError):
-            nest.Simulate(100.)
+            nest.Simulate(100.0)

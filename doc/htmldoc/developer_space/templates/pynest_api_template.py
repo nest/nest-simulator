@@ -123,7 +123,7 @@ def GetConnections(source=None, target=None, synape_model=None, synapse_label=No
 
     .. [1] Bonewald LF. (2011). The amazing osteocyte. Journal of Bone and
            Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
-       """
+    """
 
     # [[ in line comments should be used to explain why this code is here]]
     # This code was included because of bug Y when running X

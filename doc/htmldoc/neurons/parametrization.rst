@@ -19,6 +19,16 @@ The following parameters and functionalities are provided:
 -  :ref:`Combination of parameters <combine_ex>`
 
 
+.. admonition:: Create parameters after setting number of threads!
+
+   For correct results, it is essential to create parameter objects
+   only *after* the number of threads (virtual processes) has been
+   set. If parameter objects are created first and the number of
+   threads changed afterwards, this will result incorrect behavior and
+   possibly a segmentation fault. Unfortunately, NEST cannot currently
+   detect existing parameter objects when the number of threads change.
+
+
 .. _random_ex:
 
 Random parameters
@@ -167,7 +177,7 @@ others can be used when connecting.
    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
    parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
-   spatial_nodes.set('V_m'=parameter)
+   spatial_nodes.set(V_m=parameter)
 
    node_pos = np.array(nest.GetPosition(spatial_nodes))
    node_pos[:,1]
@@ -252,7 +262,7 @@ parameter:
     fig, ax = pyplot.subplots(figsize=(12, 6))
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
-    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+1))
+    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+2))
     ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
@@ -468,9 +478,9 @@ Using parameters makes it easy to set node properties
 |                                               |                                                    |
 | ::                                            | ::                                                 |
 |                                               |                                                    |
-|     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
-|       v_m = numpy.random.uniform(-20., 20.)   |                                                    |
-|       nest.SetStatus([node_id], {'V_m': V_m}) |                                                    |
+|     for gid in nrns:                          |     nrns.V_m = nest.random.uniform(-20.0, 20.0)    |
+|       v_m = numpy.random.uniform(-20.0, 20.0) |                                                    |
+|       nest.SetStatus(gid, {"V_m": v_m})       |                                                    |
 |                                               |                                                    |
 |                                               |                                                    |
 +-----------------------------------------------+----------------------------------------------------+

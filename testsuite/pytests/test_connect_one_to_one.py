@@ -19,22 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
 import unittest
+
 import connect_test_base
 import nest
-
+import numpy as np
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class TestOneToOne(connect_test_base.ConnectTestBase):
-
     # specify connection pattern
-    rule = 'one_to_one'
-    conn_dict = {'rule': rule}
+    rule = "one_to_one"
+    conn_dict = {"rule": rule}
     # sizes of populations
     N = 6
     N1 = N
@@ -53,7 +52,7 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
 
     def testSymmetricFlag(self):
         conn_dict_symmetric = self.conn_dict.copy()
-        conn_dict_symmetric['make_symmetric'] = True
+        conn_dict_symmetric["make_symmetric"] = True
         self.setUpNetwork(conn_dict_symmetric)
         M1 = connect_test_base.get_connectivity_matrix(self.pop1, self.pop2)
         M2 = connect_test_base.get_connectivity_matrix(self.pop2, self.pop1)
@@ -64,42 +63,38 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
 
     def testInputArray(self):
         syn_params = {}
-        for label in ['weight', 'delay']:
-            if label == 'weight':
+        for label in ["weight", "delay"]:
+            if label == "weight":
                 self.param_array = np.arange(self.N_array, dtype=float)
-            elif label == 'delay':
+            elif label == "delay":
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
             nest.ResetKernel()
-            self.setUpNetwork(self.conn_dict, syn_params,
-                              N1=self.N_array, N2=self.N_array)
-            M_nest = connect_test_base.get_weighted_connectivity_matrix(
-                self.pop1, self.pop2, label)
+            self.setUpNetwork(self.conn_dict, syn_params, N1=self.N_array, N2=self.N_array)
+            M_nest = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, label)
             connect_test_base.mpi_assert(M_nest, np.diag(self.param_array), self)
 
     def testInputArrayRPort(self):
         syn_params = {}
-        neuron_model = 'iaf_psc_exp_multisynapse'
-        neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N1)]}
+        neuron_model = "iaf_psc_exp_multisynapse"
+        neuron_dict = {"tau_syn": [0.1 + i for i in range(self.N1)]}
         self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.param_array = np.arange(1, self.N1 + 1, dtype=int)
-        syn_params['receptor_type'] = self.param_array
+        syn_params["receptor_type"] = self.param_array
         nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        M = connect_test_base.get_weighted_connectivity_matrix(
-            self.pop1, self.pop2, 'receptor')
+        M = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, "receptor")
         connect_test_base.mpi_assert(M, np.diag(self.param_array), self)
 
     def testInputArrayToStdpSynapse(self):
-        params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
-        syn_params = {'synapse_model': 'stdp_synapse'}
+        params = ["Wmax", "alpha", "lambda", "mu_minus", "mu_plus", "tau_plus"]
+        syn_params = {"synapse_model": "stdp_synapse"}
         values = [np.arange(self.N1, dtype=float) for i in range(6)]
         for i, param in enumerate(params):
             syn_params[param] = values[i]
         self.setUpNetwork(self.conn_dict, syn_params)
         for i, param in enumerate(params):
-            a = connect_test_base.get_weighted_connectivity_matrix(
-                self.pop1, self.pop2, param)
+            a = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, param)
             connect_test_base.mpi_assert(np.diag(a), values[i], self)
 
 
@@ -113,5 +108,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

@@ -84,6 +84,9 @@ it is considered a spike.
 
 See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -103,6 +106,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 -------------------------------------------------------------------------------
 E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
+t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
 tau_ex      ms      Rise time of the excitatory synaptic alpha function
 tau_in      ms      Rise time of the inhibitory synaptic alpha function
@@ -159,9 +163,7 @@ References
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
        Hodgkin-Huxley neuron on ModelDB:
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
-       =%2fmodeldb_package%2fstdp_cc.mod
-
+       https://modeldb.science/144566?tab=1
 
 Sends
 +++++
@@ -178,7 +180,14 @@ See also
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_clopath
+
 EndUserDocs */
+
+void register_hh_psc_alpha_clopath( const std::string& name );
 
 class hh_psc_alpha_clopath : public ClopathArchivingNode
 {
@@ -196,15 +205,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -376,8 +385,8 @@ private:
 };
 
 
-inline port
-hh_psc_alpha_clopath::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_psc_alpha_clopath::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -386,8 +395,8 @@ hh_psc_alpha_clopath::send_test_event( Node& target, rport receptor_type, synind
 }
 
 
-inline port
-hh_psc_alpha_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha_clopath::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -396,8 +405,8 @@ hh_psc_alpha_clopath::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha_clopath::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -406,8 +415,8 @@ hh_psc_alpha_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

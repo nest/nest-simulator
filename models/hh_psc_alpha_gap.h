@@ -88,6 +88,9 @@ Gap Junctions are implemented by a gap current of the form
 
 See also [1]_, [2]_, [3]_, [4]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -101,6 +104,7 @@ V_m          mV      Membrane potential
 E_L          mV      Leak reversal potential
 g_L          nS      Leak conductance
 C_m          pF      Capacity of the membrane
+t_ref        ms      Duration of refractory period
 tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
 tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
 E_Na         mV      Sodium reversal potential
@@ -148,7 +152,14 @@ See also
 
 hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_gap
+
 EndUserDocs */
+
+void register_hh_psc_alpha_gap( const std::string& name );
 
 class hh_psc_alpha_gap : public ArchivingNode
 {
@@ -169,17 +180,17 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
+  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
   void handle( GapJunctionEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
-  port handles_test_event( GapJunctionEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( GapJunctionEvent&, size_t ) override;
 
   void
   sends_secondary_event( GapJunctionEvent& ) override
@@ -383,8 +394,8 @@ hh_psc_alpha_gap::wfr_update( Time const& origin, const long from, const long to
   return not wfr_tol_exceeded;
 }
 
-inline port
-hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_psc_alpha_gap::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -392,8 +403,8 @@ hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, 
 }
 
 
-inline port
-hh_psc_alpha_gap::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha_gap::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -402,8 +413,8 @@ hh_psc_alpha_gap::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha_gap::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -412,8 +423,8 @@ hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -422,8 +433,8 @@ hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_ty
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-inline port
-hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

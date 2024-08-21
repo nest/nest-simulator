@@ -83,6 +83,9 @@ it is considered a spike.
 
 See also [1]_, [2]_, [3]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -92,6 +95,7 @@ The following parameters can be set in the status dictionary.
 V_m       mV      Membrane potential
 E_L       mV      Leak reversal potential
 C_m       pF      Capacity of the membrane
+t_ref     ms      Duration of refractory period
 g_L       nS      Leak conductance
 tau_ex    ms      Rise time of the excitatory synaptic alpha function
 tau_in    ms      Rise time of the inhibitory synaptic alpha function
@@ -140,7 +144,14 @@ See also
 
 hh_cond_exp_traub
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha
+
 EndUserDocs */
+
+void register_hh_psc_alpha( const std::string& name );
 
 class hh_psc_alpha : public ArchivingNode
 {
@@ -158,15 +169,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -332,8 +343,8 @@ private:
 };
 
 
-inline port
-hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_psc_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -342,8 +353,8 @@ hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 
-inline port
-hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -352,8 +363,8 @@ hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -362,8 +373,8 @@ hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

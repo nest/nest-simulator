@@ -24,49 +24,48 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
-import warnings
-import json
 import functools
-import textwrap
+import json
 import os
 import pydoc
-
+import textwrap
+import warnings
 from string import Template
 
-from ..ll_api import sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr
 
 __all__ = [
-    'broadcast',
-    'deprecated',
-    'get_parameters',
-    'get_parameters_hierarchical_addressing',
-    'get_wrapped_text',
-    'is_iterable',
-    'is_literal',
-    'is_sequence_of_connections',
-    'is_sequence_of_node_ids',
-    'is_string',
-    'load_help',
-    'model_deprecation_warning',
-    'restructure_data',
-    'show_deprecation_warning',
-    'show_help_with_pager',
-    'SuppressedDeprecationWarning',
+    "broadcast",
+    "deprecated",
+    "get_parameters",
+    "get_parameters_hierarchical_addressing",
+    "get_wrapped_text",
+    "is_iterable",
+    "is_literal",
+    "is_sequence_of_connections",
+    "is_sequence_of_node_ids",
+    "is_string",
+    "load_help",
+    "model_deprecation_warning",
+    "restructure_data",
+    "show_deprecation_warning",
+    "show_help_with_pager",
+    "stringify_path",
+    "SuppressedDeprecationWarning",
 ]
 
 # These flags are used to print deprecation warnings only once.
 # Only flags for special cases need to be entered here, such as special models
 # or function parameters, all flags for deprecated functions will be registered
 # by the @deprecated decorator, and therefore does not manually need to be placed here.
-_deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
-                                             'replacement': 'replacement_mod'}}
+_deprecation_warning = {"deprecated_model": {"deprecation_issued": False, "replacement": "replacement_mod"}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
     """Formats deprecation warning."""
 
-    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+    return "%s:%s: %s:%s\n" % (filename, lineno, category.__name__, message)
 
 
 warnings.formatwarning = format_Warning
@@ -105,14 +104,15 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
         Text to display instead of standard text
     """
     if func_name in _deprecation_warning:
-        if not _deprecation_warning[func_name]['deprecation_issued']:
+        if not _deprecation_warning[func_name]["deprecation_issued"]:
             if text is None:
-                text = ("{0} is deprecated and will be removed in a future version of NEST.\n"
-                        "Please use {1} instead!").format(func_name, alt_func_name)
+                text = (
+                    "{0} is deprecated and will be removed in a future version of NEST.\n" "Please use {1} instead!"
+                ).format(func_name, alt_func_name)
                 text = get_wrapped_text(text)
 
-            warnings.warn('\n' + text)   # add LF so text starts on new line
-            _deprecation_warning[func_name]['deprecation_issued'] = True
+            warnings.warn("\n" + text)  # add LF so text starts on new line
+            _deprecation_warning[func_name]["deprecation_issued"] = True
 
 
 # Since we need to pass extra arguments to the decorator, we need a
@@ -136,15 +136,41 @@ def deprecated(alt_func_name, text=None):
     """
 
     def deprecated_decorator(func):
-        _deprecation_warning[func.__name__] = {'deprecation_issued': False}
+        _deprecation_warning[func.__name__] = {"deprecation_issued": False}
 
         @functools.wraps(func)
         def new_func(*args, **kwargs):
             show_deprecation_warning(func.__name__, alt_func_name, text=text)
             return func(*args, **kwargs)
+
         return new_func
 
     return deprecated_decorator
+
+
+def stringify_path(filepath):
+    """
+    Convert path-like object to string form.
+
+    Attempt to convert path-like object to a string by coercing objects
+    supporting the fspath protocol to its ``__fspath__`` method. Anything that
+    is not path-like, which includes bytes and strings, is passed through
+    unchanged.
+
+    Parameters
+    ----------
+    filepath : object
+        Object representing file system path.
+
+    Returns
+    -------
+    filepath : str
+        Stringified filepath.
+    """
+
+    if isinstance(filepath, os.PathLike):
+        filepath = filepath.__fspath__()  # should return str or bytes object
+    return filepath
 
 
 def is_literal(obj):
@@ -271,12 +297,13 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item, )
+        return length * (item,)
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
         raise TypeError(
-            "'{0}' must be a single value, a list with one element or a list with {1} elements.".format(name, length))
+            "'{0}' must be a single value, a list with one element or a list with {1} elements.".format(name, length)
+        )
     return item
 
 
@@ -292,9 +319,12 @@ def __show_help_in_modal_window(obj, help_text):
     """
 
     help_text = json.dumps(help_text)
-    style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
-            "font-family: monospace; white-space: pre; }</style>"
-    s = Template("""
+    style = (
+        "<style>.modal-body p { display: block;unicode-bidi: embed; "
+        "font-family: monospace; white-space: pre; }</style>"
+    )
+    s = Template(
+        """
        require(
            ["base/js/dialog"],
            function(dialog) {
@@ -307,9 +337,11 @@ def __show_help_in_modal_window(obj, help_text):
                });
            }
        );
-       """)
+       """
+    )
 
     from IPython.display import HTML, Javascript, display
+
     display(HTML(style))
     display(Javascript(s.substitute(jstitle=obj, jstext=help_text)))
 
@@ -331,7 +363,7 @@ def get_help_fname(obj):
     """
 
     docdir = sli_func("statusdict/prgdocdir ::")
-    help_fname = os.path.join(docdir, 'html', 'models', f'{obj}.rst')
+    help_fname = os.path.join(docdir, "html", "models", f"{obj}.rst")
 
     if os.path.isfile(help_fname):
         return help_fname
@@ -354,7 +386,7 @@ def load_help(obj):
     """
 
     help_fname = get_help_fname(obj)
-    with open(help_fname, 'r', encoding='utf-8') as help_file:
+    with open(help_fname, "r", encoding="utf-8") as help_file:
         help_text = help_file.read()
     return help_text
 
@@ -374,14 +406,14 @@ def show_help_with_pager(obj):
 
     def check_nb():
         try:
-            return get_ipython().__class__.__name__.startswith('ZMQ')
+            return get_ipython().__class__.__name__.startswith("ZMQ")
         except NameError:
             return False
 
     help_text = load_help(obj)
 
     if check_nb():
-        __show_help_in_modal_window(obj + '.rst', help_text)
+        __show_help_in_modal_window(obj + ".rst", help_text)
         return
 
     pydoc.pager(help_text)
@@ -405,9 +437,10 @@ def model_deprecation_warning(model):
     """
 
     if model in _deprecation_warning:
-        if not _deprecation_warning[model]['deprecation_issued']:
-            text = ("The {0} model is deprecated and will be removed in a future version of NEST, "
-                    "use {1} instead.").format(model, _deprecation_warning[model]['replacement'])
+        if not _deprecation_warning[model]["deprecation_issued"]:
+            text = (
+                "The {0} model is deprecated and will be removed in a future version of NEST, " "use {1} instead."
+            ).format(model, _deprecation_warning[model]["replacement"])
             show_deprecation_warning(model, text=text)
 
 
@@ -440,10 +473,11 @@ def restructure_data(result, keys):
             final_result = result[0][keys]
 
     elif is_iterable(keys):
-        final_result = ({key: [val[i] for val in result]
-                         for i, key in enumerate(keys)} if len(result) != 1
-                        else {key: val[i] for val in result
-                              for i, key in enumerate(keys)})
+        final_result = (
+            {key: [val[i] for val in result] for i, key in enumerate(keys)}
+            if len(result) != 1
+            else {key: val[i] for val in result for i, key in enumerate(keys)}
+        )
 
     elif keys is None:
         if len(result) != 1:
@@ -484,7 +518,7 @@ def get_parameters(nc, param):
     """
     # param is single literal
     if is_literal(param):
-        cmd = '/{} get'.format(param)
+        cmd = "/{} get".format(param)
         sps(nc._datum)
         try:
             sr(cmd)
@@ -529,10 +563,10 @@ def get_parameters_hierarchical_addressing(nc, params):
     # or list of strings.
     if is_literal(params[0]):
         value_list = nc.get(params[0])
-        if type(value_list) != tuple:
+        if not isinstance(value_list, tuple):
             value_list = (value_list,)
     else:
-        raise TypeError('First argument must be a string, specifying path into hierarchical dictionary')
+        raise TypeError("First argument must be a string, specifying path into hierarchical dictionary")
 
     result = restructure_data(value_list, None)
 
@@ -561,28 +595,24 @@ class SuppressedDeprecationWarning:
                       for which to suppress deprecation warnings
         """
 
-        self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
-                              else (no_dep_funcs, ))
+        self._no_dep_funcs = no_dep_funcs if not is_string(no_dep_funcs) else (no_dep_funcs,)
         self._deprecation_status = {}
-        sr('verbosity')  # Use sli-version as we cannon import from info because of cirular inclusion problem
+        sr("verbosity")  # Use sli-version as we cannon import from info because of cirular inclusion problem
         self._verbosity_level = spp()
 
     def __enter__(self):
-
         for func_name in self._no_dep_funcs:
             self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
-            _deprecation_warning[func_name]['deprecation_issued'] = True
+            _deprecation_warning[func_name]["deprecation_issued"] = True
 
             # Suppress only if verbosity level is deprecated or lower
-            if self._verbosity_level <= sli_func('M_DEPRECATED'):
+            if self._verbosity_level <= sli_func("M_DEPRECATED"):
                 # Use sli-version as we cannon import from info because of cirular inclusion problem
-                sr("{} setverbosity".format(sli_func('M_WARNING')))
+                sr("{} setverbosity".format(sli_func("M_WARNING")))
 
     def __exit__(self, *args):
-
         # Reset the verbosity level and deprecation warning status
         sr("{} setverbosity".format((self._verbosity_level)))
 
         for func_name, deprec_dict in self._deprecation_status.items():
-            _deprecation_warning[func_name]['deprecation_issued'] = (
-                deprec_dict['deprecation_issued'])
+            _deprecation_warning[func_name]["deprecation_issued"] = deprec_dict["deprecation_issued"]

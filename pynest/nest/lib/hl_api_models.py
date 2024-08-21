@@ -23,24 +23,29 @@
 Functions for model handling
 """
 
-from ..ll_api import check_stack, sps, sr, spp
-from .hl_api_helper import deprecated, is_iterable, is_literal, model_deprecation_warning
-from .hl_api_types import to_json
+from ..ll_api import check_stack, spp, sps, sr
+from .hl_api_helper import (
+    deprecated,
+    is_iterable,
+    is_literal,
+    model_deprecation_warning,
+)
 from .hl_api_simulation import GetKernelStatus
+from .hl_api_types import to_json
 
 __all__ = [
-    'ConnectionRules',
-    'CopyModel',
-    'GetDefaults',
-    'Models',
-    'SetDefaults',
+    "ConnectionRules",
+    "CopyModel",
+    "GetDefaults",
+    "Models",
+    "SetDefaults",
 ]
 
 
-@deprecated("nest.node_models or nest.synapse_models")
 @check_stack
+@deprecated("nest.node_models or nest.synapse_models")
 def Models(mtype="all", sel=None):
-    """Return a tuple of neuron, device, or synapse model names.
+    r"""Return a tuple of neuron, device, or synapse model names.
 
     Parameters
     ----------
@@ -63,7 +68,7 @@ def Models(mtype="all", sel=None):
     Notes
     -----
     - Synapse model names ending in ``_hpc`` require less memory because of
-      thread-local indices for target neuron IDs and fixed ``rport``s of 0.
+      thread-local indices for target neuron IDs and fixed ``rport``\s of 0.
     - Synapse model names ending in ``_lbl`` allow to assign an integer label
       (``synapse_label``) to each individual synapse, at the cost of increased
       memory requirements.
@@ -76,10 +81,10 @@ def Models(mtype="all", sel=None):
     models = []
 
     if mtype in ("all", "nodes"):
-        models += GetKernelStatus('node_models')
+        models += GetKernelStatus("node_models")
 
     if mtype in ("all", "synapses"):
-        models += GetKernelStatus('synapse_models')
+        models += GetKernelStatus("synapse_models")
 
     if sel is not None:
         models = [x for x in models if sel in x]
@@ -89,8 +94,8 @@ def Models(mtype="all", sel=None):
     return tuple(models)
 
 
-@deprecated("nest.connection_rules")
 @check_stack
+@deprecated("nest.connection_rules")
 def ConnectionRules():
     """Return a tuple of all available connection rules, sorted by name.
 
@@ -101,7 +106,7 @@ def ConnectionRules():
 
     """
 
-    return tuple(sorted(GetKernelStatus('connection_rules')))
+    return tuple(sorted(GetKernelStatus("connection_rules")))
 
 
 @check_stack
@@ -127,11 +132,11 @@ def SetDefaults(model, params, val=None):
             params = {params: val}
 
     sps(params)
-    sr('/{0} exch SetDefaults'.format(model))
+    sr("/{0} exch SetDefaults".format(model))
 
 
 @check_stack
-def GetDefaults(model, keys=None, output=''):
+def GetDefaults(model, keys=None, output=""):
     """Return defaults of the given model or recording backend.
 
     Parameters
@@ -167,18 +172,17 @@ def GetDefaults(model, keys=None, output=''):
     if keys is None:
         cmd = "/{0} GetDefaults".format(model)
     elif is_literal(keys):
-        cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
+        cmd = "/{0} GetDefaults /{1} get".format(model, keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}"\
-              .format(model, keys_str) + " Map exch pop"
+        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}".format(model, keys_str) + " Map exch pop"
     else:
         raise TypeError("keys should be either a string or an iterable")
 
     sr(cmd)
     result = spp()
 
-    if output == 'json':
+    if output == "json":
         result = to_json(result)
 
     return result

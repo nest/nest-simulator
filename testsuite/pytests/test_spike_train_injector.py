@@ -27,9 +27,10 @@ the spike times for different options and emits spikes correctly in
 simulation.
 """
 
+import math
+
 import nest
 import pytest
-import math
 
 
 @pytest.fixture
@@ -38,20 +39,14 @@ def reset_kernel():
 
 
 @pytest.mark.parametrize(
-    ('in_spike_times', 'expected_spike_times', 'precise_times', 'allow_offgrid_times'),
+    ("in_spike_times", "expected_spike_times", "precise_times", "allow_offgrid_times"),
     [
         ([1.0, 1.9999, 3.0001], [1.0, 2.0, 3.0], False, False),
-        ([1.0, 1.05, 3.0001],  [1.0, 1.1, 3.0], False, True),
-        ([1.0, 1.05, 3.0001],  [1.0, 1.05, 3.0001], True, False),
-    ]
+        ([1.0, 1.05, 3.0001], [1.0, 1.1, 3.0], False, True),
+        ([1.0, 1.05, 3.0001], [1.0, 1.05, 3.0001], True, False),
+    ],
 )
-def test_set_spike_times(
-    reset_kernel,
-    in_spike_times,
-    expected_spike_times,
-    precise_times,
-    allow_offgrid_times
-):
+def test_set_spike_times(reset_kernel, in_spike_times, expected_spike_times, precise_times, allow_offgrid_times):
     """
     Test correct handling of spike times.
 
@@ -62,17 +57,20 @@ def test_set_spike_times(
 
     nest.set(resolution=0.1, tics_per_ms=1000.0)
 
-    inj_nrn = nest.Create("spike_train_injector",
-                          params={'spike_times': in_spike_times,
-                                  'precise_times': precise_times,
-                                  'allow_offgrid_times': allow_offgrid_times}
-                          )
+    inj_nrn = nest.Create(
+        "spike_train_injector",
+        params={
+            "spike_times": in_spike_times,
+            "precise_times": precise_times,
+            "allow_offgrid_times": allow_offgrid_times,
+        },
+    )
 
     out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
     assert out_spike_times == pytest.approx(expected_spike_times)
 
 
-@pytest.mark.parametrize('parrot_model', ['parrot_neuron', 'parrot_neuron_ps'])
+@pytest.mark.parametrize("parrot_model", ["parrot_neuron", "parrot_neuron_ps"])
 def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     """
     Test spike train injector in simulation.
@@ -85,9 +83,7 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     delay = 0.2
     simtime = 2.0
 
-    source = nest.Create("spike_train_injector", 1,
-                         {"spike_times": [spike_time],
-                          'precise_times': True})
+    source = nest.Create("spike_train_injector", 1, {"spike_times": [spike_time], "precise_times": True})
     parrot = nest.Create(parrot_model)
     srec = nest.Create("spike_recorder")
 
@@ -97,10 +93,10 @@ def test_spike_train_injector_in_simulation(reset_kernel, parrot_model):
     nest.Simulate(simtime)
 
     spike_data = srec.events
-    post_time = spike_data['times']
+    post_time = spike_data["times"]
 
     expected_post_time = spike_time + delay
-    if parrot_model == 'parrot_neuron':
+    if parrot_model == "parrot_neuron":
         # round-up
         expected_post_time = math.ceil(expected_post_time / nest.resolution) * nest.resolution
 

@@ -40,8 +40,8 @@ errors occurred.
 """
 
 import os
-import sys
 import re
+import sys
 from subprocess import check_output
 
 
@@ -61,15 +61,14 @@ EXIT_NO_SOURCE = 126
 
 try:
     heuristic_folders = "nest nestkernel build_support models .git"
-    if 'NEST_SOURCE' not in os.environ:
+    if "NEST_SOURCE" not in os.environ:
         if all([name in os.listdir() for name in heuristic_folders.split()]):
-            os.environ['NEST_SOURCE'] = '.'
+            os.environ["NEST_SOURCE"] = "."
         else:
             print("Script does not seem to be called from the NEST repository root.")
-    source_dir = os.environ['NEST_SOURCE']
+    source_dir = os.environ["NEST_SOURCE"]
 except KeyError:
-    eprint("Please make NEST_SOURCE environment variable to point to " +
-           "the source tree you want to check!")
+    eprint("Please make NEST_SOURCE environment variable to point to the source tree you want to check!")
     sys.exit(EXIT_NO_SOURCE)
 
 # Base names of files that contain const Name definitions
@@ -100,9 +99,8 @@ for names_file in names_files:
 
     for h, s in zip(names_header, names_source):
         if h != s:
-            eprint("[NAME] {}: inconsistent declaration: {} != {}".format(
-                names_file, h, s))
-            print("... {}\\n".format(names_file))
+            eprint(f"[NAME] {names_file}: inconsistent declaration: {h} != {s}")
+            print(f"... {names_file}\\n")
             sys.exit(EXIT_NAME_H_CPP_MISMATCH)
         else:
             names_defined.add(h)
@@ -128,7 +126,7 @@ names_unused = names_defined - names_used
 if len(names_unused) != 0:
     msg = "unused Name definition(s): " + ", ".join(names_unused)
     eprint("[NAME] " + msg)
-    print("... {}\\n".format(msg))
+    print(f"... {msg}\\n")
     sys.exit(EXIT_UNUSED_NAME)
 
 

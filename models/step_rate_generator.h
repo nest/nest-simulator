@@ -99,7 +99,14 @@ See also
 
 step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: step_rate_generator
+
 EndUserDocs */
+
+void register_step_rate_generator( const std::string& name );
 
 class step_rate_generator : public StimulationDevice
 {
@@ -117,9 +124,9 @@ public:
 
   void handle( DataLoggingRequest& ) override;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -214,8 +221,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+inline size_t
+step_rate_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -225,8 +232,8 @@ step_rate_generator::send_test_event( Node& target, rport receptor_type, syninde
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-step_rate_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+step_rate_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

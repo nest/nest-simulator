@@ -21,12 +21,7 @@
 
 from ..lib.hl_api_types import CreateParameter
 
-__all__ = [
-    'exponential',
-    'gaussian',
-    'gaussian2D',
-    'gamma',
-]
+__all__ = ["exponential", "gaussian", "gaussian2D", "gamma", "gabor"]
 
 
 def exponential(x, beta=1.0):
@@ -45,10 +40,13 @@ def exponential(x, beta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('exp_distribution', {
-        'x': x,
-        'beta': beta,
-    })
+    return CreateParameter(
+        "exp_distribution",
+        {
+            "x": x,
+            "beta": beta,
+        },
+    )
 
 
 def gaussian(x, mean=0.0, std=1.0):
@@ -69,11 +67,14 @@ def gaussian(x, mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('gaussian', {
-        'x': x,
-        'mean': mean,
-        'std': std,
-    })
+    return CreateParameter(
+        "gaussian",
+        {
+            "x": x,
+            "mean": mean,
+            "std": std,
+        },
+    )
 
 
 def gaussian2D(x, y, mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0):
@@ -102,15 +103,18 @@ def gaussian2D(x, y, mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('gaussian2d', {
-        'x': x,
-        'y': y,
-        'mean_x': mean_x,
-        'mean_y': mean_y,
-        'std_x': std_x,
-        'std_y': std_y,
-        'rho': rho,
-    })
+    return CreateParameter(
+        "gaussian2d",
+        {
+            "x": x,
+            "y": y,
+            "mean_x": mean_x,
+            "mean_y": mean_y,
+            "std_x": std_x,
+            "std_y": std_y,
+            "rho": rho,
+        },
+    )
 
 
 def gamma(x, kappa=1.0, theta=1.0):
@@ -133,8 +137,50 @@ def gamma(x, kappa=1.0, theta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('gamma', {
-        'x': x,
-        'kappa': kappa,
-        'theta': theta
-    })
+    return CreateParameter("gamma", {"x": x, "kappa": kappa, "theta": theta})
+
+
+def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
+    r"""
+    Applies a rectified Gabor function on two Parameters, representing displacements in the x and y direction.
+
+    .. math::
+        p(x) = \big[\cos(360^{\circ} \frac{y^{\prime}}{\lambda} + \psi)\big]^{+}
+               e^{-\frac{\gamma^{2}x^{\prime 2}+y^{\prime 2}}{2\text{std}^{2}}}
+        \\ x^{\prime} = x\cos\theta + y\sin\theta
+        \\ y^{\prime} = -x\sin\theta + y\cos\theta
+
+    Parameters
+    ----------
+    x : Parameter
+        Input Parameter for the x-direction.
+    y : Parameter
+        Input Parameter for the y-direction.
+    theta : float, optional
+        Orientation of profile in degree. Default is 0.0.
+    gamma : float, optional
+        Spatial aspect ratio. Controls ratio of major and minor axis. Default is 1.0.
+    std : float, optional
+        Standard deviation of the distribution. Default is 1.0.
+    lam : float, optional
+        Wavelength of spatial oscillations. Default is 1.0.
+    psi : float, optional
+        Phase of spatial oscillations in degree. Default is 0.0
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter(
+        "gabor",
+        {
+            "x": x,
+            "y": y,
+            "theta": theta,
+            "gamma": gamma,
+            "std": std,
+            "lam": lam,
+            "psi": psi,
+        },
+    )

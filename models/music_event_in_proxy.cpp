@@ -41,6 +41,14 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_music_event_in_proxy( const std::string& name )
+{
+  register_node_model< music_event_in_proxy >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -100,6 +108,8 @@ nest::music_event_in_proxy::music_event_in_proxy()
   , P_()
   , S_()
 {
+  // Register port for the model so it is available as default
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n )
@@ -107,7 +117,8 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  kernel().music_manager.register_music_in_port( P_.port_name_, true );
+  // Register port for node instance because MusicManager manages ports via reference count
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 
@@ -148,8 +159,8 @@ nest::music_event_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
   kernel().music_manager.unregister_music_in_port( P_.port_name_ );
+  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
 
   P_ = ptmp;
   S_ = stmp;
@@ -160,7 +171,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     kernel().connection_manager.send_from_device( t, local_device_id_, e );
   }

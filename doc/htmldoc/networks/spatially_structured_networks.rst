@@ -73,8 +73,8 @@ A very simple example
 We create a first, grid-based simple NodeCollection with the following command:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1 #}
-    :end-before: #{ end #}
+    :start-after: # { layer1 #}
+    :end-before: # { end #}
 
 .. _fig_layer1:
 
@@ -142,8 +142,8 @@ different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by passing the ``extent`` argument to ``nest.spatial.grid()``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer2 #}
-    :end-before: #{ end #}
+    :start-after: # { layer2 #}
+    :end-before: # { end #}
 
 .. _fig_layer2:
 
@@ -172,8 +172,8 @@ The following code creates layers centered about :math:`(0,0)`,
 :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3 #}
-    :end-before: #{ end #}
+    :start-after: # { layer3 #}
+    :end-before: # { end #}
 
 .. _fig_layer3:
 
@@ -218,8 +218,8 @@ are :math:`(n_x d/2, 0)`. The layer is created with the following code
 and shown in :numref:`fig_layer3a`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3a #}
-    :end-before: #{ end #}
+    :start-after: # { layer3a #}
+    :end-before: # { end #}
 
 .. _fig_layer3a:
 
@@ -244,8 +244,8 @@ extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4 #}
-    :end-before: #{ end #}
+    :start-after: # { layer4 #}
+    :end-before: # { end #}
 
 .. _fig_layer4:
 
@@ -281,8 +281,8 @@ Note the following points:
 To create a spatially distributed NodeCollection from a list, do the following:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4b #}
+    :end-before: # { end #}
 
 .. _fig_layer4b:
 
@@ -303,8 +303,8 @@ in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d:
 
@@ -319,8 +319,8 @@ space. Another possibility is to create a 3D grid-layer, with 3 elements passed 
 the shape argument, ``shape=[nx, ny, nz]``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d_b #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d_b:
 
@@ -356,8 +356,8 @@ You specify periodic boundary conditions for a NodeCollection using
 the entry ``edge_wrap``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ player #}
-    :end-before: #{ end #}
+    :start-after: # { player #}
+    :end-before: # { end #}
 
 .. _fig_player:
 
@@ -400,8 +400,8 @@ be of interest:
    of this guide):
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1s #}
-    :end-before: #{ end #}
+    :start-after: # { layer1s #}
+    :end-before: # { end #}
 
 
 The ``spatial`` property is read-only; changing any value will
@@ -415,8 +415,8 @@ not change properties of the spatially distributed NodeCollection.
    only be used on NodeCollections created with spatial distribution.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1p #}
-    :end-before: #{ end #}
+    :start-after: # { layer1p #}
+    :end-before: # { end #}
 
 .. _sec_connections:
 
@@ -469,14 +469,16 @@ Pool
    +--------------------------------+--------------+--------------+
    | Connection parameters          | Driver       | Pool         |
    +================================+==============+==============+
-   | ``rule='pairwise_bernoulli'``  | source layer | target layer |
+   | ``rule='fixed_indegree'``      | target layer | source layer |
    +--------------------------------+--------------+--------------+
    | ``rule='fixed_outdegree'``     | source layer | target layer |
+   +--------------------------------+--------------+--------------+
+   | ``rule='pairwise_bernoulli'``  | source layer | target layer |
    +--------------------------------+--------------+--------------+
    | ``rule='pairwise_bernoulli'``  | target layer | source layer |
    | and ``use_on_source=True``     |              |              |
    +--------------------------------+--------------+--------------+
-   | ``rule='fixed_indegree'``      | target layer | source layer |
+   | ``rule='pairwise_poisson'``    | source layer | target layer |
    +--------------------------------+--------------+--------------+
 
 Displacement
@@ -499,6 +501,13 @@ Connection probability or ``p``
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
    certainty. See section :ref:`sec_conn_kernels` for details.
+
+Pairwise average number of connections or ``pairwise_avg_num_conns``
+   The *pairwise average number of connections* between a driver and a pool node.
+   It is used in the ``pairwise_poisson`` connection rule and determines
+   the mean value of the Poisson distribution from which the number of
+   connections between the nodes is sampled. See section
+   :ref:`sec_conn_kernels` for details.
 
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
@@ -532,7 +541,7 @@ Here is a simple example, cf. :numref:`fig_conn1`
 
 .. literalinclude:: scripts/connections.py
     :start-after: # { conn1 #}
-    :end-before: #{ end #}
+    :end-before: # { end #}
 
 .. _fig_conn1:
 
@@ -617,16 +626,16 @@ Rectangular
    same unit as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2r #}
-    :end-before: #{ end #}
+    :start-after: # { conn2r #}
+    :end-before: # { end #}
 
 Circular
    All nodes within a circle are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2c #}
-    :end-before: #{ end #}
+    :start-after: # { conn2c #}
+    :end-before: # { end #}
 
 Doughnut
    All nodes between an inner and outer circle are connected. Note that
@@ -634,16 +643,16 @@ Doughnut
    by the radii of the inner and outer circles.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2d #}
-    :end-before: #{ end #}
+    :start-after: # { conn2d #}
+    :end-before: # { end #}
 
 Elliptical
    All nodes within an ellipsis are connected. The area is specified by
    its major and minor axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2e #}
-    :end-before: #{ end #}
+    :start-after: # { conn2e #}
+    :end-before: # { end #}
 
 .. _fig_conn2_a:
 
@@ -664,20 +673,20 @@ of the mask center relative to the driver node, as in the following
 examples (cf.  :numref:`fig_conn2_b`).
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2ro #}
-    :end-before: #{ end #}
+    :start-after: # { conn2ro #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2co #}
-    :end-before: #{ end #}
+    :start-after: # { conn2co #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2do #}
-    :end-before: #{ end #}
+    :start-after: # { conn2do #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2eo #}
-    :end-before: #{ end #}
+    :start-after: # { conn2eo #}
+    :end-before: # { end #}
 
 .. _fig_conn2_b:
 
@@ -695,12 +704,12 @@ add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 from the x-axis to the y-axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2rr #}
-    :end-before: #{ end #}
+    :start-after: # { conn2rr #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2er #}
-    :end-before: #{ end #}
+    :start-after: # { conn2er #}
+    :end-before: # { end #}
 
 .. _fig_conn2_c:
 
@@ -724,24 +733,24 @@ Box
    as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_a #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_a #}
+    :end-before: # { end #}
 
 Spherical
    All nodes within a sphere are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_b #}
+    :end-before: # { end #}
 
 Ellipsoidal
    All nodes within an ellipsoid are connected. The area is specified by
    its major, minor, and polar axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_c #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_c #}
+    :end-before: # { end #}
 
 As in the 2D case, you can change the location of the mask relative to
 the driver node by specifying a 3D vector in the ``'anchor'`` entry in
@@ -775,8 +784,8 @@ right corner coordinates, but give their size in x and y direction, as in
 this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3 #}
-    :end-before: #{ end #}
+    :start-after: # { conn3 #}
+    :end-before: # { end #}
 
 The resulting connections are shown in :numref:`fig_conn3`. By default
 the top-left corner of a grid mask, i.e., the grid mask element with
@@ -785,14 +794,14 @@ aligned with the driver node. You can change this alignment by
 specifying an *anchor* for the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3c #}
-    :end-before: #{ end #}
+    :start-after: # { conn3c #}
+    :end-before: # { end #}
 
 You can even place the anchor outside the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3x #}
-    :end-before: #{ end #}
+    :start-after: # { conn3x #}
+    :end-before: # { end #}
 
 The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
@@ -832,10 +841,14 @@ Probabilistic connection rules
 
 Many neuronal network models employ probabilistic connection rules.
 NEST supports probabilistic connections through the
-``pairwise_bernoulli`` connection rule. The probability can then be a constant,
-depend on the position of the source or the target neuron, or on the
-distance between a driver and a pool node to a connection probability. To
-create dependencies on neuron positions, NEST parameters objects are used.
+``pairwise_bernoulli`` and the ``pairwise_poisson`` connection rule.
+For the ``pairwise_bernoulli`` rule, the probability can then be a
+constant, depend on the position of the source or the target neuron,
+or on the distance between a driver and a pool node to a connection probability.
+For the ``pairwise_poisson`` rule, the pairwise average number of connections
+can depend on the position of the source or the target neuron,
+or on the distance between a driver and a pool node to a connection probability.
+To create dependencies on neuron positions, NEST :py:class:`.Parameter` objects are used.
 NEST then generates a connection according to this probability.
 
 Probabilistic connections between layers can be generated in two different
@@ -848,6 +861,15 @@ Free probabilistic connections using ``pairwise_bernoulli``
    resulting probability. This means in particular that *each possible
    driver-pool pair is inspected exactly once* and that there will be *at
    most one connection between each driver-pool pair*.
+
+Free probabilistic connections using ``pairwise_poisson``
+   In this case, :py:func:`.Connect` considers each driver node :math:`D` in turn.
+   For each :math:`D`, it evaluates the parameter value for each pool node
+   :math:`P` within the mask and creates a number of connections that are sampled
+   from a Poisson distribution with mean of the parameter value. This means in
+   particular that *each possible driver-pool pair is inspected exactly once*
+   and that *more than one connection between each driver-pool pair is possible*.
+   Additionally, the parameter may be larger than :math:`1`.
 
 Prescribed number of connections
    can be obtained by using ``fixed_indegree`` or ``fixed_outdegree``
@@ -914,6 +936,16 @@ parameters drawing values from random distributions.
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = \big[\cos(360^{\circ}                      |
+  |                                              | | theta,           |    \frac{y^{\prime}}{\lambda}                        |
+  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    + \psi)\big]^{+} e^{-\frac{                       |
+  |                                              | | std,             |    \gamma^{2}x^{\prime 2}+y^{\prime 2}}{             |
+  |                                              | | lam,             |    2\text{std}^{2}}}                                 |
+  |                                              | | psi              |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
+  |                                              |                    |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
   | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
   |                                              | | kappa            |                                                      |
@@ -952,8 +984,8 @@ Constant
    Fixed connection probability:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cp #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cp #}
+    :end-before: # { end #}
 
 Gaussian
    The connection probability is a Gaussian distribution based on the distance
@@ -962,8 +994,8 @@ Gaussian
    deviation" of :math:`\sigma=1`:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4g #}
-    :end-before: #{ end #}
+    :start-after: # { conn4g #}
+    :end-before: # { end #}
 
 Cut-off Gaussian
    In this example we have a distance-dependent Gaussian distributon,
@@ -972,18 +1004,27 @@ Cut-off Gaussian
 .. TODO: Reference to full Parameter table with nest.logic.conditional().
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cut #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cut #}
+    :end-before: # { end #}
 
 2D Gaussian
-   We conclude with an example using a two-dimensional Gaussian
-   distribution, i.e., a Gaussian with different widths in :math:`x`- and
-   :math:`y`- directions. This probability depends on displacement, not
-   only on distance:
+   Here we use a two-dimensional Gaussian distribution, i.e., a Gaussian with
+   different widths in :math:`x`- and :math:`y`- directions. This probability
+   depends on displacement, not only on distance:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn42d #}
-    :end-before: #{ end #}
+    :start-after: # { conn42d #}
+    :end-before: # { end #}
+
+Rectified Gabor Function
+   We conclude with an example of a rectified Gabor distribution, i.e., a
+   two-dimensional Gaussian distribution modulated with a spatial oscillation
+   perpendicular to :math:`\theta`. This probability depends on the
+   displacement along the coordinates axes, not the distance:
+
+.. literalinclude:: scripts/connections.py
+    :start-after: # { conn4gab #}
+    :end-before: # { end #}
 
 Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to
@@ -1013,8 +1054,8 @@ entire NodeCollection and is centered about the driver node.
 
 Linear example
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5lin #}
-      :end-before: #{ end #}
+      :start-after: # { conn5lin #}
+      :end-before: # { end #}
 
   Results are shown in the top panel of  :numref:`fig_conn5`. Connection
   weights and delays are shown for the leftmost neuron as driver. Weights
@@ -1027,8 +1068,8 @@ Linear example
 
 Linear example with periodic boundary conditions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5linpbc #}
-      :end-before: #{ end #}
+      :start-after: # { conn5linpbc #}
+      :end-before: # { end #}
 
   Results are shown in the middle panel of  :numref:`fig_conn5`. This example
   is identical to the previous, except that the (pool) layer has periodic
@@ -1039,12 +1080,12 @@ Linear example with periodic boundary conditions
 
 Various spatially dependent distributions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5exp #}
-      :end-before: #{ end #}
+      :start-after: # { conn5exp #}
+      :end-before: # { end #}
 
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5gauss #}
-      :end-before: #{ end #}
+      :start-after: # { conn5gauss #}
+      :end-before: # { end #}
 
   Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
   linear, exponential and Gaussian distributions of the distance between
@@ -1054,8 +1095,8 @@ Various spatially dependent distributions
 
 Randomized weights and delays
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5uniform #}
-      :end-before: #{ end #}
+      :start-after: # { conn5uniform #}
+      :end-before: # { end #}
 
   By using the ``nest.random.uniform()`` parameter for weights or delays, one can
   obtain randomized values for weights and delays, as shown by the red
@@ -1087,14 +1128,14 @@ linear (actually affine) with respect to the displacement between the nodes, of 
 target neuron on the x and y axis, respectively. The parameter is then simply:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design #}
+    :end-before: # { end #}
 
 This can be directly plugged into the :py:func:`.Connect` function:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design_ex #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design_ex #}
+    :end-before: # { end #}
 
 Periodic boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1193,8 +1234,8 @@ The resulting distribution of distances between connected nodes is shown in
  :numref:`fig_conn6`.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn6 #}
-    :end-before: #{ end #}
+    :start-after: # { conn6 #}
+    :end-before: # { end #}
 
 .. _fig_conn6:
 
@@ -1215,8 +1256,8 @@ It is also possible to use a random parameter or spatially dependent parameter
 to set the number of incoming or outgoing connections.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn7 #}
-    :end-before: #{ end #}
+    :start-after: # { conn7 #}
+    :end-before: # { end #}
 
 Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1227,8 +1268,8 @@ adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn8 #}
-    :end-before: #{ end #}
+    :start-after: # { conn8 #}
+    :end-before: # { end #}
 
 You have to use synapse models if you want to set, e.g., the receptor
 type of connections or parameters for plastic synapse models. These can
@@ -1248,15 +1289,15 @@ center of the mask. As demonstrated in the following example,
 stimulation devices have to be connected as the source layer.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn9 #}
-    :end-before: #{ end #}
+    :start-after: # { conn9 #}
+    :end-before: # { end #}
 
 While recording devices, on the other hand, have to be connected as
 the target layer (see also the following section):
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn10 #}
-    :end-before: #{ end #}
+    :start-after: # { conn10 #}
+    :end-before: # { end #}
 
 Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1267,8 +1308,8 @@ create a single spike recorder and connect all neurons in the spatially
 distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn11 #}
-    :end-before: #{ end #}
+    :start-after: # { conn11 #}
+    :end-before: # { end #}
 
 Connecting a layer of neurons to a layer of recording devices as
 described in the section on :ref:`sec_dev_subregions`, is only
@@ -1298,7 +1339,7 @@ The following table presents some query functions provided by NEST.
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetConnections()``       | Retrieve connections (all or for a given            |
 |                                 | source or target); see also                         |
-|                                 | http://www.nest-simulator.org/connection_management.|
+|                                 | :ref:`connectivity_concepts`.                       |
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetNodes()``             | Returns a NodeCollection of all elements with given |
 |                                 | properties.                                         |
@@ -1382,8 +1423,8 @@ is shown in :numref:`fig_vislayer`. All elements and the targets of the
 center neuron are shown, as well as mask and connection probability.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ vislayer #}
-    :end-before: #{ end #}
+    :start-after: # { vislayer #}
+    :end-before: # { end #}
 
 .. _sec_custom_masks:
 

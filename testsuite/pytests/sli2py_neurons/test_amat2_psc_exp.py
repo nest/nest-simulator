@@ -35,13 +35,12 @@ reference data.
 
 from collections import namedtuple
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 
 @pytest.fixture(scope="module")
@@ -75,41 +74,43 @@ def simulation():
 
     nest.resolution = 0.1
 
-    mat2p = nest.GetDefaults('mat2_psc_exp')
+    mat2p = nest.GetDefaults("mat2_psc_exp")
     # must differ from tau_m but is irrelvant for beta=0
-    tau_v = mat2p['tau_m'] + 10.0
+    tau_v = mat2p["tau_m"] + 10.0
 
-    nrn = nest.Create('amat2_psc_exp', params={'omega': -51.,
-                                               'beta': 0.0,
-                                               'E_L': mat2p['E_L'],
-                                               'I_e': mat2p['I_e'],
-                                               'C_m': mat2p['C_m'],
-                                               'tau_m': mat2p['tau_m'],
-                                               'tau_syn_ex': mat2p['tau_syn_ex'],
-                                               'tau_syn_in': mat2p['tau_syn_in'],
-                                               't_ref': mat2p['t_ref'],
-                                               'tau_1': mat2p['tau_1'],
-                                               'tau_2': mat2p['tau_2'],
-                                               'alpha_1': mat2p['alpha_1'],
-                                               'alpha_2': mat2p['alpha_2'],
-                                               'tau_v': tau_v,
-                                               })
+    nrn = nest.Create(
+        "amat2_psc_exp",
+        params={
+            "omega": -51.0,
+            "beta": 0.0,
+            "E_L": mat2p["E_L"],
+            "I_e": mat2p["I_e"],
+            "C_m": mat2p["C_m"],
+            "tau_m": mat2p["tau_m"],
+            "tau_syn_ex": mat2p["tau_syn_ex"],
+            "tau_syn_in": mat2p["tau_syn_in"],
+            "t_ref": mat2p["t_ref"],
+            "tau_1": mat2p["tau_1"],
+            "tau_2": mat2p["tau_2"],
+            "alpha_1": mat2p["alpha_1"],
+            "alpha_2": mat2p["alpha_2"],
+            "tau_v": tau_v,
+        },
+    )
 
-    dc_gen = nest.Create('dc_generator', params={'amplitude': 2400.})
-    mm = nest.Create('multimeter', params={'interval': nest.resolution,
-                                           'record_from': ['V_m', 'V_th'],
-                                           'time_in_steps': True
-                                           })
-    srec = nest.Create('spike_recorder', params={'time_in_steps': True})
+    dc_gen = nest.Create("dc_generator", params={"amplitude": 2400.0})
+    mm = nest.Create(
+        "multimeter", params={"interval": nest.resolution, "record_from": ["V_m", "V_th"], "time_in_steps": True}
+    )
+    srec = nest.Create("spike_recorder", params={"time_in_steps": True})
 
-    nest.Connect(dc_gen, nrn, syn_spec={
-                 'weight': 1.0, 'delay': nest.resolution})
-    nest.Connect(mm, nrn, syn_spec={'weight': 1.0, 'delay': nest.resolution})
-    nest.Connect(nrn, srec, syn_spec={'weight': 1.0, 'delay': nest.resolution})
+    nest.Connect(dc_gen, nrn, syn_spec={"weight": 1.0, "delay": nest.resolution})
+    nest.Connect(mm, nrn, syn_spec={"weight": 1.0, "delay": nest.resolution})
+    nest.Connect(nrn, srec, syn_spec={"weight": 1.0, "delay": nest.resolution})
 
     nest.Simulate(8.0)
 
-    Devices = namedtuple('Devices', 'spike_recorder, multimeter')
+    Devices = namedtuple("Devices", "spike_recorder, multimeter")
     return Devices(srec, mm)
 
 
@@ -123,7 +124,7 @@ def test_simulated_spike_times(simulation):
     # fire until time step 32.
     expected_spike_times = [11, 32, 54]
 
-    actual_spike_times = simulation.spike_recorder.events['times']
+    actual_spike_times = simulation.spike_recorder.events["times"]
 
     nptest.assert_array_equal(actual_spike_times, expected_spike_times)
 
@@ -135,13 +136,13 @@ def test_simulated_potentials(simulation):
 
     expected_potentials = pd.DataFrame(
         [
-            [1, -70, -51],   # <--- dc_gen is switched on
-            [2, -70, -51],   # <--- The DC current arrives at neuron,
+            [1, -70, -51],  # <--- dc_gen is switched on
+            [2, -70, -51],  # <--- The DC current arrives at neuron,
             [3, -67.6238, -51],  # <- but has not affected the potential yet
-            [4, -65.2947, -51],    # |
-            [5, -63.0117, -51],     # First evaluation of the DC current. The
-            [6, -60.774, -51],      # threshold potential stays constant,
-            [7, -58.5805, -51],     # because it is at its resting level.
+            [4, -65.2947, -51],  # |
+            [5, -63.0117, -51],  # First evaluation of the DC current. The
+            [6, -60.774, -51],  # threshold potential stays constant,
+            [7, -58.5805, -51],  # because it is at its resting level.
             [8, -56.4305, -51],
             [9, -54.323, -51],
             [10, -52.2573, -51],
@@ -152,28 +153,22 @@ def test_simulated_potentials(simulation):
             [13, -46.3023, -12.7346],
             # |  the membrane potential is further evaluated
             [14, -44.3953, -13.0965],
-            [15, -42.5262, -13.4548],    # |  without resetting.
-            [16, -40.694, -13.8095],     # |
-            [17, -38.8982, -14.1607],     # The threshold potential decays double
+            [15, -42.5262, -13.4548],  # |  without resetting.
+            [16, -40.694, -13.8095],  # |
+            [17, -38.8982, -14.1607],  # The threshold potential decays double
             # exponential towards its resting level.
             [18, -37.1379, -14.5084],
             [19, -35.4124, -14.8527],
             [20, -33.7212, -15.1935],
-            [21, -32.0634, -15.531]
+            [21, -32.0634, -15.531],
         ],
-        columns=['times', 'V_m', 'V_th']
+        columns=["times", "V_m", "V_th"],
     )
 
     mm_data = simulation.multimeter.events
-    actual_potentials = pd.DataFrame.from_dict(
-        {key: mm_data[key] for key in ['times', 'V_m', 'V_th']}
-    )
+    actual_potentials = pd.DataFrame.from_dict({key: mm_data[key] for key in ["times", "V_m", "V_th"]})
 
-    pdtest.assert_frame_equal(actual_potentials.iloc[:21],
-                              expected_potentials,
-                              rtol=1e-05,
-                              atol=1e-08
-                              )
+    pdtest.assert_frame_equal(actual_potentials.iloc[:21], expected_potentials, rtol=1e-05, atol=1e-08)
 
 
 def test_simulation_with_voltage_dependent_component():
@@ -192,19 +187,23 @@ def test_simulation_with_voltage_dependent_component():
     nest.ResetKernel()
     nest.resolution = 0.1
 
-    nrn = nest.Create('amat2_psc_exp', params={'omega': 2.,
-                                               'beta': 2.,
-                                               'E_L': 0.,
-                                               'I_e': 10.,
-                                               'V_m': -2.,  # V_m < V_th for t < 10 ms -> no spikes
-                                               'alpha_1': 10.,
-                                               'alpha_2': 10.,
-                                               })
-    mm = nest.Create('multimeter', params={'interval': nest.resolution,
-                                           'record_from': ['V_m', 'V_th', 'V_th_v'],
-                                           'time_in_steps': True
-                                           })
-    nest.Connect(mm, nrn, syn_spec={'weight': 1.0, 'delay': nest.resolution})
+    nrn = nest.Create(
+        "amat2_psc_exp",
+        params={
+            "omega": 2.0,
+            "beta": 2.0,
+            "E_L": 0.0,
+            "I_e": 10.0,
+            "V_m": -2.0,  # V_m < V_th for t < 10 ms -> no spikes
+            "alpha_1": 10.0,
+            "alpha_2": 10.0,
+        },
+    )
+    mm = nest.Create(
+        "multimeter",
+        params={"interval": nest.resolution, "record_from": ["V_m", "V_th", "V_th_v"], "time_in_steps": True},
+    )
+    nest.Connect(mm, nrn, syn_spec={"weight": 1.0, "delay": nest.resolution})
     nest.Simulate(10.1)
 
     expected_potentials = pd.DataFrame(
@@ -218,17 +217,13 @@ def test_simulation_with_voltage_dependent_component():
             [70, -0.741463, 5.86852, 3.86852],
             [80, -0.623322, 6.29576, 4.29576],
             [90, -0.516424, 6.62509, 4.62509],
-            [100, -0.419699, 6.86044, 4.86044]
+            [100, -0.419699, 6.86044, 4.86044],
         ],
-        columns=['times', 'V_m', 'V_th', 'V_th_v']
+        columns=["times", "V_m", "V_th", "V_th_v"],
     )
 
-    actual_potentials = pd.DataFrame.from_dict(
-        {key: mm.events[key] for key in ['times', 'V_m', 'V_th', 'V_th_v']}
-    )
+    actual_potentials = pd.DataFrame.from_dict({key: mm.events[key] for key in ["times", "V_m", "V_th", "V_th_v"]})
 
-    pdtest.assert_frame_equal(actual_potentials.iloc[9:100:10].reset_index(drop=True),
-                              expected_potentials,
-                              rtol=1e-05,
-                              atol=1e-08
-                              )
+    pdtest.assert_frame_equal(
+        actual_potentials.iloc[9:100:10].reset_index(drop=True), expected_potentials, rtol=1e-05, atol=1e-08
+    )

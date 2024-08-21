@@ -124,7 +124,7 @@ variables, use the receptor index ``{state_variable_name}{receptor_index}``:
 
 .. code-block:: Python
 
-    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0'}, ...})
+    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', ...]})
 
 Current generators can be connected to the model. In this case, the receptor
 type is the compartment index:
@@ -132,10 +132,19 @@ type is the compartment index:
 .. code-block:: Python
 
     dc = nest.Create('dc_generator', {...})
-    nest.Connect(dc, cm, syn_spec={..., 'receptor_type': 0}
+    nest.Connect(dc, cm, syn_spec={..., 'receptor_type': 0})
 
 Parameters
 ++++++++++
+
+Note that the compartmental model does not explicitly ensure that units are consistent.
+Therefore, it is on the user to ensure that units are consistent throughout the model.
+The quantities that have fixed units are membrane voltage [mV] and time [ms].
+Other units need to be consistent: if e.g. conductances are in uS, that means
+that the associated currents will be uS*mV = nA. By consequence, the capacitance needs to
+be in nF to ensure that the capacitive current is also in nA. This further means
+that the connection weights to receptors are in uS, and that the amplitudes of current
+injectors are in nA.
 
 The following parameters can be set in the status dictionary.
 
@@ -146,10 +155,11 @@ The following parameters can be set in the status dictionary.
 The following parameters can be used when adding compartments using ``SetStatus()``
 
 =========== ======= ===============================================================
- C_m        uF      Capacitance of compartment (default: 1 uF)
+ C_m        nF      Capacitance of compartment (default: 1 nF)
  g_C        uS      Coupling conductance with parent compartment (default: 0.01 uS)
  g_L        uS      Leak conductance of the compartment (default: 0.1 uS)
  e_L        mV      Leak reversal of the compartment (default: -70. mV)
+ v_comp     mV      Initialization voltage of the compartment (default: -75. mV)
 =========== ======= ===============================================================
 
 Ion channels and receptor types for the default model are hardcoded.
@@ -223,7 +233,14 @@ See also
 
 NEURON simulator ;-D
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cm_default
+
 EndUserDocs*/
+
+void register_cm_default( const std::string& name );
 
 class cm_default : public ArchivingNode
 {
@@ -235,15 +252,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -289,18 +306,18 @@ private:
 };
 
 
-inline port
-nest::cm_default::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
+  if ( receptor_type >= syn_buffers_.size() )
   {
     std::ostringstream msg;
     msg << "Valid spike receptor ports for " << get_name() << " are in ";
@@ -310,8 +327,8 @@ cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
   return receptor_type;
 }
 
-inline port
-cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   // if get_compartment returns nullptr, raise the error
   if ( not c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
@@ -324,8 +341,8 @@ cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
   return receptor_type;
 }
 
-inline port
-cm_default::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

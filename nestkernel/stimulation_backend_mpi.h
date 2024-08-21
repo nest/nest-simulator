@@ -47,9 +47,13 @@ The `mpi` stimulation backend collects data from MPI channels and
 updates stimulation devices just before each run. This is useful for
 co-simulation or for receiving stimuli from external software.
 
-The name of the MPI port to receive data on is read from a file for
-each device configured to use this backend.  The file needs to be
-named according to the following pattern:
+There are two ways to set the MPI port. If both are set, option A has precedence
+
+1. The address is supplied via the recording backends "mpi_address" status property.
+
+2. The name of the MPI port to send data to is read from a file for each
+   device configured to use this backend. The file needs to be named
+   according to the following pattern:
 
 ::
 
@@ -102,12 +106,14 @@ class StimulationBackendMPI : public StimulationBackend
 public:
   /**
    * InputBackend constructor
+   *
    * The actual initialization is happening in InputBackend::initialize()
    */
   StimulationBackendMPI();
 
   /**
    * InputBackend destructor
+   *
    * The actual finalization is happening in InputBackend::finalize()
    */
   ~StimulationBackendMPI() noexcept override;
@@ -132,28 +138,36 @@ private:
   bool enrolled_;
   bool prepared_;
   /**
-   * A map for the enrolled devices. We have a vector with one map per local
+   * A map for the enrolled devices.
+   *
+   * We have a vector with one map per local
    * thread. The map associates the node ID of a device on a given thread
    * with its device. Only the master thread has a valid MPI communicator pointer.
    */
-  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulationDevice* > > >;
+  using device_map = std::vector< std::map< size_t, std::pair< const MPI_Comm*, StimulationDevice* > > >;
   device_map devices_;
   /**
    * A map of MPI communicators used by the master thread for the MPI communication.
+   *
    * This map contains also the number of the devices linked to each MPI communicator.
    */
   typedef std::map< std::string, std::tuple< MPI_Comm*, std::vector< int >*, int* > > comm_map;
   comm_map commMap_;
 
+  std::string mpi_address_;
   /**
-   *  Getting the port name for the MPI connection
+   * Getting the port name for the MPI connection
+   *
    * @param device : input device for finding the file with the port
    * @param port_name : result of the port name
    */
-  static void get_port( StimulationDevice* device, std::string* port_name );
-  static void get_port( index index_node, const std::string& label, std::string* port_name );
+  void get_port( StimulationDevice* device, std::string* port_name );
+  void get_port( size_t index_node, const std::string& label, std::string* port_name );
+
   /**
-   * MPI communication for receiving the data before each run. This function is used only by the master thread.
+   * MPI communication for receiving the data before each run.
+   *
+   * This function is used only by the master thread.
    * The allocation of this function is cleaned by the function clean_memory_input_data
    * @param comm : the MPI communicator for send and receive message
    * @param device_id : the list of IDs which needs to be updated
@@ -162,13 +176,15 @@ private:
   static std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );
   /**
    * Update all the devices with the data received
+   *
    * @param array_index : number of devices by thread
    * @param devices_id : the devices' ID ordered by thread
    * @param data : the data received for updating all the devices
    */
   void update_device( int* array_index, std::vector< int >& devices_id, std::pair< int*, double* > data );
   /**
-   * clean all the memory allocated for the updating device. The function is used only by the master thread
+   * clean all the memory allocated for the updating device.
+   * The function is used only by the master thread
    * @param data
    */
   void clean_memory_input_data( std::vector< std::pair< int*, double* > >& data );
@@ -176,4 +192,4 @@ private:
 
 } // namespace
 
-#endif // STIMULATION_BACKEND_MPI_H
+#endif /* #ifndef STIMULATION_BACKEND_MPI_H */

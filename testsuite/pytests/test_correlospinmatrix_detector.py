@@ -21,8 +21,8 @@
 
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 def test_correlospinmatrix_detector():
@@ -35,18 +35,23 @@ def test_correlospinmatrix_detector():
     # 3-tensor of correlation functions
     expected_corr = np.array(
         [
-          [[0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 60, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0],
-           [0, 10, 20, 30, 40, 50, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
-           \
-          [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 50, 40, 30, 20, 10, 0],
-           [0, 0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
-           \
-          [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-        ])
+            [
+                [0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 60, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0],
+                [0, 10, 20, 30, 40, 50, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 50, 40, 30, 20, 10, 0],
+                [0, 0, 0, 0, 0, 0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+        ]
+    )
 
     sg1 = nest.Create("spike_generator")
     sg2 = nest.Create("spike_generator")
@@ -54,18 +59,18 @@ def test_correlospinmatrix_detector():
 
     csd = nest.Create("correlospinmatrix_detector")
 
-    csd.set(N_channels=3,  tau_max=10.,  delta_tau=1.)
+    csd.set(N_channels=3, tau_max=10.0, delta_tau=1.0)
 
-    sg1.set(spike_times=[10., 10., 16.])  # binary pulse starting at 10. ending at 16.
-    sg2.set(spike_times=[15., 15., 20.])  # binary pulse starting at 15. ending at 20.
+    sg1.set(spike_times=[10.0, 10.0, 16.0])  # binary pulse starting at 10. ending at 16.
+    sg2.set(spike_times=[15.0, 15.0, 20.0])  # binary pulse starting at 15. ending at 20.
 
     # one final event needed so that last down transition will be detected
-    sg3.set(spike_times=[25.])
+    sg3.set(spike_times=[25.0])
 
     nest.Connect(sg1, csd, syn_spec={"receptor_type": 0})
     nest.Connect(sg2, csd, syn_spec={"receptor_type": 1})
     nest.Connect(sg3, csd, syn_spec={"receptor_type": 2})
 
-    nest.Simulate(100.)
+    nest.Simulate(100.0)
 
     np.testing.assert_equal(np.array(csd.count_covariance), expected_corr)

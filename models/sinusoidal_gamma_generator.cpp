@@ -38,6 +38,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -48,6 +49,12 @@
 
 namespace nest
 {
+void
+register_sinusoidal_gamma_generator( const std::string& name )
+{
+  register_node_model< sinusoidal_gamma_generator >( name );
+}
+
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
 template <>
@@ -297,7 +304,7 @@ nest::sinusoidal_gamma_generator::pre_run_hook()
 }
 
 double
-nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
+nest::sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
@@ -344,8 +351,8 @@ void
 nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number --- see #737
-  const port tgt_idx = e.get_port();
-  assert( 0 <= tgt_idx and static_cast< size_t >( tgt_idx ) < B_.t0_ms_.size() );
+  const size_t tgt_idx = e.get_port();
+  assert( tgt_idx < B_.t0_ms_.size() );
 
   if ( V_.rng_->drand() < hazard_( tgt_idx ) )
   {

@@ -42,7 +42,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, adaptation, conductance-based
 
 Short description
 +++++++++++++++++
@@ -160,6 +160,11 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha_multisynapse
+
 EndUserDocs */
 
 namespace nest
@@ -175,6 +180,8 @@ namespace nest
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
+
+void register_aeif_cond_alpha_multisynapse( const std::string& name );
 
 class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
@@ -194,15 +201,15 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -360,7 +367,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup aeif_cond_alpha_multisynapse
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -392,8 +398,8 @@ private:
   void insert_conductance_recordables( size_t first = 0 );
 };
 
-inline port
-aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+aeif_cond_alpha_multisynapse::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -401,8 +407,8 @@ aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -411,8 +417,8 @@ aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_
   return 0;
 }
 
-inline port
-aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

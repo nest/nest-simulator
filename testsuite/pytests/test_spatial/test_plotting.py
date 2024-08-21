@@ -23,13 +23,14 @@
 Tests for basic spatial plotting functions.
 """
 
-import pytest
 import nest
 import numpy as np
+import pytest
 
 try:
     import matplotlib
-    matplotlib.use('Agg')   # backend without window
+
+    matplotlib.use("Agg")  # backend without window
     import matplotlib.pyplot as plt
 
     tmp_fig = plt.figure()  # make sure we can open a figure
@@ -40,19 +41,18 @@ except ImportError:
 
 
 # skip all test if plotting impossible
-pytestmark = pytest.mark.skipif(not PLOTTING_POSSIBLE,
-                                reason='Plotting impossible because matplotlib or display missing')
+pytestmark = pytest.mark.skipif(
+    not PLOTTING_POSSIBLE, reason="Plotting impossible because matplotlib or display missing"
+)
 
 
 class TestLayerPlot:
-
     @pytest.fixture(autouse=True)
     def _prep(self):
         nest.ResetKernel()
-        self.layer = nest.Create('iaf_psc_alpha',
-                                 positions=nest.spatial.grid(shape=[3, 3],
-                                                             extent=[2., 2.],
-                                                             edge_wrap=True))
+        self.layer = nest.Create(
+            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
+        )
 
     def test_PlotLayer(self):
         """Test plotting layer."""
@@ -67,16 +67,16 @@ class TestLayerPlot:
         """Test plotting targets."""
 
         delta = 0.05
-        mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1., 'mask': mask}
-        sdict = {'synapse_model': 'stdp_synapse'}
+        mask = {"rectangular": {"lower_left": [-delta, -2 / 3 - delta], "upper_right": [2 / 3 + delta, delta]}}
+        cdict = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": mask}
+        sdict = {"synapse_model": "stdp_synapse"}
 
         # connect layer -> layer
         nest.Connect(self.layer, self.layer, cdict, sdict)
 
         ctr = nest.FindCenterElement(self.layer)
         fig = nest.PlotTargets(ctr, self.layer)
-        fig.gca().set_title('Plain call')
+        fig.gca().set_title("Plain call")
 
         plotted_datapoints = plt.gca().collections[0].get_offsets().data
         eps = 0.01
@@ -87,45 +87,44 @@ class TestLayerPlot:
 
         fig = nest.PlotTargets(ctr, self.layer, mask=mask)
         ax = fig.gca()
-        ax.set_title('Call with mask')
+        ax.set_title("Call with mask")
         assert len(ax.patches) >= 1
 
     def test_PlotSources(self):
         """Test plotting sources"""
 
         delta = 0.05
-        mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1., 'mask': mask}
-        sdict = {'synapse_model': 'stdp_synapse'}
+        mask = {"rectangular": {"lower_left": [-delta, -2 / 3 - delta], "upper_right": [2 / 3 + delta, delta]}}
+        cdict = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": mask}
+        sdict = {"synapse_model": "stdp_synapse"}
 
         # connect layer -> layer
         nest.Connect(self.layer, self.layer, cdict, sdict)
 
         ctr = nest.FindCenterElement(self.layer)
         fig = nest.PlotSources(self.layer, ctr)
-        fig.gca().set_title('Plain call')
+        fig.gca().set_title("Plain call")
 
         plotted_datapoints = plt.gca().collections[0].get_offsets().data
         eps = 0.01
         pos = np.array(nest.GetPosition(self.layer))
         pos_xmask = pos[np.where(pos[:, 0] < eps)]
-        reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] > - eps)][::-1]
+        reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] > -eps)][::-1]
         assert np.sort(plotted_datapoints, axis=0) == pytest.approx(np.sort(reference_datapoints, axis=0))
 
         fig = nest.PlotSources(self.layer, ctr, mask=mask)
         ax = fig.gca()
-        ax.set_title('Call with mask')
+        ax.set_title("Call with mask")
         assert len(ax.patches) >= 1
 
 
 class TestKernelProbabilityPlot:
-
     @pytest.fixture(autouse=True)
     def _prep(self):
         nest.ResetKernel()
         self.plot_shape = [10, 10]
         self.plot_edges = [-0.5, 0.5, -0.5, 0.5]
-        self.layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
+        self.layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([10, 10], edge_wrap=False))
         self.source = self.layer[25]
 
     @staticmethod
@@ -140,9 +139,10 @@ class TestKernelProbabilityPlot:
         # Calculate reference values
         ref_probability = np.zeros(self.plot_shape[::-1])
         for i, x in enumerate(np.linspace(self.plot_edges[0], self.plot_edges[1], self.plot_shape[0])):
-            positions = np.array([[x, y]
-                                  for y in np.linspace(self.plot_edges[2], self.plot_edges[3], self.plot_shape[1])])
-            ref_distances = np.sqrt((positions[:, 0] - source_x)**2 + (positions[:, 1] - source_y)**2)
+            positions = np.array(
+                [[x, y] for y in np.linspace(self.plot_edges[2], self.plot_edges[3], self.plot_shape[1])]
+            )
+            ref_distances = np.sqrt((positions[:, 0] - source_x) ** 2 + (positions[:, 1] - source_y) ** 2)
             values = self._probability_calculation(ref_distances)
             ref_probability[:, i] = np.maximum(np.minimum(np.array(values), 1.0), 0.0)
 
@@ -162,15 +162,18 @@ class TestKernelProbabilityPlot:
 
         parameter = self._probability_calculation(1 - 1.5 * nest.spatial.distance)
 
-        masks = [{'circular': {'radius': 0.4}},
-                 {'doughnut': {'inner_radius': 0.2, 'outer_radius': 0.45}},
-                 {'rectangular': {'lower_left': [-.3, -.3], 'upper_right': [0.3, 0.3]}},
-                 {'elliptical': {'major_axis': 0.8, 'minor_axis': 0.4}}]
+        masks = [
+            {"circular": {"radius": 0.4}},
+            {"doughnut": {"inner_radius": 0.2, "outer_radius": 0.45}},
+            {"rectangular": {"lower_left": [-0.3, -0.3], "upper_right": [0.3, 0.3]}},
+            {"elliptical": {"major_axis": 0.8, "minor_axis": 0.4}},
+        ]
         fig, axs = plt.subplots(2, 2)
 
         for mask, ax in zip(masks, axs.flatten()):
-            nest.PlotProbabilityParameter(self.source, parameter, mask=mask, ax=ax,
-                                          shape=self.plot_shape, edges=self.plot_edges)
+            nest.PlotProbabilityParameter(
+                self.source, parameter, mask=mask, ax=ax, shape=self.plot_shape, edges=self.plot_edges
+            )
 
             assert len(ax.images) >= 1
             assert len(ax.patches) >= 1

@@ -86,7 +86,14 @@ See also
 
 static_synapse, static_synapse_hom_w
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: bernoulli_synapse
+
 EndUserDocs */
+
+void register_bernoulli_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class bernoulli_synapse : public Connection< targetidentifierT >
@@ -133,39 +140,31 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
-  void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  bool
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
-    const unsigned long n_spikes_in = e_spike.get_multiplicity();
-    unsigned long n_spikes_out = 0;
+    assert( e_spike.get_multiplicity() == 1 );
 
-    for ( unsigned long n = 0; n < n_spikes_in; ++n )
-    {
-      if ( get_vp_specific_rng( t )->drand() < p_transmit_ )
-      {
-        ++n_spikes_out;
-      }
-    }
+    const bool send_spike = get_vp_specific_rng( t )->drand() < p_transmit_;
 
-    if ( n_spikes_out > 0 )
+    if ( send_spike )
     {
-      e_spike.set_multiplicity( n_spikes_out );
       e.set_weight( weight_ );
       e.set_delay_steps( get_delay_steps() );
       e.set_receiver( *get_target( t ) );
@@ -173,8 +172,7 @@ public:
       e();
     }
 
-    // Resets multiplicity for consistency
-    e_spike.set_multiplicity( n_spikes_in );
+    return send_spike;
   }
 
   void get_status( DictionaryDatum& d ) const;

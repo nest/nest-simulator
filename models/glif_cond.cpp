@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "name.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,6 +47,12 @@ using namespace nest;
 
 namespace nest
 {
+void
+register_glif_cond( const std::string& name )
+{
+  register_node_model< glif_cond >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -764,10 +771,10 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
   }
 }
 
-nest::port
-nest::glif_cond::handles_test_event( SpikeEvent&, rport receptor_type )
+size_t
+nest::glif_cond::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

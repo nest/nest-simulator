@@ -96,7 +96,7 @@ def prepare_neurons(syn):
     pn = nest.Create("parrot_neuron")
     nest.Connect(sg, pn)
 
-    nodes = nest.Create("iaf_psc_alpha", 4,  {"V_th": 100000.0})
+    nodes = nest.Create("iaf_psc_alpha", 4, {"V_th": 100000.0})
     for node in nodes:
         nest.Connect(pn, node, syn_spec={"synapse_model": syn, "weight": node.tolist()[0] * 100})
 
@@ -112,7 +112,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, freeze_before_connect=Tr
     sg = nest.Create("spike_generator", {"spike_times": [1.0]})
     pn = nest.Create("parrot_neuron")
 
-    nodes = nest.Create("iaf_psc_alpha", 4,  {"V_th": 100000.0})
+    nodes = nest.Create("iaf_psc_alpha", 4, {"V_th": 100000.0})
 
     if freeze_before_connect:
         nodes[0].set(frozen=True)
@@ -130,7 +130,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, freeze_before_connect=Tr
     return nodes[first_node_to_connect:].get("V_m")
 
 
-@pytest.mark.parametrize('syn', get_hpc_models())
+@pytest.mark.parametrize("syn", get_hpc_models())
 def test_hpc_synapse(syn):
     synapse_without_hpc_suffix = syn[: len(syn) - 4]
 

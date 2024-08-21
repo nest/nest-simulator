@@ -104,6 +104,11 @@ See also
 
 lin_rate, tanh_rate, threshold_lin_rate
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_neuron_opn
+
 EndUserDocs  */
 
 template < class TNonlinearities >
@@ -129,9 +134,9 @@ public:
   void handle( DelayedRateConnectionEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( InstantaneousRateConnectionEvent&, rport ) override;
-  port handles_test_event( DelayedRateConnectionEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void
   sends_secondary_event( InstantaneousRateConnectionEvent& ) override
@@ -312,8 +317,8 @@ rate_neuron_opn< TNonlinearities >::wfr_update( Time const& origin, const long f
 }
 
 template < class TNonlinearities >
-inline port
-rate_neuron_opn< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
+inline size_t
+rate_neuron_opn< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -323,8 +328,8 @@ rate_neuron_opn< TNonlinearities >::handles_test_event( InstantaneousRateConnect
 }
 
 template < class TNonlinearities >
-inline port
-rate_neuron_opn< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
+inline size_t
+rate_neuron_opn< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -334,8 +339,8 @@ rate_neuron_opn< TNonlinearities >::handles_test_event( DelayedRateConnectionEve
 }
 
 template < class TNonlinearities >
-inline port
-rate_neuron_opn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+rate_neuron_opn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

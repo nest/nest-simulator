@@ -31,6 +31,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -43,6 +44,12 @@ nest::RecordablesMap< nest::glif_psc > nest::glif_psc::recordablesMap_;
 
 namespace nest
 {
+void
+register_glif_psc( const std::string& name )
+{
+  register_node_model< glif_psc >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -591,10 +598,10 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
   }
 }
 
-nest::port
-nest::glif_psc::handles_test_event( SpikeEvent&, rport receptor_type )
+size_t
+nest::glif_psc::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

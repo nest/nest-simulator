@@ -32,6 +32,7 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 #include "nest_datums.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -42,6 +43,13 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
+
+void
+nest::register_music_cont_out_proxy( const std::string& name )
+{
+  register_node_model< music_cont_out_proxy >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -215,12 +223,12 @@ nest::music_cont_out_proxy::finalize()
 {
 }
 
-nest::port
-nest::music_cont_out_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+size_t
+nest::music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
+  size_t p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
@@ -235,13 +243,13 @@ nest::music_cont_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+    const size_t synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      const index tnode_id = ( *P_.targets_ )[ i ];
+      const size_t tnode_id = ( *P_.targets_ )[ i ];
       if ( kernel().node_manager.is_local_node_id( tnode_id ) )
       {
         kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
@@ -361,7 +369,7 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  const index port = reply.get_port();
+  const size_t port = reply.get_port();
   const size_t record_width = P_.record_from_.size();
   const size_t offset = port * record_width;
   const DataLoggingReply::DataItem item = info[ info.size() - 1 ].data;

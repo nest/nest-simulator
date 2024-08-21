@@ -165,12 +165,12 @@ called with a specific key on a NodeCollection with several elements, a list
 the size of the NodeCollection will be returned.
 
 To modify the properties in the dictionary, we use :py:meth:`~.NodeCollection.set`. In the
-following example, the background current is set to 375.0pA, a value
+following example, the background current is set to 376.0pA, a value
 causing the neuron to spike periodically.
 
 ::
 
-    neuron.set(I_e=375.0)
+    neuron.set(I_e=376.0)
 
 Note that we can set several properties at the same time by giving
 multiple comma separated key:value pairs in a dictionary. Also be
@@ -179,7 +179,7 @@ aware that NEST is type sensitive - if a particular property is of type
 
 ::
 
-    neuron.set({"I_e": 375})
+    neuron.set({"I_e": 376})
 
 will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
@@ -302,11 +302,11 @@ obtain and display the spikes from the spike recorder.
 
 ::
 
-    dSD = spikerecorder.get("events")
-    evs = dSD["senders"]
-    ts = dSD["times"]
+    events = spikerecorder.get("events")
+    senders = events["senders"]
+    ts = events["times"]
     plt.figure(2)
-    plt.plot(ts, evs, ".")
+    plt.plot(ts, senders, ".")
     plt.show()
 
 Here we extract the events more concisely by sending the parameter name to
@@ -510,7 +510,7 @@ Connections
 
 This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST's online help for the full version and
-:ref:`Connection Management <connection_management>` for an introduction
+:ref:`Connectivity concepts <connectivity_concepts>` for an introduction
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``

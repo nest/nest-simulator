@@ -27,9 +27,9 @@ This is a regression test for GitHub issue 1703.
 """
 
 import os
-import sys
-import subprocess
 import shlex
+import subprocess
+import sys
 
 EXIT_CODE_SUCCESS = 0
 EXIT_CODE_ERROR = 1
@@ -44,7 +44,7 @@ EXIT_SEGFAULT = 139
 # If not, the test is skipped.
 try:
     import nest
-    from mpi4py import MPI      # noqa: F401
+    from mpi4py import MPI  # noqa: F401
 except ImportError:
     sys.exit(EXIT_SKIPPED)
 

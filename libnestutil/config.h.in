@@ -165,6 +165,9 @@
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 
+/* Is HDF5 available? */
+#cmakedefine HAVE_HDF5 1
+
 /* Is mpi4py available? */
 #cmakedefine HAVE_MPI4PY 1
 
@@ -178,5 +181,8 @@
 
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
+
+/* Whether to do full logging */
+#cmakedefine ENABLE_FULL_LOGGING 1
 
 #endif // #ifndef CONFIG_H

@@ -41,12 +41,12 @@ ModelRangeManager::ModelRangeManager()
 }
 
 void
-ModelRangeManager::initialize()
+ModelRangeManager::initialize( const bool )
 {
 }
 
 void
-ModelRangeManager::finalize()
+ModelRangeManager::finalize( const bool )
 {
   modelranges_.clear();
   first_node_id_ = 0;
@@ -54,7 +54,7 @@ ModelRangeManager::finalize()
 }
 
 void
-ModelRangeManager::add_range( index model, index first_node_id, index last_node_id )
+ModelRangeManager::add_range( size_t model, size_t first_node_id, size_t last_node_id )
 {
   if ( not modelranges_.empty() )
   {
@@ -77,8 +77,8 @@ ModelRangeManager::add_range( index model, index first_node_id, index last_node_
   last_node_id_ = last_node_id;
 }
 
-index
-ModelRangeManager::get_model_id( index node_id ) const
+size_t
+ModelRangeManager::get_model_id( size_t node_id ) const
 {
   if ( not is_in_range( node_id ) )
   {
@@ -110,13 +110,13 @@ ModelRangeManager::get_model_id( index node_id ) const
 }
 
 nest::Model*
-nest::ModelRangeManager::get_model_of_node_id( index node_id )
+nest::ModelRangeManager::get_model_of_node_id( size_t node_id )
 {
   return kernel().model_manager.get_node_model( get_model_id( node_id ) );
 }
 
 const modelrange&
-ModelRangeManager::get_contiguous_node_id_range( index node_id ) const
+ModelRangeManager::get_contiguous_node_id_range( size_t node_id ) const
 {
   if ( not is_in_range( node_id ) )
   {

@@ -19,16 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 import os
-import shutil
 import pathlib
+import shutil
 from glob import glob
 
 for dir_ in ("auto_examples", "models"):
     for file_ in glob(str(pathlib.Path(__file__).parent / dir_ / "*")):
-        if not any(
-            file_.endswith(f)
-            for f in (".gitignore", "models-main.rst", "models-toc.rst")
-        ):
+        if not any(file_.endswith(f) for f in (".gitignore", "index.rst")):
             try:
                 try:
                     os.unlink(file_)

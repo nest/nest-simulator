@@ -26,14 +26,35 @@ to known value.
 
 
 import nest
-import pytest
 import numpy.testing as nptest
+import pytest
 
 
 def test_correlation_detector_mip():
     # Cross check generated with cross_check_test_mip_corrdet.py
-    expected_hist = [2335, 2317, 2364, 2370, 2376, 2336, 2308, 2325, 2292, 2393,
-                     4806, 2378, 2373, 2356, 2357, 2400, 2420, 2325, 2367, 2338, 2293]
+    expected_hist = [
+        2335,
+        2317,
+        2364,
+        2370,
+        2376,
+        2336,
+        2308,
+        2325,
+        2292,
+        2393,
+        4806,
+        2378,
+        2373,
+        2356,
+        2357,
+        2400,
+        2420,
+        2325,
+        2367,
+        2338,
+        2293,
+    ]
 
     nest.ResetKernel()
 
@@ -50,13 +71,15 @@ def test_correlation_detector_mip():
     nest.Connect(mg, pn1)
     nest.Connect(mg, pn2)
 
-    syn_spec = {"weight": 1., "receptor_type": 0}
+    syn_spec = {"weight": 1.0, "receptor_type": 0}
     nest.Connect(pn1, cd, syn_spec=syn_spec)
 
-    syn_spec = {"weight": 1., "receptor_type": 1}
+    syn_spec = {"weight": 1.0, "receptor_type": 1}
     nest.Connect(pn2, cd, syn_spec=syn_spec)
 
-    nest.Simulate(100000.)
+    # One extra time step so that after conversion to deliver-events-first logic
+    # final spikes are delivered as in NEST 3 up to NEST 3.5.
+    nest.Simulate(100000.0 + nest.resolution)
 
     hist = cd.get("histogram")
     nptest.assert_array_equal(hist, expected_hist)

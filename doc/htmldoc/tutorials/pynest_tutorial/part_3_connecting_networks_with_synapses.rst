@@ -33,7 +33,7 @@ Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
-available models by using the command ``Models(synapses)``, which picks
+available models by using the command ``synapse_models``, which picks
 only the synapse models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You
@@ -64,10 +64,10 @@ STDP synapses
 
 For the majority of synapses, all of their parameters are accessible via
 :py:func:`.GetDefaults` and :py:func:`.SetDefaults`. Synapse models implementing
-spike-timing dependent plasticity are an exception to this, as their
+:hxt_ref:`spike-timing dependent plasticity` are an exception to this, as their
 dynamics are driven by the postsynaptic :hxt_ref:`spike train` as well as the
 pre-synaptic one. As a consequence, the time constant of the depressing
-window of :hxt_ref:`STDP` is a parameter of the postsynaptic neuron. It can be set
+window of STDP is a parameter of the postsynaptic neuron. It can be set
 as follows:
 
 ::
@@ -119,7 +119,7 @@ parameters associated with the distribution can be set (for example
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:ref:`Connection Managementi <connection_management>`, the most common
+:ref:`parametrization <param_ex>`, the most common
 ones are:
 
 +-------------------+------------------------+

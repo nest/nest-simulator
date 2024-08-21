@@ -82,7 +82,7 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
+to :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
@@ -125,11 +125,11 @@ also means that the membrane potential recording will never show values
 above the threshold. The time of the spike is always the time at *the
 end of the interval* during which the threshold was crossed.
 
-NEST also has a some models that determine the precise time of the
+NEST also has some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
 :ref:`precise spike time neurons <sim_precise_spike_times>`
 for details about neuron update in continuous time and the
-:ref:`documentation on connection management <connection_management>`
+:ref:`documentation on the connectivty concepts  <connectivity_concepts>`
 for how to set the delay when creating synapses.
 
 .. _stepped_simulations:

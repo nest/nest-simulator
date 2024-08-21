@@ -35,10 +35,10 @@ class TestGifPopPscExp:
     """
 
     def test_gif_pop_psc_exp(self):
-        err_mean = 1.0       # error margin for mean rate (Hz)
-        err_var = 6.0        # error margin for variance of rate (Hz^2)
-        res = 0.5            # simulation time step (ms)
-        T = 10000.0          # simulation duration (ms)
+        err_mean = 1.0  # error margin for mean rate (Hz)
+        err_var = 6.0  # error margin for variance of rate (Hz^2)
+        res = 0.5  # simulation time step (ms)
+        T = 10000.0  # simulation duration (ms)
         start_time = 1000.0  # time for starting calculating mean and variance (ms)
 
         start_step = int(start_time / res)
@@ -51,23 +51,26 @@ class TestGifPopPscExp:
         nest.ResetKernel()
         nest.resolution = res
 
-        node = nest.Create("gif_pop_psc_exp", params={"N": pop_size,
-                                                      "V_reset": 0.0,
-                                                      "V_T_star": 10.0,
-                                                      "E_L": 0.0,
-                                                      "Delta_V": 2.0,
-                                                      "C_m": 250.0,
-                                                      "tau_m": 20.0,
-                                                      "t_ref": 4.0,
-                                                      "I_e": 500.0,
-                                                      "lambda_0": 10.0,
-                                                      "tau_syn_in": 2.0,
-                                                      "tau_sfa": [500.0],
-                                                      "q_sfa": [1.0]})
+        node = nest.Create(
+            "gif_pop_psc_exp",
+            params={
+                "N": pop_size,
+                "V_reset": 0.0,
+                "V_T_star": 10.0,
+                "E_L": 0.0,
+                "Delta_V": 2.0,
+                "C_m": 250.0,
+                "tau_m": 20.0,
+                "t_ref": 4.0,
+                "I_e": 500.0,
+                "lambda_0": 10.0,
+                "tau_syn_in": 2.0,
+                "tau_sfa": [500.0],
+                "q_sfa": [1.0],
+            },
+        )
 
-        nest.Connect(node, node, syn_spec={"synapse_model": "static_synapse",
-                                           "delay": 1.0,
-                                           "weight": -6.25})
+        nest.Connect(node, node, syn_spec={"synapse_model": "static_synapse", "delay": 1.0, "weight": -6.25})
 
         vm = nest.Create("voltmeter", params={"record_from": ["n_events"], "interval": res})
         nest.Connect(vm, node)
@@ -77,11 +80,11 @@ class TestGifPopPscExp:
         nspike = vm.get("events")["n_events"][start_step:]
 
         mean_nspike = np.mean(nspike)
-        mean_rate = mean_nspike / pop_size / res * 1000.0    # convert to mean rate
+        mean_rate = mean_nspike / pop_size / res * 1000.0  # convert to mean rate
 
         var_nspike = np.var(nspike)
         var_nspike = var_nspike / pop_size / res * 1000.0
-        var_rate = var_nspike / pop_size / res * 1000.0    # convert to var of rate
+        var_rate = var_nspike / pop_size / res * 1000.0  # convert to var of rate
 
         assert abs(mean_rate - expected_rate) <= err_mean
         assert abs(var_rate - expected_var) <= err_var

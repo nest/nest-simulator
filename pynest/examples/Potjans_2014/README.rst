@@ -4,19 +4,23 @@ Cortical microcircuit model
 This is a PyNEST implementation of the cortical microcircuit model by Potjans and Diesmann [1]_.
 The network model represents four layers of cortex, L2/3, L4, L5, and L6, each consisting of a population of excitatory neurons and a population of inhibitory neurons.
 
-.. |img1| image:: ../../static/img/microcircuit.png
 
-.. |img2| image:: ../../static/img/raster_plot.png
+.. grid:: 1 2 3 3
 
-.. |img3| image:: ../../static/img/box_plot.png
+   .. grid-item::
 
-.. table:: 
-   :align: center
+     .. image:: potjans_2014_microcircuit.png
 
-   +--------+--------+--------+
-   | |img1| | |img2| | |img3| |
-   +--------+--------+--------+
-   
+   .. grid-item::
+
+     .. image:: potjans_2014_raster_plot.png
+
+   .. grid-item::
+
+     .. image:: potjans_2014_box_plot.png
+
+
+
 Left: network sketch [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
 
 Citing this code
@@ -52,13 +56,23 @@ To run the simulation, simply use:
 
 The output will be saved in the ``data`` directory.
 
-The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these features.
+The code can be :ref:`parallelized <parallel_computing>` using OpenMP and MPI, if NEST has been built with these features.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
-The command for running the script with two MPI processes is:
+
+
+.. important::
+
+   When scaling up the microcircuit model, you may encounter errors during simulation when there is less than 4 virtual processes.
+   The number of threads should, therefore, be 4 or more. You can increase
+   the number of MPI processes or set either ``local_num_threads`` to a value >= 4 or replace ``local_num_threads`` by ``total_num_virtual_procs`` and set it to a value >= 4.
+
+   For more information about MPI processes and threading see :ref:`our guide on HPC systems <optimize_performance>`.
+
+The command for running the script with four MPI processes is:
 
 .. code-block:: bash
 
-   mpirun -n 2 python3 run_microcircuit.py
+   mpirun -n 4 python3 run_microcircuit.py
 
 External drive and initial conditions
 -------------------------------------

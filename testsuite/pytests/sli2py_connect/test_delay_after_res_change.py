@@ -45,15 +45,13 @@ def test_change_to_high_resolution():
     when increasing the resolution.
     """
 
-    nest.SetKernelStatus({'resolution': 0.1,
-                          'min_delay': 2.1,
-                          'max_delay': 12.3})
-    nest.SetKernelStatus({'resolution': 0.001})
+    nest.SetKernelStatus({"resolution": 0.1, "min_delay": 2.1, "max_delay": 12.3})
+    nest.SetKernelStatus({"resolution": 0.001})
 
-    nest.SetDefaults('static_synapse', {'delay': 3.5})
+    nest.SetDefaults("static_synapse", {"delay": 3.5})
 
     assert nest.min_delay == 2.1 and nest.max_delay == 12.3
-    assert nest.GetDefaults('static_synapse')['delay'] == 3.5
+    assert nest.GetDefaults("static_synapse")["delay"] == 3.5
 
 
 def test_change_to_low_resolution():
@@ -63,15 +61,13 @@ def test_change_to_low_resolution():
     Note: min delay is always rounded down, max delay is always rounded up.
     """
 
-    nest.SetKernelStatus({'resolution': 0.1,
-                          'min_delay': 2.1,
-                          'max_delay': 12.3})
+    nest.SetKernelStatus({"resolution": 0.1, "min_delay": 2.1, "max_delay": 12.3})
     nest.resolution = 1.0
 
-    nest.SetDefaults('static_synapse', {'delay': 3.5})
+    nest.SetDefaults("static_synapse", {"delay": 3.5})
 
     assert nest.min_delay == 2.0 and nest.max_delay == 13.0
-    assert nest.GetDefaults('static_synapse')['delay'] == 4.0
+    assert nest.GetDefaults("static_synapse")["delay"] == 4.0
 
 
 def test_change_tics_per_ms():
@@ -80,12 +76,9 @@ def test_change_tics_per_ms():
     when setting tics_per_ms to 10000.
     """
 
-    nest.SetKernelStatus({'tics_per_ms': 10000,
-                          'resolution': 0.001,
-                          'min_delay': 2.1,
-                          'max_delay': 12.3})
+    nest.SetKernelStatus({"tics_per_ms": 10000, "resolution": 0.001, "min_delay": 2.1, "max_delay": 12.3})
 
-    nest.SetDefaults('static_synapse', {'delay': 3.5})
+    nest.SetDefaults("static_synapse", {"delay": 3.5})
 
     assert nest.min_delay == 2.1 and nest.max_delay == 12.3
-    assert nest.GetDefaults('static_synapse')['delay'] == 3.5
+    assert nest.GetDefaults("static_synapse")["delay"] == 3.5

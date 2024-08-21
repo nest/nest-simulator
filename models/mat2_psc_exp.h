@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -130,6 +130,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mat2_psc_exp
+
 EndUserDocs */
 
 /**
@@ -140,6 +145,8 @@ EndUserDocs */
  * computation can be done "in place", i.e. no temporary state vector
  * object is required.
  */
+
+void register_mat2_psc_exp( const std::string& name );
 
 class mat2_psc_exp : public ArchivingNode
 {
@@ -156,11 +163,11 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -328,7 +335,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup mat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -345,8 +351,8 @@ private:
 };
 
 
-inline port
-mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+mat2_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -355,8 +361,8 @@ mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 
-inline port
-mat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -365,8 +371,8 @@ mat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-mat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -375,8 +381,8 @@ mat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-mat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -35,10 +35,10 @@ four weight matrices are created and plotted.
 # First, we import all necessary modules to extract, handle and plot
 # the connectivity matrices
 
-import numpy as np
+import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import nest
-import matplotlib.gridspec as gridspec
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 ###############################################################################
@@ -80,7 +80,6 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 def plot_weight_matrices(E_neurons, I_neurons):
-
     W_EE = np.zeros([len(E_neurons), len(E_neurons)])
     W_EI = np.zeros([len(I_neurons), len(E_neurons)])
     W_IE = np.zeros([len(E_neurons), len(I_neurons)])
@@ -131,44 +130,44 @@ def plot_weight_matrices(E_neurons, I_neurons):
         W_II[a_II_src[idx] - min_I, a_II_trg[idx] - min_I] += c_II[idx]
 
     fig = plt.figure()
-    fig.suptitle('Weight matrices', fontsize=14)
+    fig.suptitle("Weight matrices", fontsize=14)
     gs = gridspec.GridSpec(4, 4)
     ax1 = plt.subplot(gs[:-1, :-1])
     ax2 = plt.subplot(gs[:-1, -1])
     ax3 = plt.subplot(gs[-1, :-1])
     ax4 = plt.subplot(gs[-1, -1])
 
-    plt1 = ax1.imshow(W_EE, cmap='jet')
+    plt1 = ax1.imshow(W_EE, cmap="jet")
 
     divider = make_axes_locatable(ax1)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt1, cax=cax)
 
-    ax1.set_title('$W_{EE}$')
+    ax1.set_title("$W_{EE}$")
     plt.tight_layout()
 
     plt2 = ax2.imshow(W_IE)
-    plt2.set_cmap('jet')
+    plt2.set_cmap("jet")
     divider = make_axes_locatable(ax2)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt2, cax=cax)
-    ax2.set_title('$W_{EI}$')
+    ax2.set_title("$W_{EI}$")
     plt.tight_layout()
 
     plt3 = ax3.imshow(W_EI)
-    plt3.set_cmap('jet')
+    plt3.set_cmap("jet")
     divider = make_axes_locatable(ax3)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt3, cax=cax)
-    ax3.set_title('$W_{IE}$')
+    ax3.set_title("$W_{IE}$")
     plt.tight_layout()
 
     plt4 = ax4.imshow(W_II)
-    plt4.set_cmap('jet')
+    plt4.set_cmap("jet")
     divider = make_axes_locatable(ax4)
     cax = divider.append_axes("right", "5%", pad="3%")
     plt.colorbar(plt4, cax=cax)
-    ax4.set_title('$W_{II}$')
+    ax4.set_title("$W_{II}$")
     plt.tight_layout()
 
 
@@ -182,28 +181,34 @@ def plot_weight_matrices(E_neurons, I_neurons):
 
 # Create populations
 NE = 100  # number of excitatory neurons
-NI = 25   # number of inhibitory neurons
-E_neurons = nest.Create('iaf_psc_alpha', NE)
-I_neurons = nest.Create('iaf_psc_alpha', NI)
+NI = 25  # number of inhibitory neurons
+E_neurons = nest.Create("iaf_psc_alpha", NE)
+I_neurons = nest.Create("iaf_psc_alpha", NI)
 
 # Definition of connectivity parameters
 CE = int(0.1 * NE)  # number of excitatory synapses per neuron
 CI = int(0.1 * NI)  # number of inhibitory synapses per neuron
 
 delay = 1.5  # synaptic delay in ms
-g = 5.0      # ratio inhibitory weight/excitatory weight
+g = 5.0  # ratio inhibitory weight/excitatory weight
 
 w_ex = nest.random.normal(20, 0.5)
 w_in = -g * w_ex
 
 # Create connections
-nest.Connect(E_neurons, E_neurons + I_neurons,
-             conn_spec={'rule': 'fixed_indegree', 'indegree': CE},
-             syn_spec={'synapse_model': 'static_synapse', 'weight': w_ex, 'delay': delay})
+nest.Connect(
+    E_neurons,
+    E_neurons + I_neurons,
+    conn_spec={"rule": "fixed_indegree", "indegree": CE},
+    syn_spec={"synapse_model": "static_synapse", "weight": w_ex, "delay": delay},
+)
 
-nest.Connect(I_neurons, E_neurons + I_neurons,
-             conn_spec={'rule': 'fixed_indegree', 'indegree': CI},
-             syn_spec={'synapse_model': 'static_synapse', 'weight': w_in, 'delay': delay})
+nest.Connect(
+    I_neurons,
+    E_neurons + I_neurons,
+    conn_spec={"rule": "fixed_indegree", "indegree": CI},
+    syn_spec={"synapse_model": "static_synapse", "weight": w_in, "delay": delay},
+)
 
 # Use plotting function
 plot_weight_matrices(E_neurons, I_neurons)

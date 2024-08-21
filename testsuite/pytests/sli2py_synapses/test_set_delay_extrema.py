@@ -44,7 +44,6 @@ def prepare_network():
 
 
 def test_setting_delay(prepare_network):
-
     min_delay, max_delay = nest.GetKernelStatus(["min_delay", "max_delay"])
 
     assert min_delay == 0.1

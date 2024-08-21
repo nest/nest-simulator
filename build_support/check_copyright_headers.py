@@ -40,8 +40,8 @@ errors occurred.
 
 
 import os
-import sys
 import re
+import sys
 
 
 def eprint(*args, **kwargs):
@@ -55,48 +55,45 @@ EXIT_NO_SOURCE = 126
 
 try:
     heuristic_folders = "nest nestkernel build_support models .git"
-    if 'NEST_SOURCE' not in os.environ:
+    if "NEST_SOURCE" not in os.environ:
         if all([name in os.listdir() for name in heuristic_folders.split()]):
-            os.environ['NEST_SOURCE'] = '.'
+            os.environ["NEST_SOURCE"] = "."
         else:
             print("Script does not seem to be called from the NEST repository root.")
-    source_dir = os.environ['NEST_SOURCE']
+    source_dir = os.environ["NEST_SOURCE"]
 except KeyError:
-    print("Please make NEST_SOURCE environment variable to point to " +
-          "the source tree you want to check!")
+    print("Please make NEST_SOURCE environment variable to point to the source tree you want to check!")
     sys.exit(EXIT_NO_SOURCE)
 
 exclude_dirs = [
-    'libltdl',
-    '.git',
-    'CMakeFiles',
-    'result',  # ignore files in $NEST_RESULT of CI builds
-    'thirdparty',
+    "libltdl",
+    ".git",
+    "CMakeFiles",
+    "result",  # ignore files in $NEST_RESULT of CI builds
+    "thirdparty",
 ]
 
 # match all file names against these regular expressions. if a match
 # is found the file is excluded from the check
-exclude_file_patterns = [r'\.#.*', '#.*', '.*~', '.*.bak']
+exclude_file_patterns = [r"\.#.*", "#.*", ".*~", ".*.bak"]
 exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 
 exclude_files = [
-    'doc/copyright_header.cpp',
-    'doc/copyright_header.py',
-    'nest/static_modules.h',
-    'pynest/pynestkernel.cpp',
-    'get-pip.py'
+    "doc/copyright_header.cpp",
+    "doc/copyright_header.py",
+    "pynest/pynestkernel.cpp",
+    "get-pip.py",
 ]
 
 templates = {
-    ('cc', 'cpp', 'h', 'sli'): 'cpp',
-    ('py', 'pyx', 'pxd'): 'py',
+    ("cc", "cpp", "h", "sli"): "cpp",
+    ("py", "pyx", "pxd"): "py",
 }
 
 template_contents = {}
 
 for extensions, template_ext in templates.items():
-    template_name = "{0}/doc/copyright_header.{1}".format(source_dir,
-                                                          template_ext)
+    template_name = "{0}/doc/copyright_header.{1}".format(source_dir, template_ext)
     with open(template_name) as template_file:
         template = template_file.readlines()
         for ext in extensions:
@@ -105,7 +102,6 @@ for extensions, template_ext in templates.items():
 total_files = 0
 total_errors = 0
 for dirpath, _, fnames in os.walk(source_dir):
-
     if any([exclude_dir in dirpath for exclude_dir in exclude_dirs]):
         continue
 
@@ -119,34 +115,33 @@ for dirpath, _, fnames in os.walk(source_dir):
 
         tested_file = os.path.join(dirpath, fname)
 
-        if any([exclude_file in tested_file
-                for exclude_file in exclude_files]):
+        if any([exclude_file in tested_file for exclude_file in exclude_files]):
             continue
 
-        with open(tested_file, encoding='utf-8') as source_file:
+        with open(tested_file, encoding="utf-8") as source_file:
             total_files += 1
             for template_line in template_contents[extension]:
                 try:
                     line_src = source_file.readline()
                 except UnicodeDecodeError as err:
-                    print("Unable to decode bytes in '{0}': {1}".format(
-                        tested_file, err))
+                    print("Unable to decode bytes in '{0}': {1}".format(tested_file, err))
                     total_errors += 1
                     break
-                if (extension == 'py' and
-                        line_src.strip() == '#!/usr/bin/env python3'):
+                if extension == "py" and line_src.strip() == "#!/usr/bin/env python3":
                     line_src = source_file.readline()
-                line_exp = template_line.replace('{{file_name}}', fname)
+                line_exp = template_line.replace("{{file_name}}", fname)
                 if line_src != line_exp:
                     fname = os.path.relpath(tested_file)
-                    eprint("[COPY] {0}: expected '{1}', found '{2}'.".format(
-                        fname, line_exp.rstrip('\n'), line_src.rstrip('\n')))
+                    eprint(
+                        "[COPY] {0}: expected '{1}', found '{2}'.".format(
+                            fname, line_exp.rstrip("\n"), line_src.rstrip("\n")
+                        )
+                    )
                     print("... {}\\n".format(fname))
                     total_errors += 1
                     break
 
-print("{0} out of {1} files have an erroneous copyright header.".format(
-    total_errors, total_files))
+print("{0} out of {1} files have an erroneous copyright header.".format(total_errors, total_files))
 
 if total_errors > 0:
     sys.exit(EXIT_BAD_HEADER)

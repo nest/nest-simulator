@@ -30,9 +30,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "connection_creator_impl.h"
-#include "connection_manager_impl.h"
 #include "free_layer.h"
 #include "genericmodel.h"
 #include "grid_layer.h"
@@ -48,7 +46,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "parameter.h"
-#include "sp_manager_impl.h"
 #include "spatial.h"
 
 // Includes from sli:
@@ -81,8 +78,7 @@ NestModule::NestModule()
 
 NestModule::~NestModule()
 {
-  // The network is deleted outside NestModule, since the
-  // dynamicloadermodule also needs it
+  // The network is deleted outside NestModule, since the dynamicloadermodule also needs it
 
   ConnectionType.deletetypename();
   NodeCollectionType.deletetypename();
@@ -95,7 +91,7 @@ NestModule::~NestModule()
 const std::string
 NestModule::name() const
 {
-  return std::string( "NEST Kernel 2" ); // Return name of the module
+  return std::string( "NEST Kernel" ); // Return name of the module
 }
 
 const std::string
@@ -178,8 +174,7 @@ NestModule::mask_factory_()
 MaskDatum
 NestModule::create_mask( const Token& t )
 {
-  // t can be either an existing MaskDatum, or a Dictionary containing
-  // mask parameters
+  // t can be either an existing MaskDatum, or a Dictionary containing mask parameters
   MaskDatum* maskd = dynamic_cast< MaskDatum* >( t.datum() );
   if ( maskd )
   {
@@ -309,38 +304,13 @@ create_doughnut( const DictionaryDatum& d )
 }
 
 
-/** @BeginDocumentation
-   Name: SetStatus - sets the value of properties of a node, connection, or object
-
-   Synopsis:
-   node_id   dict SetStatus -> -
-   conn  dict SetStatus -> -
-   obj   dict SetStatus -> -
-
-   Description:
-   SetStatus changes properties of a node (specified by its node_id), a connection
-   (specified by a connection object), or an object as used in object-oriented
-   programming in SLI (see cvo for more). Properties can be inspected with GetStatus.
-
-   Note that many properties are read-only and cannot be changed.
-
-   Examples:
-   /dc_generator Create /dc_gen Set  %Creates a dc_generator, which is a node
-   dc_gen GetStatus info %view properties (amplitude is 0)
-   dc_gen << /amplitude 1500. >> SetStatus
-   dc_gen GetStatus info % amplitude is now 1500
-
-   Author: docu by Sirko Straube
-
-   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, Set, SetStatus_dict
-*/
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
-  index node_id = getValue< long >( i->OStack.pick( 1 ) );
+  size_t node_id = getValue< long >( i->OStack.pick( 1 ) );
 
   set_node_status( node_id, dict );
 
@@ -443,50 +413,6 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: GetStatus - return the property dictionary of a node, connection, or object
-
-   Synopsis:
-   node_id   GetStatus -> dict
-   conn  GetStatus -> dict
-   obj   GetStatus -> dict
-
-   Description:
-   GetStatus returns a dictionary with the status information
-   for a node (specified by its node_id), a connection (specified by a connection
-   object), or an object as used in object-oriented programming in SLI (see cvo for more).
-
-   The interpreter exchanges data with the network element using
-   its status dictionary. To abbreviate the access pattern
-        node_id GetStatus /lit get
-   a variant of get implicitly calls GetStatus
-        node_id /lit get .
-   In this way network elements and dictionaries can be accessed
-   with the same syntax. Sometimes access to nested data structures in
-   the status dictionary is required. In this case the advanced addressing
-   scheme of get is useful in which the second argument is an array of
-   literals. See the documentation of get for details.
-
-   The information contained in the property dictionary depends on the
-   concrete node model.
-
-   Please refer to the model documentation for details.
-
-   Standard entries for nodes:
-
-   global_id   - local ID of the node
-   model       - literal, defining the current node
-   frozen      - frozen nodes are not updated
-   thread      - the thread the node is allocated on
-   vp          - the virtual process a node belongs to
-
-   Note that the standard entries cannot be modified directly.
-
-   Author: Marc-Oliver Gewaltig
-   Availability: NEST
-   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_dict,
-   GetKernelStatus
-*/
 void
 NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 {
@@ -506,7 +432,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
-    index node_id = ( *it ).node_id;
+    size_t node_id = ( *it ).node_id;
     DictionaryDatum dict = get_node_status( node_id );
     result.push_back( dict );
   }
@@ -521,7 +447,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  index node_id = getValue< long >( i->OStack.pick( 0 ) );
+  size_t node_id = getValue< long >( i->OStack.pick( 0 ) );
   DictionaryDatum dict = get_node_status( node_id );
 
   i->OStack.pop();
@@ -584,17 +510,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  NodeCollectionMetadataPTR meta = nc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-
-  // return empty dict if NC does not have metadata
-  if ( meta.get() )
-  {
-    meta->get_status( dict );
-    slice_positions_if_sliced_nc( dict, nc );
-
-    ( *dict )[ names::network_size ] = nc->size();
-  }
+  nc->get_metadata_status( dict );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -610,13 +527,6 @@ NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: SetDefaults - Set the default values for a node or synapse model.
-  Synopsis: /modelname dict SetDefaults -> -
-  SeeAlso: GetDefaults
-  Author: Jochen Martin Eppler
-  FirstVersion: September 2008
-*/
 void
 NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -631,13 +541,6 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: GetDefaults - Return the default values for a node or synapse model.
-  Synopsis: /modelname GetDefaults -> dict
-  SeeAlso: SetDefaults
-  Author: Jochen Martin Eppler
-  FirstVersion: September 2008
-*/
 void
 NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
@@ -649,6 +552,19 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
   i->OStack.push( dict );
+  i->EStack.pop();
+}
+
+void
+NestModule::Install_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const std::string modulename = getValue< std::string >( i->OStack.pick( 0 ) );
+
+  kernel().module_manager.install( modulename );
+
+  i->OStack.pop();
   i->EStack.pop();
 }
 
@@ -666,16 +582,6 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: Simulate - simulate n milliseconds
-
-   Synopsis:
-   n(int) Simulate -> -
-
-   Description: Simulate the network for n milliseconds.
-
-   SeeAlso: Run, Prepare, Cleanup, unit_conversion
-*/
 void
 NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 {
@@ -690,23 +596,6 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: Run - simulate n milliseconds
-
-   Synopsis:
-   n(int) Run -> -
-
-   Description: Simulate the network for n milliseconds.
-   Call prepare before, and cleanup after.
-   t m mul Simulate = Prepare m { t Run } repeat Cleanup
-
-   Note: Run must only be used after Prepare is called, and
-   before Cleanup to finalize state (close files, etc).
-   Any changes made between Prepare and Cleanup may cause
-   undefined behavior and incorrect results.
-
-   SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
-*/
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const
 {
@@ -721,22 +610,6 @@ NestModule::RunFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/** @BeginDocumentation
-   Name: Prepare - prepare the network for a simulation
-
-   Synopsis:
-   Prepare -> -
-
-   Description: sets up network calibration before run is called
-   any number of times
-
-   Note: Run must only be used after Prepare is called, and
-   before Cleanup to finalize state (close files, etc).
-   Any changes made between Prepare and Cleanup may cause
-   undefined behavior and incorrect results.
-
-   SeeAlso: Run, Cleanup, Simulate
-*/
 void
 NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
 {
@@ -744,22 +617,6 @@ NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: Cleanup - cleanup the network after a simulation
-
-   Synopsis:
-   Cleanup -> -
-
-   Description: tears down a network after run is called
-   any number of times
-
-   Note: Run must only be used after Prepare is called, and
-   before Cleanup to finalize state (close files, etc).
-   Any changes made between Prepare and Cleanup may cause
-   undefined behavior and incorrect results.
-
-   SeeAlso: Run, Prepare, Simulate
-*/
 void
 NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
 {
@@ -767,20 +624,6 @@ NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: CopyModel - copy a model to a new name, set parameters for copy, if
-   given
-   Synopsis:
-   /model /new_model param_dict -> -
-   /model /new_model            -> -
-   Parameters:
-   /model      - literal naming an existing model
-   /new_model  - literal name of the copy to create, must not exist before
-   /param_dict - parameters to set in the new_model
-   Description:
-   A copy of model is created and registered under the name new_model.
-   If a parameter dictionary is given, the parameters are set in new_model.
- */
 void
 NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -797,28 +640,6 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: Create - create nodes
-
-   Synopsis:
-   /model          Create -> NodeCollection
-   /model n        Create -> NodeCollection
-   /model   params Create -> NodeCollection
-   /model n params Create -> NodeCollection
-
-   Parameters:
-   /model - literal naming the modeltype
-   n      - the desired number of nodes
-   params - parameters for the newly created node(s)
-
-   Returns:
-   node_ids   - NodeCollection representing nodes created
-
-   Description:
-   Create generates n new network objects of the supplied model
-   type. If n is not given, a single node is created. params is a
-   dictionary with parameters for the new nodes.
-*/
 void
 NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -858,25 +679,6 @@ NestModule::GetNodes_D_b::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: ResetKernel - Put the simulation kernel back to its initial state.
-   Description:
-   This function re-initializes the simulation kernel, returning it to the
-   same state as after NEST has started.
-   In particular,
-   - all network nodes
-   - all connections
-   - all user-defined neuron and synapse models
-   are deleted, and
-   - time
-   - random generators
-   are reset. The only exception is that dynamically loaded modules are not
-   unloaded. This may change in a future version of NEST. The SLI interpreter
-   is not affected by ResetKernel.
-   Availability: NEST
-   Author: Marc-oliver Gewaltig
-   SeeAlso: reset, ResetOptions
-*/
 void
 NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 {
@@ -966,6 +768,62 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
+
+void
+NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) const
+{
+  kernel().connection_manager.sw_construction_connect.start();
+
+  i->assert_stack_load( 5 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 4 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_specs_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  std::map< Name, std::vector< DictionaryDatum > > synapse_specs {
+    { names::primary, {} }, { names::third_in, {} }, { names::third_out, {} }
+  };
+
+  for ( auto& [ key, syn_spec_array ] : synapse_specs )
+  {
+    ArrayDatum spec = getValue< ArrayDatum >( ( *synapse_specs_dict )[ key ] );
+
+    for ( auto syn_param : spec )
+    {
+      syn_spec_array.push_back( getValue< DictionaryDatum >( syn_param ) );
+    }
+  }
+
+  // dictionary access checking is handled by connect
+  connect_tripartite( sources, targets, third, connectivity, synapse_specs );
+
+  i->OStack.pop( 5 );
+  i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
+}
+
+
+void
+NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
+{
+  kernel().connection_manager.sw_construction_connect.start();
+
+  i->assert_stack_load( 2 );
+
+  DictionaryDatum graph_specs = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  const long hyberslab_size = getValue< long >( i->OStack.pick( 0 ) );
+
+  kernel().connection_manager.connect_sonata( graph_specs, hyberslab_size );
+
+  i->OStack.pop( 2 );
+  i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
+}
+
 /** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
@@ -987,15 +845,6 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: PrintNodes - Print nodes in the network.
-   Synopsis:
-   -  PrintNodes -> -
-   Description:
-   Print node ID ranges and model names of the nodes in the network. Print the
-   information directly to screen.
-*/
-
 void
 NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
 {
@@ -1003,16 +852,6 @@ NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
   std::cout << std::endl;
   i->EStack.pop();
 }
-
-/* BeginDocumentation
-   Name: PrintNodesToStream - Redirect printing of nodes in the network.
-   Synopsis:
-   -  PrintNodesToStream -> -
-   Description:
-   Returns string output that can be used to print information about the nodes
-   in the network.
-   The string is the information directly printed by PrintNodes.
-*/
 
 void
 NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
@@ -1024,20 +863,6 @@ NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: Rank - Return the MPI rank of the process.
-   Synopsis: Rank -> int
-   Description:
-   Returns the rank of the MPI process (MPI_Comm_rank) executing the
-   command. This function is mainly meant for logging and debugging
-   purposes. It is highly discouraged to use this function to write
-   rank-dependent code in a simulation script as this can break NEST
-   in funny ways, of which dead-locks are the nicest.
-   Availability: NEST 2.0
-   Author: Jochen Martin Eppler
-   FirstVersion: January 2006
-   SeeAlso: NumProcesses, SyncProcesses, ProcessorName
-*/
 void
 NestModule::RankFunction::execute( SLIInterpreter* i ) const
 {
@@ -1045,17 +870,6 @@ NestModule::RankFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: NumProcesses - Return the number of MPI processes.
-   Synopsis: NumProcesses -> int
-   Description:
-   Returns the number of MPI processes (MPI_Comm_size). This
-   function is mainly meant for logging and debugging purposes.
-   Availability: NEST 2.0
-   Author: Jochen Martin Eppler
-   FirstVersion: January 2006
-   SeeAlso: Rank, SyncProcesses, ProcessorName
-*/
 void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
@@ -1063,47 +877,6 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: SetFakeNumProcesses - Set a fake number of MPI processes.
-   Synopsis: n_procs SetFakeNumProcesses -> -
-   Description:
-   Sets the number of MPI processes to n_procs. Used for benchmarking purposes
-   of memory consumption only.
-   Please note:
-   - Simulation of the network will not be possible after setting fake
-     processes.
-   - It is not possible to use this function when running a script on multiple
-     actual MPI processes.
-   - The setting of the fake number of processes has to happen before the kernel
-     reset and before the setting of the local number of threads.
-     After calling SetFakeNumProcesses, it is obligatory to call either
-     ResetKernel or SetStatus on the Kernel for the setting of the fake
-     number of processes to come into effect.
-
-   A typical use case would be to test if a neuronal network fits on a machine
-   of given size without using the actual resources.
-
-   Example:
-             %%% Set fake number of processes
-             100 SetFakeNumProcesses
-
-             %%% Build network
-             /iaf_psc_alpha 100 Create
-             [1 100] Range /n Set
-
-             << /source n /target n >> Connect
-
-             %%% Measure memory consumption
-             memory_thisjob ==
-
-       Execute this script with
-             mpirun -np 1 nest example.sli
-
-   Availability: NEST 2.2
-   Author: Susanne Kunkel
-   FirstVersion: July 2011
-   SeeAlso: NumProcesses
-*/
 void
 NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -1116,19 +889,6 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: SyncProcesses - Synchronize all MPI processes.
-   Synopsis: SyncProcesses -> -
-   Availability: NEST 2.0
-   Author: Alexander Hanuschkin
-   FirstVersion: April 2009
-   Description:
-   This function allows to synchronize all MPI processes at any
-   point in a simulation script. Internally, the function uses
-   MPI_Barrier(). Note that during simulation the processes are
-   automatically synchronized without the need for user interaction.
-   SeeAlso: Rank, NumProcesses, ProcessorName
-*/
 void
 NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
 {
@@ -1136,17 +896,6 @@ NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: TimeCommunication - returns average time taken for MPI_Allgather over n
-   calls with m bytes
-   Synopsis:
-   n m TimeCommunication -> time
-   Availability: NEST 2.0
-   Author: Abigail Morrison
-   FirstVersion: August 2009
-   Description:
-   The function allows a user to test how much time a call the Allgather costs
-*/
 void
 NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
 {
@@ -1169,19 +918,7 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( time );
   i->EStack.pop();
 }
-/** @BeginDocumentation
-   Name: TimeCommunicationv - returns average time taken for MPI_Allgatherv over
-   n calls with m
-   bytes
-   Synopsis:
-   n m TimeCommunication -> time
-   Availability: NEST 2.0
-   Author:
-   FirstVersion: August 2012
-   Description:
-   The function allows a user to test how much time a call the Allgatherv costs
-   Does not work for offgrid!!!
-*/
+
 void
 NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -1199,19 +936,6 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall
-   over n calls with m
-   bytes
-   Synopsis:
-   n m TimeCommunicationAlltoall -> time
-   Availability: 10kproject (>r11254)
-   Author: Jakob Jordan
-   FirstVersion: June 2014
-   Description:
-   The function allows a user to test how much time a call to MPI_Alltoall costs
-   SeeAlso: TimeCommunication
- */
 void
 NestModule::TimeCommunicationAlltoall_i_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -1229,20 +953,6 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute( SLIInterpreter* i ) 
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: TimeCommunicationAlltoallv - returns average time taken for
-   MPI_Alltoallv over n calls with
-   m bytes
-   Synopsis:
-   n m TimeCommunicationAlltoallv -> time
-   Availability: 10kproject (>r11300)
-   Author: Jakob Jordan
-   FirstVersion: July 2014
-   Description:
-   The function allows a user to test how much time a call to MPI_Alltoallv
-   costs
-   SeeAlso: TimeCommunication
- */
 void
 NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -1260,23 +970,6 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i )
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-   Name: ProcessorName - Returns a unique specifier for the actual node.
-   Synopsis: ProcessorName -> string
-   Availability: NEST 2.0
-   Author: Alexander Hanuschkin
-   FirstVersion: April 2009
-   Description:
-   This function returns the name of the processor it was called
-   on (MPI_Get_processor_name). See MPI documentation for more details. If NEST
-   is not compiled with MPI support, this function returns the hostname of
-   the machine as returned by the POSIX function gethostname().
-   Examples:
-   (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on
-   machine ) =only
-   ProcessorName =
-   SeeAlso: Rank, NumProcesses, SyncProcesses
-*/
 void
 NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 {
@@ -1285,22 +978,6 @@ NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 }
 
 #ifdef HAVE_MPI
-/** @BeginDocumentation
-   Name: abort - Abort all NEST processes gracefully.
-   Parameters:
-   exitcode - The exitcode to quit with
-   Description:
-   This function can be run by the user to end all NEST processes as
-   gracefully as possible. If NEST is compiled without MPI support,
-   this will just call quit_i. If compiled with MPI support, it will
-   call MPI_Abort, which will kill all processes of the application
-   and thus prevents deadlocks. The exitcode is userabort in both
-   cases (see statusdict/exitcodes).
-   Availability: NEST 2.0
-   Author: Jochen Martin Eppler
-   FirstVersion: October 2012
-   SeeAlso: quit, Rank, SyncProcesses, ProcessorName
-*/
 void
 NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -1367,13 +1044,16 @@ NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
+NestModule::Cva_g_lFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
-  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum node_ids = nodecollection->to_array();
+  i->assert_stack_load( 2 );
 
-  i->OStack.pop();
+  const std::string selection = getValue< std::string >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+
+  ArrayDatum node_ids = nodecollection->to_array( selection );
+
+  i->OStack.pop( 2 );
   i->OStack.push( node_ids );
   i->EStack.pop();
 }
@@ -1434,7 +1114,7 @@ NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = nodecollection->find( node_id );
+  const auto res = nodecollection->get_nc_index( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1485,7 +1165,7 @@ NestModule::GetNodeID_qFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
-  index node_id = ( **it ).node_id;
+  size_t node_id = ( **it ).node_id;
 
   i->OStack.pop();
   i->OStack.push( node_id );
@@ -1567,29 +1247,13 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
     throw RangeCheck();
   }
 
-  const index node_id = ( *nodecollection )[ idx ];
+  const size_t node_id = ( *nodecollection )[ idx ];
 
   i->OStack.pop( 2 );
   i->OStack.push( node_id );
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::Take_g_a - slice a NodeCollection
-
-  Synopsis:
-  nc array Take_g_a -> NodeCollection
-
-  Parameters:
-  nc - NodeCollection to be sliced
-  array - array of the form [start stop step]
-
-  Description:
-  Slice a `NodeCollection` using pythonic slicing conventions:
-  - Include elements from and including `start` to but excluding `stop`.
-  - `step` is the step length in the slice and must be positive.
-  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last element.
-*/
 void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {
@@ -1633,21 +1297,7 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 
 
 #ifdef HAVE_MUSIC
-/** @BeginDocumentation
-   Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port
 
-   Synopsis:
-   (spikes_in) 0.5 SetAcceptableLatency -> -
-
-   Parameters:
-   port_name - the name of the MUSIC input port
-   latency   - the acceptable latency (ms) to set for the port
-
-   Author: Jochen Martin Eppler
-   FirstVersion: April 2009
-   Availability: Only when compiled with MUSIC
-   SeeAlso: music_event_in_proxy
-*/
 void
 NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
 {
@@ -1677,14 +1327,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
-/**
- * Enable Structural Plasticity within the simulation. This allows
- * dynamic rewiring of the network based on mean electrical activity.
- * Please note that, in the current implementation of structural plasticity,
- * spikes could occasionally be delivered via connections that were not present
- * at the time of the spike.
- * @param i
- */
+
 void
 NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
@@ -1692,10 +1335,6 @@ NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) co
 
   i->EStack.pop();
 }
-/**
- * Disable Structural Plasticity in the network.
- * @param i
- */
 void
 NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
@@ -1704,14 +1343,6 @@ NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) c
   i->EStack.pop();
 }
 
-/**
- * Set epsilon that is used for comparing spike times in STDP.
- * Spike times in STDP synapses are currently represented as double
- * values. The epsilon defines the maximum distance between spike
- * times that is still considered 0.
- *
- * Note: See issue #894
- */
 void
 NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
 {
@@ -1725,9 +1356,6 @@ NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
 }
 
 
-/** @BeginDocumentation
-  Name: CreateParameter
-*/
 void
 NestModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -1969,9 +1597,6 @@ NestModule::Dimension3d_P_P_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: GetValue
-*/
 void
 NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
 {
@@ -2000,9 +1625,6 @@ NestModule::IsSpatial_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: Apply
-*/
 void
 NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -2039,26 +1661,6 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
 
 #ifdef HAVE_LIBNEUROSIM
 
-/** @BeginDocumentation
-Name: CGParse - Call ConnectionGenerator::fromXML() and return a
-ConnectionGenerator
-
-Synopsis:
-xml_string CGParse -> cg
-
-Parameters:
-xml_string - The XML string to parse.
-
-Description:
-Return a ConnectionGenerator created by deserializing the given
-XML string. The library to parse the XML string can be selected using
-CGSelectImplementation
-
-Availability: Only if compiled with libneurosim support
-Author: Jochen Martin Eppler
-FirstVersion: September 2013
-SeeAlso: CGParseFile, CGSelectImplementation
-*/
 void
 NestModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
 {
@@ -2071,26 +1673,6 @@ NestModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( cgd );
 }
 
-/** @BeginDocumentation
-Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a
-ConnectionGenerator
-
-Synopsis:
-xml_filename CGParseFile -> cg
-
-Parameters:
-xml_filename - The XML file to read.
-
-Description:
-Return a ConnectionGenerator created by deserializing the given
-XML file. The library to parse the XML file can be selected using
-CGSelectImplementation
-
-Availability: Only if compiled with libneurosim support
-Author: Jochen Martin Eppler
-FirstVersion: February 2014
-SeeAlso: CGParse, CGSelectImplementation
-*/
 void
 NestModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
 {
@@ -2103,26 +1685,6 @@ NestModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( cgd );
 }
 
-/** @BeginDocumentation
-Name: CGSelectImplementation - Call
-ConnectionGenerator::selectCGImplementation()
-
-Synopsis:
-tag library CGParse -> -
-
-Parameters:
-tag     - The XML tag to associate with a library.
-library - The library to provide the parsing for CGParse
-
-Description:
-Select a library to provide a parser for XML files and associate
-an XML tag with the library.
-
-Availability: Only if compiled with libneurosim support
-Author: Jochen Martin Eppler
-FirstVersion: September 2013
-SeeAlso: CGParse, CGParseFile
-*/
 void
 NestModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) const
 {
@@ -2143,25 +1705,6 @@ NestModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) con
 // SLI functions for spatial networks
 //
 
-/** @BeginDocumentation
-  Name: nest::CreateLayer - create nodes with spatial properties
-
-  Synopsis:
-  dict CreateLayer -> layer
-
-  Parameters:
-  dict - dictionary with layer specification
-
-  Description: Creates a NodeCollection which contains information
-  about the spatial position of its nodes. Positions can be organized
-  in one of two layer classes: grid-based layers, in which each element
-  is placed at a location in a regular grid, and free layers, in which
-  elements can be placed arbitrarily in space.  Which kind of layer
-  this command creates depends on the elements in the supplied
-  specification dictionary.
-
-  Author: Håkon Enger, Kittel Austvoll
-*/
 void
 NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -2182,33 +1725,6 @@ NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::GetPosition - retrieve position of input node
-
-  Synopsis: NodeCollection GetPosition -> [array]
-
-  Parameters:
-  layer      - NodeCollection for layer with layer nodes
-
-  Returns:
-  [array]    - spatial position of node [x y]
-
-  Description: Retrieves spatial 2D position of layer node(s).
-
-  Examples:
-
-  %%Create layer
-  << /rows 5
-     /columns 4
-     /elements /iaf_psc_alpha
-  >> /dictionary Set
-
-  dictionary CreateLayer /src Set
-
-  src [4] Take GetPosition
-
-  Author: Kittel Austvoll
-*/
 
 void
 NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
@@ -2231,48 +1747,6 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::Displacement - compute displacement vector
-
-  Synopsis: layer from_node_id to_node_id Displacement -> [double vector]
-            layer from_pos to_node_id Displacement -> [double vector]
-
-  Parameters:
-  layer           - NodeCollection for layer
-  from_node_id    - int, node_id of node in a spatial NodeCollection
-  from_pos        - double vector, position in layer
-  to_node_id      - int, node_id of node in a spatial NodeCollection
-
-  Returns:
-  [double vector] - vector pointing from position "from" to position "to"
-
-  Description:
-  This function returns a vector connecting the position of the "from_node_id"
-  node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
-
-  The "from" position is projected into the layer of the "to_node_id" node. If
-  this layer has periodic boundary conditions (EdgeWrap is true), then the
-  shortest displacement vector is returned, taking into account the
-  periodicity. Fixed grid layers are in this case extended so that the
-  nodes at the edges of the layer have a distance of one grid unit when
-  wrapped.
-
-  Example:
-
-  << /rows 5
-     /columns 4
-     /elements /iaf_psc_alpha
-  >> CreateLayer
-  /layer Set
-
-  layer [4] Take layer [5] Take Displacement
-  [[0.2 0.3]] layer [5] Take Displacement
-
-  Author: Håkon Enger, Hans E Plesser, Kittel Austvoll
-
-  See also: Distance, GetPosition
-*/
 void
 NestModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
 {
@@ -2309,48 +1783,6 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::Distance - compute distance between nodes
-
-  Synopsis: layer from_node_id to_node_id Distance -> double
-            layer from_pos to_node_id Distance -> double
-
-  Parameters:
-  layer       - NodeCollection for layer
-  from_node_id    - int, node_id of node in a spatial NodeCollection
-  from_pos    - double vector, position in layer
-  to_node_id      - int, node_id of node in a spatial NodeCollection
-
-  Returns:
-  double - distance between nodes or given position and node
-
-  Description:
-  This function returns the distance between the position of the "from_node_id"
-  node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
-
-  The "from" position is projected into the layer of the "to_node_id" node. If
-  this layer has periodic boundary conditions (EdgeWrap is true), then the
-  shortest distance is returned, taking into account the
-  periodicity. Fixed grid layers are in this case extended so that the
-  nodes at the edges of the layer have a distance of one grid unit when
-  wrapped.
-
-  Example:
-
-  /layer
-  << /rows 5
-     /columns 4
-     /elements /iaf_psc_alpha
-  >> CreateLayer def
-
-  layer [4] Take layer [5] Take Distance
-  [[ 0.2 0.3 ]] layer [5] Take Distance
-
-  Author: Hans E Plesser, Kittel Austvoll
-
-  See also: Displacement, GetPosition
-*/
 void
 NestModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
 {
@@ -2401,24 +1833,6 @@ NestModule::Distance_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::CreateMask - create a spatial mask
-
-  Synopsis:
-  << /type dict >> CreateMask -> mask
-
-  Parameters:
-  /type - mask type
-  dict  - dictionary with mask specifications
-
-  Description: Masks can be used when creating connections between nodes
-  with spatial parameters. A mask describes which area of the pool layer
-  shall be searched for nodes to connect for any given node in the driver
-  layer. This command creates a mask object which may be combined with other
-  mask objects using Boolean operators. The mask is specified in a dictionary.
-
-  Author: Håkon Enger
-*/
 void
 NestModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -2433,19 +1847,6 @@ NestModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::Inside - test if a point is inside a mask
-
-  Synopsis:
-  point mask Inside -> bool
-
-  Parameters:
-  point - array of coordinates
-  mask - mask object
-
-  Returns:
-  bool - true if the point is inside the mask
-*/
 void
 NestModule::Inside_a_MFunction::execute( SLIInterpreter* i ) const
 {
@@ -2506,181 +1907,7 @@ NestModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::ConnectLayers - connect two layers
 
-  Synopsis: sourcelayer targetlayer connection_dict
-  ConnectLayers -> -
-
-  Description: Connects nodes in two topological layers.
-
-  The parameters set in the input dictionary decides the nature
-  of the connection pattern being created. Please see parameter
-  list below for a detailed description of these variables.
-
-  The connections are created by iterating through either the
-  source or the target layer, consecutively connecting each node
-  to a region in the opposing layer.
-
-  Parameters:
-  sourcelayer  - NodeCollection for source layer
-  targetlayer  - NodeCollection for target layer
-
-  connection_dict - dictionary containing any of the following
-                    elements:
-
-  ------------------------------------------------------------------
-  Connection dictionary parameters:
-  ------------------------------------------------------------------
-  Parameter name: connection-type
-
-  Type: string
-
-  Parameter description:
-
-  Decides the type of connection pattern being created (i.e.
-  convergent or divergent topological connection). A convergent
-  topological connection is a connection between a source region
-  and a target node. A divergent topological connection is a
-  connection between a source node and a target region. A convergent
-  topological connection can also be called a receptive field connection.
-  A divergent topological connection can also be called a projective
-  field connection. A one-to-one connection can be created by setting
-  the size of the source or target region equal to one. The connection
-  type has particular effect on the connection pattern when used together
-  with the number_of_connections variable.
-
-
-  Parameter name: mask
-
-  Type: dictionary
-
-  Parameter description:
-
-  The mask defines the region used in the connection type described
-  above. There exists a selection of many different region sizes and
-  shapes. Examples are the grid region, the rectangular, circular or
-  doughnut region.
-
-  The grid region takes an optional anchor parameter. The anchor
-  parameter indicates which node of the grid region is aligned with
-  the source node.
-
-
-  Parameter name: weights, delays and kernel
-
-  Type: dictionary
-
-  Parameter description:
-
-  These parameters can be initialised in many ways. Either as a constant
-  value, with the help of a dictionary, or in an array (only for fixed
-  grid layers). The dictionary can be of type gaussian, 2D gaussian,
-  linear, exponential and other.
-
-
-  Parameter name: source
-
-  Type: dictionary
-
-  Parameter description:
-
-  The source dictionary enables us to give further detail on
-  how the nodes in the source layer used in the connection function
-  should be processed.
-
-  Parameters:
-  model*             literal
-  lid^               integer
-
-  *modeltype (i.e. /iaf_psc_alpha) of nodes that should be connected to
-  in the layer. All nodes are used if this variable isn't set.
-  ^Nesting depth of nodes that should be connected to. All layers are used
-  if this variable isn't set.
-
-
-  Parameter name: target
-
-  Type: dictionary
-
-  Parameter description:
-
-  See description for source dictionary.
-
-
-  Parameter name: number_of_connections
-
-  Type: integer
-
-  Parameter description:
-
-  Maximum number of connections that each iterating node is allowed.
-  The actual connections being created are picked at random from all
-  the candidate connections.
-
-
-      Parameter name: synapse_model
-
-      Type: literal
-
-      Parameter description:
-
-      The synapse model to be used for creating the connection.
-.
-  Parameter name: allow_autapses
-
-  Type: bool
-
-  Parameter description: Used together with the number_of_connections option to
-  indicate if autapses are allowed.
-
-
-  Parameter name: allow_multapses
-
-  Type: bool
-
-  Parameter description: Used together with the number_of_connections option to
-  indicate if multapses are allowed.
-
-  ------------------------------------------------------------------
-
-  Example:
-
-  %Create source layer with CreateLayer
-  << /rows 15
-     /columns 43
-     /extent [1.0 2.0]
-     /elements /iaf_psc_alpha
-  >> /src_dictionary Set
-
-  src_dictionary CreateLayer /src Set
-
-  %Create target layer with CreateLayer
-  %%Create layer
-  << /rows 34
-     /columns 71
-     /extent [3.0 1.0]
-     /elements /iaf_psc_alpha
-  >> /tgt_dictionary Set
-
-  tgt_dictionary CreateLayer /tgt Set
-
-  <<  /connection_type (convergent)
-      /mask << /grid << /rows 2 /columns 3 >>
-               /anchor << /row 4 /column 2 >> >>
-      /weight 2.3
-      /delay [2.3 1.2 3.2 1.3 2.3 1.2]
-      /kernel << /gaussian << /sigma 1.2 /p_center 1.41 >> >>
-      /synapse_model /stdp_synapse
-
-  >> /parameters Set
-
-  src tgt parameters ConnectLayers
-
-  Author: Håkon Enger, Kittel Austvoll
-
-  SeeAlso: nest::CreateLayer
-*/
 void
 NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
@@ -2700,19 +1927,6 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
-/** @BeginDocumentation
-
-  Name: nest::GetLayerStatus - return information about layer
-
-  Synopsis:
-  layer GetLayerStatus -> dict
-
-  Parameters:
-  layer - NodeCollection representing layer
-
-  Returns:
-  Status dictionary with information about layer
- */
 void
 NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 {
@@ -2727,43 +1941,6 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::DumpLayerNodes - write information about layer nodes to file
-
-  Synopsis: ostream layer DumpLayerNodes -> ostream
-
-  Parameters:
-  ostream - open output stream
-  layer   - NodeCollection for layer
-
-  Description:
-  Write information about each element in the given layer to the
-  output stream. The file format is one line per element with the
-  following contents:
-
-  node ID x-position y-position [z-position]
-
-  X and y position are given as physical coordinates in the extent,
-  not as grid positions. The number of decimals can be controlled by
-  calling setprecision on the output stream before calling DumpLayerNodes.
-
-  Remarks:
-  In distributed simulations, this function should only be called for
-  MPI rank 0. If you call it on several MPI ranks, you must use a
-  different file name on each.
-
-  Examples:
-
-  /my_layer << /rows 5 /columns 4 /elements /iaf_psc_alpha >> CreateLayer def
-
-  (my_layer_dump.lyr) (w) file
-  my_layer DumpLayerNodes
-  close
-
-  Author: Kittel Austvoll, Hans Ekkehard Plesser
-
-  SeeAlso: nest::DumpLayerConnections, setprecision
-*/
 void
 NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
@@ -2778,43 +1955,6 @@ NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/** @BeginDocumentation
-  Name: nest::DumpLayerConnections - prints a list of the connections of the
-                                         nodes in the layer to file
-
-  Synopsis: ostream source_layer synapse_model DumpLayerConnections ->
-                                                                         ostream
-
-  Parameters:
-  ostream          - open outputstream
-  source_layer     - NodeCollection for layer
-  synapse_model    - synapse model (literal)
-
-  Description:
-  Dumps information about all connections of the given type having their source
-  in the given layer to the given output stream. The data format is one line per
-  connection as follows:
-
-  source_node_id target_node_id weight delay displacement[x,y,z]
-
-  where displacement are up to three coordinates of the vector from the source
-  to the target node. If targets do not have positions (eg. spike recorders
-  outside any layer), NaN is written for each displacement coordinate.
-
-  Remarks:
-  For distributed simulations
-  - this function will dump the connections with local targets only.
-  - the user is responsible for writing to a different output stream (file)
-    on each MPI process.
-
-  Examples:
-
-  (out.cnn) (w) file layer_node_id /static_synapse PrintLayerConnections close
-
-  Author: Kittel Austvoll, Hans Ekkehard Plesser
-
-  SeeAlso: nest::DumpLayerNodes
-*/
 
 void
 NestModule::DumpLayerConnections_os_g_g_lFunction::execute( SLIInterpreter* i ) const
@@ -2855,7 +1995,7 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
   std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
-  std::vector< index > mask_node_ids;
+  std::vector< size_t > mask_node_ids;
 
   const int dim = anchor.size();
 
@@ -2876,7 +2016,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
+    for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
+          it != ml.end();
           ++it )
     {
       mask_node_ids.push_back( it->second );
@@ -2892,7 +2033,7 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+    for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
           ++it )
     {
@@ -2950,6 +2091,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
+  i->createcommand( "Install", &install_sfunction );
+
   i->createcommand( "Create_l_i", &create_l_ifunction );
 
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
@@ -2983,6 +2126,8 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
+  i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
+  i->createcommand( "ConnectTripartite_g_g_g_D_D", &connect_tripartite_g_g_g_D_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
@@ -3009,7 +2154,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
   i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
   i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
-  i->createcommand( "cva_g", &cva_gfunction );
+  i->createcommand( "cva_g_l", &cva_g_lfunction );
   i->createcommand( "size_g", &size_gfunction );
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
@@ -3057,24 +2202,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
-
-  // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
-#ifdef HAVE_LIBNEUROSIM
-  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
-
-  // Add MSP growth curves
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
-
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
@@ -3092,6 +2219,7 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< Gaussian2DParameter >( "gaussian2d" );
   register_parameter< GammaParameter >( "gamma" );
   register_parameter< ExpDistParameter >( "exp_distribution" );
+  register_parameter< GaborParameter >( "gabor" );
 
 #ifdef HAVE_LIBNEUROSIM
   i->createcommand( "CGParse", &cgparse_sfunction );

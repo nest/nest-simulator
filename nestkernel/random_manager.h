@@ -56,9 +56,8 @@ public:
   /**
    * Register available RNG types, set default RNG type and create RNGs.
    */
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -84,7 +83,7 @@ public:
    *
    * @param tid ID of thread requesting generator
    **/
-  RngPtr get_vp_synced_rng( thread tid ) const;
+  RngPtr get_vp_synced_rng( size_t tid ) const;
 
   /**
    * Get VP-specific random number generator.
@@ -92,7 +91,7 @@ public:
    * Each VP (thread) can use this RNG freely and will receive an independent
    * random number sequence.
    */
-  RngPtr get_vp_specific_rng( thread tid ) const;
+  RngPtr get_vp_specific_rng( size_t tid ) const;
 
   /**
    * Confirm that rank- and thread-synchronized RNGs are in sync.
@@ -109,7 +108,7 @@ public:
    * @param RNG_TYPE Class fulfilling requirements of C++ RNG.
    **/
   template < typename RNG_TYPE >
-  void register_rng_type( std::string name );
+  void register_rng_type( const std::string& name );
 
 private:
   /** Available RNG types. */
@@ -129,14 +128,6 @@ private:
 
   /** Random number generators specific to VPs. */
   std::vector< RngPtr > vp_specific_rngs_;
-
-  /**
-   * Replace current RNGs with newly seeded generators.
-   *
-   * The new generators will be of type `current_rng_type_` and will be
-   * seeded using `base_seed_`.
-   **/
-  void reset_rngs_();
 
   /** RNG type used by default. */
   static const std::string DEFAULT_RNG_TYPE_;
@@ -161,18 +152,16 @@ nest::RandomManager::get_rank_synced_rng() const
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_synced_rng( thread tid ) const
+nest::RandomManager::get_vp_synced_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
-  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_synced_rngs_[ tid ];
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_specific_rng( thread tid ) const
+nest::RandomManager::get_vp_specific_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
-  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_specific_rngs_[ tid ];
 }
 

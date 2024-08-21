@@ -24,6 +24,7 @@ Tests for error handling
 """
 
 import unittest
+
 import nest
 
 
@@ -40,33 +41,30 @@ class ErrorTestCase(unittest.TestCase):
         message = "test"
         exception = nest.kernel.NESTError
 
-        self.assertRaisesRegex(
-            exception, message, raise_custom_exception, exception, message)
+        self.assertRaisesRegex(exception, message, raise_custom_exception, exception, message)
 
     def test_StackUnderFlow(self):
         """Stack underflow"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, 'clear ;')
+        self.assertRaisesRegex(nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, "clear ;")
 
     def test_DivisionByZero(self):
         """Division by zero"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, '1 0 div')
+        self.assertRaisesRegex(nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, "1 0 div")
 
     def test_InvalidNodeCollection(self):
         """Invalid NodeCollection"""
 
         nest.ResetKernel()
 
-        nc1 = nest.Create('iaf_psc_alpha', 10)
-        nc2 = nest.Create('iaf_psc_alpha', 10)
-        nc3 = nest.Create('iaf_psc_exp', 10)
+        nc1 = nest.Create("iaf_psc_alpha", 10)
+        nc2 = nest.Create("iaf_psc_alpha", 10)
+        nc3 = nest.Create("iaf_psc_exp", 10)
         nc_c = nc1 + nc3
 
         nest.ResetKernel()
@@ -98,7 +96,7 @@ class ErrorTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nc = nest.Create('iaf_psc_alpha', 10)   # noqa: F841
+        nc = nest.Create("iaf_psc_alpha", 10)  # noqa: F841
         nest.ResetKernel()
 
         msg = "UnknownNode"
@@ -114,7 +112,7 @@ class ErrorTestCase(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(ErrorTestCase, 'test')
+    suite = unittest.makeSuite(ErrorTestCase, "test")
     return suite
 
 

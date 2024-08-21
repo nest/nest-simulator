@@ -141,7 +141,7 @@ The following snippet produces :numref:`grid`:
 
 ::
 
-    positions = nest.spatial.grid(shape=[10, 10]  # the number of rows and column in this grid ...
+    positions = nest.spatial.grid(shape=[10, 10],  # the number of rows and column in this grid ...
                                   extent=[2., 2.]  # the size of the grid in mm
                                   )
     nest.Create('iaf_psc_alpha', positions=positions)
@@ -390,6 +390,3 @@ NodeCollection, which describes the spatial properties.
       'extent': (1.0, 1.0),
       'network_size': 20,
       'shape': (4, 5)}
-
-It may also be useful to look at the ``spatial`` property of the
-NodeCollection, which describes the layer properties.

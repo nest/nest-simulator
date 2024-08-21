@@ -151,7 +151,14 @@ See also
 
 iaf_psc_delta, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_delta_ps
+
 EndUserDocs */
+
+void register_iaf_psc_delta_ps( const std::string& name );
 
 class iaf_psc_delta_ps : public ArchivingNode
 {
@@ -180,11 +187,11 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -261,11 +268,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 
@@ -381,7 +388,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_delta_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -398,16 +404,16 @@ private:
 };
 
 
-inline port
-nest::iaf_psc_delta_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::iaf_psc_delta_ps::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_psc_delta_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_psc_delta_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -416,8 +422,8 @@ iaf_psc_delta_ps::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_delta_ps::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_psc_delta_ps::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -426,8 +432,8 @@ iaf_psc_delta_ps::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_delta_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_psc_delta_ps::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

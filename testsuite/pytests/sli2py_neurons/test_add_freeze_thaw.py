@@ -23,9 +23,9 @@
 Test that per-thread nodes vectors are updated.
 """
 
+import nest
 import numpy as np
 import pytest
-import nest
 
 
 @pytest.mark.skipif_missing_threads
@@ -44,12 +44,12 @@ def test_add_freeze_thaw():
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    neuron_model = 'iaf_psc_alpha'
-    neurons_per_pop = 11   # not multiple of number of threads
-    neuron_params = {'I_e': -50.}
-    sim_time = 10.
+    neuron_model = "iaf_psc_alpha"
+    neurons_per_pop = 11  # not multiple of number of threads
+    neuron_params = {"I_e": -50.0}
+    sim_time = 10.0
 
-    vm_ref = nest.GetDefaults(neuron_model, 'V_m')
+    vm_ref = nest.GetDefaults(neuron_model, "V_m")
 
     # Test that neurons in population a hyperpolarize
     pop_a = nest.Create(neuron_model, n=neurons_per_pop, params=neuron_params)

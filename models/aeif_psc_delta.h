@@ -97,7 +97,14 @@ the value of `J` after a spike.
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
-See also [1]_.
+.. note::
+
+    The default refractory period for ``aeif`` models is zero, consistent with the model definition in
+    Brette & Gerstner [1]_.
+    This means if the refractory period is zero, the ``aeif`` neurons can fire multiple spikes in a single time step,
+    which can lead to exploding spike numbers and extreme slow-down of simulations.
+
+    We recommend users set ``t_ref > 0``.
 
 Parameters
 ++++++++++

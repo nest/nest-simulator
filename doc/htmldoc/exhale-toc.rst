@@ -1,33 +1,25 @@
 Breathe test
 ===============
 
+List of managers
+----------------
 
-
-
-jinja
------
-
-List of classes in ``nest`` module
 
 {% for item in cpp_class_list %}
-{% if 'NestModule' not in item %}
+{% if 'Manager' in item %}
 
 * :cpp:class:`{{ item }}`
-
 
 
 {% endif %}
 {% endfor %}
 
 
-.. doxygengroup:: Devices
+
+devices
+-------
+
+
+.. .. doxygengroup:: Devices
    :project: NEST Simulator
    :members:
-
-
-
-
-.. .. doxygennamespace:: nest
-   :project: NEST Simulator
-   :members:
-   :outline:

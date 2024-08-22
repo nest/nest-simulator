@@ -38,6 +38,10 @@ pynest_dir = os.path.join(repo_root_dir, "pynest")
 sys.path.append(pynest_dir)
 
 # -- General configuration ------------------------------------------------
+read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+
+if read_the_docs_build:
+    subprocess.call("cd ../doxygen; doxygen", shell=True)
 
 source_suffix = ".rst"
 master_doc = "index"
@@ -260,10 +264,11 @@ html_show_copyright = False
 
 
 def tags_devdocs(app, docname, source):
-    if docname == "dev_iomanager":
-        special = json.load(open("test_list.json"))
+    developer_pages = ["dev_iomanager", "exhale-toc"]
+
+    if any(docname == developer_page for developer_page in developer_pages):
         cpp_class = json.load(open("cpp_output.json"))
-        html_context = {"io_manager_list": special, "cpp_class_list": cpp_class}
+        html_context = {"cpp_class_list": cpp_class}
         special_source = source[0]
         rendered = app.builder.templates.render_string(special_source, html_context)
         source[0] = rendered
@@ -288,7 +293,7 @@ intersphinx_mapping = {
     "gpu": ("https://nest-gpu.readthedocs.io/en/latest/", None),
     "neuromorph": ("https://electronicvisions.github.io/hbp-sp9-guidebook/", None),
     "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
-    "tvb": ("https://docs.thevirtualbrain.org/", None),
+    # "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
 

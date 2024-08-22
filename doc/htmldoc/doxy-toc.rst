@@ -2,17 +2,8 @@ Separate the jinjas
 ===================
 
 
-{% for item in special_list %}
-.. note::
-
-   {{ item }}
-
-{% endfor %}
-
-
-.. doxygenfile:: connection.h
+.. .. doxygenfile:: connection.h
    :no-link:
-   :allow-dot-graphs:
 
 
 
@@ -30,6 +21,3 @@ Separate the jinjas
       user -> simulation_manager: run()
       Note left of user: store results<br/>...
       user -> simulation_manager: cleanup()
-
-
-

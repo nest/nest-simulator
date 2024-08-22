@@ -161,6 +161,13 @@ public:
    */
   virtual size_t send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
+  virtual void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike ) = 0;
+
   virtual void
   send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
 
@@ -405,9 +412,16 @@ public:
       assert( lcid + lcid_offset < C_.size() );
       ConnectionT& conn = C_[ lcid + lcid_offset ];
 
+      // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+      // only if needed, as this is computationally costly
+      e.set_sender_node_id_info( tid, syn_id_, lcid + lcid_offset );
+
       e.set_port( lcid + lcid_offset );
       if ( not conn.is_disabled() )
       {
+        // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+        // only if needed, as this is computationally costly
+        e.set_sender_node_id_info( tid, syn_id_, lcid + lcid_offset );
         // Some synapses, e.g., bernoulli_synapse, may not send an event after all
         const bool event_sent = conn.send( e, tid, cp );
         if ( event_sent )
@@ -424,6 +438,13 @@ public:
 
     return 1 + lcid_offset; // event was delivered to at least one target
   }
+
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike );
 
   // Implemented in connector_base_impl.h
   void

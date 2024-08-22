@@ -145,8 +145,9 @@ public:
     size_t target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay = numerics::nan,
-    const double weight = numerics::nan );
+    const double delay,
+    const double axonal_delay,
+    const double weight );
 
   /**
    * Connect two nodes.
@@ -166,6 +167,7 @@ public:
     long* targets,
     double* weights,
     double* delays,
+    double* axonal_delays,
     std::vector< std::string >& p_keys,
     double* p_values,
     size_t n,
@@ -298,6 +300,13 @@ public:
     const std::vector< ConnectorModel* >& cm,
     Event& e );
 
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike );
+
   /**
    * Send event e to all device targets of source source_node_id
    */
@@ -387,31 +396,28 @@ public:
   void remove_disabled_connections( const size_t tid );
 
   /**
-   * Returns true if connection information needs to be
-   * communicated. False otherwise.
+   * Returns true if connection information needs to be communicated. False otherwise.
    */
   bool connections_have_changed() const;
 
   /**
-   * Sets flag indicating whether connection information needs to be
-   * communicated to true.
+   * Sets flag indicating whether connection information needs to be communicated to true.
    */
   void set_connections_have_changed();
 
   /**
-   * Sets flag indicating whether connection information needs to be
-   * communicated to false.
+   * Sets flag indicating whether connection information needs to be communicated to false.
    */
   void unset_connections_have_changed();
 
+  bool have_nonzero_axonal_delays() const;
+
   /**
-   * Deletes TargetTable and resets processed flags of
-   * SourceTable.
+   * Deletes TargetTable and resets processed flags of SourceTable.
    *
-   * This function must be called if connections are
-   * created after connections have been communicated previously. It
-   * basically restores the connection infrastructure to a state where
-   * all information only exists on the postsynaptic side.
+   * This function must be called if connections are created after connections have been communicated previously. It
+   * basically restores the connection infrastructure to a state where all information only exists on the postsynaptic
+   * side.
    */
   void restructure_connection_tables( const size_t tid );
 
@@ -528,6 +534,7 @@ private:
     const synindex syn_id,
     const DictionaryDatum& params,
     const double delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
   /**
@@ -651,6 +658,9 @@ private:
   //! simulate.
   bool connections_have_changed_;
 
+  //! True if any connection uses axonal delays on given thread.
+  std::vector< bool > have_nonzero_axonal_delays_;
+
   //! true if GetConnections has been called.
   bool get_connections_has_been_called_;
 
@@ -683,6 +693,9 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+
+  //! Number of weight corrections required for STDP synapses with predominant axonal delays during the whole simulation
+  size_t num_corrections_;
 };
 
 inline bool
@@ -793,6 +806,13 @@ ConnectionManager::connections_have_changed() const
   return connections_have_changed_;
 }
 
+inline bool
+ConnectionManager::have_nonzero_axonal_delays() const
+{
+  return std::any_of(
+    have_nonzero_axonal_delays_.cbegin(), have_nonzero_axonal_delays_.cend(), []( const bool b ) { return b; } );
+}
+
 inline void
 ConnectionManager::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
 {
@@ -881,6 +901,19 @@ ConnectionManager::send( const size_t tid,
   Event& e )
 {
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
+  const double t_last_pre_spike,
+  double* weight_revert,
+  const double t_post_spike )
+{
+  ++num_corrections_;
+  connections_[ tid ][ syn_id ]->correct_synapse_stdp_ax_delay(
+    tid, syn_id, lcid, t_last_pre_spike, weight_revert, t_post_spike );
 }
 
 inline void

@@ -185,8 +185,6 @@ nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     return;
   }
 
-  sw_synchronize_.reset();
-
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
@@ -262,7 +260,6 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
-  def< double >( dict, "time_synchronize", sw_synchronize_.elapsed() );
 }
 
 #ifdef HAVE_MPI
@@ -801,15 +798,7 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
 void
 nest::MPIManager::synchronize()
 {
-#ifdef TIMER_DETAILED
-  sw_synchronize_.start();
-#endif
-
   MPI_Barrier( comm );
-
-#ifdef TIMER_DETAILED
-  sw_synchronize_.stop();
-#endif
 }
 
 

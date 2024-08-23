@@ -462,11 +462,6 @@ public:
   // public stop watch for benchmarking purposes
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
   Stopwatch sw_construction_connect;
-  Stopwatch sw_construction_connect_third_inner_count;
-  Stopwatch sw_construction_connect_third_inner_max;
-  Stopwatch sw_construction_connect_third_inner_fill;
-  Stopwatch sw_construction_connect_third_inner_communicate;
-  Stopwatch sw_construction_connect_third_inner_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
 

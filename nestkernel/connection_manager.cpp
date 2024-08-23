@@ -120,11 +120,6 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
     stdp_eps_ = 1.0e-6;
     min_delay_ = max_delay_ = 1;
     sw_construction_connect.reset();
-    sw_construction_connect_third_inner_count.reset();
-    sw_construction_connect_third_inner_max.reset();
-    sw_construction_connect_third_inner_fill.reset();
-    sw_construction_connect_third_inner_communicate.reset();
-    sw_construction_connect_third_inner_connect.reset();
   }
 
   const size_t num_threads = kernel().vp_manager.get_num_threads();
@@ -232,16 +227,6 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
   def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
-  def< double >(
-    dict, "time_construction_connect_third_inner_count", sw_construction_connect_third_inner_count.elapsed() );
-  def< double >( dict, "time_construction_connect_third_inner_max", sw_construction_connect_third_inner_max.elapsed() );
-  def< double >(
-    dict, "time_construction_connect_third_inner_fill", sw_construction_connect_third_inner_fill.elapsed() );
-  def< double >( dict,
-    "time_construction_connect_third_inner_communicate",
-    sw_construction_connect_third_inner_communicate.elapsed() );
-  def< double >(
-    dict, "time_construction_connect_third_inner_connect", sw_construction_connect_third_inner_connect.elapsed() );
 
   ArrayDatum connection_rules;
   for ( auto const& element : *connruledict_ )

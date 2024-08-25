@@ -798,8 +798,7 @@ jobs:
               -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
               -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
-              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
-              ${{ contains(matrix.use, 'openmp') && '-DOpenMP_ROOT=$(brew --prefix libomp)' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && '$(brew --prefix libomp)' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \

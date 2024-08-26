@@ -99,7 +99,7 @@ For simulations with gap junctions, NEST uses an iterative solution
 scheme based on a numerical method called Jacobi waveform relaxation.
 The default settings of the iterative method are based on numerical
 results, benchmarks, and previous experience with gap-junction
-simulations (see Hahne et al. [2]_)
+simulations [2]_.
 and should only be changed with proper knowledge of the method. In
 general the following parameters can be set via kernel parameters:
 

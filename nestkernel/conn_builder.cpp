@@ -711,15 +711,22 @@ nest::ThirdInBuilder::connect_()
   const size_t global_max_stc = *std::max_element( max_stc.begin(), max_stc.end() );
   const size_t slots_per_rank = 2 * global_max_stc;
 
-  // create and fill send buffer, entries per pair
-  std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 );
-  std::vector< size_t > rank_idx( num_ranks, 0 );
+  // send buffer for third rank-third gid pairs
+  std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 ); // send buffer
+
+  // vector mapping destination rank to next entry in send_stg to write to
+  // initialization based on example in https://en.cppreference.com/w/cpp/iterator/back_insert_iterator
+  std::vector< size_t > rank_idx;
+  rank_idx.reserve( num_ranks );
+  std::generate_n( std::back_insert_iterator< std::vector< size_t > >( rank_idx ),
+    num_ranks,
+    [ rk = 0, slots_per_rank ]() mutable { return ( rk++ ) * slots_per_rank; } );
 
   for ( auto stgp : source_third_gids_ )
   {
     for ( auto& stg : *stgp )
     {
-      const auto ix = stg.third_rank * slots_per_rank + rank_idx[ stg.third_rank ];
+      const auto ix = rank_idx[ stg.third_rank ];
       send_stg[ ix ] = stg.third_gid; // write third gid first because we need to look at it first below
       send_stg[ ix + 1 ] = stg.source_gid;
       rank_idx[ stg.third_rank ] += 2;

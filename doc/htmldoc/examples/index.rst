@@ -77,14 +77,14 @@ PyNEST examples
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../static/img/potjans_2014_raster_plot.png
+           :img-top: ../auto_examples/Potjans_2014/potjans_2014_raster_plot.png
 
            * :doc:`../auto_examples/Potjans_2014/index`
 
 
 
     .. grid-item-card:: EI clustered network (Rostami et al)
-           :img-top: ../static/img/pynest/EI_clustered_network_schematic.png
+           :img-top: ../auto_examples/EI_clustered_network/EI_clustered_network_schematic.png
 
            :doc:`../auto_examples/EI_clustered_network/index`
 
@@ -257,7 +257,7 @@ PyNEST examples
            * :doc:`../auto_examples/sonata_example/sonata_network`
 
     .. grid-item-card:: HPC benchmark
-           :img-top: ../static/img/nest_logo-faded.png
+           :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
 

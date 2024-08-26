@@ -22,7 +22,7 @@ possibility to create both connections with a single call to
     a = nest.Create("hh_psc_alpha_gap")
     b = nest.Create("hh_psc_alpha_gap")
     gap_weight = 0.5
-    syn_dict = {"synapse_model":"gap_junction", "weight": gap_weight}
+    syn_dict = {"synapse_model": "gap_junction", "weight": gap_weight}
     conn_dict = {"rule": "one_to_one", "make_symmetric": True}
     # Create gap junction between neurons a and b
     nest.Connect(a, b, conn_dict, syn_dict)

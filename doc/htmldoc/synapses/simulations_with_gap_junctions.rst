@@ -19,11 +19,11 @@ possibility to create both connections with a single call to
 
     import nest
 
-    a = nest.Create('hh_psc_alpha_gap')
-    b = nest.Create('hh_psc_alpha_gap')
+    a = nest.Create("hh_psc_alpha_gap")
+    b = nest.Create("hh_psc_alpha_gap")
     gap_weight = 0.5
-    syn_dict = {'synapse_model':'gap_junction', 'weight': gap_weight}
-    conn_dict = {'rule': 'one_to_one', 'make_symmetric': True}
+    syn_dict = {"synapse_model":"gap_junction", "weight": gap_weight}
+    conn_dict = {"rule": "one_to_one", "make_symmetric": True}
     # Create gap junction between neurons a and b
     nest.Connect(a, b, conn_dict, syn_dict)
 
@@ -31,7 +31,7 @@ In this case the reverse connection is created internally. In order to
 prevent the creation of incomplete or non-symmetrical gap junctions the
 creation of gap junctions is restricted to
 
--  ``one_to_one`` connections with ``'make_symmetric': True``
+-  ``one_to_one`` connections with ``"make_symmetric": True``
 -  ``all_to_all`` connections with equal source and target populations
    and default or scalar parameters
 
@@ -56,7 +56,7 @@ level with e.g. the ``random`` module of the Python Standard Library:
     n_gap_junction = 3000
 
     gap_weight = 0.5
-    n = nest.Create('hh_psc_alpha_gap', n_neuron)
+    n = nest.Create("hh_psc_alpha_gap", n_neuron)
     n_list = n.tolist()
 
     random.seed(0)

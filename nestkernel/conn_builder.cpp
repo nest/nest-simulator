@@ -709,6 +709,13 @@ nest::ThirdInBuilder::connect_()
     *std::max_element( source_third_per_rank.begin(), source_third_per_rank.end() );
   kernel().mpi_manager.communicate( max_stc );
   const size_t global_max_stc = *std::max_element( max_stc.begin(), max_stc.end() );
+
+  if ( global_max_stc == 0 )
+  {
+    // no rank has any any connections requiring ThirdIn connections
+    return;
+  }
+
   const size_t slots_per_rank = 2 * global_max_stc;
 
   // send buffer for third rank-third gid pairs
@@ -752,10 +759,17 @@ nest::ThirdInBuilder::connect_()
 
     for ( size_t idx = 0; idx < recv_stg.size(); idx += 2 )
     {
-      // TODO: Once third_gid == 0, we are done for data for this rank and could jump
-      // to beginning of section for next rank
       const auto third_gid = recv_stg[ idx ];
-      if ( third_gid > 0 and kernel().vp_manager.is_node_id_vp_local( third_gid ) )
+      if ( third_gid == 0 )
+      {
+        // No more entries from this rank, jump to beginning of next rank
+        // Subtract 2 because 2 is added again by the loop increment expression
+        // Since slots_per_rank >= 1 by definition, idx >= 0 is ensured
+        idx = ( idx / slots_per_rank + 1 ) * slots_per_rank - 2;
+        continue;
+      }
+
+      if ( kernel().vp_manager.is_node_id_vp_local( third_gid ) )
       {
         const auto source_gid = recv_stg[ idx + 1 ];
         assert( source_gid > 0 );

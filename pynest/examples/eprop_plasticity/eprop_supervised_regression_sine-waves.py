@@ -38,7 +38,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 network learns to reproduce with its overall spiking activity a one-dimensional, one-second-long target signal
 which is a superposition of four sine waves of different amplitudes, phases, and periods.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_sine-waves.png
+.. image:: eprop_supervised_regression_schematic_sine-waves.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center

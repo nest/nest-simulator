@@ -32,8 +32,6 @@ from urllib.request import urlretrieve
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
-from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")
 # Add the NEST Python module to the path (just the py files, the binaries are mocked)
@@ -57,6 +55,7 @@ extensions = [
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
+    "model_tag_setup",
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
@@ -81,6 +80,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
+    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile|.*\.txt",
 }
 
 # General information about the project.
@@ -176,10 +176,12 @@ html_static_path = ["static"]
 
 html_css_files = [
     "css/custom.css",
+    "css/filter_models.css",
     "css/pygments.css",
 ]
 
 html_js_files = [
+    "js/filter_models.js",
     "js/custom.js",
 ]
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
@@ -210,31 +212,6 @@ intersphinx_mapping = {
     "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
-
-
-def config_inited_handler(app, config):
-    models_rst_dir = os.path.abspath("models")
-    ExtractUserDocs(
-        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
-        basedir=repo_root_dir,
-        outdir=models_rst_dir,
-    )
-
-
-def toc_customizer(app, docname, source):
-    if docname == "models/models-toc":
-        models_toc = json.load(open("models/toc-tree.json"))
-        html_context = {"nest_models": models_toc}
-        models_source = source[0]
-        rendered = app.builder.templates.render_string(models_source, html_context)
-        source[0] = rendered
-
-
-def setup(app):
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect("source-read", toc_customizer)
-    app.connect("config-inited", config_inited_handler)
 
 
 nitpick_ignore = [
@@ -282,14 +259,6 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
-
-def copy_example_file(src):
-    copyfile(os.path.join(pynest_dir, src), Path("examples") / Path(src).parts[-1])
-
-
-# -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/hpc_benchmark_connectivity.svg")
 
 
 def patch_documentation(patch_url):

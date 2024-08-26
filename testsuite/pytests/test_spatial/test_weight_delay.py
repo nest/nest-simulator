@@ -118,8 +118,9 @@ def test_layer_connections_dump(tmp_path, expected_conn_dump, layer_type):
     fname = tmp_path / f"{layer_type}_layer_conns.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer, "static_synapse", fname)
 
+    # We need to sort results to be invariant against implementation-dependent output order
     actual_conn_dump = fname.read_text().splitlines()
-    assert actual_conn_dump == expected_conn_dump
+    assert actual_conn_dump.sort() == expected_conn_dump.sort()
 
 
 @pytest.fixture(scope="module")

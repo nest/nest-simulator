@@ -428,9 +428,6 @@ Noise application
        :doc:`/models/rate_neuron_opn`
 
 
-Alternatively, you can use the :doc:`rate_transformer_node </models/rate_transformer_node>` (applies a non-linearity
-to a sum of incoming rates, transforming them before passing on to other nodes.)
-
 Where is Non-linearity applied? ``linear_summation``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -442,6 +439,14 @@ individual presynaptic neurons is first nonlinearly transformed and
 then summed up (``False``). Default is ``True``.
 
 You can set this parameter in the parameter dictionary of the rate neuron.
+
+
+Rate transformer
+~~~~~~~~~~~~~~~~
+
+You can use the :doc:`rate_transformer_node </models/rate_transformer_node>` (applies a non-linearity
+to a sum of incoming rates, transforming them before passing on to other nodes.)
+
 
 
 Type of non-linearity

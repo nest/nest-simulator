@@ -157,7 +157,7 @@ n_astrocytes = 5  # number of astrocytes
 p_primary = 1.0  # connection probability between neurons
 p_third_if_primary = 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
 pool_size = 1  # astrocyte pool size for each target neuron
-pool_type = "random"  # the way to determine the astrocyte pool for each target neuron
+pool_type = "block"  # the way to determine the astrocyte pool for each target neuron
 
 ###############################################################################
 # Set astrocyte parameters.

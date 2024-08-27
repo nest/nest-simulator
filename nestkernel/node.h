@@ -954,14 +954,16 @@ public:
   DeprecationWarning deprecation_warning;
 
   /**
-   * This is only to be used to get the index in the NC to the ThirdOutBuilder
+   * Set index in node collection; required by ThirdOutBuilder.
    */
   void set_tmp_nc_index( size_t index );
 
   /**
-   * Return index in NC and invalidate entry to avoid multiple reads. Only to be called by ThirdOutBuilder
+   * Return and invalidate index in node collection; required by ThirdOutBuilder.
+   *
+   * @note Not const since it invalidates index in node object.
    */
-  size_t get_tmp_nc_index() const;
+  size_t get_tmp_nc_index();
 
 
 private:
@@ -1048,6 +1050,8 @@ private:
    * @note This is only here so that the primary connection builder can inform the ThirdOutBuilder
    * about the index of the target neuron in the targets node collection. This is required for block-based
    * builders.
+   *
+   * @note Set by set_tmp_nc_index() and invalidated by get_tmp_nc_index().
    */
   size_t tmp_nc_index_;
 };
@@ -1196,11 +1200,14 @@ Node::set_tmp_nc_index( size_t index )
 }
 
 inline size_t
-Node::get_tmp_nc_index() const
+Node::get_tmp_nc_index()
 {
   assert( tmp_nc_index_ != invalid_index );
 
-  return tmp_nc_index_;
+  const auto index = tmp_nc_index_;
+  tmp_nc_index_ = invalid_index;
+
+  return index;
 }
 
 

@@ -789,13 +789,6 @@ nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
 {
 }
 
-void
-nest::ThirdOutBuilder::connect()
-{
-  assert( false ); // should never be called
-}
-
-
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
@@ -855,6 +848,9 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
 
   if ( not random_pool_ )
   {
+    // Tell every target neuron its position in the target node collection.
+    // This is necessary to assign the right block pool to it.
+    //
     // We cannot do this parallel with targets->local_begin() since we need to
     // count over all elements of the node collection which might be a complex
     // composition of slices with non-trivial mapping between elements and vps.
@@ -879,6 +875,9 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 
     if ( not random_pool_ )
     {
+      // Reset tmp_nc_index in target nodes in case a node has never been a target.
+      // We do not want non-invalid values to persist beyond the lifetime of this builder.
+      //
       // Here we can work in parallel since we just reset to invalid_index
       for ( auto tgt_it = targets_->thread_local_begin(); tgt_it != targets_->end(); ++tgt_it )
       {

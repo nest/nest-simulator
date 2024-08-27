@@ -43,7 +43,7 @@ void
 ConnectionManager::register_conn_builder( const std::string& name )
 {
   assert( not connruledict_->known( name ) );
-  GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
+  GenericBipartiteConnBuilderFactory* cb = new BipartiteConnBuilderFactory< ConnBuilder >();
   assert( cb );
   const int id = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );

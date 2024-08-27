@@ -36,22 +36,28 @@
 
 namespace nest
 {
+
 /**
- * Generic factory class for ConnBuilder objects.
+ * Generic factory class for bipartite ConnBuilder objects.
  *
  * This factory allows for flexible registration
- * of ConnBuilder subclasses and object creation.
+ * of bipartite ConnBuilder subclasses and object creation.
  *
  */
-class GenericConnBuilderFactory
+class GenericBipartiteConnBuilderFactory
 {
 public:
-  virtual ~GenericConnBuilderFactory()
+  virtual ~GenericBipartiteConnBuilderFactory()
   {
   }
 
   /**
    * Factory method for builders for bipartite connection rules (the default).
+   *
+   * @note
+   * - For plain bipartite connections, pass `nullptr` to `ThirdOutBuilder*`.
+   * - When the bipartite builder creates the primary connection of a tripartite connection,
+   *   pass a pointer to a \class ThirdOutBuilder object.
    */
   virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
@@ -61,10 +67,10 @@ public:
 };
 
 /**
- * Factory class for ConnBuilders
+ * Factory class for bipartite ConnBuilders
  */
 template < typename ConnBuilderType >
-class ConnBuilderFactory : public GenericConnBuilderFactory
+class BipartiteConnBuilderFactory : public GenericBipartiteConnBuilderFactory
 {
 public:
   BipartiteConnBuilder*
@@ -78,6 +84,13 @@ public:
   }
 };
 
+/**
+ * Generic factory class for tripartite ConnBuilder objects.
+ *
+ * This factory allows for flexible registration
+ * of tripartite ConnBuilder subclasses and object creation.
+ *
+ */
 class GenericThirdConnBuilderFactory
 {
 public:
@@ -86,7 +99,7 @@ public:
   }
 
   /**
-   * Factory method for builders for bipartite connection rules (the default).
+   * Factory method for builders for tripartite connection rules.
    */
   virtual ThirdOutBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
@@ -112,7 +125,6 @@ public:
     return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
-
 
 } // namespace nest
 

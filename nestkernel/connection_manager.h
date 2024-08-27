@@ -52,7 +52,7 @@
 
 namespace nest
 {
-class GenericConnBuilderFactory;
+class GenericBipartiteConnBuilderFactory;
 class GenericThirdConnBuilderFactory;
 class spikecounter;
 class Node;
@@ -647,7 +647,7 @@ private:
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
-  std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
+  std::vector< GenericBipartiteConnBuilderFactory* > connbuilder_factories_;
 
   DictionaryDatum thirdconnruledict_; //!< Dictionary for third-factor connection rules.
 

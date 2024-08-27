@@ -76,7 +76,6 @@ import numpy as np
 
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
-    "pre_sim_time": 100.0,  # pre-simulation time in ms (data not recorded)
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of neurons to record from with spike recorder
     "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
@@ -99,7 +98,7 @@ network_params = {
 }
 
 syn_params = {
-    "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
+    "w_a2n": 0.05,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
     "d_e": 2.0,  # delay of excitatory connection in ms
@@ -112,8 +111,6 @@ syn_params = {
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     "IP3": 0.4,  # IP3 initial value in µM
-    "delta_IP3": 0.5,  # Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-    "tau_IP3": 2.0,  # Time constant of the exponential decay of astrocytic IP3
 }
 
 ###############################################################################
@@ -329,7 +326,6 @@ def run_simulation():
     random.seed(sim_params["seed"])
 
     # simulation settings
-    pre_sim_time = sim_params["pre_sim_time"]
     sim_time = sim_params["sim_time"]
 
     # create and connect nodes
@@ -354,10 +350,6 @@ def run_simulation():
     nest.Connect(neuron_list_for_sr, sr_neuron)
     nest.Connect(mm_neuron, neuron_list_for_mm)
     nest.Connect(mm_astro, astro_list_for_mm)
-
-    # run pre-simulation
-    print("Running pre-simulation ...")
-    nest.Simulate(pre_sim_time)
 
     # run simulation
     print("Running simulation ...")

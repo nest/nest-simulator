@@ -653,35 +653,6 @@ private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
   ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
 };
-/**
- * Helper class to support parameter handling for tripartite builders.
- *
- * In tripartite builders, the actual builder class decides which connections to create and
- * handles parameterization of the primary connection. For each third-party connection,
- * it maintains an AuxiliaryBuilder which handles the parameterization of the corresponding
- * third-party connection.
- */
-/*
-class AuxiliaryBuilder : public BipartiteConnBuilder
-{
-public:
-  AuxiliaryBuilder( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
-
-  //! forwards to single_connect_() in underlying ConnBuilder
-  void single_connect( size_t, Node&, size_t, RngPtr );
-
-protected:
-  void
-  connect_() override
-  {
-    // The auxiliary builder does not create connections, it only parameterizes them.
-    assert( false );
-  }
-};
-*/
 
 class SymmetricBernoulliBuilder : public BipartiteConnBuilder
 {

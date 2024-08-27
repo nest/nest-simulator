@@ -165,8 +165,7 @@ pool_type = "random"  # the way to determine the astrocyte pool for each target 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     "IP3": 0.4,  # IP3 initial value in µM
-    "delta_IP3": 2.0,  # parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-    "tau_IP3": 10.0,  # time constant of the exponential decay of astrocytic IP3
+    "delta_IP3": 0.2,  # parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
 }
 
 ###############################################################################

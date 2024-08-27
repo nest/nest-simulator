@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Random balanced network with astrocytes
----------------------------------------
+Random balanced network with astrocytes with Bernoulli connectivity
+-------------------------------------------------------------------
 
 This script simulates a random balanced network with excitatory and inhibitory
 neurons and astrocytes. The astrocytes are modeled with ``astrocyte_lr_1994``,
@@ -58,7 +58,7 @@ References
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_small_network`
+:doc:`astrocyte_small_network`, :doc:`astrocyte_brunel_fixed_indegree`
 
 """
 
@@ -80,7 +80,7 @@ sim_params = {
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of neurons to record from with spike recorder
     "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
-    "n_vp": 4,  # number of VPs for NEST
+    "n_vp": 4,  # number of virtual processes for NEST
     "seed": 100,  # seed for the random module
 }
 

@@ -59,7 +59,7 @@ its homepage at https://www.nest-initiative.org.
 
 ## Documentation
 
-Please visit our [online documentation](https://nest-simulator.readthedocs.io/en/stable/) for details on installing and using NEST.
+Please visit our [online documentation](https://nest-simulator.org/documentation) for details on installing and using NEST.
 
 
 ## Cite NEST

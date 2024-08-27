@@ -37,18 +37,12 @@ NEST is ideal for networks of spiking neurons of any size, for example:
   balanced random networks,
 - Models of learning and plasticity.
 
-For copyright information please refer to the `LICENSE` file and to the
-information header in the source files.
-
-General information on the NEST Initiative can be found at
-its homepage at https://www.nest-initiative.org.
-
 ## Key features of NEST
 
 * NEST provides a Python interface or a stand-alone application
-* NEST provides a large collection of neurons and synapse models
-* NEST provides numerous example network scripts along with tutorials and guides to help you
-  develop your simulation
+* NEST provides a large collection of [neurons and synapse models](https://nest-simulator.org/documentation/models/index.html)
+* NEST provides numerous [example network scripts](https://nest-simulator.org/documentation/examples/index.html) along with
+  [tutorials and guides](https://nest-simulator.org/documentation/get-started_index.html) to help you develop your simulation
 * NEST has a large community of experienced developers and users; NEST was first released in 1994 under the name SYNOD, and has been extended and improved ever since
 * NEST is extensible: you can extend NEST by adding your own modules
 * NEST is scalable: Use NEST on your laptop or the largest supercomputers
@@ -75,16 +69,23 @@ For general citations, please use
 
 
 If you need help or would like to discuss an idea or issue,
-you can find [ways to get in touch here](https://nest-simulator.readthedocs.io/en/stable/community.html).
+join our [maling list](https://nest-simulator.org/documenation/developer_space/guidelines/mailing_list_guidelines.html),
+where we encourage active participation from our developers and users to share their knowledge and experience with NEST.
+
+
+You can find other [ways to get in touch here](https://nest-simulator.readthedocs.io/en/stable/community.html).
 
 
 ## Contribute
 
 NEST is built on an active community and we welcome contributions to our code and documentation.
 
-You can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose), for bug reports, feature requests, documentation improvements, or other issues.
 
-For working with NEST code and documentation, [see our documentation](https://nest-simulator.readthedocs.io/en/stable/developer_space/index.html#contribute-to-nest)
+For bug reports, feature requests, documentation improvements, or other issues,
+you can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose),
+
+For working with NEST code and documentation, you can find guidelines for contributions
+[in our documentation](https://nest-simulator.readthedocs.io/en/stable/developer_space/index.html#contribute-to-nest)
 
 
 ## Publications
@@ -93,6 +94,10 @@ You can find a list of NEST [related publications here](https://www.nest-simulat
 
 ## License
 
+
 NEST is open source software and is licensed under the [GNU General Public
 License v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) or
 later.
+
+General information on the NEST Initiative can be found at
+its homepage at https://www.nest-initiative.org.

@@ -924,7 +924,7 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
     pool_it = new_pool_it;
   }
 
-  // select third-factor neuron randomly from pool for this target
+  // select third-factor node randomly from pool for this target
   const auto third_index = pool_size_ == 1 ? 0 : rng->ulrand( pool_size_ );
   const auto third_node_id = ( pool_it->second )[ third_index ].node_id;
 

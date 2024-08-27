@@ -422,11 +422,12 @@ public:
     const DictionaryDatum& third_conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
+  //! Only call third_connect() on ThirdOutBuilder
   void
   connect() override final
   {
     assert( false );
-  } //!< only call third_connect() on ThirdOutBuilder
+  }
 
   /**
    * Create third-factor connection for given primary connection.

@@ -295,6 +295,12 @@ private:
   //! History of the firing rate regularization.
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
 
+  /**
+   * Map names of surrogate gradients provided to corresponding pointers to member functions.
+   *
+   * @todo In the long run, this map should be handled by a manager with proper registration functions,
+   * so that external modules can add their own gradient functions.
+   */
   static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
 

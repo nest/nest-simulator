@@ -289,7 +289,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 {
   B_.logger_.init();
 
-  compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
+  compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   const double h = Time::get_resolution().get_ms();
 
@@ -378,7 +378,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     }
 
     S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient )( S_.r_, S_.y3_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
+      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.y3_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     emplace_new_eprop_history_entry( t );
 

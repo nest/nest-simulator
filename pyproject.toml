@@ -72,7 +72,8 @@ with-hdf5 = "OFF"
 
 [tool.cibuildwheel]
 build-frontend = "default"
-build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+#build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+build = ["cp312-*"]
 skip = "*-win* *-manylinux_i686" # Skip
 test-skip = ""
 free-threaded-support = false
@@ -84,6 +85,9 @@ environment-pass = []
 build-verbosity = 2
 before-all =  """
   NEST_SRC_DIR=${PWD}
+    # Apply patches
+  git apply -v ./build_support/nest_vars.sh.in.patch
+  git apply -v ./build_support/slistartup.cc.patch
   # Install packages
   if [ $AUDITWHEEL_POLICY == "musllinux_1_2" ]
   then

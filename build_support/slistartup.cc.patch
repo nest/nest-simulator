@@ -1,0 +1,13 @@
+diff --git a/sli/slistartup.cc b/sli/slistartup.cc
+index a090c701f..7a246ae62 100644
+--- a/sli/slistartup.cc
++++ b/sli/slistartup.cc
+@@ -136,7 +136,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
+   // To avoid problems due to string substitution in NEST binaries during
+   // Conda installation, we need to convert the literal to string, cstr and back,
+   // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+-  : sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
++  : sliprefix( std::string( std::getenv( "SLI_PATH" ) ).c_str() )
+   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
+   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
+   , startupfile( slilibdir + "/sli/sli-init.sli" )

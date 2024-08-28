@@ -72,8 +72,7 @@ with-hdf5 = "OFF"
 
 [tool.cibuildwheel]
 build-frontend = "default"
-#build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
-build = ["cp312-*"]
+build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
 skip = "*-win* *-manylinux_i686" # Skip
 test-skip = ""
 free-threaded-support = false

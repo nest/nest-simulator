@@ -208,36 +208,15 @@ public:
   //! Copy constructor.
   EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& );
 
+  /**
+   * Define pointer-to-member function type for surrogate gradient function.
+   * @note The typename is `surrogate_gradient_function`. All parentheses in the expression are required.
+   */
+  typedef double (
+    EpropArchivingNodeRecurrent::*surrogate_gradient_function )( double, double, double, double, double, double );
+
   //! Select the surrogate gradient function.
-  double ( EpropArchivingNodeRecurrent::*select_surrogate_gradient(
-    std::string surrogate_gradient_function ) )( double, double, double, double, double, double )
-  {
-    const std::map< std::string,
-      double ( EpropArchivingNodeRecurrent::* )( double, double, double, double, double, double ) >
-      surrogate_gradient_funcs = { { "piecewise_linear",
-                                     &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient },
-        { "exponential", &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient },
-        { "fast_sigmoid_derivative", &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient },
-        { "arctan", &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient } };
-
-    auto found_entry_it = surrogate_gradient_funcs.find( surrogate_gradient_function );
-    if ( found_entry_it == surrogate_gradient_funcs.end() )
-    {
-      std::string error_message = "Surrogate gradient / pseudo-derivate function surrogate_gradient_function from [";
-      for ( const auto& surrogate_gradient_func : surrogate_gradient_funcs )
-      {
-        error_message += " \"" + surrogate_gradient_func.first + "\",";
-      }
-      error_message.pop_back();
-      error_message += " ] required.";
-
-      throw BadProperty( error_message );
-    }
-    else
-    {
-      return found_entry_it->second;
-    }
-  }
+  surrogate_gradient_function select_surrogate_gradient( const std::string& surrogate_gradient_function_name );
 
   /**
    * Compute the surrogate gradient with a piecewise linear function around the spike time (used, e.g., in Bellec
@@ -334,6 +313,8 @@ private:
 
   //! History of the firing rate regularization.
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
+
+  static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
 
 inline void

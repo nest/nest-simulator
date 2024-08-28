@@ -276,9 +276,8 @@ private:
   bool is_eprop_recurrent_node() const override;
   long get_eprop_isi_trace_cutoff() const override;
 
-  //! Compute the surrogate gradient.
-  double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )( double, double, double, double, double, double );
-
+  //! Pointer to member function selected for computing the surrogate gradient
+  surrogate_gradient_function compute_surrogate_gradient_;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< eprop_iaf_psc_delta >;

@@ -31,6 +31,15 @@
 namespace nest
 {
 
+std::map< std::string, EpropArchivingNodeRecurrent::surrogate_gradient_function >
+  EpropArchivingNodeRecurrent::surrogate_gradient_funcs_ = {
+    { "piecewise_linear", &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient },
+    { "exponential", &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient },
+    { "fast_sigmoid_derivative", &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient },
+    { "arctan", &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient }
+  };
+
+
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
   : EpropArchivingNode()
   , firing_rate_reg_( 0.0 )
@@ -46,6 +55,28 @@ EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNo
   , n_spikes_( n.n_spikes_ )
 {
 }
+
+EpropArchivingNodeRecurrent::surrogate_gradient_function
+EpropArchivingNodeRecurrent::select_surrogate_gradient( const std::string& surrogate_gradient_function_name )
+{
+  const auto found_entry_it = surrogate_gradient_funcs_.find( surrogate_gradient_function_name );
+
+  if ( found_entry_it != surrogate_gradient_funcs_.end() )
+  {
+    return found_entry_it->second;
+  }
+
+  std::string error_message = "Surrogate gradient / pseudo-derivate function surrogate_gradient_function from [";
+  for ( const auto& surrogate_gradient_func : surrogate_gradient_funcs_ )
+  {
+    error_message += " \"" + surrogate_gradient_func.first + "\",";
+  }
+  error_message.pop_back();
+  error_message += " ] required.";
+
+  throw BadProperty( error_message );
+}
+
 
 double
 EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const double r,

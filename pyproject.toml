@@ -55,20 +55,20 @@ sdist.exclude = [".github"]
 build-dir = "build/{wheel_tag}"
 
 [tool.scikit-build.cmake.define]
-with-optimize ="-O2"
-with-warning = "ON"
-with-python = "ON"
-with-boost = "ON"
-with-gsl = "ON"
-with-readline = "ON"
-with-ltdl = "ON"
-with-openmp = "ON"
-with-userdoc ="OFF"
-with-mpi = "OFF"
-with-libneurosim = "OFF"
-with-sionlib = "OFF"
-with-music = "OFF"
-with-hdf5 = "OFF"
+#with-optimize ="-O2"
+#with-warning = "ON"
+#with-python = "ON"
+#with-boost = "ON"
+#with-gsl = "ON"
+#with-readline = "ON"
+#with-ltdl = "ON"
+#with-openmp = "ON"
+#with-userdoc ="OFF"
+#with-mpi = "OFF"
+#with-libneurosim = "OFF"
+#with-sionlib = "OFF"
+#with-music = "OFF"
+#with-hdf5 = "OFF"
 
 [tool.cibuildwheel]
 build-frontend = "default"
@@ -85,8 +85,8 @@ build-verbosity = 2
 before-all =  """
   NEST_SRC_DIR=${PWD}
     # Apply patches
-  #git apply -v ./build_support/nest_vars.sh.in.patch
-  #git apply -v ./build_support/slistartup.cc.patch
+  git apply -v ./build_support/nest_vars.sh.in.patch
+  git apply -v ./build_support/slistartup.cc.patch
   # Install packages
   if [ $AUDITWHEEL_POLICY == "musllinux_1_2" ]
   then

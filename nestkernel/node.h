@@ -518,7 +518,6 @@ public:
    *
    * @throws IllegalConnection
    */
-
   virtual long get_eprop_isi_trace_cutoff() const;
 
   /**

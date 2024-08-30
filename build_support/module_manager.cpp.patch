@@ -1,5 +1,5 @@
 diff --git a/nestkernel/module_manager.cpp b/nestkernel/module_manager.cpp
-index 57c668da9..a963a8352 100644
+index 57c668da9..82ddf5fc4 100644
 --- a/nestkernel/module_manager.cpp
 +++ b/nestkernel/module_manager.cpp
 @@ -50,7 +50,7 @@ ModuleManager::ModuleManager()
@@ -7,7 +7,7 @@ index 57c668da9..a963a8352 100644
    // Conda installation, we need to convert the literal to string, cstr and back,
    // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
 -  const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
-+  const std::string module_dir = std::string( std::getenv( "SLI_PATH" ) ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
++  const std::string module_dir = std::string( NEST_INSTALL_LIBDIR );
    if ( lt_dladdsearchdir( module_dir.c_str() ) )
    {
      LOG( M_ERROR,

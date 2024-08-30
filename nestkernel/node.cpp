@@ -229,10 +229,7 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long t_previous_update,
-  const long t_current_update,
-  const long eprop_isi_trace_cutoff,
-  const bool is_bsshslm_2020_model )
+Node::write_update_to_history( const long, const long, const long, const bool )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }

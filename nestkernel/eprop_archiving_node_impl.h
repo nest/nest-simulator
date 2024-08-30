@@ -103,11 +103,10 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   {
     // If an entry exists for the previous update time, decrement its access counter
     --it_hist_prev->access_counter_;
-  }
-
-  if ( not is_bsshslm_2020_model )
-  {
-    erase_used_update_history();
+    if ( it_hist_prev->access_counter_ == 0 )
+    {
+      update_history_.erase( it_hist_prev );
+    }
   }
 }
 
@@ -184,25 +183,6 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
   const auto it_eprop_hist_from_2 = get_eprop_history( std::numeric_limits< long >::min() );
   const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ - 1 );
   eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
-}
-
-template < typename HistEntryT >
-void
-EpropArchivingNode< HistEntryT >::erase_used_update_history()
-{
-  auto it_hist = update_history_.begin();
-  while ( it_hist != update_history_.end() )
-  {
-    if ( it_hist->access_counter_ == 0 )
-    {
-      // erase() invalidates the iterator, but returns a new, valid iterator
-      it_hist = update_history_.erase( it_hist );
-    }
-    else
-    {
-      ++it_hist;
-    }
-  }
 }
 
 } // namespace nest

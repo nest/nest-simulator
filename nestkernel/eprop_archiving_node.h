@@ -145,11 +145,6 @@ public:
   //! Get an iterator pointing to the eprop history entry of the given time step.
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
-  /**
-   * Erase update history parts for which the access counter has decreased to zero since no synapse needs them any
-   * longer.
-   */
-  void erase_used_update_history();
 
   /**
    * Erase e-prop history entries corresponding to update intervals during which no spikes were transmitted to target

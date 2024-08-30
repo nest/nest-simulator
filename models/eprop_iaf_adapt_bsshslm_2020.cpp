@@ -318,7 +318,6 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     if ( interval_step == 0 )
     {
       erase_used_firing_rate_reg_history();
-      erase_used_update_history();
       erase_used_eprop_history();
 
       if ( with_reset )

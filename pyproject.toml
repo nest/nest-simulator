@@ -88,6 +88,7 @@ before-all =  """
   git apply -v ./build_support/nest_vars.sh.in.patch
   git apply -v ./build_support/slistartup.cc.patch
   git apply -v ./build_support/nest-config.in.patch
+  git apply -v ./build_support/module_manager.cpp.patch
   # Install packages
   if [ $AUDITWHEEL_POLICY == "musllinux_1_2" ]
   then

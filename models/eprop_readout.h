@@ -312,7 +312,7 @@ private:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() override;
+  long get_eprop_isi_trace_cutoff() const override;
 
   //! Compute the error signal based on the mean-squared error loss.
   void compute_error_signal_mean_squared_error( const long lag );
@@ -487,7 +487,7 @@ private:
 };
 
 inline long
-eprop_readout::get_eprop_isi_trace_cutoff()
+eprop_readout::get_eprop_isi_trace_cutoff() const
 {
   return P_.eprop_isi_trace_cutoff_;
 }

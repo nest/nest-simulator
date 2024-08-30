@@ -235,7 +235,7 @@ Node::write_update_to_history( const long, const long, const long, const bool )
 }
 
 long
-Node::get_eprop_isi_trace_cutoff()
+Node::get_eprop_isi_trace_cutoff() const
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }

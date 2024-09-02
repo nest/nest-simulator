@@ -74,7 +74,7 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
       1 - \alpha
     \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+where :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
 input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
 state variable, while :math:`x_i^t` represents the input at time :math:`t`.
 
@@ -132,7 +132,7 @@ with the following exponential kernels:
   \mathcal{F}_\alpha \left( z_i^t \right) &= \alpha \mathcal{F}_\alpha \left( z_i^{t-1} \right) + z_i^t \,, \\
   \mathcal{F}_\alpha \left( z_i^0 \right) &= z_i^0 \,, \\
 
-whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
+where :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
@@ -144,7 +144,7 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
     = c_\text{reg} \sum_t \frac{ 1 }{ T n_\text{trial} }
     \left( f^\text{target} - f^\text{av}_j \right) e_{ji}^t \,, \\
 
-whereby :math:`c_\text{reg}` is a constant scaling factor and the average
+where :math:`c_\text{reg}` is a constant scaling factor and the average
 is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
 

@@ -66,7 +66,7 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
       1 - \kappa
     \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
+where :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
 
 Descriptions of further parameters and variables can be found in the table below.
@@ -116,7 +116,7 @@ If a mean squared error loss is selected, then:
 .. math::
   e_k^t = y_k^t - y_k^{*,t} \,, \\
 
-whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
+where the readout signal :math:`y_k^t` corresponds to the membrane voltage of
 readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
 
 If a cross-entropy loss is selected, then:
@@ -126,7 +126,7 @@ If a cross-entropy loss is selected, then:
   \pi_k^t &= \text{softmax}_k \left( y_1^t, ..., y_K^t \right) =
     \frac{ \exp \left( y_k^t\right) }{ \sum_{k'} \exp \left( y_{k'}^t \right) } \,, \\
 
-whereby the readout signal :math:`\pi_k^t` corresponds to the softmax of the
+where the readout signal :math:`\pi_k^t` corresponds to the softmax of the
 membrane voltage of readout neuron :math:`k` and :math:`\pi_k^{*,t}` is the
 one-hot encoded target signal.
 

@@ -63,7 +63,7 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
       1 - \kappa
     \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
+where :math:`W_{ji}^\text{out}` is the output synaptic weight matrix and
 :math:`z_i^{t-1}` is the recurrent presynaptic spike state variable.
 
 Descriptions of further parameters and variables can be found in the table below.
@@ -135,7 +135,7 @@ loss:
 .. math::
   L_j^t = B_{jk} e_k^t = B_{jk} \left( y_k^t - y_k^{*,t} \right) \,. \\
 
-whereby the readout signal :math:`y_k^t` corresponds to the membrane voltage of
+where the readout signal :math:`y_k^t` corresponds to the membrane voltage of
 readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
 
 Furthermore, the readout and target signal are multiplied by a learning window
@@ -312,7 +312,7 @@ private:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() override;
+  long get_eprop_isi_trace_cutoff() const override;
 
   //! Compute the error signal based on the mean-squared error loss.
   void compute_error_signal_mean_squared_error( const long lag );
@@ -487,7 +487,7 @@ private:
 };
 
 inline long
-eprop_readout::get_eprop_isi_trace_cutoff()
+eprop_readout::get_eprop_isi_trace_cutoff() const
 {
   return P_.eprop_isi_trace_cutoff_;
 }

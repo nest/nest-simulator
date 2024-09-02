@@ -518,8 +518,7 @@ public:
    *
    * @throws IllegalConnection
    */
-
-  virtual long get_eprop_isi_trace_cutoff();
+  virtual long get_eprop_isi_trace_cutoff() const;
 
   /**
    * Return if the node is part of the recurrent network (and thus not a readout neuron).

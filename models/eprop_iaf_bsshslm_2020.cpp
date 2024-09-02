@@ -302,6 +302,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
 
     S_.z_ = 0.0;
 
+    // P_.V_th_ is passed twice to handle models without an adaptive threshold, serving as both v_th_adapt and V_th
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
 
@@ -427,10 +428,11 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   presyn_isis.clear();
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+
   grad += it_reg_hist->firing_rate_reg_ * sum_e;
 
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {
     grad /= learning_window;

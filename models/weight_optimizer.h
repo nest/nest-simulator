@@ -51,7 +51,7 @@ In gradient descent [1]_ the weights are optimized via:
 .. math::
   W_t = W_{t-1} - \eta g_t \,, \\
 
-whereby :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
+where :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
 
 In the Adam scheme [2]_ the weights are optimized via:

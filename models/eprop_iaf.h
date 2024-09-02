@@ -71,7 +71,7 @@ The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given 
       1 - \alpha
     \end{cases} \,, \\
 
-whereby :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+where :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
 input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
 state variable, while :math:`x_i^t` represents the input at time :math:`t`.
 
@@ -143,7 +143,7 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
   f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
     = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
 
-whereby :math:`c_\text{reg}` is a constant scaling factor.
+where :math:`c_\text{reg}` is a constant scaling factor.
 
 The overall gradient is given by the addition of the two gradients.
 
@@ -340,7 +340,7 @@ private:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() override;
+  long get_eprop_isi_trace_cutoff() const override;
 
   //! Pointer to member function selected for computing the surrogate gradient
   surrogate_gradient_function compute_surrogate_gradient_;
@@ -521,7 +521,7 @@ private:
 };
 
 inline long
-eprop_iaf::get_eprop_isi_trace_cutoff()
+eprop_iaf::get_eprop_isi_trace_cutoff() const
 {
   return P_.eprop_isi_trace_cutoff_;
 }

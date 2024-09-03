@@ -78,7 +78,7 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
   , eta_( 0.1 )
   , eps_( 0.7 )
 {
-  compute_local();
+  compute_local_();
 }
 
 void
@@ -94,7 +94,7 @@ nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::eps, eps_ );
   updateValue< double >( d, names::eta, eta_ );
-  compute_local();
+  compute_local_();
 }
 
 double
@@ -124,7 +124,7 @@ nest::GrowthCurveGaussian::update( double t,
 }
 
 void
-nest::GrowthCurveGaussian::compute_local()
+nest::GrowthCurveGaussian::compute_local_()
 {
   inv_zeta_ = 2.0 * numerics::sqrt_log_two / ( eta_ - eps_ );
   xi_ = ( eta_ + eps_ ) * 0.5;

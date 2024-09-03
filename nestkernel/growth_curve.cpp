@@ -108,8 +108,6 @@ nest::GrowthCurveGaussian::update( double t,
   // Numerical integration from t_minus to t
   // use standard forward Euler numerics
   const double h = Time::get_resolution().get_ms();
-  const double inv_zeta = ( eta_ - eps_ ) * INV_TWO_SQRT_LOG_TWO;
-  const double xi = ( eta_ + eps_ ) * 0.5;
   const double inv_tau_Ca = 1.0 / tau_Ca;
 
   double z_value = z_minus;
@@ -118,7 +116,7 @@ nest::GrowthCurveGaussian::update( double t,
   for ( double lag = t_minus; lag < ( t - h * 0.5 ); lag += h )
   {
     Ca = Ca - ( ( Ca * inv_tau_Ca ) * h );
-    const double dz = h * growth_rate * ( 2.0 * std::exp( -std::pow( ( Ca - xi ) * inv_zeta, 2 ) ) - 1.0 );
+    const double dz = h * growth_rate * ( 2.0 * std::exp( -std::pow( ( Ca - xi_ ) * inv_zeta_, 2 ) ) - 1.0 );
     z_value += dz;
   }
 

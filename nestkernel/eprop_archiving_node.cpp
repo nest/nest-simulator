@@ -60,7 +60,7 @@ EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const 
     return 0.0;
   }
 
-  return gamma * std::max( 0.0, 1.0 - beta * std::fabs( ( v_m - v_th_adapt ) / V_th ) ) / V_th;
+  return gamma * std::max( 0.0, 1.0 - beta * std::abs( ( v_m - v_th_adapt ) / V_th ) ) / V_th;
 }
 
 double
@@ -76,13 +76,13 @@ EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const doubl
     return 0.0;
   }
 
-  if ( fabs( V_th ) < 1e-6 )
+  if ( std::abs( V_th ) < 1e-6 )
   {
     throw BadProperty(
       "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
   }
 
-  return gamma * std::exp( -beta * std::fabs( v_m - v_th_adapt ) );
+  return gamma * std::exp( -beta * std::abs( v_m - v_th_adapt ) );
 }
 
 double
@@ -98,7 +98,7 @@ EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient(
     return 0.0;
   }
 
-  return gamma * std::pow( 1.0 + beta * std::fabs( v_m - v_th_adapt ), -2 );
+  return gamma * std::pow( 1.0 + beta * std::abs( v_m - v_th_adapt ), -2 );
 }
 
 double

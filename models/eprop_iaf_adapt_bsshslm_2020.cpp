@@ -352,11 +352,7 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       kernel().event_delivery_manager.send( *this, se, lag );
 
       S_.z_ = 1.0;
-
-      if ( V_.RefractoryCounts_ > 0 )
-      {
-        S_.r_ = V_.RefractoryCounts_;
-      }
+      S_.r_ = V_.RefractoryCounts_;
     }
 
     emplace_new_eprop_history_entry( t );

@@ -85,6 +85,7 @@ nest::iaf_psc_alpha_ps::Parameters_::Parameters_()
   , U_min_( -std::numeric_limits< double >::infinity() ) // mV
   , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
 {
+  compute_local_();
 }
 
 nest::iaf_psc_alpha_ps::State_::State_()
@@ -187,7 +188,19 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
+  compute_local_();
+
   return delta_EL;
+}
+
+void
+nest::iaf_psc_alpha_ps::Parameters_::compute_local_()
+{
+  // pre-compute inverse member variables for speed
+  inv_c_m_        = 1.0 / c_m_;
+  inv_tau_m_      = 1.0 / tau_m_;
+  inv_tau_syn_ex_ = 1.0 / tau_syn_ex_;
+  inv_tau_syn_in_ = 1.0 / tau_syn_in_;
 }
 
 void
@@ -268,15 +281,15 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.psc_norm_ex_ = 1.0 * numerics::e / P_.tau_syn_ex_;
-  V_.psc_norm_in_ = 1.0 * numerics::e / P_.tau_syn_in_;
+  V_.psc_norm_ex_ = 1.0 * numerics::e * P_.inv_tau_syn_ex_;
+  V_.psc_norm_in_ = 1.0 * numerics::e * P_.inv_tau_syn_in_;
 
   // pre-compute matrix for full time step
-  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
-  V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );
-  V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ / P_.tau_syn_in_ );
+  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ * P_.inv_tau_m_ );
+  V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ * P_.inv_tau_syn_ex_ );
+  V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ * P_.inv_tau_syn_in_ );
 
-  V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
+  V_.P30_ = -P_.tau_m_ * P_.inv_c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
   propagator_ex_ = IAFPropagatorAlpha( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_ );
   std::tie( V_.P31_ex_, V_.P32_ex_ ) = propagator_ex_.evaluate( V_.h_ms_ );
@@ -500,9 +513,9 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
   // V_m_ remains unchanged at 0.0 while neuron is refractory
   if ( not S_.is_refractory_ )
   {
-    const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
+    const double expm1_tau_m = numerics::expm1( -dt * P_.inv_tau_m_ );
 
-    const double ps_P30 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+    const double ps_P30 = -P_.tau_m_ * P_.inv_c_m_ * expm1_tau_m;
 
     double ps_P31_ex;
     double ps_P32_ex;
@@ -518,8 +531,8 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
     S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
   }
 
-  const double ps_e_TauSyn_ex = std::exp( -dt / P_.tau_syn_ex_ );
-  const double ps_e_TauSyn_in = std::exp( -dt / P_.tau_syn_in_ );
+  const double ps_e_TauSyn_ex = std::exp( -dt * P_.inv_tau_syn_ex_ );
+  const double ps_e_TauSyn_in = std::exp( -dt * P_.inv_tau_syn_in_ );
 
   // now the synaptic components
   S_.I_ex_ = ps_e_TauSyn_ex * dt * S_.dI_ex_ + ps_e_TauSyn_ex * S_.I_ex_;
@@ -578,9 +591,9 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 double
 nest::iaf_psc_alpha_ps::threshold_distance( double t_step ) const
 {
-  const double expm1_tau_m = numerics::expm1( -t_step / P_.tau_m_ );
+  const double expm1_tau_m = numerics::expm1( -t_step * P_.inv_tau_m_ );
 
-  const double ps_P30 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+  const double ps_P30 = -P_.tau_m_ * P_.inv_c_m_ * expm1_tau_m;
 
   double ps_P31_ex;
   double ps_P32_ex;

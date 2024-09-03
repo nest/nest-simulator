@@ -32,9 +32,6 @@
 // Includes from sli:
 #include "dictutils.h"
 
-// 1.0 / (2.0 * sqrt( log( 2.0 ) ))
-#define INV_TWO_SQRT_LOG_TWO 0.6005612043932248974
-
 /* ----------------------------------------------------------------
  * GrowthCurveLinear
  * ---------------------------------------------------------------- */
@@ -81,6 +78,7 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
   , eta_( 0.1 )
   , eps_( 0.7 )
 {
+  compute_local();
 }
 
 void
@@ -96,6 +94,7 @@ nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::eps, eps_ );
   updateValue< double >( d, names::eta, eta_ );
+  compute_local();
 }
 
 double
@@ -124,6 +123,13 @@ nest::GrowthCurveGaussian::update( double t,
   }
 
   return std::max( z_value, 0.0 );
+}
+
+void
+nest::GrowthCurveGaussian::compute_local()
+{
+  inv_zeta_ = 2.0 * numerics::sqrt_log_two / ( eta_ - eps_ );
+  xi_ = ( eta_ + eps_ ) * 0.5;
 }
 
 /* ----------------------------------------------------------------

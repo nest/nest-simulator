@@ -32,6 +32,9 @@
 // Includes from sli:
 #include "dictutils.h"
 
+// 1.0 / (2.0 * sqrt( log( 2.0 ) ))
+#define INV_TWO_SQRT_LOG_TWO 0.6005612043932248974
+
 /* ----------------------------------------------------------------
  * GrowthCurveLinear
  * ---------------------------------------------------------------- */
@@ -106,16 +109,17 @@ nest::GrowthCurveGaussian::update( double t,
   // Numerical integration from t_minus to t
   // use standard forward Euler numerics
   const double h = Time::get_resolution().get_ms();
-  const double zeta = ( eta_ - eps_ ) / ( 2.0 * sqrt( log( 2.0 ) ) );
-  const double xi = ( eta_ + eps_ ) / 2.0;
+  const double inv_zeta = ( eta_ - eps_ ) * INV_TWO_SQRT_LOG_TWO;
+  const double xi = ( eta_ + eps_ ) * 0.5;
+  const double inv_tau_Ca = 1.0 / tau_Ca;
 
   double z_value = z_minus;
   double Ca = Ca_minus;
 
-  for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
+  for ( double lag = t_minus; lag < ( t - h * 0.5 ); lag += h )
   {
-    Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
+    Ca = Ca - ( ( Ca * inv_tau_Ca ) * h );
+    const double dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) * inv_zeta, 2 ) ) - 1.0 );
     z_value = z_value + dz;
   }
 

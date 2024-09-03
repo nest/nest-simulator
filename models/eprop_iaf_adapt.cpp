@@ -467,7 +467,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
   }
 
-  const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
+  const long power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
 
   if ( power > 0 )
   {

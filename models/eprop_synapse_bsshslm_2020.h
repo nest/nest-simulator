@@ -131,7 +131,7 @@ Usage
 +++++
 
 This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.

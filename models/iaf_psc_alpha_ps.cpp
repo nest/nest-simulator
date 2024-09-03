@@ -197,8 +197,8 @@ void
 nest::iaf_psc_alpha_ps::Parameters_::compute_local_()
 {
   // pre-compute inverse member variables for speed
-  inv_c_m_        = 1.0 / c_m_;
-  inv_tau_m_      = 1.0 / tau_m_;
+  inv_c_m_ = 1.0 / c_m_;
+  inv_tau_m_ = 1.0 / tau_m_;
   inv_tau_syn_ex_ = 1.0 / tau_syn_ex_;
   inv_tau_syn_in_ = 1.0 / tau_syn_in_;
 }

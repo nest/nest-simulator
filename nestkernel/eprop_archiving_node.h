@@ -145,16 +145,25 @@ public:
   //! Get an iterator pointing to the eprop history entry of the given time step.
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
-  //! Erase update history parts for which the access counter has decreased to zero since no synapse needs them
-  //! any longer.
+  /**
+   * Erase update history parts for which the access counter has decreased to zero since no synapse needs them any
+   * longer.
+   */
   void erase_used_update_history();
 
-  //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
-  //! transmitted a spike in a more recent update interval.
+  /**
+   * Erase e-prop history entries corresponding to update intervals during which no spikes were transmitted to target
+   * neuron. Erase all e-prop history entries that predate the earliest time stamp required by the first update in the
+   * update history.
+   */
   void erase_used_eprop_history();
 
-  //! Erase entries from the e-prop history between the last trace cutoff and the last update, as well as the ones up to
-  //! the first update.
+  /**
+   * Erase e-prop history entries between the last and the penultimate updates if they exceed the specified inter-spike
+   * interval trace cutoff.
+   * Erase all e-prop history entries that predate the earliest time stamp required by the first update in the update
+   * history.
+   */
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
 protected:
@@ -230,8 +239,10 @@ public:
     }
   }
 
-  //! Compute the surrogate gradient with a piecewise linear function around the spike time (used, e.g., in Bellec et
-  //! al., 2020).
+  /**
+   * Compute the surrogate gradient with a piecewise linear function around the spike time (used, e.g., in Bellec
+   * et al. 2020).
+   */
   double compute_piecewise_linear_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -239,8 +250,10 @@ public:
     const double beta,
     const double gamma );
 
-  //! Compute the surrogate gradient with an exponentially decaying function around the spike time (used, e.g., in
-  //! Shrestha and Orchard, 2018).
+  /**
+   * Compute the surrogate gradient with an exponentially decaying function around the spike time (used, e.g., in
+   * Shrestha and Orchard, 2018).
+   */
   double compute_exponential_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -248,8 +261,10 @@ public:
     const double beta,
     const double gamma );
 
-  //! Compute the surrogate gradient with a function corresponding to the derivative of a fast sigmoid around the spike
-  //! (used, e.g., in Zenke and Ganguli, 2018).
+  /**
+   * Compute the surrogate gradient with a function corresponding to the derivative of a fast sigmoid around the spike
+   * (used, e.g., in Zenke and Ganguli, 2018).
+   */
   double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -271,8 +286,10 @@ public:
   //! Write the given surrogate gradient value to the history at the given time step.
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
 
-  //! Update the learning signal in the eprop history entry of the given time step by writing the value of the incoming
-  //! learning signal to the history or adding it to the existing value in case of multiple readout neurons.
+  /**
+   * Update the learning signal in the eprop history entry of the given time step by writing the value of the incoming
+   * learning signal to the history or adding it to the existing value in case of multiple readout neurons.
+   */
   void write_learning_signal_to_history( const long time_step,
     const double learning_signal,
     const bool has_norm_step = true );
@@ -293,8 +310,10 @@ public:
   //! Return learning signal from history for given time step or zero if time step not in history
   double get_learning_signal_from_history( const long time_step, const bool has_norm_step = true );
 
-  //! Erase parts of the firing rate regularization history for which the access counter in the update history has
-  //! decreased to zero since no synapse needs them any longer.
+  /**
+   * Erase parts of the firing rate regularization history for which the access counter in the update history has
+   * decreased to zero since no synapse needs them any longer.
+   */
   void erase_used_firing_rate_reg_history();
 
   //! Count emitted spike for the firing rate regularization.

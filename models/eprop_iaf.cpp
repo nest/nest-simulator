@@ -303,10 +303,6 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
 
-    emplace_new_eprop_history_entry( t );
-
-    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
-
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {
       SpikeEvent se;
@@ -320,6 +316,8 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       }
     }
 
+    emplace_new_eprop_history_entry( t );
+    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
     write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );

@@ -556,11 +556,11 @@ up to two randomly selected nodes in ``A`` (given ``pool_size == 2``).
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'pairwise_bernoulli',
-                      'p': p_primary}
+                 'p': p_primary}
     third_factor_conn_spec = {'rule': 'third_factor_bernoulli_with_pool',
-		                   'p': p_third_if_primary,
-                                   'pool_type': pool_type,
-		                   'pool_size': pool_size}
+		              'p': p_third_if_primary,
+                              'pool_type': pool_type,
+		              'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, third_factor_conn_spec, syn_specs)
 

@@ -305,7 +305,7 @@ public:
     const double c_reg );
 
   //! Get an iterator pointing to the firing rate regularization history of the given time step.
-  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
+  double get_firing_rate_reg_history( const long time_step );
 
   //! Return learning signal from history for given time step or zero if time step not in history
   double get_learning_signal_from_history( const long time_step, const bool has_norm_step = true );

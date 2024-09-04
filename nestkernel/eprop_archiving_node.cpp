@@ -213,13 +213,13 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
   it_hist->learning_signal_ += firing_rate_reg_;
 }
 
-std::vector< HistEntryEpropFiringRateReg >::iterator
+double
 EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 {
   const auto it_hist = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
   assert( it_hist != firing_rate_reg_history_.end() );
 
-  return it_hist;
+  return it_hist->firing_rate_reg_;
 }
 
 double

@@ -150,14 +150,12 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
     else
     {
-      const auto it_eprop_hist_from_1 = get_eprop_history( t );
-      const auto it_eprop_hist_to_1 = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
+      // erase entries that are no longer used
+      eprop_history_.erase( get_eprop_history( t ), get_eprop_history( t + update_interval ) );
     }
   }
-  const auto it_eprop_hist_from_2 = get_eprop_history( 0 );
-  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
+  // erase entries that are no longer used
+  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
 template < typename HistEntryT >

@@ -403,7 +403,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
 
 
 def test_unsupported_surrogate_gradient():
-    """Confirm that selecting a unsupported surrogate gradient raises an error."""
+    """Confirm that selecting an unsupported surrogate gradient raises an error."""
 
     params_nrn_rec = {
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
@@ -464,7 +464,7 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
     Test correct computation of surrogate gradients by comparing the simulated surrogate gradients with NEST reference
     surrogate gradients. These reference surrogate gradients were obtained from a simulation with the verified NEST
     e-prop implementation run with Linux 5.8.7-1-default, Python v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
-    """  # pylint: disable=line-too-long # noqa: E501
+    """
 
     rng_seed = 1
     np.random.seed(rng_seed)

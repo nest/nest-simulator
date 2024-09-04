@@ -118,7 +118,7 @@ EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
 }
 
 void
-EpropArchivingNodeRecurrent::emplace_new_eprop_history_entry( const long time_step )
+EpropArchivingNodeRecurrent::append_new_eprop_history_entry( const long time_step )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -272,7 +272,7 @@ EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeRe
 }
 
 void
-EpropArchivingNodeReadout::emplace_new_eprop_history_entry( const long time_step, const bool has_norm_step )
+EpropArchivingNodeReadout::append_new_eprop_history_entry( const long time_step, const bool has_norm_step )
 {
   if ( eprop_indegree_ == 0 )
   {

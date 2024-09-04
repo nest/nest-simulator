@@ -317,7 +317,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
       S_.r_ = V_.RefractoryCounts_;
     }
 
-    emplace_new_eprop_history_entry( t );
+    append_new_eprop_history_entry( t );
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
     if ( interval_step == update_interval - 1 )

@@ -312,7 +312,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       S_.r_ = V_.RefractoryCounts_;
     }
 
-    emplace_new_eprop_history_entry( t );
+    append_new_eprop_history_entry( t );
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
     write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 

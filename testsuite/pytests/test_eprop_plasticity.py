@@ -400,3 +400,133 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     # Verify results
 
     assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
+
+
+def test_unsupported_surrogate_gradient():
+    """Confirm that selecting a unsupported surrogate gradient raises an error."""
+
+    params_nrn_rec = {
+        "surrogate_gradient_function": "unsupported_surrogate_gradient",
+    }
+
+    with pytest.raises(nest.kernel.NESTError):
+        nrn = nest.Create("eprop_iaf", 1, params_nrn_rec)
+        nest.Simulate(1.0)
+
+
+@pytest.mark.parametrize(
+    "surrogate_gradient_type,surrogate_gradient_reference",
+    [
+        (
+            "piecewise_linear",
+            [
+                0.06995221780833,
+                0.06329538414758,
+                0.05727203196569,
+                0.05182187752951,
+                0.04689037386158,
+            ],
+        ),
+        (
+            "exponential",
+            [
+                0.17906075040984,
+                0.17763607512476,
+                0.17635674663337,
+                0.17520710436201,
+                0.17417332485803,
+            ],
+        ),
+        (
+            "fast_sigmoid_derivative",
+            [
+                0.13052388763403,
+                0.12915920600850,
+                0.12794275148940,
+                0.12685680729831,
+                0.12588607522600,
+            ],
+        ),
+        (
+            "arctan",
+            [
+                0.02631801794450,
+                0.02573637800870,
+                0.02522457486743,
+                0.02477299562220,
+                0.02437357413156,
+            ],
+        ),
+    ],
+)
+def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_reference):
+    """
+    Test correct computation of surrogate gradients by comparing the simulated surrogate gradients with NEST reference
+    surrogate gradients. These reference surrogate gradients were obtained from a simulation with the verified NEST
+    e-prop implementation run with Linux 5.8.7-1-default, Python v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
+    """  # pylint: disable=line-too-long # noqa: E501
+
+    rng_seed = 1
+    np.random.seed(rng_seed)
+
+    duration = {
+        "step": 1.0,
+        "sim": 20.0,
+    }
+
+    params_setup = {
+        "print_time": False,
+        "resolution": duration["step"],
+        "total_num_virtual_procs": 1,
+    }
+
+    nest.ResetKernel()
+    nest.set(**params_setup)
+
+    params_nrn_rec = {
+        "beta": 1.0,
+        "C_m": 1.0,
+        "c_reg": 0.0,
+        "E_L": 0.0,
+        "gamma": 0.3,
+        "I_e": 0.0,
+        "regular_spike_arrival": False,
+        "surrogate_gradient_function": surrogate_gradient_type,
+        "t_ref": 3.0,
+        "V_m": 0.0,
+        "V_th": 0.6,
+    }
+
+    gen_spk_in = nest.Create("spike_generator", 1)
+    nrns_in = nest.Create("parrot_neuron", 1)
+    nrns_rec = nest.Create("eprop_iaf", 1, params_nrn_rec)
+
+    params_mm_rec = {
+        "interval": duration["step"],
+        "record_from": ["surrogate_gradient", "V_m"],
+    }
+
+    mm_rec = nest.Create("multimeter", params_mm_rec)
+
+    params_conn_one_to_one = {"rule": "one_to_one"}
+    params_syn = {
+        "synapse_model": "eprop_synapse",
+        "delay": duration["step"],
+        "weight": 0.3,
+    }
+    params_syn_static = {
+        "synapse_model": "static_synapse",
+        "delay": duration["step"],
+    }
+
+    nest.SetStatus(gen_spk_in, {"spike_times": [1.0, 2.0, 3.0, 5.0, 9.0, 11.0]})
+
+    nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
+    nest.Connect(nrns_in, nrns_rec, params_conn_one_to_one, params_syn)
+    nest.Connect(mm_rec, nrns_rec, params_conn_one_to_one, params_syn_static)
+
+    nest.Simulate(duration["sim"])
+    events_mm_rec = mm_rec.get("events")
+    surrogate_gradient = events_mm_rec["surrogate_gradient"][-5:]
+
+    assert np.allclose(surrogate_gradient, surrogate_gradient_reference, rtol=1e-8)

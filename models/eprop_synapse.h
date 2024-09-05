@@ -319,8 +319,11 @@ private:
   //! Low-pass filtered spiking variable.
   double z_bar_ = 0.0;
 
-  //! Low-pass filtered eligibility trace.
-  double e_bar_ = 0.0;
+  //! Low-pass filtered eligibility trace with kappa as decay factor.
+  double e_bar_kappa_ = 0.0;
+
+  //! Low-pass filtered eligibility trace with kappa_reg as decay factor.
+  double e_bar_kappa_reg_ = 0.0;
 
   //! Adaptive threshold component of the eligibility vector.
   double epsilon_ = 0.0;
@@ -394,7 +397,8 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
-  e_bar_ = es.e_bar_;
+  e_bar_kappa_ = es.e_bar_kappa_;
+  e_bar_kappa_reg_ = es.e_bar_kappa_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
   optimizer_ = es.optimizer_;
@@ -409,7 +413,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , t_spike_previous_( es.t_spike_previous_ )
   , t_previous_trigger_spike_( es.t_spike_previous_ )
   , z_bar_( es.z_bar_ )
-  , e_bar_( es.e_bar_ )
+  , e_bar_kappa_( es.e_bar_kappa_ )
+  , e_bar_kappa_reg_( es.e_bar_kappa_reg_ )
   , epsilon_( es.epsilon_ )
   , optimizer_( es.optimizer_ )
 {
@@ -432,7 +437,8 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   t_spike_previous_ = es.t_spike_previous_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
-  e_bar_ = es.e_bar_;
+  e_bar_kappa_ = es.e_bar_kappa_;
+  e_bar_kappa_reg_ = es.e_bar_kappa_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
 
@@ -482,8 +488,16 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
 
   if ( t_spike_previous_ != 0 )
   {
-    target->compute_gradient(
-      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
+    target->compute_gradient( t_spike,
+      t_spike_previous_,
+      z_previous_buffer_,
+      z_bar_,
+      e_bar_kappa_,
+      e_bar_kappa_reg_,
+      epsilon_,
+      weight_,
+      cp,
+      optimizer_ );
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();

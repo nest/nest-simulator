@@ -384,7 +384,8 @@ eprop_iaf::compute_gradient( const long t_spike,
   const long t_spike_previous,
   double& z_previous_buffer,
   double& z_bar,
-  double& e_bar,
+  double& e_bar_kappa,
+  double& e_bar_kappa_reg,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
@@ -395,6 +396,7 @@ eprop_iaf::compute_gradient( const long t_spike,
   double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
   double psi = 0.0;              // surrogate gradient
   double L = 0.0;                // learning signal
+  double firing_rate_reg = 0.0;  // firing rate regularization term
   double grad = 0.0;             // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
@@ -412,19 +414,21 @@ eprop_iaf::compute_gradient( const long t_spike,
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;
+    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
-    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    e_bar_kappa = P_.kappa_ * e_bar_kappa + ( 1.0 - P_.kappa_ ) * e;
+    e_bar_kappa_reg = P_.kappa_reg_ * e_bar_kappa_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
     if ( optimize_each_step )
     {
-      grad = L * e_bar;
+      grad = L * e_bar_kappa + firing_rate_reg * e_bar_kappa_reg;
       weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
     }
     else
     {
-      grad += L * e_bar;
+      grad += L * e_bar_kappa + firing_rate_reg * e_bar_kappa_reg;
     }
   }
 
@@ -438,7 +442,8 @@ eprop_iaf::compute_gradient( const long t_spike,
   if ( power > 0 )
   {
     z_bar *= std::pow( V_.P_v_m_, power );
-    e_bar *= std::pow( P_.kappa_, power );
+    e_bar_kappa *= std::pow( P_.kappa_, power );
+    e_bar_kappa_reg *= std::pow( P_.kappa_reg_, power );
   }
 }
 

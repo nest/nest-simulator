@@ -307,6 +307,7 @@ extern const Name interval;
 extern const Name is_refractory;
 
 extern const Name kappa;
+extern const Name kappa_reg;
 extern const Name Kd_act;
 extern const Name Kd_IP3_1;
 extern const Name Kd_IP3_2;

@@ -148,8 +148,8 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
 .. math::
   \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
-  f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
-    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_\kappa_\text{reg} \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
 
 where :math:`c_\text{reg}` is a constant scaling factor.
 
@@ -224,6 +224,10 @@ eprop_isi_trace_cutoff      ms      :math:`{\Delta t}_\text{c}` maximum value   
                                                                 type in C++
 f_target                    Hz      :math:`f^\text{target}`                 10.0 Target firing rate of rate
                                                                                  regularization
+kappa                               :math:`\kappa`                          0.97 Low-pass filter of the
+                                                                                 eligibility trace
+kappa_reg                           :math:`\kappa_\text{reg}`               0.97 Low-pass filter of the
+                                                                                 firing rate for regularization
 beta                                :math:`\beta`                            1.0 Width scaling of surrogate
                                                                                  gradient / pseudo-derivative of
                                                                                  membrane voltage
@@ -418,6 +422,9 @@ private:
 
     //! Low-pass filter of the eligibility trace.
     double kappa_;
+
+    //! Low-pass filter of the firing rate for regularization.
+    double kappa_reg_;
 
     //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
     //! eprop_isi_trace_cutoff_ and the inter-spike distance.

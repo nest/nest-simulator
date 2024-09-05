@@ -193,7 +193,7 @@ void
 EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
   const double z,
   const double f_target,
-  const double kappa,
+  const double kappa_reg,
   const double c_reg )
 {
   if ( eprop_indegree_ == 0 )
@@ -205,7 +205,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
 
   const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
 
-  f_av_ = kappa * f_av_ + ( 1.0 - kappa ) * z / dt;
+  f_av_ = kappa_reg * f_av_ + ( 1.0 - kappa_reg ) * z / dt;
 
   firing_rate_reg_ = c_reg * ( f_av_ - f_target_ );
 

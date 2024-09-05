@@ -206,13 +206,14 @@ params_nrn_reg = {
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
+    "kappa": 0.97,  # low-pass filter of the eligibility trace
+    "kappa_reg": 0.97,  # low-pass filter of the firing rate for regularization
     "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,
     "V_m": 0.0,
     "V_th": 0.6,  # mV, spike threshold membrane voltage
-    "kappa": 0.97,  # low-pass filter of the eligibility trace
 }
 
 params_nrn_ad = {
@@ -226,13 +227,14 @@ params_nrn_ad = {
     "f_target": 10.0,
     "gamma": 0.3,
     "I_e": 0.0,
+    "kappa": 0.97,
+    "kappa_reg": 0.97,
     "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",
     "t_ref": 5.0,
     "tau_m": 20.0,
     "V_m": 0.0,
     "V_th": 0.6,
-    "kappa": 0.97,
 }
 
 params_nrn_ad["adapt_beta"] = 1.7 * (

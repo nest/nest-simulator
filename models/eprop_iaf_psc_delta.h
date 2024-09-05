@@ -161,6 +161,10 @@ c_reg                               :math:`c_\text{reg}`                 0.0 Pre
                                                                              regularization
 f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                              regularization
+kappa                               :math:`\kappa`                      0.97 Low-pass filter of the
+                                                                             eligibility trace
+kappa_reg                           :math:`\kappa_\text{reg}`           0.97 Low-pass filter of the firing rate
+                                                                             for regularization
 beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
                                                                              / pseudo-derivative of membrane
                                                                              voltage
@@ -338,6 +342,9 @@ private:
 
     //! Low-pass filter of the eligibility trace.
     double kappa_;
+
+    //! Low-pass filter of the firing rate for regularization.
+    double kappa_reg_;
 
     //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
     //! eprop_isi_trace_cutoff_ and the inter-spike distance.

@@ -215,6 +215,9 @@ params_nrn_reg = {
     "V_m": 0.0,
     "V_th": 0.6,  # mV, spike threshold membrane voltage
 }
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
+params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])
 
 params_nrn_ad = {
     "beta": 1.0,
@@ -233,6 +236,9 @@ params_nrn_ad = {
     "V_m": 0.0,
     "V_th": 0.6,
 }
+
+params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
+params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
 
 params_nrn_ad["adapt_beta"] = 1.7 * (
     (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))

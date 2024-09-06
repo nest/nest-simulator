@@ -213,7 +213,7 @@ public:
    * @note The typename is `surrogate_gradient_function`. All parentheses in the expression are required.
    */
   typedef double (
-    EpropArchivingNodeRecurrent::*surrogate_gradient_function )( double, double, double, double, double, double );
+    EpropArchivingNodeRecurrent::*surrogate_gradient_function )( double, double, double, double, double );
 
   //! Select the surrogate gradient function.
   surrogate_gradient_function select_surrogate_gradient( const std::string& surrogate_gradient_function_name );
@@ -224,8 +224,7 @@ public:
    */
   double compute_piecewise_linear_surrogate_gradient( const double r,
     const double v_m,
-    const double v_th_adapt,
-    const double V_th,
+    const double v_th,
     const double beta,
     const double gamma );
 
@@ -235,8 +234,7 @@ public:
    */
   double compute_exponential_surrogate_gradient( const double r,
     const double v_m,
-    const double v_th_adapt,
-    const double V_th,
+    const double v_th,
     const double beta,
     const double gamma );
 
@@ -246,16 +244,14 @@ public:
    */
   double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
     const double v_m,
-    const double v_th_adapt,
-    const double V_th,
+    const double v_th,
     const double beta,
     const double gamma );
 
   //! Compute the surrogate gradient with an arctan function around the spike time (used, e.g., in Fang et al., 2021).
   double compute_arctan_surrogate_gradient( const double r,
     const double v_m,
-    const double v_th_adapt,
-    const double V_th,
+    const double v_th,
     const double beta,
     const double gamma );
 

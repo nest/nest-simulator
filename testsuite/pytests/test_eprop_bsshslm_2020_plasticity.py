@@ -161,6 +161,9 @@ def test_eprop_regression():
         "V_th": 0.03,
     }
 
+    params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
+    params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])
+
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
     nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
@@ -501,6 +504,9 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "V_th": 0.6,
     }
 
+    params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
+    params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])
+
     params_nrn_ad = {
         "beta": 1.0,
         "adapt_tau": 2000.0,
@@ -518,6 +524,9 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "V_m": 0.0,
         "V_th": 0.6,
     }
+
+    params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
+    params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
 
     params_nrn_ad["adapt_beta"] = 1.7 * (
         (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))

@@ -302,9 +302,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
 
     S_.z_ = 0.0;
 
-    // P_.V_th_ is passed twice to handle models without an adaptive threshold, serving as both v_th_adapt and V_th
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {

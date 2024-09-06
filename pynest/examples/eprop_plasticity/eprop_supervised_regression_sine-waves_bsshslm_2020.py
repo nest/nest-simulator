@@ -198,7 +198,7 @@ params_nrn_rec = {
 
 # factors from the original pseudo-derivative definition are incorporated into the parameters
 params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
-params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])
+params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
 
 ####################
 

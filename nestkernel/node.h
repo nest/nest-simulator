@@ -824,8 +824,8 @@ public:
    * @param t_spike_previous [in] Time of the previous spike.
    * @param z_previous_buffer [in, out] Value of presynaptic spiking variable from previous time step.
    * @param z_bar [in, out] Filtered presynaptic spiking variable.
-   * @param e_bar [in, out] Filtered eligibility trace with kappa as decay factor.
-   * @param e_bar_reg [in, out] Filtered eligibility trace with kappa_reg as decay factor.
+   * @param e_bar [in, out] Filtered eligibility trace.
+   * @param e_bar_reg [in, out] Filtered eligibility trace for firing rate regularization.
    * @param epsilon [out] Component of eligibility vector corresponding to the adaptive firing threshold variable.
    * @param weight [in, out] Synaptic weight.
    * @param cp [in] Common properties for synapses.

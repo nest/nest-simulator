@@ -319,10 +319,10 @@ private:
   //! Low-pass filtered spiking variable.
   double z_bar_ = 0.0;
 
-  //! Low-pass filtered eligibility trace with kappa as decay factor.
+  //! Low-pass filtered eligibility trace.
   double e_bar_ = 0.0;
 
-  //! Low-pass filtered eligibility trace with kappa_reg as decay factor.
+  //! Low-pass filtered eligibility trace for firing rate regularization.
   double e_bar_reg_ = 0.0;
 
   //! Adaptive threshold component of the eligibility vector.

@@ -477,7 +477,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
   double psi = 0.0;              // surrogate gradient
   double L = 0.0;                // learning signal
-  double firing_rate_reg = 0.0;  // firing rate regularization term
+  double firing_rate_reg = 0.0;  // firing rate regularization
   double grad = 0.0;             // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );

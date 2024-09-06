@@ -296,7 +296,6 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= sim step size, this can only fail in error
   assert( V_.refractory_steps_ >= 1 );
-
 }
 
 /* ----------------------------------------------------------------

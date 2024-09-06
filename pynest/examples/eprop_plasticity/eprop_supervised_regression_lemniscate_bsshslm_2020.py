@@ -203,6 +203,10 @@ params_nrn_rec = {
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
+params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
+
 params_nrn_rec["adapt_beta"] = (
     1.7 * (1.0 - np.exp(-1 / params_nrn_rec["adapt_tau"])) / (1.0 - np.exp(-1.0 / tau_m_mean))
 )  # prefactor of adaptive threshold

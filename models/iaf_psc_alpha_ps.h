@@ -291,17 +291,13 @@ private:
 
     /** Membrane time constant in ms. */
     double tau_m_;
-    double inv_tau_m_; /* inverse of tau_m_ */
 
     /** Time constant of synaptic current in ms. */
     double tau_syn_ex_;
     double tau_syn_in_;
-    double inv_tau_syn_ex_; /* inverse of tau_syn_ex_ */
-    double inv_tau_syn_in_; /* inverse of tau_syn_in_ */
 
     /** Membrane capacitance in pF. */
     double c_m_;
-    double inv_c_m_; /* inverse of c_m_ */
 
     /** Refractory period in ms. */
     double t_ref_;
@@ -334,9 +330,6 @@ private:
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
     double set( const DictionaryDatum&, Node* );
-
-    /** Used for pre-computing member variables for performance */
-    void compute_local_();
   };
 
   // ----------------------------------------------------------------
@@ -414,6 +407,10 @@ private:
     double dI_ex_before_;   //!< at beginning of mini-step
     double dI_in_before_;   //!< at beginning of mini-step
     double V_m_before_;     //!< at beginning of mini-step
+    double inv_tau_m_;      //!< 1 / tau_m
+    double inv_tau_syn_ex_; //!< 1 / tau_syn_ex
+    double inv_tau_syn_in_; //!< 1 / tau_syn_in
+    double inv_c_m_;        //!< 1 / c_m
   };
 
   // Access functions for UniversalDataLogger -------------------------------

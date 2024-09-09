@@ -427,9 +427,8 @@ private:
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
 
-    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
-    long eprop_isi_trace_cutoff_;
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -518,6 +517,9 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
+
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -576,7 +578,7 @@ private:
 inline long
 eprop_iaf_adapt::get_eprop_isi_trace_cutoff() const
 {
-  return P_.eprop_isi_trace_cutoff_;
+  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

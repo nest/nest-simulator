@@ -348,9 +348,8 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
-    long eprop_isi_trace_cutoff_;
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -427,6 +426,9 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
+
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -490,7 +492,7 @@ private:
 inline long
 eprop_readout::get_eprop_isi_trace_cutoff() const
 {
-  return P_.eprop_isi_trace_cutoff_;
+  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

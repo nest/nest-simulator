@@ -87,7 +87,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< double >::max() )
 {
 }
 
@@ -138,7 +138,7 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::kappa, kappa_ );
   def< double >( d, names::kappa_reg, kappa_reg_ );
-  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -171,7 +171,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
   {
@@ -223,7 +223,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
 
-  if ( eprop_isi_trace_cutoff_ < 0 )
+  if ( eprop_isi_trace_cutoff_ < 0.0 )
   {
     throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
   }
@@ -298,6 +298,7 @@ eprop_iaf_adapt::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
   compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
@@ -441,10 +442,14 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  const long t_compute_until = std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
+  const long t_compute_until = V_.eprop_isi_trace_cutoff_steps_ == std::numeric_limits< long >::max()
+    ? t_spike
+    : std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
 
   for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
   {
+    assert( eprop_hist_it != eprop_history_.end() );
+
     z = z_previous_buffer;
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;
@@ -475,14 +480,14 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
   }
 
-  const long power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
+  const long cutoff_to_spike_interval = t_spike - t_spike_previous - V_.eprop_isi_trace_cutoff_steps_;
 
-  if ( power > 0 )
+  if ( cutoff_to_spike_interval > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, power );
-    e_bar *= std::pow( P_.kappa_, power );
-    e_bar_reg *= std::pow( P_.kappa_reg_, power );
-    epsilon *= std::pow( V_.P_adapt_, power );
+    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
+    e_bar *= std::pow( P_.kappa_, cutoff_to_spike_interval );
+    e_bar_reg *= std::pow( P_.kappa_reg_, cutoff_to_spike_interval );
+    epsilon *= std::pow( V_.P_adapt_, cutoff_to_spike_interval );
   }
 }
 

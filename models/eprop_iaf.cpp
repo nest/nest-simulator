@@ -83,7 +83,7 @@ eprop_iaf::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< double >::max() )
+  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 

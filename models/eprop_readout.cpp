@@ -75,7 +75,7 @@ eprop_readout::Parameters_::Parameters_()
   , regular_spike_arrival_( true )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< double >::max() )
+  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 

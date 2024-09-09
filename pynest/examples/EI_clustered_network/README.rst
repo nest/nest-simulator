@@ -3,7 +3,7 @@ EI-clustered circuit model
 
 This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. [1]_.
 
-.. figure:: /static/img/pynest/EI_clustered_network_schematic.png
+.. figure:: EI_clustered_network_schematic.png
    :alt: EI-clustered circuit model.
 
    Schematic of the EI-clustered circuit model. The network consists of `n_clusters` with one excitatory and one inhibitory population each.
@@ -16,24 +16,24 @@ If you use this code, we ask you to cite the paper by Rostami et al. [1]_ and th
 File structure
 --------------
 
-* :doc:`run_simulation.py <run_simulation>`: an example script to try out the EI-clustered circuit model
-* :doc:`network.py <network>`: the main ``Network`` class with functions to build and simulate the network
-* :doc:`helper.py <helper>`: helper functions for calculation of synaptic weights and currents and plot function for raster plots
-* :doc:`network_params.py <network_params>`: network and neuron parameters
-* :doc:`stimulus_params.py <stimulus_params>`: parameters for optional external stimulation
-* :doc:`sim_params.py <sim_params>`: simulation parameters
+* :doc:`run_simulation_EI.py <run_simulation_EI>`: an example script to try out the EI-clustered circuit model
+* :doc:`network_EI.py <network_EI>`: the main ``Network`` class with functions to build and simulate the network
+* :doc:`helper_EI.py <helper_EI>`: helper functions for calculation of synaptic weights and currents and plot function for raster plots
+* :doc:`network_params_EI.py <network_params_EI>`: network and neuron parameters
+* :doc:`stimulus_params_EI.py <stimulus_params_EI>`: parameters for optional external stimulation
+* :doc:`sim_params_EI.py <sim_params_EI>`: simulation parameters
 
 Running the simulation
 ----------------------
 
 .. code-block:: bash
 
-   python run_simulation.py
+   python run_simulation_EI.py
 
 A raster plot of the network activity is saved as ``clustered_ei_raster.png``.
 
 The code can be parallelized by using multiple threads during the NEST simulation.
-This can be done by setting the parameter ``n_vp`` in the ``run_simulation.py`` script.
+This can be done by setting the parameter ``n_vp`` in the ``run_simulation_EI.py`` script.
 
 Contributions to this PyNEST model implementation
 -------------------------------------------------

@@ -201,13 +201,14 @@ params_nrn_rec = {
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.5,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
+    "kappa": 0.99,  # low-pass filter of the eligibility trace
+    "kappa_reg": 0.99,  # low-pass filter of the firing rate for regularization
     "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,
     "V_m": 0.0,
     "V_th": 0.6,  # mV, spike threshold membrane voltage
-    "kappa": 0.99,  # low-pass filter of the eligibility trace
 }
 
 ####################

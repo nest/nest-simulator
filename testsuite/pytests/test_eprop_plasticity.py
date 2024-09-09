@@ -178,13 +178,14 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "f_target": 10.0,
         "gamma": 10.0,
         "I_e": 0.0,
+        "kappa": 0.97,
+        "kappa_reg": 0.97,
         "regular_spike_arrival": False,
         "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,
         "V_m": 0.0,
         "V_th": 0.03,
-        "kappa": 0.97,
     }
 
     if neuron_model == "eprop_iaf_psc_delta":

@@ -305,6 +305,7 @@ private:
     double& z_previous_buffer,
     double& z_bar,
     double& e_bar,
+    double& e_bar_reg,
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,

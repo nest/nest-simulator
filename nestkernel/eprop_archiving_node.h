@@ -276,7 +276,7 @@ public:
   void write_firing_rate_reg_to_history( const long t,
     const double z,
     const double f_target,
-    const double kappa,
+    const double kappa_reg,
     const double c_reg );
 
   //! Get an iterator pointing to the firing rate regularization history of the given time step.

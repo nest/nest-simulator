@@ -86,6 +86,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
+  , kappa_reg_( 0.97 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
@@ -136,6 +137,7 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::kappa, kappa_ );
+  def< double >( d, names::kappa_reg, kappa_reg_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -168,6 +170,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
+  updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
@@ -213,6 +216,11 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( kappa_ < 0.0 or kappa_ > 1.0 )
   {
     throw BadProperty( "Eligibility trace low-pass filter kappa from range [0, 1] required." );
+  }
+
+  if ( kappa_reg_ < 0.0 or kappa_reg_ > 1.0 )
+  {
+    throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
 
   if ( eprop_isi_trace_cutoff_ < 0 )
@@ -356,7 +364,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 
     append_new_eprop_history_entry( t );
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
-    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
@@ -414,6 +422,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double& z_previous_buffer,
   double& z_bar,
   double& e_bar,
+  double& e_bar_reg,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
@@ -424,6 +433,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
   double psi = 0.0;              // surrogate gradient
   double L = 0.0;                // learning signal
+  double firing_rate_reg = 0.0;  // firing rate regularization
   double grad = 0.0;             // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
@@ -441,20 +451,22 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;
+    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
     epsilon = V_.P_adapt_ * epsilon + e;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
     if ( optimize_each_step )
     {
-      grad = L * e_bar;
+      grad = L * e_bar + firing_rate_reg * e_bar_reg;
       weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
     }
     else
     {
-      grad += L * e_bar;
+      grad += L * e_bar + firing_rate_reg * e_bar_reg;
     }
   }
 
@@ -469,6 +481,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   {
     z_bar *= std::pow( V_.P_v_m_, power );
     e_bar *= std::pow( P_.kappa_, power );
+    e_bar_reg *= std::pow( P_.kappa_reg_, power );
     epsilon *= std::pow( V_.P_adapt_, power );
   }
 }

@@ -555,6 +555,7 @@ nest::Node::compute_gradient( const long,
   double&,
   double&,
   double&,
+  double&,
   const CommonSynapseProperties&,
   WeightOptimizer* )
 {

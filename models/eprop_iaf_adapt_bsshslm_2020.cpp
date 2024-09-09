@@ -275,7 +275,7 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
+  compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -330,6 +330,11 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       }
     }
 
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
     S_.z_in_ = B_.spikes_.get_value( lag );
 
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
@@ -342,7 +347,7 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     S_.z_ = 0.0;
 
     S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.V_th_, P_.beta_, P_.gamma_ );
+      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
     if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
@@ -365,11 +370,6 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     }
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
-
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 

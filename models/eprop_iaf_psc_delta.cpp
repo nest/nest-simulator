@@ -297,7 +297,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 {
   B_.logger_.init();
 
-  compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
+  compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   const double h = Time::get_resolution().get_ms();
 
@@ -385,9 +385,9 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       --S_.r_;
     }
 
-    // P_.V_th_ is passed twice to handle models without an adaptive threshold, serving as both v_th_adapt and V_th
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient )( S_.r_, S_.y3_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.y3_, P_.V_th_, P_.beta_, P_.gamma_ );
+
+    double z = 0.0; // spiking variable
 
     // threshold crossing
     if ( S_.y3_ >= P_.V_th_ )
@@ -398,12 +398,12 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
 
-      S_.z_ = 1.0;
+      z = 1.0;
     }
 
     append_new_eprop_history_entry( t );
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
-    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, z, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 

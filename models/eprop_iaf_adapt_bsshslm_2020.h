@@ -326,9 +326,8 @@ private:
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
 
-  //! Compute the surrogate gradient.
-  double (
-    eprop_iaf_adapt_bsshslm_2020::*compute_surrogate_gradient )( double, double, double, double, double, double );
+  //! Pointer to member function selected for computing the surrogate gradient
+  surrogate_gradient_function compute_surrogate_gradient_;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >;

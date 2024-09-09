@@ -31,6 +31,15 @@
 namespace nest
 {
 
+std::map< std::string, EpropArchivingNodeRecurrent::surrogate_gradient_function >
+  EpropArchivingNodeRecurrent::surrogate_gradient_funcs_ = {
+    { "piecewise_linear", &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient },
+    { "exponential", &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient },
+    { "fast_sigmoid_derivative", &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient },
+    { "arctan", &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient }
+  };
+
+
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
   : EpropArchivingNode()
   , firing_rate_reg_( 0.0 )
@@ -47,11 +56,32 @@ EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNo
 {
 }
 
+EpropArchivingNodeRecurrent::surrogate_gradient_function
+EpropArchivingNodeRecurrent::select_surrogate_gradient( const std::string& surrogate_gradient_function_name )
+{
+  const auto found_entry_it = surrogate_gradient_funcs_.find( surrogate_gradient_function_name );
+
+  if ( found_entry_it != surrogate_gradient_funcs_.end() )
+  {
+    return found_entry_it->second;
+  }
+
+  std::string error_message = "Surrogate gradient / pseudo-derivate function surrogate_gradient_function from [";
+  for ( const auto& surrogate_gradient_func : surrogate_gradient_funcs_ )
+  {
+    error_message += " \"" + surrogate_gradient_func.first + "\",";
+  }
+  error_message.pop_back();
+  error_message += " ] required.";
+
+  throw BadProperty( error_message );
+}
+
+
 double
 EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const double r,
   const double v_m,
-  const double v_th_adapt,
-  const double V_th,
+  const double v_th,
   const double beta,
   const double gamma )
 {
@@ -60,14 +90,13 @@ EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const 
     return 0.0;
   }
 
-  return gamma * std::max( 0.0, 1.0 - beta * std::abs( ( v_m - v_th_adapt ) / V_th ) ) / V_th;
+  return gamma * std::max( 0.0, 1.0 - beta * std::abs( ( v_m - v_th ) ) );
 }
 
 double
 EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const double r,
   const double v_m,
-  const double v_th_adapt,
-  const double V_th,
+  const double v_th,
   const double beta,
   const double gamma )
 {
@@ -76,20 +105,13 @@ EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const doubl
     return 0.0;
   }
 
-  if ( std::abs( V_th ) < 1e-6 )
-  {
-    throw BadProperty(
-      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
-  }
-
-  return gamma * std::exp( -beta * std::abs( v_m - v_th_adapt ) );
+  return gamma * std::exp( -beta * std::abs( v_m - v_th ) );
 }
 
 double
 EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
   const double v_m,
-  const double v_th_adapt,
-  const double V_th,
+  const double v_th,
   const double beta,
   const double gamma )
 {
@@ -98,14 +120,13 @@ EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient(
     return 0.0;
   }
 
-  return gamma * std::pow( 1.0 + beta * std::abs( v_m - v_th_adapt ), -2 );
+  return gamma * std::pow( 1.0 + beta * std::abs( v_m - v_th ), -2 );
 }
 
 double
 EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
   const double v_m,
-  const double v_th_adapt,
-  const double V_th,
+  const double v_th,
   const double beta,
   const double gamma )
 {
@@ -114,7 +135,7 @@ EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
     return 0.0;
   }
 
-  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th_adapt ), 2 ) ) );
+  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th ), 2 ) ) );
 }
 
 void

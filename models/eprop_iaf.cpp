@@ -265,7 +265,7 @@ eprop_iaf::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
+  compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -299,6 +299,11 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
   {
     const long t = origin.get_steps() + lag;
 
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
     S_.z_in_ = B_.spikes_.get_value( lag );
 
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
@@ -307,9 +312,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     S_.z_ = 0.0;
 
-    // P_.V_th_ is passed twice to handle models without an adaptive threshold, serving as both v_th_adapt and V_th
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {
@@ -325,11 +328,6 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
     write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
-
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 

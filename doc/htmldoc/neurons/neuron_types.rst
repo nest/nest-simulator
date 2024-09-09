@@ -63,7 +63,7 @@ Spiking neurons
 Geometry
 ~~~~~~~~
 
- grid:: 1 2 2 2
+.. grid:: 1 2 2 2
 
    .. grid-item::
       :columns: 2
@@ -286,7 +286,7 @@ Adaptation mechanism
             such as spike-frequency adaptation, where a neuron's responsiveness decreases with sustained
             high-frequency input, allowing for more realistic simulations of neuronal behavior.
 
-            .. dropdown:: Adaptive threshold
+            .. dropdown:: Adaptation
 
                   * aeif_cond_alpha – Conductance based exponential integrate-and-fire neuron model
                   * aeif_cond_alpha_astro – Conductance based exponential integrate-and-fire neuron model with support for neuron-astrocyte interactions

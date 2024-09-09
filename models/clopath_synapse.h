@@ -247,8 +247,6 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   std::deque< histentry_extended >::iterator start;
   std::deque< histentry_extended >::iterator finish;
 
-  // facilitation due to postsynaptic activity since last pre-synaptic spike
-
   // For a new synapse, t_lastspike_ contains the point in time of the last
   // spike. So we initially read the
   // history(t_last_spike - dendritic_delay, ..., T_spike-dendritic_delay]
@@ -261,7 +259,10 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   while ( start != finish )
   {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
+
+    // facilitation due to postsynaptic activity since last pre-synaptic spike
     weight_ = facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
+
     ++start;
   }
 

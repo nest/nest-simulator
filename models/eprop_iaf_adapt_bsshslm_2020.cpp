@@ -330,6 +330,11 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       }
     }
 
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
     S_.z_in_ = B_.spikes_.get_value( lag );
 
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
@@ -365,11 +370,6 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     }
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
-
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 

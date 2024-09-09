@@ -326,6 +326,11 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
   {
     const long t = origin.get_steps() + lag;
 
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
     S_.z_in_ = B_.spikes_.get_value( lag );
 
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
@@ -354,11 +359,6 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
     write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
-
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 

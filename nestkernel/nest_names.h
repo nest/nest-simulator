@@ -634,6 +634,7 @@ extern const Name time_deliver_spike_data;
 extern const Name time_gather_secondary_data;
 extern const Name time_gather_spike_data;
 extern const Name time_gather_target_data;
+extern const Name time_idle;
 extern const Name time_in_steps;
 extern const Name time_simulate;
 extern const Name time_update;

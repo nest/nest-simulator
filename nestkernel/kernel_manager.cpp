@@ -162,6 +162,12 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // is in place again, we can tell modules to re-register the components
   // they provide.
   module_manager.reinitialize_dynamic_modules();
+
+  // Prepare timers
+  kernel().simulation_manager.reset_timers_for_preparation();
+  kernel().simulation_manager.reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_preparation();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
 }
 
 void

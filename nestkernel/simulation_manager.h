@@ -189,6 +189,14 @@ public:
   Time get_eprop_learning_window() const;
   bool get_eprop_reset_neurons_on_update() const;
 
+#ifdef TIMER_DETAILED
+  Stopwatch&
+  get_idle_stopwatch()
+  {
+    return sw_idle_;
+  }
+#endif
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -228,7 +236,7 @@ private:
   double max_update_time_;         //!< longest update time seen so far (seconds)
 
   // private stop watches for benchmarking purposes
-  Stopwatch sw_simulate_;
+  SingleStopwatch sw_simulate_;
   Stopwatch sw_communicate_prepare_;
 #ifdef TIMER_DETAILED
   // intended for internal core developers, not for use in the public API
@@ -238,6 +246,7 @@ private:
   Stopwatch sw_gather_target_data_;
   Stopwatch sw_deliver_spike_data_;
   Stopwatch sw_deliver_secondary_data_;
+  Stopwatch sw_idle_;
 #endif
 
   double eprop_update_interval_;

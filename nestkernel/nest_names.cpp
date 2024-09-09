@@ -606,6 +606,7 @@ const Name time_deliver_spike_data( "time_deliver_spike_data" );
 const Name time_gather_secondary_data( "time_gather_secondary_data" );
 const Name time_gather_spike_data( "time_gather_spike_data" );
 const Name time_gather_target_data( "time_gather_target_data" );
+const Name time_idle( "time_idle" );
 const Name time_in_steps( "time_in_steps" );
 const Name time_simulate( "time_simulate" );
 const Name time_update( "time_update" );

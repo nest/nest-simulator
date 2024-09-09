@@ -442,14 +442,10 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  const long t_compute_until = V_.eprop_isi_trace_cutoff_steps_ == std::numeric_limits< long >::max()
-    ? t_spike
-    : std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
+  const long t_compute_until = std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
 
   for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
   {
-    assert( eprop_hist_it != eprop_history_.end() );
-
     z = z_previous_buffer;
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;

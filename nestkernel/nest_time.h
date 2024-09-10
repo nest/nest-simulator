@@ -170,6 +170,29 @@ public:
   static tic_t compute_max();
 
   /////////////////////////////////////////////////////////////
+  // Offset
+  /////////////////////////////////////////////////////////////
+
+  /**
+   * Return the creation time offset of the Event.
+   * Each Event carries the exact time of creation. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   */
+  double get_offset() const;
+
+  /**
+   * Set the creation time of the Event.
+   * Each Event carries the exact time of creation in realtime. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   * @param t Creation time in realtime. t has to be in [0, h).
+   */
+  void set_offset( double t );
+
+  /////////////////////////////////////////////////////////////
   // The data
   /////////////////////////////////////////////////////////////
 
@@ -212,29 +235,6 @@ protected:
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
   friend std::ostream&( ::operator<< )( std::ostream&, const Time& );
-
-  /////////////////////////////////////////////////////////////
-  // Offset
-  /////////////////////////////////////////////////////////////
-
-  /**
-   * Return the creation time offset of the Event.
-   * Each Event carries the exact time of creation. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   */
-  double get_offset() const;
-
-  /**
-   * Set the creation time of the Event.
-   * Each Event carries the exact time of creation in realtime. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   * @param t Creation time in realtime. t has to be in [0, h).
-   */
-  void set_offset( double t );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -339,6 +339,7 @@ public:
     : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
         : ( t.t < 0 )                          ? LIM_NEG_INF.tics
                                                : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
@@ -346,6 +347,7 @@ public:
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
         : ( t.t < 0 )                           ? LIM_NEG_INF.tics
                                                 : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
@@ -353,12 +355,14 @@ public:
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
         : ( t.t < 0 )                        ? LIM_NEG_INF.tics
                                              : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
   static tic_t fromstamp( ms_stamp );
   Time( ms_stamp t )
     : tics( fromstamp( t ) )
+    , offset_( 0. )
   {
   }
 

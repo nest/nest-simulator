@@ -559,7 +559,7 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, 
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
-  se.set_offset( S_.last_spike_offset_ );
+  se.get_stamp().set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
 }
 
@@ -580,7 +580,7 @@ nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const lo
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
-  se.set_offset( S_.last_spike_offset_ );
+  se.get_stamp().set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
 }
 

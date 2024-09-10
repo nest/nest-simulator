@@ -429,7 +429,7 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
 
       // send spike with datafield
       SpikeEvent se;
-      se.set_offset( delta_y_tsp );
+      se.get_stamp().set_offset( delta_y_tsp );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -458,7 +458,7 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 
   if ( e.get_rport() == 1 )
   {
-    s *= e.get_offset();
+    s *= e.get_stamp().get_offset();
   }
 
   // separate buffer channels for excitatory and inhibitory inputs

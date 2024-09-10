@@ -172,20 +172,6 @@ public:
   void set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid );
 
   /**
-   * Return time stamp of the event.
-   *
-   * The stamp denotes the time when the event was created.
-   */
-  Time const& get_stamp() const;
-
-  /**
-   * Set the time stamp of the event.
-   * The time stamp refers to the time when the event
-   * was created.
-   */
-  void set_stamp( Time const& );
-
-  /**
    * Return transmission delay of the event.
    *
    * The delay refers to the time until the event is
@@ -195,11 +181,12 @@ public:
 
   /**
    * Set the transmission delay of the event.
+   *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    * @param d delay
    */
-  void set_delay_steps( delay d );
+  void set_delay_steps( long d );
 
   /**
    * Relative spike delivery time in steps.
@@ -297,7 +284,28 @@ public:
    */
   bool is_valid() const;
 
+  /**
+   * Return time stamp of the event.
    *
+   * The stamp denotes the time when the event was created.
+   */
+  Time const& get_stamp() const;
+
+  /**
+   * Return time stamp of the event.
+   *
+   * The stamp denotes the time when the event was created.
+   */
+  Time& get_stamp();
+
+  /**
+   * Set the time stamp of the event.
+   *
+   * The time stamp refers to the time when the event
+   * was created.
+   */
+  void set_stamp( Time const& );
+
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
@@ -927,6 +935,12 @@ Event::set_weight( double w )
 
 inline Time const&
 Event::get_stamp() const
+{
+  return stamp_;
+}
+
+inline Time&
+Event::get_stamp()
 {
   return stamp_;
 }

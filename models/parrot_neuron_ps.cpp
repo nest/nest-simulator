@@ -81,7 +81,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
       // send spike
       SpikeEvent se;
       se.set_multiplicity( multiplicity );
-      se.set_offset( ev_offset );
+      se.get_stamp().set_offset( ev_offset );
       kernel().event_delivery_manager.send( *this, se, lag );
 
       for ( unsigned long i = 0; i < multiplicity; ++i )

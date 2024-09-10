@@ -668,7 +668,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i * SPIKES_PER_BATCH + j ];
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-          se_batch[ j ].set_offset( spike_data.get_offset() );
+          se_batch[ j ].get_stamp().set_offset( spike_data.get_offset() );
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
@@ -689,7 +689,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         const SpikeDataT& spike_data =
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-        se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].get_stamp().set_offset( spike_data.get_offset() );
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
@@ -712,7 +712,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i * SPIKES_PER_BATCH + j ];
 
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-          se_batch[ j ].set_offset( spike_data.get_offset() );
+          se_batch[ j ].get_stamp().set_offset( spike_data.get_offset() );
 
           syn_id_batch[ j ] = spike_data.get_syn_id();
           // for compressed spikes lcid holds the index in the
@@ -750,7 +750,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         const SpikeDataT& spike_data =
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-        se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].get_stamp().set_offset( spike_data.get_offset() );
         syn_id_batch[ j ] = spike_data.get_syn_id();
         // for compressed spikes lcid holds the index in the
         // compressed_spike_data structure

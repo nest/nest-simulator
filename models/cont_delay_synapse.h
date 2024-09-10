@@ -231,16 +231,16 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonS
   if ( total_offset < Time::get_resolution().get_ms() )
   {
     e.set_delay_steps( get_delay_steps() );
-    e.set_offset( total_offset );
+    e.get_stamp().set_offset( total_offset );
   }
   else
   {
     e.set_delay_steps( get_delay_steps() - 1 );
-    e.set_offset( total_offset - Time::get_resolution().get_ms() );
+    e.get_stamp().set_offset( total_offset - Time::get_resolution().get_ms() );
   }
   e();
   // reset offset to original value
-  e.set_offset( orig_event_offset );
+  e.get_stamp().set_offset( orig_event_offset );
 
   return true;
 }

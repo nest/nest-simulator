@@ -34,9 +34,8 @@ FirstVersion: November 2014
 Author: Hans E Plesser
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

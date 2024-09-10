@@ -22,11 +22,10 @@
 
 import unittest
 
-import numpy as np
-import scipy.stats
-
 import connect_test_base
 import nest
+import numpy as np
+import scipy.stats
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 

@@ -34,8 +34,9 @@ FirstVersion: November 2014
 Author: Hans E Plesser
 """
 
-import nest
 import pytest
+
+import nest
 
 
 @pytest.fixture(autouse=True)
@@ -45,9 +46,7 @@ def prepare():
     nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
 
 
-@pytest.mark.parametrize(
-    "synapse", ["stdp_synapse_hom", "stdp_facetshw_synapse_hom", "stdp_dopamine_synapse"]
-)
+@pytest.mark.parametrize("synapse", ["stdp_synapse_hom", "stdp_facetshw_synapse_hom", "stdp_dopamine_synapse"])
 class TestSettingCommonProps:
     def test_setting_common_props_on_original(self, synapse):
         expected_values = {"tau_plus": 5.0, "weight": 2.0}

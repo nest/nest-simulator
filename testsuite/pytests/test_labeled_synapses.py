@@ -30,8 +30,8 @@ import nest
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
-# apply exceptions for synapses that do not support labels or are not compatible with the default histentry/archivingnode
-synapse_list = [s for s in nest.synapse_models if s.endswith("_lbl")]
+# apply exceptions for synapses that are not compatible with the default histentry/archivingnode
+synapse_list = [s for s in nest.synapse_models if s.endswith("_lbl") and not s.startswith("stdp_pl_synapse_hom")]
 
 
 @nest.ll_api.check_stack
@@ -187,6 +187,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         """Try set a label to an 'un-label-able' synapse."""
 
         for syn in [s for s in nest.synapse_models if not s.endswith("_lbl")]:
+            if syn.startswith("stdp_pl_synapse_hom"):
+                continue
             if syn == "sic_connection":
                 # Skip sic_connection since it requires different pre- and post-synaptic neuron models
                 continue

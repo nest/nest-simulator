@@ -58,23 +58,29 @@ class TestStdpSpikeMultiplicity:
        delta, since in this case all spikes are at the end of the step, i.e.,
        all spikes have identical times independent of delta.
 
-    2. We choose delta values that are decrease by factors of 2. The
+    2. We choose delta values that are decreased by factors of 2. The
        plasticity rules depend on spike-time differences through
+
+       ::
 
            exp(dT / tau)
 
        where dT is the time between pre- and postsynaptic spikes. We construct
        pre- and postsynaptic spike times so that
 
-          dT = pre_post_shift + m * delta
+       ::
 
-       with m * delta < resolution << pre_post_shift. The time-dependence
+           dT = pre_post_shift + m * delta
+
+       with ``m * delta < resolution << pre_post_shift``. The time-dependence
        of the plasticity rule is therefore to good approximation linear in
        delta.
 
-       We can thus test as follows: Let w_pl be the weight obtained with the
-       plain parrot, and w_ps_j the weight obtained with the precise parrot
-       for delta_j = delta0 / 2^j. Then,
+       We can thus test as follows: Let ``w_pl`` be the weight obtained with the
+       plain parrot, and ``w_ps_j`` the weight obtained with the precise parrot
+       for ``delta_j = delta0 / 2^j``. Then,
+
+       ::
 
          ( w_ps_{j+1} - w_pl ) / ( w_ps_j - w_pl ) ~ 0.5  for all j
 
@@ -210,12 +216,12 @@ class TestStdpSpikeMultiplicity:
 
         Enforce that the error should strictly decrease with smaller timestep."""
 
-        post_weights = self.run_protocol(pre_post_shift=10.0)
+        post_weights = self.run_protocol(pre_post_shift=pre_post_shift)
         w_plain = np.array(post_weights["parrot"])
         w_precise = np.array(post_weights["parrot_ps"])
 
         assert all(w_plain == w_plain[0]), "Plain weights should be independent of timestep!"
-        dw = w_precise - w_plain
+        abs_err = np.abs(w_precise - w_plain)
         assert abs_err[-1] < max_abs_err, (
             "Final absolute error is "
             + "{0:.2E}".format(abs_err[-1])

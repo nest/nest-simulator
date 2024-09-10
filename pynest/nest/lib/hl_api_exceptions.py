@@ -27,7 +27,7 @@ class NESTMappedException(type):
     below gets called, creating a class with that name (the error name) and with an __init__ taking
     commandname and errormessage (as created in the source) which is a closure on the parent and
     errorname as well, with a parent of default type (self.default_parent) or
-    self.parents[errorname] if defined. """
+    self.parents[errorname] if defined."""
 
     def __getattr__(cls, errorname):
         """Creates a class of type "errorname" which is a child of cls.default_parent or
@@ -35,7 +35,7 @@ class NESTMappedException(type):
 
         This __getattr__ function also stores the class permanently as an attribute of cls for
         re-use where cls is actually the class that triggered the getattr (the class that
-        NESTMappedException is a metaclass of). """
+        NESTMappedException is a metaclass of)."""
 
         # Dynamic class construction, first check if we know its parent
         if errorname in cls.parents:
@@ -47,17 +47,18 @@ class NESTMappedException(type):
         # not NESTMappedException, since that would mean the metaclass would let the new class inherit
         # this __getattr__, allowing unintended dynamic construction of attributes
         newclass = type(
-            cls.__name__ + '.' + errorname,
+            cls.__name__ + "." + errorname,
             (parent,),
             {
-                '__init__': cls.init(parent, errorname),
-                '__doc__':
-                """Dynamically created exception {} from {}.
+                "__init__": cls.init(parent, errorname),
+                "__doc__": """Dynamically created exception {} from {}.
 
                 Created for the namespace: {}.
                 Parent exception: {}.
-                """.format(errorname, cls.source, cls.__name__, parent.__name__)
-            }
+                """.format(
+                    errorname, cls.source, cls.__name__, parent.__name__
+                ),
+            },
         )
 
         # Cache for reuse: __getattr__ should now not get called if requested again
@@ -74,8 +75,7 @@ class NESTErrors(metaclass=NESTMappedException):
     """
 
     class NESTError(Exception):
-        """Base exception class for all NEST exceptions.
-        """
+        """Base exception class for all NEST exceptions."""
 
         def __init__(self, message):
             """Initializer for NESTError base class.
@@ -90,10 +90,9 @@ class NESTErrors(metaclass=NESTMappedException):
             self.message = message
 
     class SLIException(NESTError):
-        """Base class for all exceptions coming from sli.
-        """
+        """Base class for all exceptions coming from sli."""
 
-        def __init__(self, commandname, errormessage, errorname='SLIException'):
+        def __init__(self, commandname, errormessage, errorname="SLIException"):
             """Initialize function.
 
             Parameters:
@@ -110,13 +109,13 @@ class NESTErrors(metaclass=NESTMappedException):
             self.errormessage = errormessage
 
     class PyNESTError(NESTError):
-        """Exceptions produced from Python/Cython code.
-        """
+        """Exceptions produced from Python/Cython code."""
+
         pass
 
     @staticmethod
     def init(parent, errorname):
-        """ Static class method to construct init's for SLIException children.
+        """Static class method to construct init's for SLIException children.
 
         Construct our new init with closure on errorname (as a default value) and parent.
         The default value allows the __init__ to be chained and set by the leaf child.
@@ -136,8 +135,7 @@ class NESTErrors(metaclass=NESTMappedException):
             # recursively init the parent class: all of this is only needed to properly set errorname
             parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
 
-        docstring = \
-            """Initialization function.
+        docstring = """Initialization function.
 
             Parameters:
             -----------
@@ -148,7 +146,9 @@ class NESTErrors(metaclass=NESTMappedException):
             *args, **kwargs: passed through to base class.
 
             self will be a descendant of {}.
-            """.format(errorname, parent.__name__)
+            """.format(
+            errorname, parent.__name__
+        )
 
         try:
             __init__.__doc__ = docstring
@@ -167,53 +167,52 @@ class NESTErrors(metaclass=NESTMappedException):
     source = "SLI"
     default_parent = SLIException
     parents = {
-        'TypeMismatch': 'InterpreterError',
-        'SystemSignal': 'InterpreterError',
-        'RangeCheck': 'InterpreterError',
-        'ArgumentType': 'InterpreterError',
-        'BadParameterValue': 'SLIException',
-        'DictError': 'InterpreterError',
-        'UndefinedName': 'DictError',
-        'EntryTypeMismatch': 'DictError',
-        'StackUnderflow': 'InterpreterError',
-        'IOError': 'SLIException',
-        'UnaccessedDictionaryEntry': 'DictError',
-        'UnknownModelName': 'KernelException',
-        'NewModelNameExists': 'KernelException',
-        'UnknownModelID': 'KernelException',
-        'ModelInUse': 'KernelException',
-        'UnknownSynapseType': 'KernelException',
-        'UnknownNode': 'KernelException',
-        'NoThreadSiblingsAvailable': 'KernelException',
-        'LocalNodeExpected': 'KernelException',
-        'NodeWithProxiesExpected': 'KernelException',
-        'UnknownReceptorType': 'KernelException',
-        'IncompatibleReceptorType': 'KernelException',
-        'UnknownPort': 'KernelException',
-        'IllegalConnection': 'KernelException',
-        'InexistentConnection': 'KernelException',
-        'UnknownThread': 'KernelException',
-        'BadDelay': 'KernelException',
-        'UnexpectedEvent': 'KernelException',
-        'UnsupportedEvent': 'KernelException',
-        'BadProperty': 'KernelException',
-        'BadParameter': 'KernelException',
-        'DimensionMismatch': 'KernelException',
-        'DistributionError': 'KernelException',
-        'InvalidDefaultResolution': 'KernelException',
-        'InvalidTimeInModel': 'KernelException',
-        'StepMultipleRequired': 'KernelException',
-        'TimeMultipleRequired': 'KernelException',
-        'GSLSolverFailure': 'KernelException',
-        'NumericalInstability': 'KernelException',
-        'KeyError': 'KernelException',
-        'MUSICPortUnconnected': 'KernelException',
-        'MUSICPortHasNoWidth': 'KernelException',
-        'MUSICPortAlreadyPublished': 'KernelException',
-        'MUSICSimulationHasRun': 'KernelException',
-        'MUSICChannelUnknown': 'KernelException',
-        'MUSICPortUnknown': 'KernelException',
-        'MUSICChannelAlreadyMapped': 'KernelException'
+        "TypeMismatch": "InterpreterError",
+        "SystemSignal": "InterpreterError",
+        "RangeCheck": "InterpreterError",
+        "ArgumentType": "InterpreterError",
+        "BadParameterValue": "SLIException",
+        "DictError": "InterpreterError",
+        "UndefinedName": "DictError",
+        "EntryTypeMismatch": "DictError",
+        "StackUnderflow": "InterpreterError",
+        "IOError": "SLIException",
+        "UnaccessedDictionaryEntry": "DictError",
+        "UnknownModelName": "KernelException",
+        "NewModelNameExists": "KernelException",
+        "ModelInUse": "KernelException",
+        "UnknownSynapseType": "KernelException",
+        "UnknownNode": "KernelException",
+        "NoThreadSiblingsAvailable": "KernelException",
+        "LocalNodeExpected": "KernelException",
+        "NodeWithProxiesExpected": "KernelException",
+        "UnknownReceptorType": "KernelException",
+        "IncompatibleReceptorType": "KernelException",
+        "UnknownPort": "KernelException",
+        "IllegalConnection": "KernelException",
+        "InexistentConnection": "KernelException",
+        "UnknownThread": "KernelException",
+        "BadDelay": "KernelException",
+        "UnexpectedEvent": "KernelException",
+        "UnsupportedEvent": "KernelException",
+        "BadProperty": "KernelException",
+        "BadParameter": "KernelException",
+        "DimensionMismatch": "KernelException",
+        "DistributionError": "KernelException",
+        "InvalidDefaultResolution": "KernelException",
+        "InvalidTimeInModel": "KernelException",
+        "StepMultipleRequired": "KernelException",
+        "TimeMultipleRequired": "KernelException",
+        "GSLSolverFailure": "KernelException",
+        "NumericalInstability": "KernelException",
+        "KeyError": "KernelException",
+        "MUSICPortUnconnected": "KernelException",
+        "MUSICPortHasNoWidth": "KernelException",
+        "MUSICPortAlreadyPublished": "KernelException",
+        "MUSICSimulationHasRun": "KernelException",
+        "MUSICChannelUnknown": "KernelException",
+        "MUSICPortUnknown": "KernelException",
+        "MUSICChannelAlreadyMapped": "KernelException",
     }
 
 

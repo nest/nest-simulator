@@ -151,21 +151,24 @@ Source::is_disabled() const
   return node_id_ == DISABLED_NODE_ID;
 }
 
-inline bool operator<( const Source& lhs, const Source& rhs )
+inline bool
+operator<( const Source& lhs, const Source& rhs )
 {
   return ( lhs.node_id_ < rhs.node_id_ );
 }
 
-inline bool operator>( const Source& lhs, const Source& rhs )
+inline bool
+operator>( const Source& lhs, const Source& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool operator==( const Source& lhs, const Source& rhs )
+inline bool
+operator==( const Source& lhs, const Source& rhs )
 {
   return ( lhs.node_id_ == rhs.node_id_ );
 }
 
 } // namespace nest
 
-#endif // SOURCE_H
+#endif /* #ifndef SOURCE_H */

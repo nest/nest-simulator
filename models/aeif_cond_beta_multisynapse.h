@@ -56,7 +56,7 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, adaptation, integrate-and-fire, conductance-based
 
 Short description
 +++++++++++++++++
@@ -66,7 +66,7 @@ Conductance based adaptive exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
+``aeif_cond_beta_multisynapse`` is a conductance-based adaptive exponential
 integrate-and-fire neuron model, according to Brette and Gerstner (2005) with
 multiple synaptic rise time and decay time constants, and synaptic conductance
 modeled by a beta function.
@@ -77,17 +77,20 @@ beta function, as described by A. Roth and M.C.W. van Rossum
 in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
 Chapter 6.
 
-The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
+The time constants are supplied by two arrays, ``tau_rise`` and ``tau_decay`` for
 the synaptic rise time and decay time, respectively. The synaptic
-reversal potentials are supplied by the array "E_rev". The port numbers
+reversal potentials are supplied by the array ``E_rev``. The port numbers
 are automatically assigned in the range from 1 to n_receptors.
-During connection, the ports are selected with the property "receptor_type".
+During connection, the ports are selected with the property ``receptor_type``.
+
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
 
 The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
+ C dV/dt = -g_L(V-E_L) + g_L \cdot \Delta_T \cdot \exp((V-V_T)/\Delta_T)
  + I_{syn_{tot}}(V, t) - w + I_e
 
 
@@ -97,15 +100,15 @@ where:
 
  I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
-the synapse i is excitatory or inhibitory depending on the value of
+the synapse `i` is excitatory or inhibitory depending on the value of
 :math:`E_{rev,i}`
-and the differential equation for the spike-adaptation current w is:
+and the differential equation for the spike-adaptation current `w` is:
 
 .. math::
 
- \tau_w * dw/dt = a(V - E_L) - w
+ \tau_w \cdot dw/dt = a(V - E_L) - w
 
-When the neuron fires a spike, the adaptation current w <- w + b.
+When the neuron fires a spike, the adaptation current `w <- w + b`.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
@@ -174,7 +177,14 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_beta_multisynapse
+
 EndUserDocs */
+
+void register_aeif_cond_beta_multisynapse( const std::string& name );
 
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {
@@ -182,7 +192,7 @@ class aeif_cond_beta_multisynapse : public ArchivingNode
 public:
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
-  virtual ~aeif_cond_beta_multisynapse();
+  ~aeif_cond_beta_multisynapse() override;
 
   friend int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
@@ -194,23 +204,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // The next three classes need to be friends to access the State_ class/member
   friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
@@ -231,7 +241,7 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope factor in ms
+    double Delta_T; //!< Slope factor in mV
     double tau_w;   //!< adaptation time-constant in ms
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
@@ -321,7 +331,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< simulation step size in ms
@@ -361,7 +371,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup aeif_cond_beta_multisynapse
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -393,8 +402,8 @@ private:
   void insert_conductance_recordables( size_t first = 0 );
 };
 
-inline port
-aeif_cond_beta_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+aeif_cond_beta_multisynapse::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -402,8 +411,8 @@ aeif_cond_beta_multisynapse::send_test_event( Node& target, rport receptor_type,
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -412,8 +421,8 @@ aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&, rport receptor_t
   return 0;
 }
 
-inline port
-aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

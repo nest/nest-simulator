@@ -23,12 +23,14 @@
 NodeCollection get/set tests
 """
 
-import unittest
-import nest
 import json
+import unittest
+
+import nest
 
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -36,9 +38,58 @@ except ImportError:
 try:
     import pandas
     import pandas.testing as pt
+
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False
+
+
+@nest.ll_api.check_stack
+class TestNestGetSet(unittest.TestCase):
+    """nest module get/set tests"""
+
+    def setUp(self):
+        nest.ResetKernel()
+
+    def test_get(self):
+        """
+        Test the `nest` module's `.get` function, `KernelAttribute` access and errors on
+        unknown attribute access.
+        """
+
+        # TestCase.setUp calls ResetKernel so kernel attributes should be equal to their
+        # defaults. Test should also error if there is a problem in general with the
+        # `.get` mechanism.
+        kst = nest.get("keep_source_table")
+        self.assertEqual(type(nest).keep_source_table._default, kst, "get value not equal to default after ResetKernel")
+        self.assertEqual(kst, nest.keep_source_table, "kernel attribute value not equal to get value")
+        # Getting the value of unknown attributes should error. The test should also error if there is
+        # a problem with possible `__getattr__` implementations.
+        with self.assertRaises(AttributeError, msg="no AttributeError for unknown attribute"):
+            nest.accessAbsolutelyUnknownThingOnNestModule
+        with self.assertRaises(KeyError, msg="no KeyError for unknown get key"):
+            nest.get("accessAbsolutelyUnknownKernelAttribute")
+
+    def test_set(self):
+        """
+        Test the `nest` module's `.set` function, `KernelAttribute` assignment and errors
+        on unknown attribute assignment.
+        """
+
+        # Test setting one existing kernel parameter as an exemplary for all
+        # (we just want to test the Python interface, not the setting mechanism itself)
+        nest.set(rng_seed=12345)
+        self.assertEqual(nest.rng_seed, 12345, "nest.set() failed")
+        nest.rng_seed = 345678
+        self.assertEqual(nest.rng_seed, 345678, "Setting kernel attribute failed")
+
+        # Setting the value of unknown attributes should error. Prevents user errors.
+        with self.assertRaises(AttributeError, msg="arbitrary attribute assignment passed"):
+            nest.absolutelyUnknownThingOnNestModule = 5
+
+        # Don't allow non-KA to be replaced on the module.
+        with self.assertRaises(AttributeError, msg="known attribute assignment passed"):
+            nest.get = 5
 
 
 @nest.ll_api.check_stack
@@ -53,343 +104,353 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         Test that get function works as expected.
         """
 
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
 
-        C_m = nodes.get('C_m')
-        node_ids = nodes.get('global_id')
-        E_L = nodes.get('E_L')
-        V_m = nodes.get('V_m')
-        t_ref = nodes.get('t_ref')
-        g = nodes.get(['local', 'thread', 'vp'])
-        local = g['local']
-        thread = g['thread']
-        vp = g['vp']
+        C_m = nodes.get("C_m")
+        node_ids = nodes.get("global_id")
+        E_L = nodes.get("E_L")
+        V_m = nodes.get("V_m")
+        t_ref = nodes.get("t_ref")
+        g = nodes.get(["local", "thread", "vp"])
+        local = g["local"]
+        thread = g["thread"]
+        vp = g["vp"]
 
-        self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
-                               250.0, 250.0, 250.0, 250.0, 250.0))
+        self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0))
         self.assertEqual(node_ids, tuple(range(1, 11)))
-        self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
-                               -70.0, -70.0, -70.0, -70.0, -70.0))
-        self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
-                               -70.0, -70.0, -70.0, -70.0, -70.0))
-        self.assertEqual(t_ref, (2.0, 2.0, 2.0, 2.0, 2.0,
-                                 2.0, 2.0, 2.0, 2.0, 2.0))
+        self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(t_ref, (2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0))
         self.assertTrue(local)
         self.assertEqual(thread, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
         self.assertEqual(vp, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
-        g_reference = {'local': (True, True, True, True, True,
-                                 True, True, True, True, True),
-                       'thread': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                       'vp': (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)}
+        g_reference = {
+            "local": (True, True, True, True, True, True, True, True, True, True),
+            "thread": (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            "vp": (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        }
         self.assertEqual(g, g_reference)
+
+    def test_SetStatus_and_GetStatus(self):
+        """
+        Test that SetStatus and GetStatus works as expected with
+        NodeCollection
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        num_nodes = 10
+        n = nest.Create("iaf_psc_alpha", num_nodes)
+        nest.SetStatus(n, {"V_m": 3.5})
+        self.assertEqual(nest.GetStatus(n, "V_m")[0], 3.5)
+
+        V_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        nest.SetStatus(n, "V_m", V_m)
+        for i in range(num_nodes):
+            self.assertEqual(nest.GetStatus(n, "V_m")[i], V_m[i])
+
+        with self.assertRaises(TypeError):
+            nest.SetStatus(n, [{"V_m": 34.0}, {"V_m": -5.0}])
+
+        nest.ResetKernel()
+
+        nc = nest.Create("iaf_psc_exp", 5)  # noqa: F841
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.SetStatus(n, {"V_m": -40.0})
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.GetStatus(n)
+
+        nest.ResetKernel()
+        n = nest.Create("iaf_psc_alpha", 3)
+        nest.SetStatus(n, [{"V_m": 10.0}, {"V_m": -10.0}, {"V_m": -20.0}])
+        self.assertEqual(nest.GetStatus(n, "V_m"), (10.0, -10.0, -20.0))
+
+    def test_set_on_empty_node_collection(self):
+        """
+        Checks that setting on empty NC does not raise an error.
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
+            self.assertIsNone(empty_nc.set())
 
     def test_get_sliced(self):
         """
         Test that get works on sliced NodeCollections
         """
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
 
-        V_m = nodes[2:5].get('V_m')
-        g = nodes[5:7].get(['t_ref', 'tau_m'])
-        C_m = nodes[2:9:2].get('C_m')
+        V_m = nodes[2:5].get("V_m")
+        g = nodes[5:7].get(["t_ref", "tau_m"])
+        C_m = nodes[2:9:2].get("C_m")
 
         self.assertEqual(V_m, (-70.0, -70.0, -70.0))
-        self.assertEqual(g['t_ref'], (2.0, 2.0))
+        self.assertEqual(g["t_ref"], (2.0, 2.0))
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0))
 
     def test_get_composite(self):
         """
         Test that get function works on composite NodeCollections
         """
-        n1 = nest.Create('iaf_psc_alpha', 2)
-        n2 = nest.Create('iaf_psc_delta', 2)
-        n3 = nest.Create('iaf_psc_exp')
-        n4 = nest.Create('iaf_psc_alpha', 3)
+        n1 = nest.Create("iaf_psc_alpha", 2)
+        n2 = nest.Create("iaf_psc_delta", 2)
+        n3 = nest.Create("iaf_psc_exp")
+        n4 = nest.Create("iaf_psc_alpha", 3)
 
-        n1.set(V_m=[-77., -88.])
-        n3.set({'V_m': -55.})
+        n1.set(V_m=[-77.0, -88.0])
+        n3.set({"V_m": -55.0})
 
-        n1.set(C_m=[251., 252.])
-        n2.set(C_m=[253., 254.])
-        n3.set({'C_m': 255.})
-        n4.set(C_m=[256., 257., 258.])
+        n1.set(C_m=[251.0, 252.0])
+        n2.set(C_m=[253.0, 254.0])
+        n3.set({"C_m": 255.0})
+        n4.set(C_m=[256.0, 257.0, 258.0])
 
         n5 = n1 + n2 + n3 + n4
 
         status_dict = n5.get()
 
         # Check that we get values in correct order
-        vm_ref = (-77., -88., -70., -70., -55, -70., -70., -70.)
-        self.assertEqual(status_dict['V_m'], vm_ref)
+        vm_ref = (-77.0, -88.0, -70.0, -70.0, -55, -70.0, -70.0, -70.0)
+        self.assertEqual(status_dict["V_m"], vm_ref)
 
         # Check that we get None where not applicable
         # tau_syn_ex is part of iaf_psc_alpha
-        tau_ref = (2., 2., None, None, 2., 2., 2., 2.)
-        self.assertEqual(status_dict['tau_syn_ex'], tau_ref)
+        tau_ref = (2.0, 2.0, None, None, 2.0, 2.0, 2.0, 2.0)
+        self.assertEqual(status_dict["tau_syn_ex"], tau_ref)
 
         # refractory_input is part of iaf_psc_delta
-        refrac_ref = (None, None,
-                      False, False,
-                      None, None,
-                      None, None)
+        refrac_ref = (None, None, False, False, None, None, None, None)
 
-        self.assertEqual(status_dict['refractory_input'], refrac_ref)
+        self.assertEqual(status_dict["refractory_input"], refrac_ref)
 
         # Check that calling get with string works on composite NCs, both on
         # parameters all the models have, and on individual parameters.
-        Cm_ref = [x * 1. for x in range(251, 259)]
-        Cm = n5.get('C_m')
+        Cm_ref = [x * 1.0 for x in range(251, 259)]
+        Cm = n5.get("C_m")
         self.assertEqual(list(Cm), Cm_ref)
 
-        refrac = n5.get('refractory_input')
+        refrac = n5.get("refractory_input")
         self.assertEqual(refrac, refrac_ref)
 
-    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_get_different_size(self):
         """
         Test get with different input for different sizes of NodeCollections
         """
-        single_sr = nest.Create('spike_recorder', 1)
-        multi_sr = nest.Create('spike_recorder', 10)
+        single_sr = nest.Create("spike_recorder", 1)
+        multi_sr = nest.Create("spike_recorder", 10)
         empty_array_float = np.array([], dtype=np.float64)
         empty_array_int = np.array([], dtype=np.int64)
 
         # Single node, literal parameter
-        self.assertEqual(single_sr.get('start'), 0.0)
+        self.assertEqual(single_sr.get("start"), 0.0)
 
         # Single node, array parameter
-        self.assertEqual(single_sr.get(['start', 'time_in_steps']),
-                         {'start': 0.0, 'time_in_steps': False})
+        self.assertEqual(single_sr.get(["start", "time_in_steps"]), {"start": 0.0, "time_in_steps": False})
 
         # Single node, hierarchical with literal parameter
-        np.testing.assert_array_equal(single_sr.get('events', 'times'),
-                                      empty_array_float)
+        np.testing.assert_array_equal(single_sr.get("events", "times"), empty_array_float)
 
         # Multiple nodes, hierarchical with literal parameter
-        values = multi_sr.get('events', 'times')
+        values = multi_sr.get("events", "times")
         for v in values:
             np.testing.assert_array_equal(v, empty_array_float)
 
         # Single node, hierarchical with array parameter
-        values = single_sr.get('events', ['senders', 'times'])
+        values = single_sr.get("events", ["senders", "times"])
         self.assertEqual(len(values), 2)
-        self.assertTrue('senders' in values)
-        self.assertTrue('times' in values)
-        np.testing.assert_array_equal(values['senders'], empty_array_int)
-        np.testing.assert_array_equal(values['times'], empty_array_float)
+        self.assertTrue("senders" in values)
+        self.assertTrue("times" in values)
+        np.testing.assert_array_equal(values["senders"], empty_array_int)
+        np.testing.assert_array_equal(values["times"], empty_array_float)
 
         # Multiple nodes, hierarchical with array parameter
-        values = multi_sr.get('events', ['senders', 'times'])
+        values = multi_sr.get("events", ["senders", "times"])
         self.assertEqual(len(values), 2)
-        self.assertTrue('senders' in values)
-        self.assertTrue('times' in values)
-        self.assertEqual(len(values['senders']), len(multi_sr))
-        for v in values['senders']:
+        self.assertTrue("senders" in values)
+        self.assertTrue("times" in values)
+        self.assertEqual(len(values["senders"]), len(multi_sr))
+        for v in values["senders"]:
             np.testing.assert_array_equal(v, empty_array_int)
-        for v in values['times']:
+        for v in values["times"]:
             np.testing.assert_array_equal(v, empty_array_float)
 
         # Single node, no parameter (gets all values)
         values = single_sr.get()
         num_values_single_sr = len(values.keys())
-        self.assertEqual(values['start'], 0.0)
+        self.assertEqual(values["start"], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sr.get()
         self.assertEqual(len(values.keys()), num_values_single_sr)
-        self.assertEqual(values['start'],
-                         tuple(0.0 for i in range(len(multi_sr))))
+        self.assertEqual(values["start"], tuple(0.0 for i in range(len(multi_sr))))
 
-    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    @unittest.skipIf(not HAVE_PANDAS, "Pandas package is not available")
     def test_get_pandas(self):
         """
         Test that get function with Pandas output works as expected.
         """
-        single_sr = nest.Create('spike_recorder', 1)
-        multi_sr = nest.Create('spike_recorder', 10)
+        single_sr = nest.Create("spike_recorder", 1)
+        multi_sr = nest.Create("spike_recorder", 10)
         empty_array_float = np.array([], dtype=np.float64)
 
         # Single node, literal parameter
-        pt.assert_frame_equal(single_sr.get('start', output='pandas'),
-                              pandas.DataFrame({'start': [0.0]},
-                                               index=tuple(single_sr.tolist())))
+        pt.assert_frame_equal(
+            single_sr.get("start", output="pandas"), pandas.DataFrame({"start": [0.0]}, index=tuple(single_sr.tolist()))
+        )
 
         # Multiple nodes, literal parameter
-        pt.assert_frame_equal(multi_sr.get('start', output='pandas'),
-                              pandas.DataFrame(
-                                  {'start': [0.0 for i in range(
-                                      len(multi_sr))]},
-                                  index=tuple(multi_sr.tolist())))
+        pt.assert_frame_equal(
+            multi_sr.get("start", output="pandas"),
+            pandas.DataFrame({"start": [0.0 for i in range(len(multi_sr))]}, index=tuple(multi_sr.tolist())),
+        )
 
         # Single node, array parameter
-        pt.assert_frame_equal(single_sr.get(['start', 'n_events'],
-                                            output='pandas'),
-                              pandas.DataFrame({'start': [0.0],
-                                                'n_events': [0]},
-                                               index=tuple(single_sr.tolist())))
+        pt.assert_frame_equal(
+            single_sr.get(["start", "n_events"], output="pandas"),
+            pandas.DataFrame({"start": [0.0], "n_events": [0]}, index=tuple(single_sr.tolist())),
+        )
 
         # Multiple nodes, array parameter
-        ref_dict = {'start': [0.0 for i in range(len(multi_sr))],
-                    'n_events': [0]}
-        pt.assert_frame_equal(multi_sr.get(['start', 'n_events'],
-                                           output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sr.tolist())))
+        ref_dict = {"start": [0.0 for i in range(len(multi_sr))], "n_events": [0]}
+        pt.assert_frame_equal(
+            multi_sr.get(["start", "n_events"], output="pandas"),
+            pandas.DataFrame(ref_dict, index=tuple(multi_sr.tolist())),
+        )
 
         # Single node, hierarchical with literal parameter
-        pt.assert_frame_equal(single_sr.get('events', 'times',
-                                            output='pandas'),
-                              pandas.DataFrame({'times': [[]]},
-                                               index=tuple(single_sr.tolist())))
+        pt.assert_frame_equal(
+            single_sr.get("events", "times", output="pandas"),
+            pandas.DataFrame({"times": [[]]}, index=tuple(single_sr.tolist())),
+        )
 
         # Multiple nodes, hierarchical with literal parameter
-        ref_dict = {'times': [empty_array_float
-                              for i in range(len(multi_sr))]}
-        pt.assert_frame_equal(multi_sr.get('events', 'times',
-                                           output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sr.tolist())))
+        ref_dict = {"times": [empty_array_float for i in range(len(multi_sr))]}
+        pt.assert_frame_equal(
+            multi_sr.get("events", "times", output="pandas"), pandas.DataFrame(ref_dict, index=tuple(multi_sr.tolist()))
+        )
 
         # Single node, hierarchical with array parameter
-        ref_df = pandas.DataFrame(
-            {'times': [[]], 'senders': [[]]}, index=tuple(single_sr.tolist()))
+        ref_df = pandas.DataFrame({"times": [[]], "senders": [[]]}, index=tuple(single_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(single_sr.get(
-            'events', ['senders', 'times'], output='pandas'),
-            ref_df)
+        pt.assert_frame_equal(single_sr.get("events", ["senders", "times"], output="pandas"), ref_df)
 
         # Multiple nodes, hierarchical with array parameter
-        ref_dict = {'times': [[] for i in range(len(multi_sr))],
-                    'senders': [[] for i in range(len(multi_sr))]}
-        ref_df = pandas.DataFrame(
-            ref_dict,
-            index=tuple(multi_sr.tolist()))
+        ref_dict = {"times": [[] for i in range(len(multi_sr))], "senders": [[] for i in range(len(multi_sr))]}
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        sr_df = multi_sr.get('events', ['senders', 'times'], output='pandas')
+        sr_df = multi_sr.get("events", ["senders", "times"], output="pandas")
         sr_df = sr_df.reindex(sorted(sr_df.columns), axis=1)
-        pt.assert_frame_equal(sr_df,
-                              ref_df)
+        pt.assert_frame_equal(sr_df, ref_df)
 
         # Single node, no parameter (gets all values)
-        values = single_sr.get(output='pandas')
+        values = single_sr.get(output="pandas")
         num_values_single_sr = values.shape[1]
-        self.assertEqual(values['start'][tuple(single_sr.tolist())[0]], 0.0)
+        self.assertEqual(values["start"][tuple(single_sr.tolist())[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = multi_sr.get(output='pandas')
+        values = multi_sr.get(output="pandas")
         self.assertEqual(values.shape, (len(multi_sr), num_values_single_sr))
-        pt.assert_series_equal(values['start'],
-                               pandas.Series({key: 0.0
-                                              for key in tuple(multi_sr.tolist())},
-                                             dtype=np.float64,
-                                             name='start'))
+        pt.assert_series_equal(
+            values["start"],
+            pandas.Series({key: 0.0 for key in tuple(multi_sr.tolist())}, dtype=np.float64, name="start"),
+        )
 
         # With data in events
-        nodes = nest.Create('iaf_psc_alpha', 10)
-        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        nodes = nest.Create("iaf_psc_alpha", 10)
+        pg = nest.Create("poisson_generator", {"rate": 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
-        nest.Connect(nodes, multi_sr, 'one_to_one')
+        nest.Connect(nodes, multi_sr, "one_to_one")
         nest.Simulate(50)
 
-        ref_values = single_sr.get('events', ['senders', 'times'])
-        ref_df = pandas.DataFrame({key: [ref_values[key]] for key in ['senders', 'times']},
-                                  index=tuple(single_sr.tolist()))
-        sd_df = single_sr.get('events', ['senders', 'times'], output='pandas')
+        ref_values = single_sr.get("events", ["senders", "times"])
+        ref_df = pandas.DataFrame(
+            {key: [ref_values[key]] for key in ["senders", "times"]}, index=tuple(single_sr.tolist())
+        )
+        sd_df = single_sr.get("events", ["senders", "times"], output="pandas")
         pt.assert_frame_equal(sd_df, ref_df)
 
-        ref_values = multi_sr.get('events', ['senders', 'times'])
+        ref_values = multi_sr.get("events", ["senders", "times"])
         ref_df = pandas.DataFrame(ref_values, index=tuple(multi_sr.tolist()))
-        sd_df = multi_sr.get('events', ['senders', 'times'], output='pandas')
+        sd_df = multi_sr.get("events", ["senders", "times"], output="pandas")
         pt.assert_frame_equal(sd_df, ref_df)
 
     def test_get_JSON(self):
         """
         Test that get function with json output works as expected.
         """
-        single_sr = nest.Create('spike_recorder', 1)
-        multi_sr = nest.Create('spike_recorder', 10)
+        single_sr = nest.Create("spike_recorder", 1)
+        multi_sr = nest.Create("spike_recorder", 10)
 
         # Single node, literal parameter
-        self.assertEqual(json.loads(
-            single_sr.get('start', output='json')), 0.0)
+        self.assertEqual(json.loads(single_sr.get("start", output="json")), 0.0)
 
         # Multiple nodes, literal parameter
-        self.assertEqual(
-            json.loads(multi_sr.get('start', output='json')),
-            len(multi_sr) * [0.0])
+        self.assertEqual(json.loads(multi_sr.get("start", output="json")), len(multi_sr) * [0.0])
 
         # Single node, array parameter
-        ref_dict = {'start': 0.0, 'n_events': 0}
-        self.assertEqual(
-            json.loads(single_sr.get(['start', 'n_events'], output='json')),
-            ref_dict)
+        ref_dict = {"start": 0.0, "n_events": 0}
+        self.assertEqual(json.loads(single_sr.get(["start", "n_events"], output="json")), ref_dict)
 
         # Multiple nodes, array parameter
-        ref_dict = {'start': len(multi_sr) * [0.0],
-                    'n_events': len(multi_sr) * [0]}
-        self.assertEqual(
-            json.loads(multi_sr.get(['start', 'n_events'], output='json')),
-            ref_dict)
+        ref_dict = {"start": len(multi_sr) * [0.0], "n_events": len(multi_sr) * [0]}
+        self.assertEqual(json.loads(multi_sr.get(["start", "n_events"], output="json")), ref_dict)
 
         # Single node, hierarchical with literal parameter
-        self.assertEqual(json.loads(single_sr.get(
-            'events', 'times', output='json')), [])
+        self.assertEqual(json.loads(single_sr.get("events", "times", output="json")), [])
 
         # Multiple nodes, hierarchical with literal parameter
         ref_list = len(multi_sr) * [[]]
-        self.assertEqual(
-            json.loads(multi_sr.get('events', 'times', output='json')),
-            ref_list)
+        self.assertEqual(json.loads(multi_sr.get("events", "times", output="json")), ref_list)
 
         # Single node, hierarchical with array parameter
-        ref_dict = {'senders': [], 'times': []}
-        self.assertEqual(
-            json.loads(single_sr.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        ref_dict = {"senders": [], "times": []}
+        self.assertEqual(json.loads(single_sr.get("events", ["senders", "times"], output="json")), ref_dict)
 
         # Multiple nodes, hierarchical with array parameter
-        ref_dict = {'times': len(multi_sr) * [[]],
-                    'senders': len(multi_sr) * [[]]}
-        self.assertEqual(
-            json.loads(multi_sr.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        ref_dict = {"times": len(multi_sr) * [[]], "senders": len(multi_sr) * [[]]}
+        self.assertEqual(json.loads(multi_sr.get("events", ["senders", "times"], output="json")), ref_dict)
 
         # Single node, no parameter (gets all values)
-        values = json.loads(single_sr.get(output='json'))
+        values = json.loads(single_sr.get(output="json"))
         num_values_single_sr = len(values)
-        self.assertEqual(values['start'], 0.0)
+        self.assertEqual(values["start"], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = json.loads(multi_sr.get(output='json'))
+        values = json.loads(multi_sr.get(output="json"))
         self.assertEqual(len(values), num_values_single_sr)
-        self.assertEqual(values['start'], len(multi_sr) * [0.0])
+        self.assertEqual(values["start"], len(multi_sr) * [0.0])
 
         # With data in events
-        nodes = nest.Create('iaf_psc_alpha', 10)
-        pg = nest.Create('poisson_generator', {'rate': 70000.0})
+        nodes = nest.Create("iaf_psc_alpha", 10)
+        pg = nest.Create("poisson_generator", {"rate": 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
-        nest.Connect(nodes, multi_sr, 'one_to_one')
+        nest.Connect(nodes, multi_sr, "one_to_one")
         nest.Simulate(50)
 
-        sd_ref = single_sr.get('events', ['senders', 'times'])
-        sd_json = single_sr.get('events', ['senders', 'times'], output='json')
+        sd_ref = single_sr.get("events", ["senders", "times"])
+        sd_json = single_sr.get("events", ["senders", "times"], output="json")
         sd_dict = json.loads(sd_json)
         self.assertEqual(len(sd_dict.keys()), 2)
         self.assertEqual(sorted(sd_dict.keys()), sorted(sd_ref.keys()))
-        for key in ['senders', 'times']:
+        for key in ["senders", "times"]:
             self.assertEqual(list(sd_ref[key]), list(sd_dict[key]))
 
-        multi_sr_ref = multi_sr.get('events', ['senders', 'times'])
-        multi_sr_json = multi_sr.get('events', ['senders', 'times'], output='json')
+        multi_sr_ref = multi_sr.get("events", ["senders", "times"])
+        multi_sr_json = multi_sr.get("events", ["senders", "times"], output="json")
         multi_sr_dict = json.loads(multi_sr_json)
         self.assertEqual(len(multi_sr_dict.keys()), 2)
         self.assertEqual(sorted(multi_sr_dict.keys()), sorted(multi_sr_ref.keys()))
-        for key in ['senders', 'times']:
+        for key in ["senders", "times"]:
             multi_sr_ref_element = [list(element) for element in multi_sr_ref[key]]
             self.assertEqual(multi_sr_ref_element, multi_sr_dict[key])
 
@@ -398,117 +459,132 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         Test that set function works as expected.
         """
 
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
 
         # Dict to set same value for all nodes.
-        nodes.set({'C_m': 100.0})
-        C_m = nodes.get('C_m')
-        self.assertEqual(C_m, (100.0, 100.0, 100.0, 100.0, 100.0,
-                               100.0, 100.0, 100.0, 100.0, 100.0))
+        nodes.set({"C_m": 100.0})
+        C_m = nodes.get("C_m")
+        self.assertEqual(C_m, (100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0))
 
         # Set same value for all nodes.
         nodes.set(tau_Ca=500.0)
-        tau_Ca = nodes.get('tau_Ca')
-        self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
-                                  500.0, 500.0, 500.0, 500.0, 500.0))
+        tau_Ca = nodes.get("tau_Ca")
+        self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0))
 
         # List of dicts, where each dict corresponds to a single node.
-        nodes.set(({'V_m': 10.0}, {'V_m': 20.0}, {'V_m': 30.0}, {'V_m': 40.0},
-                   {'V_m': 50.0}, {'V_m': 60.0}, {'V_m': 70.0}, {'V_m': 80.0},
-                   {'V_m': 90.0}, {'V_m': -100.0}))
-        V_m = nodes.get('V_m')
-        self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0,
-                               60.0, 70.0, 80.0, 90.0, -100.0))
+        nodes.set(
+            (
+                {"V_m": 10.0},
+                {"V_m": 20.0},
+                {"V_m": 30.0},
+                {"V_m": 40.0},
+                {"V_m": 50.0},
+                {"V_m": 60.0},
+                {"V_m": 70.0},
+                {"V_m": 80.0},
+                {"V_m": 90.0},
+                {"V_m": -100.0},
+            )
+        )
+        V_m = nodes.get("V_m")
+        self.assertEqual(V_m, (10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, -100.0))
 
         # Set value of a parameter based on list. List must be length of nodes.
-        nodes.set(V_reset=[-85., -82., -80., -77., -75.,
-                           -72., -70., -67., -65., -62.])
-        V_reset = nodes.get('V_reset')
-        self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
-                                   -72., -70., -67., -65., -62.))
+        nodes.set(V_reset=[-85.0, -82.0, -80.0, -77.0, -75.0, -72.0, -70.0, -67.0, -65.0, -62.0])
+        V_reset = nodes.get("V_reset")
+        self.assertEqual(V_reset, (-85.0, -82.0, -80.0, -77.0, -75.0, -72.0, -70.0, -67.0, -65.0, -62.0))
 
         with self.assertRaises(IndexError):
-            nodes.set(V_reset=[-85., -82., -80., -77., -75.])
+            nodes.set(V_reset=[-85.0, -82.0, -80.0, -77.0, -75.0])
 
         # Set different parameters with a dictionary.
-        nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
-        g = nodes.get(['t_ref', 'tau_m', 'tau_minus'])
-        self.assertEqual(g['t_ref'], (44.0, 44.0, 44.0, 44.0, 44.0,
-                                      44.0, 44.0, 44.0, 44.0, 44.0))
-        self.assertEqual(g['tau_m'], (2.0, 2.0, 2.0, 2.0, 2.0,
-                                      2.0, 2.0, 2.0, 2.0, 2.0))
-        self.assertEqual(g['tau_minus'], (42.0, 42.0, 42.0, 42.0, 42.0,
-                                          42.0, 42.0, 42.0, 42.0, 42.0))
+        nodes.set({"t_ref": 44.0, "tau_m": 2.0, "tau_minus": 42.0})
+        g = nodes.get(["t_ref", "tau_m", "tau_minus"])
+        self.assertEqual(g["t_ref"], (44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0))
+        self.assertEqual(g["tau_m"], (2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0))
+        self.assertEqual(g["tau_minus"], (42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0))
 
         with self.assertRaises(nest.kernel.NESTError):
-            nodes.set({'vp': 2})
+            nodes.set({"vp": 2})
 
     def test_set_composite(self):
         """
         Test that set works on composite NodeCollections
         """
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
 
-        nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
-        nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
+        nodes[2:5].set(({"V_m": -50.0}, {"V_m": -40.0}, {"V_m": -30.0}))
+        nodes[5:7].set({"t_ref": 4.4, "tau_m": 3.0})
         nodes[2:9:2].set(C_m=111.0)
-        V_m = nodes.get('V_m')
-        g = nodes.get(['t_ref', 'tau_m'])
-        C_m = nodes.get('C_m')
+        V_m = nodes.get("V_m")
+        g = nodes.get(["t_ref", "tau_m"])
+        C_m = nodes.get("C_m")
 
-        self.assertEqual(V_m, (-70.0, -70.0, -50.0, -40.0, -30.0,
-                               -70.0, -70.0, -70.0, -70.0, -70.0,))
-        self.assertEqual(g, {'t_ref': (2.0, 2.0, 2.0, 2.0, 2.0,
-                                       4.4, 4.4, 2.0, 2.0, 2.0),
-                             'tau_m': (10.0, 10.0, 10.0, 10.0, 10.0,
-                                       3.00, 3.00, 10.0, 10.0, 10.0)})
-        self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
-                               250.0, 111.0, 250.0, 111.0, 250.0))
+        self.assertEqual(
+            V_m,
+            (
+                -70.0,
+                -70.0,
+                -50.0,
+                -40.0,
+                -30.0,
+                -70.0,
+                -70.0,
+                -70.0,
+                -70.0,
+                -70.0,
+            ),
+        )
+        self.assertEqual(
+            g,
+            {
+                "t_ref": (2.0, 2.0, 2.0, 2.0, 2.0, 4.4, 4.4, 2.0, 2.0, 2.0),
+                "tau_m": (10.0, 10.0, 10.0, 10.0, 10.0, 3.00, 3.00, 10.0, 10.0, 10.0),
+            },
+        )
+        self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0, 250.0, 111.0, 250.0, 111.0, 250.0))
 
     def test_get_attribute(self):
         """Test get using getattr"""
-        nodes = nest.Create('iaf_psc_alpha', 10)
-        self.assertEqual(nodes.C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
-                                     250.0, 250.0, 250.0, 250.0, 250.0))
+        nodes = nest.Create("iaf_psc_alpha", 10)
+        self.assertEqual(nodes.C_m, (250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0, 250.0))
         self.assertEqual(nodes.global_id, tuple(range(1, 11)))
-        self.assertEqual(nodes.E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
-                                     -70.0, -70.0, -70.0, -70.0, -70.0))
-        self.assertEqual(nodes.V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
-                                     -70.0, -70.0, -70.0, -70.0, -70.0))
-        self.assertEqual(nodes.t_ref, (2.0, 2.0, 2.0, 2.0, 2.0,
-                                       2.0, 2.0, 2.0, 2.0, 2.0))
+        self.assertEqual(nodes.E_L, (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.V_m, (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.t_ref, (2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0))
         with self.assertRaises(KeyError):
             print(nodes.nonexistent_attribute)
 
         self.assertIsNone(nodes.spatial)
-        spatial_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        spatial_nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([2, 2]))
         self.assertIsNotNone(spatial_nodes.spatial)
-        spatial_reference = {'network_size': 4,
-                             'center': (0.0, 0.0),
-                             'edge_wrap': False,
-                             'extent': (1.0, 1.0),
-                             'shape': (2, 2)}
+        spatial_reference = {
+            "network_size": 4,
+            "center": (0.0, 0.0),
+            "edge_wrap": False,
+            "extent": (1.0, 1.0),
+            "shape": (2, 2),
+        }
         self.assertEqual(spatial_nodes.spatial, spatial_reference)
 
     def test_set_attribute(self):
         """Test set using setattr"""
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
         nodes.C_m = 100.0
-        self.assertEqual(nodes.get('C_m'), (100.0, 100.0, 100.0, 100.0, 100.0,
-                                            100.0, 100.0, 100.0, 100.0, 100.0))
-        v_reset_reference = (-85., -82., -80., -77., -75., -72., -70., -67., -65., -62.)
+        self.assertEqual(nodes.get("C_m"), (100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0))
+        v_reset_reference = (-85.0, -82.0, -80.0, -77.0, -75.0, -72.0, -70.0, -67.0, -65.0, -62.0)
         nodes.V_reset = v_reset_reference
-        self.assertEqual(nodes.get('V_reset'), v_reset_reference)
+        self.assertEqual(nodes.get("V_reset"), v_reset_reference)
 
         with self.assertRaises(IndexError):
-            nodes.V_reset = [-85., -82., -80., -77., -75.]
+            nodes.V_reset = [-85.0, -82.0, -80.0, -77.0, -75.0]
 
         with self.assertRaises(nest.kernel.NESTError):
-            nodes.nonexistent_attribute = 1.
+            nodes.nonexistent_attribute = 1.0
 
 
 def suite():
-    suite = unittest.makeSuite(TestNodeCollectionGetSet, 'test')
+    suite = unittest.makeSuite(TestNodeCollectionGetSet, "test")
     return suite
 
 

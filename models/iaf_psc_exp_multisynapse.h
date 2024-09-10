@@ -48,24 +48,23 @@ Leaky integrate-and-fire neuron model with multiple ports
 Description
 +++++++++++
 
-iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
+``iaf_psc_exp_multisynapse`` is a direct extension of iaf_psc_exp.
 On the postsynaptic side, there can be arbitrarily many synaptic
-time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
+time constants (``iaf_psc_exp`` has exactly two: ``tau_syn_ex`` and ``tau_syn_in``).
 
 This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
-"receptor_type" in the connectors.
+``receptor_type`` in the connectors.
 
 .. note::
 
-   If `tau_m` is very close to a synaptic time constant, the model
-   will numerically behave as if `tau_m` is equal to the synaptic
-   time constant, to avoid numerical instabilities.
+
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
-   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
-
-Remarks:
+   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
@@ -86,7 +85,14 @@ See also
 
 iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_multisynapse
+
 EndUserDocs */
+
+void register_iaf_psc_exp_multisynapse( const std::string& name );
 
 class iaf_psc_exp_multisynapse : public ArchivingNode
 {
@@ -103,24 +109,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class DynamicRecordablesMap< iaf_psc_exp_multisynapse >;
@@ -205,9 +211,7 @@ private:
 
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_;     //!< membrane potential, variable 2
-    double current_; //!< This is the current in a time step. This is only
-                     //!< here to allow logging
+    double V_m_; //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
     int refractory_steps_;
@@ -269,7 +273,6 @@ private:
   }; // Variables
 
   /**
-   * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -295,7 +298,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      return std::accumulate( S_.i_syn_.begin(), S_.i_syn_.end(), 0.0 );
     }
     else
     {
@@ -316,8 +319,8 @@ iaf_psc_exp_multisynapse::Parameters_::n_receptors_() const
   return tau_syn_.size();
 }
 
-inline port
-iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_psc_exp_multisynapse::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -325,8 +328,8 @@ iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -335,8 +338,8 @@ iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type
   return 0;
 }
 
-inline port
-iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

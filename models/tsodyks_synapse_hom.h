@@ -49,6 +49,7 @@ Synaptic depression is motivated by depletion of vesicles in the readily
 releasable pool of synaptic vesicles (variable x in equation (3)). Synaptic
 facilitation comes about by a presynaptic increase of release probability,
 which is modeled by variable U in Eq (4).
+
 The original interpretation of variable y is the amount of glutamate
 concentration in the synaptic cleft. In [1]_ this variable is taken to be
 directly proportional to the synaptic current caused in the postsynaptic
@@ -57,26 +58,27 @@ to reproduce the results of [1]_ and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
-1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_psc_exp_htum,
+1.) The postsynaptic neuron must be of type ``iaf_psc_exp`` or ``iaf_psc_exp_htum``,
 because these neuron models have a postsynaptic current which decays
 exponentially.
 
-2.) The time constant of each tsodyks_synapse targeting a particular neuron
+2.) The time constant of each ``tsodyks_synapse`` targeting a particular neuron
 must be chosen equal to that neuron's synaptic time constant. In particular
 that means that all synapses targeting a particular neuron have the same
-parameter tau_psc.
+parameter ``tau_psc``.
 
 However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is u(t)*x(t)*w, where u(t) and x(t) are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
-The interpretation is as follows: The quantity u(t)*x(t) is the release
-probability times the amount of releasable synaptic vesicles at time t of the
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where `u(t)` and `x(t)` are defined in
+Eq (3) and (4), `w` is the synaptic weight specified upon connection.
+The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
+probability times the amount of releasable synaptic vesicles at time `t` of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of y(t) is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
 impulse u(t)*x(t)*w the full shape of y(t). The postsynaptic neuron, however,
@@ -87,7 +89,7 @@ an arbitrary postsynaptic effect depending on y(t).
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -106,11 +108,11 @@ Parameters
                   cleft [0,1]
 ========  ======  ========================================================
 
-Remarks:
+.. note::
 
-The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
-all synapses of the model and must be set using SetDefaults on the synapse
-model.
+   The weight and the parameters U, tau_psc, tau_fac, and tau_rec are
+   common to all synapses of the model and must be set using
+   :py:func:`.SetDefaults` on the synapse model.
 
 References
 ++++++++++
@@ -128,6 +130,11 @@ See also
 ++++++++
 
 tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse_hom
 
 EndUserDocs */
 
@@ -163,12 +170,18 @@ public:
 };
 
 
+void register_tsodyks_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class tsodyks_synapse_hom : public Connection< targetidentifierT >
 {
 public:
   typedef TsodyksHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -181,6 +194,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse_hom( const tsodyks_synapse_hom& ) = default;
+  tsodyks_synapse_hom& operator=( const tsodyks_synapse_hom& ) = default;
 
   /**
    * Default Destructor.
@@ -212,7 +226,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
+  bool send( Event& e, size_t t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -220,15 +234,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -237,10 +251,9 @@ public:
   void
   set_weight( double )
   {
-    throw BadProperty(
+    throw NotImplemented(
       "Setting of individual weights is not possible! The common weights can "
-      "be changed via "
-      "CopyModel()." );
+      "be changed via CopyModel()." );
   }
 
 private:
@@ -250,6 +263,8 @@ private:
   double t_lastspike_; //!< time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties tsodyks_synapse_hom< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -257,8 +272,8 @@ private:
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-tsodyks_synapse_hom< targetidentifierT >::send( Event& e, thread t, const TsodyksHomCommonProperties& cp )
+inline bool
+tsodyks_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const TsodyksHomCommonProperties& cp )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -303,6 +318,8 @@ tsodyks_synapse_hom< targetidentifierT >::send( Event& e, thread t, const Tsodyk
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

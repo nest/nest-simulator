@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -47,7 +47,7 @@ PSCs and adaptive threshold
 Description
 +++++++++++
 
-amat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``amat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -71,23 +71,19 @@ The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
-Remarks:
+The default parameter values for this model are different from the
+corresponding parameter values for ``mat2_psc_exp``. If identical
+parameters are used, and beta is 0, then this model shall behave
+exactly as mat2_psc_exp.
 
-- The default parameter values for this model are different from the
-  corresponding parameter values for mat2_psc_exp.
-- If identical parameters are used, and beta==0, then this model shall
-  behave exactly as mat2_psc_exp.
-- The time constants in the model must fullfill the following conditions:
-  - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
-  - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
-  - :math:`\tau_m != \tau_v`
-  This is required to avoid singularities in the numerics. This is a
-  problem of implementation only, not a principal problem of the model.
-- Expect unstable numerics if time constants that are required to be
-  different are very close.
-- :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
-  implementation to avoid a degenerate case of the ODE describing the
-  model [1]_.  For very similar values, numerics will be unstable.
+The following state variables can be read out using a multimeter:
+
+=========== ==== ==================================
+ V_m        mV   Non-resetting membrane potential
+ V_th       mV   Two-timescale adaptive threshold
+=========== ==== ==================================
+
+See also [4]_.
 
 Parameters
 ++++++++++
@@ -116,12 +112,24 @@ The following parameters can be set in the status dictionary:
                     relative to E_L as in [3]_)
 =========== ======= ===========================================================
 
-=========== ==== =======================================================
-**State variables that can be read out with the multimeter device**
-------------------------------------------------------------------------
- V_m        mV   Non-resetting membrane potential
- V_th       mV   Two-timescale adaptive threshold
-=========== ==== =======================================================
+.. note::
+
+   - The time constants in the model must fulfill the following conditions:
+     - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+     - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+     - :math:`\tau_m != \tau_v`
+     This is required to avoid singularities in the numerics. This is a
+     problem of implementation only, not a principal problem of the model.
+
+   - Expect unstable numerics if time constants that are required to be
+     different are very close.
+
+   - :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
+     implementation to avoid a degenerate case of the ODE describing the
+     model [1]_.  For very similar values, numerics will be unstable.
+
+   - Some parameter values given in Table 1 of [4]_ are incorrect. For
+     correct values, see Table 4 of [5]_.
 
 References
 ++++++++++
@@ -142,6 +150,10 @@ References
        for reproducing diverse firing patterns and predicting precise
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
+.. [5] Heiberg T, Kriener B, Tetzlaff T, Einevoll GT, Plesser HE (2018).
+       Firing-rate model for neurons with a broad repertoire of spiking behaviors.
+       J Comput Neurosci, 45:103.
+       DOI: https://doi.org/10.1007/s10827-018-0693-9
 
 Sends
 +++++
@@ -153,7 +165,14 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: amat2_psc_exp
+
 EndUserDocs */
+
+void register_amat2_psc_exp( const std::string& name );
 
 class amat2_psc_exp : public ArchivingNode
 {
@@ -170,23 +189,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access private members
   friend class RecordablesMap< amat2_psc_exp >;
@@ -247,7 +266,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -291,8 +310,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( amat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, amat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( amat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, amat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -377,7 +396,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup amat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -394,8 +412,8 @@ private:
 };
 
 
-inline port
-amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+amat2_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -403,8 +421,8 @@ amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, boo
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -413,8 +431,8 @@ amat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -423,8 +441,8 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

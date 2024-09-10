@@ -31,16 +31,33 @@
 // Includes from sli:
 #include "interpret.h"
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 std::string
 nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models.";
+  msg << "/" << n_.toString() + " is not a known model name.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
+#endif
+  return msg.str();
+}
+
+std::string
+nest::UnknownComponent::message() const
+{
+  std::ostringstream msg;
+  msg << "/" << n_.toString() + " is not a known component.";
+#ifndef HAVE_GSL
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }
@@ -50,15 +67,6 @@ nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
-  return msg.str();
-}
-
-std::string
-nest::UnknownModelID::message() const
-{
-  std::ostringstream msg;
-
-  msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
   return msg.str();
 }
 
@@ -132,8 +140,18 @@ nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, e.g., a device.";
+         "but the node with id "
+      << id_ << " is not a node without proxies, e.g., a device.";
   return out.str();
+}
+
+std::string
+nest::UnknownCompartment::message() const
+{
+  std::ostringstream msg;
+
+  msg << "Compartment " << compartment_idx_ << " " << info_ << ".";
+  return msg.str();
 }
 
 std::string
@@ -159,6 +177,10 @@ nest::UnknownPort::message() const
 {
   std::ostringstream out;
   out << "Port with id " << id_ << " does not exist.";
+  if ( not info_.empty() )
+  {
+    out << " " << info_ << ".";
+  }
   return out.str();
 }
 
@@ -381,6 +403,32 @@ nest::MPIPortsFileUnknown::message() const
       << " which specifies the folder with files containing the MPI ports";
   return msg.str();
 }
+
+
+std::string
+nest::MPIPortsFileMissing::message() const
+{
+  std::ostringstream msg;
+  msg << "The node with ID " << node_id_ << " expects a file with the MPI address at location " << path_
+      << ". The file does not seem to exist.";
+  return msg.str();
+}
+
+std::string
+nest::MPIErrorCode::message() const
+{
+
+  char errmsg[ 256 ];
+  int len;
+
+  MPI_Error_string( error_code_, errmsg, &len );
+  std::string error;
+  error.assign( errmsg, len );
+
+  std::ostringstream msg;
+  msg << "MPI Error: " << error;
+  return msg.str();
+}
 #endif
 
 std::string
@@ -426,6 +474,14 @@ nest::BackendNotPrepared::message() const
 {
   std::ostringstream msg;
   msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
+  return msg.str();
+}
+
+std::string
+nest::BackendAlreadyRegistered::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " has already been registered.";
   return msg.str();
 }
 

@@ -50,33 +50,33 @@ symmetric nearest-neighbour spike pairing scheme
 Description
 +++++++++++
 
-stdp_nn_restr_synapse is a connector to create synapses with spike time
+``stdp_nn_restr_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the restricted symmetric nearest-neighbour spike
 pairing scheme (fig. 7C in [1]_).
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
-one, but only if the latter occured not earlier than the previous presynaptic
+one, but only if the latter occurred not earlier than the previous presynaptic
 one. When a postsynaptic spike occurs, it is accounted in the facilitation
 rule with the nearest preceding presynaptic one, but only if the latter
-occured not earlier than the previous postsynaptic one. So, a spike can
+occurred not earlier than the previous postsynaptic one. So, a spike can
 participate neither in two depression pairs nor in two potentiation pairs.
 
-The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
-+ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
++ dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
 concerned pre/postsynaptic spike is paired with the second latest preceding
-post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}`` will
 result in a potentiation pair 20-to-10).
 
 The implementation relies on an additional variable - the postsynaptic
 eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
-decays exponentially with the time constant tau_minus and increases to 1 on
-a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
+decays exponentially with the time constant ``tau_minus`` and increases to 1 on
+a post-spike occurrence (instead of increasing by 1 as in ``stdp_synapse``).
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -112,10 +112,17 @@ See also
 
 stdp_synapse, stdp_nn_symm_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_restr_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_stdp_nn_restr_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_nn_restr_synapse : public Connection< targetidentifierT >
@@ -124,6 +131,10 @@ class stdp_nn_restr_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -137,13 +148,14 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_restr_synapse( const stdp_nn_restr_synapse& ) = default;
+  stdp_nn_restr_synapse& operator=( const stdp_nn_restr_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -162,7 +174,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -171,15 +183,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -221,6 +233,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_nn_restr_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -229,8 +243,8 @@ private:
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
-stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -281,7 +295,7 @@ stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const Comm
       value_to_throw_away, // discard Kminus
       nearest_neighbor_Kminus,
       value_to_throw_away // discard Kminus_triplet
-      );
+    );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }
 
@@ -294,6 +308,8 @@ stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const Comm
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 
@@ -340,7 +356,7 @@ stdp_nn_restr_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) != ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

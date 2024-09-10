@@ -21,8 +21,8 @@
  */
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "target_table.h"
+#include "kernel_manager.h"
 
 // Includes from libnestutil
 #include "vector_util.h"
@@ -30,13 +30,13 @@
 void
 nest::TargetTable::initialize()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads );
   secondary_send_buffer_pos_.resize( num_threads );
 
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     targets_[ tid ] = std::vector< std::vector< Target > >();
     secondary_send_buffer_pos_[ tid ] = std::vector< std::vector< std::vector< size_t > > >();
   } // of omp parallel
@@ -50,7 +50,7 @@ nest::TargetTable::finalize()
 }
 
 void
-nest::TargetTable::prepare( const thread tid )
+nest::TargetTable::prepare( const size_t tid )
 {
   // add one to max_num_local_nodes to avoid possible overflow in case
   // of rounding errors
@@ -63,12 +63,12 @@ nest::TargetTable::prepare( const thread tid )
   for ( size_t lid = 0; lid < num_local_nodes; ++lid )
   {
     // resize to maximal possible synapse-type index
-    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
+    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models() );
   }
 }
 
 void
-nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
+nest::TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
 {
   for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = secondary_send_buffer_pos_[ tid ].begin();
         it != secondary_send_buffer_pos_[ tid ].end();
@@ -84,9 +84,9 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 }
 
 void
-nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
+nest::TargetTable::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
 {
-  const index lid = target_data.get_source_lid();
+  const size_t lid = target_data.get_source_lid();
 
   vector_util::grow( targets_[ tid ][ lid ] );
 

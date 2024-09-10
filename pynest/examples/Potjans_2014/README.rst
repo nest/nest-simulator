@@ -4,39 +4,43 @@ Cortical microcircuit model
 This is a PyNEST implementation of the cortical microcircuit model by Potjans and Diesmann [1]_.
 The network model represents four layers of cortex, L2/3, L4, L5, and L6, each consisting of a population of excitatory neurons and a population of inhibitory neurons.
 
-.. |img1| image:: microcircuit.png
 
-.. |img2| image:: raster_plot.png
+.. grid:: 1 2 3 3
 
-.. |img3| image:: box_plot.png
+   .. grid-item::
 
-.. table:: 
-   :align: center
+     .. image:: potjans_2014_microcircuit.png
 
-   +--------+--------+--------+
-   | |img1| | |img2| | |img3| |
-   +--------+--------+--------+
-   
+   .. grid-item::
+
+     .. image:: potjans_2014_raster_plot.png
+
+   .. grid-item::
+
+     .. image:: potjans_2014_box_plot.png
+
+
+
 Left: network sketch [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
 
 Citing this code
-################
+----------------
 
 If you use this code, we ask you to cite the paper by Potjans and Diesmann [1]_ and the NEST release on Zenodo.
 
 File structure
-##############
+--------------
 
-* ``run_microcircuit.py``: an example script to try out the microcircuit
-* ``network.py``: the main Network class with functions to build and simulate the network
-* ``helpers.py``: helper functions for network construction, simulation and evaluation
-* ``network_params.py``: network and neuron parameters
-* ``stimulus_params.py``: parameters for optional external stimulation
-* ``sim_params.py``: simulation parameters
-* ``reference_data``: reference data and figures obtained by executing ``run_microcircuit.py`` with default parameters
+* :doc:`run_microcircuit.py <run_microcircuit>`: an example script to try out the microcircuit
+* :doc:`network.py <network>`: the main Network class with functions to build and simulate the network
+* :doc:`helpers.py <helpers>`: helper functions for network construction, simulation and evaluation
+* :doc:`network_params.py <network_params>`: network and neuron parameters
+* :doc:`stimulus_params.py <stimulus_params>`: parameters for optional external stimulation
+* :doc:`sim_params.py <sim_params>`: simulation parameters
+* `reference_data <https://github.com/nest/nest-simulator/tree/master/pynest/examples/Potjans_2014/reference_data>`_: reference data and figures obtained by executing run_microcircuit.py with default parameters
 
 Running the simulation
-######################
+----------------------
 
 By default, the variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to
 `0.1`, which is a good choice for running the microcircuit on a local machine.
@@ -52,16 +56,26 @@ To run the simulation, simply use:
 
 The output will be saved in the ``data`` directory.
 
-The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these features.
+The code can be :ref:`parallelized <parallel_computing>` using OpenMP and MPI, if NEST has been built with these features.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
-The command for running the script with two MPI processes is:
+
+
+.. important::
+
+   When scaling up the microcircuit model, you may encounter errors during simulation when there is less than 4 virtual processes.
+   The number of threads should, therefore, be 4 or more. You can increase
+   the number of MPI processes or set either ``local_num_threads`` to a value >= 4 or replace ``local_num_threads`` by ``total_num_virtual_procs`` and set it to a value >= 4.
+
+   For more information about MPI processes and threading see :ref:`our guide on HPC systems <optimize_performance>`.
+
+The command for running the script with four MPI processes is:
 
 .. code-block:: bash
 
-   mpirun -n 2 python3 run_microcircuit.py
+   mpirun -n 4 python3 run_microcircuit.py
 
 External drive and initial conditions
-#####################################
+-------------------------------------
 
 By default, the simulation uses external Poissonian input to excite all neuronal populations of the microcircuit, i.e., ``poisson_input': True`` in ``network_params.py``.
 If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated direct current (DC) input.
@@ -71,7 +85,7 @@ The default random initialization of membrane voltages in this simulation uses p
 Previous implementations used the same mean and standard deviation for all populations, which is here achieved by setting ``'V_type': 'original'``.
 
 Recommendations for benchmarking
-################################
+--------------------------------
 
 For benchmark simulations assessing network-construction and state-propagation times, the recommended changes to the default parameters are the following:
 
@@ -89,7 +103,7 @@ For benchmark simulations assessing network-construction and state-propagation t
 * ``'poisson_input': False``: DC background input.
 
 Contributions to this PyNEST microcircuit model implementation
-##############################################################
+--------------------------------------------------------------
 
 Current communicating author: Johanna Senk
 
@@ -100,25 +114,26 @@ Current communicating author: Johanna Senk
 2016: first version implemented by Hendrik Rothe, Hannah Bos and Sacha van Albada
 
 Acknowledgments
-###############
+---------------
 
-Funding for the PyNEST microcircuit: This project has received funding from the European Union Seventh Framework Programme ([FP7/2007-2013]) under grant agreement n° 604102 (Human Brain Project, HBP) and the European Union’s Horizon 2020 Framework Programme for Research and Innovation under Specific Grant Agreement No. 720270 (Human Brain Project SGA1) and No. 785907 (Human Brain Project SGA2).
+Funding for the PyNEST microcircuit: This project has received funding from the European Union Seventh Framework Programme ([FP7/2007-2013]) under grant agreement n° 604102 (Human Brain Project, HBP) and the European Union's Horizon 2020 Framework Programme for Research and Innovation under Specific Grant Agreement No. 720270 (Human Brain Project SGA1) and No. 785907 (Human Brain Project SGA2).
 
 Funding for the study by Potjans and Diesmann [1]_: This work was supported by the Helmholtz Alliance on Systems Biology; European Union (FACETS, grant 15879 and BrainScaleS, grant 269921); Deutsch-Israelische Projektkooperation (DIP, grant F1.2); Bundesministerium für Bildung und Forschung, Germany (BMBF, grant 01GQ0420 to BCCN Freiburg), and the Next-Generation Supercomputer Project of the Ministry of education, culture, sports, science and technology (MEXT), Japan. Funding to pay the Open Access publication charges for this article was provided by Research Center Juelich, a member of the Helmholtz Association.
 
 Other implementations of the microcircuit model
-###############################################
+-----------------------------------------------
+
 A `SLI version <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__  by David Dahmen, Tom Tetzlaff, and Sacha van Albada, based on the original version by Tobias Potjans and Markus Diesmann, is also part of the NEST code base as an example.
 
 A `PyNN version <https://github.com/NeuralEnsemble/PyNN/tree/master/examples/Potjans2014>`__ is part of the PyNN code base as an example.
 
 References
-##########
+----------
 
 .. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
         microcircuit: relating structure and activity in a full-scale spiking
         network model. Cerebral Cortex. 24(3):785–806. DOI: `10.1093/cercor/bhs358 <https://doi.org/10.1093/cercor/bhs358>`__.
-        
+
 .. [2]  van Albada SJ., Rowley AG., Senk J., Hopkins M., Schmidt M., Stokes AB., Lester DR., Diesmann M. and Furber SB. 2018.
         Performance Comparison of the Digital Neuromorphic Hardware SpiNNaker
         and the Neural Network Simulation Software NEST for a Full-Scale Cortical Microcircuit Model.

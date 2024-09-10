@@ -23,14 +23,14 @@ from setuptools import setup
 
 setup(
     name = 'nest-simulator',
-    version = '@NEST_VERSION@@githash@',
+    version = '@NEST_VERSION@',
     description = 'Python bindings for NEST',
     author = 'The NEST Initiative',
     url = 'https://www.nest-simulator.org',
     license = 'GPLv2+',
     packages = ['nest', 'nest.lib'],
     install_requires = ['numpy', 'scipy'],
-    extras_require = {'test': ['junitparser', 'matplotlib', 'nose']},
+    extras_require = {'test': ['junitparser', 'matplotlib', 'pytest']},
     classifiers = [
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

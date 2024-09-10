@@ -22,24 +22,27 @@
 
 #include "volume_transmitter.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from nestkernel:
 #include "connector_base.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "spikecounter.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+
+void
+nest::register_volume_transmitter( const std::string& name )
+{
+  register_node_model< volume_transmitter >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -70,14 +73,14 @@ void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Nod
  * ---------------------------------------------------------------- */
 
 nest::volume_transmitter::volume_transmitter()
-  : ArchivingNode()
+  : Node()
   , P_()
   , local_device_id_( 0 )
 {
 }
 
 nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
-  : ArchivingNode( n )
+  : Node( n )
   , P_( n.P_ )
   , local_device_id_( n.local_device_id_ )
 {
@@ -89,11 +92,10 @@ nest::volume_transmitter::init_buffers_()
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
   B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
-  ArchivingNode::clear_history();
 }
 
 void
-nest::volume_transmitter::calibrate()
+nest::volume_transmitter::pre_run_hook()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );

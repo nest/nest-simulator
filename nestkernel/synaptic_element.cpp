@@ -20,13 +20,6 @@
  *
  */
 
-/**
- * \file synaptic_element.cpp
- * Implementation of synaptic_element and growth_curve
- * \author Mikael Naveau
- * \date July 2013
- */
-
 #include "synaptic_element.h"
 
 // Includes from nestkernel:
@@ -37,9 +30,9 @@
 #include "dictutils.h"
 
 /* ----------------------------------------------------------------
-* SynapticElement
-* Default constructors defining default parameters and state
-* ---------------------------------------------------------------- */
+ * SynapticElement
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
 
 nest::SynapticElement::SynapticElement()
   : z_( 0.0 )
@@ -61,13 +54,14 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , tau_vacant_( se.tau_vacant_ )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
-  assert( growth_curve_ != 0 );
+  assert( growth_curve_ );
   DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
   se.get( nc_parameters );
   growth_curve_->set( nc_parameters );
 }
 
-nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
+nest::SynapticElement&
+nest::SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {
@@ -92,8 +86,8 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
 }
 
 /* ----------------------------------------------------------------
-* get function to store current values in dictionary
-* ---------------------------------------------------------------- */
+ * get function to store current values in dictionary
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::get( DictionaryDatum& d ) const
 {
@@ -109,8 +103,8 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
 }
 
 /* ----------------------------------------------------------------
-* set function to store dictionary values in the SynaticElement
-* ---------------------------------------------------------------- */
+ * set function to store dictionary values in the SynaticElement
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::set( const DictionaryDatum& d )
 {
@@ -141,8 +135,8 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 
 
 /* ----------------------------------------------------------------
-* Update the number of element at the time t (in ms)
-* ---------------------------------------------------------------- */
+ * Update the number of element at the time t (in ms)
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {

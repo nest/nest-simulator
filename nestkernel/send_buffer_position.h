@@ -25,8 +25,8 @@
 
 // C++ includes:
 #include <cassert>
-#include <vector>
 #include <limits>
+#include <vector>
 
 // Includes from nestkernel:
 #include "vp_manager.h"
@@ -41,34 +41,104 @@ namespace nest
 class SendBufferPosition
 {
 private:
-  thread begin_rank_;
-  thread end_rank_;
-  thread max_size_;
-  size_t num_spike_data_written_;
-  size_t send_recv_count_per_rank_;
-  std::vector< thread > idx_;
-  std::vector< thread > begin_;
-  std::vector< thread > end_;
-
-  thread rank_to_index_( const thread rank ) const;
+  std::vector< size_t > begin_; //!< first entry for rank
+  std::vector< size_t > end_;   //!< one beyond last entry for rank
+  std::vector< size_t > idx_;   //!< next entry in rank to write to
 
 public:
-  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
-
-  /**
-   * Returns current index of specified rank in MPI buffer.
-   */
-  unsigned int idx( const thread rank ) const;
+  SendBufferPosition();
 
   /**
    * Returns begin index of specified rank in MPI buffer.
    */
-  unsigned int begin( const thread rank ) const;
+  size_t begin( const size_t rank ) const;
 
   /**
    * Returns end index of specified rank in MPI buffer.
    */
-  unsigned int end( const thread rank ) const;
+  size_t end( const size_t rank ) const;
+
+  /**
+   * Returns current index of specified rank in MPI buffer.
+   */
+  size_t idx( const size_t rank ) const;
+
+  /**
+   * Returns whether the part of the buffer on the specified rank has been filled.
+   *
+   * @param rank Rank denoting which part of the buffer we check
+   */
+  bool is_chunk_filled( const size_t rank ) const;
+
+  void increase( const size_t rank );
+};
+
+inline size_t
+SendBufferPosition::idx( const size_t rank ) const
+{
+  return idx_[ rank ];
+}
+
+inline size_t
+SendBufferPosition::begin( const size_t rank ) const
+{
+  return begin_[ rank ];
+}
+
+inline size_t
+SendBufferPosition::end( const size_t rank ) const
+{
+  return end_[ rank ];
+}
+
+inline bool
+SendBufferPosition::is_chunk_filled( const size_t rank ) const
+{
+  return idx_[ rank ] == end_[ rank ];
+}
+
+inline void
+SendBufferPosition::increase( const size_t rank )
+{
+  ++idx_[ rank ];
+}
+
+
+/**
+ * This class simplifies keeping track of write position in MPI buffer
+ * while collocating targets.
+ */
+class TargetSendBufferPosition
+{
+private:
+  size_t begin_rank_;
+  size_t end_rank_;
+  size_t max_size_;
+  size_t num_target_data_written_;
+  size_t send_recv_count_per_rank_;
+  std::vector< size_t > idx_;
+  std::vector< size_t > begin_;
+  std::vector< size_t > end_;
+
+  size_t rank_to_index_( const size_t rank ) const;
+
+public:
+  TargetSendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
+
+  /**
+   * Returns current index of specified rank in MPI buffer.
+   */
+  unsigned int idx( const size_t rank ) const;
+
+  /**
+   * Returns begin index of specified rank in MPI buffer.
+   */
+  unsigned int begin( const size_t rank ) const;
+
+  /**
+   * Returns end index of specified rank in MPI buffer.
+   */
+  unsigned int end( const size_t rank ) const;
 
   /**
    * Returns whether the part of the buffer on the specified rank has been
@@ -76,7 +146,7 @@ public:
    *
    * @param rank Rank denoting which part of the buffer we check
    */
-  bool is_chunk_filled( const thread rank ) const;
+  bool is_chunk_filled( const size_t rank ) const;
 
   /**
    * Returns whether the parts of the  MPI buffer assigned to this thread has
@@ -84,24 +154,24 @@ public:
    */
   bool are_all_chunks_filled() const;
 
-  void increase( const thread rank );
+  void increase( const size_t rank );
 };
 
-inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks,
+inline TargetSendBufferPosition::TargetSendBufferPosition( const AssignedRanks& assigned_ranks,
   const unsigned int send_recv_count_per_rank )
   : begin_rank_( assigned_ranks.begin )
   , end_rank_( assigned_ranks.end )
   , max_size_( assigned_ranks.max_size )
-  , num_spike_data_written_( 0 )
+  , num_target_data_written_( 0 )
   , send_recv_count_per_rank_( send_recv_count_per_rank )
 {
   idx_.resize( assigned_ranks.size );
   begin_.resize( assigned_ranks.size );
   end_.resize( assigned_ranks.size );
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank
-    const thread lr_idx = rank % assigned_ranks.max_size;
+    const size_t lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
     idx_[ lr_idx ] = rank * send_recv_count_per_rank;
     begin_[ lr_idx ] = rank * send_recv_count_per_rank;
@@ -109,8 +179,8 @@ inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ran
   }
 }
 
-inline thread
-SendBufferPosition::rank_to_index_( const thread rank ) const
+inline size_t
+TargetSendBufferPosition::rank_to_index_( const size_t rank ) const
 {
   assert( begin_rank_ <= rank );
   assert( rank < end_rank_ );
@@ -118,40 +188,40 @@ SendBufferPosition::rank_to_index_( const thread rank ) const
 }
 
 inline unsigned int
-SendBufferPosition::idx( const thread rank ) const
+TargetSendBufferPosition::idx( const size_t rank ) const
 {
   return idx_[ rank_to_index_( rank ) ];
 }
 
 inline unsigned int
-SendBufferPosition::begin( const thread rank ) const
+TargetSendBufferPosition::begin( const size_t rank ) const
 {
   return begin_[ rank_to_index_( rank ) ];
 }
 
 inline unsigned int
-SendBufferPosition::end( const thread rank ) const
+TargetSendBufferPosition::end( const size_t rank ) const
 {
   return end_[ rank_to_index_( rank ) ];
 }
 
 inline bool
-SendBufferPosition::is_chunk_filled( const thread rank ) const
+TargetSendBufferPosition::is_chunk_filled( const size_t rank ) const
 {
   return idx( rank ) == end( rank );
 }
 
 inline bool
-SendBufferPosition::are_all_chunks_filled() const
+TargetSendBufferPosition::are_all_chunks_filled() const
 {
-  return num_spike_data_written_ == send_recv_count_per_rank_ * idx_.size();
+  return num_target_data_written_ == send_recv_count_per_rank_ * idx_.size();
 }
 
 inline void
-SendBufferPosition::increase( const thread rank )
+TargetSendBufferPosition::increase( const size_t rank )
 {
   ++idx_[ rank_to_index_( rank ) ];
-  ++num_spike_data_written_;
+  ++num_target_data_written_;
 }
 
 } // namespace nest

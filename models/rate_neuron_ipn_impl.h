@@ -34,8 +34,8 @@
 #include <string>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -237,7 +237,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::calibrate()
+nest::rate_neuron_ipn< TNonlinearities >::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -270,9 +270,6 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;
@@ -437,7 +434,7 @@ void
 nest::rate_neuron_ipn< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
+  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

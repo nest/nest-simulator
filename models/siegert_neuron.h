@@ -55,7 +55,7 @@ model for mean-field analysis of spiking networks
 Description
 +++++++++++
 
-siegert_neuron is an implementation of a rate model with the
+``siegert_neuron`` is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
 synapses [2]_ and [3]_ (their eq. 25). The model can be used for a
@@ -67,12 +67,12 @@ The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
-Remarks:
-
 For details on the numerical solution of the Siegert integral, you can
 check out the `Siegert_neuron_integration
 <../model_details/siegert_neuron_integration.ipynb>`_
 notebook in the NEST source code.
+
+See also [1]_, [4]_.
 
 Parameters
 ++++++++++
@@ -97,7 +97,6 @@ iaf_psc_exp/delta.
  V_reset   mV      Reset relative to resting potential
 =========  ======  ================================================
 
-
 References
 ++++++++++
 
@@ -117,7 +116,6 @@ References
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
-
 Sends
 +++++
 
@@ -133,7 +131,15 @@ See also
 
 diffusion_connection
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: siegert_neuron
+
 EndUserDocs */
+
+void register_siegert_neuron( const std::string& name );
 
 class siegert_neuron : public ArchivingNode
 {
@@ -144,7 +150,7 @@ public:
   siegert_neuron();
   siegert_neuron( const siegert_neuron& );
 
-  ~siegert_neuron();
+  ~siegert_neuron() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -155,31 +161,31 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  void handle( DiffusionConnectionEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( DiffusionConnectionEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DiffusionConnectionEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( DiffusionConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void
-  sends_secondary_event( DiffusionConnectionEvent& )
+  sends_secondary_event( DiffusionConnectionEvent& ) override
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // siegert function
   double siegert( double, double );
@@ -304,8 +310,8 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
   return not wfr_tol_exceeded;
 }
 
-inline port
-siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_type )
+inline size_t
+siegert_neuron::handles_test_event( DiffusionConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type == 0 )
   {
@@ -321,8 +327,8 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_ty
   }
 }
 
-inline port
-siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+siegert_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -22,6 +22,9 @@
 
 #include "vp_manager.h"
 
+// C++ includes:
+#include <cstdlib>
+
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -45,147 +48,128 @@ nest::VPManager::VPManager()
 }
 
 void
-nest::VPManager::initialize()
+nest::VPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
 // When the VPManager is initialized, you will have 1 thread again.
 // Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
-  /* The next line is required because we use the OpenMP
-   threadprivate() directive in the allocator, see OpenMP
-   API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
-   It keeps OpenMP from automagically changing the number
-   of threads used for parallel regions.
-   */
+  // The next line is required because we use the OpenMP
+  // threadprivate() directive in the allocator, see OpenMP
+  // API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
+  // It keeps OpenMP from automagically changing the number
+  // of threads used for parallel regions.
   omp_set_dynamic( false );
 #endif
+
+  if ( get_OMP_NUM_THREADS() > 1 )
+  {
+    std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
+    msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
+
+    LOG( M_INFO, "VPManager::initialize()", msg );
+  }
+
   set_num_threads( 1 );
 }
 
 void
-nest::VPManager::finalize()
+nest::VPManager::finalize( const bool )
 {
+}
+
+size_t
+nest::VPManager::get_OMP_NUM_THREADS() const
+{
+  const char* const omp_num_threads = std::getenv( "OMP_NUM_THREADS" );
+  if ( omp_num_threads )
+  {
+    return std::atoi( omp_num_threads );
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads = get_num_threads();
+  size_t n_threads = get_num_threads();
+  size_t n_vps = get_num_virtual_processes();
+
   bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-  if ( n_threads_updated )
-  {
-    if ( kernel().node_manager.size() > 0 )
-    {
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().connection_manager.get_user_set_delay_extrema() )
-    {
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().simulation_manager.has_been_simulated() )
-    {
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( not Time::resolution_is_default() )
-    {
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.are_model_defaults_modified() )
-    {
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
-    {
-      throw KernelException(
-        "Multiple threads can not be used if structural plasticity is "
-        "enabled" );
-    }
-
-    if ( n_threads > 1 and force_singlethreading_ )
-    {
-      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
-      n_threads = 1;
-    }
-
-    kernel().change_number_of_threads( n_threads );
-  }
-
-  long n_vps = get_num_virtual_processes();
   bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
+
   if ( n_vps_updated )
   {
+    if ( not n_threads_updated )
+    {
+      n_threads = n_vps / kernel().mpi_manager.get_num_processes();
+    }
+
+    const bool n_threads_conflict = n_vps / kernel().mpi_manager.get_num_processes() != n_threads;
+    const bool n_procs_conflict = n_vps % kernel().mpi_manager.get_num_processes() != 0;
+    if ( n_threads_conflict or n_procs_conflict )
+    {
+      throw BadProperty(
+        "Requested total_num_virtual_procs is incompatible with the number of processes and threads."
+        "It must be an integer multiple of num_processes and equal to "
+        "local_num_threads * num_processes. Value unchanged." );
+    }
+  }
+
+  // We only want to act if new values differ from the old
+  n_threads_updated = n_threads != get_num_threads();
+  n_vps_updated = n_vps != get_num_virtual_processes();
+
+  if ( n_threads_updated or n_vps_updated )
+  {
+    std::vector< std::string > errors;
     if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Nodes exist" );
     }
     if ( kernel().connection_manager.get_user_set_delay_extrema() )
     {
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Delay extrema have been set" );
     }
     if ( kernel().simulation_manager.has_been_simulated() )
     {
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( not Time::resolution_is_default() )
-    {
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Network has been simulated" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Model defaults were modified" );
+    }
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
+    {
+      errors.push_back( "Structural plasticity enabled: multithreading cannot be enabled" );
+    }
+    if ( force_singlethreading_ and n_threads > 1 )
+    {
+      errors.push_back( "This installation of NEST does not support multiple threads" );
     }
 
-    if ( n_vps % kernel().mpi_manager.get_num_processes() != 0 )
+    if ( not errors.empty() )
     {
-      throw BadProperty(
-        "Number of virtual processes (threads*processes) must be an integer "
-        "multiple of the number of processes. Value unchanged." );
+      std::string msg = "Number of threads unchanged. Error conditions:";
+      for ( auto& error : errors )
+      {
+        msg += " " + error + ".";
+      }
+      throw KernelException( msg );
     }
 
-    long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
-    if ( ( n_threads > 1 ) and ( force_singlethreading_ ) )
+    if ( get_OMP_NUM_THREADS() > 0 and get_OMP_NUM_THREADS() != n_threads )
     {
-      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
-      n_threads = 1;
+      std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
+      msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
+      LOG( M_WARNING, "VPManager::set_status()", msg );
     }
 
     kernel().change_number_of_threads( n_threads );
@@ -200,23 +184,12 @@ nest::VPManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::VPManager::set_num_threads( nest::thread n_threads )
+nest::VPManager::set_num_threads( size_t n_threads )
 {
-  if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
-  {
-    throw KernelException( "Multiple threads can not be used if structural plasticity is enabled" );
-  }
+  assert( not( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 ) );
   n_threads_ = n_threads;
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
-#endif
-}
-
-void
-nest::VPManager::assert_single_threaded()
-{
-#ifdef _OPENMP
-  assert( omp_get_num_threads() == 1 );
 #endif
 }

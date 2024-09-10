@@ -43,6 +43,7 @@ class TimeConverter;
 
 /**
  * Base class for all Models.
+ *
  * Each Node class is associated with a corresponding Model
  * class. The Model class is responsible for the creation and class
  * wide parametrisation of its associated Node objects.
@@ -75,6 +76,7 @@ public:
 
   /**
    * Set number of threads based on number set in network.
+   *
    * As long as no nodes of the model have been allocated, the number
    * of threads may be changed.
    * @note Requires that network pointer in NestModule is initialized.
@@ -83,13 +85,12 @@ public:
 
   /**
    * Allocate new Node and return its pointer.
-   * allocate() is not const, because it
+   *
+   * create() is not const, because it
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* allocate( thread t );
-
-  void free( thread t, Node* );
+  Node* create( size_t t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -98,18 +99,13 @@ public:
   void clear();
 
   /**
-   * Reserve memory for at least n additional Nodes.
-   * A number of memory managers work more efficiently if they have
-   * an idea about the number of Nodes to be allocated.
-   * This function prepares the memory manager for the subsequent
-   * allocation of n additional Nodes.
-   * @param t Thread for which the Nodes are reserved.
-   * @param n Number of Nodes to be allocated.
+   * Reserve space for n additional Nodes.
    */
-  void reserve_additional( thread t, size_t n );
+  void reserve_additional( size_t t, size_t n );
 
   /**
    * Return name of the Model.
+   *
    * This function returns the name of the Model as C++ string. The
    * name is defined by the constructor. The result is identical to the value
    * of Node::get_name();
@@ -121,6 +117,7 @@ public:
   /**
    * Return the available memory. The result is given in number of elements,
    * not in bytes.
+   *
    * Note that this function reports a sum over all threads.
    */
   size_t mem_available();
@@ -128,6 +125,7 @@ public:
   /**
    * Return the memory capacity. The result is given in number of elements,
    * not in bytes.
+   *
    * Note that this function reports a sum over all threads.
    */
   size_t mem_capacity();
@@ -140,6 +138,7 @@ public:
   /**
    * Change properties of the prototype node according to the
    * entries in the dictionary.
+   *
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
@@ -148,20 +147,24 @@ public:
   /**
    * Export properties of the prototype node by setting
    * entries in the status dictionary.
+   *
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  DictionaryDatum get_status( void );
+  DictionaryDatum get_status();
 
-  virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
+  virtual size_t send_test_event( Node&, size_t, synindex, bool ) = 0;
 
   virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
   virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re ) = 0;
   virtual void sends_secondary_event( DiffusionConnectionEvent& de ) = 0;
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re ) = 0;
+  virtual void sends_secondary_event( LearningSignalConnectionEvent& re ) = 0;
+  virtual void sends_secondary_event( SICEvent& sic ) = 0;
 
   /**
    * Check what type of signal this model is sending.
+   *
    * Required so that proxynode can formward this call
    * to model that in turn delegates the call to the underlying
    * prototype.
@@ -176,7 +179,7 @@ public:
   /**
    * Return const reference to the prototype.
    */
-  virtual Node const& get_prototype( void ) const = 0;
+  virtual Node const& get_prototype() const = 0;
 
   /**
    * Set the model id on the prototype.
@@ -199,12 +202,12 @@ public:
    * Set the model id on the prototype.
    */
   void
-  set_type_id( index id )
+  set_type_id( size_t id )
   {
     type_id_ = id;
   }
 
-  index
+  size_t
   get_type_id() const
   {
     return type_id_;
@@ -220,20 +223,16 @@ private:
    * Set the number of threads.
    * @see set_threads()
    */
-  void set_threads_( thread t );
+  void set_threads_( size_t t );
 
   /**
-   * Initialize the pool allocator with the Node specific values.
+   * Create a new object.
    */
-  virtual void init_memory_( sli::pool& ) = 0;
-
-  /**
-   * Allocate a new object at the specified memory position.
-   */
-  virtual Node* allocate_( void* ) = 0;
+  virtual Node* create_() = 0;
 
   /**
    * Name of the Model.
+   *
    * This name will be used to identify all Nodes which are
    * created by this model object.
    */
@@ -241,31 +240,27 @@ private:
 
   /**
    * Identifier of the model C++ type.
+   *
    * For pristine models, the type_id equals the model_id.
    * For copied models, the type_id equals the type_id of the base model.
    * This number is needed to automatically save and restore copied models.
    */
-  index type_id_;
+  size_t type_id_;
 
   /**
    * Memory for all nodes sorted by threads.
    */
-  std::vector< sli::pool > memory_;
+  std::vector< std::vector< Node* > > memory_;
 };
 
 
 inline Node*
-Model::allocate( thread t )
+Model::create( size_t t )
 {
-  assert( ( size_t ) t < memory_.size() );
-  return allocate_( memory_[ t ].alloc() );
-}
-
-inline void
-Model::free( thread t, Node* n )
-{
-  assert( ( size_t ) t < memory_.size() );
-  memory_[ t ].free( n );
+  assert( t < memory_.size() );
+  Node* n = create_();
+  memory_[ t ].emplace_back( n );
+  return n;
 }
 
 inline std::string

@@ -22,17 +22,13 @@
 
 #include <cmath>
 
-#include "node_collection.h"
 #include "node.h"
+#include "node_collection.h"
 #include "spatial.h"
 #include "vp_manager_impl.h"
 
-// includes from sli
-#include "sharedptrdatum.h"
-
 #include "parameter.h"
 
-template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -62,7 +58,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   }
 
   assert( nc->size() == 1 );
-  const index source_lid = nc->operator[]( 0 ) - source_metadata->get_first_node_id();
+  const size_t source_lid = nc->operator[]( 0 ) - source_metadata->get_first_node_id();
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
@@ -141,7 +137,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  NodeCollectionPTR nc = node->get_nc();
+  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node );
   if ( not nc.get() )
   {
     throw KernelException( "NodePosParameter: not nc" );
@@ -161,7 +157,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
-  index lid = node->get_node_id() - meta->get_first_node_id();
+  size_t lid = node->get_node_id() - meta->get_first_node_id();
   std::vector< double > pos = layer->get_position_vector( lid );
   if ( ( unsigned int ) dimension_ >= pos.size() )
   {
@@ -196,10 +192,10 @@ SpatialDistanceParameter::value( RngPtr,
     }
     return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
-    throw KernelException( String::compose(
-      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-      " or 1-3 for x-z. Got ",
-      dimension_ ) );
+    throw KernelException(
+      String::compose( "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+                       " or 1-3 for x-z. Got ",
+        dimension_ ) );
     break;
   }
 }
@@ -312,13 +308,15 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   , py_( getValue< ParameterDatum >( d, "y" ) )
   , mean_x_( getValue< double >( d, "mean_x" ) )
   , mean_y_( getValue< double >( d, "mean_y" ) )
-  , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
-  , y_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
-  , xy_term_const_(
-      getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                                         * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
+  , x_term_const_( 1.
+      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+        * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
+  , y_term_const_( 1.
+      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+        * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
+  , xy_term_const_( getValue< double >( d, "rho" )
+      / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) ) * getValue< double >( d, "std_x" )
+        * getValue< double >( d, "std_y" ) ) )
 {
   const auto rho = getValue< double >( d, "rho" );
   const auto std_x = getValue< double >( d, "std_x" );
@@ -350,6 +348,50 @@ Gaussian2DParameter::value( RngPtr rng,
   const auto dx = px_->value( rng, source_pos, target_pos, layer, node ) - mean_x_;
   const auto dy = py_->value( rng, source_pos, target_pos, layer, node ) - mean_y_;
   return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
+}
+
+
+GaborParameter::GaborParameter( const DictionaryDatum& d )
+  : Parameter( true )
+  , px_( getValue< ParameterDatum >( d, "x" ) )
+  , py_( getValue< ParameterDatum >( d, "y" ) )
+  , cos_( std::cos( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
+  , sin_( std::sin( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
+  , gamma_( getValue< double >( d, "gamma" ) )
+  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+  , lambda_( getValue< double >( d, "lam" ) )
+  , psi_( getValue< double >( d, "psi" ) )
+{
+  const auto gamma = getValue< double >( d, "gamma" );
+  const auto std = getValue< double >( d, "std" );
+  if ( std <= 0 )
+  {
+    throw BadProperty( "std > 0 required for gabor function parameter, got std=" + std::to_string( std ) );
+  }
+  if ( gamma <= 0 )
+  {
+    throw BadProperty( "gamma > 0 required for gabor function parameter, got gamma=" + std::to_string( gamma ) );
+  }
+}
+
+double
+GaborParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node );
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node );
+  const auto dx_prime = dx * cos_ + dy * sin_;
+  const auto dy_prime = -dx * sin_ + dy * cos_;
+  const auto gabor_exp =
+    std::exp( -gamma_ * gamma_ * dx_prime * dx_prime * inv_two_std2_ - dy_prime * dy_prime * inv_two_std2_ );
+  const auto gabor_cos_plus =
+    std::max( std::cos( 2 * numerics::pi * dy_prime / lambda_ + psi_ * numerics::pi / 180. ), 0. );
+  const auto gabor_res = gabor_exp * gabor_cos_plus;
+
+  return gabor_res;
 }
 
 
@@ -479,4 +521,4 @@ dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
   return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
-} /* namespace nest */
+} // namespace nest

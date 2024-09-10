@@ -45,7 +45,7 @@ Generate sinusoidally modulated Poisson spike trains
 Description
 +++++++++++
 
-sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+``sinusoidal_poisson_generator`` generates sinusoidally modulated Poisson spike
 trains. By default, each target of the generator will receive a different
 spike train.
 
@@ -53,45 +53,45 @@ The instantaneous rate of the process is given by
 
 .. math::
 
-  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
-     * \pi/180 )) >= 0
+  f(t) = \mathrm{max} \left(0, \mathrm{rate} + \mathrm{amplitude} \cdot \sin
+     \left( 2 \pi \cdot \mathrm{frequency} \cdot t + \mathrm{phase}
+     \cdot \frac{\pi}{180} \right) \right) >= 0
 
-Remarks
-+++++++
+.. note::
 
-- If amplitude > rate, firing rate is cut off at zero. In this case, the mean
-  firing rate will be less than rate.
-- The state of the generator is reset on calibration.
-- The generator does not support precise spike timing.
-- You can use the multimeter to sample the rate of the generator.
-- The generator will create different trains if run at different
-  temporal resolutions.
+   - If :math:`\mathrm{amplitude} > \mathrm{rate}`, firing rate is cut off
+     at zero. In this case, the mean firing rate will be less than rate.
+   - The state of the generator is reset on calibration.
+   - The generator does not support precise spike timing.
+   - You can use the multimeter to sample the rate of the generator.
+   - The generator will create different trains if run at different
+     temporal resolutions.
 
-- Individual spike trains vs single spike train:
-  By default, the generator sends a different spike train to each of its
-  targets. If /individual_spike_trains is set to false using either
-  SetDefaults or CopyModel before a generator node is created, the generator
-  will send the same spike train to all of its targets.
+By default, the generator sends a different spike train to each of its
+targets. If ``individual_spike_trains`` is set to ``False`` using either
+:py:func:`.SetDefaults` or :py:func:`.CopyModel` before a generator node
+is created, the generator will send the same spike train to all of its targets.
 
 .. include:: ../models/stimulation_device.rst
 
 rate
-    Mean firing rate in spikes/second, default: 0 s^-1
+    Mean firing rate in spikes/second. Default: ``0.0``.
 
 amplitude
-    Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+    Firing rate modulation amplitude in spikes/second. Default: ``0.0``.
 
 frequency
-    Modulation frequency, default: 0 Hz
+    Modulation frequency in Hz. Default: ``0.0``.
 
 phase
-    Modulation phase in degree [0-360], default: 0
+    Modulation phase in degree [0-360]. Default: ``0.0``.
 
 individual_spike_trains
-    See note above, default: true
+    See note above. Default: ``True``.
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the
@@ -119,7 +119,15 @@ See also
 
 poisson_generator, sinusoidal_gamma_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_poisson_generator
+
 EndUserDocs */
+
+void register_sinusoidal_poisson_generator( const std::string& name );
 
 class sinusoidal_poisson_generator : public StimulationDevice
 {
@@ -128,20 +136,20 @@ public:
   sinusoidal_poisson_generator();
   sinusoidal_poisson_generator( const sinusoidal_poisson_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
 
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -177,7 +185,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
   void event_hook( DSSpikeEvent& ) override;
 
   void update( Time const&, const long, const long ) override;
@@ -271,8 +279,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+sinusoidal_poisson_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -292,8 +300,8 @@ sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type
   }
 }
 
-inline port
-sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

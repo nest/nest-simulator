@@ -38,18 +38,6 @@
 
 using namespace nest;
 
-/* Obtain time resolution information from configuration
-   variables or use defaults.
-*/
-
-#ifndef CONFIG_TICS_PER_MS
-#define CONFIG_TICS_PER_MS 1000.0
-#endif
-
-#ifndef CONFIG_TICS_PER_STEP
-#define CONFIG_TICS_PER_STEP 100
-#endif
-
 const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
@@ -67,9 +55,9 @@ double Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 // should only be necessary when not folded away
 // by the compiler as compile time consts
 const tic_t Time::LimitPosInf::tics;
-const delay Time::LimitPosInf::steps;
+const long Time::LimitPosInf::steps;
 const tic_t Time::LimitNegInf::tics;
-const delay Time::LimitNegInf::steps;
+const long Time::LimitNegInf::steps;
 
 tic_t
 Time::compute_max()
@@ -169,9 +157,9 @@ Time::fromstamp( Time::ms_stamp t )
   {
     return LIM_NEG_INF.tics;
   }
+
   // why not just fmod STEPS_PER_MS? This gives different
-  // results in corner cases --- and I don't think the
-  // intended ones.
+  // results in corner cases --- and I don't think the intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
   const double ms = n * Range::TICS_PER_STEP_INV * Range::MS_PER_STEP;
@@ -198,7 +186,8 @@ Time::reset_to_defaults()
   Range::STEPS_PER_MS = 1 / Range::MS_PER_STEP;
 }
 
-std::ostream& operator<<( std::ostream& strm, const Time& t )
+std::ostream&
+operator<<( std::ostream& strm, const Time& t )
 {
   if ( t.is_neg_inf() )
   {

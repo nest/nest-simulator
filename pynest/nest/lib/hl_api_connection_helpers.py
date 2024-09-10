@@ -25,19 +25,20 @@ Connect function.
 """
 
 import copy
+
 import numpy as np
 
-from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
+from ..ll_api import spp, sps, sr
 from .hl_api_exceptions import NESTErrors
+from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 
 __all__ = [
-    '_connect_layers_needed',
-    '_connect_spatial',
-    '_process_conn_spec',
-    '_process_spatial_projections',
-    '_process_syn_spec',
+    "_connect_layers_needed",
+    "_connect_spatial",
+    "_process_conn_spec",
+    "_process_spatial_projections",
+    "_process_syn_spec",
 ]
 
 
@@ -45,10 +46,10 @@ def _process_conn_spec(conn_spec):
     """Processes the connectivity specifications from None, string or dictionary to a dictionary."""
     if conn_spec is None:
         # Get default conn_spec
-        sr('/Connect /conn_spec GetOption')
+        sr("/Connect /conn_spec GetOption")
         return spp()
     elif isinstance(conn_spec, str):
-        processed_conn_spec = {'rule': conn_spec}
+        processed_conn_spec = {"rule": conn_spec}
         return processed_conn_spec
     elif isinstance(conn_spec, dict):
         return conn_spec
@@ -64,14 +65,18 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
         # for use_connect_arrays, return "static_synapse" by default
         if use_connect_arrays:
             return {"synapse_model": "static_synapse"}
-
         return syn_spec
 
-    rule = conn_spec['rule']
+    if isinstance(syn_spec, CollocatedSynapses):
+        return syn_spec
 
     if isinstance(syn_spec, str):
         return {"synapse_model": syn_spec}
-    elif isinstance(syn_spec, dict):
+
+    rule = conn_spec["rule"]
+    if isinstance(syn_spec, dict):
+        if "synapse_model" in syn_spec and not isinstance(syn_spec["synapse_model"], str):
+            raise kernel.NESTError("'synapse_model' must be a string")
         for key, value in syn_spec.items():
             # if value is a list, it is converted to a numpy array
             if isinstance(value, (list, tuple)):
@@ -79,69 +84,76 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
 
             if isinstance(value, (np.ndarray, np.generic)):
                 if len(value.shape) == 1:
-                    if rule == 'one_to_one':
+                    if rule == "one_to_one":
                         if value.shape[0] != prelength:
                             if use_connect_arrays:
                                 raise kernel.NESTError(
-                                    "'{}' has to be an array of dimension {}.".format(key, prelength))
+                                    "'{}' has to be an array of dimension {}.".format(key, prelength)
+                                )
                             else:
                                 raise kernel.NESTError(
                                     "'{}' has to be an array of dimension {}, a scalar or a dictionary.".format(
-                                        key, prelength))
+                                        key, prelength
+                                    )
+                                )
                         else:
                             syn_spec[key] = value
-                    elif rule == 'fixed_total_number':
-                        if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
+                    elif rule == "fixed_total_number":
+                        if "N" in conn_spec and value.shape[0] != conn_spec["N"]:
                             raise kernel.NESTError(
                                 "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
-                                    key, conn_spec['N']))
+                                    key, conn_spec["N"]
+                                )
+                            )
                         else:
                             syn_spec[key] = value
                     else:
                         raise kernel.NESTError(
                             "'{}' has the wrong type. One-dimensional parameter arrays can only be used in "
-                            "conjunction with rule 'one_to_one' or 'fixed_total_number'.".format(key))
+                            "conjunction with rule 'one_to_one' or 'fixed_total_number'.".format(key)
+                        )
 
                 elif len(value.shape) == 2:
-                    if rule == 'all_to_all':
+                    if rule == "all_to_all":
                         if value.shape[0] != postlength or value.shape[1] != prelength:
                             raise kernel.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_target x n_sources), a scalar "
-                                "or a dictionary.".format(key, postlength, prelength))
+                                "or a dictionary.".format(key, postlength, prelength)
+                            )
                         else:
                             syn_spec[key] = value.flatten()
-                    elif rule == 'fixed_indegree':
-                        indegree = conn_spec['indegree']
-                        if value.shape[0] != postlength or \
-                                value.shape[1] != indegree:
+                    elif rule == "fixed_indegree":
+                        indegree = conn_spec["indegree"]
+                        if value.shape[0] != postlength or value.shape[1] != indegree:
                             raise kernel.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_target x indegree), a scalar "
-                                "or a dictionary.".format(key, postlength, indegree))
+                                "or a dictionary.".format(key, postlength, indegree)
+                            )
                         else:
                             syn_spec[key] = value.flatten()
-                    elif rule == 'fixed_outdegree':
-                        outdegree = conn_spec['outdegree']
-                        if value.shape[0] != prelength or \
-                                value.shape[1] != outdegree:
+                    elif rule == "fixed_outdegree":
+                        outdegree = conn_spec["outdegree"]
+                        if value.shape[0] != prelength or value.shape[1] != outdegree:
                             raise kernel.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_sources x outdegree), a scalar "
-                                "or a dictionary.".format(key, prelength, outdegree))
+                                "or a dictionary.".format(key, prelength, outdegree)
+                            )
                         else:
                             syn_spec[key] = value.flatten()
                     else:
                         raise kernel.NESTError(
                             "'{}' has the wrong type. Two-dimensional parameter arrays can only be used in "
-                            "conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'.".format(key))
+                            "conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'.".format(key)
+                        )
 
         # check that "synapse_model" is there for use_connect_arrays
         if use_connect_arrays and "synapse_model" not in syn_spec:
             syn_spec["synapse_model"] = "static_synapse"
 
         return syn_spec
-    elif isinstance(syn_spec, CollocatedSynapses):
-        return syn_spec
 
-    raise TypeError("syn_spec must be a string or dict")
+    # If we get here, syn_spec is of illegal type.
+    raise TypeError("syn_spec must be a string, dict or CollocatedSynapses object")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
@@ -149,53 +161,71 @@ def _process_spatial_projections(conn_spec, syn_spec):
     Processes the connection and synapse specifications to a single dictionary
     for the SLI function `ConnectLayers`.
     """
-    allowed_conn_spec_keys = ['mask', 'allow_multapses', 'allow_autapses', 'rule',
-                              'indegree', 'outdegree', 'p', 'use_on_source', 'allow_oversized_mask']
-    allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model', 'synapse_label', 'receptor_type']
+    allowed_conn_spec_keys = [
+        "mask",
+        "allow_multapses",
+        "allow_autapses",
+        "rule",
+        "indegree",
+        "outdegree",
+        "p",
+        "pairwise_avg_num_conns",
+        "use_on_source",
+        "allow_oversized_mask",
+    ]
+    allowed_syn_spec_keys = ["weight", "delay", "synapse_model", "synapse_label", "receptor_type"]
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError("'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
 
     projections = {}
     projections.update(conn_spec)
-    if 'p' in conn_spec:
-        projections['kernel'] = projections.pop('p')
+    if "p" in conn_spec:
+        projections["kernel"] = projections.pop("p")
+    elif "pairwise_avg_num_conns" in conn_spec:
+        projections["kernel"] = projections.pop("pairwise_avg_num_conns")
     if syn_spec is not None:
         if isinstance(syn_spec, CollocatedSynapses):
             for syn_list in syn_spec.syn_specs:
                 for key in syn_list.keys():
                     if key not in allowed_syn_spec_keys:
                         raise ValueError(
-                            "'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
-            projections.update({'synapse_parameters': syn_spec.syn_specs})
+                            "'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key)
+                        )
+            projections.update({"synapse_parameters": syn_spec.syn_specs})
         else:
             for key in syn_spec.keys():
                 if key not in allowed_syn_spec_keys:
                     raise ValueError("'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
             projections.update(syn_spec)
-    if conn_spec['rule'] == 'fixed_indegree':
-        if 'use_on_source' in conn_spec:
+    if conn_spec["rule"] == "fixed_indegree":
+        if "use_on_source" in conn_spec:
             raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
-        projections['connection_type'] = 'pairwise_bernoulli_on_source'
-        projections['number_of_connections'] = projections.pop('indegree')
-    elif conn_spec['rule'] == 'fixed_outdegree':
-        if 'use_on_source' in conn_spec:
+        projections["connection_type"] = "pairwise_bernoulli_on_source"
+        projections["number_of_connections"] = projections.pop("indegree")
+    elif conn_spec["rule"] == "fixed_outdegree":
+        if "use_on_source" in conn_spec:
             raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
-        projections['connection_type'] = 'pairwise_bernoulli_on_target'
-        projections['number_of_connections'] = projections.pop('outdegree')
-    elif conn_spec['rule'] == 'pairwise_bernoulli':
-        if ('use_on_source' in conn_spec and
-                conn_spec['use_on_source']):
-            projections['connection_type'] = 'pairwise_bernoulli_on_source'
-            projections.pop('use_on_source')
+        projections["connection_type"] = "pairwise_bernoulli_on_target"
+        projections["number_of_connections"] = projections.pop("outdegree")
+    elif conn_spec["rule"] == "pairwise_bernoulli":
+        if "use_on_source" in conn_spec and conn_spec["use_on_source"]:
+            projections["connection_type"] = "pairwise_bernoulli_on_source"
+            projections.pop("use_on_source")
         else:
-            projections['connection_type'] = 'pairwise_bernoulli_on_target'
-            if 'use_on_source' in projections:
-                projections.pop('use_on_source')
+            projections["connection_type"] = "pairwise_bernoulli_on_target"
+            if "use_on_source" in projections:
+                projections.pop("use_on_source")
+    elif conn_spec["rule"] == "pairwise_poisson":
+        if "use_on_source" in conn_spec:
+            raise ValueError("'use_on_source' can only be set when using 'pairwise_bernoulli'.")
+        projections["connection_type"] = "pairwise_poisson"
     else:
-        raise kernel.NESTError("When using kernel or mask, the only possible connection rules are "
-                               "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'")
-    projections.pop('rule')
+        raise kernel.NESTError(
+            "When using kernel or mask, the only possible connection rules are "
+            "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'"
+        )
+    projections.pop("rule")
     return projections
 
 
@@ -207,10 +237,11 @@ def _connect_layers_needed(conn_spec, syn_spec):
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
         # We must use ConnectLayers in some additional cases.
-        rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
-        if ('mask' in conn_spec or
-                ('p' in conn_spec and not rule_is_bernoulli) or
-                'use_on_source' in conn_spec):
+        rule_is_bernoulli = "pairwise_bernoulli" in str(conn_spec["rule"])
+        if "mask" in conn_spec or ("p" in conn_spec and not rule_is_bernoulli) or "use_on_source" in conn_spec:
+            return True
+        rule_is_poisson = "pairwise_poisson" in str(conn_spec["rule"])
+        if "mask" in conn_spec or ("pairwise_avg_num_conns" in conn_spec and not rule_is_poisson):
             return True
     # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.
     if isinstance(syn_spec, dict):
@@ -225,6 +256,7 @@ def _connect_layers_needed(conn_spec, syn_spec):
 
 def _connect_spatial(pre, post, projections):
     """Connect `pre` to `post` using the specifications in `projections` with the SLI function `ConnectLayers`."""
+
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
@@ -237,7 +269,7 @@ def _connect_spatial(pre, post, projections):
 
     projections = fixdict(projections)
     sps(projections)
-    sr('ConnectLayers')
+    sr("ConnectLayers")
 
 
 def _process_input_nodes(pre, post, conn_spec):
@@ -258,8 +290,9 @@ def _process_input_nodes(pre, post, conn_spec):
     use_connect_arrays = False
 
     # check for 'one_to_one' conn_spec
-    one_to_one_cspec = (conn_spec if not isinstance(conn_spec, dict)
-                        else conn_spec.get('rule', 'all_to_all') == 'one_to_one')
+    one_to_one_cspec = (
+        conn_spec if not isinstance(conn_spec, dict) else conn_spec.get("rule", "all_to_all") == "one_to_one"
+    )
 
     # check and convert input types
     pre_is_nc, post_is_nc = True, True
@@ -281,8 +314,8 @@ def _process_input_nodes(pre, post, conn_spec):
     if not pre_is_nc or not post_is_nc:
         if len(pre) != len(post):
             raise NESTErrors.ArgumentType(
-                "Connect",
-                "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
+                "Connect", "If `pre` or `post` contain non-unique IDs, then they must have the same length."
+            )
 
         # convert to arrays
         pre = np.asarray(pre)

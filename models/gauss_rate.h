@@ -49,24 +49,26 @@ Rate neuron model with Gaussian gain function
 Description
 +++++++++++
 
-gauss_rate is an implementation of a nonlinear rate model with input
+``gauss_rate`` is an implementation of a nonlinear rate model with input
 
 .. math::
 
-   input(h) = g * \exp( -( x - \mu )^2 / ( 2 * \sigma^2 ) )
+   input(h) = g \cdot \exp( -( x - \mu )^2 / ( 2 \cdot \sigma^2 ) )
 
-It either models a rate neuron with input noise (see rate_neuron_ipn)
-or a rate transformer (see rate_transformer_node).
+It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
+or a rate transformer (see ``rate_transformer_node``).
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 
 The model supports connections to other rate models with either zero or
-non-zero delay, and uses the secondary_event concept introduced with
+non-zero delay, and uses the ``secondary_event`` concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('gauss_rate_ipn'). Nonlinear rate transformers can be
-created by typing nest.Create('rate_transformer_gauss').
+``nest.Create("gauss_rate_ipn")``. Nonlinear rate transformers can be
+created by typing ``nest.Create("rate_transformer_gauss")``.
+
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -90,7 +92,7 @@ transformers.
 
 Note:
 
-The boolean parameter linear_summation determines whether the
+The boolean parameter ``linear_summation`` determines whether the
 input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
@@ -124,6 +126,11 @@ See also
 ++++++++
 
 rate_connection_instantaneous, rate_connection_delayed
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gauss_rate
 
 EndUserDocs */
 
@@ -171,7 +178,11 @@ nonlinearities_gauss_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_gauss_rate > gauss_rate_ipn;
+void register_gauss_rate_ipn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_gauss_rate > rate_transformer_gauss;
+void register_rate_transformer_gauss( const std::string& name );
+
 
 template <>
 void RecordablesMap< gauss_rate_ipn >::create();

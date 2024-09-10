@@ -25,9 +25,6 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <limits>
-#include <iomanip>
-#include <iostream>
 #include <cstdio>
 
 // Includes from libnestutil:
@@ -38,17 +35,22 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 namespace nest
 {
+void
+register_gif_cond_exp( const std::string& name )
+{
+  register_node_model< gif_cond_exp >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -81,19 +83,24 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ref_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex_ );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in_ );
-  const double I_L = node.P_.g_L_ * ( y[ S::V_M ] - node.P_.E_L_ );
+  // Clamp membrane potential to V_reset while refractory.
+  const double V = is_refractory ? node.P_.V_reset_ : y[ S::V_M ];
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex_ );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in_ );
+  const double I_L = node.P_.g_L_ * ( V - node.P_.E_L_ );
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = is_refractory ? 0.0 : ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -164,7 +171,8 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
+nest::gif_cond_exp::State_&
+nest::gif_cond_exp::State_::operator=( const State_& s )
 {
   I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
@@ -227,7 +235,6 @@ nest::gif_cond_exp::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::E_L, E_L_, node );
   updateValueParam< double >( d, names::g_L, g_L_, node );
@@ -255,20 +262,20 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {
@@ -306,7 +313,7 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
+  if ( tau_synE_ <= 0 or tau_synI_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }
@@ -332,9 +339,9 @@ nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, N
 
 nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -342,9 +349,9 @@ nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
 
 nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -404,7 +411,7 @@ nest::gif_cond_exp::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -413,7 +420,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   }
@@ -422,7 +429,7 @@ nest::gif_cond_exp::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -432,13 +439,13 @@ nest::gif_cond_exp::init_buffers_()
   }
 
   B_.sys_.function = gif_cond_exp_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }
 
 void
-nest::gif_cond_exp::calibrate()
+nest::gif_cond_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -471,10 +478,6 @@ nest::gif_cond_exp::calibrate()
 void
 nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

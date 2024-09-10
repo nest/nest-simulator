@@ -24,6 +24,7 @@ Test if Set/GetStatus work properly
 """
 
 import unittest
+
 import nest
 
 
@@ -36,7 +37,13 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        self.assertEqual(nest.GetKernelStatus(), nest.kernel_status)
+        # Remove entry containing numpy arrays from status dicts since they do not compare well
+        gks_result = nest.GetKernelStatus()
+        ks_result = nest.kernel_status
+        del gks_result["spike_buffer_resize_log"]
+        del ks_result["spike_buffer_resize_log"]
+        self.assertEqual(gks_result, ks_result)
+
         self.assertEqual(nest.GetKernelStatus("resolution"), nest.resolution)
 
         nest.resolution = 0.4
@@ -54,7 +61,7 @@ class StatusTestCase(unittest.TestCase):
 
         self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
 
-        test_keys = ("resolution", ) * 3
+        test_keys = ("resolution",) * 3
         kernel_status = nest.GetKernelStatus(test_keys)
         self.assertEqual(len(kernel_status), len(test_keys))
 
@@ -65,19 +72,18 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         nest.SetKernelStatus({})
-        nest.SetKernelStatus({'resolution': 0.2})
+        nest.SetKernelStatus({"resolution": 0.2})
 
-        self.assertRaises(ValueError, nest.SetKernelStatus, {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {"nonexistent_status_key": 0})
         # Readonly check
-        self.assertRaises(ValueError, nest.SetKernelStatus, {'network_size': 120})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {"network_size": 120})
 
     def test_GetDefaults(self):
         """GetDefaults"""
 
         nest.ResetKernel()
 
-        for model in nest.Models():
-
+        for model in nest.node_models + nest.synapse_models:
             model_status = nest.GetDefaults(model)
             self.assertIsInstance(model_status, dict)
             self.assertGreater(len(model_status), 1)
@@ -88,7 +94,7 @@ class StatusTestCase(unittest.TestCase):
                 test_value = nest.GetDefaults(model, "V_m")
                 self.assertIsInstance(test_value, float)
 
-                test_keys = ("V_m", ) * 3
+                test_keys = ("V_m",) * 3
                 model_status = nest.GetDefaults(model, test_keys)
                 self.assertEqual(len(model_status), len(test_keys))
 
@@ -97,44 +103,44 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
-                v_m = nest.GetDefaults(m)['V_m']
+        for model in nest.node_models:
+            if "V_m" in nest.GetDefaults(model):
+                v_m = nest.GetDefaults(model)["V_m"]
 
-                nest.SetDefaults(m, {'V_m': -1.})
-                self.assertEqual(nest.GetDefaults(m, 'V_m'), -1.)
+                nest.SetDefaults(model, {"V_m": -1.0})
+                self.assertEqual(nest.GetDefaults(model, "V_m"), -1.0)
 
-                nest.SetDefaults(m, 'V_m', v_m)
-                self.assertEqual(nest.GetDefaults(m, 'V_m'), v_m)
+                nest.SetDefaults(model, "V_m", v_m)
+                self.assertEqual(nest.GetDefaults(model, "V_m"), v_m)
 
                 self.assertRaisesRegex(
-                    nest.kernel.NESTError, "DictError",
-                    nest.SetDefaults, m, 'nonexistent_status_key', 0)
+                    nest.kernel.NESTError, "DictError", nest.SetDefaults, model, "nonexistent_status_key", 0
+                )
 
     def test_GetStatus(self):
         """GetStatus"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        for model in nest.node_models:
+            if "V_m" in nest.GetDefaults(model):
                 nest.ResetKernel()
 
-                n = nest.Create(m)
+                n = nest.Create(model)
 
                 d = nest.GetStatus(n)
                 self.assertIsInstance(d, tuple)
                 self.assertIsInstance(d[0], dict)
                 self.assertGreater(len(d[0]), 1)
 
-                v1 = nest.GetStatus(n)[0]['V_m']
-                v2 = nest.GetStatus(n, 'V_m')[0]
+                v1 = nest.GetStatus(n)[0]["V_m"]
+                v2 = nest.GetStatus(n, "V_m")[0]
                 self.assertEqual(v1, v2)
 
-                n = nest.Create(m, 10)
-                d = nest.GetStatus(n, 'V_m')
+                n = nest.Create(model, 10)
+                d = nest.GetStatus(n, "V_m")
                 self.assertEqual(len(d), len(n))
                 self.assertIsInstance(d[0], float)
 
-                test_keys = ("V_m", ) * 3
+                test_keys = ("V_m",) * 3
                 d = nest.GetStatus(n, test_keys)
                 self.assertEqual(len(d), len(n))
                 self.assertEqual(len(d[0]), len(test_keys))
@@ -142,80 +148,78 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatus(self):
         """SetStatus with dict"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        for model in nest.node_models:
+            if "V_m" in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
-                nest.SetStatus(n, {'V_m': 1.})
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 1.)
+                n = nest.Create(model)
+                nest.SetStatus(n, {"V_m": 1.0})
+                self.assertEqual(nest.GetStatus(n, "V_m")[0], 1.0)
 
     def test_SetStatusList(self):
         """SetStatus with list"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        for model in nest.node_models:
+            if "V_m" in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
-                nest.SetStatus(n, [{'V_m': 2.}])
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 2.)
+                n = nest.Create(model)
+                nest.SetStatus(n, [{"V_m": 2.0}])
+                self.assertEqual(nest.GetStatus(n, "V_m")[0], 2.0)
 
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        for model in nest.node_models:
+            if "V_m" in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
-                nest.SetStatus(n, 'V_m', 3.)
-                self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.)
+                n = nest.Create(model)
+                nest.SetStatus(n, "V_m", 3.0)
+                self.assertEqual(nest.GetStatus(n, "V_m")[0], 3.0)
 
     def test_SetStatusVth_E_L(self):
-        """SetStatus of reversal and threshold potential """
+        """SetStatus of reversal and threshold potential"""
 
-        excluded = ['a2eif_cond_exp_HW', 'mat2_psc_exp', 'amat2_psc_exp']
-        models = [m for m in nest.Models() if m not in excluded]
+        excluded = ["a2eif_cond_exp_HW", "mat2_psc_exp", "amat2_psc_exp"]
+        models = nest.node_models + nest.synapse_models
 
-        for m in models:
-            if all(key in nest.GetDefaults(m) for key in ('V_th', 'E_L')):
+        for model in [m for m in models if m not in excluded]:
+            if all(key in nest.GetDefaults(model) for key in ("V_th", "E_L")):
                 nest.ResetKernel()
 
-                neuron1 = nest.Create(m)
-                neuron2 = nest.Create(m)
+                neuron1 = nest.Create(model)
+                neuron2 = nest.Create(model)
 
                 # must not depend on the order
-                new_EL = -90.
-                new_Vth = -10.
+                new_EL = -90.0
+                new_Vth = -10.0
 
-                if 'V_reset' in nest.GetDefaults(m):
-                    nest.SetStatus(neuron1 + neuron2, {'V_reset': new_EL})
+                if "V_reset" in nest.GetDefaults(model):
+                    nest.SetStatus(neuron1 + neuron2, {"V_reset": new_EL})
 
-                nest.SetStatus(neuron1, {'E_L': new_EL})
-                nest.SetStatus(neuron2, {'V_th': new_Vth})
-                nest.SetStatus(neuron1, {'V_th': new_Vth})
-                nest.SetStatus(neuron2, {'E_L': new_EL})
-                vth1, vth2 = nest.GetStatus(neuron1 + neuron2, 'V_th')
+                nest.SetStatus(neuron1, {"E_L": new_EL})
+                nest.SetStatus(neuron2, {"V_th": new_Vth})
+                nest.SetStatus(neuron1, {"V_th": new_Vth})
+                nest.SetStatus(neuron2, {"E_L": new_EL})
+                vth1, vth2 = nest.GetStatus(neuron1 + neuron2, "V_th")
                 self.assertEqual(vth1, vth2)
 
     def test_SetStatusV_th_smaller_V_reset(self):
         """SetStatus of reversal and threshold potential
-           check if error is raised if V_reset > V_th"""
+        check if error is raised if V_reset > V_th"""
 
-        for m in nest.Models():
-            if all(key in nest.GetDefaults(m) for key in ('V_th', 'V_reset')):
+        for model in nest.node_models + nest.synapse_models:
+            if all(key in nest.GetDefaults(model) for key in ("V_th", "V_reset")):
                 nest.ResetKernel()
 
-                neuron = nest.Create(m)
+                neuron = nest.Create(model)
 
                 # should raise exception
                 self.assertRaisesRegex(
-                    nest.kernel.NESTError, "BadProperty",
-                    nest.SetStatus, neuron,
-                    {'V_reset': 10., 'V_th': 0.}
+                    nest.kernel.NESTError, "BadProperty", nest.SetStatus, neuron, {"V_reset": 10.0, "V_th": 0.0}
                 )
 
 
 def suite():
-    suite = unittest.makeSuite(StatusTestCase, 'test')
+    suite = unittest.makeSuite(StatusTestCase, "test")
     return suite
 
 

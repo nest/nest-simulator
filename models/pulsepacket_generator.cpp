@@ -33,11 +33,18 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+
+void
+nest::register_pulsepacket_generator( const std::string& name )
+{
+  register_node_model< pulsepacket_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------
@@ -74,7 +81,6 @@ nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
 {
-
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
@@ -97,8 +103,8 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 }
 
 /* ----------------------------------------------------------------
-* Default and copy constructor for node
-* ---------------------------------------------------------------- */
+ * Default and copy constructor for node
+ * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
   : StimulationDevice()
@@ -129,9 +135,9 @@ nest::pulsepacket_generator::init_buffers_()
 }
 
 void
-nest::pulsepacket_generator::calibrate()
+nest::pulsepacket_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -164,11 +170,8 @@ nest::pulsepacket_generator::calibrate()
 
 
 void
-nest::pulsepacket_generator::update( Time const& T, const long from, const long to )
+nest::pulsepacket_generator::update( Time const& T, const long, const long to )
 {
-  assert( to >= from );
-  assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
-
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
   {

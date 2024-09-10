@@ -27,14 +27,9 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // External includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -43,25 +38,29 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 
 namespace nest
 {
+void
+register_hh_cond_exp_traub( const std::string& name )
+{
+  register_node_model< hh_cond_exp_traub >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_cond_exp_traub >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::V_M > );
   insert_( names::g_ex, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_EXC > );
   insert_( names::g_in, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_INH > );
@@ -173,7 +172,8 @@ nest::hh_cond_exp_traub::State_::State_( const State_& s )
   }
 }
 
-nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=( const State_& s )
+nest::hh_cond_exp_traub::State_&
+nest::hh_cond_exp_traub::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -229,7 +229,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
     throw BadProperty( "Capacitance must be strictly positive." );
   }
 
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -256,7 +256,7 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
   updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
   updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -264,9 +264,9 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -274,9 +274,9 @@ nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -339,7 +339,7 @@ nest::hh_cond_exp_traub::init_buffers_()
 
   B_.I_stim_ = 0.0;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -348,7 +348,7 @@ nest::hh_cond_exp_traub::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -357,7 +357,7 @@ nest::hh_cond_exp_traub::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -367,13 +367,13 @@ nest::hh_cond_exp_traub::init_buffers_()
   }
 
   B_.sys_.function = hh_cond_exp_traub_dynamics;
-  B_.sys_.jacobian = 0;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }
 
 void
-nest::hh_cond_exp_traub::calibrate()
+nest::hh_cond_exp_traub::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -387,9 +387,6 @@ nest::hh_cond_exp_traub::calibrate()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -425,8 +422,8 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
     }
     else
     {
-      // (threshold   &&    maximum    )
-      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. && V_.U_old_ > S_.y_[ State_::V_M ] )
+      // (threshold   and    maximum    )
+      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and V_.U_old_ > S_.y_[ State_::V_M ] )
       {
         S_.r_ = V_.refractory_counts_;
 

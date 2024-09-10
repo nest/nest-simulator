@@ -45,19 +45,19 @@ References
        Neuroinform. http://dx.doi.org/10.3389/neuro.11.012.2008
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 n_neuron = 500
 gap_per_neuron = 60
 inh_per_neuron = 50
 delay = 1.0
-j_exc = 300.
-j_inh = -50.
+j_exc = 300.0
+j_inh = -50.0
 threads = 8
 stepsize = 0.05
-simtime = 501.
+simtime = 501.0
 gap_weight = 0.3
 
 nest.ResetKernel()
@@ -81,10 +81,10 @@ nest.wfr_tol = 0.0001
 nest.wfr_max_iterations = 15
 nest.wfr_interpolation_order = 3
 
-neurons = nest.Create('hh_psc_alpha_gap', n_neuron)
+neurons = nest.Create("hh_psc_alpha_gap", n_neuron)
 
 sr = nest.Create("spike_recorder")
-pg = nest.Create("poisson_generator", params={'rate': 500.0})
+pg = nest.Create("poisson_generator", params={"rate": 500.0})
 
 ###############################################################################
 # Each neuron shall receive ``inh_per_neuron = 50`` inhibitory synaptic inputs
@@ -94,21 +94,13 @@ pg = nest.Create("poisson_generator", params={'rate': 500.0})
 # with synaptic weight ``j_exc = 300.0`` pA and the same delay.
 # The desired connections are created with the following commands:
 
-conn_dict = {'rule': 'fixed_indegree',
-             'indegree': inh_per_neuron,
-             'allow_autapses': False,
-             'allow_multapses': True}
+conn_dict = {"rule": "fixed_indegree", "indegree": inh_per_neuron, "allow_autapses": False, "allow_multapses": True}
 
-syn_dict = {'synapse_model': 'static_synapse',
-            'weight': j_inh,
-            'delay': delay}
+syn_dict = {"synapse_model": "static_synapse", "weight": j_inh, "delay": delay}
 
 nest.Connect(neurons, neurons, conn_dict, syn_dict)
 
-nest.Connect(pg, neurons, 'all_to_all',
-             syn_spec={'synapse_model': 'static_synapse',
-                       'weight': j_exc,
-                       'delay': delay})
+nest.Connect(pg, neurons, "all_to_all", syn_spec={"synapse_model": "static_synapse", "weight": j_exc, "delay": delay})
 
 ###############################################################################
 # Then the neurons are connected to the ``spike_recorder`` and the initial
@@ -116,7 +108,7 @@ nest.Connect(pg, neurons, 'all_to_all',
 
 nest.Connect(neurons, sr)
 
-neurons.V_m = nest.random.uniform(min=-80., max=-40.)
+neurons.V_m = nest.random.uniform(min=-80.0, max=-40.0)
 
 #######################################################################################
 # Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
@@ -134,10 +126,12 @@ neuron_list = neurons.tolist()
 connections = numpy.random.choice(neuron_list, [n_connection, 2])
 
 for source_node_id, target_node_id in connections:
-    nest.Connect(nest.NodeCollection([source_node_id]),
-                 nest.NodeCollection([target_node_id]),
-                 {'rule': 'one_to_one', 'make_symmetric': True},
-                 {'synapse_model': 'gap_junction', 'weight': gap_weight})
+    nest.Connect(
+        nest.NodeCollection([source_node_id]),
+        nest.NodeCollection([target_node_id]),
+        {"rule": "one_to_one", "make_symmetric": True},
+        {"synapse_model": "gap_junction", "weight": gap_weight},
+    )
 
 ###############################################################################
 # In the end we start the simulation and plot the spike pattern.
@@ -145,15 +139,15 @@ for source_node_id, target_node_id in connections:
 nest.Simulate(simtime)
 
 events = sr.events
-times = events['times']
-spikes = events['senders']
+times = events["times"]
+spikes = events["senders"]
 n_spikes = sr.n_events
 
 hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 
 plt.figure(1)
-plt.plot(times, spikes, 'o')
-plt.title(f'Average spike rate (Hz): {hz_rate:.2f}')
-plt.xlabel('time (ms)')
-plt.ylabel('neuron no')
+plt.plot(times, spikes, "o")
+plt.title(f"Average spike rate (Hz): {hz_rate:.2f}")
+plt.xlabel("time (ms)")
+plt.ylabel("neuron no")
 plt.show()

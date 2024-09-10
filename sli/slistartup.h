@@ -27,9 +27,9 @@
 #include <string>
 
 // Generated includes:
+#include "config.h"
 #include "dirent.h"
 #include "errno.h"
-#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -55,28 +55,30 @@
 #define EXITCODE_SKIPPED_NO_THREADING 203
 #define EXITCODE_SKIPPED_NO_GSL 204
 #define EXITCODE_SKIPPED_NO_MUSIC 205
+#define EXITCODE_SKIPPED_NO_BOOST 206
 
 
 class SLIStartup : public SLIModule
 {
-  const std::string startupfilename;
-  const std::string slilibpath;
-  std::string slilibdir;
-  std::string slidocdir;
-  std::string sliprefix;
+  const std::string sliprefix;
+  const std::string slilibdir;
+  const std::string slidocdir;
+  const std::string startupfile;
 
-  std::string locateSLIInstallationPath( void );
-  bool checkpath( std::string const&, std::string& ) const;
+  std::string find_startup_file( const std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
-  Token targs;
+  Token commandline_args_;
   int verbosity_;
   bool debug_;
 
 public:
   Name argv_name;
   Name version_name;
+  Name version_git_info_name;
+  Name version_git_hash_name;
+  Name version_git_branch_name;
+  Name version_git_remote_name;
   Name exitcode_name;
   Name prgbuilt_name;
   Name prefix_name;
@@ -107,9 +109,17 @@ public:
   Name ismpi_name;
   Name have_gsl_name;
   Name have_music_name;
+  Name have_boost_name;
   Name have_libneurosim_name;
   Name have_sionlib_name;
+  Name have_hdf5_name;
   Name ndebug_name;
+
+  Name mpiexec_name;
+  Name mpiexec_numproc_flag_name;
+  Name mpiexec_max_numprocs_name;
+  Name mpiexec_preflags_name;
+  Name mpiexec_postflags_name;
 
   Name exitcodes_name;
   Name exitcode_success_name;
@@ -119,6 +129,7 @@ public:
   Name exitcode_skipped_no_threading_name;
   Name exitcode_skipped_no_gsl_name;
   Name exitcode_skipped_no_music_name;
+  Name exitcode_skipped_no_boost_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
   Name exitcode_userabort_name;
@@ -132,20 +143,20 @@ public:
   class GetenvFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   GetenvFunction getenvfunction;
 
   SLIStartup( int, char** );
-  ~SLIStartup()
+  ~SLIStartup() override
   {
   }
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   const std::string
-  name( void ) const
+  name() const override
   {
     return "SLIStartup";
   }

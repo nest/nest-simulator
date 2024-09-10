@@ -22,8 +22,6 @@
 
 #include "amat2_psc_exp.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -32,13 +30,11 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -48,6 +44,12 @@ nest::RecordablesMap< nest::amat2_psc_exp > nest::amat2_psc_exp::recordablesMap_
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_amat2_psc_exp( const std::string& name )
+{
+  register_node_model< amat2_psc_exp >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -159,18 +161,18 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 || tau_v_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_ref_ <= 0 or tau_1_ <= 0 or tau_2_ <= 0 or tau_v_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ || Tau_ == tau_v_ )
+  if ( Tau_ == tau_ex_ or Tau_ == tau_in_ or Tau_ == tau_v_ )
   {
     throw BadProperty(
       "tau_m must differ from tau_syn_ex, tau_syn_in and tau_v. "
       "See note in documentation." );
   }
 
-  if ( tau_v_ == tau_ex_ || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  if ( tau_v_ == tau_ex_ or tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
   {
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "
@@ -260,7 +262,7 @@ nest::amat2_psc_exp::init_buffers_()
 }
 
 void
-nest::amat2_psc_exp::calibrate()
+nest::amat2_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -320,13 +322,13 @@ nest::amat2_psc_exp::calibrate()
     / ( c * std::pow( taum - tauV, 2 ) );
   V_.P71_ = ( beta * tauE * taum * tauV
               * ( ( em * taum * std::pow( tauE - tauV, 2 ) - eE * tauE * std::pow( taum - tauV, 2 ) ) * tauV
-                  - eV * ( tauE - taum )
-                    * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV - std::pow( tauV, 3 ) ) ) )
+                - eV * ( tauE - taum )
+                  * ( h * ( tauE - tauV ) * ( taum - tauV ) + tauE * taum * tauV - std::pow( tauV, 3 ) ) ) )
     / ( c * ( tauE - taum ) * std::pow( tauE - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
   V_.P72_ = ( beta * tauI * taum * tauV
               * ( ( em * taum * std::pow( tauI - tauV, 2 ) - eI * tauI * std::pow( taum - tauV, 2 ) ) * tauV
-                  - eV * ( tauI - taum )
-                    * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV - std::pow( tauV, 3 ) ) ) )
+                - eV * ( tauI - taum )
+                  * ( h * ( tauI - tauV ) * ( taum - tauV ) + tauI * taum * tauV - std::pow( tauV, 3 ) ) ) )
     / ( c * ( tauI - taum ) * std::pow( tauI - tauV, 2 ) * std::pow( taum - tauV, 2 ) );
   V_.P73_ = ( beta * tauV * ( -( em * taum * tauV ) + eV * ( h * ( taum - tauV ) + taum * tauV ) ) )
     / std::pow( taum - tauV, 2 );
@@ -366,9 +368,6 @@ nest::amat2_psc_exp::calibrate()
 void
 nest::amat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {

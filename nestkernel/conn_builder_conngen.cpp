@@ -35,12 +35,15 @@ namespace nest
 
 ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
+  assert( third_out == nullptr );
+
   updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
   if ( cg_->arity() != 0 )
   {
@@ -82,12 +85,12 @@ ConnectionGeneratorBuilder::connect_()
   if ( num_parameters == 0 )
   {
     // connect source to target
-    while ( cg_->next( source, target, NULL ) )
+    while ( cg_->next( source, target, nullptr ) )
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
       Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
+      const size_t target_thread = target_node->get_thread();
       single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
   }
@@ -101,8 +104,8 @@ ConnectionGeneratorBuilder::connect_()
     const size_t d_idx = ( *params_map_ )[ names::delay ];
     const size_t w_idx = ( *params_map_ )[ names::weight ];
 
-    const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
-    const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );
+    const bool d_idx_is_0_or_1 = d_idx == 0 or ( d_idx == 1 );
+    const bool w_idx_is_0_or_1 = w_idx == 0 or ( w_idx == 1 );
     const bool indices_differ = ( w_idx != d_idx );
     if ( not( d_idx_is_0_or_1 and w_idx_is_0_or_1 and indices_differ ) )
     {
@@ -116,7 +119,7 @@ ConnectionGeneratorBuilder::connect_()
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
       Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
+      const size_t target_thread = target_node->get_thread();
 
       update_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
 
@@ -137,38 +140,6 @@ ConnectionGeneratorBuilder::connect_()
   }
 }
 
-/**
- * Create the masks for sources and targets and set them on the
- * Connection Generator.
- *
- * The masks are based on the contiguous ranges present in the given
- * sources and targets. We need to do some index translation here, as
- * the CG expects indices from 0..n for both source and target
- * populations, while the corresponding RangeSets for sources and
- * targets contain NEST global indices (node IDs).
- *
- * The masks for the sources must contain all nodes (local+remote). To
- * achieve this, the skip of the mask is set to 1 and the same source
- * mask is stored n_proc times on each process.
- *
- * The masks for the targets must only contain local nodes. This is
- * achieved by first setting skip to num_processes upon creation of
- * the mask, and second by the fact that for each contiguous range of
- * nodes in a mask, each of them contains the index-translated id of
- * the first local neuron as the first entry. If this renders the
- * range empty (i.e. because the first local id is beyond the last
- * element of the range), the range is not added to the mask.
- *
- * \note Each process computes the full set of source and target
- * masks, i.e. one mask per rank will be created on each rank.
- *
- * \note Setting the masks for all processes on each process might
- * become a memory bottleneck when going to very large numbers of
- * processes. Especially so for the source masks, which are all the
- * same. This could be solved by making the ConnectionGenerator
- * interface MPI aware and communicating the masks during connection
- * setup.
- */
 void
 ConnectionGeneratorBuilder::cg_set_masks()
 {
@@ -246,8 +217,8 @@ ConnectionGeneratorBuilder::cg_set_masks()
  * \param nodes The std::vector<long> of node IDs to search in
  * \returns the right border of the range
  */
-index
-ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes )
+size_t
+ConnectionGeneratorBuilder::cg_get_right_border( size_t left, size_t step, const NodeCollectionPTR nodes )
 {
   // Check if left is already the index of the last element in
   // node IDs. If yes, return left as the right border
@@ -273,7 +244,7 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
     // right border of the contiguous range (last_i) and return it.
     const bool end_of_nodes = i == static_cast< long >( nodes->size() ) - 1;
     const auto dist_a = ( *nodes )[ i ] - ( *nodes )[ left ];
-    const auto dist_b = i - static_cast< index >( left );
+    const auto dist_b = i - static_cast< size_t >( left );
     const bool same_dist = dist_a == dist_b;
 
     if ( ( end_of_nodes and same_dist ) or i == leftmost_r )
@@ -289,7 +260,7 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( ( *nodes )[ i ] - ( *nodes )[ left ] == i - static_cast< index >( left ) )
+    if ( ( *nodes )[ i ] - ( *nodes )[ left ] == i - static_cast< size_t >( left ) )
     {
       i += step;
     }
@@ -313,22 +284,10 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
   return 0;
 }
 
-/**
- * Determine all contiguous ranges found in a given vector of node IDs
- * and add the ranges to the given RangeSet.
- *
- * \param ranges A reference to the RangeSet to add to
- * \param nodes A reference to a std::vector<long> of node IDs
- *
- * \note We do not store the indices into the given range, but
- * instead we store the actual node IDs. This allows us to use CG
- * generated indices as indices into the ranges spanned by the
- * RangeSet. Index translation is done in cg_create_masks().
- */
 void
 ConnectionGeneratorBuilder::cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes )
 {
-  index right, left = 0;
+  size_t right, left = 0;
   while ( true )
   {
     // Determine the right border of the contiguous range starting

@@ -22,26 +22,29 @@
 
 #include "weight_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
-#include "node_collection.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest_datums.h"
+#include "nest_impl.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+
+void
+nest::register_weight_recorder( const std::string& name )
+{
+  register_node_model< weight_recorder >( name );
+}
+
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()
@@ -134,9 +137,9 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::weight_recorder::calibrate()
+nest::weight_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate(
+  RecordingDevice::pre_run_hook(
     { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
@@ -205,7 +208,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
     write( e,
       { e.get_weight() },
       { static_cast< long >( e.get_receiver_node_id() ),
-       static_cast< long >( e.get_rport() ),
-       static_cast< long >( e.get_port() ) } );
+        static_cast< long >( e.get_rport() ),
+        static_cast< long >( e.get_port() ) } );
   }
 }

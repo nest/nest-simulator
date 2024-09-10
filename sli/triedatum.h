@@ -45,13 +45,13 @@ private:
   TypeTrie tree;
 
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new TrieDatum( *this );
   }
 
   Datum*
-  get_ptr()
+  get_ptr() override
   {
     Datum::addReference();
     return this;
@@ -82,29 +82,29 @@ public:
 
 
   void
-  print( std::ostream& o ) const
+  print( std::ostream& o ) const override
   {
     o << '+' << name << '+';
   }
 
   void
-  pprint( std::ostream& o ) const
+  pprint( std::ostream& o ) const override
   {
     print( o );
   }
 
   void
-  info( std::ostream& out ) const
+  info( std::ostream& out ) const override
   {
     pprint( out );
     out << "\nVariants are:" << std::endl;
     tree.info( out );
   }
 
-  bool equals( Datum const* ) const;
+  bool equals( Datum const* ) const override;
 
   const Name&
-  getname( void ) const
+  getname() const
   {
     return name;
   }
@@ -128,12 +128,13 @@ public:
   }
 
   TypeTrie&
-  get( void )
+  get()
   {
     return tree;
   }
 
-  static void* operator new( size_t size )
+  static void*
+  operator new( size_t size )
   {
     if ( size != memory.size_of() )
     {
@@ -142,9 +143,10 @@ public:
     return memory.alloc();
   }
 
-  static void operator delete( void* p, size_t size )
+  static void
+  operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( not p )
     {
       return;
     }

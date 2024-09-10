@@ -48,14 +48,15 @@ global offset that shifts the stimulation period. All three values are
 set as times in ms.
 
 - For spike-emitting devices, only spikes with times `t` that fulfill
-  `start` < `t` <= `stop` are emitted. Spikes that have timestamp of
-  `t` = `start` are not emitted.
+  :math:`\mathrm{start} < t \leq \mathrm{stop}` are emitted. Spikes
+  that have timestamp of :math:`t = \mathrm{start}` are not emitted.
 
 - For current-emitting devices, the current is activated and
   deactivated such that the current first affects the target dynamics
-  during the update step (start, start+h], i.e., an effect can be
-  recorded at the earliest at time start+h. The last interval during
-  which the current affects the target's dynamics is (stop-h, stop].
+  during the update step :math:`(\mathrm{start}, \mathrm{start}+h]`,
+  that is, an effect can be recorded at the earliest at time
+  :math:`\mathrm{start}+h`. The last interval during which the current
+  affects the target's dynamics is :math:`(\textrm{stop}-h, \textrm{stop}]`.
 
 The property ``stimulus_source`` defaults to an empty string. It can
 be set to the name of a stimulation backend, in which case it will
@@ -68,28 +69,28 @@ Parameters
 ++++++++++
 
 label
-    A string (default: `""`) specifying an arbitrary textual label for
-    the device. Stimulation backends might use the label to generate
-    device specific identifiers like filenames and such.
+    A string specifying an arbitrary textual label for the device.
+    Stimulation backends might use the label to generate device specific
+    identifiers like filenames and such. Default: ``""``.
 
 origin
-    A positive floating point number (default : `0.0`) used as the
-    reference time in ms for `start` and `stop`.
+    A positive floating point number used as the reference time in ms
+    for ``start`` and ``stop``. Default: ``0.0``.
 
 start
-    A positive floating point number (default: `0.0`) specifying the
-    activation time in ms, relative to `origin`.
+    A positive floating point number specifying the activation time in ms,
+    relative to ``origin``. Default: ``0.0``.
 
 stimulus_source
-    A string (default: `""`) specifying the name of the stimulation
-    backend from which to get the data for updating the stimulus
-    parameters of the device. By default the device uses its
-    internally stored parameters for updating the stimulus.
+    A string specifying the name of the stimulation backend from which to
+    get the data for updating the stimulus parameters of the device.
+    By default, the device uses its internally stored parameters for updating
+    the stimulus. Default: ``""``.
 
 stop
-    A floating point number (default: `infinity`) specifying the
-    deactivation time in ms, relative to `origin`. The value of `stop`
-    must be greater than or equal to `start`.
+    A floating point number specifying the deactivation time in ms, relative
+    to ``origin``. The value of ``stop`` must be greater than or equal to
+    ``start``. Default: ``infinity``.
 
 EndUserDocs */
 
@@ -153,6 +154,7 @@ public:
 
   /**
    * Determine whether device is active.
+   *
    * The argument is the value of the simulation time.
    * @see class comment for details.
    */
@@ -163,12 +165,12 @@ public:
   bool has_proxies() const override;
   Name get_element_type() const override;
 
-  using Device::init_state;
-  using Device::calibrate;
   using Device::init_buffers;
-  using Node::calibrate;
+  using Device::init_state;
+  using Device::pre_run_hook;
+  using Node::pre_run_hook;
 
-  void calibrate() override;
+  void pre_run_hook() override;
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
   void enforce_single_syn_type( synindex );
@@ -190,8 +192,8 @@ public:
     throw KernelException( "WORNG TYPE" );
   };
   const std::string& get_label() const;
-  virtual void set_data_from_stimulation_backend( std::vector< double >& ){};
-  void update( Time const&, const long, const long ) override{};
+  virtual void set_data_from_stimulation_backend( std::vector< double >& ) {};
+  void update( Time const&, const long, const long ) override {};
 
 protected:
   void set_initialized_() final;
@@ -203,6 +205,7 @@ protected:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;
@@ -234,5 +237,4 @@ StimulationDevice::has_proxies() const
 
 } // namespace nest
 
-
-#endif
+#endif /* #ifndef STIMULATION_DEVICE_H */

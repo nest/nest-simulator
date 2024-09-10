@@ -70,9 +70,9 @@ nest::StimulationDevice::enforce_single_syn_type( synindex syn_id )
 }
 
 void
-nest::StimulationDevice::calibrate()
+nest::StimulationDevice::pre_run_hook()
 {
-  Device::calibrate();
+  Device::pre_run_hook();
 }
 
 void

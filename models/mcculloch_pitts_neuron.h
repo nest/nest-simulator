@@ -45,6 +45,7 @@ each update point the total synaptic input h into the neuron is
 summed up, passed through a Heaviside gain function :math:`g(h) = H(h-\theta)`,
 whose output is either 1 (if input is above) or 0 (if input is below
 threshold theta).
+
 The time constant :math:`\tau_m` is defined as the
 mean inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
@@ -61,6 +62,7 @@ the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay :math:`d`, the user has to specify the
 delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
 
+See also [2]_.
 
 Parameters
 ++++++++++
@@ -117,6 +119,11 @@ See also
 ++++++++
 
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mcculloch_pitts_neuron
+
 EndUserDocs */
 
 class gainfunction_mcculloch_pitts
@@ -133,17 +140,20 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   bool operator()( RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
+inline bool
+gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+typedef binary_neuron< gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+void register_mcculloch_pitts_neuron( const std::string& name );
+
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

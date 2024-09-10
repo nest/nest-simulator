@@ -32,16 +32,22 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
+void
+register_ac_generator( const std::string& name )
+{
+  register_node_model< ac_generator >( name );
+}
+
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;
 
 template <>
@@ -72,7 +78,8 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=( const Parameters_& p )
+nest::ac_generator::Parameters_&
+nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -174,11 +181,11 @@ nest::ac_generator::init_buffers_()
 }
 
 void
-nest::ac_generator::calibrate()
+nest::ac_generator::pre_run_hook()
 {
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   const double h = Time::get_resolution().get_ms();
   const double t = kernel().simulation_manager.get_time().get_ms();
@@ -201,9 +208,6 @@ nest::ac_generator::calibrate()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   long start = origin.get_steps();
 
   CurrentEvent ce;

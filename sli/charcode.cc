@@ -52,7 +52,8 @@ CharCode::Group( size_t code, const char* g )
   }
 }
 
-size_t CharCode::operator()( char c ) const
+size_t
+CharCode::operator()( char c ) const
 {
   unsigned char chr = static_cast< unsigned char >( c );
   assert( chr < size() );

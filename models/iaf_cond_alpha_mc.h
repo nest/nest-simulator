@@ -68,16 +68,20 @@ Short description
 
 Multi-compartment conductance-based leaky integrate-and-fire neuron model
 
-
 Description
 +++++++++++
+
+.. admonition:: Deprecated model
+
+   ``iaf_cond_alpha_mc`` is deprecated because ``cm_default`` is an improved
+   implementation of compartmental models in NEST (see :doc:`cm_default`).
 
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
 
-iaf_cond_alpha_mc is an implementation of a multi-compartment spiking
+``iaf_cond_alpha_mc`` is an implementation of a multi-compartment spiking
 neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of ref:`multicompartment models
+mainly to illustrate the implementation of :ref:`multicompartment models
 <multicompartment-models>` in NEST.
 
 The model has three compartments: soma, proximal and distal dendrite,
@@ -106,9 +110,11 @@ receive current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
-the receptor types given in the receptor_types entry of the state dictionary.
-Note that in contrast to the single-compartment iaf_cond_alpha model, all
+the receptor types given in the ``receptor_types`` entry of the state dictionary.
+Note that in contrast to the single-compartment ``iaf_cond_alpha`` model, all
 synaptic weights must be positive numbers!
+
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -166,7 +172,14 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_alpha_mc
+
 EndUserDocs */
+
+void register_iaf_cond_alpha_mc( const std::string& name );
 
 class iaf_cond_alpha_mc : public ArchivingNode
 {
@@ -176,7 +189,7 @@ class iaf_cond_alpha_mc : public ArchivingNode
 public:
   iaf_cond_alpha_mc();
   iaf_cond_alpha_mc( const iaf_cond_alpha_mc& );
-  ~iaf_cond_alpha_mc();
+  ~iaf_cond_alpha_mc() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -186,23 +199,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -220,7 +233,7 @@ private:
    * @note Start with 1 so we can forbid port 0 to avoid accidental
    *       creation of connections with no receptor type set.
    */
-  static const port MIN_SPIKE_RECEPTOR = 1;
+  static const size_t MIN_SPIKE_RECEPTOR = 1;
 
   /**
    * Spike receptors.
@@ -243,7 +256,7 @@ private:
    *  @note Start with SUP_SPIKE_RECEPTOR to avoid any overlap and
    *        accidental mix-ups.
    */
-  static const port MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
+  static const size_t MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
 
   /**
    * Current receptors.
@@ -310,7 +323,7 @@ private:
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 
@@ -376,7 +389,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
 
@@ -395,7 +408,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -464,20 +477,20 @@ private:
   static RecordablesMap< iaf_cond_alpha_mc > recordablesMap_;
 };
 
-inline port
-iaf_cond_alpha_mc::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_cond_alpha_mc::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }
@@ -489,12 +502,12 @@ iaf_cond_alpha_mc::handles_test_event( SpikeEvent&, rport receptor_type )
   return receptor_type - MIN_SPIKE_RECEPTOR;
 }
 
-inline port
-iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
-  if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
+  if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }
@@ -506,12 +519,12 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, rport receptor_type )
   return receptor_type - MIN_CURR_RECEPTOR;
 }
 
-inline port
-iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: device, generator
+/* BeginUserDocs: device, spike, generator
 
 Short description
 +++++++++++++++++
@@ -51,15 +51,19 @@ Description
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
 
-Spike times are given in milliseconds, and must be sorted with the
-earliest spike first. All spike times must be strictly in the future.
-Trying to set a spike time in the past or at the current time step
-will cause a NEST error. Setting a spike time of 0.0 will also result
-in an error.
+.. note::
 
-Spike times may not coincide with a time step, i.e., are not a multiple
-of the simulation resolution. Three options control how spike times that
-do not coincide with a step are handled (see examples below):
+   If the spike trains have a very high rate, we recommend using the
+   ``spike_generator``. For rates similar to regular neurons, use
+   :doc:`spike train injector </models/spike_train_injector>`.
+
+
+
+Spike times are given in milliseconds as an array. The `spike_times`
+array must be sorted with the earliest spike first. All spike times
+must be strictly in the future. Trying to set a spike time in the
+past or at the current time step will cause a NEST error. Setting a
+spike time of 0.0 will also result in an error.
 
 Multiple occurrences of the same time indicate that more than one
 event is to be generated at this particular time.
@@ -70,7 +74,12 @@ are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
 
-    `precise_times`  default: false
+The spike generator supports spike times that do not coincide with a time
+step, that is, are not falling on the grid defined by the simulation resolution.
+There are three options that control how spike times that do not coincide
+with a step are handled (see also examples below):
+
+Option 1:   ``precise_times``   default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
 of the resolution. The rounding is controlled by the two other flags.
@@ -79,14 +88,15 @@ combination of step and offset. This should only be used if all neurons
 receiving the spike train can handle precise timing information. In this
 case, the other two options are ignored.
 
-    `allow_offgrid_times`   default: false
+Option 2:   ``allow_offgrid_times``   default: false
 
 If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
 If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
+This setting has no effect if ``precise_times`` is `true`.
 
-    `shift_now_spikes`   default: false
+Option 3:   ``shift_now_spikes``   default: false
 
 This option is mainly for use by the PyNN-NEST interface.
 If false, spike times rounded down to the current point in time will
@@ -101,13 +111,13 @@ return different `spike_times` values at different resolutions.
 
 Example:
 
-  ::
+::
 
      nest.Create("spike_generator",
                  params={"spike_times": [1.0, 2.0, 3.0]})
 
-  Instructs the spike generator to generate events at 1.0, 2.0, and
-  3.0 milliseconds, relative to the device-timer origin.
+Instructs the spike generator to generate events at 1.0, 2.0, and
+3.0 milliseconds, relative to the device-timer origin.
 
 Example:
 
@@ -115,86 +125,88 @@ Assume that NEST works with default resolution (step size) of 0.1 ms
 and default tic length of 0.001 ms. Then, spikes times not falling
 onto the grid will be handled as follows for different option settings:
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.9999, 3.0001]})
 
-  ---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
+---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001]})
 
-  ---> **Error!** Spike time 1.05 not within tic/2 of step
+---> **Error!** Spike time 1.05 not within tic/2 of step
 
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "allow_offgrid_times": True})
 
-  ---> spikes at steps 10, 11 (mid-step time rounded up),
-         30 (time within tic/2 of step moved to step)
+---> spikes at steps 10, 11 (mid-step time rounded up),
+      30 (time within tic/2 of step moved to step)
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [1.0, 1.05, 3.0001],
                "precise_times": True})
 
-  ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
-         step 31, offset -0.0999
+---> spikes at step 10, offset 0.0; step 11, offset -0.05;
+      step 31, offset -0.0999
 
 Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 100). Then, any spike times set at this time must be later than step 100.
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001]})
 
-  ---> spike time is within tic/2 of step 100, rounded down to 100 thus
-         not in the future; **spike will not be emitted**
+---> spike time is within tic/2 of step 100, rounded down to 100 thus
+      not in the future; **spike will not be emitted**
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001],
                "precise_times": True})
 
-  ---> spike at step 101, offset -0.0999 is in the future
+---> spike at step 101, offset -0.0999 is in the future
 
-  ::
+::
 
     nest.Create("spike_generator",
                params={"spike_times": [10.0001, 11.0001],
                "shift_now_spikes": True})
 
-  ---> spike at step 101, spike shifted into the future, and spike at step
-        110, not shifted, since it is in the future anyways
+---> spike at step 101, spike shifted into the future, and spike at step
+      110, not shifted, since it is in the future anyways
 
 .. include:: ../models/stimulation_device.rst
 
 spike_times
-    List of spike times in ms
+    List of spike times in ms.
 
 spike_weights
-    Corresponding spike-weights, the unit depends on the receiver
+    List of corresponding spike weights, the unit depends on the receiver.
+    (e.g., nS for conductance-based neurons or pA for current based ones)
 
 spike_multiplicities
-    Multiplicities of spikes, same length as spike_times; mostly for debugging
+    List of multiplicities of spikes, same length as spike_times; mostly
+    for debugging.
 
 precise_times
-    See above
+    See above.
 
 allow_offgrid_times
-    See above
+    See above.
 
 shift_now_spikes
-    See above
+    See above.
 
 Set spike times from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,10 +223,18 @@ SpikeEvent
 See also
 ++++++++
 
-poisson_generator
+poisson_generator, spike_train_injector
+
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_generator
 
 EndUserDocs
 */
+void register_spike_generator( const std::string& name );
+
 class spike_generator : public StimulationDevice
 {
 
@@ -222,7 +242,7 @@ public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
@@ -249,7 +269,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -284,8 +304,9 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                               //!< Sets default parameter values
-    Parameters_( const Parameters_& ) = default; //!< Recalibrate all times
+    Parameters_(); //!< Sets default parameter values
+    Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
@@ -313,8 +334,8 @@ private:
   State_ S_;
 };
 
-inline port
-spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+spike_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   enforce_single_syn_type( syn_id );
 

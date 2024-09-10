@@ -29,15 +29,16 @@
 namespace nest
 {
 
-/** Layer with neurons placed in a grid
+/**
+ * Layer with neurons placed in a grid
  */
 template < int D >
 class GridLayer : public Layer< D >
 {
 public:
   typedef Position< D > key_type;
-  typedef index mapped_type;
-  typedef std::pair< Position< D >, index > value_type;
+  typedef size_t mapped_type;
+  typedef std::pair< Position< D >, size_t > value_type;
   typedef value_type& reference;
   typedef const value_type& const_reference;
 
@@ -74,7 +75,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -84,13 +86,15 @@ public:
     /**
      * Iterators are equal if they point to the same node in the same layer.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
+      return ( other.layer_.get_metadata() == layer_.get_metadata() ) and ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
+      return ( other.layer_.get_metadata() != layer_.get_metadata() ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -114,25 +118,27 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
+   *
    * @param sind index of node
    * @returns position of node.
    */
-  Position< D > get_position( index sind ) const;
+  Position< D > get_position( size_t sind ) const override;
 
   /**
    * Get position of node. Also allowed for non-local nodes.
-   * @param lid local index of node
+   *
+   * @param lid global index of node within layer
    * @returns position of node.
    */
-  Position< D > lid_to_position( index lid ) const;
+  Position< D > lid_to_position( size_t lid ) const;
 
-  index gridpos_to_lid( Position< D, int > pos ) const;
+  size_t gridpos_to_lid( Position< D, int > pos ) const;
 
   Position< D > gridpos_to_position( Position< D, int > gridpos ) const;
 
   using Layer< D >::get_global_positions_vector;
 
-  std::vector< std::pair< Position< D >, index > > get_global_positions_vector( const AbstractMask& mask,
+  std::vector< std::pair< Position< D >, size_t > > get_global_positions_vector( const AbstractMask& mask,
     const Position< D >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection );
@@ -140,23 +146,23 @@ public:
   masked_iterator masked_begin( const Mask< D >& mask, const Position< D >& anchor );
   masked_iterator masked_end();
 
-  Position< D, index > get_dims() const;
+  Position< D, size_t > get_dims() const;
 
-  void set_status( const DictionaryDatum& d );
-  void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d ) override;
+  void get_status( DictionaryDatum& d, NodeCollection const* ) const override;
 
 protected:
-  Position< D, index > dims_; ///< number of nodes in each direction.
+  Position< D, size_t > dims_; ///< number of nodes in each direction.
 
   template < class Ins >
   void insert_global_positions_( Ins iter, NodeCollectionPTR node_collection );
-  void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection );
-  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
-    NodeCollectionPTR node_collection );
+  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection ) override;
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
+    NodeCollectionPTR node_collection ) override;
 };
 
 template < int D >
-Position< D, index >
+Position< D, size_t >
 GridLayer< D >::get_dims() const
 {
   return dims_;
@@ -170,12 +176,12 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
   updateValue< std::vector< long > >( d, names::shape, new_dims );
 
-  index new_size = 1;
+  size_t new_size = 1;
   for ( int i = 0; i < D; ++i )
   {
     new_size *= new_dims[ i ];
 
-    this->dims_[ i ] = static_cast< index >( new_dims[ i ] );
+    this->dims_[ i ] = static_cast< size_t >( new_dims[ i ] );
   }
 
   if ( new_size != this->node_collection_->size() )
@@ -200,16 +206,16 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( DictionaryDatum& d ) const
+GridLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
-  Layer< D >::get_status( d );
+  Layer< D >::get_status( d, nc );
 
-  ( *d )[ names::shape ] = std::vector< index >( dims_.get_vector() );
+  ( *d )[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
 }
 
 template < int D >
 Position< D >
-GridLayer< D >::lid_to_position( index lid ) const
+GridLayer< D >::lid_to_position( size_t lid ) const
 {
   Position< D, int > gridpos;
   for ( int i = D - 1; i > 0; --i )
@@ -239,16 +245,16 @@ GridLayer< D >::gridpos_to_position( Position< D, int > gridpos ) const
 
 template < int D >
 Position< D >
-GridLayer< D >::get_position( index sind ) const
+GridLayer< D >::get_position( size_t lid ) const
 {
-  return lid_to_position( sind );
+  return lid_to_position( lid );
 }
 
 template < int D >
-index
+size_t
 GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 {
-  index lid = 0;
+  size_t lid = 0;
 
   // In case of periodic boundaries, allow grid positions outside layer
   for ( int i = 0; i < D; ++i )
@@ -277,27 +283,23 @@ template < class Ins >
 void
 GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
-  index i = 0;
-  index lid_end = node_collection->size();
-
-  NodeCollection::const_iterator gi = node_collection->begin();
-
-  for ( ; ( gi < node_collection->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( auto gi = node_collection->begin(); gi < node_collection->end(); ++gi )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
+    const auto triple = *gi;
+    *iter++ = std::pair< Position< D >, size_t >( lid_to_position( triple.nc_index ), triple.node_id );
   }
 }
 
 template < int D >
 void
-GridLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection )
+GridLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
   insert_global_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
 template < int D >
 void
-GridLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+GridLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
   NodeCollectionPTR node_collection )
 {
   insert_global_positions_( std::back_inserter( vec ), node_collection );
@@ -344,12 +346,12 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
     else
     {
       lower_left[ i ] = std::min(
-        index( std::max(
+        size_t( std::max(
           ceil( ( bbox.lower_left[ i ] - layer.lower_left_[ i ] ) * layer_.dims_[ i ] / layer.extent_[ i ] - 0.5 ),
           0.0 ) ),
         layer.dims_[ i ] );
       upper_right[ i ] = std::min(
-        index( std::max(
+        size_t( std::max(
           round( ( bbox.upper_right[ i ] - layer.lower_left_[ i ] ) * layer_.dims_[ i ] / layer.extent_[ i ] ), 0.0 ) ),
         layer.dims_[ i ] );
     }
@@ -371,14 +373,16 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 }
 
 template < int D >
-inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operator*()
+inline std::pair< Position< D >, size_t >
+GridLayer< D >::masked_iterator::operator*()
 {
-  return std::pair< Position< D >, index >(
+  return std::pair< Position< D >, size_t >(
     layer_.gridpos_to_position( node_ ), layer_.node_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
 }
 
 template < int D >
-typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::operator++()
+typename GridLayer< D >::masked_iterator&
+GridLayer< D >::masked_iterator::operator++()
 {
   do
   {
@@ -397,13 +401,13 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
 }
 
 template < int D >
-std::vector< std::pair< Position< D >, index > >
+std::vector< std::pair< Position< D >, size_t > >
 GridLayer< D >::get_global_positions_vector( const AbstractMask& mask,
   const Position< D >& anchor,
   bool,
   NodeCollectionPTR )
 {
-  std::vector< std::pair< Position< D >, index > > positions;
+  std::vector< std::pair< Position< D >, size_t > > positions;
 
   const Mask< D >& mask_d = dynamic_cast< const Mask< D >& >( mask );
   for ( typename GridLayer< D >::masked_iterator mi = masked_begin( mask_d, anchor ); mi != masked_end(); ++mi )

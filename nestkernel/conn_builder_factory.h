@@ -31,47 +31,98 @@
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "sharedptrdatum.h"
 #include "name.h"
+#include "sharedptrdatum.h"
 
 namespace nest
 {
+
 /**
- * Generic factory class for ConnBuilder objects.
+ * Generic factory class for bipartite ConnBuilder objects.
  *
  * This factory allows for flexible registration
- * of ConnBuilder subclasses and object creation.
+ * of bipartite ConnBuilder subclasses and object creation.
  *
  */
-class GenericConnBuilderFactory
+class GenericBipartiteConnBuilderFactory
 {
 public:
-  virtual ~GenericConnBuilderFactory()
+  virtual ~GenericBipartiteConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( NodeCollectionPTR,
+
+  /**
+   * Factory method for builders for bipartite connection rules (the default).
+   *
+   * @note
+   * - For plain bipartite connections, pass `nullptr` to `ThirdOutBuilder*`.
+   * - When the bipartite builder creates the primary connection of a tripartite connection,
+   *   pass a pointer to a \class ThirdOutBuilder object.
+   */
+  virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder*,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
 };
 
 /**
- * Factory class for generating objects of type ConnBuilder
+ * Factory class for bipartite ConnBuilders
  */
-
 template < typename ConnBuilderType >
-class ConnBuilderFactory : public GenericConnBuilderFactory
+class BipartiteConnBuilderFactory : public GenericBipartiteConnBuilderFactory
 {
-
 public:
-  //! create conn builder
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const
+    const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
+    return new ConnBuilderType( sources, targets, third_out, conn_spec, syn_specs );
+  }
+};
+
+/**
+ * Generic factory class for tripartite ConnBuilder objects.
+ *
+ * This factory allows for flexible registration
+ * of tripartite ConnBuilder subclasses and object creation.
+ *
+ */
+class GenericThirdConnBuilderFactory
+{
+public:
+  virtual ~GenericThirdConnBuilderFactory()
+  {
+  }
+
+  /**
+   * Factory method for builders for tripartite connection rules.
+   */
+  virtual ThirdOutBuilder* create( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdInBuilder*,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& ) const = 0;
+};
+
+/**
+ * Factory class for Third-factor ConnBuilders
+ */
+template < typename ThirdConnBuilderType >
+class ThirdConnBuilderFactory : public GenericThirdConnBuilderFactory
+{
+public:
+  ThirdOutBuilder*
+  create( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs ) const override
+  {
+    return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
 

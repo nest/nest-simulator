@@ -67,13 +67,13 @@ sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory;
 class NameDatum : public AggregateDatum< Name, &SLIInterpreter::Nametype >
 {
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new NameDatum( *this );
   }
 
   Datum*
-  get_ptr()
+  get_ptr() override
   {
     Datum::addReference();
     return this;
@@ -89,7 +89,7 @@ public:
     : AggregateDatum< Name, &SLIInterpreter::Nametype >( n )
   {
   }
-  ~NameDatum()
+  ~NameDatum() override
   {
     set_executable();
   }
@@ -98,13 +98,13 @@ public:
 class LiteralDatum : public AggregateDatum< Name, &SLIInterpreter::Literaltype >
 {
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new LiteralDatum( *this );
   }
 
   Datum*
-  get_ptr()
+  get_ptr() override
   {
     Datum::addReference();
     return this;
@@ -121,10 +121,10 @@ public:
   {
     set_executable();
   }
-  ~LiteralDatum()
+  ~LiteralDatum() override
   {
   }
-  void pprint( std::ostream& ) const;
+  void pprint( std::ostream& ) const override;
 };
 
 #endif

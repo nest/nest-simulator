@@ -27,9 +27,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -39,26 +36,30 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 nest::RecordablesMap< nest::hh_psc_alpha_clopath > nest::hh_psc_alpha_clopath::recordablesMap_;
 
 namespace nest
 {
+void
+register_hh_psc_alpha_clopath( const std::string& name )
+{
+  register_node_model< hh_psc_alpha_clopath >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_psc_alpha_clopath >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::V_M > );
   insert_( names::I_syn_ex, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_EXC > );
   insert_( names::I_syn_in, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_INH > );
@@ -119,9 +120,9 @@ hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode
   f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
 
   // convolved membrane potentials for Clopath stdp
-  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_plus;
-  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_minus;
-  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_bar_bar;
+  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_u_bar_plus;
+  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_u_bar_minus;
+  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_u_bar_bar;
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -138,20 +139,20 @@ hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_clopath::Parameters_::Parameters_()
-  : t_ref_( 2.0 )        // ms
-  , g_Na( 12000.0 )      // nS
-  , g_K( 3600.0 )        // nS
-  , g_L( 30.0 )          // nS
-  , C_m( 100.0 )         // pF
-  , E_Na( 50.0 )         // mV
-  , E_K( -77.0 )         // mV
-  , E_L( -54.402 )       // mV
-  , tau_synE( 0.2 )      // ms
-  , tau_synI( 2.0 )      // ms
-  , I_e( 0.0 )           // pA
-  , tau_plus( 114.0 )    // ms
-  , tau_minus( 10.0 )    // ms
-  , tau_bar_bar( 500.0 ) // ms
+  : t_ref_( 2.0 )           // ms
+  , g_Na( 12000.0 )         // nS
+  , g_K( 3600.0 )           // nS
+  , g_L( 30.0 )             // nS
+  , C_m( 100.0 )            // pF
+  , E_Na( 50.0 )            // mV
+  , E_K( -77.0 )            // mV
+  , E_L( -54.402 )          // mV
+  , tau_synE( 0.2 )         // ms
+  , tau_synI( 2.0 )         // ms
+  , I_e( 0.0 )              // pA
+  , tau_u_bar_plus( 114.0 ) // ms
+  , tau_u_bar_minus( 10.0 ) // ms
+  , tau_u_bar_bar( 500.0 )  // ms
 {
 }
 
@@ -186,7 +187,8 @@ nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
+nest::hh_psc_alpha_clopath::State_&
+nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -214,9 +216,9 @@ nest::hh_psc_alpha_clopath::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_synE );
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::I_e, I_e );
-  def< double >( d, names::tau_plus, tau_plus );
-  def< double >( d, names::tau_minus, tau_minus );
-  def< double >( d, names::tau_bar_bar, tau_bar_bar );
+  def< double >( d, names::tau_u_bar_plus, tau_u_bar_plus );
+  def< double >( d, names::tau_u_bar_minus, tau_u_bar_minus );
+  def< double >( d, names::tau_u_bar_bar, tau_u_bar_bar );
 }
 
 void
@@ -235,9 +237,9 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d, Node* no
   updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
   updateValueParam< double >( d, names::I_e, I_e, node );
-  updateValueParam< double >( d, names::tau_plus, tau_plus, node );
-  updateValueParam< double >( d, names::tau_minus, tau_minus, node );
-  updateValueParam< double >( d, names::tau_bar_bar, tau_bar_bar, node );
+  updateValueParam< double >( d, names::tau_u_bar_plus, tau_u_bar_plus, node );
+  updateValueParam< double >( d, names::tau_u_bar_minus, tau_u_bar_minus, node );
+  updateValueParam< double >( d, names::tau_u_bar_bar, tau_u_bar_bar, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -246,7 +248,7 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d, Node* no
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 or tau_synI <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 or tau_u_bar_plus <= 0 or tau_u_bar_minus <= 0 or tau_u_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -278,7 +280,7 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
   updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
   updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -286,9 +288,9 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
 
 nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -296,9 +298,9 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
 
 nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -359,7 +361,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -368,7 +370,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -377,7 +379,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -387,7 +389,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
   }
 
   B_.sys_.function = hh_psc_alpha_clopath_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -397,7 +399,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_clopath::calibrate()
+nest::hh_psc_alpha_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -416,10 +418,6 @@ nest::hh_psc_alpha_clopath::calibrate()
 void
 nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -471,16 +469,16 @@ nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const l
       --S_.r_;
     }
     else
-      // (    threshold    &&     maximum       )
-      if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
-    {
-      S_.r_ = V_.RefractoryCounts_;
+      // (    threshold    and     maximum       )
+      if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
+      {
+        S_.r_ = V_.RefractoryCounts_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

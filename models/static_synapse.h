@@ -39,7 +39,7 @@ Synapse type for static connections
 Description
 +++++++++++
 
-static_synapse does not support any kind of plasticity. It simply stores
+``static_synapse`` does not support any kind of plasticity. It simply stores
 the parameters target, weight, delay and receiver port for each connection.
 
 Transmits
@@ -53,7 +53,14 @@ See also
 
 tsodyks_synapse, stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: static_synapse
+
 EndUserDocs */
+
+void register_static_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class static_synapse : public Connection< targetidentifierT >
@@ -63,8 +70,11 @@ class static_synapse : public Connection< targetidentifierT >
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -81,6 +91,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   static_synapse( const static_synapse& rhs ) = default;
+  static_synapse& operator=( const static_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -97,63 +108,64 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( RateEvent&, rport )
+    size_t
+    handles_test_event( RateEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DataLoggingRequest&, rport )
+    size_t
+    handles_test_event( DataLoggingRequest&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( CurrentEvent&, rport )
+    size_t
+    handles_test_event( CurrentEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( ConductanceEvent&, rport )
+    size_t
+    handles_test_event( ConductanceEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DoubleDataEvent&, rport )
+    size_t
+    handles_test_event( DoubleDataEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DSSpikeEvent&, rport )
+    size_t
+    handles_test_event( DSSpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DSCurrentEvent&, rport )
+    size_t
+    handles_test_event( DSCurrentEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
-  void
-  send( Event& e, const thread tid, const CommonSynapseProperties& )
+  bool
+  send( Event& e, const size_t tid, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay_steps( get_delay_steps() );
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;
@@ -166,6 +178,9 @@ public:
     weight_ = w;
   }
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties static_synapse< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void

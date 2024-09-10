@@ -51,11 +51,10 @@ poisson_generator to a parrot_neuron and then that parrot_neuron to
 a group of neurons, all target neurons will receive the same poisson
 spike train.
 
-Remarks:
-
-- Weights on connection to the parrot_neuron are ignored.
-- Weights on connections from the parrot_neuron are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Please note that weights of connections *to* the ``parrot_neuron``
+are ignored, while weights on connections *from* the ``parrot_neuron``
+to the target are handled as usual. Delays are honored on both
+incoming and outgoing connections.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
@@ -77,7 +76,14 @@ Sends
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: parrot_neuron_ps
+
 EndUserDocs */
+
+void register_parrot_neuron_ps( const std::string& name );
 
 class parrot_neuron_ps : public ArchivingNode
 {
@@ -92,28 +98,28 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
-  port send_test_event( Node&, rport, synindex, bool );
-  port handles_test_event( SpikeEvent&, rport );
+  void handle( SpikeEvent& ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
 
   void
-  calibrate()
+  pre_run_hook() override
   {
   } // no variables
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /** Queue for incoming events. */
   struct Buffers_
@@ -124,8 +130,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+parrot_neuron_ps::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -133,8 +139,8 @@ parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, 
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-parrot_neuron_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+parrot_neuron_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).

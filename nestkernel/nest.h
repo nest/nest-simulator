@@ -49,72 +49,61 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_dryrun_mode( const index n_procs );
+void enable_dryrun_mode( const size_t n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
-
-enum class RegisterConnectionModelFlags : unsigned
-{
-  REGISTER_HPC = 1 << 0,
-  REGISTER_LBL = 1 << 1,
-  IS_PRIMARY = 1 << 2,
-  HAS_DELAY = 1 << 3,
-  SUPPORTS_WFR = 1 << 4,
-  REQUIRES_SYMMETRIC = 1 << 5,
-  REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
-  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
-};
-
-template <>
-struct EnableBitMaskOperators< RegisterConnectionModelFlags >
-{
-  static const bool enable = true;
-};
-
-const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
-  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
-  | RegisterConnectionModelFlags::HAS_DELAY;
-
-const RegisterConnectionModelFlags default_secondary_connection_model_flags =
-  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
 
 /**
  * Register connection model (i.e. an instance of a class inheriting from `Connection`).
  */
 template < template < typename > class ConnectorModelT >
-void register_connection_model( const std::string& name,
-  const RegisterConnectionModelFlags flags = default_connection_model_flags );
+void register_connection_model( const std::string& name );
 
 /**
- * Register secondary connection models (e.g. gap junctions, rate-based models).
+ * Register node model (i.e. an instance of a class inheriting from `Node`).
  */
-template < template < typename > class ConnectorModelT >
-void register_secondary_connection_model( const std::string& name,
-  const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+template < typename NodeModelT >
+void register_node_model( const std::string& name, std::string deprecation_info = std::string() );
 
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();
-RngPtr get_vp_synced_rng( thread tid );
-RngPtr get_vp_specific_rng( thread tid );
+RngPtr get_vp_synced_rng( size_t tid );
+RngPtr get_vp_specific_rng( size_t tid );
 
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();
 
-void set_node_status( const index node_id, const DictionaryDatum& dict );
-DictionaryDatum get_node_status( const index node_id );
+void set_node_status( const size_t node_id, const DictionaryDatum& dict );
+DictionaryDatum get_node_status( const size_t node_id );
 
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-NodeCollectionPTR create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const size_t n );
 
 NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
+/**
+ * Create bipartite connections.
+ */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const std::vector< DictionaryDatum >& synapse_params );
+
+/**
+ * Create tripartite connections
+ *
+ * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+ * entries are optional.
+ */
+void connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& third_connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -142,6 +131,8 @@ void connect_arrays( long* sources,
   std::string syn_model );
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
+
+void disconnect( const ArrayDatum& conns );
 
 void simulate( const double& t );
 
@@ -189,8 +180,8 @@ void cleanup();
 
 void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
-void set_model_defaults( const Name& model_name, const DictionaryDatum& );
-DictionaryDatum get_model_defaults( const Name& model_name );
+void set_model_defaults( const std::string model_name, const DictionaryDatum& );
+DictionaryDatum get_model_defaults( const std::string model_name );
 
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
@@ -200,6 +191,7 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+
 }
 
 

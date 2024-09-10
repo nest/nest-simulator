@@ -54,14 +54,14 @@ public:
   GridMask( const DictionaryDatum& d );
 
   bool
-  inside( const std::vector< double >& ) const
+  inside( const std::vector< double >& ) const override
   {
     throw KernelException( "Grid mask must be applied to a grid layer." );
   }
 
   void set_anchor( const Position< D, int >& );
 
-  DictionaryDatum get_dict() const;
+  DictionaryDatum get_dict() const override;
 
   GridMask< D >*
   clone() const
@@ -75,19 +75,19 @@ public:
   static Name get_name();
 
   AbstractMask*
-  intersect_mask( const AbstractMask& ) const
+  intersect_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
 
   AbstractMask*
-  union_mask( const AbstractMask& ) const
+  union_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
 
   AbstractMask*
-  minus_mask( const AbstractMask& ) const
+  minus_mask( const AbstractMask& ) const override
   {
     throw KernelException( "Grid masks can not be combined." );
   }
@@ -152,7 +152,7 @@ GridMask< D >::get_dict() const
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
-  std::vector< long > shape_dim{ shape_x, shape_y };
+  std::vector< long > shape_dim { shape_x, shape_y };
 
   if ( D == 3 )
   {

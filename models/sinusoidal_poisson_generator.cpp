@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,18 +34,23 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
+void
+register_sinusoidal_poisson_generator( const std::string& name )
+{
+  register_node_model< sinusoidal_poisson_generator >( name );
+}
+
 RecordablesMap< sinusoidal_poisson_generator > sinusoidal_poisson_generator::recordablesMap_;
 
 template <>
@@ -79,8 +83,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_& nest::sinusoidal_poisson_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_poisson_generator::Parameters_&
+nest::sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -141,7 +145,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_poisson_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
@@ -210,12 +214,12 @@ nest::sinusoidal_poisson_generator::init_buffers_()
 }
 
 void
-nest::sinusoidal_poisson_generator::calibrate()
+nest::sinusoidal_poisson_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
@@ -227,16 +231,11 @@ nest::sinusoidal_poisson_generator::calibrate()
 
   V_.sin_ = std::sin( V_.h_ * P_.om_ ); // block elements
   V_.cos_ = std::cos( V_.h_ * P_.om_ );
-
-  return;
 }
 
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const long start = origin.get_steps();
 
   // random number generator

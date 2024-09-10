@@ -43,23 +43,21 @@ Synapse type for continuous delays
 Description
 +++++++++++
 
-cont_delay_synapse relaxes the condition that NEST only implements delays
-which are an integer multiple of the time step h. A continuous delay is
-decomposed into an integer part (delay_) and a double (delay_offset_) so
-that the actual delay is given by  delay_*h - delay_offset_. This can be
+``cont_delay_synapse`` relaxes the condition that NEST only implements delays
+which are an integer multiple of the time step `h`. A continuous delay is
+decomposed into an integer part (``delay_``) and a double (``delay_offset_``) so
+that the actual delay is given by  ``delay_*h - delay_offset_``. This can be
 combined with off-grid spike times.
 
-Remarks:
+All delays set by the normal NEST Connect function will be rounded, even
+when using cont_delay_synapse. To set non-grid delays, you must either
 
-All delays set by the normal NEST Connect function will be rounded, even when
-using cont_delay_synapse. To set non-grid delays, you must either
+1. set the delay as model default using :py:func:`.SetDefaults`, which
+   is very efficient, but results in a situation where all synapses then
+   will have the same delay.
 
-1) set the delay as synapse default, as in the example above
-2) set the delay for each synapse after the connections have been created,
-
-Alternative 1) is much more efficient, but all synapses then will have the
-               same delay.
-Alternative 2) is slower, but allows individual delay values.
+2. set the delay for each synapse after the connections have been
+   created, which is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
@@ -73,7 +71,14 @@ See also
 
 static_synapse, iaf_psc_alpha_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cont_delay_synapse
+
 EndUserDocs */
+
+void register_cont_delay_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class cont_delay_synapse : public Connection< targetidentifierT >
@@ -82,6 +87,10 @@ class cont_delay_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -107,9 +116,9 @@ public:
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
-  using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
+  using ConnectionBase::set_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void
@@ -138,7 +147,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -146,50 +155,50 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( RateEvent&, rport )
+    size_t
+    handles_test_event( RateEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DataLoggingRequest&, rport )
+    size_t
+    handles_test_event( DataLoggingRequest&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( CurrentEvent&, rport )
+    size_t
+    handles_test_event( CurrentEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( ConductanceEvent&, rport )
+    size_t
+    handles_test_event( ConductanceEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DoubleDataEvent&, rport )
+    size_t
+    handles_test_event( DoubleDataEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DSSpikeEvent&, rport )
+    size_t
+    handles_test_event( DSSpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
-    port
-    handles_test_event( DSCurrentEvent&, rport )
+    size_t
+    handles_test_event( DSCurrentEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -207,8 +216,8 @@ private:
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );
@@ -232,7 +241,12 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   e();
   // reset offset to original value
   e.set_offset( orig_event_offset );
+
+  return true;
 }
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties cont_delay_synapse< targetidentifierT >::properties;
 
 } // of namespace nest
 

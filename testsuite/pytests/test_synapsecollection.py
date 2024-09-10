@@ -24,10 +24,12 @@ Tests for the SynapseCollection class
 """
 
 import unittest
+
 import nest
 
 try:
     import pandas
+
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False
@@ -44,7 +46,7 @@ class TestSynapseCollection(unittest.TestCase):
         """
         Test simple SynapseCollection.
         """
-        nrns = nest.Create('iaf_psc_alpha', 2)
+        nrns = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(nrns, nrns)
 
         get_conns = nest.GetConnections()
@@ -52,8 +54,8 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertTrue(isinstance(get_conns, nest.SynapseCollection))
         self.assertEqual(len(get_conns), 4)
 
-        sources = get_conns.get('source')
-        targets = get_conns.get('target')
+        sources = get_conns.get("source")
+        targets = get_conns.get("target")
 
         self.assertEqual(sources, [1, 1, 2, 2])
         self.assertEqual(targets, [1, 2, 1, 2])
@@ -62,27 +64,24 @@ class TestSynapseCollection(unittest.TestCase):
         """
         Test get() and set() on SynapseCollection.
         """
-        nrns = nest.Create('iaf_psc_alpha', 2)
+        nrns = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(nrns, nrns)
 
         get_conns = nest.GetConnections()
 
         get_conns.set(delay=2.0)
-        get_conns.set(({'weight': 1.5},
-                       {'weight': 2.5},
-                       {'weight': 3.5},
-                       {'weight': 4.5}))
+        get_conns.set(({"weight": 1.5}, {"weight": 2.5}, {"weight": 3.5}, {"weight": 4.5}))
 
-        delay = get_conns.get('delay')
-        weight = get_conns.get('weight')
+        delay = get_conns.get("delay")
+        weight = get_conns.get("weight")
 
         self.assertEqual(delay, [2.0, 2.0, 2.0, 2.0])
         self.assertEqual(weight, [1.5, 2.5, 3.5, 4.5])
 
-        get_conns.set({'weight': 6., 'delay': 11.})
+        get_conns.set({"weight": 6.0, "delay": 11.0})
 
-        delay = get_conns.get('delay')
-        weight = get_conns.get('weight')
+        delay = get_conns.get("delay")
+        weight = get_conns.get("weight")
 
         self.assertEqual(delay, [11.0, 11.0, 11.0, 11.0])
         self.assertEqual(weight, [6.0, 6.0, 6.0, 6.0])
@@ -91,53 +90,46 @@ class TestSynapseCollection(unittest.TestCase):
             get_conns.set(source=2)
 
         nest.ResetKernel()
-        nrns = nest.Create('iaf_psc_alpha', 2)
+        nrns = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(nrns, nrns)
 
         get_conns = nest.GetConnections()
 
         get_conns.set(weight=[2.0, 3.0, 4.0, 5.0])
-        weight = get_conns.get('weight')
+        weight = get_conns.get("weight")
         self.assertEqual(weight, [2.0, 3.0, 4.0, 5.0])
 
     def test_get(self):
         """
         Test get() on SynapseCollection
         """
-        nrns = nest.Create('iaf_psc_alpha', 2)
+        nrns = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(nrns, nrns)
         conns = nest.GetConnections()
 
         # Key is a string
-        target = conns.get('target')
+        target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(['delay', 'port', 'weight'])
+        dpw = conns.get(["delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         target_ref = [1, 2, 1, 2]
-        dpw_ref = {'delay': [1., 1., 1., 1.],
-                   'port': [0, 1, 2, 3],
-                   'weight': [1., 1., 1., 1.]}
-        all_ref = {'delay': [1.0, 1.0, 1.0, 1.0],
-                   'port': [0, 1, 2, 3],
-                   'receptor': [0, 0, 0, 0],
-                   'sizeof': [32, 32, 32, 32],
-                   'source': [1, 1, 2, 2],
-                   'synapse_id': [expected_syn_id,
-                                  expected_syn_id,
-                                  expected_syn_id,
-                                  expected_syn_id],
-                   'synapse_model': ['static_synapse',
-                                     'static_synapse',
-                                     'static_synapse',
-                                     'static_synapse'],
-                   'target': [1, 2, 1, 2],
-                   'target_thread': [0, 0, 0, 0],
-                   'weight': [1.0, 1.0, 1.0, 1.0]}
+        dpw_ref = {"delay": [1.0, 1.0, 1.0, 1.0], "port": [0, 1, 2, 3], "weight": [1.0, 1.0, 1.0, 1.0]}
+        all_ref = {
+            "delay": [1.0, 1.0, 1.0, 1.0],
+            "port": [0, 1, 2, 3],
+            "receptor": [0, 0, 0, 0],
+            "sizeof": [32, 32, 32, 32],
+            "source": [1, 1, 2, 2],
+            "synapse_id": [expected_syn_id, expected_syn_id, expected_syn_id, expected_syn_id],
+            "synapse_model": ["static_synapse", "static_synapse", "static_synapse", "static_synapse"],
+            "target": [1, 2, 1, 2],
+            "target_thread": [0, 0, 0, 0],
+            "weight": [1.0, 1.0, 1.0, 1.0],
+        }
 
         self.assertEqual(target, target_ref)
         self.assertEqual(dpw, dpw_ref)
@@ -146,31 +138,33 @@ class TestSynapseCollection(unittest.TestCase):
         # Now try the same with a single connection
         nest.ResetKernel()
 
-        nrns = nest.Create('iaf_psc_alpha')
+        nrns = nest.Create("iaf_psc_alpha")
         nest.Connect(nrns, nrns)
         conns = nest.GetConnections()
 
         self.assertEqual(len(conns), 1)
 
         # Key is a string
-        target = conns.get('target')
+        target = conns.get("target")
         # Key is a list of strings
-        dpw = conns.get(['delay', 'port', 'weight'])
+        dpw = conns.get(["delay", "port", "weight"])
         # Key is None
         all_values = conns.get()
 
         target_ref = 1
-        dpw_ref = {'delay': 1., 'port': 0, 'weight': 1.}
-        all_ref = {'delay': 1.0,
-                   'port': 0,
-                   'receptor': 0,
-                   'sizeof': 32,
-                   'source': 1,
-                   'synapse_id': expected_syn_id,
-                   'synapse_model': 'static_synapse',
-                   'target': 1,
-                   'target_thread': 0,
-                   'weight': 1.0}
+        dpw_ref = {"delay": 1.0, "port": 0, "weight": 1.0}
+        all_ref = {
+            "delay": 1.0,
+            "port": 0,
+            "receptor": 0,
+            "sizeof": 32,
+            "source": 1,
+            "synapse_id": expected_syn_id,
+            "synapse_model": "static_synapse",
+            "target": 1,
+            "target_thread": 0,
+            "weight": 1.0,
+        }
 
         self.assertEqual(target, target_ref)
         self.assertEqual(dpw, dpw_ref)
@@ -181,61 +175,61 @@ class TestSynapseCollection(unittest.TestCase):
         Test get on SynapseCollection when we have more than one synapse
         """
 
-        nrns = nest.Create('iaf_psc_alpha', 4)
+        nrns = nest.Create("iaf_psc_alpha", 4)
 
-        nest.Connect(nrns, nrns, 'one_to_one')
-        nest.Connect(nrns, nrns, 'one_to_one', {'synapse_model': 'stdp_synapse', 'alpha': 2.})
+        nest.Connect(nrns, nrns, "one_to_one")
+        nest.Connect(nrns, nrns, "one_to_one", {"synapse_model": "stdp_synapse", "alpha": 2.0})
 
         conns = nest.GetConnections()
-        alpha_ref = [None]*len(nrns) + [2.]*len(nrns)
+        alpha_ref = [None] * len(nrns) + [2.0] * len(nrns)
 
-        self.assertEqual(conns.get('alpha'), alpha_ref)
-        self.assertEqual(conns.get()['alpha'], alpha_ref)
+        self.assertEqual(conns.get("alpha"), alpha_ref)
+        self.assertEqual(conns.get()["alpha"], alpha_ref)
 
     def test_GetConnectionsOnSubset(self):
         """
         Test GetConnections on sliced NodeCollection
         """
 
-        nrns = nest.Create('iaf_psc_alpha', 10)
+        nrns = nest.Create("iaf_psc_alpha", 10)
         nest.Connect(nrns, nrns)
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
         self.assertEqual(len(get_conns), 9)
 
-        sources = get_conns.get('source')
-        targets = get_conns.get('target')
+        sources = get_conns.get("source")
+        targets = get_conns.get("target")
 
         self.assertEqual(sources, [4, 4, 4, 5, 5, 5, 6, 6, 6])
         self.assertEqual(targets.sort(), [3, 5, 7, 3, 5, 7, 3, 5, 7].sort())
 
         nest.ResetKernel()
 
-        nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns, nrns, {'rule': 'one_to_one'})
+        nrns = nest.Create("iaf_psc_alpha", 10)
+        nest.Connect(nrns, nrns, {"rule": "one_to_one"})
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
         self.assertEqual(len(get_conns), 1)
 
-        sources = get_conns.get('source')
-        targets = get_conns.get('target')
+        sources = get_conns.get("source")
+        targets = get_conns.get("target")
 
         self.assertEqual(sources, 5)
         self.assertEqual(targets, 5)
 
         nest.ResetKernel()
 
-        nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns[3:6], nrns[2:8:2], {'rule': 'one_to_one'})
+        nrns = nest.Create("iaf_psc_alpha", 10)
+        nest.Connect(nrns[3:6], nrns[2:8:2], {"rule": "one_to_one"})
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
         self.assertEqual(len(get_conns), 3)
 
-        sources = get_conns.get('source')
-        targets = get_conns.get('target')
+        sources = get_conns.get("source")
+        targets = get_conns.get("target")
 
         self.assertEqual(sources, [4, 5, 6])
         self.assertEqual(targets, [3, 5, 7])
@@ -244,120 +238,105 @@ class TestSynapseCollection(unittest.TestCase):
         """
         Test GetConnections with synapse_model
         """
-        nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns[:4], nrns[2:6],
-                     syn_spec={'synapse_model': 'stdp_synapse'})
-        nest.Connect(nrns[5:7], nrns[8:],
-                     conn_spec={'rule': 'one_to_one'},
-                     syn_spec={'synapse_model': 'tsodyks_synapse'})
-        nest.Connect(nrns[7:], nrns[:5],
-                     syn_spec={'synapse_model': 'stdp_triplet_synapse',
-                               'weight': 5.})
+        nrns = nest.Create("iaf_psc_alpha", 10)
+        nest.Connect(nrns[:4], nrns[2:6], syn_spec={"synapse_model": "stdp_synapse"})
+        nest.Connect(
+            nrns[5:7], nrns[8:], conn_spec={"rule": "one_to_one"}, syn_spec={"synapse_model": "tsodyks_synapse"}
+        )
+        nest.Connect(nrns[7:], nrns[:5], syn_spec={"synapse_model": "stdp_triplet_synapse", "weight": 5.0})
 
-        get_conn_1 = nest.GetConnections(nrns, nrns,
-                                         synapse_model='stdp_synapse')
-        get_conn_2 = nest.GetConnections(nrns, nrns,
-                                         synapse_model='tsodyks_synapse')
-        get_conn_3 = nest.GetConnections(nrns, nrns,
-                                         synapse_model='stdp_triplet_synapse')
+        get_conn_1 = nest.GetConnections(nrns, nrns, synapse_model="stdp_synapse")
+        get_conn_2 = nest.GetConnections(nrns, nrns, synapse_model="tsodyks_synapse")
+        get_conn_3 = nest.GetConnections(nrns, nrns, synapse_model="stdp_triplet_synapse")
 
-        sources_1 = get_conn_1.get('source')
-        sources_2 = get_conn_2.get('source')
-        sources_3 = get_conn_3.get('source')
-        targets_1 = get_conn_1.get('target')
-        targets_2 = get_conn_2.get('target')
-        targets_3 = get_conn_3.get('target')
+        sources_1 = get_conn_1.get("source")
+        sources_2 = get_conn_2.get("source")
+        sources_3 = get_conn_3.get("source")
+        targets_1 = get_conn_1.get("target")
+        targets_2 = get_conn_2.get("target")
+        targets_3 = get_conn_3.get("target")
 
-        self.assertEqual(sources_1,
-                         [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4])
+        self.assertEqual(sources_1, [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4])
         self.assertEqual(sources_2, [6, 7])
-        self.assertEqual(sources_3,
-                         [8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10])
-        self.assertEqual(targets_1.sort(),
-                         [3, 4, 5, 6, 3, 4, 5, 6,
-                          3, 4, 5, 6, 3, 4, 5, 6].sort())
+        self.assertEqual(sources_3, [8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10])
+        self.assertEqual(targets_1.sort(), [3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6, 3, 4, 5, 6].sort())
         self.assertEqual(targets_2, [9, 10])
-        self.assertEqual(targets_3.sort(),
-                         [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5].sort())
+        self.assertEqual(targets_3.sort(), [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5].sort())
 
-        weight = get_conn_3.get('weight')
-        self.assertEqual(weight,
-                         [5., 5., 5., 5., 5., 5., 5.,
-                          5., 5., 5., 5., 5., 5., 5., 5.])
+        weight = get_conn_3.get("weight")
+        self.assertEqual(weight, [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0])
 
         get_conns = nest.GetConnections()
         self.assertEqual(len(get_conns), 33)
 
-    @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
+    @unittest.skipIf(not HAVE_PANDAS, "Pandas package is not available")
     def test_getWithPandasOutput(self):
         """
         Test get on SynapseCollection with pandas output
         """
-        nrn = nest.Create('iaf_psc_alpha')
+        nrn = nest.Create("iaf_psc_alpha")
         nest.Connect(nrn, nrn)
         conns = nest.GetConnections()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
-        conns_val = conns.get(output='pandas')
-        pnds_ref = pandas.DataFrame({'delay': 1.,
-                                     'port': 0,
-                                     'receptor': 0,
-                                     'sizeof': 32,
-                                     'source': 1,
-                                     'synapse_id': expected_syn_id,
-                                     'synapse_model': 'static_synapse',
-                                     'target': 1,
-                                     'target_thread': 0,
-                                     'weight': 1.},
-                                    index=(conns.get('source'),))
+        conns_val = conns.get(output="pandas")
+        pnds_ref = pandas.DataFrame(
+            {
+                "delay": 1.0,
+                "port": 0,
+                "receptor": 0,
+                "sizeof": 32,
+                "source": 1,
+                "synapse_id": expected_syn_id,
+                "synapse_model": "static_synapse",
+                "target": 1,
+                "target_thread": 0,
+                "weight": 1.0,
+            },
+            index=(conns.get("source"),),
+        )
         self.assertTrue(conns_val.equals(pnds_ref))
 
-        conns_delay = conns.get('delay', output='pandas')
-        conns_sizeof = conns.get(['sizeof'], output='pandas')
+        conns_delay = conns.get("delay", output="pandas")
+        conns_sizeof = conns.get(["sizeof"], output="pandas")
 
-        self.assertTrue(conns_delay.equals(
-            pandas.DataFrame({'delay': 1.}, index=(conns.get('source'),))))
-        self.assertTrue(conns_sizeof.equals(
-            pandas.DataFrame({'sizeof': 32}, index=(conns.get('source'),))))
+        self.assertTrue(conns_delay.equals(pandas.DataFrame({"delay": 1.0}, index=(conns.get("source"),))))
+        self.assertTrue(conns_sizeof.equals(pandas.DataFrame({"sizeof": 32}, index=(conns.get("source"),))))
 
         nest.ResetKernel()
 
-        nrns = nest.Create('iaf_psc_alpha', 2)
+        nrns = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(nrns, nrns)
         conns = nest.GetConnections()
 
-        conns_val = conns.get(output='pandas')
-        pnds_ref = pandas.DataFrame({'delay': [1., 1., 1., 1.],
-                                     'port': [0, 1, 2, 3],
-                                     'receptor': [0, 0, 0, 0],
-                                     'sizeof': [32, 32, 32, 32],
-                                     'source': [1, 1, 2, 2],
-                                     'synapse_id': [expected_syn_id,
-                                                    expected_syn_id,
-                                                    expected_syn_id,
-                                                    expected_syn_id],
-                                     'synapse_model': ['static_synapse',
-                                                       'static_synapse',
-                                                       'static_synapse',
-                                                       'static_synapse'],
-                                     'target': [1, 2, 1, 2],
-                                     'target_thread': [0, 0, 0, 0],
-                                     'weight': [1., 1., 1., 1.]},
-                                    index=conns.get('source'))
+        conns_val = conns.get(output="pandas")
+        pnds_ref = pandas.DataFrame(
+            {
+                "delay": [1.0, 1.0, 1.0, 1.0],
+                "port": [0, 1, 2, 3],
+                "receptor": [0, 0, 0, 0],
+                "sizeof": [32, 32, 32, 32],
+                "source": [1, 1, 2, 2],
+                "synapse_id": [expected_syn_id, expected_syn_id, expected_syn_id, expected_syn_id],
+                "synapse_model": ["static_synapse", "static_synapse", "static_synapse", "static_synapse"],
+                "target": [1, 2, 1, 2],
+                "target_thread": [0, 0, 0, 0],
+                "weight": [1.0, 1.0, 1.0, 1.0],
+            },
+            index=conns.get("source"),
+        )
         self.assertTrue(conns_val.equals(pnds_ref))
 
-        conns_target = conns.get('target', output='pandas')
-        conns_sizeof_port = conns.get(['sizeof', 'port'], output='pandas')
+        conns_target = conns.get("target", output="pandas")
+        conns_sizeof_port = conns.get(["sizeof", "port"], output="pandas")
 
-        self.assertTrue(conns_target.equals(
-            pandas.DataFrame({'target': [1, 2, 1, 2]},
-                             index=conns.get('source'))))
-        self.assertTrue(conns_sizeof_port.equals(
-            pandas.DataFrame({'sizeof': [32, 32, 32, 32],
-                              'port': [0, 1, 2, 3]},
-                             index=conns.get('source'))))
+        self.assertTrue(conns_target.equals(pandas.DataFrame({"target": [1, 2, 1, 2]}, index=conns.get("source"))))
+        self.assertTrue(
+            conns_sizeof_port.equals(
+                pandas.DataFrame({"sizeof": [32, 32, 32, 32], "port": [0, 1, 2, 3]}, index=conns.get("source"))
+            )
+        )
 
     def test_empty(self):
         """
@@ -365,36 +344,41 @@ class TestSynapseCollection(unittest.TestCase):
         """
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 0)
-        self.assertEqual(conns.get(), ())
+        self.assertEqual(conns.get(), {})
+        self.assertEqual(conns.get("weight"), ())
 
-        nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns, 'one_to_one')
+        nrns = nest.Create("iaf_psc_alpha", 2)
+        nest.Connect(nrns, nrns, "one_to_one")
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 2)
 
         nest.ResetKernel()
-        self.assertEqual(conns.get(), ())
-        conns.set(weight=10.)
-        self.assertEqual(conns.get('weight'), ())
+        self.assertEqual(conns.get(), {})
+        conns.set(weight=10.0)
+        self.assertEqual(conns.get("weight"), ())
 
     def test_string(self):
         """
         Test the str functionality of SynapseCollection
         """
-        ref_str = (' source   target   synapse model   weight   delay \n' +
-                   '-------- -------- --------------- -------- -------\n' +
-                   '      1        4  static_synapse    1.000   1.000\n' +
-                   '      2        4  static_synapse    2.000   1.000\n' +
-                   '      1        3    stdp_synapse    4.000   1.000\n' +
-                   '      1        4    stdp_synapse    3.000   1.000\n' +
-                   '      2        3    stdp_synapse    3.000   1.000\n' +
-                   '      2        4    stdp_synapse    2.000   1.000')
+        ref_str = (
+            " source   target   synapse model   weight   delay \n"
+            + "-------- -------- --------------- -------- -------\n"
+            + "      1        4  static_synapse    1.000   1.000\n"
+            + "      2        4  static_synapse    2.000   1.000\n"
+            + "      1        3    stdp_synapse    4.000   1.000\n"
+            + "      1        4    stdp_synapse    3.000   1.000\n"
+            + "      2        3    stdp_synapse    3.000   1.000\n"
+            + "      2        4    stdp_synapse    2.000   1.000"
+        )
 
-        s_nodes = nest.Create('iaf_psc_alpha', 2)
-        t_nodes = nest.Create('iaf_psc_alpha', 3)
+        s_nodes = nest.Create("iaf_psc_alpha", 2)
+        t_nodes = nest.Create("iaf_psc_alpha", 3)
 
-        nest.Connect(s_nodes, t_nodes[1], syn_spec={'weight': [[1., 2.]]})
-        nest.Connect(s_nodes, t_nodes[:2], syn_spec={'synapse_model': 'stdp_synapse', 'weight': [[4., 3.], [3., 2.]]})
+        nest.Connect(s_nodes, t_nodes[1], syn_spec={"weight": [[1.0, 2.0]]})
+        nest.Connect(
+            s_nodes, t_nodes[:2], syn_spec={"synapse_model": "stdp_synapse", "weight": [[4.0, 3.0], [3.0, 2.0]]}
+        )
 
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))
@@ -403,14 +387,14 @@ class TestSynapseCollection(unittest.TestCase):
         """
         Test the str functionality of empty SynapseCollection
         """
-        ref_str = ('The synapse collection does not contain any connections.')
+        ref_str = "The synapse collection does not contain any connections."
 
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))
 
 
 def suite():
-    suite = unittest.makeSuite(TestSynapseCollection, 'test')
+    suite = unittest.makeSuite(TestSynapseCollection, "test")
     return suite
 
 

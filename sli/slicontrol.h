@@ -43,7 +43,7 @@ public:
   Backtrace_onFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Backtrace_offFunction : public SLIFunction
@@ -52,7 +52,7 @@ public:
   Backtrace_offFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class OStackdumpFunction : public SLIFunction
@@ -61,7 +61,7 @@ public:
   OStackdumpFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class EStackdumpFunction : public SLIFunction
@@ -70,7 +70,7 @@ public:
   EStackdumpFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class LoopFunction : public SLIFunction
@@ -79,7 +79,7 @@ public:
   LoopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ExitFunction : public SLIFunction
@@ -88,7 +88,7 @@ public:
   ExitFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class QuitFunction : public SLIFunction
@@ -97,7 +97,7 @@ public:
   QuitFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IfFunction : public SLIFunction
@@ -106,7 +106,7 @@ public:
   IfFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IfelseFunction : public SLIFunction
@@ -115,7 +115,7 @@ public:
   IfelseFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RepeatFunction : public SLIFunction
@@ -124,7 +124,7 @@ public:
   RepeatFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CloseinputFunction : public SLIFunction
@@ -133,7 +133,7 @@ public:
   CloseinputFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class StoppedFunction : public SLIFunction
@@ -142,7 +142,7 @@ public:
   StoppedFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class StopFunction : public SLIFunction
@@ -151,7 +151,7 @@ public:
   StopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CurrentnameFunction : public SLIFunction
@@ -160,7 +160,7 @@ public:
   CurrentnameFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IparsestdinFunction : public SLIFunction
@@ -169,7 +169,7 @@ public:
   IparsestdinFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class StartFunction : public SLIFunction
@@ -178,7 +178,7 @@ public:
   StartFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ParsestdinFunction : public SLIFunction
@@ -187,7 +187,7 @@ public:
   ParsestdinFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IparseFunction : public SLIFunction
@@ -196,7 +196,7 @@ public:
   IparseFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class DefFunction : public SLIFunction
@@ -205,7 +205,7 @@ public:
   DefFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class SetFunction : public SLIFunction
@@ -214,7 +214,7 @@ public:
   SetFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class LoadFunction : public SLIFunction
@@ -223,7 +223,7 @@ public:
   LoadFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class LookupFunction : public SLIFunction
@@ -232,7 +232,7 @@ public:
   LookupFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ForFunction : public SLIFunction
@@ -241,7 +241,7 @@ public:
   ForFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Forall_aFunction : public SLIFunction
@@ -250,7 +250,7 @@ public:
   Forall_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Forallindexed_aFunction : public SLIFunction
@@ -259,7 +259,7 @@ public:
   Forallindexed_aFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Forallindexed_sFunction : public SLIFunction
@@ -268,7 +268,7 @@ public:
   Forallindexed_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Forall_sFunction : public SLIFunction
@@ -277,7 +277,7 @@ public:
   Forall_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RaiseerrorFunction : public SLIFunction
@@ -286,7 +286,7 @@ public:
   RaiseerrorFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class PrinterrorFunction : public SLIFunction
@@ -295,7 +295,7 @@ public:
   PrinterrorFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RaiseagainFunction : public SLIFunction
@@ -304,7 +304,7 @@ public:
   RaiseagainFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CyclesFunction : public SLIFunction
@@ -313,7 +313,7 @@ public:
   CyclesFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CodeAccessedFunction : public SLIFunction
@@ -322,7 +322,7 @@ public:
   CodeAccessedFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CodeExecutedFunction : public SLIFunction
@@ -331,7 +331,7 @@ public:
   CodeExecutedFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ExecFunction : public SLIFunction
@@ -340,7 +340,7 @@ public:
   ExecFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 
@@ -350,7 +350,7 @@ public:
   TypeinfoFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 /** @BeginDocumentation
@@ -390,7 +390,7 @@ public:
   SwitchFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 /** @BeginDocumentation
@@ -442,7 +442,7 @@ public:
   SwitchdefaultFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 /** @BeginDocumentation
@@ -485,7 +485,7 @@ public:
   CaseFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CounttomarkFunction : public SLIFunction
@@ -494,7 +494,7 @@ public:
   CounttomarkFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class PclocksFunction : public SLIFunction
@@ -503,7 +503,7 @@ public:
   PclocksFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class PclockspersecFunction : public SLIFunction
@@ -512,7 +512,7 @@ public:
   PclockspersecFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class PgetrusageFunction : public SLIFunction
@@ -521,7 +521,7 @@ public:
   PgetrusageFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 
 private:
   bool getinfo_( int, DictionaryDatum& ) const;
@@ -533,7 +533,7 @@ public:
   TimeFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Sleep_dFunction : public SLIFunction
@@ -542,7 +542,7 @@ public:
   Sleep_dFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Token_sFunction : public SLIFunction
@@ -551,7 +551,7 @@ public:
   Token_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Token_isFunction : public SLIFunction
@@ -560,7 +560,7 @@ public:
   Token_isFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class Symbol_sFunction : public SLIFunction
@@ -569,7 +569,7 @@ public:
   Symbol_sFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class SetGuardFunction : public SLIFunction
@@ -578,7 +578,7 @@ public:
   SetGuardFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RemoveGuardFunction : public SLIFunction
@@ -587,7 +587,7 @@ public:
   RemoveGuardFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class MessageFunction : public SLIFunction
@@ -596,7 +596,7 @@ public:
   MessageFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class SetVerbosityFunction : public SLIFunction
@@ -605,7 +605,7 @@ public:
   SetVerbosityFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class VerbosityFunction : public SLIFunction
@@ -614,7 +614,7 @@ public:
   VerbosityFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 
@@ -624,7 +624,7 @@ public:
   NoopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class DebugOnFunction : public SLIFunction
@@ -633,7 +633,7 @@ public:
   DebugOnFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class DebugOffFunction : public SLIFunction
@@ -642,7 +642,7 @@ public:
   DebugOffFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class DebugFunction : public SLIFunction
@@ -651,7 +651,7 @@ public:
   DebugFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 

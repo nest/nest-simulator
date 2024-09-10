@@ -23,9 +23,6 @@
 
 #include "parrot_neuron.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -33,15 +30,19 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
+void
+register_parrot_neuron( const std::string& name )
+{
+  register_node_model< parrot_neuron >( name );
+}
+
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()
@@ -58,9 +59,6 @@ parrot_neuron::init_buffers_()
 void
 parrot_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
@@ -83,7 +81,6 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
-  def< double >( d, names::t_spike, get_spiketime_ms() );
   ArchivingNode::get_status( d );
 }
 

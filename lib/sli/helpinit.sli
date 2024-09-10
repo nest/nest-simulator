@@ -108,29 +108,7 @@ Synopsis: (filename) page -> -
 Description:
   The "page" command is used by NEST's online-help system to display
   the help pages. It displays the contents of a file, either through a
-  built-in pager, or an external pager program. The text you are
-  reading right now is displayed using "page".
-
-  You can customize the display. Type "/page ShowOptions" to show your
-  current settings. Use the "SetOptions" command to customize the
-  pager program. Here are some useful suggestions. You will want to
-  put your favourite into your ~/.nestrc file (see "/nestrc help"):
-  
-  1. /page << /command (more)             % Use more as a pager
-              /wait    true >> SetOptions % and wait for termination
-  
-  2. /page << /command (less -S)          % Use less as a pager
-              /wait    true >> SetOptions % and wait for termination
-  
-  3. /page << /command (xterm -e less -S)  % Run less in a separate xterm window...
-              /wait    false >> SetOptions % ..so we can go on working in parallel.
-  
-  4. /page << /command (xless)             % Use xless as a pager
-              /wait    false >> SetOptions % xless opens it's own window.
-  
-  5. /page << /command false >> SetOptions % use built-in pager.
-  
-  6. /page ResetOptions % Return to the default configuration ($PAGER or built-in pager).
+  built-in pager, or an external pager program.
 
 Options:
   /command - UNIX command to display a file (default: see below)
@@ -144,7 +122,7 @@ Options:
     file as argument.
   
     /command defaults to the contents of the $PAGER environment
-    variable. If this variable is not set, it defaults to false.
+    variable. If this variable is not set, it defaults to (more).
   
   /wait - whether to wait for the UNIX program to finish. (default: true)
   
@@ -188,7 +166,7 @@ SeeAlso: help, helpindex, license, system
 */
 
 /page <<
-    /command  (PAGER) getenv not {false} if
+    /command  (PAGER) getenv not {(more)} if
     /wait     true
 >> Options
 
@@ -385,17 +363,9 @@ Description:
   option. (See "SetOptions" on how to do this.)
 
 Options:
-  /command - UNIX command to use as browser (default: false)
+  /command - UNIX command to use as browser (default: firefox)
   
-    /command is initially set to false. "helpdesk" will issue a
-    message that the user needs to specify the browser.
-    Ths user will usually set /command to his preferred browser in his
-    .nestrc file.
-    Example: /helpdesk << /command (firefox) >> SetOptions
-
-    If /command is set to the name of a UNIX program, "helpdesk" will
-    execute this program as a child process, and use it to display the
-    HTML-helpdesk.
+    /command is initially set to (firefox).
   
   /wait - whether to wait for the UNIX program to finish. (default: false)
   
@@ -415,7 +385,7 @@ SeeAlso: SetOptions, help, helpindex
 */
 
 /helpdesk <<
-    /command false
+    /command (firefox)
     /wait    false
 >> Options
 
@@ -448,7 +418,7 @@ SeeAlso: SetOptions, help, helpindex
     } ifelse
   }
   {
-    M_ERROR (MissingOptionError) (NEST does not know how to connect to your browser. Please see the file ~/.nestrc to learn how to tell NEST about your browser.) message
+    M_ERROR (MissingOptionError) (NEST does not know how to connect to your browser. Please see the file helpinit.sli to learn how to tell NEST about your browser.) message
     /helpdesk /MissingOptionError raiseerror    
   } ifelse
 } def

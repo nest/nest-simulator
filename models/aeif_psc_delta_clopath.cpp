@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
 #include <limits>
 
@@ -38,14 +37,12 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -55,6 +52,12 @@ nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopat
 
 namespace nest
 {
+void
+register_aeif_psc_delta_clopath( const std::string& name )
+{
+  register_node_model< aeif_psc_delta_clopath >( name );
+}
+
 /*
  * template specialization must be placed in namespace
  *
@@ -65,7 +68,7 @@ template <>
 void
 RecordablesMap< aeif_psc_delta_clopath >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
   insert_( names::w, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
   insert_( names::z, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
@@ -98,7 +101,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak.
-  const double& V = ( is_refractory || is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
+  const double& V = ( is_refractory or is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
                                                     : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& w = y[ S::W ];
@@ -112,8 +115,9 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped ) ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z
-                                                          + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( is_refractory or is_clamped )
+    ? 0.0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = is_clamped ? 0.0 : ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -122,11 +126,11 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
 
   f[ S::V_TH ] = -( V_th - node.P_.V_th_rest ) / node.P_.tau_V_th;
 
-  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_plus;
+  f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_u_bar_plus;
 
-  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_minus;
+  f[ S::U_BAR_MINUS ] = ( -u_bar_minus + V ) / node.P_.tau_u_bar_minus;
 
-  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_bar_bar;
+  f[ S::U_BAR_BAR ] = ( -u_bar_bar + u_bar_minus ) / node.P_.tau_u_bar_bar;
 
   return GSL_SUCCESS;
 }
@@ -136,25 +140,25 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
-  : V_peak_( 33.0 )      // mV
-  , V_reset_( -60.0 )    // mV
-  , t_ref_( 0.0 )        // ms
-  , g_L( 30.0 )          // nS
-  , C_m( 281.0 )         // pF
-  , E_L( -70.6 )         // mV
-  , Delta_T( 2.0 )       // mV
-  , tau_w( 144.0 )       // ms
-  , tau_z( 40.0 )        // ms
-  , tau_V_th( 50.0 )     // ms
-  , V_th_max( 30.4 )     // mV
-  , V_th_rest( -50.4 )   // mV
-  , tau_plus( 7.0 )      // ms
-  , tau_minus( 10.0 )    // ms
-  , tau_bar_bar( 500.0 ) // ms
-  , a( 4.0 )             // nS
-  , b( 80.5 )            // pA
-  , I_sp( 400.0 )        // pA
-  , I_e( 0.0 )           // pA
+  : V_peak_( 33.0 )         // mV
+  , V_reset_( -60.0 )       // mV
+  , t_ref_( 0.0 )           // ms
+  , g_L( 30.0 )             // nS
+  , C_m( 281.0 )            // pF
+  , E_L( -70.6 )            // mV
+  , Delta_T( 2.0 )          // mV
+  , tau_w( 144.0 )          // ms
+  , tau_z( 40.0 )           // ms
+  , tau_V_th( 50.0 )        // ms
+  , V_th_max( 30.4 )        // mV
+  , V_th_rest( -50.4 )      // mV
+  , tau_u_bar_plus( 7.0 )   // ms
+  , tau_u_bar_minus( 10.0 ) // ms
+  , tau_u_bar_bar( 500.0 )  // ms
+  , a( 4.0 )                // nS
+  , b( 80.5 )               // pA
+  , I_sp( 400.0 )           // pA
+  , I_e( 0.0 )              // pA
   , gsl_error_tol( 1e-6 )
   , t_clamp_( 2.0 )  // ms
   , V_clamp_( 33.0 ) // mV
@@ -186,7 +190,8 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
+nest::aeif_psc_delta_clopath::State_&
+nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   clamp_r_ = s.clamp_r_;
@@ -198,7 +203,7 @@ nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::oper
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
@@ -218,9 +223,9 @@ nest::aeif_psc_delta_clopath::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::Delta_T, Delta_T );
   def< double >( d, names::tau_w, tau_w );
   def< double >( d, names::tau_z, tau_z );
-  def< double >( d, names::tau_plus, tau_plus );
-  def< double >( d, names::tau_minus, tau_minus );
-  def< double >( d, names::tau_bar_bar, tau_bar_bar );
+  def< double >( d, names::tau_u_bar_plus, tau_u_bar_plus );
+  def< double >( d, names::tau_u_bar_minus, tau_u_bar_minus );
+  def< double >( d, names::tau_u_bar_bar, tau_u_bar_bar );
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
@@ -248,9 +253,9 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
   updateValueParam< double >( d, names::Delta_T, Delta_T, node );
   updateValueParam< double >( d, names::tau_w, tau_w, node );
   updateValueParam< double >( d, names::tau_z, tau_z, node );
-  updateValueParam< double >( d, names::tau_plus, tau_plus, node );
-  updateValueParam< double >( d, names::tau_minus, tau_minus, node );
-  updateValueParam< double >( d, names::tau_bar_bar, tau_bar_bar, node );
+  updateValueParam< double >( d, names::tau_u_bar_plus, tau_u_bar_plus, node );
+  updateValueParam< double >( d, names::tau_u_bar_minus, tau_u_bar_minus, node );
+  updateValueParam< double >( d, names::tau_u_bar_bar, tau_u_bar_bar, node );
 
   updateValueParam< double >( d, names::I_e, I_e, node );
 
@@ -308,7 +313,8 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Ensure that t_clamp >= 0" );
   }
 
-  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
+  if ( tau_w <= 0 or tau_V_th <= 0 or tau_w <= 0 or tau_z <= 0 or tau_u_bar_plus <= 0 or tau_u_bar_minus <= 0
+    or tau_u_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -341,9 +347,9 @@ nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Param
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -351,9 +357,9 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta_clopath& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -415,7 +421,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -423,7 +429,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   }
@@ -432,7 +438,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -441,7 +447,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
   B_.sys_.function = aeif_psc_delta_clopath_dynamics;
@@ -452,7 +458,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 }
 
 void
-nest::aeif_psc_delta_clopath::calibrate()
+nest::aeif_psc_delta_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -472,8 +478,6 @@ nest::aeif_psc_delta_clopath::calibrate()
 void
 nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )
@@ -506,14 +510,14 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ == 0 && S_.clamp_r_ == 0 )
+      if ( S_.r_ == 0 and S_.clamp_r_ == 0 )
       {
         // neuron not refractory
         S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
@@ -530,7 +534,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
                                             // Delta_T == 0.
       }
 
-      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
+      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ and S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
@@ -538,10 +542,10 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron does not use clamping, set to 0
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron does not use clamping, set to 0
+         */
         S_.clamp_r_ = V_.clamp_counts_ > 0 ? V_.clamp_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -554,11 +558,11 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         S_.clamp_r_ = 0;
 
         /* Initialize refractory step counter.
-        * - We need to add 1 to compensate for count-down immediately after
-        *   while loop.
-        * - If neuron has no refractory time, set to 0 to avoid refractory
-        *   artifact inside while loop.
-        */
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
       }
 

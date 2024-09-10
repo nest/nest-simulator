@@ -22,29 +22,31 @@
 
 #include "gif_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
 #include "dictutils.h"
 
 #include "compose.hpp"
-#include "propagator_stability.h"
 
 namespace nest
 {
+void
+register_gif_psc_exp_multisynapse( const std::string& name )
+{
+  register_node_model< gif_psc_exp_multisynapse >( name );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -160,20 +162,20 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {
@@ -215,7 +217,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
-    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+    if ( has_connections_ and tau_tmp.size() < tau_syn_.size() )
     {
       throw BadProperty(
         "The neuron has connections, "
@@ -293,7 +295,7 @@ nest::gif_psc_exp_multisynapse::init_buffers_()
 }
 
 void
-nest::gif_psc_exp_multisynapse::calibrate()
+nest::gif_psc_exp_multisynapse::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -334,7 +336,8 @@ nest::gif_psc_exp_multisynapse::calibrate()
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
-    V_.P21_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], tau_m, P_.c_m_, h );
+
+    V_.P21_syn_[ i ] = IAFPropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }
@@ -347,10 +350,6 @@ nest::gif_psc_exp_multisynapse::calibrate()
 void
 nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -431,7 +430,7 @@ void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

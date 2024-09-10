@@ -22,23 +22,25 @@
 
 
 // Includes from nestkernel:
+#include "connector_model_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-
+#include "model_manager_impl.h"
 
 namespace nest
 {
 
 template < template < typename > class ConnectorModelT >
 void
-register_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+register_connection_model( const std::string& name )
 {
-  kernel().model_manager.register_connection_model< ConnectorModelT >( name, flags );
+  kernel().model_manager.register_connection_model< ConnectorModelT >( name );
 }
 
-template < template < typename > class ConnectorModelT >
+template < typename NodeModelT >
 void
-register_secondary_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+register_node_model( const std::string& name, std::string deprecation_info )
 {
-  kernel().model_manager.register_secondary_connection_model< ConnectorModelT >( name, flags );
+  kernel().model_manager.register_node_model< NodeModelT >( name, deprecation_info );
 }
 }

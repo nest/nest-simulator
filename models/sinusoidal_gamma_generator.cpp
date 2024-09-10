@@ -38,16 +38,23 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
+void
+register_sinusoidal_gamma_generator( const std::string& name )
+{
+  register_node_model< sinusoidal_gamma_generator >( name );
+}
+
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
 template <>
@@ -81,8 +88,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_& nest::sinusoidal_gamma_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_&
+nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -144,7 +151,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_gamma_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
@@ -259,7 +266,7 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a
   }
 
   double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
-  if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
+  if ( std::abs( p.amplitude_ ) > 0 and std::abs( p.om_ ) > 0 )
   {
     deltaLambda +=
       -p.order_ * p.amplitude_ / p.om_ * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
@@ -270,11 +277,11 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a
 // ----------------------------------------------------
 
 void
-nest::sinusoidal_gamma_generator::calibrate()
+nest::sinusoidal_gamma_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = get_vp_specific_rng( get_thread() );
@@ -297,7 +304,7 @@ nest::sinusoidal_gamma_generator::calibrate()
 }
 
 double
-nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
+nest::sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
@@ -309,9 +316,6 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const Time t = Time( Time::step( origin.get_steps() + lag + 1 ) );
@@ -347,8 +351,8 @@ void
 nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number --- see #737
-  const port tgt_idx = e.get_port();
-  assert( 0 <= tgt_idx && static_cast< size_t >( tgt_idx ) < B_.t0_ms_.size() );
+  const size_t tgt_idx = e.get_port();
+  assert( tgt_idx < B_.t0_ms_.size() );
 
   if ( V_.rng_->drand() < hazard_( tgt_idx ) )
   {

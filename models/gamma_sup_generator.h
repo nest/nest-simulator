@@ -47,7 +47,7 @@ Simulate the superimposed spike train of a population of gamma processes
 Description
 +++++++++++
 
-The gamma_sup_generator generator simulates the pooled spike train of a
+The ``gamma_sup_generator`` generator simulates the pooled spike train of a
 population of neurons firing independently with gamma process statistics.
 
 .. include:: ../models/stimulation_device.rst
@@ -60,6 +60,9 @@ gamma_shape
 
 n_proc
     Number of superimposed independent component processes, default: 1
+
+
+See also [1]_.
 
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,7 +88,14 @@ See also
 
 ppd_sup_generator, poisson_generator_ps, spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gamma_sup_generator
+
 EndUserDocs */
+
+void register_gamma_sup_generator( const std::string& name );
 
 class gamma_sup_generator : public StimulationDevice
 {
@@ -98,7 +108,7 @@ public:
 
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -109,7 +119,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   /**
    * Update state.
@@ -137,7 +147,7 @@ private:
   struct Parameters_
   {
     double rate_;               //!< rate of component gamma process [Hz]
-    unsigned long gamma_shape_; //!< gamma shape parameter [1]_
+    unsigned long gamma_shape_; //!< gamma shape parameter [1]
     unsigned long n_proc_;      //!< number of component processes
 
     /**
@@ -208,8 +218,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-gamma_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+gamma_sup_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -223,8 +233,8 @@ gamma_sup_generator::send_test_event( Node& target, rport receptor_type, syninde
   {
     SpikeEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ )
+    const size_t p = target.handles_test_event( e, receptor_type );
+    if ( p != invalid_port )
     {
       // count number of targets
       ++P_.num_targets_;

@@ -20,32 +20,34 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Create two populations on a 30x30 grid and connect them using a Gaussian probabilistic kernel
-----------------------------------------------------------------------------------------------
+Spatial networks: Gaussian probabilistic kernel
+-----------------------------------------------
 
+Create two populations on a 30x30 grid and connect them using a Gaussian probabilistic kernel
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 import nest
+import numpy as np
 
 nest.ResetKernel()
 
 #####################################################################
 # create two test layers
-pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
+pos = nest.spatial.grid(shape=[30, 30], extent=[3.0, 3.0])
 
 #####################################################################
 # create and connect two populations
-a = nest.Create('iaf_psc_alpha', positions=pos)
-b = nest.Create('iaf_psc_alpha', positions=pos)
+a = nest.Create("iaf_psc_alpha", positions=pos)
+b = nest.Create("iaf_psc_alpha", positions=pos)
 
-cdict = {'rule': 'pairwise_bernoulli',
-         'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
-                                                  std=0.5),
-         'mask': {'circular': {'radius': 3.0}}}
+cdict = {
+    "rule": "pairwise_bernoulli",
+    "p": nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
+    "mask": {"circular": {"radius": 3.0}},
+}
 
 nest.Connect(a, b, cdict)
 
@@ -55,22 +57,30 @@ nest.Connect(a, b, cdict)
 # plot targets of two source neurons into same figure, with mask
 # use different colors
 
-for src_index, color, cmap in [(30 * 15 + 15, 'blue', 'Blues'), (0, 'green', 'Greens')]:
+for src_index, color, cmap in [(30 * 15 + 15, "blue", "Blues"), (0, "green", "Greens")]:
     # obtain node id for center
-    src = a[src_index:src_index + 1]
+    src = a[src_index : src_index + 1]
     fig = plt.figure()
-    nest.PlotTargets(src, b, mask=cdict['mask'], probability_parameter=cdict['p'],
-                     src_color=color, tgt_color=color, mask_color=color,
-                     probability_cmap=cmap, src_size=100,
-                     fig=fig)
+    nest.PlotTargets(
+        src,
+        b,
+        mask=cdict["mask"],
+        probability_parameter=cdict["p"],
+        src_color=color,
+        tgt_color=color,
+        mask_color=color,
+        probability_cmap=cmap,
+        src_size=100,
+        fig=fig,
+    )
 
     # beautify
     plt.axes().set_xticks(np.arange(-1.5, 1.55, 0.5))
     plt.axes().set_yticks(np.arange(-1.5, 1.55, 0.5))
     plt.grid(True)
     plt.axis([-2.0, 2.0, -2.0, 2.0])
-    plt.axes().set_aspect('equal', 'box')
-    plt.title('Connection targets, Gaussian kernel')
+    plt.axes().set_aspect("equal", "box")
+    plt.title("Connection targets, Gaussian kernel")
 
 plt.show()
 

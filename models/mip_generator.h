@@ -44,11 +44,11 @@ Create spike trains as described by the MIP model
 Description
 +++++++++++
 
-The mip_generator generates correlated spike trains using an Multiple
+The ``mip_generator`` generates correlated spike trains using an Multiple
 Interaction Process (MIP) as described in [1]_. Underlying principle is a
 Poisson parent process with rate r, the spikes of which are copied into the
 child processes with a certain probability p. Every node the mip_generator is
-connected to receives a distinct child process as input, whose rate is p*r.
+connected to receives a distinct child process as input, whose rate is `p*r`.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
@@ -98,11 +98,18 @@ See also
 
 poisson_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mip_generator
+
 EndUserDocs */
 
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
+void register_mip_generator( const std::string& name );
+
 class mip_generator : public StimulationDevice
 {
 
@@ -117,7 +124,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -128,7 +135,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -150,7 +157,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -166,8 +173,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+mip_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

@@ -40,10 +40,17 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
+
+void
+nest::register_music_rate_out_proxy( const std::string& name )
+{
+  register_node_model< music_rate_out_proxy >( name );
+}
 
 nest::music_rate_out_proxy::Parameters_::Parameters_()
   : port_name_( "rate_out" )
@@ -80,7 +87,7 @@ void
 nest::music_rate_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.published_)
+  //  if(d->known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
@@ -134,7 +141,7 @@ nest::music_rate_out_proxy::init_buffers_()
 }
 
 void
-nest::music_rate_out_proxy::calibrate()
+nest::music_rate_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( not S_.published_ )
@@ -223,7 +230,6 @@ nest::music_rate_out_proxy::set_status( const DictionaryDatum& d )
 void
 nest::music_rate_out_proxy::handle( InstantaneousRateConnectionEvent& e )
 {
-
   // propagate last rate in min delay interval to MUSIC port; we can not use
   // e.end() - 1 since the iterator is defined in terms of unsigned ints, not
   // the event DataType; instead we forward iterate using e.get_coeffvalue and

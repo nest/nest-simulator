@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -34,6 +35,12 @@
 
 namespace nest
 {
+void
+register_step_current_generator( const std::string& name )
+{
+  register_node_model< step_current_generator >( name );
+}
+
 RecordablesMap< step_current_generator > step_current_generator::recordablesMap_;
 
 template <>
@@ -62,7 +69,8 @@ nest::step_current_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::step_current_generator::Parameters_& nest::step_current_generator::Parameters_::operator=( const Parameters_& p )
+nest::step_current_generator::Parameters_&
+nest::step_current_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -257,10 +265,10 @@ nest::step_current_generator::init_buffers_()
 }
 
 void
-nest::step_current_generator::calibrate()
+nest::step_current_generator::pre_run_hook()
 {
   B_.logger_.init();
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 }
 
 
@@ -271,9 +279,6 @@ nest::step_current_generator::calibrate()
 void
 nest::step_current_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   assert( P_.amp_time_stamps_.size() == P_.amp_values_.size() );
 
   const long t0 = origin.get_steps();
@@ -281,7 +286,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
-  while ( B_.idx_ < P_.amp_time_stamps_.size() && P_.amp_time_stamps_[ B_.idx_ ].get_steps() <= first )
+  while ( B_.idx_ < P_.amp_time_stamps_.size() and P_.amp_time_stamps_[ B_.idx_ ].get_steps() <= first )
   {
     ++B_.idx_;
   }
@@ -295,7 +300,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class SimulatingDevice.
-    if ( B_.idx_ < P_.amp_time_stamps_.size() && curr_time + 1 == P_.amp_time_stamps_[ B_.idx_ ].get_steps() )
+    if ( B_.idx_ < P_.amp_time_stamps_.size() and curr_time + 1 == P_.amp_time_stamps_[ B_.idx_ ].get_steps() )
     {
       B_.amp_ = P_.amp_values_[ B_.idx_ ];
       B_.idx_++;

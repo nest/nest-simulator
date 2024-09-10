@@ -19,9 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
 import nest
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
+
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 def test_consistent_local_vps():
     """
     Test local_vps field of kernel status.
@@ -35,7 +40,7 @@ def test_consistent_local_vps():
     local_vps = list(nest.GetLocalVPs())
 
     # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create('iaf_psc_delta', 2 * n_vp))
+    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
 
     vp_direct = list(nrns.vp)
     vp_indirect = [local_vps[t] for t in nrns.thread]

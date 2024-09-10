@@ -27,8 +27,8 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "node_collection.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -38,8 +38,8 @@
 #include "token.h"
 
 // Includes from spatial:
-#include "layer.h"
 #include "free_layer.h"
+#include "layer.h"
 #include "mask.h"
 
 
@@ -53,16 +53,16 @@ class LayerMetadata : public NodeCollectionMetadata
 {
 public:
   LayerMetadata( AbstractLayerPTR );
-  ~LayerMetadata()
+  ~LayerMetadata() override
   {
   }
 
-  void set_status( const DictionaryDatum&, bool ){};
+  void set_status( const DictionaryDatum&, bool ) override {};
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( DictionaryDatum& d, NodeCollection const* nc ) const override
   {
-    layer_->get_status( d );
+    layer_->get_status( d, nc );
   }
 
   //! Returns pointer to object with layer representation
@@ -74,48 +74,51 @@ public:
 
   // Using string as enum would make stuff more complicated
   std::string
-  get_type() const
+  get_type() const override
   {
     return "spatial";
   }
 
   void
-  set_first_node_id( index node_id )
+  set_first_node_id( size_t node_id ) override
   {
     first_node_id_ = node_id;
   }
-  index
-  get_first_node_id() const
+
+  size_t
+  get_first_node_id() const override
   {
     return first_node_id_;
   }
 
-  void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
-
-  bool operator==( const NodeCollectionMetadataPTR rhs ) const
+  bool
+  operator==( const NodeCollectionMetadataPTR rhs ) const override
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( rhs_layer_metadata == nullptr )
+    if ( not rhs_layer_metadata )
     {
       return false;
     }
     // Compare status dictionaries of this layer and rhs layer
     DictionaryDatum dict( new Dictionary() );
     DictionaryDatum rhs_dict( new Dictionary() );
-    get_status( dict );
-    rhs_layer_metadata->get_status( rhs_dict );
+
+    // Since we do not have access to the node collection here, we
+    // compare based on all metadata, irrespective of any slicing
+    get_status( dict, /* nc */ nullptr );
+    rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
     return *dict == *rhs_dict;
   }
 
 private:
   const AbstractLayerPTR layer_; //!< layer object
-  index first_node_id_;
+  size_t first_node_id_;
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
 NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( NodeCollectionPTR layer_nc );
-std::vector< double > get_position( const index node_id );
+std::vector< double > get_position( const size_t node_id );
 ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );

@@ -36,7 +36,6 @@
 #include "integerdatum.h"
 #include "namedatum.h"
 #include "stringdatum.h"
-#include "symboldatum.h"
 
 /*************************************************************************/
 /** Scanner   (implemented as a DFA)                                     */
@@ -140,7 +139,7 @@ Scanner::Scanner( std::istream* is )
 
   code.Group( alpha, "ABCDFGHIJKLMNOPQRSTUVWXYZ" );
   code.Group( alpha, "abcdfghijklmopqrsuvwxyz" );
-  code.Range( alpha, ( char ) 161, ( char ) 255 );
+  code.Range( alpha, static_cast< char >( 161 ), static_cast< char >( 255 ) );
   code[ '_' ] = alpha;
   code.Group( alpha, "~`!@#$^&=|:;'<,>?\"" ); // according to PS
 
@@ -525,7 +524,8 @@ Scanner::source( std::istream* in_s )
   }
 }
 
-bool Scanner::operator()( Token& t )
+bool
+Scanner::operator()( Token& t )
 {
   static const int base = 10;
   ScanStates state = start;
@@ -538,19 +538,16 @@ bool Scanner::operator()( Token& t )
   unsigned char sgc = '\0';
 
   long lng = 0L;
-  double d = 0.0;
   int sg = 1;
   int e = 0;
   int parenth = 0; // to handle PS parenthesis in strings
-  double p = 1.;
-
 
   t.clear();
 
   do
   {
 
-    if ( not in->eof() && not in->good() )
+    if ( not in->eof() and not in->good() )
     {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;
@@ -567,7 +564,7 @@ bool Scanner::operator()( Token& t )
       ++line;
     }
 
-    if ( c == '\0' || in->bad() )
+    if ( c == '\0' or in->bad() )
     {
       c = endof;
     }
@@ -606,7 +603,7 @@ bool Scanner::operator()( Token& t )
     {
       IntegerDatum id( lng );
       t = id;
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -623,13 +620,11 @@ bool Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -642,8 +637,6 @@ bool Scanner::operator()( Token& t )
       state = fracdgtst;
     /* no break */
     case fracdgtst:
-      p /= base;
-      d += sg * p * digval( c );
       ds.push_back( c );
       break;
 
@@ -660,7 +653,7 @@ bool Scanner::operator()( Token& t )
       ds.clear();
 
       t.move( doubletoken );
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -711,7 +704,7 @@ bool Scanner::operator()( Token& t )
       state = alphast;
       break;
     case sgalphast:
-      assert( sgc == '+' || sgc == '-' );
+      assert( sgc == '+' or sgc == '-' );
       s.append( 1, sgc );
       state = alphast;
     /* no break */
@@ -745,7 +738,7 @@ bool Scanner::operator()( Token& t )
     /* no break */
     case aheadalphst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -758,7 +751,7 @@ bool Scanner::operator()( Token& t )
 
     case aheadlitst:
     {
-      if ( c != endoln && c != endof )
+      if ( c != endoln and c != endof )
       {
         in->unget();
         --col;
@@ -810,7 +803,7 @@ bool Scanner::operator()( Token& t )
     default:
       break;
     }
-  } while ( ( state != error ) && ( state != end ) );
+  } while ( ( state != error ) and ( state != end ) );
   return ( state == end );
 }
 
@@ -819,6 +812,5 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl
-            << context << std::endl;
+  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl << context << std::endl;
 }

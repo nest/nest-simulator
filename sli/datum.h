@@ -40,7 +40,7 @@ class Datum
    * Virtual copy constructor.
    * Use this function to lazily copy a datum.
    */
-  virtual Datum* clone( void ) const = 0;
+  virtual Datum* clone() const = 0;
 
 
   /**
@@ -67,8 +67,8 @@ protected:
 
 
   Datum()
-    : type( NULL )
-    , action( NULL )
+    : type( nullptr )
+    , action( nullptr )
     , reference_count_( 1 )
     , executable_( true )
   {
@@ -93,7 +93,7 @@ protected:
 
 
 public:
-  virtual ~Datum(){};
+  virtual ~Datum() {};
 
 
   void
@@ -169,7 +169,7 @@ public:
   virtual void info( std::ostream& ) const;
 
   const Name&
-  gettypename( void ) const
+  gettypename() const
   {
     return type->gettypename();
   }
@@ -192,7 +192,7 @@ template < SLIType* slt >
 class TypedDatum : public Datum
 {
 public:
-  TypedDatum( void )
+  TypedDatum()
     : Datum( slt )
   {
   }
@@ -209,7 +209,8 @@ protected:
 };
 
 template < SLIType* slt >
-inline const TypedDatum< slt >& TypedDatum< slt >::operator=( const TypedDatum< slt >& )
+inline const TypedDatum< slt >&
+TypedDatum< slt >::operator=( const TypedDatum< slt >& )
 {
   //  assert( type == d.type );
   return *this;

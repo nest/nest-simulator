@@ -38,7 +38,7 @@ PROJECT_NAME           = NEST
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = @NEST_VERSION_STRING@
+PROJECT_NUMBER         = @NEST_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -746,7 +746,6 @@ WARN_LOGFILE           = doxygen.log
 INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
 			@PROJECT_SOURCE_DIR@/doc \
 			@PROJECT_SOURCE_DIR@/examples \
-			@PROJECT_SOURCE_DIR@/extras \
 			@PROJECT_SOURCE_DIR@/lib \
 			@PROJECT_SOURCE_DIR@/libnestutil \
 			@PROJECT_SOURCE_DIR@/models \

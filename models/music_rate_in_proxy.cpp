@@ -36,8 +36,16 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_music_rate_in_proxy( const std::string& name )
+{
+  register_node_model< music_rate_in_proxy >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -68,7 +76,7 @@ void
 nest::music_rate_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.registered_)
+  //  if(d->known(names::port_name) and s.registered_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.registered_ )
@@ -99,6 +107,8 @@ nest::music_rate_in_proxy::music_rate_in_proxy()
   , P_()
   , S_()
 {
+  // Register port for the model so it is available as default
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 nest::music_rate_in_proxy::music_rate_in_proxy( const music_rate_in_proxy& n )
@@ -106,7 +116,8 @@ nest::music_rate_in_proxy::music_rate_in_proxy( const music_rate_in_proxy& n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  kernel().music_manager.register_music_in_port( P_.port_name_, true );
+  // Register port for node instance because MusicManager manages ports via reference count
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 
@@ -120,7 +131,7 @@ nest::music_rate_in_proxy::init_buffers_()
 }
 
 void
-nest::music_rate_in_proxy::calibrate()
+nest::music_rate_in_proxy::pre_run_hook()
 {
   // only publish the port once
   if ( not S_.registered_ )
@@ -149,8 +160,8 @@ nest::music_rate_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
   kernel().music_manager.unregister_music_in_port( P_.port_name_ );
+  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
   P_ = ptmp;
   S_ = stmp;
 }

@@ -40,16 +40,16 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
-#include "node_collection.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
-#include "device_node.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 
 namespace nest
 {
+void register_music_cont_out_proxy( const std::string& name );
 
 /* BeginUserDocs: device, MUSIC
 
@@ -61,12 +61,12 @@ A device which sends continuous data from NEST to MUSIC
 Description
 +++++++++++
 
-A music_cont_out_proxy can be used to send continuous data from
+A ``music_cont_out_proxy`` can be used to send continuous data from
 neurons over MUSIC to remote applications. It works in a similar fashion like
 the multimeter model. The user has to specify the recordable values to observe
-(e.g. ["V_m"]) via the record_from parameter. The target neurons are specified
-by a list of global neuron ids which must be passed via the "targets"
-parameter. The music_cont_out_proxy will be connected automatically to the
+(e.g. [``V_m``]) via the record_from parameter. The target neurons are specified
+by a list of global neuron ids which must be passed via the ``targets``
+parameter. The ``music_cont_out_proxy`` will be connected automatically to the
 specified target neurons. It is not possible to apply further changes to the
 list of target neurons or observed quantities once the simulation has been
 started for the first time.
@@ -80,7 +80,7 @@ receiving buffer via the following access pattern:
     For example:
     target_node_ids = [ 2, 5, 4 ], record_from = ["V_m"] and
 
-    we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
+    we want to get ``V_m`` for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
 This model is only available if NEST was compiled with MUSIC.
 
@@ -106,6 +106,11 @@ See also
 ++++++++
 
 music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_cont_out_proxy
 
 EndUserDocs */
 
@@ -140,7 +145,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_signal;
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool );
 
   void handle( DataLoggingReply& );
 
@@ -153,7 +158,7 @@ public:
 
 protected:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
   void finalize();
 
   /**
@@ -203,7 +208,7 @@ private:
     Buffers_();                  //!< Initializes default buffer
     Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
     bool has_targets_;           //!< Indicates whether the proxy is recording from any
-                                 //!neurons or not
+                                 //! neurons or not
     std::vector< double > data_; //!< Recorded data
   };
 

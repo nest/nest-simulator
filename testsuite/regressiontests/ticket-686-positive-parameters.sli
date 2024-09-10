@@ -26,11 +26,11 @@ Name: testsuite::ticket-686 - catch nodes which do not require tau_*, C_m > 0
 
 Synopsis: (ticket-686-positive-parameters) run -> NEST exits if test fails
 
-Description: 
+Description:
 This tests ensures that models with parameters C_m or tau_* throw an exception
 when trying to set a value that is not strictly positive.
- 
-The test also ensures that values can actually be set to different, positive 
+
+The test also ensures that values can actually be set to different, positive
 values.
 
 Author: Hans Ekkehard Plesser, 2013-04-18
@@ -41,15 +41,27 @@ Author: Hans Ekkehard Plesser, 2013-04-18
 
 M_ERROR setverbosity
 
+% SLI2PY TODO: iaf_tum_2000 should be removed from skipped_models when porting
+% this test. The reason it is skipped in the SLI version of the test, is that
+% tau_fac can be set to 0.0 to turn facilitation off. The logic of the test
+% needs to be updated to accommodate for this possibility.
+
 % Add models that have C_m or tau_* and that should not be checked
 % This should be devices only.
-/skipped_models 
-  [ /correlation_detector 
+/skipped_models
+  [ /correlation_detector
     /correlomatrix_detector
-    /correlospinmatrix_detector 
-    /siegert_neuron ] 
+    /correlospinmatrix_detector
+    /iaf_tum_2000   % tau_fac == 0 is permitted
+    /siegert_neuron ]
 def
-skipped_models { modeldict exch undef } forall
+
+/models [] def
+GetKernelStatus /node_models get {
+  /m Set skipped_models m MemberQ not {
+    models m append /models Set
+  } if
+} forall
 
 
 % model GetPositiveKeyes -> list of keys requiring positive values
@@ -57,9 +69,9 @@ skipped_models { modeldict exch undef } forall
 /GetPositiveKeys
 {
   GetDefaults keys
-  { 
-    cvs /key Set 
-    key (C_m) eq      
+  {
+    cvs /key Set
+    key (C_m) eq
     key length 4 geq
     {
 	key 0 4 getinterval (tau_) eq
@@ -68,40 +80,40 @@ skipped_models { modeldict exch undef } forall
       false
     } ifelse
     or
-  } Select 
+  } Select
 } def
 
 
 % first test: ensure values <= 0 provoke exception
 {
-  modeldict keys 
+  models
   {
     ResetKernel
 
     % Avoid exceptions in case a model has C_m or
     % tau_* that cannot be changed.
-    << /dict_miss_is_error false >> SetKernelStatus    
+    << /dict_miss_is_error false >> SetKernelStatus
 
     /model Set
     /all_fine true def % pass by default
 
-    % now test one at a time    
+    % now test one at a time
     model GetPositiveKeys
     {
 
-      /key Set      
+      /key Set
 
       [ 0.0 -1.0 ] % test for zero and negative
       {
         /val Set
-	
+
 	% the next line shall provoke an error
 	mark
-	{ 
+	{
 	  /neuron model Create def
           neuron key get /origval Set
 	  neuron << >> dup key val put_d SetStatus
-	}       
+	}
         stopped
         {
           % we got an exception, need to clean up
@@ -120,51 +132,51 @@ skipped_models { modeldict exch undef } forall
  	}
         {
           % model failed to raise exception
-          pop % mark	  
-	  /all_fine false def	  
+          pop % mark
+	  /all_fine false def
 	}
         ifelse   % stopped
 
-      } 
+      }
       forall  % values
     }
-    forall   % keys    
+    forall   % keys
 
-    all_fine % leave result on stack    
+    all_fine % leave result on stack
     dup not { (ERROR: ) model cvs join == } if
 
-  }  
-  Map   % modeldict keys
+  }
+  Map
 
   true exch { and } Fold
-  
+
 } assert_or_die
 
 
 % second test: ensure positive values can be set
 {
-  modeldict keys 
+  models
   {
     ResetKernel
 
     % Avoid exceptions in case a model has C_m or
     % tau_* that cannot be changed.
-    << /dict_miss_is_error false >> SetKernelStatus    
+    << /dict_miss_is_error false >> SetKernelStatus
 
     /model Set
 
-    model /iaf_psc_exp_ps_lossless neq 
+    model /iaf_psc_exp_ps_lossless neq
     {
-      % now test one at a time    
+      % now test one at a time
       model GetPositiveKeys {
-  
-        /key Set      
-  
+
+        /key Set
+
         /nrn model Create def
         /newval nrn key get 1.0 add def
         nrn << >> dup key newval put SetStatus
-        nrn key get newval eq 
-  
+        nrn key get newval eq
+
       } Map
 
       true exch { and } Fold
@@ -174,12 +186,12 @@ skipped_models { modeldict exch undef } forall
       true
     }
     ifelse
-    
-  }  
-  Map   % modeldict keys
+
+  }
+  Map
 
   true exch { and } Fold
-  
+
 } assert_or_die
 
 endusing

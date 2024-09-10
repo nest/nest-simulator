@@ -23,17 +23,16 @@
 Functions for parallel computing
 """
 
-from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+from ..ll_api import check_stack, sli_func, spp, sps, sr
 
 __all__ = [
-    'NumProcesses',
-    'Rank',
-    'GetLocalVPs',
-    'SetAcceptableLatency',
-    'SetMaxBuffered',
-    'SyncProcesses',
+    "NumProcesses",
+    "Rank",
+    "GetLocalVPs",
+    "SetAcceptableLatency",
+    "SetMaxBuffered",
+    "SyncProcesses",
 ]
 
 
@@ -111,16 +110,14 @@ def SetMaxBuffered(port_name, size):
 
 @check_stack
 def SyncProcesses():
-    """Synchronize all MPI processes.
-    """
+    """Synchronize all MPI processes."""
 
     sr("SyncProcesses")
 
 
 @check_stack
 def GetLocalVPs():
-    """Return iterable representing the VPs local to the MPI rank.
-    """
+    """Return iterable representing the VPs local to the MPI rank."""
 
     # Compute local VPs as range based on round-robin logic in
     # VPManager::get_vp(). mpitest_get_local_vps ensures this is in

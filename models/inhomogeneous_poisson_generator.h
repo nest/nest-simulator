@@ -95,7 +95,14 @@ See also
 
 sinusoidal_poisson_generator, step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: inhomogeneous_poisson_generator
+
 EndUserDocs */
+
+void register_inhomogeneous_poisson_generator( const std::string& name );
 
 class inhomogeneous_poisson_generator : public StimulationDevice
 {
@@ -111,7 +118,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -123,7 +130,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
   void event_hook( DSSpikeEvent& ) override;
@@ -175,9 +182,9 @@ private:
   Variables_ V_;
 };
 
-inline port
+inline size_t
 inhomogeneous_poisson_generator::send_test_event( Node& target,
-  rport receptor_type,
+  size_t receptor_type,
   synindex syn_id,
   bool dummy_target )
 {

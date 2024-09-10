@@ -23,16 +23,15 @@
 Functions to visualize a network built in NEST.
 """
 
-import pydot
 import nest
+import pydot
 
 __all__ = [
-    'plot_network',
+    "plot_network",
 ]
 
 
-def plot_network(nodes, filename, ext_conns=False,
-                 plot_modelnames=False):
+def plot_network(nodes, filename, ext_conns=False, plot_modelnames=False):
     """Plot the given nodes and the connections that originate from
     them.
 
@@ -65,13 +64,13 @@ def plot_network(nodes, filename, ext_conns=False,
         raise nest.kernel.NESTError("nodes must be a NodeCollection")
 
     if ext_conns:
-        raise NotImplementedError('ext_conns')
+        raise NotImplementedError("ext_conns")
     if plot_modelnames:
-        raise NotImplementedError('plot_modelnames')
+        raise NotImplementedError("plot_modelnames")
 
     conns = nest.GetConnections(nodes)
 
-    graph = pydot.Dot(rankdir='LR', ranksep='5')
+    graph = pydot.Dot(rankdir="LR", ranksep="5")
     for source, target in zip(conns.sources(), conns.targets()):
         graph.add_edge(pydot.Edge(str(source), str(target)))
 

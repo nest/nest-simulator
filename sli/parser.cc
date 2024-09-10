@@ -26,14 +26,11 @@
 
 #include "parser.h"
 
-// Generated includes:
-#include "config.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "namedatum.h"
 #include "scanner.h"
-#include "symboldatum.h"
 
 /*****************************************************************/
 /* parse                                                         */
@@ -56,25 +53,26 @@ Parser::init( std::istream& is )
 }
 
 Parser::Parser( std::istream& is )
-  : s( NULL )
+  : s( nullptr )
   , ParseStack( 128 )
 {
   init( is );
-  assert( s != NULL );
+  assert( s );
 }
 
-Parser::Parser( void )
-  : s( NULL )
+Parser::Parser()
+  : s( nullptr )
   , ParseStack( 128 )
 {
   init( std::cin );
-  assert( s != NULL );
+  assert( s );
 }
 
 
-bool Parser::operator()( Token& t )
+bool
+Parser::operator()( Token& t )
 {
-  assert( s != NULL );
+  assert( s );
 
   Token pt;
 
@@ -157,13 +155,13 @@ bool Parser::operator()( Token& t )
           if ( pt->isoftype( SLIInterpreter::Arraytype ) )
           {
             ArrayDatum* pa = dynamic_cast< ArrayDatum* >( pt.datum() );
-            assert( pa != NULL );
+            assert( pa );
             pa->push_back( t );
           }
           else // now it must be a procedure
           {
             LitprocedureDatum* pp = dynamic_cast< LitprocedureDatum* >( pt.datum() );
-            assert( pp != NULL );
+            assert( pp );
             pp->set_executable();
             pp->push_back( t );
           }
@@ -179,7 +177,7 @@ bool Parser::operator()( Token& t )
     } // if(ok)
     //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok
     //      << '\n';
-  } while ( ( result == tokencontinue ) || ( result == scancontinue ) );
+  } while ( result == tokencontinue or result == scancontinue );
 
   if ( result != tokencompleted )
   {
@@ -209,12 +207,14 @@ bool Parser::operator()( Token& t )
   return ( result == tokencompleted );
 }
 
-bool operator==( Parser const& p1, Parser const& p2 )
+bool
+operator==( Parser const& p1, Parser const& p2 )
 {
   return &p1 == &p2;
 }
 
-std::ostream& operator<<( std::ostream& out, const Parser& p )
+std::ostream&
+operator<<( std::ostream& out, const Parser& p )
 {
   out << "Parser(" << p.scan() << ')' << std::endl;
   return out;

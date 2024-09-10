@@ -27,9 +27,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -38,13 +36,11 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -54,13 +50,19 @@ nest::RecordablesMap< nest::iaf_cond_exp_sfa_rr > nest::iaf_cond_exp_sfa_rr::rec
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_iaf_cond_exp_sfa_rr( const std::string& name )
+{
+  register_node_model< iaf_cond_exp_sfa_rr >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_cond_exp_sfa_rr >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::V_M > );
   insert_( names::g_ex, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_INH > );
@@ -79,20 +81,28 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
   assert( pnode );
   const nest::iaf_cond_exp_sfa_rr& node = *( reinterpret_cast< nest::iaf_cond_exp_sfa_rr* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double I_L = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
-  const double I_sfa = y[ S::G_SFA ] * ( y[ S::V_M ] - node.P_.E_sfa );
-  const double I_rr = y[ S::G_RR ] * ( y[ S::V_M ] - node.P_.E_rr );
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_th.
+  const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_th_ );
+
+  const double I_syn_exc = y[ S::G_EXC ] * ( V - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( V - node.P_.E_in );
+  const double I_L = node.P_.g_L * ( V - node.P_.E_L );
+
+  const double I_sfa = y[ S::G_SFA ] * ( V - node.P_.E_sfa );
+  const double I_rr = y[ S::G_RR ] * ( V - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] =
+    is_refractory ? 0.0 : ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -147,7 +157,8 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
+nest::iaf_cond_exp_sfa_rr::State_&
+nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -222,7 +233,7 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d, Node* nod
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 || tau_sfa <= 0 || tau_rr <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 or tau_sfa <= 0 or tau_rr <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -250,9 +261,9 @@ nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Paramete
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -260,9 +271,9 @@ nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp_sfa_rr& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -323,7 +334,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -332,7 +343,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -341,7 +352,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -351,7 +362,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   }
 
   B_.sys_.function = iaf_cond_exp_sfa_rr_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -359,7 +370,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::calibrate()
+nest::iaf_cond_exp_sfa_rr::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -376,10 +387,6 @@ nest::iaf_cond_exp_sfa_rr::calibrate()
 void
 nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -425,18 +432,18 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
     else
       // neuron is not absolute refractory
       if ( S_.y_[ State_::V_M ] >= P_.V_th_ )
-    {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y_[ State_::V_M ] = P_.V_reset_;
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
 
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      S_.y_[ State_::G_SFA ] += P_.q_sfa;
-      S_.y_[ State_::G_RR ] += P_.q_rr;
+        S_.y_[ State_::G_SFA ] += P_.q_sfa;
+        S_.y_[ State_::G_RR ] += P_.q_rr;
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

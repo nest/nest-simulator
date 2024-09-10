@@ -63,7 +63,7 @@ reset_kernel()
 }
 
 void
-enable_dryrun_mode( const index n_procs )
+enable_dryrun_mode( const size_t n_procs )
 {
   kernel().mpi_manager.set_num_processes( n_procs );
 }
@@ -87,13 +87,13 @@ get_rank_synced_rng()
 }
 
 RngPtr
-get_vp_synced_rng( thread tid )
+get_vp_synced_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_synced_rng( tid );
 }
 
 RngPtr
-get_vp_specific_rng( thread tid )
+get_vp_specific_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
@@ -118,13 +118,13 @@ get_kernel_status()
 }
 
 void
-set_node_status( const index node_id, const DictionaryDatum& dict )
+set_node_status( const size_t node_id, const DictionaryDatum& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
 DictionaryDatum
-get_node_status( const index node_id )
+get_node_status( const size_t node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
@@ -133,11 +133,11 @@ void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
-  const index source_node_id = getValue< long >( conn_dict, nest::names::source );
-  const index target_node_id = getValue< long >( conn_dict, nest::names::target );
-  const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
+  const size_t source_node_id = getValue< long >( conn_dict, nest::names::source );
+  const size_t target_node_id = getValue< long >( conn_dict, nest::names::target );
+  const size_t tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  const port p = getValue< long >( conn_dict, nest::names::port );
+  const size_t p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
@@ -161,22 +161,14 @@ get_connection_status( const ConnectionDatum& conn )
 }
 
 NodeCollectionPTR
-create( const Name& model_name, const index n_nodes )
+create( const Name& model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
-  {
-    throw UnknownModelName( model_name );
-  }
-
-  // create
-  const index model_id = static_cast< index >( model );
-
+  const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -193,6 +185,18 @@ connect( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+}
+
+void
+connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& third_connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
+{
+  kernel().connection_manager.connect_tripartite(
+    sources, targets, third, connectivity, third_connectivity, synapse_specs );
 }
 
 void
@@ -218,6 +222,18 @@ get_connections( const DictionaryDatum& dict )
   ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
+}
+
+void
+disconnect( const ArrayDatum& conns )
+{
+  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
+  {
+    const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
+    kernel().sp_manager.disconnect(
+      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
+  }
 }
 
 void
@@ -270,36 +286,52 @@ copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatu
 }
 
 void
-set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const std::string component, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults( modelname, dict );
+  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  {
+    return;
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    kernel().io_manager.set_recording_backend_status( component, dict );
+    return;
+  }
+
+  throw UnknownComponent( component );
 }
 
 DictionaryDatum
-get_model_defaults( const Name& modelname )
+get_model_defaults( const std::string component )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-
-  DictionaryDatum dict;
-
-  if ( not nodemodel.empty() )
+  try
   {
-    const long model_id = static_cast< long >( nodemodel );
-    Model* m = kernel().model_manager.get_model( model_id );
-    dict = m->get_status();
+    const size_t model_id = kernel().model_manager.get_node_model_id( component );
+    return kernel().model_manager.get_node_model( model_id )->get_status();
   }
-  else if ( not synmodel.empty() )
+  catch ( UnknownModelName& )
   {
-    const long synapse_id = static_cast< long >( synmodel );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
+    // ignore errors; throw at the end of the function if that's reached
   }
 
-  return dict;
+  try
+  {
+    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    return kernel().model_manager.get_connector_defaults( synapse_model_id );
+  }
+  catch ( UnknownSynapseType& )
+  {
+    // ignore errors; throw at the end of the function if that's reached
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  {
+    return kernel().io_manager.get_recording_backend_status( component );
+  }
+
+  throw UnknownComponent( component );
+  return DictionaryDatum(); // supress missing return value warning; never reached
 }
 
 ParameterDatum
@@ -357,7 +389,7 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() >= n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
@@ -372,7 +404,7 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() == n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   auto nc_it = node_collection->begin();

@@ -142,7 +142,8 @@ MusicEventHandler::publish_port()
   }
 }
 
-void MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
+void
+MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
 {
   assert( channelmap_[ channel ] != 0 );
   eventqueue_[ channel ].push( t * 1e3 ); // MUSIC uses seconds as time unit
@@ -181,4 +182,4 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
 
 } // namespace nest
 
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */

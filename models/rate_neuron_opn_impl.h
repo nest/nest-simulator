@@ -221,7 +221,7 @@ nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::calibrate()
+nest::rate_neuron_opn< TNonlinearities >::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -246,9 +246,6 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;
@@ -341,7 +338,7 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
     // clear last_y_values
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
-    // modifiy new_rates for rate-neuron-event as proxy for next min_delay
+    // modify new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
     {
       new_rates[ temp ] = S_.noisy_rate_;
@@ -410,7 +407,7 @@ void
 nest::rate_neuron_opn< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
+  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

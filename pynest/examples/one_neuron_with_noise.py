@@ -37,9 +37,9 @@ records the neuron's membrane potential.
 # several times in a Python shell without interference from previous NEST
 # simulations.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -56,7 +56,7 @@ voltmeter = nest.Create("voltmeter")
 ###############################################################################
 # Third, the Poisson generator is configured using ``SetStatus``, which expects
 # a list of node handles and a list of parameter dictionaries. We set the
-# Poisson generators to 8,000 Hz and 15,000 Hz, respectively. Note that we do
+# Poisson generators to 80,000 Hz and 15,000 Hz, respectively. Note that we do
 # not need to set parameters for the neuron and the voltmeter, since they have
 # satisfactory defaults.
 
@@ -67,7 +67,7 @@ noise[1].rate = 15000.0
 # Fourth, the neuron is connected to the ``poisson_generator`` and to the
 # ``voltmeter``. We also specify the synaptic weight and delay in this step.
 
-nest.Connect(noise, neuron, syn_spec={'weight': [[1.2, -1.0]], 'delay': 1.0})
+nest.Connect(noise, neuron, syn_spec={"weight": [[1.2, -1.0]], "delay": 1.0})
 nest.Connect(voltmeter, neuron)
 
 ###############################################################################

@@ -46,11 +46,11 @@ Rate neuron model with sigmoidal gain function
 Description
 +++++++++++
 
-sigmoid_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.
+``sigmoid_rate`` is an implementation of a nonlinear rate model with input
+function :math:`input(h) = g / ( 1. + \exp( -\beta \cdot ( h - \theta ) ) )`.
 
-It either models a rate neuron with input noise (see rate_neuron_ipn)
-or a rate transformer (see rate_transformer_node).
+It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
+or a rate transformer (see ``rate_transformer_node``).
 
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
@@ -62,9 +62,10 @@ the gap-junction framework.
 The following parameters can be set in the status dictionary.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('sigmoid_rate_ipn'). Nonlinear rate transformers can be
-created by typing nest.Create('rate_transformer_sigmoid').
+``nest.Create('sigmoid_rate_ipn')``. Nonlinear rate transformers can be
+created by typing ``nest.Create('rate_transformer_sigmoid')``.
 
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -122,6 +123,12 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate
+
 EndUserDocs */
 
 class nonlinearities_sigmoid_rate
@@ -142,7 +149,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -168,7 +175,11 @@ nonlinearities_sigmoid_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
+void register_sigmoid_rate_ipn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
+void register_rate_transformer_sigmoid( const std::string& name );
+
 
 template <>
 void RecordablesMap< sigmoid_rate_ipn >::create();

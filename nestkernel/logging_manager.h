@@ -49,11 +49,10 @@ class LoggingManager : public ManagerInterface
 public:
   LoggingManager();
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Register a logging client.
@@ -79,10 +78,11 @@ public:
   /**
    * Create a LoggingEvent.
    *
-   * This function creates a LoggingEvent that will be delivered to all
-   * registered logging clients, if the severity is above the set logging
-   * level. Do not use this function to do actuall logging in the source code,
-   * insted use the LOG() function provided by the logging.h header.
+   * This function creates a LoggingEvent that will be delivered to
+   * all registered logging clients, if the severity is above the set
+   * logging level. Do not use this function to do actual logging in
+   * the source code, instead use the LOG() function provided by the
+   * logging.h header in libnestutil.
    *
    */
   void publish_log( const severity_t, const std::string&, const std::string&, const std::string&, const size_t ) const;
@@ -118,9 +118,9 @@ private:
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   nest::severity_t logging_level_;
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary
-                            //!< entries
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
+
 } // namespace nest
 
-#endif // ifndef LOGGING_MANAGER_H
+#endif /* ifndef LOGGING_MANAGER_H */

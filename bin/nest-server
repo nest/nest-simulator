@@ -1,0 +1,104 @@
+#!/bin/bash
+
+DAEMON="${NEST_SERVER_DAEMON:-0}"
+HOST="${NEST_SERVER_HOST:-127.0.0.1}"
+LOGFILE="${NEST_SERVER_LOGFILE:-/tmp/nest-server.log}"
+PORT="${NEST_SERVER_PORT:-52425}"
+STDOUT="${NEST_SERVER_STDOUT:-0}"
+
+usage() {
+  echo "NEST Server"
+  echo "-----------"
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-h <HOST>] [-o] [-p <PORT>]"
+  echo ""
+  echo "Commands:"
+  echo "  log         display the server output log"
+  echo "  status      display the status of all server instances"
+  echo "  start       start a server instance on <HOST>:<PORT>"
+  echo "  stop        stop a server instance on <HOST>:<PORT>"
+  echo "  restart     restart (i.e. stop and start) a server instance on <HOST>:<PORT>"
+  echo
+  echo "Options:"
+  echo "  -d                 daemonize the server process"
+  echo "  -h <HOST>          use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
+  echo "  -o                 print NEST outputs to the console"
+  echo "  -p <PORT>          use port <PORT> for opening the socket [default: 52425]"
+}
+
+log() {
+  # Follow info logs.
+  tail -f "${LOGFILE}"
+}
+
+pid() {
+  # Get process ID of instance on defined host and port.
+  pgrep -f "gunicorn nest.server.app --bind ${HOST}:${PORT}"
+}
+
+set-gunicorn_opts() {
+  # Set opts for gunicorn.
+  GUNICORN_OPTS="--bind ${HOST}:${PORT}"
+  if [ "${DAEMON}" -eq 1 ]; then
+    GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
+  fi
+  if [ "${STDOUT}" -eq 0 ]; then
+    GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
+  fi
+  GUNICORN_OPTS="${GUNICORN_OPTS} --log-file ${LOGFILE}"
+}
+
+start() {
+  # Start server instance.
+  if pid > /dev/null;  then
+    echo "NEST Server is already running at http://${HOST}:${PORT}."
+  else
+    echo "NEST Server is now running at http://${HOST}:${PORT}."
+    if [ "${DAEMON}" -eq 0 ]; then
+      echo "Use CTRL + C to stop this service."
+      if [ "${STDOUT}" -eq 1 ]; then
+        echo "-----------------------------------------------------"
+      fi
+    fi
+
+    set-gunicorn_opts
+    exec gunicorn nest.server:app ${GUNICORN_OPTS}
+  fi
+}
+
+status() {
+  # List all processes of NEST Server.
+  PS_AUX="$(ps aux | grep "[g]unicorn nest.server.app")"
+  printf "USER\t\t\tPID\t\tHTTP-SOCKET\n"
+  echo "${PS_AUX}" | head -n 1 | awk '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 2 || i == 15 ) printf $i"\t\t"}; printf "\n" }'
+}
+
+stop() {
+  # Stop server instance.
+  if pid > /dev/null; then
+    kill "$(pid 2>&1 | head -n 1)"
+    echo "NEST Server running at http://${HOST}:${PORT} has stopped."
+  else
+    echo "NEST Server is not running at http://${HOST}:${PORT}."
+    false
+  fi
+}
+
+CMD=$1; shift
+while getopts "dh:op:" opt; do
+    case $opt in
+        d) DAEMON=1 ;;
+        h) HOST=$OPTARG ;;
+        o) STDOUT=1 ;;
+        p) PORT=$OPTARG ;;
+    esac
+done
+
+case "$CMD" in
+  log) log ;;
+  pid) pid ;;
+  restart) stop; sleep .5; start ;;
+  start)   start ;;
+  status)  status ;;
+  stop)    stop ;;
+  *) usage ;;
+esac

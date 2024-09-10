@@ -24,25 +24,28 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "booldatum.h"
-#include "integerdatum.h"
-#include "arraydatum.h"
+
+void
+nest::register_inhomogeneous_poisson_generator( const std::string& name )
+{
+  register_node_model< inhomogeneous_poisson_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------
@@ -227,9 +230,9 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 }
 
 void
-nest::inhomogeneous_poisson_generator::calibrate()
+nest::inhomogeneous_poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
   V_.h_ = Time::get_resolution().get_ms();
 }
 
@@ -240,8 +243,6 @@ nest::inhomogeneous_poisson_generator::calibrate()
 void
 nest::inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( P_.rate_times_.size() == P_.rate_values_.size() );
 
   const long t0 = origin.get_steps();

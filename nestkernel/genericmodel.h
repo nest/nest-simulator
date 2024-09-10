@@ -33,6 +33,7 @@ namespace nest
 {
 /**
  * Generic Model template.
+ *
  * The template GenericModel should be used
  * as base class for custom model classes. It already includes the
  * element factory functionality, as well as a pool based memory
@@ -54,61 +55,54 @@ public:
   /**
    * Return pointer to cloned model with same name.
    */
-  Model* clone( const std::string& ) const;
+  Model* clone( const std::string& ) const override;
 
-  bool has_proxies();
-  bool one_node_per_process();
-  bool is_off_grid();
-  void calibrate_time( const TimeConverter& tc );
+  bool has_proxies() override;
+  bool one_node_per_process() override;
+  bool is_off_grid() override;
+  void calibrate_time( const TimeConverter& tc ) override;
+
   /**
-     @note The decision of whether one node can receive a certain
-     event was originally in the node. But in the distributed case,
-     it may be that you only have a proxy node and not he real
-     thing. Thus, you need to be able to make this decision without
-     having the node. Since the model now takes responsibility for a
-     lot of general node properties, it was a natural place to put
-     this function.
-
-     Model::send_test_event() is a forwarding function that calls
-     send_test_event() from the prototype. Since proxies know the
-     model they represent, they can now answer a call to check
-     connection by referring back to the model.
+   * Send a test event to a target node.
+   *
+   * This is a forwarding function that calls Node::send_test_event() from the prototype.
+   * Since proxies know the model they represent, they can now answer a call to check
+   * connection by referring back to the model.
    */
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void sends_secondary_event( GapJunctionEvent& ge );
+  void sends_secondary_event( GapJunctionEvent& ge ) override;
 
-  SignalType sends_signal() const;
+  SignalType sends_signal() const override;
 
-  void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+  void sends_secondary_event( InstantaneousRateConnectionEvent& re ) override;
 
-  void sends_secondary_event( DiffusionConnectionEvent& de );
+  void sends_secondary_event( DiffusionConnectionEvent& de ) override;
 
-  void sends_secondary_event( DelayedRateConnectionEvent& re );
+  void sends_secondary_event( DelayedRateConnectionEvent& re ) override;
 
-  Node const& get_prototype() const;
+  void sends_secondary_event( LearningSignalConnectionEvent& re ) override;
 
-  void set_model_id( int );
+  void sends_secondary_event( SICEvent& sic ) override;
 
-  int get_model_id();
+  Node const& get_prototype() const override;
 
-  void deprecation_warning( const std::string& );
+  void set_model_id( int ) override;
+
+  int get_model_id() override;
+
+  void deprecation_warning( const std::string& ) override;
 
 private:
-  void set_status_( DictionaryDatum );
-  DictionaryDatum get_status_();
+  void set_status_( DictionaryDatum ) override;
+  DictionaryDatum get_status_() override;
 
-  size_t get_element_size() const;
+  size_t get_element_size() const override;
 
   /**
    * Call placement new on the supplied memory position.
    */
-  Node* allocate_( void* );
-
-  /**
-   * Initialize the pool allocator with the node specific properties.
-   */
-  void init_memory_( sli::pool& );
+  Node* create_() override;
 
   /**
    * Prototype node from which all instances are constructed.
@@ -120,9 +114,7 @@ private:
    */
   std::string deprecation_info_;
 
-  /**
-   * False until deprecation warning has been issued once
-   */
+  //! False until deprecation warning has been issued once
   bool deprecation_warning_issued_;
 };
 
@@ -156,17 +148,10 @@ GenericModel< ElementT >::clone( const std::string& newname ) const
 
 template < typename ElementT >
 Node*
-GenericModel< ElementT >::allocate_( void* adr )
+GenericModel< ElementT >::create_()
 {
-  Node* n = new ( adr ) ElementT( proto_ );
+  Node* n = new ElementT( proto_ );
   return n;
-}
-
-template < typename ElementT >
-void
-GenericModel< ElementT >::init_memory_( sli::pool& mem )
-{
-  mem.init( sizeof( ElementT ), 1000, 1 );
 }
 
 template < typename ElementT >
@@ -198,8 +183,8 @@ GenericModel< ElementT >::calibrate_time( const TimeConverter& tc )
 }
 
 template < typename ElementT >
-inline port
-GenericModel< ElementT >::send_test_event( Node& target, rport receptor, synindex syn_id, bool dummy_target )
+inline size_t
+GenericModel< ElementT >::send_test_event( Node& target, size_t receptor, synindex syn_id, bool dummy_target )
 {
   return proto_.send_test_event( target, receptor, syn_id, dummy_target );
 }
@@ -230,6 +215,20 @@ inline void
 GenericModel< ElementT >::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( LearningSignalConnectionEvent& re )
+{
+  return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( SICEvent& sic )
+{
+  return proto_.sends_secondary_event( sic );
 }
 
 template < typename ElementT >

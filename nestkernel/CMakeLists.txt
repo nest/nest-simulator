@@ -23,6 +23,7 @@ set ( nestkernel_sources
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h
@@ -34,7 +35,7 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
-      dynamicloader.h dynamicloader.cpp
+      module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -43,7 +44,6 @@ set ( nestkernel_sources
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager_impl.h model_manager.cpp
-      nest_types.h
       nest_datums.h nest_datums.cpp
       nest_names.cpp nest_names.h
       nestmodule.h nestmodule.cpp
@@ -59,6 +59,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
+      secondary_event.h secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -68,6 +69,7 @@ set ( nestkernel_sources
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_conngen.h conn_builder_conngen.cpp
+      sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
@@ -96,7 +98,7 @@ set ( nestkernel_sources
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
       target.h target_data.h static_assert.h
-      send_buffer_position.h
+      send_buffer_position.h send_buffer_position.cpp
       source.h
       source_table.h source_table.cpp
       source_table_position.h
@@ -112,6 +114,8 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+      buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
       )
 
 
@@ -131,25 +135,29 @@ if ( HAVE_MPI )
 endif ()
 
 
-add_library( nestkernel ${nestkernel_sources} )
+# Prevent problems with Conda path substitution (see #2348)
+set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
+
+
+add_library( nestkernel STATIC ${nestkernel_sources} )
+set_target_properties( nestkernel
+    PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    )
+
 target_link_libraries( nestkernel
-    nestutil sli_lib
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+    nestutil sli_lib models
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/models
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-    )
-
-install( TARGETS nestkernel
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 FILTER_HEADERS("${nestkernel_sources}" install_headers )

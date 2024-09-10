@@ -213,20 +213,60 @@ def
   << >> begin
   /slice Set
   /coll Set
+
+  % Because Take expects arguments with one-based indexing, while Take_g_a expects
+  % arguments with zero-based indexing, we need to adjust arguments before calling Take_g_a.
   slice length 1 eq
   {
-    slice 0 get dup 1 3 arraystore coll exch Take_g_a
+    slice 0 get dup 2 arraystore /slice Set
+  } if
+
+  slice arrayload
+  2 eq
+  {
+    1 /step Set
   }
   {
-    % assume that we have two or three elements now
-    slice dup
-    length 2 eq { 1 append } if
-    coll exch
-    Take_g_a
-  }
-  ifelse
-  end
+    /step Set
+  } ifelse
 
+  % We assume that we have two or three elements now.
+  % Have to adjust slice to zero-indexing.
+  /stp Set
+  /strt Set
+
+  % With one-based indexing, 0 is not a valid index.
+  strt 0 eq
+  { % strt == 0
+    /Take /RangeError raiseerror
+  } if
+
+  % For positive start values, start is adjusted one down for zero-based indexing.
+  % The stop value goes from inclusive to exclusive, so positive stop values do not have to be adjusted.
+  strt 0 gt
+  { % strt > 0
+    % adjust to zero-indexing
+    strt 1 sub /strt Set
+  } if
+
+  % Negative one-based start values are converted to positive zero-based start values.
+  strt 0 lt
+  { % strt < 0
+    strt coll size add /strt Set
+  } if
+
+  % Negative one-based stop values are converted to positive zero-based stop values.
+  % Because we go from inclusive to exclusive stop value, stop is adjusted one up.
+  stp -1 leq
+  {
+    stp coll size add 1 add /stp Set
+  } if
+
+  strt stp step 3 arraystore
+  coll exch
+  Take_g_a
+
+  end
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -373,7 +413,7 @@ def
 
 /CreateParameter trie
 [/dictionarytype] /CreateParameter_D load addtotrie
-[/doubletype] /CreateParameter_D load addtotrie
+[/doubletype] { /val Set << /constant << /value val >> >> CreateParameter_D } addtotrie
 def
 
 /GetValue [/parametertype]
@@ -448,9 +488,14 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% add conversion from NodeCollection
-/cva [/nodecollectiontype]
-  /cva_g load
+% add new functions to trie if it exists, else create new
+/cva dup lookup not
+{
+  trie
+} if
+  [/connectiontype] /cva_C load addtotrie
+  [/nodecollectiontype] { /all cva_g_l } addtotrie
+  [/nodecollectiontype /literaltype] /cva_g_l load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -798,12 +843,12 @@ def
    Parameters:
    sources    nodecollection  - the node IDs of the sources
    targets    nodecollection  - the node IDs of the targets
-   weight     double         - the weight of the connection
-   delay      double         - the delay of the connection
-   conn_rule  literal        - the name of the connection rule, see connruledict
-   conn_spec  dict           - dictionary with connectivity specification (see Options)
-   syn_model  literal        - the name of the synapse model, see synapsedict
-   syn_spec   dict           - dictionary with synapse model specification (see Options)
+   weight     double          - the weight of the connection
+   delay      double          - the delay of the connection
+   conn_rule  literal         - the name of the connection rule
+   conn_spec  dict            - dictionary with connectivity specification (see Options)
+   syn_model  literal         - the name of the synapse model
+   syn_spec   dict            - dictionary with synapse model specification (see Options)
 
    Options:
    /conn_spec - dictionary with connectivity specification, must at least contain /rule
@@ -837,7 +882,10 @@ def
    Parameters for synapses may be fixed single values, arrays or random deviate
    specifications.
 
-   SeeAlso: synapsedict, connruledict, cvnodecollection, GetOptions
+   A list of available connection rules can be obtained from the
+   kernel status dictionary by inspecting the key /connection_rules.
+
+   SeeAlso: cvnodecollection, GetOptions
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 
@@ -1017,7 +1065,7 @@ def
         4 2 roll               % bring sources and targets to bottom
         Connect_g_g_D_D
       } bind addtotrie
-      
+
       % Variant: sources targets conn_spec syn_vector Connect
       % Connect nodes from two sets of NodeCollections using the given connectivity specification
       % and a list of synapse specifications
@@ -1035,6 +1083,13 @@ def
   } forall
 
 def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/ConnectSonata [/dictionarytype /integertype]
+{
+  ConnectSonata_D
+} def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1064,6 +1119,8 @@ def
       network, as a list of arrays (IntVectorDatum), one array per connection.
    2. Each array (connection object) has the following elements:
       [source-node_id target-node_id target-thread synapse-model-id port]
+      where synapse-model-id corresponds to the position of the model in the list
+      of models available from the /synapse_models property of the kernel status dictionary.
    3. The optional dictionary elements /source and /target can be used to filter
       for specific pre- and postsynaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
@@ -1072,16 +1129,13 @@ def
       on the MPI process executing the function.
 
    Remarks:
-   1. See synapsedict for the synapse-model-id's for all synapse models.
-   2. The /synapse_label property can only be assigned to synapse models with names ending
+   1. The /synapse_label property can only be assigned to synapse models with names ending
       with '_lbl'. All other synapses have the default synapse_label UNLABELED_CONNECTION (-1).
-   3. The "port" enumerates connections per source, thread and synapse model. It is
+   2. The "port" enumerates connections per source, thread and synapse model. It is
       mainly important for NEST internally.
-   4. In OpenMP mode, GetConnections works thread-parallel for better performance.
-   5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetStatus, and GetStatus
-
-   SeeAlso: synapsedict
+   3. In OpenMP mode, GetConnections works thread-parallel for better performance.
+   4. Connection objects can be converted to SLI lists with cva.
+   5. Connection objects can be passed to SetStatus, and GetStatus
 */
 /GetConnections [/dictionarytype]
 {
@@ -1136,7 +1190,7 @@ def
                 effect, the element keeps its state intact as if it was "frozen".
 		This is the only state which can directly be set by the user.
    buffers_initialized - the buffers of the node have been initialized
-   err        - some unspecified error condition has occured.
+   err        - some unspecified error condition has occurred.
 
    Examples: elementstates info
 
@@ -1376,81 +1430,6 @@ def
 /TimeCommunicationAlltoallv trie
 [/integertype /integertype] /TimeCommunicationAlltoallv_i_i load addtotrie
 def
-
-% can only be defined here because on bg processes.sli is not included
-statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
-{
- /memory_thisjob { :memory_thisjob_bg } def
-} if
-
-
-/** @BeginDocumentation
-Name: SaveModels - Retrieve the state of all models.
-Description:
-*/
-
-/SaveModels
-{
-  << >> begin
-  modeldict cva 2 Partition size /n_models Set
-  n_models 1 add % proxy model is not in modeldict
-  array /models Set
-  {
-    models exch
-    arrayload ; exch
-    put /models Set
- } forall
-
- [
- models
- {
-   dup type /literaltype eq
-   { GetDefaults } { pop } ifelse
- } forall
- ]
- end
-} def
-
-/** @BeginDocumentation
-Name: RestoreModels - Restore saved models from an array of status dictionaries.
-Description:
-*/
-/RestoreModels
-[/arraytype]
-{
- << >> begin
-  /models Set
-  GetKernelStatus /dict_miss_is_error get /dict_err Set
-  << /dict_miss_is_error false >> SetKernelStatus
-  /old_verbosity verbosity def
-  M_ERROR setverbosity
-  /restoremodel
-  {
-    begin
-    model type_id neq
-    {
-      type_id model currentdict CopyModel
-    }
-    {
-      type_id /a2eif_cond_exp_HW neq        % these models
-      type_id /topology_layer_3d neq and    % these models
-      type_id /topology_layer_free neq and  % break when
-      type_id /topology_layer_grid neq and  % their status is changed
-      {  model currentdict SetDefaults } if
-    } ifelse
-    end
-  } def
-  models
-  {
-    restoremodel
-  } forall
-  old_verbosity setverbosity
-  << /dict_miss_is_error dict_err >> SetKernelStatus
-  end
-} def
-
-/cva [/connectiontype] /cva_C load def
-
 
 /abort
 {

@@ -55,7 +55,7 @@ be obtained if all n release sites are activated.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -66,13 +66,12 @@ The following parameters can be set in the status dictionary:
 
 ==========  ======= =========================================================
  U          real    Maximal fraction of available resources [0,1],
-                    default=0.5
- u          real    Available fraction of resources [0,1], default=0.5
- p          real    Probability that a vesicle is available, default = 1.0
+                    default = 0.5
+ u          real    Available fraction of resources [0,1], default = U
  n          integer Total number of release sites, default = 1
  a          integer Number of available release sites, default = n
- tau_rec    ms      Time constant for depression, default=800 ms
- tau_rec    ms      Time constant for facilitation, default=0 (off)
+ tau_fac    ms      Time constant for facilitation, default = 0 (off)
+ tau_rec    ms      Time constant for depression, default = 800
 ==========  ======= =========================================================
 
 References
@@ -100,7 +99,14 @@ See also
 
 tsodyks2_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: quantal_stp_synapse
+
 EndUserDocs */
+
+void register_quantal_stp_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class quantal_stp_synapse : public Connection< targetidentifierT >
@@ -109,22 +115,28 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   quantal_stp_synapse();
+
   /**
    * Copy constructor to propagate common properties.
    */
   quantal_stp_synapse( const quantal_stp_synapse& ) = default;
+  quantal_stp_synapse& operator=( const quantal_stp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -144,7 +156,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -152,15 +164,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -183,6 +195,8 @@ private:
   double t_lastspike_; //!< Time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties quantal_stp_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -191,8 +205,8 @@ private:
  * \param cp Common properties object, containing the quantal_stp parameters.
  */
 template < typename targetidentifierT >
-inline void
-quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -211,7 +225,9 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
     }
   }
 
-  if ( n_release > 0 )
+  const bool send_spike = n_release > 0;
+
+  if ( send_spike )
   {
     e.set_receiver( *get_target( t ) );
     e.set_weight( n_release * weight_ );
@@ -234,6 +250,8 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   }
 
   t_lastspike_ = t_spike;
+
+  return send_spike;
 }
 
 } // namespace

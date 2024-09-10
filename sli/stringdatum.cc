@@ -46,12 +46,6 @@ AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream
   out << ')';
 }
 
-// explicit template instantiation needed
-// because otherwise methods defined in
-// numericdatum_impl.h will not be instantiated
-// Moritz, 2007-04-16
-template class AggregateDatum< std::string, &SLIInterpreter::Stringtype >;
-
 const ToUppercase_sFunction touppercase_sfunction;
 const ToLowercase_sFunction tolowercase_sfunction;
 

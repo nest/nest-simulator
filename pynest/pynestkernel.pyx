@@ -24,22 +24,18 @@
 
 import cython
 
-from libc.stdlib cimport malloc, free
+from cpython cimport array
+from cpython.object cimport Py_EQ, Py_GE, Py_GT, Py_LE, Py_LT, Py_NE
+from cpython.ref cimport PyObject
+from cython.operator cimport dereference as deref
+from cython.operator cimport preincrement as inc
+from libc.stdlib cimport free, malloc
 from libc.string cimport memcpy
-
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from cython.operator cimport dereference as deref
-from cython.operator cimport preincrement as inc
-
-from cpython cimport array
-
-from cpython.ref cimport PyObject
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-
 import nest
-from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+from nest.lib.hl_api_exceptions import NESTError, NESTErrors, NESTMappedException
 
 
 cdef string SLI_TYPE_BOOL = b"booltype"
@@ -81,7 +77,7 @@ except ImportError:
     pass
 
 
-cdef class SLIDatum(object):
+cdef class SLIDatum:
 
     cdef Datum* thisptr
     cdef readonly unicode dtype
@@ -109,7 +105,7 @@ cdef class SLIDatum(object):
         self.thisptr = dat
 
 
-cdef class SLILiteral(object):
+cdef class SLILiteral:
 
     cdef readonly object name
     cdef object _hash
@@ -152,7 +148,7 @@ cdef class SLILiteral(object):
             return self.name >= obj
 
 
-cdef class NESTEngine(object):
+cdef class NESTEngine:
 
     cdef SLIInterpreter* pEngine
 
@@ -268,14 +264,14 @@ cdef class NESTEngine(object):
         cdef Datum* nc_datum = python_object_to_datum(node_collection)
 
         try:
-            if array.dtype == numpy.bool:
+            if array.dtype == bool:
                 # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
                 array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
                 array_bool_ptr = &array_bool_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
             elif numpy.issubdtype(array.dtype, numpy.integer):
-                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+                array_long_mv = numpy.ascontiguousarray(array, dtype=int)
                 array_long_ptr = &array_long_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
@@ -300,19 +296,14 @@ cdef class NESTEngine(object):
             raise TypeError('weights must be a 1-dimensional NumPy array')
         if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
             raise TypeError('delays must be a 1-dimensional NumPy array')
-        if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
-                                              numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
-            raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
         if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
             raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
 
-        if not len(sources) == len(targets):
+        if len(sources) != len(targets):
             raise ValueError('Sources and targets must be arrays of the same length.')
-        if weights is not None:
-            if not len(sources) == len(weights):
+        if weights is not None and len(sources) != len(weights):
                 raise ValueError('weights must be an array of the same length as sources and targets.')
-        if delays is not None:
-            if not len(sources) == len(delays):
+        if delays is not None and len(sources) != len(delays):
                 raise ValueError('delays must be an array of the same length as sources and targets.')
         if syn_param_values is not None:
             if not len(syn_param_keys) == syn_param_values.shape[0]:
@@ -321,10 +312,10 @@ cdef class NESTEngine(object):
                 raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
         # Get pointers to the first element in each NumPy array
-        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
+        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=int)
         cdef long* sources_ptr = &sources_mv[0]
 
-        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.long)
+        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=int)
         cdef long* targets_ptr = &targets_mv[0]
 
         cdef double[::1] weights_mv
@@ -342,8 +333,8 @@ cdef class NESTEngine(object):
         # Storing parameter keys in a vector of strings
         cdef vector[string] param_keys_ptr
         if syn_param_keys is not None:
-            for i, key in enumerate(syn_param_keys):
-                param_keys_ptr.push_back(key)
+            for key in syn_param_keys:
+                param_keys_ptr.push_back(key.encode('utf8'))
 
         cdef double[:, ::1] param_values_mv
         cdef double* param_values_ptr = NULL
@@ -450,7 +441,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTError.PyNESTError("only vectors of integers or floats are supported")
+                raise NESTErrors.PyNESTError("only vectors of integers or floats are supported")
 
         if ret is NULL:
             try:
@@ -610,13 +601,13 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
         arr = array.clone(ARRAY_LONG, vector_ptr.size(), False)
         array_data = arr.data.as_longs
         if HAVE_NUMPY:
-            ret_dtype = numpy.int_
+            ret_dtype = int
     elif sli_vector_ptr_t is sli_vector_double_ptr_t and vector_value_t is double:
         vector_ptr = deref_dvector(dat)
         arr = array.clone(ARRAY_DOUBLE, vector_ptr.size(), False)
         array_data = arr.data.as_doubles
         if HAVE_NUMPY:
-            ret_dtype = numpy.float_
+            ret_dtype = float
     else:
         raise NESTErrors.PyNESTError("unsupported specialization")
 

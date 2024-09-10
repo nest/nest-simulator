@@ -41,7 +41,6 @@ namespace nest
  * @note Each manager shall be instantiated only once. Therefore, copy
  * constructor and assignment operator are declared private and not implemented.
  *
- * @ingroup KernelManagers
  */
 class ManagerInterface
 {
@@ -69,9 +68,13 @@ public:
    * is responsible for calling the initialization routines on the
    * specific managers in correct order.
    *
+   * @param adjust_number_of_threads_or_rng_only  Pass true if calling from kernel_manager::change_number_of_threads()
+   * or RandomManager::get_status() to limit operations to those necessary for thread adjustment or switch or re-seeding
+   * of RNG.
+   *
    * @see finalize()
    */
-  virtual void initialize() = 0;
+  virtual void initialize( const bool adjust_number_of_threads_or_rng_only ) = 0;
 
   /**
    * Take down manager after operation.
@@ -86,25 +89,36 @@ public:
    * specific managers in correct order, i.e., the opposite order of
    * initialize() calls.
    *
+   * @param adjust_number_of_threads_or_rng_only  Pass true if calling from kernel_manager::change_number_of_threads()
+   * to limit operations to those necessary for thread adjustment.
+   *
    * @see initialize()
    */
-  virtual void finalize() = 0;
+  virtual void finalize( const bool adjust_number_of_threads_or_rng_only ) = 0;
 
   /**
-   * Change the number of threads
+   * Set the status of the manager
    *
-   * Many data structures depend on the number of threads. This
-   * function is called on each manager upon a change of that number
-   * and allows the manager to re-allocate data structures
-   * accordingly.
+   * @see get_status()
    */
-  virtual void change_num_threads( thread ){};
-
   virtual void set_status( const DictionaryDatum& ) = 0;
+
+  /**
+   * Retrieve the status of the manager
+   *
+   * @note This would ideally be a const function. However, some
+   * managers delay the update of internal variables up to the point
+   * where they are needed (e.g., before reporting their values to the
+   * user, or before simulate is called). An example for this pattern
+   * is the call to update_delay_extrema_() right at the beginning of
+   * ConnectionManager::get_status().
+   *
+   * @see set_status()
+   */
   virtual void get_status( DictionaryDatum& ) = 0;
 
-  virtual void prepare(){};
-  virtual void cleanup(){};
+  virtual void prepare() {};
+  virtual void cleanup() {};
 };
 }
 

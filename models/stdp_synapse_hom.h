@@ -42,7 +42,7 @@ Synapse type for spike-timing dependent plasticity using homogeneous parameters
 Description
 +++++++++++
 
-stdp_synapse_hom is a connector to create synapses with spike time
+``stdp_synapse_hom`` is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
@@ -59,7 +59,7 @@ Examples:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -76,8 +76,6 @@ Parameters
  mu_minus real     Weight dependence exponent, depression
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
-
-Remarks:
 
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.
@@ -109,6 +107,11 @@ See also
 ++++++++
 
 tsodyks_synapse, static_synapse
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_synapse_hom
 
 EndUserDocs */
 
@@ -151,6 +154,8 @@ public:
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
+void register_stdp_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_synapse_hom : public Connection< targetidentifierT >
 {
@@ -158,6 +163,10 @@ class stdp_synapse_hom : public Connection< targetidentifierT >
 public:
   typedef STDPHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -170,6 +179,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_synapse_hom( const stdp_synapse_hom& ) = default;
+  stdp_synapse_hom& operator=( const stdp_synapse_hom& ) = default;
 
 
   // Explicitly declare all methods inherited from the dependent base
@@ -195,7 +205,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPHomCommonProperties& );
+  bool send( Event& e, size_t t, const STDPHomCommonProperties& );
 
   void
   set_weight( double w )
@@ -210,10 +220,10 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -231,7 +241,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -260,6 +270,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_synapse_hom< targetidentifierT >::properties;
 
 //
 // Implementation of class stdp_synapse_hom.
@@ -280,8 +292,8 @@ stdp_synapse_hom< targetidentifierT >::stdp_synapse_hom()
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-stdp_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPHomCommonProperties& cp )
+inline bool
+stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
@@ -320,6 +332,8 @@ stdp_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPHomCo
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / cp.tau_plus_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

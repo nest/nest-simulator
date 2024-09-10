@@ -31,16 +31,15 @@ with externally applied current and spikes impinging
 
 Voltage traces, current traces, threshold traces, and spikes are shown.
 
-KEYWORDS: glif_psc
 """
 
 ##############################################################################
 # First, we import all necessary modules to simulate, analyze and plot this
 # example.
 
-import nest
-import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
+import nest
 
 ##############################################################################
 # We initialize NEST and set the simulation resolution.
@@ -64,31 +63,51 @@ syn_tau = [2.0, 1.0]
 # of the 2 synaptic ports as mentioned above. Other neuron parameters are set
 # as default. The five ``glif_psc`` node handles were combined as a list.
 
-n_lif = nest.Create("glif_psc",
-                    params={"spike_dependent_threshold": False,
-                            "after_spike_currents": False,
-                            "adapting_threshold": False,
-                            "tau_syn": syn_tau})
-n_lif_r = nest.Create("glif_psc",
-                      params={"spike_dependent_threshold": True,
-                              "after_spike_currents": False,
-                              "adapting_threshold": False,
-                              "tau_syn": syn_tau})
-n_lif_asc = nest.Create("glif_psc",
-                        params={"spike_dependent_threshold": False,
-                                "after_spike_currents": True,
-                                "adapting_threshold": False,
-                                "tau_syn": syn_tau})
-n_lif_r_asc = nest.Create("glif_psc",
-                          params={"spike_dependent_threshold": True,
-                                  "after_spike_currents": True,
-                                  "adapting_threshold": False,
-                                  "tau_syn": syn_tau})
-n_lif_r_asc_a = nest.Create("glif_psc",
-                            params={"spike_dependent_threshold": True,
-                                    "after_spike_currents": True,
-                                    "adapting_threshold": True,
-                                    "tau_syn": syn_tau})
+n_lif = nest.Create(
+    "glif_psc",
+    params={
+        "spike_dependent_threshold": False,
+        "after_spike_currents": False,
+        "adapting_threshold": False,
+        "tau_syn": syn_tau,
+    },
+)
+n_lif_r = nest.Create(
+    "glif_psc",
+    params={
+        "spike_dependent_threshold": True,
+        "after_spike_currents": False,
+        "adapting_threshold": False,
+        "tau_syn": syn_tau,
+    },
+)
+n_lif_asc = nest.Create(
+    "glif_psc",
+    params={
+        "spike_dependent_threshold": False,
+        "after_spike_currents": True,
+        "adapting_threshold": False,
+        "tau_syn": syn_tau,
+    },
+)
+n_lif_r_asc = nest.Create(
+    "glif_psc",
+    params={
+        "spike_dependent_threshold": True,
+        "after_spike_currents": True,
+        "adapting_threshold": False,
+        "tau_syn": syn_tau,
+    },
+)
+n_lif_r_asc_a = nest.Create(
+    "glif_psc",
+    params={
+        "spike_dependent_threshold": True,
+        "after_spike_currents": True,
+        "adapting_threshold": True,
+        "tau_syn": syn_tau,
+    },
+)
 
 neurons = n_lif + n_lif_r + n_lif_asc + n_lif_r_asc + n_lif_r_asc_a
 
@@ -105,18 +124,22 @@ neurons = n_lif + n_lif_r + n_lif_asc + n_lif_r_asc + n_lif_r_asc_a
 # current. Configuration of the Poisson generator includes the definition of
 # the start and stop times and the rate of the injected spike train.
 
-espikes = nest.Create("spike_generator",
-                      params={"spike_times": [10., 100., 150.],
-                              "spike_weights": [20.] * 3})
-ispikes = nest.Create("spike_generator",
-                      params={"spike_times": [15., 99., 150.],
-                              "spike_weights": [-20.] * 3})
-cg = nest.Create("step_current_generator",
-                 params={"amplitude_values": [400., ],
-                         "amplitude_times": [200., ],
-                         "start": 200., "stop": 500.})
-pg = nest.Create("poisson_generator",
-                 params={"rate": 150000., "start": 600., "stop": 900.})
+espikes = nest.Create("spike_generator", params={"spike_times": [10.0, 100.0, 150.0], "spike_weights": [20.0] * 3})
+ispikes = nest.Create("spike_generator", params={"spike_times": [15.0, 99.0, 150.0], "spike_weights": [-20.0] * 3})
+cg = nest.Create(
+    "step_current_generator",
+    params={
+        "amplitude_values": [
+            400.0,
+        ],
+        "amplitude_times": [
+            200.0,
+        ],
+        "start": 200.0,
+        "stop": 500.0,
+    },
+)
+pg = nest.Create("poisson_generator", params={"rate": 150000.0, "start": 600.0, "stop": 900.0})
 pn = nest.Create("parrot_neuron")
 
 ###############################################################################
@@ -128,10 +151,8 @@ pn = nest.Create("parrot_neuron")
 # spikes to the glif_psc neuron.
 
 nest.Connect(cg, neurons, syn_spec={"delay": resolution})
-nest.Connect(espikes, neurons,
-             syn_spec={"delay": resolution, "receptor_type": 1})
-nest.Connect(ispikes, neurons,
-             syn_spec={"delay": resolution, "receptor_type": 1})
+nest.Connect(espikes, neurons, syn_spec={"delay": resolution, "receptor_type": 1})
+nest.Connect(ispikes, neurons, syn_spec={"delay": resolution, "receptor_type": 1})
 nest.Connect(pg, pn, syn_spec={"delay": resolution})
 nest.Connect(pn, neurons, syn_spec={"delay": resolution, "receptor_type": 2})
 
@@ -140,12 +161,13 @@ nest.Connect(pn, neurons, syn_spec={"delay": resolution, "receptor_type": 2})
 # specified for the multimeter include the list of quantities that should be
 # recorded and the time interval at which quantities are measured.
 
-mm = nest.Create("multimeter",
-                 params={"interval": resolution,
-                         "record_from": ["V_m", "I", "I_syn", "threshold",
-                                         "threshold_spike",
-                                         "threshold_voltage",
-                                         "ASCurrents_sum"]})
+mm = nest.Create(
+    "multimeter",
+    params={
+        "interval": resolution,
+        "record_from": ["V_m", "I", "I_syn", "threshold", "threshold_spike", "threshold_voltage", "ASCurrents_sum"],
+    },
+)
 nest.Connect(mm, neurons)
 
 ###############################################################################
@@ -159,7 +181,7 @@ nest.Connect(neurons, sr)
 # Run the simulation for 1000 ms and retrieve recorded data from
 # the multimeter and spike recorder.
 
-nest.Simulate(1000.)
+nest.Simulate(1000.0)
 
 data = mm.events
 senders = data["senders"]
@@ -180,7 +202,6 @@ spikes = spike_data["times"]
 
 glif_models = ["lif", "lif_r", "lif_asc", "lif_r_asc", "lif_r_asc_a"]
 for i in range(len(glif_models)):
-
     glif_model = glif_models[i]
     node_id = neurons[i].global_id
     plt.figure(glif_model)
@@ -190,9 +211,11 @@ for i in range(len(glif_models)):
     ax1 = plt.subplot(gs[0])
     plt.plot(t, data["V_m"][senders == node_id], "b")
     plt.plot(t, data["threshold"][senders == node_id], "g--")
-    plt.plot(spikes[spike_senders == node_id],
-             [max(data["threshold"][senders == node_id]) * 0.95] *
-             len(spikes[spike_senders == node_id]), "r.")
+    plt.plot(
+        spikes[spike_senders == node_id],
+        [max(data["threshold"][senders == node_id]) * 0.95] * len(spikes[spike_senders == node_id]),
+        "r.",
+    )
     plt.legend(["V_m", "threshold", "spike"])
     plt.ylabel("V (mV)")
     plt.title("Simulation of glif_psc neuron of " + glif_model)

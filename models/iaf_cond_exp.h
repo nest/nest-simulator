@@ -66,11 +66,13 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_exp`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an exponential function. The exponential function
 is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -118,7 +120,14 @@ See also
 
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_exp
+
 EndUserDocs*/
+
+void register_iaf_cond_exp( const std::string& name );
 
 class iaf_cond_exp : public ArchivingNode
 {
@@ -126,7 +135,7 @@ class iaf_cond_exp : public ArchivingNode
 public:
   iaf_cond_exp();
   iaf_cond_exp( const iaf_cond_exp& );
-  ~iaf_cond_exp();
+  ~iaf_cond_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -136,23 +145,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -186,7 +195,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -228,8 +237,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_exp& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_exp > logger_;
@@ -245,7 +254,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -293,16 +302,16 @@ private:
 };
 
 
-inline port
-nest::iaf_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::iaf_cond_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_cond_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -311,8 +320,8 @@ iaf_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_cond_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -321,8 +330,8 @@ iaf_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_cond_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

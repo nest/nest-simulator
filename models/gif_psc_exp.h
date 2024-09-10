@@ -24,10 +24,10 @@
 #define GIF_PSC_EXP_H
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"
@@ -35,17 +35,17 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
 
-Current-based generalized integrate-and-fire neuron model
+Current-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
 
 Description
 +++++++++++
 
-gif_psc_exp is the generalized integrate-and-fire neuron according to
+``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with exponential
 shaped postsynaptic currents.
 
@@ -55,7 +55,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+ C \cdot dV(t)/dt = -g_L \cdot (V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
     - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
@@ -64,7 +64,7 @@ Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
- \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+ \tau_\eta{_i} \cdot d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -78,7 +78,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 \cdot \exp (V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -92,7 +92,7 @@ Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i} \cdot d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -114,7 +114,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 .. math::
 
-  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} \cdot (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
 The same formula applies for :math:`q_{\gamma}`.
@@ -124,12 +124,12 @@ The shape of postsynaptic current is exponential.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+  will numerically behave as if ``tau_m`` is equal to `tau_syn_ex` or
+  ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 Parameters
 ++++++++++
@@ -197,7 +197,14 @@ See also
 
 pp_psc_delta, gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gif_psc_exp
+
 EndUserDocs */
+
+void register_gif_psc_exp( const std::string& name );
 
 class gif_psc_exp : public ArchivingNode
 {
@@ -214,24 +221,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< gif_psc_exp >;
@@ -393,7 +400,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -409,8 +415,8 @@ private:
   static RecordablesMap< gif_psc_exp > recordablesMap_;
 };
 
-inline port
-gif_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+gif_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -419,8 +425,8 @@ gif_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool 
 }
 
 
-inline port
-gif_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+gif_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -429,8 +435,8 @@ gif_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-gif_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+gif_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -439,8 +445,8 @@ gif_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-gif_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+gif_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

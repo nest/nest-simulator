@@ -1,0 +1,47 @@
+/*
+ *  test_message_receiver.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+skip_if_without_music
+
+M_ERROR setverbosity
+
+{
+    /simtime 100 def
+
+    /ref_times [ 30.0 70.0 90.0 ] def
+    /ref_messages [ (First) (Second) (Third) ] def
+
+    /music_message_in_proxy Create /mmip Set
+    mmip << /port_name (msgdata) >> SetStatus
+
+    simtime Simulate
+
+    mmip GetStatus 0 get
+    /data get /data Set
+
+    data /messages_times get cva ref_times eq
+    data /messages get ref_messages eq  and
+}
+assert_or_die

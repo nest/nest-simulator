@@ -24,8 +24,8 @@
 #define STDP_TRIPLET_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
-#include <math.h>
 #include "connection.h"
+#include <math.h>
 
 namespace nest
 {
@@ -40,16 +40,17 @@ Synapse type with spike-timing dependent plasticity (triplets)
 Description
 +++++++++++
 
-stdp_triplet_synapse is a connection with spike time dependent
+``stdp_triplet_synapse`` is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]_).
 
 Notes:
-- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
-  Kplus and Kplus_triplet and decay with time-constants tau_plus and
-  tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the postsynaptic
-  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-  tau_minus and tau_minus_triplet, respectively. These two time-constants
+
+- Presynaptic traces ``r_1`` and ``r_2`` of [1]_ are stored in the connection as
+  ``Kplus`` and ``Kplus_triplet`` and decay with time-constants ``tau_plus`` and
+  ``tau_plus_triplet``, respectively.
+- Postsynaptic traces ``o_1`` and ``o_2`` of [1]_ are acquired from the postsynaptic
+  neuron states ``Kminus_`` and ``triplet_Kminus_`` which decay on time-constants
+  ``tau_minus`` and ``tau_minus_triplet``, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
 - This version implements the 'all-to-all' spike interaction of [1]_. The
   'nearest-spike' interaction of [1]_ can currently not be implemented
@@ -59,7 +60,7 @@ Notes:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -106,11 +107,19 @@ See also
 
 stdp_triplet_synapse_hpc, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_triplet_synapse
+
+
 EndUserDocs */
 
 // connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template
+
+void register_stdp_triplet_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_triplet_synapse : public Connection< targetidentifierT >
@@ -119,6 +128,10 @@ class stdp_triplet_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -131,6 +144,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
+  stdp_triplet_synapse& operator=( const stdp_triplet_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -143,8 +157,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places
   // these functions are used. Since ConnectionBase depends on the template
   // parameter, they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -163,7 +177,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -171,10 +185,10 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
@@ -192,7 +206,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -236,6 +250,9 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_triplet_synapse< targetidentifierT >::properties;
+
 /**
  * Send an event to the receiver of this connection.
  * \param e The event to send
@@ -243,10 +260,9 @@ private:
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
-stdp_triplet_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+stdp_triplet_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
-
   double t_spike = e.get_stamp().get_ms();
   double dendritic_delay = get_delay();
   Node* target = get_target( t );
@@ -292,6 +308,8 @@ stdp_triplet_synapse< targetidentifierT >::send( Event& e, thread t, const Commo
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 // Defaults come from reference [1]_ data fitting and table 3.
@@ -356,7 +374,7 @@ stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
     throw BadProperty( "State Kplus must be positive." );
   }
 
-  if ( not( Kplus_triplet_ >= 0 ) )
+  if ( Kplus_triplet_ < 0 )
   {
     throw BadProperty( "State Kplus_triplet must be positive." );
   }

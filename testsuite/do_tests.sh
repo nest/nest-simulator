@@ -27,7 +27,7 @@
 # respective language's native `unittest` library to assert certain
 # invariants and thus ensure a correctly working installation of NEST.
 #
-
+set -euo pipefail
 
 #
 # usage <exit_code> [argument]
@@ -50,11 +50,10 @@ usage ()
     fi
 
     cat <<EOF
-Usage: $0 --prefix=<path> --report-dir=<path> [options]
+Usage: $0 --prefix=<path> [options]
 
 Required arguments:
     --prefix=<path>        The base installation path of NEST
-    --report-dir=<path>    The directory to store the output to
 
 Options:
     --with-python=<exe>    The Python executable to use
@@ -65,6 +64,9 @@ EOF
     exit $1
 }
 
+PREFIX=""
+PYTHON=""
+MUSIC=""
 while test $# -gt 0 ; do
     case "$1" in
         --help)
@@ -72,9 +74,6 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-            ;;
-        --report-dir=*)
-            REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -89,12 +88,8 @@ while test $# -gt 0 ; do
     shift
 done
 
-if test ! "${PREFIX}"; then
+if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
-fi
-
-if test ! "${REPORTDIR}"; then
-    usage 2 "--report-dir";
 fi
 
 if test "${PYTHON}"; then
@@ -104,11 +99,10 @@ if test "${PYTHON}"; then
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
     }
-    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
+      PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
-python3 -c "import junitparser" >/dev/null 2>&1
-if test $? != 0; then
+if ! python3 -c "import junitparser" >/dev/null 2>&1; then
     echo "Error: Required Python package 'junitparser' not found."
     exit 1
 fi
@@ -118,30 +112,49 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-if test -d "${REPORTDIR}"; then
-    rm -rf "${REPORTDIR}"
-fi
-mkdir "${REPORTDIR}"
-
+# Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
+
+# Create the report directory in the directory in which make installcheck is called (do_tests.sh is run).
+# Use absolute pathnames, this is necessary for MUSIC tests which otherwis will not find the logfiles
+# while running in temporary directories.
+REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
+
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
-NEST="nest_serial"
+echo "TEST_BASEDIR=${TEST_BASEDIR}"
+echo "TEST_LOGFILE=${TEST_LOGFILE}"
+echo "TEST_OUTFILE=${TEST_OUTFILE}"
+echo "TEST_RETFILE=${TEST_RETFILE}"
+echo "TEST_RUNFILE=${TEST_RUNFILE}"
 
+echo "${TEST_BASEDIR}"
+ls -la "${TEST_BASEDIR}"
+
+NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+HAVE_OPENMP="$(sli -c 'is_threaded =only')"
 
 if test "${HAVE_MPI}" = "true"; then
-  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
-  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+    MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
+    MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
+    # OpenMPI requires --oversubscribe to allow more processes than available cores
+    if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
+	if [[ ! "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
+	    export SLI_MPIEXEC_PREFLAGS="--oversubscribe"
+	fi
+    fi
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
-if test "$(uname -s)" = "Darwin"; then
-    TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
-    defaults write com.apple.CrashReporter DialogType server
+echo "INFO_OS=${INFO_OS}"
+if test "x${INFO_OS}" = "xDarwin"; then
+    TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )" || true
+    echo "TEST_CRSTATE=$TEST_CRSTATE"
+    defaults write com.apple.CrashReporter DialogType server || echo "WARNING: Could not set CrashReporter DialogType!"
 fi
 
 print_paths () {
@@ -158,7 +171,11 @@ echo
 NEST_VERSION="$(sli -c "statusdict/version :: =only")"
 echo "  NEST executable .... $NEST (version $NEST_VERSION)"
 echo "  PREFIX ............. $PREFIX"
-if test "${PYTHON}"; then
+if test -n "${MUSIC}"; then
+    MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
+    echo "  MUSIC executable ... $MUSIC (version $MUSIC_VERSION)"
+fi
+if test -n "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
@@ -167,13 +184,10 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  MPI launcher ....... $MPI_LAUNCHER"
+    echo "         launcher .... $MPI_LAUNCHER"
+    echo "         version ..... $MPI_LAUNCHER_VERSION"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
-fi
-if test "${MUSIC}"; then
-    MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
-    echo "  MUSIC executable ... $MUSIC (version $MUSIC_VERSION)"
 fi
 echo "  TEST_BASEDIR ....... $TEST_BASEDIR"
 echo "  REPORTDIR .......... $REPORTDIR"
@@ -306,10 +320,17 @@ echo "--------------------------------"
 
 junit_open '03_unittests'
 
-for test_ext in sli py ; do
-      for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-          run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-      done
+tests_collect=sli
+if test "${PYTHON}"; then
+  tests_collect="$tests_collect py"
+fi
+for test_ext in ${tests_collect} ; do
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/sli2py_ignore/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
 done
 
 junit_close
@@ -320,9 +341,12 @@ echo "---------------------------------"
 
 junit_open '04_regressiontests'
 
-for test_ext in sli py ; do
+for test_ext in ${tests_collect} ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/sli2py_ignore/" | grep ".*\.${test_ext}$") ; do
+        run_test "regressiontests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
 
@@ -368,7 +392,7 @@ if test "${MUSIC}"; then
 
     # Create a temporary directory with a unique name.
     BASEDIR="$PWD"
-    tmpdir="$(mktemp -d)"
+    TMPDIR_MUSIC="$(mktemp -d)"
 
     TESTDIR="${TEST_BASEDIR}/musictests/"
 
@@ -382,28 +406,32 @@ if test "${MUSIC}"; then
 
         # Check if there is an accompanying shell script for the test.
         sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
-        if test ! -f "${sh_file}"; then unset sh_file; fi
+        if test ! -f "${sh_file}"; then sh_file=""; fi
+
+        # Check if there is an accompanying input data file
+        input_file="${TESTDIR}/$(basename ${music_file} .music)0.dat"
+        if test ! -f "${input_file}"; then input_file=""; fi
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
+        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
         echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Copy everything to 'tmpdir'.
+        # Copy everything to TMPDIR_MUSIC.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
-        cp ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || :
+        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${TMPDIR_MUSIC} 2>/dev/null || true
 
-        # Create the runner script in 'tmpdir'.
-        cd "${tmpdir}"
+        # Create the runner script in TMPDIR_MUSIC.
+        cd "${TMPDIR_MUSIC}"
         echo "#!/bin/sh" >  runner.sh
         echo "set +e" >> runner.sh
-        echo "NEST_DATA_PATH=\"${tmpdir}\"" >> runner.sh
-        echo "${command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
+        echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\"" >> runner.sh
+        echo "${test_command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
         if test -n "${sh_file}"; then
             chmod 755 "$(basename "${sh_file}")"
             echo "./$(basename "${sh_file}")" >> runner.sh
@@ -411,9 +439,10 @@ if test "${MUSIC}"; then
         echo "echo \$? > exit_code ; exit 0" >> runner.sh
 
         # Run the script and measure execution time. Copy the output to the logfile.
+        music_path=$(dirname ${MUSIC})
         chmod 755 runner.sh
-        TIME_ELAPSED=$( time_cmd ./runner.sh )
-        TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
+        TIME_ELAPSED=$(PATH=$PATH:${music_path} time_cmd ./runner.sh )
+        TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
         sed -e 's/^/   > /g' ${TEST_OUTFILE} >> "${TEST_LOGFILE}"
 
         # Retrieve the exit code. This is either the one of the mpirun call
@@ -424,7 +453,7 @@ if test "${MUSIC}"; then
         # The values will be stored in the XML report at 'junit_close'.
         # Test failures and diagnostic information are also stored in the xml-report file
         # with 'unit_write'.
-        JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+        JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))
         if test -z $(echo ${test_name} | grep failure); then
             if test $exit_code -eq 0; then
                 echo "Success"
@@ -452,8 +481,6 @@ if test "${MUSIC}"; then
         cd "${BASEDIR}"
     done
 
-    rm -rf "$tmpdir"
-
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
@@ -468,24 +495,44 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi and non_concurrent subdirectories
+    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    env
+    set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
-          "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+    set -e
 
-    # Run tests that cannot run concurrently
-    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_nc.xml"    
-    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
-          "${PYNEST_TEST_DIR}/non_concurrent" 2>&1 | tee -a "${TEST_LOGFILE}" 
-  
-    # Run tests in the mpi subdirectories, grouped by number of processes
-    if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
-       for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
-           XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
-           $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
-       done
+    # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
+    if test "${HAVE_MPI}" = "true" && test "${HAVE_OPENMP}" = "true" ; then
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+	env
+	set +e
+	"${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+		    "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+	set -e
+    fi
+
+    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
+    if test "${HAVE_MPI}" = "true"; then
+        if test "${MPI_LAUNCHER}"; then
+	    # Loop over subdirectories whose names are the number of mpi procs to use
+            for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
+                XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+                PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+
+		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+		    PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"
+		fi
+
+		set +e
+
+		# We need to use eval here because $() splits run_command in weird ways
+                run_command="$(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only")"
+		eval "${run_command}" 2>&1 | tee -a "${TEST_LOGFILE}"
+		set -e
+            done
+        fi
     fi
 else
     echo
@@ -498,11 +545,16 @@ echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
 if command -v run_all_cpptests >/dev/null 2>&1; then
+  set +e
   CPP_TEST_OUTPUT=$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  set -e
   echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
+
+# the following steps rely on `$?`, so breaking on error is not an option and we turn it off
+set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.
@@ -511,7 +563,7 @@ TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
 if test "x${INFO_OS}" = xDarwin ; then
-    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
+    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
 fi
 
 exit $TESTSUITE_RESULT

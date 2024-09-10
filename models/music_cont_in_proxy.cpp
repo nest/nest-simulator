@@ -32,12 +32,20 @@
 #include "integerdatum.h"
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_music_cont_in_proxy( const std::string& name )
+{
+  register_node_model< music_cont_in_proxy >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -65,11 +73,12 @@ nest::music_cont_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
 {
-  // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.published_)
-  //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
+  if ( d->known( names::port_name ) and s.published_ )
+  {
+    throw MUSICPortAlreadyPublished( node->get_name(), port_name_ );
+  }
 
   if ( not s.published_ )
   {
@@ -119,7 +128,7 @@ nest::music_cont_in_proxy::init_buffers_()
 }
 
 void
-nest::music_cont_in_proxy::calibrate()
+nest::music_cont_in_proxy::pre_run_hook()
 {
   // only publish the port once
   if ( not S_.published_ )
@@ -151,7 +160,7 @@ nest::music_cont_in_proxy::calibrate()
     S_.published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "music_cont_in_proxy::calibrate()", msg.c_str() );
+    LOG( M_INFO, "music_cont_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 
@@ -167,8 +176,8 @@ nest::music_cont_in_proxy::get_status( DictionaryDatum& d ) const
 void
 nest::music_cont_in_proxy::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, S_, this ); // throws if BadProperty
 
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty

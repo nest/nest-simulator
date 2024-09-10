@@ -49,13 +49,13 @@ Provide a direct current (DC) input
 Description
 +++++++++++
 
-The dc_generator provides a constant DC input to the connected
+The ``dc_generator`` provides a constant DC input to the connected
 node. The unit of the current is pA.
 
-The dc_generator is rather inefficient, since it needs to send the
+The ``dc_generator`` is rather inefficient, since it needs to send the
 same current information on each time step. If you only need a
 constant bias current into a neuron, you could instead directly set
-the property *I_e*, which is available in many neuron models.
+the property ``I_e``, which is available in many neuron models.
 
 .. include:: ../models/stimulation_device.rst
 
@@ -82,7 +82,14 @@ See also
 
 ac_generator, noise_generator, step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: dc_generator
+
 EndUserDocs */
+
+void register_dc_generator( const std::string& name );
 
 class dc_generator : public StimulationDevice
 {
@@ -94,14 +101,14 @@ public:
   //! Allow multimeter to connect to local instances
   bool local_receiver() const override;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   using Node::handle;
   using Node::handles_test_event;
 
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -113,7 +120,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
@@ -178,8 +185,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+inline size_t
+dc_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -189,8 +196,8 @@ dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_i
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-dc_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+dc_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -26,6 +26,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,12 +36,19 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 
+void
+nest::register_poisson_generator( const std::string& name )
+{
+  register_node_model< poisson_generator >( name );
+}
+
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // pA
+  : rate_( 0.0 ) // Hz
 {
 }
 
@@ -100,9 +108,9 @@ nest::poisson_generator::init_buffers_()
 }
 
 void
-nest::poisson_generator::calibrate()
+nest::poisson_generator::pre_run_hook()
 {
-  StimulationDevice::calibrate();
+  StimulationDevice::pre_run_hook();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -117,9 +125,6 @@ nest::poisson_generator::calibrate()
 void
 nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 )
   {
     return;

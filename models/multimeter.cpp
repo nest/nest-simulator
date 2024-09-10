@@ -24,12 +24,26 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 namespace nest
 {
+void
+register_multimeter( const std::string& name )
+{
+  register_node_model< multimeter >( name );
+}
+
+void
+register_voltmeter( const std::string& name )
+{
+  register_node_model< voltmeter >( name );
+}
+
 
 multimeter::multimeter()
   : RecordingDevice()
@@ -45,13 +59,13 @@ multimeter::multimeter( const multimeter& n )
 {
 }
 
-port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+size_t
+multimeter::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port_ and not is_model_prototype() )
+  size_t p = target.handles_test_event( e, receptor_type );
+  if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
   }
@@ -73,7 +87,8 @@ nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::multimeter::Parameters_& nest::multimeter::Parameters_::operator=( const Parameters_& p )
+nest::multimeter::Parameters_&
+nest::multimeter::Parameters_::operator=( const Parameters_& p )
 {
   interval_ = p.interval_;
   offset_ = p.offset_;
@@ -106,7 +121,7 @@ void
 nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
+    and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -138,7 +153,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
-    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
+    if ( v != 0 and Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "
@@ -169,9 +184,9 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-multimeter::calibrate()
+multimeter::pre_run_hook()
 {
-  RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -182,7 +197,7 @@ multimeter::update( Time const& origin, const long from, const long )
      previous slice if we are called at the beginning of the slice. Otherwise,
      we do nothing.
    */
-  if ( origin.get_steps() == 0 || from != 0 )
+  if ( origin.get_steps() == 0 or from != 0 )
   {
     return;
   }
@@ -204,9 +219,6 @@ multimeter::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  // count records that have been skipped during inactivity
-  size_t inactive_skipped = 0;
-
   // record all data, time point by time point
   for ( size_t j = 0; j < info.size(); ++j )
   {
@@ -217,14 +229,10 @@ multimeter::handle( DataLoggingReply& reply )
 
     if ( not is_active( info[ j ].timestamp ) )
     {
-      ++inactive_skipped;
       continue;
     }
 
     reply.set_stamp( info[ j ].timestamp );
-    // const index sender = reply.get_sender_node_id();
-    // const Time stamp = reply.get_stamp();
-    // const double offset = reply.get_stamp().get_offset();
 
     write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
   }
@@ -235,11 +243,6 @@ multimeter::get_type() const
 {
   return RecordingDevice::MULTIMETER;
 }
-
-
-//
-// Definition of voltmeter subclass
-//
 
 voltmeter::voltmeter()
   : multimeter()

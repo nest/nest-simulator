@@ -27,9 +27,6 @@
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 #include <string>
 
 // Includes from libnestutil:
@@ -39,13 +36,12 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 struct my_params
 {
@@ -66,6 +62,12 @@ erfcx( double x, void* p )
 
 namespace nest
 {
+void
+register_siegert_neuron( const std::string& name )
+{
+  register_node_model< siegert_neuron >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -292,7 +294,7 @@ nest::siegert_neuron::init_buffers_()
 }
 
 void
-nest::siegert_neuron::calibrate()
+nest::siegert_neuron::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
@@ -310,9 +312,6 @@ nest::siegert_neuron::calibrate()
 bool
 nest::siegert_neuron::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;

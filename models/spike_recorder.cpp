@@ -22,24 +22,26 @@
 
 #include "spike_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+
+void
+nest::register_spike_recorder( const std::string& name )
+{
+  register_node_model< spike_recorder >( name );
+}
+
 
 nest::spike_recorder::spike_recorder()
   : RecordingDevice()
@@ -52,9 +54,9 @@ nest::spike_recorder::spike_recorder( const spike_recorder& n )
 }
 
 void
-nest::spike_recorder::calibrate()
+nest::spike_recorder::pre_run_hook()
 {
-  RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -105,7 +107,7 @@ nest::spike_recorder::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
       write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     }

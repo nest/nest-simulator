@@ -1,0 +1,8 @@
+---
+extends: existence
+message: "Don't use ampersands unless one is part of a company or brand name."
+level: warning
+nonword: true
+tokens:
+  - '\w+\s&\s\w+'
+

@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm>
-#include <cstdlib>
 #include <iomanip>
 #include <string>
 #include <vector>
@@ -40,12 +39,14 @@ Dictionary::~Dictionary()
 {
 }
 
-const Token& Dictionary::operator[]( const char* n ) const
+const Token&
+Dictionary::operator[]( const char* n ) const
 {
   return operator[]( Name( n ) );
 }
 
-Token& Dictionary::operator[]( const char* n )
+Token&
+Dictionary::operator[]( const char* n )
 {
   return operator[]( Name( n ) );
 }
@@ -204,7 +205,8 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
   return missed.empty();
 }
 
-std::ostream& operator<<( std::ostream& out, const Dictionary& d )
+std::ostream&
+operator<<( std::ostream& out, const Dictionary& d )
 {
   out << "<<";
 

@@ -29,21 +29,26 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
+void
+register_iaf_psc_delta_ps( const std::string& name )
+{
+  register_node_model< iaf_psc_delta_ps >( name );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -106,20 +111,20 @@ nest::iaf_psc_delta_ps::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::I_e, I_e_ );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  if ( updateValueParam< double >( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -128,7 +133,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  if ( updateValueParam< double >( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -137,7 +142,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -179,9 +184,9 @@ nest::iaf_psc_delta_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) 
 }
 
 void
-nest::iaf_psc_delta_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_delta_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, U_ ) )
+  if ( updateValueParam< double >( d, names::V_m, U_, node ) )
   {
     U_ -= p.E_L_;
   }
@@ -238,7 +243,7 @@ nest::iaf_psc_delta_ps::init_buffers_()
 }
 
 void
-iaf_psc_delta_ps::calibrate()
+iaf_psc_delta_ps::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -259,10 +264,6 @@ iaf_psc_delta_ps::calibrate()
 void
 iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {
@@ -304,7 +305,7 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
     double t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -368,9 +369,10 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
           {
             if ( S_.with_refr_input_ )
             {
-              V_.refr_spikes_buffer_ +=
-                ev_weight * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
-                                        - ( S_.last_spike_offset_ - ev_offset ) + P_.t_ref_ ) / P_.tau_m_ );
+              V_.refr_spikes_buffer_ += ev_weight
+                * std::exp(
+                  -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_ - ( S_.last_spike_offset_ - ev_offset ) + P_.t_ref_ )
+                  / P_.tau_m_ );
             }
           }
           else
@@ -428,7 +430,7 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( not S_.is_refractory_ && t > 0 ) // not at end of step, do remainder
+      if ( not S_.is_refractory_ and t > 0 ) // not at end of step, do remainder
       {
         propagate_( t );
         if ( S_.U_ >= P_.U_th_ )
@@ -456,8 +458,6 @@ nest::iaf_psc_delta_ps::propagate_( const double dt )
   const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );
   const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
   S_.U_ = -v_inf * expm1_dt + S_.U_ * expm1_dt + S_.U_;
-
-  return;
 }
 
 void
@@ -482,8 +482,6 @@ nest::iaf_psc_delta_ps::emit_spike_( Time const& origin, const long lag, const d
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
-
-  return;
 }
 
 void
@@ -504,8 +502,6 @@ nest::iaf_psc_delta_ps::emit_instant_spike_( Time const& origin, const long lag,
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
   kernel().event_delivery_manager.send( *this, se, lag );
-
-  return;
 }
 
 void

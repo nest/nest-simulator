@@ -27,9 +27,16 @@
 #include "connector_model.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"
+
+void
+nest::register_stdp_dopamine_synapse( const std::string& name )
+{
+  register_connection_model< stdp_dopamine_synapse >( name );
+}
 
 namespace nest
 {
@@ -39,7 +46,7 @@ namespace nest
 
 STDPDopaCommonProperties::STDPDopaCommonProperties()
   : CommonSynapseProperties()
-  , vt_( 0 )
+  , volume_transmitter_( nullptr )
   , A_plus_( 1.0 )
   , A_minus_( 1.5 )
   , tau_plus_( 20.0 )
@@ -55,14 +62,9 @@ void
 STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  if ( vt_ != 0 )
-  {
-    def< long >( d, names::vt, vt_->get_node_id() );
-  }
-  else
-  {
-    def< long >( d, names::vt, -1 );
-  }
+
+  const NodeCollectionDatum vt = NodeCollectionDatum( NodeCollection::create( volume_transmitter_ ) );
+  def< NodeCollectionDatum >( d, names::volume_transmitter, vt );
 
   def< double >( d, names::A_plus, A_plus_ );
   def< double >( d, names::A_minus, A_minus_ );
@@ -79,16 +81,23 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  long vtnode_id;
-  if ( updateValue< long >( d, names::vt, vtnode_id ) )
+  NodeCollectionDatum vt_datum;
+  if ( updateValue< NodeCollectionDatum >( d, names::volume_transmitter, vt_datum ) )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
-    vt_ = dynamic_cast< volume_transmitter* >( vt );
-    if ( vt_ == 0 )
+    if ( vt_datum->size() != 1 )
     {
-      throw BadProperty( "Dopamine source must be volume transmitter" );
+      throw BadProperty( "Property volume_transmitter must be a single element NodeCollection" );
     }
+
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    Node* vt_node = kernel().node_manager.get_node_or_proxy( ( *vt_datum )[ 0 ], tid );
+    volume_transmitter* vt = dynamic_cast< volume_transmitter* >( vt_node );
+    if ( not vt )
+    {
+      throw BadProperty( "Property volume_transmitter must be set to a node of type volume_transmitter" );
+    }
+
+    volume_transmitter_ = vt;
   }
 
   updateValue< double >( d, names::A_plus, A_plus_ );
@@ -99,19 +108,6 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   updateValue< double >( d, names::b, b_ );
   updateValue< double >( d, names::Wmin, Wmin_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
-}
-
-Node*
-STDPDopaCommonProperties::get_node()
-{
-  if ( vt_ == 0 )
-  {
-    throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
-  }
-  else
-  {
-    return vt_;
-  }
 }
 
 } // of namespace nest

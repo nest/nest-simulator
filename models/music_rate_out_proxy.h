@@ -51,13 +51,13 @@ Device to forward rates to remote applications using MUSIC
 Description
 +++++++++++
 
-A `music_rate_out_proxy` is used to send rates to a remote application that
+A ``music_rate_out_proxy`` is used to send rates to a remote application that
 also uses MUSIC.
 
-The `music_rate_out_proxy` represents a complete MUSIC rate output
+The ``music_rate_out_proxy`` represents a complete MUSIC rate output
 port. The channel on the port to which a source node forwards its
 events is determined during connection setup by using the parameter
-`music_channel` of the connection. The name of the port is set via
+``music_channel`` of the connection. The name of the port is set via
 ``SetStatus`` (see Parameters section below).
 
 Parameters
@@ -80,10 +80,17 @@ See also
 
 music_rate_in_proxy, music_cont_out_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_rate_out_proxy
+
 EndUserDocs */
 
 namespace nest
 {
+void register_music_rate_out_proxy( const std::string& name );
+
 class music_rate_out_proxy : public DeviceNode
 {
 
@@ -118,14 +125,14 @@ public:
 
   void handle( InstantaneousRateConnectionEvent& );
 
-  port handles_test_event( InstantaneousRateConnectionEvent&, rport );
+  size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )
@@ -143,7 +150,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, State_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -184,8 +191,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
+inline size_t
+music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type )
 {
   // receptor_type i is mapped to channel i of the MUSIC port so we
   // have to generate the index map here, that assigns the channel
@@ -206,6 +213,6 @@ music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rpo
 
 } // namespace
 
-#endif /* #ifndef MUSIC_RATE_OUT_PROXY_H */
+#endif /* HAVE_MUSIC */
 
 #endif

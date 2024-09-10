@@ -39,6 +39,7 @@
 
 namespace nest
 {
+void register_music_event_in_proxy( const std::string& name );
 
 /* BeginUserDocs: device, MUSIC, spike
 
@@ -50,14 +51,14 @@ A device which receives spikes from MUSIC
 Description
 +++++++++++
 
-A music_event_in_proxy can be used to pass spikes to nodes within NEST
+A ``music_event_in_proxy`` can be used to pass spikes to nodes within NEST
 which are received from another application.
 
 It uses the MUSIC library to receive spike events from other
-applications. The music_event_in_proxy represents one channel on a port
+applications. The ``music_event_in_proxy`` represents one channel on a port
 to which MUSIC can connect an event source. The music_event_in_proxy can
 be connected to local neurons or devices within NEST to receive
-the events. Multiple music_in_proxies can be configured to listen
+the events. Multiple ``music_in_proxies`` can be configured to listen
 on the same port, but each channel can only listened to by a
 single proxy.
 
@@ -84,6 +85,11 @@ See also
 ++++++++
 
 SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_event_in_proxy
 
 EndUserDocs */
 
@@ -114,14 +120,14 @@ public:
   using Node::handles_test_event;
 
   void handle( SpikeEvent& );
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )
@@ -141,7 +147,7 @@ private:
     void get( DictionaryDatum& ) const;
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      */
     void set( const DictionaryDatum&, State_& );
   };
@@ -166,8 +172,8 @@ private:
   State_ S_;
 };
 
-inline port
-music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+music_event_in_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

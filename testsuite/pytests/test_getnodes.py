@@ -24,6 +24,7 @@ Test GetNodes
 """
 
 import unittest
+
 import nest
 
 
@@ -34,11 +35,12 @@ class GetNodesTestCase(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-        a = nest.Create('iaf_psc_alpha', 3)
-        b = nest.Create('iaf_psc_delta', 2, {'V_m': -77.})
-        c = nest.Create('iaf_psc_alpha', 4, {'V_m': [-77., -66., -77., -66.],
-                                             'tau_m': [10., 11., 12., 13.]})
-        d = nest.Create('iaf_psc_exp', 4)
+        a = nest.Create("iaf_psc_alpha", 3)  # noqa: F841
+        b = nest.Create("iaf_psc_delta", 2, {"V_m": -77.0})  # noqa: F841
+        c = nest.Create(
+            "iaf_psc_alpha", 4, {"V_m": [-77.0, -66.0, -77.0, -66.0], "tau_m": [10.0, 11.0, 12.0, 13.0]}  # noqa: F841
+        )
+        d = nest.Create("iaf_psc_exp", 4)  # noqa: F841
 
     def test_GetNodes(self):
         """test GetNodes"""
@@ -49,25 +51,24 @@ class GetNodesTestCase(unittest.TestCase):
 
     def test_GetNodes_with_params(self):
         """test GetNodes with params"""
-        nodes_Vm = nest.GetNodes({'V_m': -77.})
+        nodes_Vm = nest.GetNodes({"V_m": -77.0})
         nodes_Vm_ref = nest.NodeCollection([4, 5, 6, 8])
 
         self.assertEqual(nodes_Vm_ref, nodes_Vm)
 
-        nodes_Vm_tau = nest.GetNodes({'V_m': -77., 'tau_m': 12.})
+        nodes_Vm_tau = nest.GetNodes({"V_m": -77.0, "tau_m": 12.0})
         nodes_Vm_tau_ref = nest.NodeCollection([8])
 
         self.assertEqual(nodes_Vm_tau_ref, nodes_Vm_tau)
 
-        nodes_exp = nest.GetNodes({'model': 'iaf_psc_exp'})
+        nodes_exp = nest.GetNodes({"model": "iaf_psc_exp"})
         nodes_exp_ref = nest.NodeCollection([10, 11, 12, 13])
 
         self.assertEqual(nodes_exp_ref, nodes_exp)
 
 
 def suite():
-
-    suite = unittest.makeSuite(GetNodesTestCase, 'test')
+    suite = unittest.makeSuite(GetNodesTestCase, "test")
     return suite
 
 

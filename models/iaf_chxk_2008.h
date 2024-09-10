@@ -56,14 +56,14 @@ precise spike times used in Casti et al. 2008
 Description
 +++++++++++
 
-iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
+``iaf_chxk_2008`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]_. A spike is emitted when the membrane potential
 is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
-follow alpha-function time courses as in the iaf_cond_alpha model.
+follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used
@@ -71,7 +71,7 @@ follow alpha-function time courses as in the iaf_cond_alpha model.
    determined by linear interpolation within the time step during which the
    threshold was crossed.
 
-   iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+   ``iaf_chxk_2008`` neurons therefore emit spikes with precise spike time
    information, but they ignore precise spike times when handling synaptic
    input.
 
@@ -126,6 +126,11 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_chxk_2008
+
 EndUserDocs */
 
 /**
@@ -140,6 +145,8 @@ EndUserDocs */
  */
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
+void register_iaf_chxk_2008( const std::string& name );
+
 class iaf_chxk_2008 : public ArchivingNode
 {
 
@@ -148,7 +155,7 @@ class iaf_chxk_2008 : public ArchivingNode
 public:
   iaf_chxk_2008();
   iaf_chxk_2008( const iaf_chxk_2008& );
-  ~iaf_chxk_2008();
+  ~iaf_chxk_2008() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -158,29 +165,29 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -278,8 +285,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;
@@ -295,7 +302,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -387,8 +394,8 @@ private:
 
 // Boilerplate inline function definitions ----------------------------------
 
-inline port
-iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_chxk_2008::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -396,8 +403,8 @@ iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, boo
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_chxk_2008::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_chxk_2008::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -406,8 +413,8 @@ iaf_chxk_2008::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_chxk_2008::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -416,8 +423,8 @@ iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

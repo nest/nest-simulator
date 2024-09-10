@@ -43,29 +43,41 @@ void
 ConnectionManager::register_conn_builder( const std::string& name )
 {
   assert( not connruledict_->known( name ) );
-  GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
-  assert( cb != 0 );
+  GenericBipartiteConnBuilderFactory* cb = new BipartiteConnBuilderFactory< ConnBuilder >();
+  assert( cb );
   const int id = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );
   connruledict_->insert( name, id );
 }
 
-inline void
-ConnectionManager::send_to_devices( const thread tid, const index source_node_id, Event& e )
+template < typename ThirdConnBuilder >
+void
+ConnectionManager::register_third_conn_builder( const std::string& name )
 {
-  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  assert( not thirdconnruledict_->known( name ) );
+  GenericThirdConnBuilderFactory* cb = new ThirdConnBuilderFactory< ThirdConnBuilder >();
+  assert( cb );
+  const int id = thirdconnbuilder_factories_.size();
+  thirdconnbuilder_factories_.push_back( cb );
+  thirdconnruledict_->insert( name, id );
 }
 
 inline void
-ConnectionManager::send_to_devices( const thread tid, const index source_node_id, SecondaryEvent& e )
+ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, Event& e )
 {
-  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_connection_models( tid ) );
 }
 
 inline void
-ConnectionManager::send_from_device( const thread tid, const index ldid, Event& e )
+ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e )
 {
-  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_connection_models( tid ) );
+}
+
+inline void
+ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event& e )
+{
+  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_connection_models( tid ) );
 }
 
 } // namespace nest

@@ -41,52 +41,40 @@ class ModelRangeManager : public ManagerInterface
 {
 public:
   ModelRangeManager();
-  ~ModelRangeManager()
+  ~ModelRangeManager() override
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void
-  set_status( const DictionaryDatum& )
-  {
-  }
-  virtual void
-  get_status( DictionaryDatum& )
-  {
-  }
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Assign a range of node IDs for the given model
    */
-  void add_range( index model, index first_node_id, index last_node_id );
+  void add_range( size_t model, size_t first_node_id, size_t last_node_id );
 
   /**
    * Check whether a node ID is with the range of assigned node IDs
    */
-  bool is_in_range( index node_id ) const;
+  bool is_in_range( size_t node_id ) const;
 
   /**
    * Get the ID of the model to which this node ID is assigned
    */
-  index get_model_id( index node_id ) const;
+  size_t get_model_id( size_t node_id ) const;
 
   /**
    * Return the Model for a given node ID.
    */
-  Model* get_model_of_node_id( index );
-
-  /**
-   * Check whether this model ID has any node IDs assigned to it
-   */
-  bool model_in_use( index i ) const;
+  Model* get_model_of_node_id( size_t );
 
   /**
    * Return the contiguous range of IDs of nodes assigned to the same model
    * as the node with the given node ID.
    */
-  const modelrange& get_contiguous_node_id_range( index node_id ) const;
+  const modelrange& get_contiguous_node_id_range( size_t node_id ) const;
 
   std::vector< modelrange >::const_iterator begin() const;
 
@@ -94,15 +82,24 @@ public:
 
 private:
   std::vector< modelrange > modelranges_;
-  index first_node_id_;
-  index last_node_id_;
+  size_t first_node_id_;
+  size_t last_node_id_;
 };
 
+inline void
+nest::ModelRangeManager::set_status( const DictionaryDatum& )
+{
+}
+
+inline void
+nest::ModelRangeManager::get_status( DictionaryDatum& )
+{
+}
 
 inline bool
-nest::ModelRangeManager::is_in_range( index node_id ) const
+nest::ModelRangeManager::is_in_range( size_t node_id ) const
 {
-  return ( ( node_id <= last_node_id_ ) and ( node_id >= first_node_id_ ) );
+  return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
 inline std::vector< modelrange >::const_iterator

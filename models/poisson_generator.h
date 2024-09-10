@@ -44,9 +44,9 @@ Generate spikes with Poisson process statistics
 Description
 +++++++++++
 
-The poisson_generator simulates a neuron that is firing with Poisson
-statistics, i.e. exponentially distributed interspike intervals. It will
-generate a `unique` spike train for each of it's targets. If you do not want
+The ``poisson_generator`` simulates a neuron that is firing with Poisson
+statistics, that is, exponentially distributed interspike intervals. It will
+generate a `unique` spike train for each of its targets. If you do not want
 this behavior and need the same spike train for all targets, you have to use a
 ``parrot_neuron`` between the poisson generator and the targets.
 
@@ -75,7 +75,14 @@ See also
 
 poisson_generator_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: poisson_generator
+
 EndUserDocs */
+
+void register_poisson_generator( const std::string& name );
 
 class poisson_generator : public StimulationDevice
 {
@@ -95,7 +102,7 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -106,7 +113,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
   void event_hook( DSSpikeEvent& ) override;
@@ -123,7 +130,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -139,8 +146,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+poisson_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

@@ -63,7 +63,7 @@ protected:
 
 private:
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new AggregateDatum< C, slt >( *this );
   }
@@ -96,7 +96,7 @@ public:
     // to work.
 
     const AggregateDatum< C, slt >* ddc = dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
-    if ( ddc == NULL )
+    if ( not ddc )
     {
       return false;
     }
@@ -104,7 +104,8 @@ public:
     return static_cast< C >( *ddc ) == static_cast< C >( *this );
   }
 
-  static void* operator new( size_t size )
+  static void*
+  operator new( size_t size )
   {
     if ( size != memory.size_of() )
     {
@@ -113,9 +114,10 @@ public:
     return memory.alloc();
   }
 
-  static void operator delete( void* p, size_t size )
+  static void
+  operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( not p )
     {
       return;
     }

@@ -20,13 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
 
 
 class TestRecordingBackends(unittest.TestCase):
-
     def testAAAResetKernel(self):
         """Test reset of recording backend defaults.
 
@@ -86,13 +86,11 @@ class TestRecordingBackends(unittest.TestCase):
         nest.ResetKernel()
 
         if HAVE_SIONLIB:
-            rb_status = nest.recording_backends
-            chunksize = rb_status["sionlib"]["sion_chunksize"]
-            sl_params = {"sionlib": {"sion_chunksize": chunksize + 1}}
-            nest.recording_backends = sl_params
-
-            sl_chunksize = nest.recording_backends["sionlib"]["sion_chunksize"]
-            self.assertEqual(sl_chunksize, chunksize + 1)
+            chunksize_before = nest.GetDefaults("sionlib", "sion_chunksize")
+            sionlib_options = {"sion_chunksize": chunksize_before + 1}
+            nest.SetDefaults("sionlib", sionlib_options)
+            chunksize_after = nest.GetDefaults("sionlib", "sion_chunksize")
+            self.assertEqual(chunksize_after, chunksize_before + 1)
 
     def testSetDefaultRecordingBackend(self):
         """Test setting the default recording backend.
@@ -151,6 +149,6 @@ def suite():
     return suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

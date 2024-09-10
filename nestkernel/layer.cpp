@@ -24,9 +24,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
 #include "node_collection.h"
-#include "kernel_manager.h"
 #include "parameter.h"
 
 // Includes from sli:
@@ -44,8 +44,8 @@
 namespace nest
 {
 
-NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
-NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
+NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -54,17 +54,11 @@ AbstractLayer::~AbstractLayer()
 NodeCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
-  index length = 0;
-  AbstractLayer* layer_local = 0;
+  size_t length = 0;
+  AbstractLayer* layer_local = nullptr;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
-
-  if ( element_model.empty() )
-  {
-    throw UnknownModelName( element_name );
-  }
-  auto element_id = static_cast< long >( element_model );
+  auto element_id = kernel().model_manager.get_node_model_id( element_name );
 
   if ( layer_dict->known( names::positions ) )
   {
@@ -121,12 +115,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
 
-    if ( not std::all_of( shape.begin(),
-           shape.end(),
-           []( long x )
-           {
-             return x > 0;
-           } ) )
+    if ( not std::all_of( shape.begin(), shape.end(), []( long x ) { return x > 0; } ) )
     {
       throw BadProperty( "All shape entries must be positive." );
     }

@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -46,7 +46,7 @@ Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and ad
 Description
 +++++++++++
 
-mat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``mat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -70,14 +70,16 @@ The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
-Remarks:
+The current implementation requires tau_m != tau_syn_{ex,in} to avoid
+a degenerate case of the ODE describing the model [1]_. For very
+similar values, numerics will be unstable.
 
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
+The following state variables can be read out with the multimeter device:
+
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
 
 Parameters
 ++++++++++
@@ -101,19 +103,6 @@ The following parameters can be set in the status dictionary:
  omega        mV      Resting spike threshold (absolute value, not
                       relative to E_L as in [3]_)
 ============ =======  ========================================================
-
-The following state variables can be read out with the multimeter device:
-
-====== ====  =================================
- V_m   mV    Non-resetting membrane potential
- V_th  mV    Two-timescale adaptive threshold
-====== ====  =================================
-
-Remarks:
-
-tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]_. For very similar values,
-numerics will be unstable.
 
 References
 ++++++++++
@@ -141,7 +130,23 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mat2_psc_exp
+
 EndUserDocs */
+
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ */
+
+void register_mat2_psc_exp( const std::string& name );
 
 class mat2_psc_exp : public ArchivingNode
 {
@@ -158,23 +163,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access private members
   friend class RecordablesMap< mat2_psc_exp >;
@@ -229,7 +234,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -270,8 +275,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -330,7 +335,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup mat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -347,8 +351,8 @@ private:
 };
 
 
-inline port
-mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+mat2_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -357,8 +361,8 @@ mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 
-inline port
-mat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -367,8 +371,8 @@ mat2_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-mat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -377,8 +381,8 @@ mat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-mat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+mat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -182,7 +182,7 @@ def
   /conndict Set
 
   ResetKernel
-  << /elements /iaf_psc_alpha  /positions [ [0. 0. 0.] ] >> CreateLayer
+  << /elements /iaf_psc_alpha  /positions [ [0. 0. 0.] ] /extent [1.0 1.0 1.0] >> CreateLayer
   dup
   conndict ConnectLayers
 } def

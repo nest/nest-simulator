@@ -23,7 +23,6 @@
 #ifndef TSODYKS_SYNAPSE_H
 #define TSODYKS_SYNAPSE_H
 
-
 // C++ includes:
 #include <cmath>
 
@@ -51,6 +50,7 @@ Synaptic depression is motivated by depletion of vesicles in the readily
 releasable pool of synaptic vesicles (variable x in equation (3)). Synaptic
 facilitation comes about by a presynaptic increase of release probability,
 which is modeled by variable U in Eq (4).
+
 The original interpretation of variable y is the amount of glutamate
 concentration in the synaptic cleft. In [1]_ this variable is taken to be
 directly proportional to the synaptic current caused in the postsynaptic
@@ -59,37 +59,38 @@ to reproduce the results of [1]_ and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
-1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_psc_exp_htum,
+1.) The postsynaptic neuron must be of type ``iaf_psc_exp`` or ``iaf_psc_exp_htum``,
 because these neuron models have a postsynaptic current which decays
 exponentially.
 
-2.) The time constant of each tsodyks_synapse targeting a particular neuron
+2.) The time constant of each ``tsodyks_synapse`` targeting a particular neuron
 must be chosen equal to that neuron's synaptic time constant. In particular
 that means that all synapses targeting a particular neuron have the same
-parameter tau_psc.
+parameter ``tau_psc``.
 
 However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is u(t)*x(t)*w, where u(t) and x(t) are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
-The interpretation is as follows: The quantity u(t)*x(t) is the release
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where ``u(t)`` and ``x(t)``
+are defined in Eq (3) and (4), w is the synaptic weight specified upon connection.
+The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
 probability times the amount of releasable synaptic vesicles at time t of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
-of the synapse's variable y. Since the dynamics of y(t) is linear, the
+
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
+of the synapse's variable y. Since the dynamics of ``y(t)`` is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
-impulse u(t)*x(t)*w the full shape of y(t). The postsynaptic neuron, however,
-might choose to have a synaptic current that is not necessarily identical to
-the concentration of transmitter y(t) in the synaptic cleft. It may realize
-an arbitrary postsynaptic effect depending on y(t).
+impulse :math:`u(t) \cdot x(t) \cdot w` the full shape of ``y(t)``. The postsynaptic
+neuron, however, might choose to have a synaptic current that is not necessarily
+identical to the concentration of transmitter ``y(t)`` in the synaptic cleft. It may
+realize an arbitrary postsynaptic effect depending on ``y(t)``.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -108,6 +109,7 @@ The following parameters can be set in the status dictionary:
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
+ u        real    Initial release probability of synaptic vesicles [0,1]
 ========  ======  ========================================================
 
 References
@@ -125,9 +127,16 @@ SpikeEvent
 See also
 ++++++++
 
-stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
+iaf_tum_2000, stdp_synapse, static_synapse, iaf_psc_exp
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse
 
 EndUserDocs */
+
+void register_tsodyks_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks_synapse : public Connection< targetidentifierT >
@@ -136,6 +145,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -143,10 +156,11 @@ public:
   tsodyks_synapse();
 
   /**
-     * Copy constructor from a property object.
-     * Needs to be defined properly in order for GenericConnector to work.
-     */
+   * Copy constructor from a property object.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
   tsodyks_synapse( const tsodyks_synapse& ) = default;
+  tsodyks_synapse& operator=( const tsodyks_synapse& ) = default;
 
   /**
    * Default Destructor.
@@ -159,8 +173,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -179,7 +193,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -187,15 +201,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -219,6 +233,8 @@ private:
   double t_lastspike_; //!< time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties tsodyks_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -226,8 +242,8 @@ private:
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -240,13 +256,10 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   // !!! x != 1.0 -> z != 0.0 -> t_lastspike_=0 has influence on dynamics
 
   // propagator
-  // TODO: use expm1 here instead, where applicable
   double Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
   double Pyy = std::exp( -h / tau_psc_ );
-  double Pzz = std::exp( -h / tau_rec_ );
-
-  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
-  double Pxz = 1.0 - Pzz;
+  double Pzz = std::expm1( -h / tau_rec_ );
+  double Pxy = ( Pzz * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
 
   double z = 1.0 - x_ - y_;
 
@@ -254,7 +267,7 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   // don't change the order !
 
   u_ *= Puu;
-  x_ += Pxy * y_ + Pxz * z;
+  x_ += Pxy * y_ - Pzz * z;
   y_ *= Pyy;
 
   // delta function u
@@ -275,6 +288,8 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSyna
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >
@@ -298,7 +313,6 @@ tsodyks_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-
   def< double >( d, names::U, U_ );
   def< double >( d, names::tau_psc, tau_psc_ );
   def< double >( d, names::tau_rec, tau_rec_ );
@@ -333,30 +347,34 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
-    throw BadProperty( "U must be in [0,1]." );
+    throw BadProperty( "'U' must be in [0,1]." );
   }
 
   updateValue< double >( d, names::tau_psc, tau_psc_ );
   if ( tau_psc_ <= 0.0 )
   {
-    throw BadProperty( "tau_psc must be > 0." );
+    throw BadProperty( "'tau_psc' must be > 0." );
   }
 
   updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
-    throw BadProperty( "tau_rec must be > 0." );
+    throw BadProperty( "'tau_rec' must be > 0." );
   }
 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
-    throw BadProperty( "tau_fac must be >= 0." );
+    throw BadProperty( "'tau_fac' must be >= 0." );
   }
 
   updateValue< double >( d, names::u, u_ );
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
 }
 
 } // namespace

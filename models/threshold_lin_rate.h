@@ -47,12 +47,12 @@ Rate model with threshold-linear gain function
 Description
 +++++++++++
 
-threshold_lin_rate is an implementation of a nonlinear rate model with
-input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+``threshold_lin_rate`` is an implementation of a nonlinear rate model with
+input function :math:`input(h) = min( max( g \cdot ( h - \theta ), 0 ),
 \alpha )`.  It either models a rate neuron with input noise (see
-rate_neuron_ipn), a rate neuron with output noise (see
-rate_neuron_opn) or a rate transformer (see
-rate_transformer_node). Input transformation can either be applied to
+``rate_neuron_ipn``), a rate neuron with output noise (see
+``rate_neuron_opn``) or a rate transformer (see
+``rate_transformer_node``). Input transformation can either be applied to
 individual inputs or to the sum of all inputs.
 
 The model supports connections to other rate models with either zero
@@ -70,6 +70,8 @@ type ``threshold_lin_rate_ipn`` for input noise or of type
 ``threshold_lin_rate_opn`` output noise. Nonlinear rate transformers
 can be obtained by creating models of type
 ``rate_transformer_threshold_lin``.
+
+See also [1]_ [2]_.
 
 Parameters
 ++++++++++
@@ -119,6 +121,11 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: threshold_lin_rate
+
 EndUserDocs */
 
 class nonlinearities_threshold_lin_rate
@@ -143,7 +150,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -169,8 +176,14 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+void register_threshold_lin_rate_ipn( const std::string& name );
+
 typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+void register_threshold_lin_rate_opn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
+void register_rate_transformer_threshold_lin( const std::string& name );
+
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();

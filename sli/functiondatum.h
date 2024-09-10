@@ -56,19 +56,20 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
   bool deprecation_warning_issued_;
 
   Datum*
-  clone( void ) const
+  clone() const override
   {
     return new FunctionDatum( *this );
   }
 
   Datum*
-  get_ptr()
+  get_ptr() override
   {
     Datum::addReference();
     return this;
   }
 
-  SLIFunction const& operator=( SLIFunction const& f )
+  SLIFunction const&
+  operator=( SLIFunction const& f )
   {
     std::cerr << "Warning: Definition of FunctionDatum (" << name << ") changed!!\n";
 
@@ -100,7 +101,7 @@ public:
   }
 
   void
-  execute( SLIInterpreter* i )
+  execute( SLIInterpreter* i ) override
   {
     if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) )
     {
@@ -114,29 +115,29 @@ public:
   }
 
   void
-  print( std::ostream& o ) const
+  print( std::ostream& o ) const override
   {
     o << '-' << name << '-';
   }
 
   void
-  pprint( std::ostream& o ) const
+  pprint( std::ostream& o ) const override
   {
     print( o );
   }
 
   void
-  info( std::ostream& out ) const
+  info( std::ostream& out ) const override
   {
     out << "FunctionDatum::info\n";
     out << "name = " << name << std::endl;
   }
 
   bool
-  equals( Datum const* dat ) const
+  equals( Datum const* dat ) const override
   {
     const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
-    if ( fd == NULL )
+    if ( not fd )
     {
       return false;
     }
@@ -145,14 +146,15 @@ public:
   }
 
   const Name&
-  getname( void ) const
+  getname() const
   {
     return name;
   }
 
   void backtrace( SLIInterpreter*, int ) const;
 
-  static void* operator new( size_t size )
+  static void*
+  operator new( size_t size )
   {
     if ( size != sizeof( FunctionDatum ) )
     {
@@ -161,9 +163,10 @@ public:
     return memory.alloc();
   }
 
-  static void operator delete( void* p, size_t size )
+  static void
+  operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( not p )
     {
       return;
     }

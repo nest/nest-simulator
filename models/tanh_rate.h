@@ -44,11 +44,11 @@ rate model with hyperbolic tangent non-linearity
 Description
 +++++++++++
 
-tanh_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = \tanh(g * (h-\theta))`. It either models a
-rate neuron with input noise (see rate_neuron_ipn), a rate neuron with
-output noise (see rate_neuron_opn) or a rate transformer (see
-rate_transformer_node). Input transformation can either be applied to
+``tanh_rate`` is an implementation of a nonlinear rate model with input
+function :math:`input(h) = \tanh(g \cdot (h-\theta))`. It either models a
+rate neuron with input noise (see ``rate_neuron_ipn``), a rate neuron with
+output noise (see ``rate_neuron_opn``) or a rate transformer (see
+``rate_transformer_node``). Input transformation can either be applied to
 individual inputs or to the sum of all inputs.
 
 The model supports connections to other rate models with either zero or
@@ -56,10 +56,11 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('tanh_rate_ipn') or nest.Create('tanh_rate_opn') for input
+``nest.Create("tanh_rate_ipn")`` or ``nest.Create("tanh_rate_opn")`` for input
 noise or output noise, respectively. Nonlinear rate transformers can
-be created by typing nest.Create('rate_transformer_tanh').
+be created by typing ``nest.Create("rate_transformer_tanh")``.
 
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -116,6 +117,11 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tanh_rate
+
 EndUserDocs */
 
 class nonlinearities_tanh_rate
@@ -136,7 +142,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -162,8 +168,14 @@ nonlinearities_tanh_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
+void register_tanh_rate_ipn( const std::string& name );
+
 typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
+void register_tanh_rate_opn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
+void register_rate_transformer_tanh( const std::string& name );
+
 
 template <>
 void RecordablesMap< tanh_rate_ipn >::create();

@@ -34,6 +34,8 @@ The parameter `A_se` from the publications is represented by the
 synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
+See also [3]_.
+
 Parameters
 ~~~~~~~~~~
 
@@ -68,23 +70,21 @@ References
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 """
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
 ###############################################################################
 # Parameter set for depression
 
-dep_params = {"U": 0.67, "u": 0.67, 'x': 1.0, "tau_rec": 450.0,
-              "tau_fac": 0.0, "weight": 250.}
+dep_params = {"U": 0.67, "u": 0.67, "x": 1.0, "tau_rec": 450.0, "tau_fac": 0.0, "weight": 250.0}
 
 ###############################################################################
 # Parameter set for facilitation
 
-fac_params = {"U": 0.1, "u": 0.1, 'x': 1.0, "tau_fac": 1000.,
-              "tau_rec": 100., "weight": 250.}
+fac_params = {"U": 0.1, "u": 0.1, "x": 1.0, "tau_fac": 1000.0, "tau_rec": 100.0, "weight": 250.0}
 
 ###############################################################################
 # Now we assign the parameter set to the synapse models.
@@ -95,7 +95,7 @@ tsodyks2_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsod
 ###############################################################################
 # Create three neurons.
 
-neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
+neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.0})
 
 ###############################################################################
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two

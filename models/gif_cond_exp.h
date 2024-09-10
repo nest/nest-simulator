@@ -33,10 +33,10 @@
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 
 #include "universal_data_logger.h"
 
@@ -48,17 +48,17 @@ namespace nest
 
 extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, adaptation
 
 Short description
 +++++++++++++++++
 
-Conductance-based generalized integrate-and-fire neuron model
+Conductance-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
 
 Description
 +++++++++++
 
-gif_psc_exp is the generalized integrate-and-fire neuron according to
+``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with postsynaptic
 conductances in the form of truncated exponentials.
 
@@ -68,7 +68,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+ C*dV(t)/dt = -g_L\cdot(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
     - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
@@ -77,7 +77,7 @@ Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
- \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+ \tau_\eta{_i}\cdot d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -91,7 +91,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 \cdot \exp (V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -105,7 +105,7 @@ Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i} \cdot d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -127,7 +127,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 .. math::
 
-  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} \cdot (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
 The same formula applies for :math:`q_{\gamma}`.
@@ -213,7 +213,14 @@ See also
 
 pp_psc_delta, gif_cond_exp_multisynapse, gif_psc_exp, gif_psc_exp_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gif_cond_exp
+
 EndUserDocs  */
+
+void register_gif_cond_exp( const std::string& name );
 
 class gif_cond_exp : public ArchivingNode
 {
@@ -221,7 +228,7 @@ class gif_cond_exp : public ArchivingNode
 public:
   gif_cond_exp();
   gif_cond_exp( const gif_cond_exp& );
-  ~gif_cond_exp();
+  ~gif_cond_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -231,25 +238,25 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int gif_cond_exp_dynamics( double, const double*, double*, void* );
@@ -371,7 +378,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -435,8 +442,8 @@ private:
   static RecordablesMap< gif_cond_exp > recordablesMap_;
 };
 
-inline port
-gif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+gif_cond_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -445,8 +452,8 @@ gif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 
-inline port
-gif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+gif_cond_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -455,8 +462,8 @@ gif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-gif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+gif_cond_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -465,8 +472,8 @@ gif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-gif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+gif_cond_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

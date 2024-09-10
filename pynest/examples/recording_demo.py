@@ -40,14 +40,14 @@ def setup(record_to, time_in_steps):
     nest.ResetKernel()
     nest.overwrite_files = True
 
-    pg_params = {'rate': 1000000.}
-    sr_params = {'record_to': record_to, 'time_in_steps': time_in_steps}
+    pg_params = {"rate": 1000000.0}
+    sr_params = {"record_to": record_to, "time_in_steps": time_in_steps}
 
-    n = nest.Create('iaf_psc_exp')
-    pg = nest.Create('poisson_generator', 1, pg_params)
-    sr = nest.Create('spike_recorder', 1, sr_params)
+    n = nest.Create("iaf_psc_exp")
+    pg = nest.Create("poisson_generator", 1, pg_params)
+    sr = nest.Create("spike_recorder", 1, sr_params)
 
-    nest.Connect(pg, n, syn_spec={'weight': 10.})
+    nest.Connect(pg, n, syn_spec={"weight": 10.0})
     nest.Connect(n, sr)
 
     return sr
@@ -56,15 +56,15 @@ def setup(record_to, time_in_steps):
 def get_data(sr):
     """Get recorded data from the spike_recorder."""
 
-    if sr.record_to == 'ascii':
-        return np.loadtxt(f'{sr.filenames[0]}', dtype=object)
-    if sr.record_to == 'memory':
-        return sr.get('events')
+    if sr.record_to == "ascii":
+        return np.loadtxt(f"{sr.filenames[0]}", dtype=object)
+    if sr.record_to == "memory":
+        return sr.get("events")
 
 
 # Just loop through some recording backends and settings
 for time_in_steps in (True, False):
-    for record_to in ('ascii', 'memory'):
+    for record_to in ("ascii", "memory"):
         sr = setup(record_to, time_in_steps)
         nest.Simulate(30.0)
         data = get_data(sr)

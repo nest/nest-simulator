@@ -23,8 +23,8 @@
 #ifndef VECTOR_UTIL_H
 #define VECTOR_UTIL_H
 
-#include <vector>
 #include <cstddef>
+#include <vector>
 
 namespace vector_util
 {

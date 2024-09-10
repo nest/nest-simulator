@@ -80,7 +80,7 @@ public:
   }
 
   /** Set internal variables before calls to SimulationManager::run() */
-  virtual void calibrate();
+  virtual void pre_run_hook();
 
   virtual void get_status( DictionaryDatum& ) const;
   virtual void set_status( const DictionaryDatum& );
@@ -152,6 +152,7 @@ private:
 
     /**
      * Time step of device activation.
+     *
      * t_min_ = origin_ + start_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -161,6 +162,7 @@ private:
 
     /**
      * Time step of device deactivation.
+     *
      * t_max_ = origin_ + stop_, in steps.
      * @note This is an auxiliary variable that is initialized to -1 in the
      * constructor and set to its proper value by calibrate. It should NOT
@@ -223,4 +225,4 @@ nest::Device::get_t_max_() const
   return V_.t_max_;
 }
 
-#endif // DEVICE_H
+#endif /* DEVICE_H */

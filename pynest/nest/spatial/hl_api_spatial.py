@@ -20,50 +20,38 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+
 from ..lib.hl_api_types import CreateParameter, Parameter
 from ..ll_api import sli_func
 
 __all__ = [
-    'distance',
-    'grid',
-    'free',
-    'pos',
-    'source_pos',
-    'target_pos',
+    "grid",
+    "free",
+    "pos",
+    "source_pos",
+    "target_pos",
 ]
 
 
 class DistanceParameter(Parameter):
-    """
-    Object representing the distance between two nodes in space.
-
-    If used alone, the DistanceObject represents simply the Euclidean
-    distance between two nodes.
-
-    Alternatively the distance in a single dimension may be chosen. Three
-    properties are defined, x, y, and z, which represent the distance in
-    their respective dimensions. Note that the distance parameter can only
-    be used in contexts with two nodes, e.g. when connecting.
-    """
-
     def __init__(self):
-        distance_parameter = CreateParameter('distance', {})
+        distance_parameter = CreateParameter("distance", {})
         super().__init__(distance_parameter._datum)
 
     @property
     def x(self):
         """Parameter representing the distance on the x-axis"""
-        return CreateParameter('distance', {'dimension': 1})
+        return CreateParameter("distance", {"dimension": 1})
 
     @property
     def y(self):
         """Parameter representing the distance on the y-axis"""
-        return CreateParameter('distance', {'dimension': 2})
+        return CreateParameter("distance", {"dimension": 2})
 
     @property
     def z(self):
         """Parameter representing the distance on the z-axis"""
-        return CreateParameter('distance', {'dimension': 3})
+        return CreateParameter("distance", {"dimension": 3})
 
     @staticmethod
     def n(dimension):
@@ -80,13 +68,10 @@ class DistanceParameter(Parameter):
         Parameter:
             Object yielding the distance in the given dimension.
         """
-        return CreateParameter('distance', {'dimension': dimension})
+        return CreateParameter("distance", {"dimension": dimension})
 
 
-distance = DistanceParameter()
-
-
-class pos(object):
+class pos:
     """
     Position of node in a specific dimension.
 
@@ -94,9 +79,10 @@ class pos(object):
     position in their respective dimensions. Note that this parameter can
     only be used in contexts with one node, e.g. when setting node status.
     """
-    x = CreateParameter('position', {'dimension': 0})
-    y = CreateParameter('position', {'dimension': 1})
-    z = CreateParameter('position', {'dimension': 2})
+
+    x = CreateParameter("position", {"dimension": 0})
+    y = CreateParameter("position", {"dimension": 1})
+    z = CreateParameter("position", {"dimension": 2})
 
     @staticmethod
     def n(dimension):
@@ -113,10 +99,10 @@ class pos(object):
         Parameter:
             Object yielding the position in the given dimension.
         """
-        return CreateParameter('position', {'dimension': dimension})
+        return CreateParameter("position", {"dimension": dimension})
 
 
-class source_pos(object):
+class source_pos:
     """
     Position of the source node in a specific dimension.
 
@@ -124,9 +110,10 @@ class source_pos(object):
     node position in their respective dimensions. Note that this parameter
     can only be used in contexts with two nodes, e.g. when connecting.
     """
-    x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 1})
-    y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 1})
-    z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 1})
+
+    x = CreateParameter("position", {"dimension": 0, "synaptic_endpoint": 1})
+    y = CreateParameter("position", {"dimension": 1, "synaptic_endpoint": 1})
+    z = CreateParameter("position", {"dimension": 2, "synaptic_endpoint": 1})
 
     @staticmethod
     def n(dimension):
@@ -143,11 +130,10 @@ class source_pos(object):
         Parameter:
             Object yielding the position in the given dimension.
         """
-        return CreateParameter('position',
-                               {'dimension': dimension, 'synaptic_endpoint': 1})
+        return CreateParameter("position", {"dimension": dimension, "synaptic_endpoint": 1})
 
 
-class target_pos(object):
+class target_pos:
     """
     Position of the target node in a specific dimension.
 
@@ -155,9 +141,10 @@ class target_pos(object):
     node position in their respective dimensions. Note that this parameter
     can only be used in contexts with two nodes, e.g. when connecting.
     """
-    x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 2})
-    y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 2})
-    z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 2})
+
+    x = CreateParameter("position", {"dimension": 0, "synaptic_endpoint": 2})
+    y = CreateParameter("position", {"dimension": 1, "synaptic_endpoint": 2})
+    z = CreateParameter("position", {"dimension": 2, "synaptic_endpoint": 2})
 
     @staticmethod
     def n(dimension):
@@ -174,11 +161,10 @@ class target_pos(object):
         Parameter:
             Object yielding the position in the given dimension.
         """
-        return CreateParameter('position',
-                               {'dimension': dimension, 'synaptic_endpoint': 2})
+        return CreateParameter("position", {"dimension": dimension, "synaptic_endpoint": 2})
 
 
-class grid(object):
+class grid:
     """
     Defines grid-based positions for nodes.
 
@@ -201,7 +187,7 @@ class grid(object):
         self.edge_wrap = edge_wrap
 
 
-class free(object):
+class free:
     """
     Defines positions for nodes based on a list of positions, or a Parameter object.
 
@@ -222,14 +208,10 @@ class free(object):
 
     def __init__(self, pos, extent=None, edge_wrap=False, num_dimensions=None):
         if extent and num_dimensions:
-            raise TypeError(
-                'extent and number of dimensions cannot be specified at the'
-                ' same time')
+            raise TypeError("extent and number of dimensions cannot be specified at the same time")
         if isinstance(pos, (list, tuple, np.ndarray)):
             if num_dimensions:
-                raise TypeError(
-                    'number of dimensions cannot be specified when using an'
-                    ' array of positions')
+                raise TypeError("number of dimensions cannot be specified when using an array of positions")
             if len(pos) == sum(isinstance(d, Parameter) for d in pos):
                 self.pos = self._parameter_list_to_dimension(pos, len(pos))
             else:
@@ -241,13 +223,12 @@ class free(object):
             # extent, or if it's not explicitly specified.
             if not num_dimensions:
                 raise TypeError(
-                    'could not infer number of dimensions. Set '
-                    'num_dimensions or extent when using Parameter as pos')
+                    "could not infer number of dimensions. Set num_dimensions or extent when using Parameter as pos"
+                )
             dim_parameters = [pos for _ in range(num_dimensions)]
             self.pos = self._parameter_list_to_dimension(dim_parameters, num_dimensions)
         else:
-            raise TypeError(
-                'pos must be either an array of positions, or a Parameter')
+            raise TypeError("pos must be either an array of positions, or a Parameter")
 
         self.extent = extent
         self.edge_wrap = edge_wrap
@@ -255,11 +236,11 @@ class free(object):
     def _parameter_list_to_dimension(self, dim_parameters, num_dimensions):
         """Converts a list of Parameters to a dimension2d or dimension3d Parameter."""
         if num_dimensions == 2:
-            dimfunc = 'dimension2d'
+            dimfunc = "dimension2d"
         elif num_dimensions == 3:
-            dimfunc = 'dimension3d'
+            dimfunc = "dimension3d"
         else:
-            raise ValueError('Number of dimensions must be 2 or 3.')
+            raise ValueError("Number of dimensions must be 2 or 3.")
         # The dimension2d and dimension3d Parameter stores a Parameter for
         # each dimension. When creating positions for nodes, values from
         # each parameter are fetched for the position vector.

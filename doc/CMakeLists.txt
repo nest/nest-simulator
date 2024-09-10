@@ -17,88 +17,81 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+if( BUILD_DOCS )
+  # If we hit this, any part of the documentation was configured to be built.
+  # The top-level 'docs' target will contain all sub-documentations such as `sphinxdocs`
+  # and `doxygendocs`. Using `ALL` we make it run on `make install` as well.
+  add_custom_target( docs ALL )
+endif()
 
-if ( NOT CMAKE_CROSSCOMPILING )
-
-  # Python is needed to generate the help. If Python does not exist,
-  # there are problems with the following.
-  # See https://github.com/nest/nest-simulator/issues/678.
-  find_package( PythonInterp )
-  if ( Python_FOUND )
-
-    # Extract help from all source files in the source code, put
-    # them in doc/help and generate a local help index in the
-    # build directory containing links to the help files.
-    install( CODE
-      "execute_process(
-         COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
-         )"
+if( BUILD_SLI_DOCS STREQUAL ON AND NOT CMAKE_CROSSCOMPILING )
+  # This is a legacy code block marked for imminent removal together with SLI. (11/2022)
+  # It does not follow the restructured `docs`-`subdocs` dependencies, and
+  # configures SLI doc building to occur on `install` using `execute_process` calls.
+  message( STATUS "Configuring SLI documentation")
+  install( DIRECTORY slihelp_generator
+      DESTINATION ${CMAKE_INSTALL_DATADIR}
       )
+  # Extract help from all source files in the source code, put
+  # them in doc/help and generate a local help index in the
+  # build directory containing links to the help files.
+  install( CODE
+    "execute_process(
+       COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
+       WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
+       )"
+    )
 
-    # Copy the local doc/help directory to the global installation
-    # directory for documentation.
-    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-      OPTIONAL
-      )
+  # Copy the local doc/help directory to the global installation
+  # directory for documentation.
+  install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+    OPTIONAL
+    )
 
-    # Update the global help index to include all help files in
-    # the global installation directory for documentation.
-    install( CODE
-      "execute_process(
-         COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
-         )"
-      )
-
-  endif ()
-
+  # Update the global help index to include all help files in
+  # the global installation directory for documentation.
+  install( CODE
+    "execute_process(
+       COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+       WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/slihelp_generator\"
+       )"
+    )
 endif ()
 
-if ( DOXYGEN_FOUND )
-  add_custom_target( doc
-      COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/normaldoc.conf"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-      )
-
-  if ( DOXYGEN_DOT_FOUND )
-    add_custom_target( fulldoc
-        COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        )
-  else ()
-    add_custom_target( fulldoc
-        COMMAND ${CMAKE_COMMAND} -E echo "dot command is not found on your system. Cannot build full documentation."
-        )
-  endif ()
-else ()
-  add_custom_target( doc
-      COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build documentation."
-      )
-  add_custom_target( fulldoc
-      COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
-      )
-endif ()
-
+# Determine in or out of tree building
 if ( "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}" )
   set( OUT_OF_TREE_BUILD "False" )
 else ()
   set( OUT_OF_TREE_BUILD "True" )
 endif ()
 
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
-set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
 
-add_custom_target( html
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
-  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
-  COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} sphinx-build -b html "${DOC_BUILD_DIR}" "${DOC_BUILD_DIR}/html"
-  COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
-  COMMAND ${PYTHON_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"
-)
+if ( BUILD_SPHINX_DOCS )
+  message( STATUS "Configuring Sphinx documentation" )
+  set( _SPHINX_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
+  set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build/html" )
+  add_custom_target( sphinxdocs
+    WORKING_DIRECTORY ${_SPHINX_SOURCE_DIR}
+    COMMAND ${Python_EXECUTABLE} clean_source_dirs.py
+    COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
+    COMMAND ${Python_EXECUTABLE} resolve_includes.py ${SPHINX_BUILD_DIR}/models
+  )
+  add_dependencies( docs sphinxdocs )
 
-install( DIRECTORY "${DOC_BUILD_DIR}/html"
-  DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-  OPTIONAL
-)
+  install( DIRECTORY ${_SPHINX_BUILD_DIR}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}
+    OPTIONAL
+    )
+  install( DIRECTORY logos
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}
+      )
+endif ()
+
+if ( BUILD_DOXYGEN_DOCS )
+  add_custom_target( doxygendocs
+      COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/fulldoc.conf"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+      )
+  add_dependencies( docs doxygendocs )
+endif ()

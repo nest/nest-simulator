@@ -49,10 +49,10 @@ spike timing version with arbitrary dead times
 Description
 +++++++++++
 
-The poisson_generator_ps simulates a neuron firing with Poisson
-statistics (with dead time), i.e. exponentially distributed interspike
+The ``poisson_generator_ps`` simulates a neuron firing with Poisson
+statistics (with dead time), that is, exponentially distributed interspike
 intervals plus constant dead time, spike events have exact timing,
-i.e. they are not constrained to the simulation time grid.
+that is, they are not constrained to the simulation time grid.
 
 .. note::
    This generator must be connected to all its targets using the
@@ -88,7 +88,14 @@ See also
 
 poisson_generator, parrot_neuron_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: poisson_generator_ps
+
 EndUserDocs */
+
+void register_poisson_generator_ps( const std::string& name );
 
 class poisson_generator_ps : public StimulationDevice
 {
@@ -101,7 +108,7 @@ public:
 
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -114,7 +121,7 @@ public:
 private:
   void init_state_() override;
   void init_buffers_() override;
-  void calibrate() override;
+  void pre_run_hook() override;
 
   /**
    * Update state.
@@ -155,7 +162,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -185,7 +192,7 @@ private:
      * @name update-hook communication.
      * The following variables are used for direct communication from
      * update() to event_hook(). They rely on the fact that event_hook()
-     * is called instantaneuously from update().
+     * is called instantaneously from update().
      * Spikes are sent at times t that fulfill
      *
      *   t_min_active_ < t <= t_max_active_
@@ -203,8 +210,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+poisson_generator_ps::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -218,8 +225,8 @@ poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synind
   {
     SpikeEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ and not is_model_prototype() )
+    const size_t p = target.handles_test_event( e, receptor_type );
+    if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_; // count number of targets
     }

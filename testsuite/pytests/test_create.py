@@ -25,6 +25,7 @@ Creation tests
 
 import unittest
 import warnings
+
 import nest
 
 
@@ -38,41 +39,72 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelCreate(self):
         """Model Creation"""
 
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             node = nest.Create(model)
-            self.assertGreater(node.get('global_id'), 0)
+            self.assertGreater(node.get("global_id"), 0)
 
     def test_ModelCreateN(self):
         """Model Creation with N"""
 
         num_nodes = 10
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             nodes = nest.Create(model, num_nodes)
             self.assertEqual(len(nodes), num_nodes)
+
+    def test_correct_node_collection_model_created(self):
+        """
+        Ensure that the correct model is created for node in ``NodeCollection``.
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        models = nest.node_models
+        nc = nest.NodeCollection()
+
+        for model in models:
+            nc += nest.Create(model)
+
+        self.assertTrue(len(nc) > 0)
+
+        for i, node in enumerate(nc):
+            self.assertEqual(node.model, models[i])
 
     def test_ModelCreateNdict(self):
         """Model Creation with N and dict"""
 
         num_nodes = 10
         voltage = 12.0
-        n = nest.Create('iaf_psc_alpha', num_nodes, {'V_m': voltage})
+        n = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
+        self.assertEqual(nest.GetStatus(n, "V_m"), (voltage,) * num_nodes)
+
+    def test_Create_accepts_empty_params_dict(self):
+        """
+        Create with empty parameter dictionary
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+        nest.Create("iaf_psc_delta", params={})
 
     def test_erroneous_param_to_create(self):
         """Erroneous param to Create raises exception"""
         num_nodes = 3
         nest_errors = nest.kernel.NESTErrors
-        params = [(tuple(), TypeError),
-                  ({'V_m': [-50]}, IndexError),
-                  ({'V_mm': num_nodes*[-50.]}, nest_errors.DictError),
-                  ]
+        params = [
+            (tuple(), TypeError),
+            ({"V_m": [-50]}, IndexError),
+            ({"V_mm": num_nodes * [-50.0]}, nest_errors.DictError),
+        ]
 
         for p, err in params:
             with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter('always')
-                self.assertRaises(err, nest.Create, 'iaf_psc_alpha', num_nodes, p)
-                self.assertEqual(len(w), 1, 'warning was not issued')
+                warnings.simplefilter("always")
+                self.assertRaises(err, nest.Create, "iaf_psc_alpha", num_nodes, p)
+                self.assertEqual(len(w), 1, "warning was not issued")
                 self.assertTrue(issubclass(w[0].category, UserWarning))
 
     def test_ModelDicts(self):
@@ -80,33 +112,13 @@ class CreateTestCase(unittest.TestCase):
 
         num_nodes = 10
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
-        n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
+        n = nest.Create("iaf_psc_alpha", num_nodes, [{"V_m": v} for v in V_m])
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
-
-    def test_CopyModel(self):
-        """CopyModel"""
-
-        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
-        vm = nest.GetDefaults('new_neuron')['V_m']
-        self.assertEqual(vm, 10.0)
-
-        n = nest.Create('new_neuron', 10)
-        vm = nest.GetStatus(n[0])[0]['V_m']
-        self.assertEqual(vm, 10.0)
-
-        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect(n[0], n[1], syn_spec='new_synapse')
-        w = nest.GetDefaults('new_synapse')['weight']
-        self.assertEqual(w, 10.0)
-
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "NewModelNameExists",
-            nest.CopyModel, 'iaf_psc_alpha', 'new_neuron')
+        self.assertEqual(nest.GetStatus(n, "V_m"), V_m)
 
 
 def suite():
-    suite = unittest.makeSuite(CreateTestCase, 'test')
+    suite = unittest.makeSuite(CreateTestCase, "test")
     return suite
 
 

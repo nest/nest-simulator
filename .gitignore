@@ -1,6 +1,7 @@
 
 __pycache__/
 build/
+conda/
 _build/
 install/
 reports/
@@ -14,13 +15,8 @@ pynest/pynestkernel.cxx
 *.o
 *.pyc
 
-Makefile
-
-build/
-install/
 examples/example_logs/
 
-/extras/nest-config
 /libnestutil/config.h
 /librandom/randomtest
 /nest/nest
@@ -36,10 +32,8 @@ cmake_install.cmake
 CMakeDoxygenDefaults.cmake
 
 # generated files
-doc/fulldoc.conf
-doc/normaldoc.conf
-extras/nest-config
-extras/nest_vars.sh
+bin/nest-config
+bin/nest_vars.sh
 libnestutil/config.h
 nest/static_modules.h
 pynest/setup.py
@@ -77,3 +71,6 @@ cscope.out
 .cproject
 .pydevproject
 .python-version
+
+# Merge conflict artifacts
+*.orig

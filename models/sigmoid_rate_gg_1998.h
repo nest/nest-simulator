@@ -45,11 +45,11 @@ rate model with sigmoidal gain function
 Description
 +++++++++++
 
-sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
-input function as in [1]_ :math:`input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 )`.
+``sigmoid_rate_gg_1998`` is an implementation of a nonlinear rate model with
+input function as in [1]_ :math:`input(h) = ( g \cdot h )^4 / ( .1^4 +( g \cdot h )^4 )`.
 
-It either models a rate neuron with input noise (see rate_neuron_ipn)
-or a rate transformer (see rate_transformer_node).
+It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
+or a rate transformer (see ``rate_transformer_node``).
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 
@@ -58,9 +58,10 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-nest.Create('sigmoid_rate_gg_1998_ipn'). Nonlinear rate transformers can be
-created by typing nest.Create('rate_transformer_sigmoid_rate_gg_1998').
+``nest.Create('sigmoid_rate_gg_1998_ipn')``. Nonlinear rate transformers can be
+created by typing ``nest.Create('rate_transformer_sigmoid_rate_gg_1998')``.
 
+See also [2]_, [3]_.
 
 Parameters
 ++++++++++
@@ -102,7 +103,7 @@ References
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi/org/10.3389/fninf.2015.00022
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
 Sends
@@ -121,6 +122,12 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate_gg_1998
+
 EndUserDocs */
 
 class nonlinearities_sigmoid_rate_gg_1998
@@ -137,7 +144,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -163,7 +170,11 @@ nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 > sigmoid_rate_gg_1998_ipn;
+void register_sigmoid_rate_gg_1998_ipn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 > rate_transformer_sigmoid_gg_1998;
+void register_rate_transformer_sigmoid_gg_1998( const std::string& name );
+
 
 template <>
 void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();

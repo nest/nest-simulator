@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -54,7 +55,7 @@ threshold crossing
 Description
 +++++++++++
 
-iaf_psc_exp_ps is the "canonical" implementation of the leaky
+``iaf_psc_exp_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses the regula falsi method to approximate the timing of a threshold
 crossing. This is the most exact implementation available.
@@ -75,6 +76,25 @@ superior overall performance given an accuracy goal; see [1]_ [2]_ for
 details. Subthreshold dynamics are integrated using exact integration
 between events [3]_.
 
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time and offset).
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
+
+For details about exact subthreshold integration, please see
+:doc:`../neurons/exact-integration`.
+
 Parameters
 ++++++++++
 
@@ -92,28 +112,6 @@ I_e         pA     Constant input current
 V_min       mV     Absolute lower value for the membrane potential
 V_reset     mV     Reset value for the membrane potential
 ==========  =====  ==========================================================
-
-Remarks
-+++++++
-
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time and offset).
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-.. note::
-
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
-
-  For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
 
 References
 ++++++++++
@@ -142,7 +140,14 @@ See also
 
 iaf_psc_exp, iaf_psc_alpha_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_ps
+
 EndUserDocs */
+
+void register_iaf_psc_exp_ps( const std::string& name );
 
 class iaf_psc_exp_ps : public ArchivingNode
 {
@@ -154,7 +159,7 @@ public:
   iaf_psc_exp_ps();
 
   /** Copy constructor.
-      GenericModel::allocate_() uses the copy constructor to clone
+      GenericModel::create_() uses the copy constructor to clone
       actual model instances from the prototype instance.
 
       @note The copy constructor MUST NOT be used to create nodes based
@@ -170,24 +175,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -206,8 +211,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void calibrate();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -226,7 +231,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -263,6 +268,10 @@ private:
    */
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
+
   // ----------------------------------------------------------------
 
   /**
@@ -291,11 +300,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 
@@ -372,7 +381,7 @@ private:
   {
     double h_ms_;           //!< Time resolution [ms]
     long refractory_steps_; //!< Refractory time in steps
-    double exp_tau_m_;      //!< exp(-h/tau_m)
+    double expm1_tau_m_;    //!< expm1(-h/tau_m)
     double exp_tau_ex_;     //!< exp(-h/tau_ex)
     double exp_tau_in_;     //!< exp(-h/tau_in)
     double P20_;            //!< Progagator matrix element, 2nd row
@@ -396,7 +405,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_ps_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -412,16 +420,16 @@ private:
   static RecordablesMap< iaf_psc_exp_ps > recordablesMap_;
 };
 
-inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::iaf_psc_exp_ps::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -430,8 +438,8 @@ iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -440,8 +448,8 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

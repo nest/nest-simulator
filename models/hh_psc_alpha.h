@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model
 Description
 +++++++++++
 
-hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
+``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
 
 1. Postsynaptic currents
@@ -81,6 +81,11 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
+See also [1]_, [2]_, [3]_.
+
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -90,6 +95,7 @@ The following parameters can be set in the status dictionary.
 V_m       mV      Membrane potential
 E_L       mV      Leak reversal potential
 C_m       pF      Capacity of the membrane
+t_ref     ms      Duration of refractory period
 g_L       nS      Leak conductance
 tau_ex    ms      Rise time of the excitatory synaptic alpha function
 tau_in    ms      Rise time of the inhibitory synaptic alpha function
@@ -138,7 +144,14 @@ See also
 
 hh_cond_exp_traub
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha
+
 EndUserDocs */
+
+void register_hh_psc_alpha( const std::string& name );
 
 class hh_psc_alpha : public ArchivingNode
 {
@@ -146,7 +159,7 @@ class hh_psc_alpha : public ArchivingNode
 public:
   hh_psc_alpha();
   hh_psc_alpha( const hh_psc_alpha& );
-  ~hh_psc_alpha();
+  ~hh_psc_alpha() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -156,23 +169,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void calibrate();
-  void update( Time const&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -206,7 +219,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -259,8 +272,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha > logger_;
@@ -276,7 +289,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -330,8 +343,8 @@ private:
 };
 
 
-inline port
-hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_psc_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -340,8 +353,8 @@ hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 
-inline port
-hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -350,8 +363,8 @@ hh_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -360,8 +373,8 @@ hh_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_psc_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

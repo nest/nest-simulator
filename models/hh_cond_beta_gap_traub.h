@@ -30,8 +30,8 @@
 
 // C includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
@@ -69,48 +69,55 @@ Hodgkin-Huxley neuron with gap junction support and beta function synaptic condu
 Description
 +++++++++++
 
-hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
+``hh_cond_beta_gap_traub`` is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junctions.
 
-This model was specifically developed for a major review of simulators [1]_,
-based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
-The key differences between the current model and the model in [2]_ are:
+This model is derived from the ``hh_conda_exp`` model, but supports double-exponential-shaped
+(beta-shaped) synaptic conductances and also supports gap junctions. The model is originally
+based on a model of hippocampal pyramidal cells by Traub and Miles [1]_.
+The key differences between the current model and the model in [1]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only I_Na and I_K, with simpler I_K dynamics than
-  in [2]_, so it has only three instead of eight gating variables;
+- Following [2]_, this model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
+  in [1]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
+- The model incorporates gap junctions [3]_.
 
-This model is primarily provided as reference implementation for hh_coba
-example of the Brette et al (2007) review. Default parameter values are chosen
-to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
-simulators covered is available from ModelDB [3]_.
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
 
-Note:
-In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and
-:math:`V_m` has fallen during the current time step.
-
-To avoid that this leads to multiple spikes during the falling flank of a
-spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
-:math:`t_{ref} = 2` ms in [2]_.
 
 Postsynaptic currents
+---------------------
+
 Incoming spike events induce a postsynaptic change of conductance modelled by a
 beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
-where xx is ex or in.
+event of weight 1.0 results in a peak conductance of 1 nS at :math:`t = \tau_{rise,xx}`
+where xx is `ex` or `in`.
 
 Spike Detection
+---------------
+
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 Gap Junctions
+-------------
+
 Gap Junctions are implemented by a gap current of the form
 :math:`g_{ij}( V_i - V_j)`.
+
+.. note::
+   In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and
+   :math:`V_m` has fallen during the current time step.
+
+   To avoid multiple spikes from occurring during the falling flank of a
+   spike, it is essential to choose a sufficiently long refractory period.
+   Traub and Miles used :math:`t_{ref} = 3` ms ([1]_, p 118), while we used
+   :math:`t_{ref} = 2` ms in [1]_.
 
 Parameters
 ++++++++++
@@ -142,12 +149,15 @@ I_e          pA      External input current
 References
 ++++++++++
 
-.. [1] Brette R et al (2007). Simulation of networks of spiking neurons: A
-       review of tools and strategies. Journal of Computational Neuroscience
-       23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
-.. [2] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
+.. [1] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
        Cambridge University Press, Cambridge UK.
-.. [3] http://modeldb.yale.edu/83319
+.. [2] Brette R, et al (2007). Simulation of networks of spiking neurons:
+       A review of tools and strategies. J Comput Neurosci, 23, 349–398
+       DOI: https://doi.org/10.1007/s10827-007-0038-6
+.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A,
+       and Diesmann M. (2015). A unified framework for spiking and gap-junction
+       interactions in distributed neuronal network simulations.
+       Frontiers in Neuroinformatics, 9. DOI: https://doi.org/10.3389/fninf.2015.00022
 .. [4] Rotter S and Diesmann M (1999). Exact digital simulation of
        time-invariant linear systems with applications to neuronal modeling.
        Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
@@ -170,7 +180,15 @@ See also
 
 hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_cond_beta_gap_traub
+
 EndUserDocs */
+
+void register_hh_cond_beta_gap_traub( const std::string& name );
 
 class hh_cond_beta_gap_traub : public ArchivingNode
 {
@@ -180,7 +198,7 @@ public:
 
   hh_cond_beta_gap_traub();
   hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& );
-  ~hh_cond_beta_gap_traub();
+  ~hh_cond_beta_gap_traub() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -191,38 +209,38 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool );
+  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
-  void handle( GapJunctionEvent& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
+  void handle( GapJunctionEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( GapJunctionEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( GapJunctionEvent&, size_t ) override;
 
   void
-  sends_secondary_event( GapJunctionEvent& )
+  sends_secondary_event( GapJunctionEvent& ) override
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   double get_normalisation_factor( double, double );
-  void calibrate();
+  void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
   bool update_( Time const&, const long, const long, const bool );
 
-  void update( Time const&, const long, const long );
-  bool wfr_update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
+  bool wfr_update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -262,8 +280,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;        //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* ); //!< Set values from dictionary
   };
 
 public:
@@ -299,7 +317,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // Variables class -------------------------------------------------------
@@ -352,7 +370,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -415,8 +433,8 @@ hh_cond_beta_gap_traub::wfr_update( Time const& origin, const long from, const l
   return not wfr_tol_exceeded;
 }
 
-inline port
-hh_cond_beta_gap_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_cond_beta_gap_traub::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -425,8 +443,8 @@ hh_cond_beta_gap_traub::send_test_event( Node& target, rport receptor_type, syni
 }
 
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -435,8 +453,8 @@ hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -445,8 +463,8 @@ hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -455,8 +473,8 @@ hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, rport recep
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( GapJunctionEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( GapJunctionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -480,10 +498,10 @@ hh_cond_beta_gap_traub::get_status( DictionaryDatum& d ) const
 inline void
 hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -495,7 +513,7 @@ hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  calibrate();
+  pre_run_hook();
 }
 
 } // namespace

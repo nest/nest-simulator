@@ -22,8 +22,25 @@
 
 #include "gauss_rate.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_gauss_rate_ipn( const std::string& name )
+{
+  register_node_model< gauss_rate_ipn >( name );
+}
+
+void
+register_rate_transformer_gauss( const std::string& name )
+{
+  register_node_model< rate_transformer_gauss >( name );
+}
+
 
 void
 nonlinearities_gauss_rate::get( DictionaryDatum& d ) const
@@ -49,7 +66,7 @@ template <>
 void
 RecordablesMap< nest::gauss_rate_ipn >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::rate, &nest::gauss_rate_ipn::get_rate_ );
   insert_( names::noise, &nest::gauss_rate_ipn::get_noise_ );
 }
@@ -58,7 +75,7 @@ template <>
 void
 RecordablesMap< nest::rate_transformer_gauss >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::rate, &nest::rate_transformer_gauss::get_rate_ );
 }
 

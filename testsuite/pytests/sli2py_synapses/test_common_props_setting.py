@@ -46,7 +46,7 @@ def prepare():
 
 
 @pytest.mark.parametrize(
-    "synapse", ["stdp_synapse_hom", "stdp_pl_synapse_hom", "stdp_facetshw_synapse_hom", "stdp_dopamine_synapse"]
+    "synapse", ["stdp_synapse_hom", "stdp_facetshw_synapse_hom", "stdp_dopamine_synapse"]
 )
 class TestSettingCommonProps:
     def test_setting_common_props_on_original(self, synapse):

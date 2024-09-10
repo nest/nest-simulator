@@ -30,6 +30,10 @@ import nest
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
+# apply exceptions for synapses that do not support labels or are not compatible with the default histentry/archivingnode
+synapse_list = [s for s in nest.synapse_models if s.endswith("_lbl")]
+
+
 @nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
 class LabeledSynapsesTestCase(unittest.TestCase):
@@ -99,7 +103,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseOnConnect(self):
         """Set a label to a labeled synapse on connect."""
 
-        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
+        for syn in synapse_list:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -118,7 +122,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseSetStatus(self):
         """Set a label to a labeled synapse on SetStatus."""
 
-        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
+        for syn in synapse_list:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -139,7 +143,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseSetDefaults(self):
         """Set a label to a labeled synapse on SetDefaults."""
 
-        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
+        for syn in synapse_list:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -156,7 +160,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_GetLabeledSynapses(self):
         """Get labeled synapses with GetConnections."""
 
-        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
+        for syn in synapse_list:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required

@@ -180,12 +180,6 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"synapse_model": "stdp_facetshw_synapse_hom"}
         check_synapse(params, values, syn_params, self)
 
-    def testStdpPlSynapseHom(self):
-        params = ["Kplus"]
-        values = [0.173]
-        syn_params = {"synapse_model": "stdp_pl_synapse_hom"}
-        check_synapse(params, values, syn_params, self)
-
     def testStdpSynapseHom(self):
         params = ["Kplus"]
         values = [0.382]
@@ -229,7 +223,6 @@ class ConnectTestBase(unittest.TestCase):
             "static_synapse_hom_w",
             "stdp_dopamine_synapse",
             "stdp_facetshw_synapse_hom",
-            "stdp_pl_synapse_hom",
             "stdp_synapse_hom",
             "stdp_synapse",
             "tsodyks2_synapse",
@@ -260,7 +253,6 @@ class ConnectTestBase(unittest.TestCase):
             "quantal_stp_synapse",
             "stdp_dopamine_synapse",
             "stdp_facetshw_synapse_hom",
-            "stdp_pl_synapse_hom",
             "stdp_synapse_hom",
             "stdp_synapse",
             "tsodyks2_synapse",
@@ -284,7 +276,6 @@ class ConnectTestBase(unittest.TestCase):
             "static_synapse_hom_w",
             "stdp_dopamine_synapse",
             "stdp_facetshw_synapse_hom",
-            "stdp_pl_synapse_hom",
             "stdp_synapse_hom",
             "stdp_synapse",
             "tsodyks2_synapse",

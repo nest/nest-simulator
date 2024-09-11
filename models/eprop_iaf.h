@@ -103,8 +103,39 @@ voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
 trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
-See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
-gradients functions.
+.. start_surrogate-gradient-functions
+
+Surrogate gradients help overcome the challenge of the spiking function's
+non-differentiability, facilitating the use of gradient-based learning
+techniques such as e-prop. The non-existent derivative of the spiking
+variable with respect to the membrane voltage,
+:math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+replaced with a variety of surrogate gradient functions, as detailed in
+various studies (see, e.g., [3]_). NEST currently provides four
+different surrogate gradient functions:
+
+1. A piecewise linear function used among others in [1]_:
+
+.. math::
+  \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
+    \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
+
+2. An exponential function used in [4]_:
+
+.. math::
+  \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
+
+3. The derivative of a fast sigmoid function used in [5]_:
+
+.. math::
+  \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
+
+4. An arctan function used in [6]_:
+
+.. math::
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
+
+.. end_surrogate-gradient-functions
 
 In the interval between two presynaptic spikes, the gradient is calculated
 at each time step until the cutoff time point. This computation occurs over
@@ -271,6 +302,27 @@ References
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
+
+.. start_surrogate-gradient-references
+
+.. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
+       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
+       https://doi.org/10.1109/MSP.2019.2931595
+
+.. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
+       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+
+.. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
+       Spiking Neural Networks. Neural Computation, 30:1514–1541.
+       https://doi.org/10.1162/neco_a_01086
+
+.. [6] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
+       learning in spiking neural networks. Advances in Neural Information
+       Processing Systems, 34:21056–21069.
+       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
+
+.. end_surrogate-gradient-references
 
 Sends
 +++++

@@ -106,12 +106,13 @@ voltage :math:`\psi_j^t` (the product of which forms the eligibility
 trace :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
-See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
-gradients functions.
-
 .. math::
   \frac{ \text{d} E }{ \text{d} W_{ji} } &= \sum_t L_j^t \bar{e}_{ji}^t \,, \\
    e_{ji}^t &= \psi^t_j \bar{z}_i^{t-1} \,, \\
+
+.. include:: ../models/eprop_iaf.rst
+   :start-after: .. start_surrogate-gradient-functions
+   :end-before: .. end_surrogate-gradient-functions
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with the following exponential kernels:
@@ -241,6 +242,10 @@ References
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
+
+.. include:: ../models/eprop_iaf.rst
+   :start-after: .. start_surrogate-gradient-references
+   :end-before: .. end_surrogate-gradient-references
 
 Sends
 +++++

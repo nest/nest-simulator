@@ -91,10 +91,14 @@ constexpr uint8_t NUM_BITS_LCID = 27U;
 constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
-constexpr uint8_t NUM_BITS_DELAY = 21U;
-constexpr uint8_t NUM_BITS_DENDRITIC_DELAY = NUM_BITS_DELAY;
-constexpr uint8_t NUM_BITS_AXONAL_DELAY = 32U - NUM_BITS_DENDRITIC_DELAY;
 constexpr uint8_t NUM_BITS_NODE_ID = 62U;
+
+// These types are used in delay_types.h and denote the space available for the dendritic and axonal portions of the
+// total transmission delay. The delay is only split into two parts for selected synapse types.
+// Given that axonal delays can be much larger than dendritic/backpropagation delays, they require more bits.
+constexpr uint8_t NUM_BITS_DENDRITIC_DELAY = 14U;
+constexpr uint8_t NUM_BITS_AXONAL_DELAY = sizeof( unsigned int ) * 8 - NUM_BITS_DENDRITIC_DELAY;
+
 
 // Maximally allowed values for bitfields
 

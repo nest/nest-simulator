@@ -212,7 +212,7 @@ Usage
 +++++
 
 This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -305,6 +305,7 @@ private:
     double& z_previous_buffer,
     double& z_bar,
     double& e_bar,
+    double& e_bar_reg,
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
@@ -347,9 +348,8 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
-    long eprop_isi_trace_cutoff_;
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -426,6 +426,9 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
+
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -489,7 +492,7 @@ private:
 inline long
 eprop_readout::get_eprop_isi_trace_cutoff() const
 {
-  return P_.eprop_isi_trace_cutoff_;
+  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

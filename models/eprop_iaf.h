@@ -103,8 +103,39 @@ voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
 trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
-See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
-gradients functions.
+.. start_surrogate-gradient-functions
+
+Surrogate gradients help overcome the challenge of the spiking function's
+non-differentiability, facilitating the use of gradient-based learning
+techniques such as e-prop. The non-existent derivative of the spiking
+variable with respect to the membrane voltage,
+:math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+replaced with a variety of surrogate gradient functions, as detailed in
+various studies (see, e.g., [3]_). NEST currently provides four
+different surrogate gradient functions:
+
+1. A piecewise linear function used among others in [1]_:
+
+.. math::
+  \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
+    \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
+
+2. An exponential function used in [4]_:
+
+.. math::
+  \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
+
+3. The derivative of a fast sigmoid function used in [5]_:
+
+.. math::
+  \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
+
+4. An arctan function used in [6]_:
+
+.. math::
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
+
+.. end_surrogate-gradient-functions
 
 In the interval between two presynaptic spikes, the gradient is calculated
 at each time step until the cutoff time point. This computation occurs over
@@ -140,8 +171,8 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
 .. math::
   \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
-  f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
-    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_{\kappa_\text{reg}} \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
 
 where :math:`c_\text{reg}` is a constant scaling factor.
 
@@ -211,6 +242,10 @@ eprop_isi_trace_cutoff      ms   :math:`{\Delta t}_\text{c}` maximum value    Cu
                                                              type in C++
 f_target                    Hz   :math:`f^\text{target}`                 10.0 Target firing rate of rate
                                                                               regularization
+kappa                            :math:`\kappa`                          0.97 Low-pass filter of the
+                                                                              eligibility trace
+kappa_reg                        :math:`\kappa_\text{reg}`               0.97 Low-pass filter of the
+                                                                              the firing rate for regularization
 beta                             :math:`\beta`                            1.0 Width scaling of surrogate
                                                                               gradient / pseudo-derivative of
                                                                               membrane voltage
@@ -219,7 +254,8 @@ gamma                            :math:`\gamma`                           0.3 He
                                                                               membrane voltage
 surrogate_gradient_function      :math:`\psi`                piecewise_linear Surrogate gradient /
                                                                               pseudo-derivative function
-                                                                              ["piecewise_linear", "exponential",
+                                                                              ["piecewise_linear",
+                                                                              "exponential",
                                                                               "fast_sigmoid_derivative",
                                                                               "arctan"]
 =========================== ==== =========================== ================ ==================================
@@ -250,7 +286,7 @@ Usage
 +++++
 
 This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -266,6 +302,27 @@ References
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
+
+.. start_surrogate-gradient-references
+
+.. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
+       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
+       https://doi.org/10.1109/MSP.2019.2931595
+
+.. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
+       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+
+.. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
+       Spiking Neural Networks. Neural Computation, 30:1514–1541.
+       https://doi.org/10.1162/neco_a_01086
+
+.. [6] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
+       learning in spiking neural networks. Advances in Neural Information
+       Processing Systems, 34:21056–21069.
+       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
+
+.. end_surrogate-gradient-references
 
 Sends
 +++++
@@ -333,6 +390,7 @@ private:
     double& z_previous_buffer,
     double& z_bar,
     double& e_bar,
+    double& e_bar_reg,
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
@@ -397,9 +455,11 @@ private:
     //! Low-pass filter of the eligibility trace.
     double kappa_;
 
-    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
-    long eprop_isi_trace_cutoff_;
+    //! Low-pass filter of the firing rate for regularization.
+    double kappa_reg_;
+
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -479,6 +539,9 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
+
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -523,7 +586,7 @@ private:
 inline long
 eprop_iaf::get_eprop_isi_trace_cutoff() const
 {
-  return P_.eprop_isi_trace_cutoff_;
+  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

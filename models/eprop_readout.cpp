@@ -75,7 +75,7 @@ eprop_readout::Parameters_::Parameters_()
   , regular_spike_arrival_( true )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
+  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -112,7 +112,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -129,7 +129,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -141,7 +141,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
 
-  if ( eprop_isi_trace_cutoff_ < 0 )
+  if ( eprop_isi_trace_cutoff_ < 0.0 )
   {
     throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
   }
@@ -202,6 +202,8 @@ eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
+  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
+
   compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
 
   const double dt = Time::get_resolution().get_ms();
@@ -251,8 +253,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
-    emplace_new_eprop_history_entry( t, false );
-
+    append_new_eprop_history_entry( t, false );
     write_error_signal_to_history( t, S_.error_signal_, false );
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
@@ -334,6 +335,7 @@ eprop_readout::compute_gradient( const long t_spike,
   double& z_previous_buffer,
   double& z_bar,
   double& e_bar,
+  double& e_bar_reg,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
@@ -349,7 +351,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  const long t_compute_until = std::min( t_spike_previous + P_.eprop_isi_trace_cutoff_, t_spike );
+  const long t_compute_until = std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
 
   for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
   {
@@ -377,11 +379,11 @@ eprop_readout::compute_gradient( const long t_spike,
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
   }
 
-  const int power = t_spike - ( t_spike_previous + P_.eprop_isi_trace_cutoff_ );
+  const long cutoff_to_spike_interval = t_spike - t_spike_previous - V_.eprop_isi_trace_cutoff_steps_;
 
-  if ( power > 0 )
+  if ( cutoff_to_spike_interval > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, power );
+    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
   }
 }
 

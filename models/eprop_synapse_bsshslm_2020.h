@@ -131,7 +131,7 @@ Usage
 +++++
 
 This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -600,8 +600,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
     auto it = optimizer_dict->find( names::optimize_each_step );
     if ( it != optimizer_dict->end() )
     {
-      throw BadProperty(
-        "Optimization in every time step optimize_each_step is not available for eprop_synapse_bsshslm_2020." );
+      throw BadProperty( "eprop_synapse_bsshslm_2020 only supports optimize_each_step == False." );
     }
     if ( optimizer_ )
     {

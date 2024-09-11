@@ -283,7 +283,6 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
     if ( interval_step == 0 )
     {
       erase_used_firing_rate_reg_history();
-      erase_used_update_history();
       erase_used_eprop_history();
 
       if ( with_reset )
@@ -294,6 +293,11 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
       }
     }
 
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
     S_.z_in_ = B_.spikes_.get_value( lag );
 
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
@@ -302,13 +306,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
 
     S_.z_ = 0.0;
 
-    // P_.V_th_ is passed twice to handle models without an adaptive threshold, serving as both v_th_adapt and V_th
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
-
-    emplace_new_eprop_history_entry( t );
-
-    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {
@@ -318,12 +316,11 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
       kernel().event_delivery_manager.send( *this, se, lag );
 
       S_.z_ = 1.0;
-
-      if ( V_.RefractoryCounts_ > 0 )
-      {
-        S_.r_ = V_.RefractoryCounts_;
-      }
+      S_.r_ = V_.RefractoryCounts_;
     }
+
+    append_new_eprop_history_entry( t );
+    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
     if ( interval_step == update_interval - 1 )
     {
@@ -332,11 +329,6 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
     }
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
-
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
@@ -429,9 +421,9 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  const auto firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
 
-  grad += it_reg_hist->firing_rate_reg_ * sum_e;
+  grad += firing_rate_reg * sum_e;
 
   if ( average_gradient )
   {

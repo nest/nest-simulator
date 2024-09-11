@@ -110,8 +110,9 @@ voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
 trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
-See the documentation on the :doc:`eprop_archiving_node<../models/eprop_archiving_node/>` for details on the surrogate
-gradients functions.
+.. include:: ../models/eprop_iaf.rst
+   :start-after: .. start_surrogate-gradient-functions
+   :end-before: .. end_surrogate-gradient-functions
 
 In the interval between two presynaptic spikes, the gradient is calculated
 at each time step until the cutoff time point. This computation occurs over
@@ -148,8 +149,8 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
 .. math::
   \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
-  f^{\text{ema},t}_j &= \mathcal{F}_\kappa \left( \frac{z_j^t}{\Delta t} \right)
-    = \kappa f^{\text{ema},t-1}_j + \left( 1 - \kappa \right) \frac{z_j^t}{\Delta t} \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_{\kappa_\text{reg}} \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
 
 where :math:`c_\text{reg}` is a constant scaling factor.
 
@@ -224,6 +225,10 @@ eprop_isi_trace_cutoff      ms      :math:`{\Delta t}_\text{c}` maximum value   
                                                                 type in C++
 f_target                    Hz      :math:`f^\text{target}`                 10.0 Target firing rate of rate
                                                                                  regularization
+kappa                               :math:`\kappa`                          0.97 Low-pass filter of the
+                                                                                 eligibility trace
+kappa_reg                           :math:`\kappa_\text{reg}`               0.97 Low-pass filter of the
+                                                                                 firing rate for regularization
 beta                                :math:`\beta`                            1.0 Width scaling of surrogate
                                                                                  gradient / pseudo-derivative of
                                                                                  membrane voltage
@@ -266,7 +271,7 @@ Usage
 +++++
 
 This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -282,6 +287,10 @@ References
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
+
+.. include:: ../models/eprop_iaf.rst
+   :start-after: .. start_surrogate-gradient-references
+   :end-before: .. end_surrogate-gradient-references
 
 Sends
 +++++
@@ -349,6 +358,7 @@ private:
     double& z_previous_buffer,
     double& z_bar,
     double& e_bar,
+    double& e_bar_reg,
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
@@ -419,9 +429,11 @@ private:
     //! Low-pass filter of the eligibility trace.
     double kappa_;
 
-    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
-    long eprop_isi_trace_cutoff_;
+    //! Low-pass filter of the firing rate for regularization.
+    double kappa_reg_;
+
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -510,6 +522,9 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
+
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -568,7 +583,7 @@ private:
 inline long
 eprop_iaf_adapt::get_eprop_isi_trace_cutoff() const
 {
-  return P_.eprop_isi_trace_cutoff_;
+  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

@@ -103,11 +103,10 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   {
     // If an entry exists for the previous update time, decrement its access counter
     --it_hist_prev->access_counter_;
-  }
-
-  if ( not is_bsshslm_2020_model )
-  {
-    erase_used_update_history();
+    if ( it_hist_prev->access_counter_ == 0 )
+    {
+      update_history_.erase( it_hist_prev );
+    }
   }
 }
 
@@ -150,14 +149,12 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
     else
     {
-      const auto it_eprop_hist_from_1 = get_eprop_history( t );
-      const auto it_eprop_hist_to_1 = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
+      // erase entries that are no longer used
+      eprop_history_.erase( get_eprop_history( t ), get_eprop_history( t + update_interval ) );
     }
   }
-  const auto it_eprop_hist_from_2 = get_eprop_history( 0 );
-  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
+  // erase entries that are no longer used
+  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
 template < typename HistEntryT >
@@ -174,6 +171,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
   const long t_prev = ( update_history_.end() - 2 )->t_;
   const long t_curr = ( update_history_.end() - 1 )->t_;
 
+  // Erase entries to be ignored by trace cutoff
   if ( t_prev + eprop_isi_trace_cutoff < t_curr )
   {
     const auto it_eprop_hist_from_1 = get_eprop_history( t_prev + eprop_isi_trace_cutoff );
@@ -181,28 +179,10 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
     eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
   }
 
+  // Erase entries before the earliest current update
   const auto it_eprop_hist_from_2 = get_eprop_history( std::numeric_limits< long >::min() );
   const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ - 1 );
   eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
-}
-
-template < typename HistEntryT >
-void
-EpropArchivingNode< HistEntryT >::erase_used_update_history()
-{
-  auto it_hist = update_history_.begin();
-  while ( it_hist != update_history_.end() )
-  {
-    if ( it_hist->access_counter_ == 0 )
-    {
-      // erase() invalidates the iterator, but returns a new, valid iterator
-      it_hist = update_history_.erase( it_hist );
-    }
-    else
-    {
-      ++it_hist;
-    }
-  }
 }
 
 } // namespace nest

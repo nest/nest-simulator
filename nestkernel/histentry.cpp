@@ -42,10 +42,14 @@ nest::HistEntryEprop::HistEntryEprop( long t )
 {
 }
 
-nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal )
+nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t,
+  double surrogate_gradient,
+  double learning_signal,
+  double firing_rate_reg )
   : HistEntryEprop( t )
   , surrogate_gradient_( surrogate_gradient )
   , learning_signal_( learning_signal )
+  , firing_rate_reg_( firing_rate_reg )
 {
 }
 

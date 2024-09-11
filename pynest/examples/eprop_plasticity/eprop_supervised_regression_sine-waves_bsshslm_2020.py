@@ -196,6 +196,10 @@ params_nrn_rec = {
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
+params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
+
 ####################
 
 # Intermediate parrot neurons required between input spike generators and recurrent neurons,

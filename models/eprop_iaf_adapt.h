@@ -148,7 +148,7 @@ with respect to the synaptic weight :math:`W_{ji}` is given by:
 .. math::
   \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
     &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
-  f^{\text{ema},t}_j &= \mathcal{F}_\kappa_\text{reg} \left( \frac{z_j^t}{\Delta t} \right)
+  f^{\text{ema},t}_j &= \mathcal{F}_{\kappa_\text{reg}} \left( \frac{z_j^t}{\Delta t} \right)
     = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
 
 where :math:`c_\text{reg}` is a constant scaling factor.

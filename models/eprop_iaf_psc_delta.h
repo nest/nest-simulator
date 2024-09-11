@@ -152,31 +152,31 @@ The following parameters can be set in the status dictionary.
 ``refractory_input`` ``False``          None                            If set to True, spikes arriving during refractory period are integrated afterwards
 ==================== ================== =============================== ==================================================================================
 
-=========================== ======= ======================= ================ ===================================
+=========================== ======= ========================== ================ ===================================
 **E-prop parameters**
-----------------------------------------------------------------------------------------------------------------
-Parameter                   Unit    Math equivalent         Default          Description
-=========================== ======= ======================= ================ ===================================
-c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
-                                                                             regularization
-f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
-                                                                             regularization
-kappa                               :math:`\kappa`                      0.97 Low-pass filter of the
-                                                                             eligibility trace
-kappa_reg                           :math:`\kappa_\text{reg}`           0.97 Low-pass filter of the firing rate
-                                                                             for regularization
-beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
-                                                                             / pseudo-derivative of membrane
-                                                                             voltage
-gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
-                                                                             gradient / pseudo-derivative of
-                                                                             membrane voltage
-surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
-                                                                             pseudo-derivative function
-                                                                             ["piecewise_linear", "exponential",
-                                                                             "fast_sigmoid_derivative",
-                                                                             "arctan"]
-=========================== ======= ======================= ================ ===================================
+-------------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent            Default          Description
+=========================== ======= ========================== ================ ===================================
+c_reg                               :math:`c_\text{reg}`                    0.0 Prefactor of firing rate
+                                                                                regularization
+f_target                    Hz      :math:`f^\text{target}`                10.0 Target firing rate of rate
+                                                                                regularization
+kappa                               :math:`\kappa`                         0.97 Low-pass filter of the
+                                                                                eligibility trace
+kappa_reg                           :math:`\kappa_\text{reg}`              0.97 Low-pass filter of the firing rate
+                                                                                for regularization
+beta                                :math:`\beta`                           1.0 Width scaling of surrogate gradient
+                                                                                / pseudo-derivative of membrane
+                                                                                voltage
+gamma                               :math:`\gamma`                          0.3 Height scaling of surrogate
+                                                                                gradient / pseudo-derivative of
+                                                                                membrane voltage
+surrogate_gradient_function         :math:`\psi`               piecewise_linear Surrogate gradient /
+                                                                                pseudo-derivative function
+                                                                                ["piecewise_linear", "exponential",
+                                                                                "fast_sigmoid_derivative",
+                                                                                "arctan"]
+=========================== ======= ========================== ================ ===================================
 
 References
 ++++++++++
@@ -271,7 +271,7 @@ private:
     double& z_previous_buffer,
     double& z_bar,
     double& e_bar,
-    double& e_bar_reg,    
+    double& e_bar_reg,
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,

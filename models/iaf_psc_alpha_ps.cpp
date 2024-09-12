@@ -282,7 +282,7 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
   V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );
   V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ / P_.tau_syn_in_ );
 
-  V_.P30_ = -P_.tau_m_ * V_.inv_c_m_ * V_.expm1_tau_m_;
+  V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
   propagator_ex_ = IAFPropagatorAlpha( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_ );
   std::tie( V_.P31_ex_, V_.P32_ex_ ) = propagator_ex_.evaluate( V_.h_ms_ );

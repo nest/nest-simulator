@@ -91,7 +91,7 @@ weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`

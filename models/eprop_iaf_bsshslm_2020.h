@@ -225,7 +225,7 @@ surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseud
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -316,7 +316,7 @@ private:
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
 
-  //! Pointer to member function selected for computing the surrogate gradient
+  //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_;
 
   //! Map for storing a static set of recordables.

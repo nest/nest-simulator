@@ -211,7 +211,7 @@ target_signal         mV   :math:`y^*_j`             0.0 Target signal
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`

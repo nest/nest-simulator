@@ -141,7 +141,7 @@ public:
 
   /**
    * Compute the surrogate gradient with a piecewise linear function around the spike time (used, e.g., in Bellec
-   * et al. 2020).
+   * et al., 2020).
    */
   double compute_piecewise_linear_surrogate_gradient( const double r,
     const double v_m,

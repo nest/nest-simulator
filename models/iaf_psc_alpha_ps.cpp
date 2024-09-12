@@ -278,9 +278,9 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
   V_.psc_norm_in_ = numerics::e * V_.inv_tau_syn_in_;
 
   // pre-compute matrix for full time step
-  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ * V_.inv_tau_m_ );
-  V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ * V_.inv_tau_syn_ex_ );
-  V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ * V_.inv_tau_syn_in_ );
+  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );
+  V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ / P_.tau_syn_in_ );
 
   V_.P30_ = -P_.tau_m_ * V_.inv_c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion

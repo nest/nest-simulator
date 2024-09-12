@@ -11,9 +11,8 @@ supervised classification task to accumulate evidence [2]_. Here, you find tutor
 reproduce these two tasks as well as two more advanced regression tasks using the NEST implementation
 of e-prop [3]_ and how to visualize the simulation recordings.
 
-The examples labeled "after Bellec et al. (2020)" use the original e-prop model by Bellec an colleagues,
-while the other tutorials use a version of e-prop that includes additional biological features
-as described in [3]_.
+The tutorials labeled "after Bellec et al. (2020)" use the original e-prop model [1]_, while the other
+tutorials use a version of e-prop that includes additional biological features as described in [3]_.
 
 See below for a diagram that describes the relationships between the different models for e-prop.
 

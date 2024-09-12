@@ -600,7 +600,8 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
     auto it = optimizer_dict->find( names::optimize_each_step );
     if ( it != optimizer_dict->end() )
     {
-      throw BadProperty( "eprop_synapse_bsshslm_2020 only supports optimize_each_step == False." );
+      throw BadProperty(
+        "eprop_synapse_bsshslm_2020 only supports optimization in each step optimize_each_step == False." );
     }
     if ( optimizer_ )
     {

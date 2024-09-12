@@ -71,19 +71,15 @@ public:
   //! Get an iterator pointing to the eprop history entry of the given time step.
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
-
   /**
-   * Erase e-prop history entries corresponding to update intervals during which no spikes were transmitted to target
-   * neuron. Erase all e-prop history entries that predate the earliest time stamp required by the first update in the
-   * update history.
+   * Erase e-prop history entries for update intervals during which no spikes were sent to the target neuron,
+   * and any entries older than the earliest time stamp required by the first update in the history.
    */
   void erase_used_eprop_history();
 
   /**
-   * Erase e-prop history entries between the last and the penultimate updates if they exceed the specified inter-spike
-   * interval trace cutoff.
-   * Erase all e-prop history entries that predate the earliest time stamp required by the first update in the update
-   * history.
+   * Erase e-prop history entries between the last and penultimate updates if they exceed the inter-spike
+   * interval trace cutoff and any entries older than the earliest time stamp required by the first update.
    */
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 

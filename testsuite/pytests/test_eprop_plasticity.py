@@ -41,7 +41,9 @@ def fix_resolution():
 @pytest.mark.parametrize("source_model", supported_source_models)
 @pytest.mark.parametrize("target_model", supported_target_models)
 def test_connect_with_eprop_synapse(source_model, target_model):
-    """Ensures that the restriction to supported neuron models works."""
+    """
+    Ensure that the restriction to supported neuron models works.
+    """
 
     # Connect supported models with e-prop synapse
     src = nest.Create(source_model)
@@ -51,7 +53,9 @@ def test_connect_with_eprop_synapse(source_model, target_model):
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
 def test_unsupported_model_raises(target_model):
-    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error."""
+    """
+    Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error.
+    """
 
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
@@ -100,13 +104,14 @@ def test_unsupported_model_raises(target_model):
 )
 def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     """
-    Test correct computation of losses for a regression task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
-    by comparing the simulated losses with NEST reference losses to catch scenarios in which the e-prop model does not
-    work as intended (e.g., potential future changes to the NEST code base or a faulty installation). These reference
-    losses were obtained from a simulation with the verified NEST e-prop implementation run with
-    Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and NEST@9b65de4bf.
-    """  # pylint: disable=line-too-long # noqa: E501
+    Test correct computation of losses for a regression task (for details on the task, see
+    nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py) by
+    comparing the simulated losses with NEST reference losses to catch scenarios in which the e-prop
+    model does not work as intended (e.g., potential future changes to the NEST code base or a
+    faulty installation). These reference losses were obtained from a simulation with the verified
+    NEST e-prop implementation run with Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and
+    NEST@9b65de4bf.
+    """
 
     # Initialize random generator
     rng_seed = 1
@@ -404,7 +409,9 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
 
 
 def test_unsupported_surrogate_gradient():
-    """Confirm that selecting an unsupported surrogate gradient raises an error."""
+    """
+    Confirm that selecting an unsupported surrogate gradient raises an error.
+    """
 
     params_nrn_rec = {
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
@@ -462,9 +469,10 @@ def test_unsupported_surrogate_gradient():
 )
 def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_reference):
     """
-    Test correct computation of surrogate gradients by comparing the simulated surrogate gradients with NEST reference
-    surrogate gradients. These reference surrogate gradients were obtained from a simulation with the verified NEST
-    e-prop implementation run with Linux 5.8.7-1-default, Python v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
+    Test correct computation of surrogate gradients by comparing the simulated surrogate gradients
+    with NEST reference surrogate gradients. These reference surrogate gradients were obtained from
+    a simulation with the verified NEST e-prop implementation run with Linux 5.8.7-1-default, Python
+    v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
     """
 
     rng_seed = 1

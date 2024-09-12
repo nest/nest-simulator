@@ -41,7 +41,9 @@ def fix_resolution():
 @pytest.mark.parametrize("source_model", supported_source_models)
 @pytest.mark.parametrize("target_model", supported_target_models)
 def test_connect_with_eprop_synapse(source_model, target_model):
-    """Ensures that the restriction to supported neuron models works."""
+    """
+    Ensure that the restriction to supported neuron models works.
+    """
 
     # Connect supported models with e-prop synapse
     src = nest.Create(source_model)
@@ -51,7 +53,9 @@ def test_connect_with_eprop_synapse(source_model, target_model):
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
 def test_unsupported_model_raises(target_model):
-    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse_bsshslm_2020 raises an error."""
+    """
+    Confirm that connecting a non-eprop neuron as target via an eprop_synapse_bsshslm_2020 raises an error.
+    """
 
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
@@ -62,21 +66,23 @@ def test_unsupported_model_raises(target_model):
 
 def test_eprop_regression():
     """
-    Test correct computation of losses for a regression task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py)
+    Test correct computation of losses for a regression task (for details on the task, see
+    nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py)
     by comparing the simulated losses with
 
-        1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
-           potential future changes to the NEST code base or a faulty installation). These reference losses
-           were obtained from a simulation with the verified NEST e-prop implementation run with
-           Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and NEST@3304c6b5c.
+        1. NEST reference losses to catch scenarios in which the e-prop model does not work as
+        intended (e.g., potential future changes to the NEST code base or a faulty installation).
+        These reference losses were obtained from a simulation with the verified NEST e-prop
+        implementation run with Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and
+        NEST@3304c6b5c.
 
-        2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
-           obtained from a simulation with the original TensorFlow implementation
-           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,
-            a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
-            Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
-            INM6/eligibility_propagation@7df7d2627.
+        2. TensorFlow reference losses to check the faithfulness to the original model. These
+        reference losses were obtained from a simulation with the original TensorFlow implementation
+        (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,
+        a modified fork of the original model at
+        https://github.com/IGITUGraz/eligibility_propagation) run with Linux 4.15.0-213-generic,
+        Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
+        INM6/eligibility_propagation@7df7d2627.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator
@@ -394,21 +400,23 @@ def test_eprop_regression():
 )
 def test_eprop_classification(batch_size, loss_nest_reference):
     """
-    Test correct computation of losses for a classification task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py)
+    Test correct computation of losses for a classification task (for details on the task, see
+    nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py)
     by comparing the simulated losses with
 
-        1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
-           potential future changes to the NEST code base or a faulty installation). These reference losses
-           were obtained from a simulation with the verified NEST e-prop implementation run with
-           Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and NEST@3304c6b5c.
+        1. NEST reference losses to catch scenarios in which the e-prop model does not work as
+        intended (e.g., potential future changes to the NEST code base or a faulty installation).
+        These reference losses were obtained from a simulation with the verified NEST e-prop
+        implementation run with Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and
+        NEST@3304c6b5c.
 
-        2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
-           obtained from a simulation with the original TensorFlow implementation
-           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,
-           a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
-           Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
-           INM6/eligibility_propagation@7df7d2627.
+        2. TensorFlow reference losses to check the faithfulness to the original model. These
+        reference losses were obtained from a simulation with the original TensorFlow implementation
+        (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,
+        a modified fork of the original model at
+        https://github.com/IGITUGraz/eligibility_propagation) run with Linux 4.15.0-213-generic,
+        Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
+        INM6/eligibility_propagation@7df7d2627.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator

@@ -190,7 +190,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization prefactor c_reg ≥ 0 required." );
+    throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )

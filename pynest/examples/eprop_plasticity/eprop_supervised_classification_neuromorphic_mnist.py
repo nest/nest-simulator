@@ -197,7 +197,7 @@ params_nrn_out = {
 params_nrn_rec = {
     "beta": 1.7,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
-    "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
+    "c_reg": 2.0 / duration["sequence"],  # coefficient of firing rate regularization
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization

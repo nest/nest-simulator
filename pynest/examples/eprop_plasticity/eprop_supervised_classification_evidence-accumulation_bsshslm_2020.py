@@ -205,7 +205,7 @@ params_nrn_out = {
 params_nrn_reg = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
-    "c_reg": 300.0,  # firing rate regularization scaling - 2*learning_window*(TF c_reg) for technical reasons
+    "c_reg": 300.0,  # coefficient of firing rate regularization - 2*learning_window*(TF c_reg) for technical reasons
     "E_L": 0.0,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative

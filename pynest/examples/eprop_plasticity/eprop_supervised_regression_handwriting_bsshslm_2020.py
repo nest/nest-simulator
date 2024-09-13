@@ -196,7 +196,7 @@ params_nrn_rec = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "C_m": 250.0,
-    "c_reg": 150.0,  # firing rate regularization scaling
+    "c_reg": 150.0,  # coefficient of firing rate regularization
     "E_L": 0.0,
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative

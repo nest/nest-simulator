@@ -183,7 +183,7 @@ V_th                        mV      :math:`v_\text{th}`                -55.0 Spi
 ----------------------------------------------------------------------------------------------------------------
 Parameter                   Unit    Math equivalent         Default          Description
 =========================== ======= ======================= ================ ===================================
-c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
+c_reg                               :math:`c_\text{reg}`                 0.0 Coefficient of firing rate
                                                                              regularization
 f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                              regularization
@@ -327,7 +327,7 @@ private:
     //! Capacitance of the membrane (pF).
     double C_m_;
 
-    //! Prefactor of firing rate regularization.
+    //! Coefficient of firing rate regularization.
     double c_reg_;
 
     //! Leak / resting membrane potential (mV).

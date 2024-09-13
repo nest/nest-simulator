@@ -234,7 +234,7 @@ V_th                        mV      :math:`v_\text{th}`                -55.0 Spi
 ----------------------------------------------------------------------------------------------------------------
 Parameter                   Unit Math equivalent             Default          Description
 =========================== ==== =========================== ================ ==================================
-c_reg                            :math:`c_\text{reg}`                     0.0 Prefactor of firing rate
+c_reg                            :math:`c_\text{reg}`                     0.0 Coefficient of firing rate
                                                                               regularization
 eprop_isi_trace_cutoff      ms   :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                              representable    e-prop update between two
@@ -415,7 +415,7 @@ private:
     //! Capacitance of the membrane (pF).
     double C_m_;
 
-    //! Prefactor of firing rate regularization.
+    //! Coefficient of firing rate regularization.
     double c_reg_;
 
     //! Leak / resting membrane potential (mV).

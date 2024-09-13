@@ -123,6 +123,8 @@ EndUserDocs */
 void register_eprop_learning_signal_connection( const std::string& name );
 
 /**
+ * @brief Class implementing a feedback connection model for e-prop plasticity with additional biological features.
+ *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
  * according to Bellec et al. (2020) with additional biological features described in
  * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).

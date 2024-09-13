@@ -285,6 +285,8 @@ EndUserDocs */
 void register_eprop_iaf_adapt_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing an adaptive LIF neuron model for e-prop plasticity.
+ *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
  * threshold adaptation for e-prop plasticity according to Bellec et al. (2020).
  */

@@ -347,6 +347,8 @@ EndUserDocs */
 void register_eprop_iaf( const std::string& name );
 
 /**
+ * @brief Class implementing a LIF neuron model for e-prop plasticity with additional biological features.
+ *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
  * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).

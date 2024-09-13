@@ -152,6 +152,8 @@ Examples using this model
 EndUserDocs */
 
 /**
+ * @brief Base class implementing common properties for e-prop synapses with additional biological features.
+ *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
  * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
  * (in preparation).
@@ -197,6 +199,8 @@ public:
 void register_eprop_synapse( const std::string& name );
 
 /**
+ * @brief Class implementing a synapse model for e-prop plasticity with additional biological features.
+ *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
  * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *

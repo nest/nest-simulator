@@ -164,6 +164,8 @@ Examples using this model
 EndUserDocs */
 
 /**
+ * @brief Base class implementing common properties for e-prop synapses.
+ *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
@@ -210,6 +212,8 @@ public:
 void register_eprop_synapse_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a synapse model for e-prop plasticity.
+ *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
  * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al.

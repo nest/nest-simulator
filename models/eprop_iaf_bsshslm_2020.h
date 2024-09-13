@@ -307,11 +307,7 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  double compute_gradient( std::vector< long >& presyn_isis,
-    const long t_previous_update,
-    const long t_previous_trigger_spike,
-    const double kappa,
-    const bool average_gradient ) override;
+  double compute_gradient( std::vector< long >&, const long, const long, const double, const bool ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;

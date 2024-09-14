@@ -29,7 +29,7 @@ import pytest
 
 nest.set_verbosity("M_WARNING")
 
-supported_source_models = ["eprop_iaf", "eprop_iaf_adapt", "eprop_iaf_psc_delta"]
+supported_source_models = ["eprop_iaf", "eprop_iaf_adapt", "eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
 supported_target_models = supported_source_models + ["eprop_readout"]
 
 
@@ -91,6 +91,17 @@ def test_unsupported_model_raises(target_model):
         ),
         (
             "eprop_iaf_psc_delta",
+            "gradient_descent",
+            [
+                0.32286231964124,
+                0.61322219696014,
+                0.63745062813969,
+                0.63844466107304,
+                0.58671835471489,
+            ],
+        ),
+        (
+            "eprop_iaf_psc_delta_adapt",
             "gradient_descent",
             [
                 0.32286231964124,
@@ -193,7 +204,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "V_th": 0.03,
     }
 
-    if neuron_model == "eprop_iaf_psc_delta":
+    if neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
         del params_nrn_rec["regular_spike_arrival"]
         params_nrn_rec["V_reset"] = -0.5
         params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]

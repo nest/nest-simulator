@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_psc_delta.cpp
+ *  eprop_iaf_psc_delta_adapt.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,9 +20,9 @@
  *
  */
 
-/* eprop_iaf_psc_delta is a neuron where the potential jumps on each spike arrival. */
+/* eprop_iaf_psc_delta_adapt is a neuron where the potential jumps on each spike arrival. */
 
-#include "eprop_iaf_psc_delta.h"
+#include "eprop_iaf_psc_delta_adapt.h"
 
 // C++ includes:
 #include <limits>
@@ -43,9 +43,9 @@
 namespace nest
 {
 void
-register_eprop_iaf_psc_delta( const std::string& name )
+register_eprop_iaf_psc_delta_adapt( const std::string& name )
 {
-  register_node_model< eprop_iaf_psc_delta >( name );
+  register_node_model< eprop_iaf_psc_delta_adapt >( name );
 }
 
 
@@ -53,25 +53,25 @@ register_eprop_iaf_psc_delta( const std::string& name )
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< eprop_iaf_psc_delta > eprop_iaf_psc_delta::recordablesMap_;
+RecordablesMap< eprop_iaf_psc_delta_adapt > eprop_iaf_psc_delta_adapt::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< eprop_iaf_psc_delta >::create()
+RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
-  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta::get_V_m_ );
+  insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
+  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
+  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
+nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   : tau_m_( 10.0 )                                  // ms
   , c_m_( 250.0 )                                   // pF
   , t_ref_( 2.0 )                                   // ms
@@ -92,7 +92,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
 {
 }
 
-nest::eprop_iaf_psc_delta::State_::State_()
+nest::eprop_iaf_psc_delta_adapt::State_::State_()
   : y0_( 0.0 )
   , y3_( 0.0 )
   , r_( 0 )
@@ -108,7 +108,7 @@ nest::eprop_iaf_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
@@ -130,7 +130,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -229,7 +229,7 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
 }
 
 void
-nest::eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
@@ -237,7 +237,10 @@ nest::eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p
 }
 
 void
-nest::eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL,
+  Node* node )
 {
   if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
   {
@@ -249,12 +252,12 @@ nest::eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Paramete
   }
 }
 
-nest::eprop_iaf_psc_delta::Buffers_::Buffers_( eprop_iaf_psc_delta& n )
+nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( eprop_iaf_psc_delta_adapt& n )
   : logger_( n )
 {
 }
 
-nest::eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n )
+nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& n )
   : logger_( n )
 {
 }
@@ -263,7 +266,7 @@ nest::eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_de
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::eprop_iaf_psc_delta::eprop_iaf_psc_delta()
+nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
   : EpropArchivingNodeRecurrent()
   , P_()
   , S_()
@@ -272,7 +275,7 @@ nest::eprop_iaf_psc_delta::eprop_iaf_psc_delta()
   recordablesMap_.create();
 }
 
-nest::eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
+nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& n )
   : EpropArchivingNodeRecurrent( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -285,7 +288,7 @@ nest::eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta::init_buffers_()
+nest::eprop_iaf_psc_delta_adapt::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
@@ -293,7 +296,7 @@ nest::eprop_iaf_psc_delta::init_buffers_()
 }
 
 void
-nest::eprop_iaf_psc_delta::pre_run_hook()
+nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -331,13 +334,13 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 }
 
 long
-eprop_iaf_psc_delta::get_shift() const
+eprop_iaf_psc_delta_adapt::get_shift() const
 {
   return offset_gen_ + delay_in_rec_;
 }
 
 bool
-eprop_iaf_psc_delta::is_eprop_recurrent_node() const
+eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
 {
   return true;
 }
@@ -347,7 +350,7 @@ eprop_iaf_psc_delta::is_eprop_recurrent_node() const
  */
 
 void
-nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
+nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
@@ -417,7 +420,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
 }
 
 void
-nest::eprop_iaf_psc_delta::handle( SpikeEvent& e )
+nest::eprop_iaf_psc_delta_adapt::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -430,7 +433,7 @@ nest::eprop_iaf_psc_delta::handle( SpikeEvent& e )
 }
 
 void
-nest::eprop_iaf_psc_delta::handle( CurrentEvent& e )
+nest::eprop_iaf_psc_delta_adapt::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -442,7 +445,7 @@ nest::eprop_iaf_psc_delta::handle( CurrentEvent& e )
 }
 
 void
-eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
+eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
 {
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
@@ -456,13 +459,13 @@ eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
 }
 
 void
-nest::eprop_iaf_psc_delta::handle( DataLoggingRequest& e )
+nest::eprop_iaf_psc_delta_adapt::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-eprop_iaf_psc_delta::compute_gradient( const long t_spike,
+eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
   const long t_spike_previous,
   double& z_previous_buffer,
   double& z_bar,

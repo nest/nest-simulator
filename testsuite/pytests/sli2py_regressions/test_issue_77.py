@@ -65,6 +65,7 @@ skip_models = [
     "eprop_iaf",  # does not support stdp synapses
     "eprop_iaf_adapt",  # does not support stdp synapses
     "eprop_iaf_psc_delta",  # does not support stdp synapses
+    "eprop_iaf_psc_delta_adapt",  # does not support stdp synapses
 ]
 
 # The following models require connections to rport 1 or other specific parameters:

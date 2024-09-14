@@ -27,8 +27,9 @@ eprop_readout_bsshslm_2020
 eprop_synapse_bsshslm_2020
 eprop_learning_signal_connection_bsshslm_2020
 eprop_iaf
-eprop_iaf_psc_delta
 eprop_iaf_adapt
+eprop_iaf_psc_delta
+eprop_iaf_psc_delta_adapt
 eprop_readout
 eprop_synapse
 eprop_learning_signal_connection

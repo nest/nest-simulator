@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_psc_delta.h
+ *  eprop_iaf_psc_delta_adapt.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_IAF_PSC_DELTA_H
-#define EPROP_IAF_PSC_DELTA_H
+#ifndef EPROP_IAF_PSC_DELTA_ADAPT_H
+#define EPROP_IAF_PSC_DELTA_ADAPT_H
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -55,7 +55,7 @@ Description
 * Dirac delta (:math:`\delta`)-shaped synaptic input currents.
 
 
-The `eprop_iaf_psc_delta` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
+The `eprop_iaf_psc_delta_adapt` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -208,7 +208,7 @@ iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_iaf_psc_delta
+.. listexamples:: eprop_iaf_psc_delta_adapt
 
 EndUserDocs */
 
@@ -227,14 +227,14 @@ EndUserDocs */
  * matrix objects.
  */
 
-void register_eprop_iaf_psc_delta( const std::string& name );
+void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
-class eprop_iaf_psc_delta : public EpropArchivingNodeRecurrent
+class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent
 {
 
 public:
-  eprop_iaf_psc_delta();
-  eprop_iaf_psc_delta( const eprop_iaf_psc_delta& );
+  eprop_iaf_psc_delta_adapt();
+  eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -285,8 +285,8 @@ private:
   surrogate_gradient_function compute_surrogate_gradient_;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< eprop_iaf_psc_delta >;
-  friend class UniversalDataLogger< eprop_iaf_psc_delta >;
+  friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
+  friend class UniversalDataLogger< eprop_iaf_psc_delta_adapt >;
 
   // ----------------------------------------------------------------
 
@@ -405,15 +405,15 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( eprop_iaf_psc_delta& );
-    Buffers_( const Buffers_&, eprop_iaf_psc_delta& );
+    Buffers_( eprop_iaf_psc_delta_adapt& );
+    Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& );
 
     /** buffers and summs up incoming spikes/currents */
     RingBuffer spikes_;
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< eprop_iaf_psc_delta > logger_;
+    UniversalDataLogger< eprop_iaf_psc_delta_adapt > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -475,17 +475,17 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
+  static RecordablesMap< eprop_iaf_psc_delta_adapt > recordablesMap_;
 };
 
 inline long
-eprop_iaf_psc_delta::get_eprop_isi_trace_cutoff() const
+eprop_iaf_psc_delta_adapt::get_eprop_isi_trace_cutoff() const
 {
   return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t
-nest::eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+nest::eprop_iaf_psc_delta_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -493,7 +493,7 @@ nest::eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, 
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_iaf_psc_delta_adapt::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -503,7 +503,7 @@ eprop_iaf_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_iaf_psc_delta_adapt::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -513,7 +513,7 @@ eprop_iaf_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
+eprop_iaf_psc_delta_adapt::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -524,7 +524,7 @@ eprop_iaf_psc_delta::handles_test_event( LearningSignalConnectionEvent&, size_t 
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -534,7 +534,7 @@ eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t recepto
 }
 
 inline void
-eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
+eprop_iaf_psc_delta_adapt::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -542,7 +542,7 @@ eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
+eprop_iaf_psc_delta_adapt::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
@@ -561,4 +561,4 @@ eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif /* #ifndef EPROP_IAF_PSC_DELTA_H */
+#endif /* #ifndef EPROP_IAF_PSC_DELTA_ADAPT_H */

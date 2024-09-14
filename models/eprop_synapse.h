@@ -57,7 +57,7 @@ Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of
-archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``,
+archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``, ``eprop_iaf_psc_delta_adapt``,
 ``eprop_iaf_adapt``, and ``eprop_readout``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:

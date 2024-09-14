@@ -295,6 +295,12 @@ private:
    */
   struct Parameters_
   {
+    //! Prefactor of the threshold adaptation.
+    double adapt_beta_;
+
+    //! Time constant of the threshold adaptation (ms).
+    double adapt_tau_;
+
     /** Membrane time constant in ms. */
     double tau_m_;
 
@@ -366,6 +372,12 @@ private:
    */
   struct State_
   {
+    //! Adaptation variable.
+    double adapt_;
+
+    //! Adapting spike threshold voltage.
+    double v_th_adapt_;
+
     double y0_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
@@ -430,6 +442,9 @@ private:
     //! Propagator matrix entry for evolving the incoming spike variables.
     double P_z_in_;
 
+    //! Propagator matrix entry for evolving the adaptation (mathematical symbol "rho" in user documentation).
+    double P_adapt_;
+
     int RefractoryCounts_;
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
@@ -458,6 +473,20 @@ private:
   get_learning_signal_() const
   {
     return S_.learning_signal_;
+  }
+
+  //! Get the current value of the adapting threshold.
+  double
+  get_v_th_adapt_() const
+  {
+    return S_.v_th_adapt_ + P_.E_L_;
+  }
+
+  //! Get the current value of the adaptation.
+  double
+  get_adaptation_() const
+  {
+    return S_.adapt_;
   }
 
   // ----------------------------------------------------------------

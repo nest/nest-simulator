@@ -429,7 +429,7 @@ private:
     UniversalDataLogger< eprop_iaf_bsshslm_2020 > logger_;
   };
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
@@ -475,7 +475,7 @@ private:
   //! Structure of state variables.
   State_ S_;
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   Variables_ V_;
 
   //! Structure of buffers.

@@ -416,7 +416,7 @@ private:
     UniversalDataLogger< eprop_readout > logger_;
   };
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
@@ -481,7 +481,7 @@ private:
   //! Structure of state variables.
   State_ S_;
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   Variables_ V_;
 
   //! Structure of buffers.

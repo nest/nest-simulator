@@ -38,7 +38,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
 which encode the x and y coordinates of the handwritten word "chaos".
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_handwriting_bsshslm_2020.png
+.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_handwriting_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
@@ -91,7 +91,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_schematic_handwriting_bsshslm_2020.png")
+    Image(filename="./eprop_supervised_regression_handwriting_bsshslm_2020.png")
 except Exception:
     pass
 

@@ -514,7 +514,7 @@ eprop_iaf_psc_delta_adapt::get_eprop_isi_trace_cutoff() const
 }
 
 inline size_t
-nest::eprop_iaf_psc_delta_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_iaf_psc_delta_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -494,7 +494,7 @@ private:
     //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
 
-    //! Binary input spike variables - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary input spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_in_;
 
     //! Default constructor.

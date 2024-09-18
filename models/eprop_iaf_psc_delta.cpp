@@ -309,13 +309,16 @@ void
 eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
   const double dt = Time::get_resolution().get_ms();
+
   for ( long lag = from; lag < to; ++lag )
   {
     const long t = origin.get_steps() + lag;
-    if ( S_.r_ == 0 )
+
+    const auto z_in = B_.spikes_.get_value( lag );
+
+    if ( S_.r_ == 0 ) // not refractory, can spike
     {
-      // neuron not refractory
-      S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + B_.spikes_.get_value( lag );
+      S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + V_.P_z_in_ * z_in;
 
       if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
       {
@@ -325,15 +328,11 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
       S_.v_m_ = ( S_.v_m_ < P_.V_min_ ? P_.V_min_ : S_.v_m_ );
     }
-    else // neuron is absolute refractory
+    else
     {
       if ( P_.with_refr_input_ )
       {
-        S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * dt / P_.tau_m_ );
-      }
-      else
-      {
-        B_.spikes_.get_value( lag );
+        S_.refr_spikes_buffer_ += z_in * std::exp( -S_.r_ * dt / P_.tau_m_ );
       }
 
       --S_.r_;
@@ -362,7 +361,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     S_.i_in_ = B_.currents_.get_value( lag );
 
-    B_.logger_.record_data( origin.get_steps() + lag );
+    B_.logger_.record_data( t );
   }
 }
 

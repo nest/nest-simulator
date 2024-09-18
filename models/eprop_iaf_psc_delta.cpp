@@ -42,12 +42,12 @@
 
 namespace nest
 {
+
 void
 register_eprop_iaf_psc_delta( const std::string& name )
 {
   register_node_model< eprop_iaf_psc_delta >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Recordables map

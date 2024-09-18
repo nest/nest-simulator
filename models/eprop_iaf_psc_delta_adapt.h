@@ -35,6 +35,7 @@
 
 namespace nest
 {
+
 // Disable clang-formatting for documentation due to over-wide table.
 // clang-format off
 /* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
@@ -259,7 +260,6 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-
 private:
   void init_buffers_() override;
   void pre_run_hook() override;
@@ -435,7 +435,6 @@ private:
    */
   struct Variables_
   {
-
     double P30_;
     double P33_;
 
@@ -449,7 +448,6 @@ private:
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
-
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -528,6 +526,7 @@ eprop_iaf_psc_delta_adapt::handles_test_event( SpikeEvent&, size_t receptor_type
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+
   return 0;
 }
 
@@ -539,6 +538,7 @@ eprop_iaf_psc_delta_adapt::handles_test_event( CurrentEvent&, size_t receptor_ty
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
+
 }
 
 inline size_t
@@ -559,6 +559,7 @@ eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t r
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

@@ -173,6 +173,12 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
+
+  if ( V_reset_ < V_min_ )
+  {
+    throw BadProperty( "Reset voltage V_reset ≥ minimal voltage V_min required." );
+  }
+
   if ( c_m_ <= 0 )
   {
     throw BadProperty( "Capacitance must be >0." );
@@ -195,6 +201,11 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( f_target_ < 0 )
   {
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
+  }
+
+  if ( V_th_ < V_min_ )
+  {
+    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
   if ( kappa_ < 0.0 or kappa_ > 1.0 )

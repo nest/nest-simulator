@@ -435,7 +435,7 @@ private:
 
   //! Get the current value of the membrane voltage.
   double
-  get_V_m_() const
+  get_v_m_() const
   {
     return S_.v_m_ + P_.E_L_;
   }

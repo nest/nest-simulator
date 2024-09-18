@@ -62,7 +62,7 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
   insert_( names::V_th_adapt, &eprop_iaf_psc_delta_adapt::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
+  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------

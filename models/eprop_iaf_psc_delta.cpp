@@ -103,6 +103,16 @@ eprop_iaf_psc_delta::State_::State_()
 {
 }
 
+eprop_iaf_psc_delta::Buffers_::Buffers_( eprop_iaf_psc_delta& n )
+  : logger_( n )
+{
+}
+
+eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n )
+  : logger_( n )
+{
+}
+
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -247,16 +257,6 @@ eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p
   {
     y3_ -= delta_EL;
   }
-}
-
-eprop_iaf_psc_delta::Buffers_::Buffers_( eprop_iaf_psc_delta& n )
-  : logger_( n )
-{
-}
-
-eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n )
-  : logger_( n )
-{
 }
 
 /* ----------------------------------------------------------------

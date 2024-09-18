@@ -109,6 +109,16 @@ eprop_iaf_psc_delta_adapt::State_::State_()
 {
 }
 
+eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( eprop_iaf_psc_delta_adapt& n )
+  : logger_( n )
+{
+}
+
+eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& n )
+  : logger_( n )
+{
+}
+
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -281,16 +291,6 @@ eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Paramete
     // adjust voltage to change in E_L
     v_th_adapt_ -= delta_EL;
   }
-}
-
-eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( eprop_iaf_psc_delta_adapt& n )
-  : logger_( n )
-{
-}
-
-eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& n )
-  : logger_( n )
-{
 }
 
 /* ----------------------------------------------------------------

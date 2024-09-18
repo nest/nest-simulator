@@ -73,7 +73,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   : adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 )
   , tau_m_( 10.0 )
-  , c_m_( 250.0 )
+  , C_m_( 250.0 )
   , t_ref_( 2.0 )
   , E_L_( -70.0 )
   , I_e_( 0.0 )
@@ -129,7 +129,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::C_m, c_m_ );
+  def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
@@ -158,7 +158,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
@@ -196,7 +196,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Reset voltage V_reset ≥ minimal voltage V_min required." );
   }
 
-  if ( c_m_ <= 0 )
+  if ( C_m_ <= 0 )
   {
     throw BadProperty( "Membrane capacitance C_m > 0 required." );
   }
@@ -320,7 +320,7 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   const double dt = Time::get_resolution().get_ms();
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
-  V_.P_i_in_ = P_.tau_m_ / P_.c_m_ * ( 1.0 - V_.P_v_m_ );
+  V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = 1.0;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }

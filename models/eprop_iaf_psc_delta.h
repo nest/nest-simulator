@@ -287,7 +287,7 @@ private:
     double tau_m_;
 
     //! Capacitance of the membrane (pF).
-    double c_m_;
+    double C_m_;
 
     //! Duration of the refractory period (ms).
     double t_ref_;

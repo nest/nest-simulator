@@ -312,15 +312,15 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
 {
   B_.logger_.init();
 
+  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
+
   compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   const double dt = Time::get_resolution().get_ms();
 
-
-  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
-  V_.P_i_in_ = 1 / P_.c_m_ * ( 1 - V_.P_v_m_ ) * P_.tau_m_;
-
+  V_.P_i_in_ = P_.tau_m_ / P_.c_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = 1.0;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 
@@ -340,10 +340,6 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
-
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
 }
 
 long

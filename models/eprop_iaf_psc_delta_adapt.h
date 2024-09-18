@@ -283,12 +283,6 @@ private:
   //! Structure of parameters.
   struct Parameters_
   {
-    //! Prefactor of the threshold adaptation.
-    double adapt_beta_;
-
-    //! Time constant of the threshold adaptation (ms).
-    double adapt_tau_;
-
     //! Time constant of the membrane (ms).
     double tau_m_;
 
@@ -315,6 +309,13 @@ private:
 
     //! If True, count spikes arriving during the refractory period.
     bool with_refr_input_;
+
+    //! Prefactor of the threshold adaptation.
+    double adapt_beta_;
+
+    //! Time constant of the threshold adaptation (ms).
+    double adapt_tau_;
+
 
     //! Coefficient of firing rate regularization.
     double c_reg_;
@@ -354,12 +355,6 @@ private:
   //! Structure of state variables.
   struct State_
   {
-    //! Adaptation variable.
-    double adapt_;
-
-    //! Adapting spike threshold voltage.
-    double v_th_adapt_;
-
     //! Input current (pA).
     double i_in_;
 
@@ -371,6 +366,12 @@ private:
 
     //! Count of spikes arriving during refractory period discounted for decay until end of refractory period.
     double refr_spikes_buffer_;
+
+    //! Adaptation variable.
+    double adapt_;
+
+    //! Adapting spike threshold voltage.
+    double v_th_adapt_;
 
     //! Learning signal. Sum of weighted error signals coming from the readout neurons.
     double learning_signal_;

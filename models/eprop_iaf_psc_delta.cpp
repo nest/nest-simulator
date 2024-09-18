@@ -58,9 +58,9 @@ template <>
 void
 RecordablesMap< eprop_iaf_psc_delta >::create()
 {
+  insert_( names::V_m, &eprop_iaf_psc_delta::get_v_m_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -150,6 +150,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
 
   if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
@@ -163,7 +164,11 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
   updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
+
+  if ( V_th_ < V_min_ )
+  {
+    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
+  }
 
   if ( V_reset_ >= V_th_ )
   {
@@ -198,11 +203,6 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( f_target_ < 0 )
   {
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
-  }
-
-  if ( V_th_ < V_min_ )
-  {
-    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
   if ( kappa_ < 0.0 or kappa_ > 1.0 )

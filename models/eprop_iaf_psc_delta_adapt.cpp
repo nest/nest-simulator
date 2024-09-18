@@ -58,11 +58,11 @@ template <>
 void
 RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
+  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
   insert_( names::adaptation, &eprop_iaf_psc_delta_adapt::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_psc_delta_adapt::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -70,9 +70,7 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
  * ---------------------------------------------------------------- */
 
 eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
-  : adapt_beta_( 1.0 )
-  , adapt_tau_( 10.0 )
-  , tau_m_( 10.0 )
+  : tau_m_( 10.0 )
   , C_m_( 250.0 )
   , t_ref_( 2.0 )
   , E_L_( -70.0 )
@@ -81,6 +79,8 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() )
   , V_reset_( -70.0 - E_L_ )
   , with_refr_input_( false )
+  , adapt_beta_( 1.0 )
+  , adapt_tau_( 10.0 )
   , c_reg_( 0.0 )
   , f_target_( 0.01 )
   , beta_( 1.0 )
@@ -93,12 +93,12 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
 }
 
 eprop_iaf_psc_delta_adapt::State_::State_()
-  : adapt_( 0.0 )
-  , v_th_adapt_( 15.0 )
-  , i_in_( 0.0 )
+  : i_in_( 0.0 )
   , v_m_( 0.0 )
   , r_( 0 )
   , refr_spikes_buffer_( 0.0 )
+  , adapt_( 0.0 )
+  , v_th_adapt_( 15.0 )
   , learning_signal_( 0.0 )
   , surrogate_gradient_( 0.0 )
 {
@@ -121,8 +121,6 @@ eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_de
 void
 eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::adapt_beta, adapt_beta_ );
-  def< double >( d, names::adapt_tau, adapt_tau_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
@@ -132,6 +130,8 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
+  def< double >( d, names::adapt_beta, adapt_beta_ );
+  def< double >( d, names::adapt_tau, adapt_tau_ );
   def< double >( d, names::c_reg, c_reg_ );
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::beta, beta_ );
@@ -154,12 +154,13 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
   V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
-  updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
+  updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
+  updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
 
   if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
@@ -173,16 +174,10 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
   updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 
-  if ( adapt_beta_ < 0 )
+  if ( V_th_ < V_min_ )
   {
-    throw BadProperty( "Threshold adaptation prefactor adapt_beta ≥ 0 required." );
-  }
-
-  if ( adapt_tau_ <= 0 )
-  {
-    throw BadProperty( "Threshold adaptation time constant adapt_tau > 0 required." );
+    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
   if ( V_reset_ >= V_th_ )
@@ -210,6 +205,16 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
 
+  if ( adapt_beta_ < 0 )
+  {
+    throw BadProperty( "Threshold adaptation prefactor adapt_beta ≥ 0 required." );
+  }
+
+  if ( adapt_tau_ <= 0 )
+  {
+    throw BadProperty( "Threshold adaptation time constant adapt_tau > 0 required." );
+  }
+
   if ( c_reg_ < 0 )
   {
     throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
@@ -218,11 +223,6 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   if ( f_target_ < 0 )
   {
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
-  }
-
-  if ( V_th_ < V_min_ )
-  {
-    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
   if ( kappa_ < 0.0 or kappa_ > 1.0 )
@@ -246,9 +246,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
 void
 eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::adaptation, adapt_ );
   def< double >( d, names::V_th_adapt, v_th_adapt_ + p.E_L_ );
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::learning_signal, learning_signal_ );
 }

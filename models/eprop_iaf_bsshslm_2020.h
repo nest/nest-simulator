@@ -218,7 +218,7 @@ V_m                mV   :math:`v_j`             -70.0 Membrane voltage
 ----------------------------------------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ==========================================================
-learning_signal    pA   :math:`L_j`               0.0 Learning signal
+learning_signal      pA :math:`L_j`               0.0 Learning signal
 surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane voltage
 ================== ==== =============== ============= ==========================================================
 

@@ -233,7 +233,7 @@ V_th_adapt           mV :math:`A_j`             -55.0 Adapting spike threshold
 ------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ========================
-learning_signal         :math:`L_j`               0.0 Learning signal
+learning_signal      pA :math:`L_j`               0.0 Learning signal
 surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
 ================== ==== =============== ============= ========================
 

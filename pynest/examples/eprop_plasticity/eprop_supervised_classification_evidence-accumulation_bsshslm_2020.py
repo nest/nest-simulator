@@ -654,7 +654,6 @@ colors = {
 
 plt.rcParams.update(
     {
-        "font.sans-serif": "Arial",
         "axes.spines.right": False,
         "axes.spines.top": False,
         "axes.prop_cycle": cycler(color=[colors["blue"], colors["red"]]),

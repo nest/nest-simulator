@@ -93,8 +93,8 @@ eprop_iaf_psc_delta::Parameters_::Parameters_()
 }
 
 eprop_iaf_psc_delta::State_::State_()
-  : y0_( 0.0 )
-  , y3_( 0.0 )
+  : i_in_( 0.0 )
+  , v_m_( 0.0 )
   , r_( 0 )
   , refr_spikes_buffer_( 0.0 )
   , learning_signal_( 0.0 )
@@ -241,7 +241,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, v_m_ + p.E_L_ ); // Membrane potential
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::learning_signal, learning_signal_ );
 }
@@ -249,13 +249,13 @@ eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) con
 void
 eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
+  if ( updateValueParam< double >( d, names::V_m, v_m_, node ) )
   {
-    y3_ -= p.E_L_;
+    v_m_ -= p.E_L_;
   }
   else
   {
-    y3_ -= delta_EL;
+    v_m_ -= delta_EL;
   }
 }
 
@@ -299,12 +299,12 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
-  const double h = Time::get_resolution().get_ms();
+  const double dt = Time::get_resolution().get_ms();
 
 
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
-  V_.P33_ = std::exp( -h / P_.tau_m_ );
-  V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
+  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
+  V_.P_i_in_ = 1 / P_.c_m_ * ( 1 - V_.P_v_m_ ) * P_.tau_m_;
 
   V_.P_z_in_ = 1.0;
 
@@ -349,25 +349,25 @@ eprop_iaf_psc_delta::is_eprop_recurrent_node() const
 void
 eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  const double h = Time::get_resolution().get_ms();
+  const double dt = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {
     const long t = origin.get_steps() + lag;
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
+      S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + B_.spikes_.get_value( lag );
 
       // if we have accumulated spikes from refractory period,
       // add and reset accumulator
       if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
       {
-        S_.y3_ += S_.refr_spikes_buffer_;
+        S_.v_m_ += S_.refr_spikes_buffer_;
         S_.refr_spikes_buffer_ = 0.0;
       }
 
       // lower bound of membrane potential
-      S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
+      S_.v_m_ = ( S_.v_m_ < P_.V_min_ ? P_.V_min_ : S_.v_m_ );
     }
     else // neuron is absolute refractory
     {
@@ -375,7 +375,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       // for decay until end of refractory period
       if ( P_.with_refr_input_ )
       {
-        S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+        S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * dt / P_.tau_m_ );
       }
       else
       {
@@ -386,15 +386,15 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       --S_.r_;
     }
 
-    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.y3_, P_.V_th_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     double z = 0.0; // spike state variable
 
     // threshold crossing
-    if ( S_.y3_ >= P_.V_th_ )
+    if ( S_.v_m_ >= P_.V_th_ )
     {
       S_.r_ = V_.RefractoryCounts_;
-      S_.y3_ = P_.V_reset_;
+      S_.v_m_ = P_.V_reset_;
 
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -409,7 +409,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
     // set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.i_in_ = B_.currents_.get_value( lag );
 
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -498,7 +498,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     L = eprop_hist_it->learning_signal_;
     firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
-    z_bar = V_.P33_ * z_bar + V_.P_z_in_ * z;
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
@@ -523,7 +523,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
   if ( cutoff_to_spike_interval > 0 )
   {
-    z_bar *= std::pow( V_.P33_, cutoff_to_spike_interval );
+    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
     e_bar *= std::pow( P_.kappa_, cutoff_to_spike_interval );
     e_bar_reg *= std::pow( P_.kappa_reg_, cutoff_to_spike_interval );
   }

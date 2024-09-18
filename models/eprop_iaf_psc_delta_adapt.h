@@ -378,9 +378,9 @@ private:
     //! Adapting spike threshold voltage.
     double v_th_adapt_;
 
-    double y0_;
+    double i_in_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double y3_;
+    double v_m_;
 
     int r_; //!< Number of refractory steps remaining
 
@@ -435,8 +435,8 @@ private:
    */
   struct Variables_
   {
-    double P30_;
-    double P33_;
+    double P_i_in_;
+    double P_v_m_;
 
     //! Propagator matrix entry for evolving the incoming spike variables.
     double P_z_in_;
@@ -456,7 +456,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.v_m_ + P_.E_L_;
   }
 
   //! Get the current value of the surrogate gradient.

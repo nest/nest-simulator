@@ -23,7 +23,7 @@
 #ifndef EPROP_IAF_PSC_DELTA_ADAPT_H
 #define EPROP_IAF_PSC_DELTA_ADAPT_H
 
-// Includes from nestkernel:
+// nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
@@ -158,7 +158,7 @@ The following parameters can be set in the status dictionary.
 -------------------------------------------------------------------------------------------------------------------
 Parameter                   Unit    Math equivalent            Default          Description
 =========================== ======= ========================== ================ ===================================
-c_reg                               :math:`c_\text{reg}`                    0.0 Prefactor of firing rate
+c_reg                               :math:`c_\text{reg}`                    0.0 Coefficient of firing rate
                                                                                 regularization
 f_target                    Hz      :math:`f^\text{target}`                10.0 Target firing rate of rate
                                                                                 regularization
@@ -213,35 +213,25 @@ Examples using this model
 
 EndUserDocs */
 
-/**
- * The present implementation uses individual variables for the
- * components of the state vector and the non-zero matrix elements of
- * the propagator. Because the propagator is a lower triangular matrix,
- * no full matrix multiplication needs to be carried out and the
- * computation can be done "in place", i.e. no temporary state vector
- * object is required.
- *
- * The template support of recent C++ compilers enables a more succinct
- * formulation without loss of runtime performance already at minimal
- * optimization levels. A future version of iaf_psc_delta will probably
- * address the problem of efficient usage of appropriate vector and
- * matrix objects.
- */
-
 void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
+/**
+ * @brief Class implementing a LIF neuron model for e-prop plasticity with additional biological features.
+ *
+ * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
+ * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+ * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ */
 class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent
 {
 
 public:
+  //! Default constructor.
   eprop_iaf_psc_delta_adapt();
+
+  //! Copy constructor.
   eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
   using Node::handle;
   using Node::handles_test_event;
 
@@ -284,15 +274,13 @@ private:
   //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_;
 
-  // The next two classes need to be friends to access the State_ class/member
+  //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
+
+  //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
   friend class UniversalDataLogger< eprop_iaf_psc_delta_adapt >;
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Independent parameters of the model.
-   */
+  //! Structure of parameters.
   struct Parameters_
   {
     //! Prefactor of the threshold adaptation.
@@ -301,36 +289,34 @@ private:
     //! Time constant of the threshold adaptation (ms).
     double adapt_tau_;
 
-    /** Membrane time constant in ms. */
+    //! Time constant of the membrane (ms).
     double tau_m_;
 
-    /** Membrane capacitance in pF. */
+    //! Capacitance of the membrane (pF).
     double c_m_;
 
-    /** Refractory period in ms. */
+    //! Duration of the refractory period (ms).
     double t_ref_;
 
-    /** Resting potential in mV. */
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
-    /** External DC current */
+    //! Constant external input current (pA).
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (E_L_+V_th_). */
+    //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real lower bound is (V_min_+V_th_). */
+    //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    /** reset value of the membrane potential */
+    //! Reset voltage relative to the leak membrane potential (mV).
     double V_reset_;
 
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    //! If True, count spikes arriving during the refractory period.
+    bool with_refr_input_;
 
-    //! Prefactor of firing rate regularization.
+    //! Coefficient of firing rate regularization.
     double c_reg_;
 
     //! Target firing rate of rate regularization (spikes/s).
@@ -355,21 +341,17 @@ private:
     //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
     double eprop_isi_trace_cutoff_;
 
-    Parameters_(); //!< Sets default parameter values
+    //! Default constructor.
+    Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Get the parameters and their values.
+    void get( DictionaryDatum& ) const;
 
-    /** Set values from dictionary.
-     * @returns Change in reversal potential E_L, to be passed to State_::set()
-     */
-    double set( const DictionaryDatum&, Node* node );
+    //! Set the parameters and throw errors in case of invalid values.
+    double set( const DictionaryDatum&, Node* );
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * State variables of the model.
-   */
+  //! Structure of state variables.
   struct State_
   {
     //! Adaptation variable.
@@ -378,15 +360,16 @@ private:
     //! Adapting spike threshold voltage.
     double v_th_adapt_;
 
+    //! Input current (pA).
     double i_in_;
-    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+
+    //! Membrane voltage relative to the leak membrane potential (mV).
     double v_m_;
 
-    int r_; //!< Number of refractory steps remaining
+    //! Number of remaining refractory steps.
+    int r_;
 
-    /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
+    //! Count of spikes arriving during refractory period discounted for decay until end of refractory period.
     double refr_spikes_buffer_;
 
     //! Learning signal. Sum of weighted error signals coming from the readout neurons.
@@ -398,61 +381,59 @@ private:
     //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
 
-    State_(); //!< Default initialization
+    //! Default constructor.
+    State_();
 
+    //! Get the state variables and their values.
     void get( DictionaryDatum&, const Parameters_& ) const;
 
-    /** Set values from dictionary.
-     * @param dictionary to take data from
-     * @param current parameters
-     * @param Change in reversal potential E_L specified by this dict
-     */
+    //! Set the state variables.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Buffers of the model.
-   */
+  //! Structure of buffers.
   struct Buffers_
   {
+    //! Default constructor.
     Buffers_( eprop_iaf_psc_delta_adapt& );
+
+    //! Copy constructor.
     Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& );
 
-    /** buffers and summs up incoming spikes/currents */
+    //! Buffer for incoming spikes.
     RingBuffer spikes_;
+
+    //! Buffer for incoming currents.
     RingBuffer currents_;
 
-    //! Logger for all analog data
+    //! Logger for universal data.
     UniversalDataLogger< eprop_iaf_psc_delta_adapt > logger_;
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Internal variables of the model.
-   */
+  //! Structure of internal variables.
   struct Variables_
   {
-    double P_i_in_;
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
+    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! documentation).
     double P_z_in_;
+
+    //! Propagator matrix entry for evolving the incoming currents.
+    double P_i_in_;
 
     //! Propagator matrix entry for evolving the adaptation (mathematical symbol "rho" in user documentation).
     double P_adapt_;
 
+    //! Total refractory steps.
     int RefractoryCounts_;
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
   };
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out the real membrane potential
+  //! Get the current value of the membrane voltage.
   double
   get_V_m_() const
   {
@@ -487,21 +468,21 @@ private:
     return S_.adapt_;
   }
 
-  // ----------------------------------------------------------------
+  // the order in which the structure instances are defined is important for speed
 
-  /**
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
+  //! Structure of parameters.
   Parameters_ P_;
-  State_ S_;
-  Variables_ V_;
-  Buffers_ B_;
-  /** @} */
 
-  //! Mapping of recordables names to access functions
+  //! Structure of state variables.
+  State_ S_;
+
+  //! Structure of internal variables.
+  Variables_ V_;
+
+  //! Structure of buffers.
+  Buffers_ B_;
+
+  //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf_psc_delta_adapt > recordablesMap_;
 };
 
@@ -537,8 +518,8 @@ eprop_iaf_psc_delta_adapt::handles_test_event( CurrentEvent&, size_t receptor_ty
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return 0;
 
+  return 0;
 }
 
 inline size_t
@@ -574,21 +555,18 @@ eprop_iaf_psc_delta_adapt::get_status( DictionaryDatum& d ) const
 inline void
 eprop_iaf_psc_delta_adapt::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  // temporary copies in case of errors
+  Parameters_ ptmp = P_;
+  State_ stmp = S_;
 
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
+  // make sure that ptmp and stmp consistent - throw BadProperty if not
+  const double delta_EL = ptmp.set( d, this );
+  stmp.set( d, ptmp, delta_EL, this );
 
-  // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
 }
 
-} // namespace
+} // namespace nest
 
-#endif /* #ifndef EPROP_IAF_PSC_DELTA_ADAPT_H */
+#endif // EPROP_IAF_PSC_DELTA_ADAPT_H

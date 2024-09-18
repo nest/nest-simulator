@@ -20,24 +20,23 @@
  *
  */
 
-/* eprop_iaf_psc_delta_adapt is a neuron where the potential jumps on each spike arrival. */
-
+// nest models
 #include "eprop_iaf_psc_delta_adapt.h"
 
-// C++ includes:
+// C++
 #include <limits>
 
-// Includes from libnestutil:
+// libnestutil
 #include "dict_util.h"
 #include "numerics.h"
 
-// Includes from nestkernel:
+// nestkernel
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
+// sli
 #include "dictutils.h"
 
 namespace nest
@@ -55,13 +54,10 @@ register_eprop_iaf_psc_delta_adapt( const std::string& name )
 
 RecordablesMap< eprop_iaf_psc_delta_adapt > eprop_iaf_psc_delta_adapt::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
 template <>
 void
 RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
-  // use standard names wherever you can for consistency!
   insert_( names::adaptation, &eprop_iaf_psc_delta_adapt::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_psc_delta_adapt::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
@@ -70,20 +66,20 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 }
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
 eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   : adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 )
-  , tau_m_( 10.0 )                                  // ms
-  , c_m_( 250.0 )                                   // pF
-  , t_ref_( 2.0 )                                   // ms
-  , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA
-  , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
-  , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
-  , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
+  , tau_m_( 10.0 )
+  , c_m_( 250.0 )
+  , t_ref_( 2.0 )
+  , E_L_( -70.0 )
+  , I_e_( 0.0 )
+  , V_th_( -55.0 - E_L_ )
+  , V_min_( -std::numeric_limits< double >::max() )
+  , V_reset_( -70.0 - E_L_ )
   , with_refr_input_( false )
   , c_reg_( 0.0 )
   , f_target_( 0.01 )
@@ -120,7 +116,7 @@ eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_de
 }
 
 /* ----------------------------------------------------------------
- * Parameter and state extractions and manipulation functions
+ * Getter and setter functions for parameters and state
  * ---------------------------------------------------------------- */
 
 void
@@ -128,9 +124,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
-  def< double >( d, names::E_L, E_L_ ); // Resting potential
+  def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ ); // threshold value
+  def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::C_m, c_m_ );
@@ -150,8 +146,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 double
 eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to
-  // E_L_
+  // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
   updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
@@ -167,6 +162,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
+
   if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
   {
     f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
@@ -202,15 +198,17 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
 
   if ( c_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be >0." );
+    throw BadProperty( "Membrane capacitance C_m > 0 required." );
   }
+
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time must not be negative." );
+    throw BadProperty( "Refractory time t_ref ≥ 0 required." );
   }
+
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant must be > 0." );
+    throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
 
   if ( c_reg_ < 0 )
@@ -251,7 +249,7 @@ eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p
 {
   def< double >( d, names::adaptation, adapt_ );
   def< double >( d, names::V_th_adapt, v_th_adapt_ + p.E_L_ );
-  def< double >( d, names::V_m, v_m_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::learning_signal, learning_signal_ );
 }
@@ -310,12 +308,14 @@ eprop_iaf_psc_delta_adapt::init_buffers_()
 void
 eprop_iaf_psc_delta_adapt::pre_run_hook()
 {
-  B_.logger_.init();
+  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
   compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
+
+  // calculate the entries of the propagator matrix for the evolution of the state vector
 
   const double dt = Time::get_resolution().get_ms();
 
@@ -323,23 +323,6 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.P_i_in_ = P_.tau_m_ / P_.c_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = 1.0;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
-
-  // t_ref_ specifies the length of the absolute refractory period as
-  // a double in ms. The grid based iaf_psp_delta can only handle refractory
-  // periods that are integer multiples of the computation step size (h).
-  // To ensure consistency with the overall simulation scheme such conversion
-  // should be carried out via objects of class nest::Time. The conversion
-  // requires 2 steps:
-  //     1. A time object r is constructed, defining representation of
-  //        t_ref_ in tics. This representation is then converted to computation
-  //        time steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out get_steps(), a
-  //        member function of class nest::Time.
-  //
-  // Choosing a t_ref_ that is not an integer multiple of the computation time
-  // step h will lead to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued
-  // spike time may exhibit a different effective refractory time.
 }
 
 long
@@ -355,8 +338,8 @@ eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
 }
 
 /* ----------------------------------------------------------------
- * Update and spike handling functions
- */
+ * Update function
+ * ---------------------------------------------------------------- */
 
 void
 eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
@@ -370,34 +353,27 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       // neuron not refractory
       S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + B_.spikes_.get_value( lag );
 
-      // if we have accumulated spikes from refractory period,
-      // add and reset accumulator
       if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
       {
         S_.v_m_ += S_.refr_spikes_buffer_;
         S_.refr_spikes_buffer_ = 0.0;
       }
 
-      // lower bound of membrane potential
       S_.v_m_ = ( S_.v_m_ < P_.V_min_ ? P_.V_min_ : S_.v_m_ );
     }
     else // neuron is absolute refractory
     {
-      // read spikes from buffer and accumulate them, discounting
-      // for decay until end of refractory period
       if ( P_.with_refr_input_ )
       {
         S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * dt / P_.tau_m_ );
       }
       else
       {
-        // clear buffer entry, ignore spike
         B_.spikes_.get_value( lag );
       }
 
       --S_.r_;
     }
-
 
     double z = 0.0; // spike state variable
 
@@ -407,8 +383,6 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
-
-    // threshold crossing
     if ( S_.v_m_ >= S_.v_th_adapt_ )
     {
       S_.r_ = V_.RefractoryCounts_;
@@ -426,23 +400,21 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
-    // set new input current
     S_.i_in_ = B_.currents_.get_value( lag );
 
-    // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
+
+/* ----------------------------------------------------------------
+ * Event handling functions
+ * ---------------------------------------------------------------- */
 
 void
 eprop_iaf_psc_delta_adapt::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  // EX: We must compute the arrival time of the incoming spike
-  //     explicity, since it depends on delay and offset within
-  //     the update cycle.  The way it is done here works, but
-  //     is clumsy and should be improved.
   B_.spikes_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
@@ -546,4 +518,4 @@ eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
   }
 }
 
-} // namespace
+} // namespace nest

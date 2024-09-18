@@ -168,6 +168,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
   updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 
   if ( V_reset_ >= V_th_ )
   {
@@ -192,7 +193,6 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
   if ( c_reg_ < 0 )
   {
     throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );

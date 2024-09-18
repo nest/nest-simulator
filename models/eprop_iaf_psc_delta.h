@@ -366,9 +366,6 @@ private:
     //! Surrogate gradient / pseudo-derivative of the membrane voltage.
     double surrogate_gradient_;
 
-    //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
-    double z_;
-
     //! Default constructor.
     State_();
 

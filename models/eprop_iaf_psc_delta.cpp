@@ -95,7 +95,6 @@ eprop_iaf_psc_delta::State_::State_()
   , refr_spikes_buffer_( 0.0 )
   , learning_signal_( 0.0 )
   , surrogate_gradient_( 0.0 )
-  , z_( 0.0 )
 {
 }
 

@@ -156,32 +156,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
-  {
-    V_reset_ -= E_L_;
-  }
-  else
-  {
-    V_reset_ -= delta_EL;
-  }
-
-  if ( updateValueParam< double >( d, names::V_th, V_th_, node ) )
-  {
-    V_th_ -= E_L_;
-  }
-  else
-  {
-    V_th_ -= delta_EL;
-  }
-
-  if ( updateValueParam< double >( d, names::V_min, V_min_, node ) )
-  {
-    V_min_ -= E_L_;
-  }
-  else
-  {
-    V_min_ -= delta_EL;
-  }
+  V_reset_ -= updateValueParam< double >( d, names::V_reset, V_reset_, node ) ? E_L_ : delta_EL;
+  V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
+  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
@@ -271,14 +248,7 @@ eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p
 void
 eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, v_m_, node ) )
-  {
-    v_m_ -= p.E_L_;
-  }
-  else
-  {
-    v_m_ -= delta_EL;
-  }
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 
   // adaptive threshold can only be set indirectly via the adaptation variable
   if ( updateValueParam< double >( d, names::adaptation, adapt_, node ) )

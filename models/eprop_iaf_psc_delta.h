@@ -281,7 +281,7 @@ private:
   bool is_eprop_recurrent_node() const override;
   long get_eprop_isi_trace_cutoff() const override;
 
-  //! Pointer to member function selected for computing the surrogate gradient
+  //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_;
 
   // The next two classes need to be friends to access the State_ class/member

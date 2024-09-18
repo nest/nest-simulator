@@ -363,9 +363,9 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       --S_.r_;
     }
 
-    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
-
     double z = 0.0; // spike state variable
+
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     // threshold crossing
     if ( S_.v_m_ >= P_.V_th_ )

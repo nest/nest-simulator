@@ -155,31 +155,31 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===================== ======= ===================== ================== =========================================
+========================= ======= ===================== ================== =====================================
 **Neuron parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter             Unit    Math equivalent       Default            Description
-===================== ======= ===================== ================== =========================================
-C_m                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
-E_L                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
-I_e                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
-regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
-                                                                       end of the time step, if False at the
-                                                                       beginning (determines PSC scale)
-tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
-                                                    value              voltage
-                                                    representable by a
-                                                    ``double`` type in
-                                                    C++
-===================== ======= ===================== ================== =========================================
+Parameter                 Unit    Math equivalent       Default            Description
+========================= ======= ===================== ================== =====================================
+``C_m``                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+``E_L``                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
+``I_e``                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
+``regular_spike_arrival`` Boolean                                 ``True`` If True, the input spikes arrive at
+                                                                           the end of the time step, if False at
+                                                                           the beginning (determines PSC scale)
+``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
+                                                        value              voltage
+                                                        representable by a
+                                                        ``double`` type in
+                                                        C++
+========================= ======= ===================== ================== =====================================
 
 =========================== ======= =========================== ================ ===============================
 **E-prop parameters**
 ----------------------------------------------------------------------------------------------------------------
 Parameter                   Unit    Math equivalent             Default          Description
 =========================== ======= =========================== ================ ===============================
-eprop_isi_trace_cutoff      ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
+``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                                 representable    e-prop update between two
                                                                 by a ``long``    spikes
                                                                 type in C++
@@ -190,23 +190,23 @@ Recordables
 
 The following state variables evolve during simulation and can be recorded.
 
-===================== ==== =============== ============= ================
+=============== ==== =============== ============= ================
 **Neuron state variables and recordables**
--------------------------------------------------------------------------
-State variable        Unit Math equivalent Initial value Description
-===================== ==== =============== ============= ================
-V_m                   mV   :math:`v_j`               0.0 Membrane voltage
-===================== ==== =============== ============= ================
+-------------------------------------------------------------------
+State variable  Unit Math equivalent Initial value Description
+=============== ==== =============== ============= ================
+``V_m``         mV   :math:`v_j`               0.0 Membrane voltage
+=============== ==== =============== ============= ================
 
-===================== ==== =============== ============= ================
+========================= ==== =============== ============= ==============
 **E-prop state variables and recordables**
--------------------------------------------------------------------------
-State variable        Unit Math equivalent Initial value Description
-===================== ==== =============== ============= ================
-error_signal          mV   :math:`L_j`               0.0 Error signal
-readout_signal        mV   :math:`y_j`               0.0 Readout signal
-target_signal         mV   :math:`y^*_j`             0.0 Target signal
-===================== ==== =============== ============= ================
+---------------------------------------------------------------------------
+State variable            Unit Math equivalent Initial value Description
+========================= ==== =============== ============= ==============
+``error_signal``          mV   :math:`L_j`               0.0 Error signal
+``readout_signal``        mV   :math:`y_j`               0.0 Readout signal
+``target_signal``         mV   :math:`y^*_j`             0.0 Target signal
+========================= ==== =============== ============= ==============
 
 Usage
 +++++

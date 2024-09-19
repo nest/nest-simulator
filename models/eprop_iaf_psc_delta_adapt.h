@@ -36,8 +36,6 @@
 namespace nest
 {
 
-// Disable clang-formatting for documentation due to over-wide table.
-// clang-format off
 /* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
 
 Short description
@@ -65,10 +63,11 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} +
+   \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
-a constant input current set as a model parameter.
+where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below
+and :math:`I_\text{e}` is a constant input current set as a model parameter.
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
 
@@ -139,45 +138,54 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==================== ================== =============================== ==================================================================================
-**Parameter**        **Default**        **Math equivalent**             **Description**
-==================== ================== =============================== ==================================================================================
-``E_L``              -70 mV             :math:`E_\text{L}`              Resting membrane potential
-``C_m``              250 pF             :math:`C_{\text{m}}`            Capacitance of the membrane
-``tau_m``            10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
-``t_ref``            2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
-``V_th``             -55 mV             :math:`V_{\text{th}}`           Spike threshold
-``V_reset``          -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``I_e``              0 pA               :math:`I_\text{e}`              Constant input current
-``V_min``            :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
-``refractory_input`` ``False``          None                            If set to True, spikes arriving during refractory period are integrated afterwards
-==================== ================== =============================== ==================================================================================
+==================== ================== ====================== ========================================
+**Neuron parameters**
+-------------------------------------------------------------------------------------------------------
+Parameter            Default            Math equivalent        Description
+==================== ================== ====================== ========================================
+``E_L``              -70 mV             :math:`E_\text{L}`     Resting membrane potential
+``C_m``              250 pF             :math:`C_\text{m}`     Capacitance of the membrane
+``tau_m``            10 ms              :math:`\tau_\text{m}`  Membrane time constant
+``t_ref``            2 ms               :math:`t_\text{ref}`   Duration of refractory period
+``V_th``             -55 mV             :math:`V_\text{th}`    Spike threshold
+``V_reset``          -70 mV             :math:`V_\text{reset}` Reset potential of the membrane
+``I_e``              0 pA               :math:`I_\text{e}`     Constant input current
+``V_min``            :math:`-\infty` mV :math:`V_\text{min}`   Absolute lower value for the membrane
+                                                               potential
+``refractory_input`` ``False``                                 If set to True, spikes arriving during
+                                                               refractory period are integrated
+                                                               afterwards
+==================== ================== ====================== ========================================
 
-=========================== ======= ========================== ================ ===================================
+=============================== ======= ========================== ================== ==========================
 **E-prop parameters**
--------------------------------------------------------------------------------------------------------------------
-Parameter                   Unit    Math equivalent            Default          Description
-=========================== ======= ========================== ================ ===================================
-c_reg                               :math:`c_\text{reg}`                    0.0 Coefficient of firing rate
-                                                                                regularization
-f_target                    Hz      :math:`f^\text{target}`                10.0 Target firing rate of rate
-                                                                                regularization
-kappa                               :math:`\kappa`                         0.97 Low-pass filter of the
-                                                                                eligibility trace
-kappa_reg                           :math:`\kappa_\text{reg}`              0.97 Low-pass filter of the firing rate
-                                                                                for regularization
-beta                                :math:`\beta`                           1.0 Width scaling of surrogate gradient
-                                                                                / pseudo-derivative of membrane
-                                                                                voltage
-gamma                               :math:`\gamma`                          0.3 Height scaling of surrogate
-                                                                                gradient / pseudo-derivative of
-                                                                                membrane voltage
-surrogate_gradient_function         :math:`\psi`               piecewise_linear Surrogate gradient /
-                                                                                pseudo-derivative function
-                                                                                ["piecewise_linear", "exponential",
-                                                                                "fast_sigmoid_derivative",
-                                                                                "arctan"]
-=========================== ======= ========================== ================ ===================================
+----------------------------------------------------------------------------------------------------------------
+Parameter                       Unit    Math equivalent            Default            Description
+=============================== ======= ========================== ================== ==========================
+``c_reg``                               :math:`c_\text{reg}`                    0.0   Coefficient of firing rate
+                                                                                      regularization
+``f_target``                    Hz      :math:`f^\text{target}`                10.0   Target firing rate of rate
+                                                                                      regularization
+``kappa``                               :math:`\kappa`                         0.97   Low-pass filter of the
+                                                                                      eligibility trace
+``kappa_reg``                           :math:`\kappa_\text{reg}`              0.97   Low-pass filter of the
+                                                                                      firing rate for
+                                                                                      regularization
+``beta``                                :math:`\beta`                           1.0   Width scaling of surrogate
+                                                                                      gradient /
+                                                                                      pseudo-derivative
+                                                                                      of membrane voltage
+``gamma``                               :math:`\gamma`                          0.3   Height scaling of
+                                                                                      surrogate gradient
+                                                                                      / pseudo-derivative
+                                                                                      of membrane voltage
+``surrogate_gradient_function``         :math:`\psi`               "piecewise_linear" Surrogate gradient /
+                                                                                      pseudo-derivative function
+                                                                                      ["piecewise_linear",
+                                                                                      "exponential",
+                                                                                      "fast_sigmoid_derivative",
+                                                                                      "arctan"]
+=============================== ======= ========================== ================== ==========================
 
 References
 ++++++++++

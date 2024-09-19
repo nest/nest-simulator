@@ -61,14 +61,14 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-========= ===== ================ ======= ===============
+========== ===== ================ ======= ===============
 **Individual synapse parameters**
---------------------------------------------------------
-Parameter  Unit  Math equivalent Default Description
-========= ===== ================ ======= ===============
-delay     ms    :math:`d_{jk}`       1.0 Dendritic delay
-weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
-========= ===== ================ ======= ===============
+---------------------------------------------------------
+Parameter  Unit  Math equivalent  Default Description
+========== ===== ================ ======= ===============
+``delay``  ms    :math:`d_{jk}`       1.0 Dendritic delay
+``weight`` pA    :math:`B_{jk}`       1.0 Synaptic weight
+========== ===== ================ ======= ===============
 
 Recordables
 +++++++++++
@@ -76,13 +76,13 @@ Recordables
 The following variables can be recorded. Note that since this connection lacks
 a plasticity mechanism the weight does not evolve over time.
 
-================== ==== =============== ============= ==========================================================
+============== ==== =============== ============= ===============
 **Synapse recordables**
-----------------------------------------------------------------------------------------------------------------
-State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
-================== ==== =============== ============= ==========================================================
+-----------------------------------------------------------------
+State variable Unit Math equivalent Initial value Description
+============== ==== =============== ============= ===============
+``weight``     pA   :math:`B_{jk}`            1.0 Synaptic weight
+============== ==== =============== ============= ===============
 
 Usage
 +++++

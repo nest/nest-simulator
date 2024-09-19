@@ -90,7 +90,7 @@ The following parameters can be set in the status dictionary.
 ----------------------------------------------------------------------------------------------------
 Parameter        Unit Math equivalent Default Description
 ================ ==== =============== ======= ======================================================
-optimizer                                  {} Dictionary of optimizer parameters
+``optimizer``                              {} Dictionary of optimizer parameters
 ================ ==== =============== ======= ======================================================
 
 ============= ==== ========================= ======= =========================================================
@@ -98,8 +98,8 @@ optimizer                                  {} Dictionary of optimizer parameters
 --------------------------------------------------------------------------------------------------------------
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
-delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+``delay``     ms   :math:`d_{ji}`                1.0 Dendritic delay
+``weight``    pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 
 Recordables
@@ -112,7 +112,7 @@ The following variables can be recorded.
 ----------------------------------------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ==========================================================
-weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+``weight``         pA   :math:`B_{jk}`            1.0 Synaptic weight
 ================== ==== =============== ============= ==========================================================
 
 Usage

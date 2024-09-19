@@ -122,6 +122,7 @@ By default, :math:`V_\text{m}` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter
 :math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
+For details see [1]_ and [2]_.
 
 
 

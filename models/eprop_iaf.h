@@ -223,66 +223,69 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``tau_m``                   ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
-                                                            representable
-                                                            by a ``double``
+                                                            representable by
+                                                            a ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-=============================== ==== =========================== ================== ============================
+=============================== ======= =========================== ================== =========================
 **E-prop parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter                       Unit Math equivalent             Default            Description
-=============================== ==== =========================== ================== ============================
-``c_reg``                            :math:`c_\text{reg}`                     0.0   Coefficient of firing rate
-                                                                                    regularization
-``eprop_isi_trace_cutoff``      ms   :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
-                                                                 representable      e-prop update between two
-                                                                 by a ``long``      spikes
-                                                                 type in C++
-``f_target``                    Hz   :math:`f^\text{target}`                 10.0   Target firing rate of rate
-                                                                                    regularization
-``kappa``                            :math:`\kappa`                          0.97   Low-pass filter of the
-                                                                                    eligibility trace
-``kappa_reg``                        :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
-                                                                                    the firing rate for
-                                                                                    regularization
-``beta``                             :math:`\beta`                            1.0   Width scaling of surrogate
-                                                                                    gradient / pseudo-derivative
-                                                                                    of membrane voltage
-``gamma``                            :math:`\gamma`                           0.3   Height scaling of surrogate
-                                                                                    gradient / pseudo-derivative
-                                                                                    of membrane voltage
-``surrogate_gradient_function``      :math:`\psi`                "piecewise_linear" Surrogate gradient /
-                                                                                    pseudo-derivative function
-                                                                                    ["piecewise_linear",
-                                                                                    "exponential",
-                                                                                    "fast_sigmoid_derivative",
-                                                                                    "arctan"]
-=============================== ==== =========================== ================== ============================
+Parameter                       Unit    Math equivalent             Default            Description
+=============================== ======= =========================== ================== =========================
+``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
+                                                                                       rate regularization
+``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
+                                                                    representable      e-prop update between two
+                                                                    by a ``long``      spikes
+                                                                    type in C++
+``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
+                                                                                       rate regularization
+``kappa``                               :math:`\kappa`                          0.97   Low-pass filter of the
+                                                                                       eligibility trace
+``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
+                                                                                       firing rate for
+                                                                                       regularization
+``beta``                                :math:`\beta`                            1.0   Width scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``gamma``                               :math:`\gamma`                           0.3   Height scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``surrogate_gradient_function``         :math:`\psi`                "piecewise_linear" Surrogate gradient /
+                                                                                       pseudo-derivative
+                                                                                       function
+                                                                                       ["piecewise_linear",
+                                                                                       "exponential",
+                                                                                       "fast_sigmoid_derivative"
+                                                                                       , "arctan"]
+=============================== ======= =========================== ================== =========================
 
 Recordables
 +++++++++++
 
 The following state variables evolve during simulation and can be recorded.
 
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
 **Neuron state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-``V_m``            mV   :math:`v_j`             -70.0 Membrane voltage
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ========================
+``V_m``              mV :math:`v_j`             -70.0 Membrane voltage
+================== ==== =============== ============= ========================
 
-====================== ==== =============== ============= ======================================================
+====================== ==== =============== ============= =========================================
 **E-prop state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
 State variable         Unit Math equivalent Initial value Description
-====================== ==== =============== ============= ======================================================
+====================== ==== =============== ============= =========================================
 ``learning_signal``      pA :math:`L_j`               0.0 Learning signal
-``surrogate_gradient``      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane
-                                                          voltage
-====================== ==== =============== ============= ======================================================
+``surrogate_gradient``      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of
+                                                          membrane voltage
+====================== ==== =============== ============= =========================================
 
 Usage
 +++++

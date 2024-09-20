@@ -543,10 +543,6 @@ private:
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
-    //! documentation).
-    double P_z_in_;
-
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
 

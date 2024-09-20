@@ -286,7 +286,6 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
-  V_.P_z_in_ = 1.0;
 }
 
 long
@@ -318,7 +317,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     if ( S_.r_ == 0 ) // not refractory, can spike
     {
-      S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + V_.P_z_in_ * z_in;
+      S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + z_in;
 
       if ( P_.with_refr_input_ and S_.refr_spikes_buffer_ != 0.0 )
       {
@@ -444,7 +443,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     L = eprop_hist_it->learning_signal_;
     firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    z_bar = V_.P_v_m_ * z_bar + z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;

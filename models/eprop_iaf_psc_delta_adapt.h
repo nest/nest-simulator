@@ -47,14 +47,14 @@ postsynaptic currents and threshold adaptation for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_iaf_adapt`` is an implementation of a leaky integrate-and-fire
+``eprop_iaf_psc_delta_adapt`` is an implementation of a leaky integrate-and-fire
 neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
  .. note::
-   The neuron dynamics of the ``eprop_iaf_adapt`` model (excluding
+   The neuron dynamics of the ``eprop_iaf_psc_delta_adapt`` model (excluding
    e-prop plasticity and the threshold adaptation) are similar to the neuron
    dynamics of the ``iaf_psc_delta`` model, with minor differences, such as the
    propagator of the post-synaptic current and the voltage reset upon a spike.
@@ -62,14 +62,9 @@ E-prop plasticity was originally introduced and implemented in TensorFlow in [1]
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
-    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
+  v_j^t &= \alpha v_j^{t-1} + \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \sum_i W_{ji}^\text{in} x_i^t \,, \\
   \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
-  \zeta &=
-    \begin{cases}
-      1 \\
-      1 - \alpha
-    \end{cases} \,, \\
 
 where :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
 input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
@@ -90,9 +85,17 @@ The spike state variable is expressed by a Heaviside function:
   z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
 If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
-emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
-time step. After the time step of the spike emission, the neuron is not
-able to spike for an absolute refractory period :math:`t_\text{ref}`.
+emitted and the membrane voltage is reset to :math:`v_\text{reset}. After the time step
+of the spike emission, the neuron is not able to spike for an absolute refractory period
+:math:`t_\text{ref}` during which the membrane potential stays clamped to the reset voltage
+:math:`v_\text{reset}`, thus
+
+.. math::
+  v_m = v_\text{reset} \quad \text{for} \quad t_\text{spk} \leq t \leq t_\text{spk} + t_\text{ref} \,.
+
+Spikes arriving while the neuron is refractory are discarded by default. However,
+if ``refractory_input`` is set to ``True`` they are damped for each time step
+until the end of the refractory period and then added to the membrane voltage.
 
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
@@ -110,9 +113,35 @@ voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
 trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
 by the readout neurons.
 
-.. include:: ../models/eprop_iaf.rst
-   :start-after: .. start_surrogate-gradient-functions
-   :end-before: .. end_surrogate-gradient-functions
+Surrogate gradients help overcome the challenge of the spiking function's
+non-differentiability, facilitating the use of gradient-based learning
+techniques such as e-prop. The non-existent derivative of the spiking
+variable with respect to the membrane voltage,
+:math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+replaced with a variety of surrogate gradient functions, as detailed in
+various studies (see, e.g., [3]_). NEST currently provides four
+different surrogate gradient functions:
+
+1. A piecewise linear function used among others in [1]_:
+
+.. math::
+  \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
+    \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
+
+2. An exponential function used in [4]_:
+
+.. math::
+  \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
+
+3. The derivative of a fast sigmoid function used in [5]_:
+
+.. math::
+  \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
+
+4. An arctan function used in [6]_:
+
+.. math::
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
 
 In the interval between two presynaptic spikes, the gradient is calculated
 at each time step until the cutoff time point. This computation occurs over
@@ -139,7 +168,7 @@ with the following exponential kernels:
 .. math::
   \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
     = \kappa \bar{e}_{ji}^{t-1} + \left( 1 - \kappa \right) e_{ji}^t \,, \\
-  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + z_i^t \,. \\
 
 Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
 neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate

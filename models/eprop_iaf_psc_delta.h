@@ -139,54 +139,63 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==================== ================== ====================== ========================================
+=========================== ======= ======================= ================ ===================================
 **Neuron parameters**
--------------------------------------------------------------------------------------------------------
-Parameter            Default            Math equivalent        Description
-==================== ================== ====================== ========================================
-``E_L``              -70 mV             :math:`E_\text{L}`     Resting membrane potential
-``C_m``              250 pF             :math:`C_\text{m}`     Capacitance of the membrane
-``tau_m``            10 ms              :math:`\tau_\text{m}`  Membrane time constant
-``t_ref``            2 ms               :math:`t_\text{ref}`   Duration of refractory period
-``V_th``             -55 mV             :math:`V_\text{th}`    Spike threshold
-``V_reset``          -70 mV             :math:`V_\text{reset}` Reset potential of the membrane
-``I_e``              0 pA               :math:`I_\text{e}`     Constant input current
-``V_min``            :math:`-\infty` mV :math:`V_\text{min}`   Absolute lower value for the membrane
-                                                               potential
-``refractory_input`` ``False``                                 If set to True, spikes arriving during
-                                                               refractory period are integrated
-                                                               afterwards
-==================== ================== ====================== ========================================
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
+``C_m``                     pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+``E_L``                     mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
+``I_e``                     pA      :math:`I_\text{e}`                   0.0 Constant external input current
+``t_ref``                   ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
+``tau_m``                   ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
+                                                            value            membrane voltage
+                                                            representable
+                                                            by a ``double``
+                                                            type in C++
+``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
+``V_reset``                 mV      :math:`v_\text{reset}`             -70.0 Reset voltage
+``refractory_input``        Boolean                                ``False`` If ``True``, spikes arriving during
+                                                                             the refractory period are damped
+                                                                             until it ends and then added to the
+                                                                             membrane voltage
+=========================== ======= ======================= ================ ===================================
 
-=============================== ======= ========================== ================== ==========================
+=============================== ======= =========================== ================== =========================
 **E-prop parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter                       Unit    Math equivalent            Default            Description
-=============================== ======= ========================== ================== ==========================
-``c_reg``                               :math:`c_\text{reg}`                    0.0   Coefficient of firing rate
-                                                                                      regularization
-``f_target``                    Hz      :math:`f^\text{target}`                10.0   Target firing rate of rate
-                                                                                      regularization
-``kappa``                               :math:`\kappa`                         0.97   Low-pass filter of the
-                                                                                      eligibility trace
-``kappa_reg``                           :math:`\kappa_\text{reg}`              0.97   Low-pass filter of the
-                                                                                      firing rate for
-                                                                                      regularization
-``beta``                                :math:`\beta`                           1.0   Width scaling of surrogate
-                                                                                      gradient /
-                                                                                      pseudo-derivative of
-                                                                                      membrane voltage
-``gamma``                               :math:`\gamma`                          0.3   Height scaling of
-                                                                                      surrogate gradient /
-                                                                                      pseudo-derivative
-                                                                                      of membrane voltage
-``surrogate_gradient_function``         :math:`\psi`               "piecewise_linear" Surrogate gradient /
-                                                                                      pseudo-derivative function
-                                                                                      ["piecewise_linear",
-                                                                                      "exponential",
-                                                                                      "fast_sigmoid_derivative",
-                                                                                      "arctan"]
-=============================== ======= ========================== ================== ==========================
+Parameter                       Unit    Math equivalent             Default            Description
+=============================== ======= =========================== ================== =========================
+``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
+                                                                                       rate regularization
+``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
+                                                                    representable      e-prop update between two
+                                                                    by a ``long``      spikes
+                                                                    type in C++
+``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
+                                                                                       rate regularization
+``kappa``                               :math:`\kappa`                          0.97   Low-pass filter of the
+                                                                                       eligibility trace
+``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
+                                                                                       firing rate for
+                                                                                       regularization
+``beta``                                :math:`\beta`                            1.0   Width scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``gamma``                               :math:`\gamma`                           0.3   Height scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``surrogate_gradient_function``         :math:`\psi`                "piecewise_linear" Surrogate gradient /
+                                                                                       pseudo-derivative
+                                                                                       function
+                                                                                       ["piecewise_linear",
+                                                                                       "exponential",
+                                                                                       "fast_sigmoid_derivative"
+                                                                                       , "arctan"]
+=============================== ======= =========================== ================== =========================
 
 References
 ++++++++++

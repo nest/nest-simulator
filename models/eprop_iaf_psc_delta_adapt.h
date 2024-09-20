@@ -36,103 +36,150 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire, adaptive threshold
 
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire model with delta-shaped input currents
-for e-prop plasticity
+Current-based leaky integrate-and-fire neuron model with delta-shaped
+postsynaptic currents and threshold adaptation for e-prop plasticity
 
 Description
 +++++++++++
 
-``iaf_psc_delta`` is a leaky integrate-and-fire neuron model with
+``eprop_iaf_adapt`` is an implementation of a leaky integrate-and-fire
+neuron model with delta-shaped postsynaptic currents and threshold adaptation
+used for eligibility propagation (e-prop) plasticity.
 
-* a hard threshold,
-* a fixed refractory period,
-* Dirac delta (:math:`\delta`)-shaped synaptic input currents.
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
+ .. note::
+   The neuron dynamics of the ``eprop_iaf_adapt`` model (excluding
+   e-prop plasticity and the threshold adaptation) are similar to the neuron
+   dynamics of the ``iaf_psc_delta`` model, with minor differences, such as the
+   propagator of the post-synaptic current and the voltage reset upon a spike.
 
-The `eprop_iaf_psc_delta_adapt` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
-
-Membrane potential evolution, spike emission, and refractoriness
-................................................................
-
-The membrane potential evolves according to
-
-.. math::
-
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} +
-   \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
-
-where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below
-and :math:`I_\text{e}` is a constant input current set as a model parameter.
-
-A spike is emitted at time step :math:`t^*=t_{k+1}` if
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
+  v_j^t &= \alpha v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \zeta \sum_i W_{ji}^\text{in} x_i^t - z_j^{t-1} v_\text{th} \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
+  \zeta &=
+    \begin{cases}
+      1 \\
+      1 - \alpha
+    \end{cases} \,, \\
 
-   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
+where :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
+state variable, while :math:`x_i^t` represents the input at time :math:`t`.
 
-Subsequently,
+Descriptions of further parameters and variables can be found in the table below.
 
-.. math::
-
-   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
-
-that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
-
-Synaptic input
-..............
-
-The change in membrane potential due to synaptic inputs can be formulated as:
-
-.. math::
-
-   \dot{\Delta}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
-
-where :math:`j` indexes either excitatory (:math:`w_j > 0`)
-or inhibitory (:math:`w_j < 0`) presynaptic neurons,
-:math:`k` indexes the spike times of neuron :math:`j`, :math:`d_j`
-is the delay from neuron :math:`j`, and :math:`\delta` is the Dirac delta distribution.
-This implies that the jump in voltage upon a single synaptic input spike is
+The threshold adaptation is given by:
 
 .. math::
+  A_j^t &= v_\text{th} + \beta a_j^t \,, \\
+  a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
+  \rho &= e^{-\frac{ \Delta t }{ \tau_\text{a} }} \,. \\
 
-   \Delta_{\text{syn}} = w \;,
-
-where :math:`w` is the corresponding synaptic weight in mV.
-
-
-The change in voltage caused by the synaptic input can be interpreted as being caused
-by individual post-synaptic currents (PSCs) given by
+The spike state variable is expressed by a Heaviside function:
 
 .. math::
+  z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
-   i_{\text{syn}}(t) = C_{\text{m}} \cdot w \cdot \delta(t).
+If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
+emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
+time step. After the time step of the spike emission, the neuron is not
+able to spike for an absolute refractory period :math:`t_\text{ref}`.
 
-As a consequence, the total charge :math:`q` transferred by a single PSC is
+An additional state variable and the corresponding differential equation
+represents a piecewise constant external current.
+
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
+
+The change of the synaptic weight is calculated from the gradient :math:`g^t` of
+the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
+which depends on the presynaptic
+spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
+of the spike state variable with respect to the postsynaptic membrane
+voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
+trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
+by the readout neurons.
+
+.. include:: ../models/eprop_iaf.rst
+   :start-after: .. start_surrogate-gradient-functions
+   :end-before: .. end_surrogate-gradient-functions
+
+In the interval between two presynaptic spikes, the gradient is calculated
+at each time step until the cutoff time point. This computation occurs over
+the time range:
+
+:math:`t \in \left[ t_\text{spk,prev}, \min \left( t_\text{spk,prev} + \Delta t_\text{c}, t_\text{spk,curr} \right)
+\right]`.
+
+Here, :math:`t_\text{spk,prev}` represents the time of the previous spike that
+passed the synapse, while :math:`t_\text{spk,curr}` is the time of the
+current spike, which triggers the application of the learning rule and the
+subsequent synaptic weight update. The cutoff :math:`\Delta t_\text{c}`
+defines the maximum allowable interval for integration between spikes.
+The expression for the gradient is given by:
 
 .. math::
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  e_{ji}^{t-1} &= \psi_j^{t-1} \left( \bar{z}_i^{t-2} - \beta \epsilon_{ji,a}^{t-2} \right) \,, \\
+  \epsilon^{t-2}_{ji,\text{a}} &= e_{ji}^{t-1} + \rho \epsilon_{ji,a}^{t-3} \,. \\
 
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \cdot w \;.
+The eligibility trace and the presynaptic spike trains are low-pass filtered
+with the following exponential kernels:
 
-By default, :math:`V_\text{m}` is not bounded from below. To limit
-hyperpolarization to biophysically plausible values, set parameter
-:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
+.. math::
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
+    = \kappa \bar{e}_{ji}^{t-1} + \left( 1 - \kappa \right) e_{ji}^t \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
-For details see [1]_, [2]_, [3]_, [4]_, [5]_, [6]_, [7]_, [8]_.
+Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
+neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
+:math:`f^\text{target}`. The gradient :math:`g_\text{reg}^t` of the regularization loss :math:`E_\text{reg}^t`
+with respect to the synaptic weight :math:`W_{ji}` is given by:
 
+.. math::
+  \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
+    &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_{\kappa_\text{reg}} \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
 
+where :math:`c_\text{reg}` is a constant scaling factor.
 
+The overall gradient is given by the addition of the two gradients.
 
-.. note::
-   Spikes arriving while the neuron is refractory, are discarded by
-   default. If the property ``refractory_input`` is set to True, such
-   spikes are added to the membrane potential at the end of the
-   refractory period, dampened according to the interval between
-   arrival and end of refractoriness.
+As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
+for more information on the available optimizers):
+
+.. math::
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
+
+After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
+the next spike:
+
+.. math::
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
+  \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
+  \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,, \\
+  \epsilon^{t+p} &= \epsilon^t \rho^p \,. \\
+
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
+
+ * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_readout<../models/eprop_readout/>`
+ * :doc:`eprop_synapse<../models/eprop_synapse/>`
+ * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+
+Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
 Parameters
 ++++++++++

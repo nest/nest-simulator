@@ -122,7 +122,7 @@ By default, :math:`V_\text{m}` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter
 :math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
-For details see [1]_ and [2]_.
+For details see [1]_, [2]_, [3]_, [4]_, [5]_, [6]_, [7]_, [8]_.
 
 
 
@@ -201,17 +201,78 @@ Parameter                       Unit    Math equivalent             Default     
                                                                                        , "arctan"]
 =============================== ======= =========================== ================== =========================
 
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
+
+================== ==== =============== ============= ========================
+**Neuron state variables and recordables**
+------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ========================
+``adaptation``          :math:`a_j`               0.0 Adaptation variable
+``V_m``              mV :math:`v_j`             -70.0 Membrane voltage
+``V_th_adapt``       mV :math:`A_j`             -55.0 Adapting spike threshold
+================== ==== =============== ============= ========================
+
+====================== ==== =============== ============= =========================================
+**E-prop state variables and recordables**
+---------------------------------------------------------------------------------------------------
+State variable         Unit Math equivalent Initial value Description
+====================== ==== =============== ============= =========================================
+``learning_signal``      pA :math:`L_j`               0.0 Learning signal
+``surrogate_gradient``      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of
+                                                          membrane voltage
+====================== ==== =============== ============= =========================================
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models
+and the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in several
+:doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
+reproducing among others the original proof-of-concept tasks in [1]_.
+
 References
 ++++++++++
 
-.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
+       Maass W (2020). A solution to the learning dilemma for recurrent
+       networks of spiking neurons. Nature Communications, 11:3625.
+       https://doi.org/10.1038/s41467-020-17236-y
+
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       implementation of eligibility propagation (in preparation)
+
+.. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
+       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
+       https://doi.org/10.1109/MSP.2019.2931595
+
+.. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
+       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+
+.. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
+       Spiking Neural Networks. Neural Computation, 30:1514–1541.
+       https://doi.org/10.1162/neco_a_01086
+
+.. [6] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
+       learning in spiking neural networks. Advances in Neural Information
+       Processing Systems, 34:21056–21069.
+       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
+
+.. [7] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biological Cybernetics
+       81:381-402.
+       https://doi.org/10.1007/s004220050570
+
+.. [8] Diesmann M, Gewaltig MO, Rotter S, Aertsen A (2001). State space analysis
+       of synchronous spiking in cortical neural networks. Neurocomputing
+       38-40:565-571.
+       https://doi.org/10.1016/S0925-2312(01)00409-X
 
 Sends
 +++++
@@ -221,12 +282,10 @@ SpikeEvent
 Receives
 ++++++++
 
-SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent, CurrentEvent, LearningSignalConnectionEvent, DataLoggingRequest
 
 See also
 ++++++++
-
-iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 Examples using this model
 +++++++++++++++++++++++++

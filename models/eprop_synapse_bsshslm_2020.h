@@ -93,7 +93,8 @@ The following parameters can be set in the status dictionary.
 -------------------------------------------------------------------------------------------------------------
 Parameter            Unit    Math equivalent Default   Description
 ==================== ======= =============== ========= ======================================================
-``average_gradient`` Boolean                 ``False`` If True, average the gradient over the learning window
+``average_gradient`` Boolean                 ``False`` If ``True``, average the gradient over the learning
+                                                       window
 ``optimizer``                                     {}   Dictionary of optimizer parameters
 ==================== ======= =============== ========= ======================================================
 

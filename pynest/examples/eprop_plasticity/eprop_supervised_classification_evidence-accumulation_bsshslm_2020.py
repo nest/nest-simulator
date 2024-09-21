@@ -316,13 +316,11 @@ params_wr = {
 
 params_sr_in = {
     "start": duration["offset_gen"],
-    "stop": duration["total_offset"] + duration["task"],
     "label": "spike_recorder_in",
 }
 
 params_sr_reg = {
     "start": duration["offset_gen"],
-    "stop": duration["total_offset"] + duration["task"],
     "label": "spike_recorder_reg",
 }
 
@@ -635,7 +633,7 @@ def evaluate(n_iter_start, n_iter_interval, phase_label):
     errors = 1.0 - accuracy
 
     results_dict["iteration"].extend(range(n_iter_start, n_iter_start + n_iter_interval))
-    results_dict["error"].extend(error_val)
+    results_dict["error"].extend(errors)
     results_dict["loss"].extend(loss)
     results_dict["label"].extend([phase_label] * len(loss))
 
@@ -813,9 +811,9 @@ def plot_spikes(ax, events, ylabel, xlims):
 for title, xlims in zip(
     ["Dynamic variables before training", "Dynamic variables after training"],
     [
-    (0, steps["sequence"]),
-    ((n_iter_sim - 1) * batch_size * steps["sequence"], n_iter_sim * batch_size * steps["sequence"]),
-],
+        (0, steps["sequence"]),
+        ((n_iter_sim - 1) * batch_size * steps["sequence"], n_iter_sim * batch_size * steps["sequence"]),
+    ],
 ):
     fig, axs = plt.subplots(14, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
     fig.suptitle(title)

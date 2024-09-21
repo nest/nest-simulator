@@ -117,7 +117,9 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
 # The original number of iterations requires distributed computing. Increasing the number of iterations
-# enhances learning performance up to the point where overfitting occurs.
+# enhances learning performance up to the point where overfitting occurs. If early stopping is enabled, the
+# classification error is tested in regular intervals and the training stopped as soon as the error selected as
+# stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
 batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
 n_iter = 50  # number of iterations, 2000 in reference [2]
@@ -126,10 +128,12 @@ n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall
 n_cues = 7  # number of cues given before decision
 prob_group = 0.3  # probability with which one input group is present
 
+do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
 n_validate_every = 10  # number of training iterations before validation
 n_early_stop = 8  # number of iterations to average over to evaluate early stopping condition
-n_test = 4  # number of iterations for final test
 stop_crit = 0.07  # error value corresponding to stop criterion for early stopping
+
+n_test = 4  # number of iterations for final test
 
 n_val = np.ceil(n_iter / n_validate_every)
 n_iter_max = int(n_iter + n_val + (n_val - 1) * (n_early_stop + 1) + n_test)
@@ -643,10 +647,11 @@ def evaluate(n_iter_start, n_iter_interval, phase_label):
 # %% ###########################################################################################################
 # Simulate
 # ~~~~~~~~
-# We train the network by simulating for a number of training iterations with the set learning rate. In regular
-# intervals, we evaluate the network's performance on the validation set and, if the error is below a certain
-# threshold, we stop the training early. If the error is not below the threshold, we continue training until the
-# end of the set number of iterations. Finally, we evaluate the network's performance on the test set.
+# We train the network by simulating for a number of training iterations with the set learning rate. If early
+# stopping is turned on, we evaluate the network's performance on the validation set in regular intervals and,
+# if the error is below a certain threshold, we stop the training early. If the error is not below the
+# threshold, we continue training until the end of the set number of iterations. Finally, we evaluate the
+# network's performance on the test set.
 
 results_dict = {
     "error": [],
@@ -678,7 +683,7 @@ nest.Simulate(duration["total_offset"])
 
 phase_label_previous = ""
 for k_iter in range(n_iter):
-    if k_iter % n_validate_every == 0:
+    if do_early_stopping and k_iter % n_validate_every == 0:
         error_val, n_iter_sim, phase_label_previous = run("validation", n_iter_sim, eta_test, phase_label_previous)
 
         if k_iter > 0 and error_val < stop_crit:

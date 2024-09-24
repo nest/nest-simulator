@@ -524,6 +524,9 @@ private:
     //! Count of spikes arriving during refractory period discounted for decay until end of refractory period.
     double refr_spikes_buffer_;
 
+    //! Binary spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    double z_;
+
     //! Adaptation variable.
     double adapt_;
 

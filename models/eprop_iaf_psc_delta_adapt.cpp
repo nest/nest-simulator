@@ -97,6 +97,7 @@ eprop_iaf_psc_delta_adapt::State_::State_()
   , v_m_( 0.0 )
   , r_( 0 )
   , refr_spikes_buffer_( 0.0 )
+  , z_( 0.0 )
   , adapt_( 0.0 )
   , v_th_adapt_( 15.0 )
   , learning_signal_( 0.0 )
@@ -361,6 +362,9 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       }
 
       S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
+
+      S_.adapt_ = V_.P_adapt_ * S_.adapt_ + S_.z_;
+      S_.v_th_adapt_ = P_.V_th_ + P_.adapt_beta_ * S_.adapt_;
     }
     else
     {
@@ -372,10 +376,7 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       --S_.r_;
     }
 
-    double z = 0.0; // spike state variable
-
-    S_.adapt_ = V_.P_adapt_ * S_.adapt_ + z;
-    S_.v_th_adapt_ = P_.V_th_ + P_.adapt_beta_ * S_.adapt_;
+    S_.z_ = 0.0;
 
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
@@ -388,12 +389,12 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
 
-      z = 1.0;
+      S_.z_ = 1.0;
     }
 
     append_new_eprop_history_entry( t );
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
-    write_firing_rate_reg_to_history( t, z, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 

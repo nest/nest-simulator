@@ -360,7 +360,7 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
         S_.refr_spikes_buffer_ = 0.0;
       }
 
-      S_.v_m_ = ( S_.v_m_ < P_.V_min_ ? P_.V_min_ : S_.v_m_ );
+      S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
     }
     else
     {

@@ -120,7 +120,7 @@ to find out how to install NEST.
 - Information on the Python bindings to NEST can be found in
   `${prefix}/share/doc/nest/README.md`.
 - For those looking to extend NEST, developer documentation on [Contributing to
-  NEST](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html) is available.
+  NEST](https://nest-simulator.readthedocs.io/en/latest/developer_space/index.html#contribute-to-nest) is available.
 
 ## Citing NEST
 

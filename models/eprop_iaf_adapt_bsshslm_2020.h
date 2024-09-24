@@ -423,10 +423,10 @@ private:
     //! Membrane voltage relative to the leak membrane potential (mV).
     double v_m_;
 
-    //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
 
-    //! Binary input spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary input spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_in_;
 
     //! Default constructor.
@@ -464,7 +464,7 @@ private:
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! Propagator matrix entry for evolving the incoming spike state variables (mathematical symbol "zeta" in user
     //! documentation).
     double P_z_in_;
 

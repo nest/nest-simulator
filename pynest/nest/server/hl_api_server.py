@@ -32,11 +32,10 @@ from .hl_api_server_helpers import (
     CORS_ORIGINS,
     EXEC_CALL_ENABLED,
     _check_security,
-    get_arguments,
     nest_calls,
 )
 from .hl_api_server_mpi import api_client, do_call, log, mpi_comm
-from .hl_api_server_utils import ErrorHandler
+from .hl_api_server_utils import ErrorHandler, get_arguments
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.

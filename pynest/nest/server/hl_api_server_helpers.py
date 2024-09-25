@@ -140,6 +140,7 @@ def get_or_error(func):
             message = "%s: %s" % (error_class, detail)
         else:
             message = "%s at line %d: %s" % (error_class, lineno, detail)
+
         raise ErrorHandler(message, lineno)
 
     return func_wrapper

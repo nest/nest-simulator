@@ -602,114 +602,134 @@ weights_pre_train = {
 }
 
 # %% ###########################################################################################################
-# Evaluate training error
-# ~~~~~~~~~~~~~~~~~~~~~~~
-# We evaluate the network's training error by calculating a loss - in this case, the cross-entropy error between
-# the integrated recurrent network activity and the target rate.
-
-
-def evaluate(n_iter_start, n_iter_interval, phase_label):
-    events_mm_out = mm_out.get("events")
-
-    readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
-    target_signal = events_mm_out["target_signal"]
-    senders = events_mm_out["senders"]
-    times = events_mm_out["times"]
-
-    cond1 = times > (n_iter_start - 1) * batch_size * duration["sequence"] + duration["total_offset"]
-    cond2 = times <= n_iter_start * batch_size * duration["sequence"] + duration["total_offset"]
-    idc = cond1 & cond2
-
-    readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in set(senders)])
-    target_signal = np.array([target_signal[idc][senders[idc] == i] for i in set(senders)])
-
-    readout_signal = readout_signal.reshape((n_out, n_iter_interval, batch_size, steps["sequence"]))
-    target_signal = target_signal.reshape((n_out, n_iter_interval, batch_size, steps["sequence"]))
-
-    readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
-    target_signal = target_signal[:, :, :, -steps["learning_window"] :]
-
-    loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
-
-    y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
-    y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
-    accuracy = np.mean((y_target == y_prediction), axis=1)
-    errors = 1.0 - accuracy
-
-    results_dict["iteration"].extend(range(n_iter_start, n_iter_start + n_iter_interval))
-    results_dict["error"].extend(errors)
-    results_dict["loss"].extend(loss)
-    results_dict["label"].extend([phase_label] * len(loss))
-
-    return errors, loss
-
-
-# %% ###########################################################################################################
-# Simulate
-# ~~~~~~~~
+# Simulate and evaluate
+# ~~~~~~~~~~~~~~~~~~~~~
 # We train the network by simulating for a number of training iterations with the set learning rate. If early
 # stopping is turned on, we evaluate the network's performance on the validation set in regular intervals and,
 # if the error is below a certain threshold, we stop the training early. If the error is not below the
 # threshold, we continue training until the end of the set number of iterations. Finally, we evaluate the
 # network's performance on the test set.
-
-results_dict = {
-    "error": [],
-    "loss": [],
-    "iteration": [],
-    "label": [],
-}
+# Furthermore, we evaluate the network's training error by calculating a loss - in this case, the cross-entropy
+# error between the integrated recurrent network activity and the target rate.
 
 
-def run(phase_label, n_iter_start, eta, phase_label_previous, n_iter_interval=1):
-    params_common_syn_eprop["optimizer"]["eta"] = eta
-    nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
+class TrainingPipeline:
+    def __init__(self):
+        self.results_dict = {
+            "error": [],
+            "loss": [],
+            "iteration": [],
+            "label": [],
+        }
+        self.n_iter_sim = 0
+        self.phase_label_previous = ""
+        self.error = 0
+        self.k_iter = 0
+        self.early_stop = False
 
-    nest.Simulate(duration["extension_sim"])
-    error_val = [0]
-    if n_iter_start > 0:
-        error_val, loss = evaluate(n_iter_start, n_iter_interval, phase_label_previous)
+    def evaluate(self):
+        events_mm_out = mm_out.get("events")
 
-    duration["sim"] = n_iter_interval * batch_size * duration["sequence"] - duration["extension_sim"]
+        readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
+        target_signal = events_mm_out["target_signal"]
+        senders = events_mm_out["senders"]
+        times = events_mm_out["times"]
 
-    nest.Simulate(duration["sim"])
+        cond1 = times > (self.n_iter_sim - 1) * batch_size * duration["sequence"] + duration["total_offset"]
+        cond2 = times <= self.n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
+        idc = cond1 & cond2
 
-    n_iter_start_new = n_iter_start + n_iter_interval
-    return error_val, n_iter_start_new, phase_label
+        readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in set(senders)])
+        target_signal = np.array([target_signal[idc][senders[idc] == i] for i in set(senders)])
+
+        readout_signal = readout_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
+        target_signal = target_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
+
+        readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+        target_signal = target_signal[:, :, :, -steps["learning_window"] :]
+
+        loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
+
+        y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
+        y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
+        accuracy = np.mean((y_target == y_prediction), axis=1)
+        errors = 1.0 - accuracy
+
+        self.results_dict["iteration"].append(self.n_iter_sim)
+        self.results_dict["error"].extend(errors)
+        self.results_dict["loss"].extend(loss)
+        self.results_dict["label"].append(self.phase_label_previous)
+
+        self.error = errors[0]
+
+    def run(self, phase_label, eta):
+        params_common_syn_eprop["optimizer"]["eta"] = eta
+        nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
+
+        nest.Simulate(duration["extension_sim"])
+        if self.n_iter_sim > 0:
+            self.evaluate()
+
+        duration["sim"] = batch_size * duration["sequence"] - duration["extension_sim"]
+
+        nest.Simulate(duration["sim"])
+
+        self.n_iter_sim += 1
+        self.phase_label_previous = phase_label
+
+    def run_training(self):
+        self.run("training", eta_train)
+
+    def run_validation(self):
+        if do_early_stopping and self.k_iter % n_validate_every == 0:
+            self.run("validation", eta_test)
+
+    def run_early_stopping(self):
+        if do_early_stopping and self.k_iter % n_validate_every == 0:
+            if self.k_iter > 0 and self.error < stop_crit:
+                errors_early_stop = []
+                for _ in range(n_early_stop):
+                    self.run("early-stopping", eta_test)
+                    errors_early_stop.append(self.error)
+
+                self.early_stop = np.mean(errors_early_stop) < stop_crit
+
+    def run_test(self):
+        for _ in range(n_test):
+            self.run("test", eta_test)
+
+    def simulate(self):
+        nest.Simulate(duration["total_offset"])
+
+        while self.k_iter < n_iter and not self.early_stop:
+            self.run_validation()
+            self.run_early_stopping()
+            self.run_training()
+            self.k_iter += 1
+
+        self.run_test()
+
+        nest.Simulate(steps["extension_sim"])
+
+        self.evaluate()
+
+        duration["task"] = self.n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
+
+        gen_spk_final_update.set({"spike_times": [duration["task"] + duration["extension_sim"] + 1]})
+
+        nest.Simulate(duration["delays"])
+
+    def get_results(self):
+        for k, v in self.results_dict.items():
+            self.results_dict[k] = np.array(v)
+        return self.results_dict
 
 
-n_iter_sim = 0
-nest.Simulate(duration["total_offset"])
+training_pipeline = TrainingPipeline()
+training_pipeline.simulate()
 
-phase_label_previous = ""
-for k_iter in range(n_iter):
-    if do_early_stopping and k_iter % n_validate_every == 0:
-        error_val, n_iter_sim, phase_label_previous = run("validation", n_iter_sim, eta_test, phase_label_previous)
-
-        if k_iter > 0 and error_val < stop_crit:
-            errors_early_stop, n_iter_sim, phase_label_previous = run(
-                "early-stopping", n_iter_sim, eta_test, phase_label_previous
-            )
-            if np.mean(errors_early_stop) < stop_crit:
-                break
-
-    run_iter = min(n_iter - k_iter, n_validate_every)
-    _, n_iter_sim, phase_label_previous = run("training", n_iter_sim, eta_train, phase_label_previous)
-
-for _ in range(n_test):
-    _, n_iter_sim, phase_label_previous = run("test", n_iter_sim, eta_test, phase_label_previous)
-
-nest.Simulate(steps["extension_sim"])
-error_val, loss = evaluate(n_iter_sim, 1, phase_label_previous)
-
-for k, v in results_dict.items():
-    results_dict[k] = np.array(v)
-
-duration["task"] = n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
-
-gen_spk_final_update.set({"spike_times": [duration["task"] + duration["extension_sim"] + 1]})
-
-nest.Simulate(duration["delays"])
+results_dict = training_pipeline.get_results()
+n_iter_sim = training_pipeline.n_iter_sim
 
 # %% ###########################################################################################################
 # Read out post-training weights
@@ -772,7 +792,7 @@ fig.suptitle("Training error")
 
 for color, label in zip(colors, set(results_dict["label"])):
     idc = results_dict["label"] == label
-    axs[0].scatter(np.array(results_dict["iteration"])[idc], results_dict["loss"][idc], label=label)
+    axs[0].scatter(results_dict["iteration"][idc], results_dict["loss"][idc], label=label)
     axs[1].scatter(results_dict["iteration"][idc], results_dict["error"][idc], label=label)
 
 axs[0].set_ylabel(r"$E = -\sum_{t,k} \pi_k^{*,t} \log \pi_k^t$")

@@ -37,7 +37,7 @@ captures changes in pixel intensity through a dynamic vision sensor, converting 
 binary events, which we interpret as spike trains. This conversion closely emulates biological neural
 processing, making it a fitting challenge for an e-prop-equipped spiking neural network (SNN).
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation.png
+.. image:: eprop_supervised_classification_evidence-accumulation.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center

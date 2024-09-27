@@ -40,7 +40,7 @@ taking a left and a right turn of which one is correct. After a number of iterat
 infer the underlying rationale of the task. Here, the solution is to turn to the side in which more cues were
 presented.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.png
+.. image:: eprop_supervised_classification_evidence-accumulation_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center

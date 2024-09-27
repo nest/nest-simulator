@@ -201,9 +201,11 @@ the next spike:
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,, \\
   \epsilon^{t+p} &= \epsilon^t \rho^p \,. \\
 
+For more information on the implementation details of the neuron model, see [7]_ and [8]_.
+
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
- * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
  * :doc:`eprop_readout<../models/eprop_readout/>`
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`

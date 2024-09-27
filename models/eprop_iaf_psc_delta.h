@@ -192,6 +192,8 @@ the next spike:
   \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
 
+For more information on the implementation details of the neuron model, see [7]_ and [8]_.
+
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`

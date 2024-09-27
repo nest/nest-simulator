@@ -28,7 +28,13 @@ hardware.
 For further information, see:
 
 * :doc:`/auto_examples/eprop_plasticity/index`
-* :doc:`/models/index_e-prop plasticity`
+* :doc:`/models/eprop_iaf_adapt_bsshslm_2020`
+* :doc:`/models/eprop_iaf_bsshslm_2020`
+* :doc:`/models/eprop_learning_signal_connection_bsshslm_2020`
+* :doc:`/models/eprop_readout_bsshslm_2020`
+* :doc:`/models/eprop_synapse_bsshslm_2020`
+
+
 
 Connectivity concepts
 ---------------------

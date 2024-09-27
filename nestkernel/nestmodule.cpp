@@ -770,16 +770,17 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 
 
 void
-NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) const
+NestModule::ConnectTripartite_g_g_g_D_D_DFunction::execute( SLIInterpreter* i ) const
 {
   kernel().connection_manager.sw_construction_connect.start();
 
-  i->assert_stack_load( 5 );
+  i->assert_stack_load( 6 );
 
-  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 4 ) );
-  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
-  NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 5 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 4 ) );
+  NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum third_connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum synapse_specs_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   std::map< Name, std::vector< DictionaryDatum > > synapse_specs {
@@ -797,9 +798,9 @@ NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) co
   }
 
   // dictionary access checking is handled by connect
-  connect_tripartite( sources, targets, third, connectivity, synapse_specs );
+  connect_tripartite( sources, targets, third, connectivity, third_connectivity, synapse_specs );
 
-  i->OStack.pop( 5 );
+  i->OStack.pop( 6 );
   i->EStack.pop();
 
   kernel().connection_manager.sw_construction_connect.stop();
@@ -874,18 +875,6 @@ void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
   i->OStack.push( kernel().mpi_manager.get_num_processes() );
-  i->EStack.pop();
-}
-
-void
-NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  enable_dryrun_mode( n_procs );
-
-  i->OStack.pop( 1 );
   i->EStack.pop();
 }
 
@@ -2127,7 +2116,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
   i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
-  i->createcommand( "ConnectTripartite_g_g_g_D_D", &connect_tripartite_g_g_g_D_Dfunction );
+  i->createcommand( "ConnectTripartite_g_g_g_D_D_D", &connect_tripartite_g_g_g_D_D_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
@@ -2138,7 +2127,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
-  i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
   i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );

@@ -3,7 +3,7 @@ EI-clustered circuit model
 
 This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. [1]_.
 
-.. figure:: /static/img/pynest/EI_clustered_network_schematic.png
+.. figure:: EI_clustered_network_schematic.png
    :alt: EI-clustered circuit model.
 
    Schematic of the EI-clustered circuit model. The network consists of `n_clusters` with one excitatory and one inhibitory population each.

@@ -38,7 +38,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
 which encode the x and y coordinates of a lemniscate.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_lemniscate_bsshslm_2020.png
+.. image:: eprop_supervised_regression_lemniscate_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center

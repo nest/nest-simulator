@@ -43,6 +43,18 @@ public:
   size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
 };
 
+class histentry_step
+{
+public:
+  histentry_step( size_t t, double Kminus, double Kminus_triplet, size_t access_counter );
+
+  size_t t_;              //!< point in time when spike occurred (in steps)
+  double Kminus_;         //!< value of Kminus at that time
+  double Kminus_triplet_; //!< value of triplet STDP Kminus at that time
+  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
+};
+
+
 // entry in the history of plasticity rules which consider additional factors
 class histentry_extended
 {

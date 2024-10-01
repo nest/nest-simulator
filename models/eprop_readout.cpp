@@ -72,7 +72,6 @@ eprop_readout::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , E_L_( 0.0 )
   , I_e_( 0.0 )
-  , regular_spike_arrival_( true )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , eprop_isi_trace_cutoff_( 1000.0 )
@@ -109,7 +108,6 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
-  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
@@ -127,7 +125,6 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
@@ -210,7 +207,6 @@ eprop_readout::pre_run_hook()
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
-  V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
 }
 
 long
@@ -242,7 +238,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + S_.z_in_ + V_.P_v_m_ * S_.v_m_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
     ( this->*compute_error_signal )( lag );
@@ -361,7 +357,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
     L = eprop_hist_it->error_signal_;
 
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    z_bar = V_.P_v_m_ * z_bar + z;
 
     if ( optimize_each_step )
     {

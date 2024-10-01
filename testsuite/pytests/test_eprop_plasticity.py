@@ -180,7 +180,6 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "E_L": 0.0,
         "eprop_isi_trace_cutoff": 100,
         "I_e": 0.0,
-        "regular_spike_arrival": False,
         "tau_m": 30.0,
         "V_m": 0.0,
     }
@@ -196,7 +195,6 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "I_e": 0.0,
         "kappa": 0.97,
         "kappa_reg": 0.97,
-        "regular_spike_arrival": False,
         "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,
@@ -205,7 +203,6 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     }
 
     if neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
-        del params_nrn_rec["regular_spike_arrival"]
         params_nrn_rec["V_reset"] = -0.5
         params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
         params_nrn_rec["V_th"] = 0.5
@@ -510,7 +507,6 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
         "E_L": 0.0,
         "gamma": 0.5,
         "I_e": 0.0,
-        "regular_spike_arrival": False,
         "surrogate_gradient_function": surrogate_gradient_type,
         "t_ref": 3.0,
         "V_m": 0.0,

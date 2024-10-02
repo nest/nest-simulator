@@ -211,6 +211,9 @@ params_nrn_rec = {
     "V_th": 0.6,  # mV, spike threshold membrane voltage
 }
 
+scale_factor = 1.0 - params_nrn_rec["kappa"]  # factor for rescaling due to removal of irregular spike arrival
+params_nrn_rec["c_reg"] /= scale_factor**2
+
 ####################
 
 # Intermediate parrot neurons required between input spike generators and recurrent neurons,
@@ -318,8 +321,8 @@ dtype_weights = np.float32  # data type of weights - for reproducing TF results 
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
-weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights)
-weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
+weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights) * scale_factor
+weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights) / scale_factor
 
 weights_in_rec *= create_mask(weights_in_rec, 0.75)
 weights_rec_rec *= create_mask(weights_rec_rec, 0.99)
@@ -329,7 +332,7 @@ params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
-        "eta": 5e-3,  # learning rate
+        "eta": 5e-3 * scale_factor**2,  # learning rate
         "optimize_each_step": False,  # call optimizer every time step (True) or once per spike (False); both
         # yield same results for gradient descent, False offers speed-up
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
@@ -338,7 +341,7 @@ params_common_syn_eprop = {
     "weight_recorder": wr,
 }
 
-eta_train = 5e-3
+eta_train = 5e-3 * scale_factor**2
 eta_test = 0.0
 
 params_syn_base = {

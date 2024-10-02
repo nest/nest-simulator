@@ -71,44 +71,44 @@ def test_unsupported_model_raises(target_model):
             "eprop_iaf",
             "adam",
             [
-                0.13126137747586,
-                0.09395562983704,
-                0.00734052541014,
-                0.02909589949313,
-                0.00279041902009,
+                0.11299135657185,
+                0.24214707468622,
+                0.22801961532915,
+                0.18990506421410,
+                0.17807439012893,
             ],
         ),
         (
             "eprop_iaf_adapt",
             "gradient_descent",
             [
-                0.04298221363883,
-                0.03100545785399,
-                0.00930311104052,
-                0.00455478436740,
-                0.00017408818078,
+                0.02242584487453,
+                0.01916753791522,
+                0.00571493935652,
+                0.00037875376195,
+                0.00037823157578,
             ],
         ),
         (
             "eprop_iaf_psc_delta",
             "gradient_descent",
             [
-                0.32286231964124,
-                0.61322219696014,
-                0.63745062813969,
-                0.63844466107304,
-                0.58671835471489,
+                0.27039631749159,
+                0.51390204375229,
+                0.53473859833866,
+                0.53140089764207,
+                0.46251560097325,
             ],
         ),
         (
             "eprop_iaf_psc_delta_adapt",
             "gradient_descent",
             [
-                0.19603671513741,
-                0.33370485743782,
-                0.35727428693343,
-                0.31206408953001,
-                0.31411885659561,
+                0.16416646182675,
+                0.27952159282830,
+                0.28717519804974,
+                0.27112053231265,
+                0.28730274348102,
             ],
         ),
     ],
@@ -202,9 +202,11 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "V_th": 0.03,
     }
 
+    scale_factor = 1.0 - params_nrn_rec["kappa"]
+
     if neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
         params_nrn_rec["V_reset"] = -0.5
-        params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
+        params_nrn_rec["c_reg"] = 2.0 / duration["sequence"] / scale_factor**2
         params_nrn_rec["V_th"] = 0.5
     elif neuron_model == "eprop_iaf_adapt":
         params_nrn_rec["adapt_beta"] = 0.0174
@@ -265,14 +267,21 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
     weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
     np.fill_diagonal(weights_rec_rec, 0.0)
-    weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
+    weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights) * scale_factor
     weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
+
+    if neuron_model in ["eprop_iaf", "eprop_iaf_adapt"]:
+        weights_in_rec *= scale_factor
+        weights_rec_rec *= scale_factor
+        weights_out_rec *= scale_factor
+    elif neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
+        weights_out_rec /= scale_factor
 
     params_common_syn_eprop = {
         "optimizer": {
             "type": optimizer,
             "batch_size": 1,
-            "eta": 1e-4,
+            "eta": 1e-4 * scale_factor**2,
             "optimize_each_step": True,
             "Wmin": -100.0,
             "Wmax": 100.0,
@@ -436,41 +445,41 @@ def test_unsupported_surrogate_gradient():
         (
             "piecewise_linear",
             [
-                0.06135126216450,
-                0.05456129183053,
-                0.04841747260500,
-                0.04285831508010,
-                0.03782818133881,
+                0.00000000000000,
+                0.06326028627150,
+                0.05628864827448,
+                0.04998044934977,
+                0.04427255492229,
             ],
         ),
         (
             "exponential",
             [
-                0.20795269433458,
-                0.20514779735629,
-                0.20264243938260,
-                0.20040187562686,
-                0.19839588646645,
+                0.00000000000000,
+                0.20874818539303,
+                0.20585774973044,
+                0.20327688132449,
+                0.20096951065442,
             ],
         ),
         (
             "fast_sigmoid_derivative",
             [
-                0.14187432621036,
-                0.13984381221999,
-                0.13804386008020,
-                0.13644497667035,
-                0.13502206566839,
+                0.00000000000000,
+                0.14245317962074,
+                0.14035621717075,
+                0.13849845457159,
+                0.13684908496324,
             ],
         ),
         (
             "arctan",
             [
-                0.01851467830587,
-                0.01801794405092,
-                0.01758480869073,
-                0.01720567699047,
-                0.01687268127553,
+                0.00000000000000,
+                0.01865787406582,
+                0.01814248109253,
+                0.01769356640047,
+                0.01730100362413,
             ],
         ),
     ],

@@ -244,6 +244,10 @@ params_nrn_ad["adapt_beta"] = 1.7 * (
     / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
 
+scale_factor = 1.0 - params_nrn_reg["kappa"]  # factor for rescaling due to removal of irregular spike arrival
+params_nrn_reg["c_reg"] /= scale_factor**2
+params_nrn_ad["c_reg"] /= scale_factor**2
+
 ####################
 
 # Intermediate parrot neurons required between input spike generators and recurrent neurons,
@@ -360,8 +364,8 @@ dtype_weights = np.float32  # data type of weights - for reproducing TF results 
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
-weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights)
-weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
+weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights) * scale_factor
+weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights) / scale_factor
 
 params_common_syn_eprop = {
     "optimizer": {
@@ -370,7 +374,7 @@ params_common_syn_eprop = {
         "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
         "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
         "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
-        "eta": 5e-3 / duration["learning_window"],  # learning rate
+        "eta": 5e-3 / duration["learning_window"] * scale_factor**2,  # learning rate
         "optimize_each_step": True,  # call optimizer every time step (True) or once per spike (False); only
         # True implements original Adam algorithm, False offers speed-up; choice can affect learning performance
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights

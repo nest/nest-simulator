@@ -413,7 +413,7 @@ eprop_iaf::compute_gradient( const long t_spike,
 
     z_bar = V_.P_v_m_ * z_bar + z;
     e = psi * z_bar;
-    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    e_bar = P_.kappa_ * e_bar + e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
     if ( optimize_each_step )

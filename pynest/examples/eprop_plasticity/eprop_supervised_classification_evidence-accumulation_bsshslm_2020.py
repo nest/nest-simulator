@@ -660,44 +660,48 @@ class TrainingPipeline:
 
         self.error = errors[0]
 
-    def run(self, phase_label, eta):
+    def run_phase(self, phase_label, eta):
         params_common_syn_eprop["optimizer"]["eta"] = eta
         nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
-        nest.Simulate(duration["extension_sim"])
+        self.simulate("extension_sim")
+
         if self.n_iter_sim > 0:
             self.evaluate()
 
         duration["sim"] = batch_size * duration["sequence"] - duration["extension_sim"]
 
-        nest.Simulate(duration["sim"])
+        self.simulate("sim")
 
         self.n_iter_sim += 1
         self.phase_label_previous = phase_label
 
     def run_training(self):
-        self.run("training", eta_train)
+        self.run_phase("training", eta_train)
 
     def run_validation(self):
         if do_early_stopping and self.k_iter % n_validate_every == 0:
-            self.run("validation", eta_test)
+            self.run_phase("validation", eta_test)
 
     def run_early_stopping(self):
         if do_early_stopping and self.k_iter % n_validate_every == 0:
             if self.k_iter > 0 and self.error < stop_crit:
                 errors_early_stop = []
                 for _ in range(n_early_stop):
-                    self.run("early-stopping", eta_test)
+                    self.run_phase("early-stopping", eta_test)
                     errors_early_stop.append(self.error)
 
                 self.early_stop = np.mean(errors_early_stop) < stop_crit
 
     def run_test(self):
         for _ in range(n_test):
-            self.run("test", eta_test)
+            self.run_phase("test", eta_test)
 
-    def simulate(self):
-        nest.Simulate(duration["total_offset"])
+    def simulate(self, k):
+        nest.Simulate(duration[k])
+
+    def run(self):
+        self.simulate("total_offset")
 
         while self.k_iter < n_iter and not self.early_stop:
             self.run_validation()
@@ -707,7 +711,7 @@ class TrainingPipeline:
 
         self.run_test()
 
-        nest.Simulate(steps["extension_sim"])
+        self.simulate("extension_sim")
 
         self.evaluate()
 
@@ -715,7 +719,7 @@ class TrainingPipeline:
 
         gen_spk_final_update.set({"spike_times": [duration["task"] + duration["extension_sim"] + 1]})
 
-        nest.Simulate(duration["delays"])
+        self.simulate("delays")
 
     def get_results(self):
         for k, v in self.results_dict.items():
@@ -724,7 +728,7 @@ class TrainingPipeline:
 
 
 training_pipeline = TrainingPipeline()
-training_pipeline.simulate()
+training_pipeline.run()
 
 results_dict = training_pipeline.get_results()
 n_iter_sim = training_pipeline.n_iter_sim

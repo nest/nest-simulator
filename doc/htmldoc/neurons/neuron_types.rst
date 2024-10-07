@@ -103,8 +103,8 @@ Geometry
 Spiking mechanism
 ~~~~~~~~~~~~~~~~~
 
-Integrate-and-fire
-^^^^^^^^^^^^^^^^^^
+Hard threshold (integrate-and-fire)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
@@ -131,7 +131,7 @@ Integrate-and-fire
           * :ref:`exact_integration`
           * :doc:`/model_details/IAF_Integration_Singularity`
 
-Hodgkin Huxley
+Soft threshold
 ^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
@@ -155,20 +155,30 @@ Hodgkin Huxley
             voltage-gated sodium and potassium channels, along with a leak current.
             This model is particularly useful for studying the detailed mechanisms of action potential generation and propagation,
 
-            .. dropdown:: Hodgkin Huxley neurons
+            .. dropdown:: Soft threshold
 
                * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
                * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
                * hh_psc_alpha – Hodgkin-Huxley neuron model
                * hh_psc_alpha_clopath – Hodgkin-Huxley neuron model with support for Clopath plasticity
                * hh_psc_alpha_gap – Hodgkin-Huxley neuron model with gap-junction support
+               * Hill and Tononi?
+               * Izhikevich
+               * Adaptive exponential integrate-and-fire (AEIF)
 
           .. tab-item:: Technical details
 
             * :doc:`/model_details/hh_details`
+            * :doc:`/model_details/HillTononiModels`
 
-Point process
-^^^^^^^^^^^^^
+
+Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
+whole spike wave form
+
+Stochastic
+^^^^^^^^^^
+
+Modeled by point process.
 
 .. grid:: 1 2 2 2
 
@@ -189,9 +199,10 @@ Point process
 
         pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
 
+Auxillary neurons
+^^^^^^^^^^^^^^^^^
 
-Parrot neurons
-^^^^^^^^^^^^^^
+
 
 .. grid:: 1 2 2 2
 
@@ -206,7 +217,9 @@ Parrot neurons
 
       Neurons that repeat incoming spikes. Applications:
 
-      .. dropdown:: Parrot neurons
+      .. dropdown:: Auxillary neurons
+
+        ignore-and-fire
 
         parrot_neuron – Neuron that repeats incoming spikes
 
@@ -217,8 +230,16 @@ Parrot neurons
 Input mechanism
 ~~~~~~~~~~~~~~~
 
-Current-based
-^^^^^^^^^^^^^
+Electrical
+^^^^^^^^^^
+
+- Gap junctions
+
+Chemical
+^^^^^^^^
+
+- Current-based synapses
+
 
 .. grid:: 1 2 2 2
 
@@ -238,8 +259,8 @@ Current-based
      and are directly added to the neuron's equation governing voltage dynamics.
      Computationally less intensive than conductance-based models.
 
-Conductance-based
-^^^^^^^^^^^^^^^^^
+- Conductance-based synapses
+
 
 .. grid:: 1 2 2 2
 
@@ -259,6 +280,13 @@ Conductance-based
      which are often modeled based on voltage or neurotransmitter binding.
      These models capture more realistic synaptic behavior, as they account for the varying impact of
      synaptic inputs depending on the membrane potential, which can change over time.
+
+
+- Astrocytes - Slow inward current?
+
+
+External inputs (Devices)
+
 
 Adaptation mechanism
 ~~~~~~~~~~~~~~~~~~~~
@@ -355,13 +383,13 @@ how the current changes over time after a synaptic event.
    .. grid-item-card:: Alpha
       :columns: 3
 
-      .. image:: /static/img/alpha_nn.svg
+      .. image:: /static/img/alpha2.svg
 
 
    .. grid-item-card:: Beta
       :columns: 3
 
-      .. image:: /static/img/beta_nn.svg
+      .. image:: /static/img/beta2.svg
 
 
 |

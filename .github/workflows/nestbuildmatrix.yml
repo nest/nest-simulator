@@ -2,133 +2,456 @@
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
-name: "NEST matrix jobs"
-env:
-  CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
-  PYTHONPATH: ${{ github.workspace }}/build/python
+name: "NEST CI"
+
 on: [push, pull_request]
 
-
 jobs:
-  static_checks:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    env:
-      xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+  clang-format:
     runs-on: "ubuntu-20.04"
+    env:
+      CLANG_REQUIRE_VERSION: 13
+      CLANG_FORMAT_FILE: ".clang-format"
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
+      - name: "Instal dependencies"
+        run: |
+          python -m pip install --force-reinstall clang-format==${{ env.CLANG_REQUIRE_VERSION }}
 
-      - name: "Restore apt cache"
-        uses: actions/cache@v2
-        env:
-          cache-name: "apt-cache"
+      - name: "Run clang-format..."
+        run: |
+          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
+          diff -u <(cat ${files}) <(clang-format ${files})
+
+  cppcheck:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
         with:
-          path: |
-            !/var/cache/apt/archives/lock
-            !/var/cache/apt/archives/partial
-            /var/cache/apt
-          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-system-${{ env.cache-name }}-
-            ${{ runner.os }}-system-
+          fetch-depth: 0
 
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev libboost-all-dev
-          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install vera++ clang-format-9
-          sudo ldconfig
-          g++ --version
+          sudo apt-get install cppcheck
 
-      - name: "Restore pip cache"
+      - name: "Run cppcheck..."
+        run: |
+          cppcheck --enable=all --language=c++ --std=c++11 -i sli/ --suppressions-list=.cppcheck_suppressions ./
+
+  rstcheck:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install rstcheck
+
+      - name: "Run rstcheck..."
+        run: |
+          rstcheck -r doc/
+
+  vale:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          sudo apt update
+          sudo apt install python3-docutils
+          wget --progress=dot:mega 'https://github.com/errata-ai/vale/releases/download/v2.26.0/vale_2.26.0_Linux_64-bit.tar.gz'
+          echo '956577b214ce3db8fb11483f99a183cf65673e3bd47423c6d4ebe37f085cadc7 vale_2.26.0_Linux_64-bit.tar.gz' | sha256sum -c
+          tar -xzf 'vale_2.26.0_Linux_64-bit.tar.gz'
+
+      - name: "Run vale..."
+        run: |
+          ./vale -v
+          ./vale doc
+
+  copyright_headers:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pydocstyle
+
+      - name: "Check copyright headers..."
+        run: |
+          python build_support/check_copyright_headers.py
+
+  unused_names:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Check for unused nest::names..."
+        run: |
+          python build_support/check_unused_names.py
+
+  forbidden_types:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Check for forbidden types..."
+        run: |
+          ./build_support/check_forbidden_types.sh
+
+  lychee_IGNORED:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Install dependencies"
+        run: |
+          wget --progress=dot:mega 'https://github.com/lycheeverse/lychee/releases/download/v0.8.2/lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
+          echo '12c27c9b6d551aea9178080d27de75ed26125b130722153399259432f723e606  lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz' | sha256sum -c
+          tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
+
+      - name: "Run lychee..."
+        continue-on-error: true
+        run: "pwd; ls -l; ./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
+        # TODO: doc/auto_examples and doc/models need to be added here, but exists only after a `make html`
         env:
-          cache-name: "pip-cache"
-        uses: actions/cache@v2
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pydocstyle:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pydocstyle
+
+      - name: "Run pydocstyle..."
+        run: |
+          pydocstyle pynest/
+
+  mypy:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install mypy matplotlib numpy scipy data-science-types
+
+      - name: "Run mypy..."
+        run: |
+          mypy pynest/
+
+  # pytest-linux:
+  #   runs-on: "ubuntu-20.04"
+  #   needs: [build_linux]
+  #   env:
+  #     NEST_VPATH: "build"
+  #     NEST_RESULT: "result"
+
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       os: ["ubuntu-20.04"]
+  #       cpp_compiler: ["gcc"]
+
+  #       # available use flags (all default to "OFF"):
+  #       use:
+  #         - "boost, optimize, warning"  # formerly "minimal"
+  #       #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+  #       #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+  #       #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+
+  #   steps:
+  #     - name: "Download binary artifacts"
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+
+  #     - name: "Set up Python 3.x"
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.9
+
+  #     - name: "Install dependencies"
+  #       run: |
+  #         pip install pytest pytest-cov pytest-doctestplus
+
+  #     - name: "Run pytest..."
+  #       run: |
+  #         pwd
+  #         ls -lisa
+  #         cd "$NEST_VPATH"
+  #         pwd
+  #         ls -lisa
+  #         pytest testsuite/pytests/
+
+  # pytest-mac:
+  #   runs-on: "macos-latest"
+  #   needs: [build_macos]
+  #   steps:
+  #     - name: "Checkout repository content"
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: "Set up Python 3.x"
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.9
+
+  #     - name: "Install dependencies"
+  #       run: |
+  #         pip install pytest pytest-cov pytest-doctestplus
+
+  #     - name: "Run pytest..."
+  #       run: |
+  #         pytest pynest/
+
+  pylint:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pylint
+
+      - name: "Run pylint..."
+        run: |
+          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
+  
+  isort:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Run isort..."
+        uses: isort/isort-action@f14e57e1d457956c45a19c05a89cccdf087846e5  # 1.1.0
+        with:
+          configuration: --profile=black --thirdparty="nest" --check-only --diff
+
+  black:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Run black..."
+        uses: psf/black@193ee766ca496871f93621d6b58d57a6564ff81b  # 23.7.0
+        with:
+          jupyter: true
+
+  flake8:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install flake8
+
+      - name: "Run flake8..."
+        run: |
+          flake8 .
+
+  sphinx-rtd:
+    # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
+    runs-on: "ubuntu-20.04"
+    needs: [pydocstyle, rstcheck, vale]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v4
+        with:
+          # Using 3.8 because Read the docs does not work with higher versions.
+          # See also: https://github.com/nest/nest-simulator/pull/2744
+          python-version: 3.8
+
+      - name: "Install dependencies"
+        run: |
+          sudo apt update
+          pip install -r doc/requirements.txt
+          # The pandoc executable, which is required, cannot be installed via pip see: https://stackoverflow.com/a/71585691
+          sudo apt install pandoc
+
+      - name: "Test-build documentation"
+        run: |
+          mkdir -pv build
+          cd build
+          cmake -Dwith-userdoc=ON -DCMAKE_INSTALL_PREFIX=../install ..
+          make docs |& tee sphinx-output.log
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "sphinx-rtd output"
+          path: |
+            build/sphinx-output.log
+            build/userdoc/html/
+
+  sphinx-conda:
+    # as close as possible to the suggested user docs build in the documentation
+    runs-on: "ubuntu-20.04"
+    if: false
+    needs: [pydocstyle, rstcheck, vale]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Conda
+        uses: conda-incubator/setup-miniconda@3b0f2504dd76ef23b6d31f291f4913fb60ab5ff3   # v2.2.0
+        with:
+          auto-update-conda: true
+          python-version: "3.7"
+
+      - name: Install conda dependencies
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda env create -p conda
+
+      - name: "Test-build documentation"
+        shell: bash -l {0}
+        run: |
+          conda activate conda/
+          mkdir -pv build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=../install ..
+          make html |& tee sphinx-output.log
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
           path: |
-            /opt/hostedtoolcache/Python/**/site-packages/*
-            $HOME/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.cache-name }}-
-            ${{ runner.os }}-python-
+            build/sphinx-output.log
+            build/userdoc/html/
 
-      - name: "Install Python dependencies"
-        run: |
-          python -m pip install --upgrade pip setuptools
-          python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
-          python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
-
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-          echo "GITHUB_ENV = $GITHUB_ENV"
-          cat $GITHUB_ENV
-
-      - name: "Static Code Analysis"
-        run: build_support/ci_build.sh
-        env:
-          xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-
-  test_linux:
+  build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [static_checks]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    env:
+      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: false
       matrix:
         os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc", "clang"]
-        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-        exclude:
-          - xNEST_BUILD_TYPE: "MINIMAL"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "MPI_ONLY"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - xNEST_BUILD_TYPE: "FULL"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
+        cpp_compiler: ["gcc"]
+
+        # available use flags (all default to "OFF"):
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        use:
+          - "boost, optimize, warning"
+          - "openmp, python, gsl, ltdl, boost, optimize, warning"
+          - "mpi, python, gsl, ltdl, boost, optimize, warning"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning"
 
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
-          echo 'EOF' >>$GITHUB_ENV
-
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
       - name: "Restore apt cache"
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: "apt-cache"
         with:
@@ -144,18 +467,48 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev libboost-all-dev
-          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+          sudo apt-get install ccache
+          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
+          sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
+          # Install MPI dependencies regardless of whether we compile NEST with or without MPI, so the installation of MPI4Py works 
+          sudo apt-get install openmpi-bin libopenmpi-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install vera++
+          sudo apt-get install pkg-config
           sudo ldconfig
-          g++ --version
+
+      - name: "Install GSL system dependencies"
+        if: "${{ contains(matrix.use, 'gsl') }}"
+        run: |
+          sudo apt-get install libgsl0-dev
+
+      - name: "Install HDF5 system dependencies"
+        if: "${{ contains(matrix.use, 'hdf5') }}"
+        run: |
+          sudo apt-get install libhdf5-dev
+
+      - name: "Restore ccache"
+        # Using CCache to re-use compiled objects from prior runs that have the same
+        # source (hashed), compiler (mtime+size) and compile flags.
+        env:
+          cache-name: "ccache"
+        uses: actions/cache@v3
+        with:
+          path: |
+            $HOME/.ccache
+            .ccache
+            /home/runner/.ccache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.cpp_compiler }}-${{ matrix.NEST_BUILD_TYPE }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.cpp_compiler }}-${{ matrix.NEST_BUILD_TYPE }}
+            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.cpp_compiler }}
+            ${{ runner.os }}-${{ env.cache-name }}
+            ${{ runner.os }}
 
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -169,67 +522,141 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist cython matplotlib terminaltables pandoc pandas
+          # Install mpi4py regardless of whether we compile NEST with or without MPI, so regressiontests/issue-1703.py will run in both cases
+          python -m pip install --force-reinstall --upgrade mpi4py
+          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
+      - name: "Install h5py"
+        if: "${{ contains(matrix.use, 'hdf5') }}"
+        run: |
+          python -m pip install --force-reinstall --upgrade --no-binary=h5py h5py
+
+      - name: "Install MUSIC"
+        if: "${{ contains(matrix.use, 'music') }}"
+        run: |
+          chmod +x build_support/install_music.sh
+          ./build_support/install_music.sh
+
+      - name: "Install SIONlib"
+        if: "${{ contains(matrix.use, 'sionlib') }}"
+        run: |
+          chmod +x build_support/install_sionlib.sh
+          ./build_support/install_sionlib.sh
+
+      - name: "Install LibNeurosim – WARNING WARNING NO PROPER PYTHON INSTALL!"
+        if: "${{ contains(matrix.use, 'libneurosim') }}"
+        run: |
+          chmod +x build_support/install_csa-libneurosim.sh
+          PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
+          ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
+
+      - name: "Configure NEST build"
+        env:
+          CMAKE_C_COMPILER_LAUNCHER: ccache
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
+        run: |
+          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+
+          if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+              export CC=clang-11
+              export CXX=clang++-11
+          fi
+          export CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
+
+          cd "$NEST_VPATH"
+          cmake \
+              -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+              -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+              -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
+              -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
+              -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
+              -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
+              -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
+              -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
+              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
+              -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              ..
+
       - name: "Build NEST"
         run: |
-          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-        env:
-          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-          #get changed files: https://github.com/marketplace/actions/get-changed-files
+          cd "$NEST_VPATH"
+          env
+          make VERBOSE=1
+
+      - name: "Install NEST"
+        run: |
+          cd "$NEST_VPATH"
+          make install
+
+      - name: "Initialize Matplotlibrc"
+        run: |
+          # initialize matplotlib backend
+          mkdir -p $HOME/.matplotlib
+          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+
+      - name: "Run NEST testsuite"
+        run: |
+          pwd
+          cd "$NEST_VPATH"
+          chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
+          make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
-            ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**
 
-  test_macos:
+  build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [static_checks]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    env:
+      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: false
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
-        xNEST_BUILD_TYPE: ["FULL_MACOS"]
+
+        # available use flags (all default to "OFF"):
+        # openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, userdoc, music
+        use:
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, optimize, warning"
 
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
-          echo 'EOF' >>$GITHUB_ENV
-
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
       - name: "Install MacOS system dependencies"
         run: |
-          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost
-          brew info python
+          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost hdf5
 
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -243,26 +670,64 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py h5py cython matplotlib terminaltables pandoc pandas
+          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
+      - name: "Configure NEST build"
+        run: |
+          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+
+          cd "$NEST_VPATH"
+          cmake \
+              -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+              -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+              -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
+              -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
+              -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
+              ${{ contains(matrix.use, 'openmp') && '-DOpenMP_ROOT=$(brew --prefix libomp)' }} \
+              -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
+              -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
+              -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
+              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
+              -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              ..
+
       - name: "Build NEST"
         run: |
-          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-        env:
-          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-          #get changed files: https://github.com/marketplace/actions/get-changed-files
+          cd "$NEST_VPATH"
+          env
+          make VERBOSE=1
+
+      - name: "Install NEST"
+        run: |
+          cd "$NEST_VPATH"
+          make install
+
+      - name: "Initialize Matplotlibrc"
+        run: |
+          # initialize matplotlib backend
+          mkdir -p $HOME/.matplotlib
+          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+
+      - name: "Run NEST testsuite"
+        run: |
+          pwd
+          cd "$NEST_VPATH"
+          chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
+          make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@v2
-        if: always()
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
         with:
-          name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
-            ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**

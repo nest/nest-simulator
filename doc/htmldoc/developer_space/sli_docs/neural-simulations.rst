@@ -9,7 +9,7 @@ Overview
 --------
 
 A simulation of a network is like an experiment with the difference that
-it takes place inside the computer’s memory rather than in the physical
+it takes place inside the computer's memory rather than in the physical
 world.
 
 Like in a real experiment, you need a system which you want to
@@ -187,7 +187,7 @@ the time step from 1.1 ms to 1.2 ms.
 During the time step from 10.9 ms to 11.0 ms, the membrane potential
 crosses the threshold value -55.0 mV. Thus, the neuron emits an output
 spike at 11.0 ms and the membrane potential is then reset to -70.0 mV
-and clamped to the resting value for 2 ms, the refractory period of the
+and clamped to the resting value for 2 ms, the :hxt_ref:`refractory period` of the
 neuron. After the refractory period, the membrane continues to
 depolarize due to the continuing input current.
 
@@ -205,7 +205,7 @@ the key 'synapse_models' will return the list of available synapse
 models.
 
 You can find a list of all available neuron models in our :doc:`model
-directory <models/index_neuron>`.
+directory <../../models/index_neuron>`.
 
 Creating nodes
 ~~~~~~~~~~~~~~
@@ -232,7 +232,7 @@ In the fist line, we create one integrate and fire neuron from the model
 The return value of ``Create`` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
-called the node’s *node ID* (the network as a whole owns the node ID
+called the node's *node ID* (the network as a whole owns the node ID
 ``0``, therefore the ids of user-created nodes start with ``1``). Often,
 it is neccessary to have a large number of nodes of the same type. The
 command Create can also be used for this purpose. The following line of
@@ -286,7 +286,7 @@ layer we have created above:
 
 Using the command ``SetStatus``, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
-the threshold value ``V_th`` to -60 mV:
+the threshold value :hxt_ref:`V_th` to -60 mV:
 
 ::
 
@@ -295,7 +295,7 @@ the threshold value ``V_th`` to -60 mV:
    -60
 
 Please note, that ``SetStatus`` checks if a property really exists in a
-node and will issue an error if it doesn’t. This behavior can be changed
+node and will issue an error if it doesn't. This behavior can be changed
 by the following command:
 
 ::
@@ -318,7 +318,7 @@ expected type:
        Provided datatype: stringtype
 
 In order to find out, which properties of a given model can be changed
-an which not, you have to refer to the model’s documentation.
+an which not, you have to refer to the model's documentation.
 
 Connections
 -----------
@@ -416,7 +416,7 @@ By definition, a device is active in the interval \\((t_1,t_2)\) if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
 t_E < t_2\) for all \\(E\) . In other words, the interval during which
 the device is active corresponds to the range of time-stamps of the
-device’s events.
+device's events.
 
 Note that it is not possible to generate/observe an event with time
 stamp 0.
@@ -453,18 +453,19 @@ different amplitudes at different times.
 Example 5
 ^^^^^^^^^
 
-::
+.. code-block:: text
 
    SLI ] /iaf_psc_alpha Create /n Set
    SLI ] /poisson_generator Create /pg Set
    SLI ] pg << /rate 220.0 Hz >> SetStatus
    SLI ] pg n Connect
 
+
 Recording devices
 ~~~~~~~~~~~~~~~~~
 
 All devices which are used to observe the state of other network nodes
-are called recording devices. Examples are ``multimeter`` and
+are called recording devices. Examples are :hxt_ref:`multimeter` and
 ``spike_recorder``.
 
 Recording devices have properties which control the amount, the
@@ -476,15 +477,15 @@ set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
 ``GetStatus``. To get a list of all available recording backends, run
 
-::
+.. code-block:: text
 
-   SLI ] GetKernelStatus /recording_backends get ==
+    SLI ] GetKernelStatus /recording_backends get ==
 
 A list of node models including all available device models can be retrieved by calling
-``GetKernelStatus /node_models get`. The most important devices are:
+``GetKernelStatus /node_models get``. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
-* ``multimeter`` Device to observe arbitrary analog quantities.
+* :hxt_ref:`multimeter` Device to observe arbitrary analog quantities.
 * ``spike_recorder`` Device to observe spike times.
 
 Please note that the connection direction for analog recorders (all
@@ -495,13 +496,13 @@ this case.
 Example 6
 ^^^^^^^^^
 
-::
+.. code-block:: text
 
-   SLI ] /iaf_psc_alpha Create /n Set
-   SLI ] /voltmeter Create /vm Set
-   SLI ] /spike_recorder Create /sr Set
-   SLI ] vm n Connect
-   SLI ] n sr Connect
+    SLI ] /iaf_psc_alpha Create /n Set
+    SLI ] /voltmeter Create /vm Set
+    SLI ] /spike_recorder Create /sr Set
+    SLI ] vm n Connect
+    SLI ] n sr Connect
 
 Simulation
 ----------

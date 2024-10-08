@@ -45,9 +45,10 @@ References
 # Import all necessary modules for simulation, analysis and plotting.
 
 import time
+
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -96,13 +97,7 @@ C_tot = int(CI + CE)  # total number of synapses per neuron
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
-neuron_params = {"C_m": 1.0,
-                 "tau_m": tauMem,
-                 "t_ref": 2.0,
-                 "E_L": 0.0,
-                 "V_reset": 0.0,
-                 "V_m": 0.0,
-                 "V_th": theta}
+neuron_params = {"C_m": 1.0, "tau_m": tauMem, "t_ref": 2.0, "E_L": 0.0, "V_reset": 0.0, "V_m": 0.0, "V_th": theta}
 J = 0.1  # postsynaptic amplitude in mV
 J_ex = J  # amplitude of excitatory postsynaptic potential
 J_in = -g * J_ex  # amplitude of inhibitory postsynaptic potential
@@ -244,8 +239,10 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults(ex_syn.synapse_model)["num_connections"] +
-                nest.GetDefaults(in_syn.synapse_model)["num_connections"])
+num_synapses = (
+    nest.GetDefaults(ex_syn.synapse_model)["num_connections"]
+    + nest.GetDefaults(in_syn.synapse_model)["num_connections"]
+)
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking
@@ -260,8 +257,8 @@ sim_time = endsimulate - endbuild
 print("Brunel network simulation (Python)")
 print(f"Number of neurons : {N_neurons}")
 print(f"Number of synapses: {num_synapses}")
-print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
-print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"       Excitatory : {num_synapses_ex}")
+print(f"       Inhibitory : {num_synapses_in}")
 print(f"Excitatory rate   : {rate_ex:.2f} Hz")
 print(f"Inhibitory rate   : {rate_in:.2f} Hz")
 print(f"Building time     : {build_time:.2f} s")

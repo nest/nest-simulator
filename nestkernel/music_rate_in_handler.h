@@ -58,6 +58,7 @@ public:
 
   /**
    * Publish the MUSIC port.
+   *
    * This method has to be called once before the first simulation to
    * tell MUSIC which channels lie on which processor.
    */
@@ -83,6 +84,6 @@ private:
 
 } // namespace nest
 
-#endif // HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */
 
-#endif // MUSIC_RATE_IN_HANDLER
+#endif /* #ifndef MUSIC_RATE_IN_HANDLER */

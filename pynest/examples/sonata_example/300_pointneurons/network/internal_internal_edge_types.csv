@@ -1,0 +1,5 @@
+edge_type_id target_query source_query delay dynamics_params model_template
+100 ei=='e' ei=='e' 2.0 ExcToExc.json static_synapse
+101 ei=='i' ei=='e' 2.0 ExcToInh.json static_synapse
+102 ei=='e' ei=='i' 2.0 InhToExc.json static_synapse
+103 ei=='i' ei=='i' 2.0 InhToInh.json static_synapse

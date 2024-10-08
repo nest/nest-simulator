@@ -7,16 +7,19 @@ Lecturer installation instructions
 NEST Desktop
 ~~~~~~~~~~~~
 
-* :doc:`NEST Desktop <desktop:index>` is a graphical user interface designed for illustrating neural network concepts
-  ideal for the classroom setting.
+:doc:`NEST Desktop <desktop:index>` is a graphical user interface designed for illustrating neural network concepts
+ideal for the classroom setting.
+There are several materials for Bachelor and Master's level already prepared.
 
-We recommend you checkout the NEST desktop project and see if it fits your needs!
+* Check out :doc:`the lecture material for NEST Desktop <desktop:lecturer/index>`
 
 
 Docker install
 ~~~~~~~~~~~~~~
 
-We provide a docker container for NEST, with options to include NEST-Desktop, Jupyter notebooks or Jupyterlab.
+We provide a docker container for NEST that also includes NESTML. You can select from options
+to also include NEST-Desktop, Jupyter Notebooks, or JupyterLab.
+
 
 See :ref:`instructions for docker here <docker>`.
 

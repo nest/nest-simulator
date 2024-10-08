@@ -24,30 +24,23 @@ Conngen tests
 """
 
 import unittest
+
 import nest
 
 try:
     import csa
+
     HAVE_CSA = True
 except ImportError:
     HAVE_CSA = False
-
-try:
-    import numpy
-    HAVE_NUMPY = True
-except ImportError:
-    HAVE_NUMPY = False
 
 nest.ll_api.sli_run("statusdict/have_libneurosim ::")
 HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 
 
 @nest.ll_api.check_stack
-@unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
-@unittest.skipIf(
-    not HAVE_LIBNEUROSIM,
-    'NEST was built without support for libneurosim'
-)
+@unittest.skipIf(not HAVE_CSA, "Python CSA package is not available")
+@unittest.skipIf(not HAVE_LIBNEUROSIM, "NEST was built without support for libneurosim")
 class ConngenTestCase(unittest.TestCase):
     """Conngen tests"""
 
@@ -79,7 +72,7 @@ class ConngenTestCase(unittest.TestCase):
             # correct targets, weights and delays
             conns = nest.GetConnections(sources[i])
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns.target, targets[i].get('global_id'))
+            self.assertEqual(conns.target, targets[i].get("global_id"))
             self.assertEqual(conns.weight, weight)
             self.assertEqual(conns.delay, delay)
 
@@ -112,7 +105,7 @@ class ConngenTestCase(unittest.TestCase):
             # and the non-standard synapse model set
             conns = nest.GetConnections(sources[i])
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns.target, targets[i].get('global_id'))
+            self.assertEqual(conns.target, targets[i].get("global_id"))
             self.assertEqual(conns.synapse_model, synmodel)
             self.assertEqual(conns.tau_plus, tau_plus)
 
@@ -133,8 +126,9 @@ class ConngenTestCase(unittest.TestCase):
         n_neurons = 4
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
-        projection = nest.Conngen(pop, pop, cg=cg,
-                                  syn_spec=nest.synapsemodels.SynapseModel(synapse_model="fantasy_synapse"))
+        projection = nest.Conngen(
+            pop, pop, cg=cg, syn_spec=nest.synapsemodels.SynapseModel(synapse_model="fantasy_synapse")
+        )
         nest.Connect(projection)
 
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType", nest.BuildNetwork)
@@ -148,8 +142,8 @@ class ConngenTestCase(unittest.TestCase):
 
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
-        syn_spec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
-        pop = nest.Create('iaf_psc_alpha', 3)
+        syn_spec = nest.CollocatedSynapses({"weight": -2.0}, {"weight": 2.0})
+        pop = nest.Create("iaf_psc_alpha", 3)
         projection = nest.Conngen(pop, pop, cg=cg, syn_spec=syn_spec)
 
         nest.Connect(projection)
@@ -190,8 +184,7 @@ class ConngenTestCase(unittest.TestCase):
 
 
 def suite():
-
-    suite = unittest.makeSuite(ConngenTestCase, 'test')
+    suite = unittest.makeSuite(ConngenTestCase, "test")
     return suite
 
 

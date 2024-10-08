@@ -10,14 +10,14 @@ jobs:
     if: ${{ github.repository_owner == 'nest' }}
     steps:
       - name: sycnmaster
-        uses: wei/git-sync@v3
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
         with:
           source_repo: "nest/nest-simulator"
           source_branch: "master"
           destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/nest/nest-simulator.git"
           destination_branch: "master"
       - name: synctags
-        uses: wei/git-sync@v3
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
         with:
           source_repo: "nest/nest-simulator"
           source_branch: "refs/tags/*"

@@ -24,7 +24,6 @@
 
 // Includes from sli:
 #include "name.h"
-#include "token.h"
 
 sli::pool BoolDatum::memory( sizeof( BoolDatum ), 1024, 1 );
 
@@ -77,7 +76,7 @@ BoolDatum::operator new( size_t size )
 void
 BoolDatum::operator delete( void* p, size_t size )
 {
-  if ( p == NULL )
+  if ( not p )
   {
     return;
   }

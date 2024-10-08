@@ -21,9 +21,10 @@
 
 # This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
+import unittest
+
 import nest
 import numpy
-import unittest
 
 
 @nest.ll_api.check_stack
@@ -39,21 +40,35 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         n_trials = 100  # number of measurement trials
 
         # parameter set for facilitation
-        fac_params = {"U": 0.03, "u": 0.03,
-                      "tau_fac": 500., "tau_rec": 200., "weight": 1.}
+        fac_params = {"U": 0.03, "u": 0.03, "tau_fac": 500.0, "tau_rec": 200.0, "weight": 1.0}
 
         # Here we assign the parameter set to the synapse models
-        t1_params = nest.synapsemodels.tsodyks2(**fac_params)     # for tsodyks2_synapse
+        t1_params = nest.synapsemodels.tsodyks2(**fac_params)  # for tsodyks2_synapse
         t2_params = nest.synapsemodels.quantal_stp(**fac_params)  # for furhmann_synapse
 
         t2_params.specs["n"] = n_syn
-        t2_params.specs["weight"] = 1. / n_syn
+        t2_params.specs["weight"] = 1.0 / n_syn
 
         source = nest.Create("spike_generator")
-        source.spike_times = [30., 60., 90., 120., 150., 180., 210., 240., 270., 300., 330., 360., 390., 900.]
+        source.spike_times = [
+            30.0,
+            60.0,
+            90.0,
+            120.0,
+            150.0,
+            180.0,
+            210.0,
+            240.0,
+            270.0,
+            300.0,
+            330.0,
+            360.0,
+            390.0,
+            900.0,
+        ]
 
         parrot = nest.Create("parrot_neuron")
-        neuron = nest.Create("iaf_psc_exp", 2, params={"tau_syn_ex": 3., "tau_m": 70.})
+        neuron = nest.Create("iaf_psc_exp", 2, params={"tau_syn_ex": 3.0, "tau_m": 70.0})
 
         # We must send spikes via parrot because devices cannot
         # connect through plastic synapses
@@ -64,7 +79,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         voltmeter = nest.Create("voltmeter", 2)
 
-        t_tot = 1500.
+        t_tot = 1500.0
 
         # the following is a dry run trial so that the synapse dynamics is
         # idential in all subsequent trials.
@@ -81,12 +96,12 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
             nest.SetStatus(source, {"origin": t_net})
             nest.Simulate(t_tot)
 
-        nest.Simulate(.1)  # flush the last voltmeter events from the queue
+        nest.Simulate(0.1)  # flush the last voltmeter events from the queue
 
         vm = numpy.array(voltmeter[1].events["V_m"])
         vm_reference = numpy.array(voltmeter[0].events["V_m"])
 
-        assert(len(vm) % n_trials == 0)
+        assert len(vm) % n_trials == 0
         n_steps = int(len(vm) / n_trials)
         vm.shape = (n_trials, n_steps)
         vm_reference.shape = (n_trials, n_steps)
@@ -94,12 +109,11 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         vm_mean = numpy.mean(vm, axis=0)
         vm_ref_mean = numpy.mean(vm_reference, axis=0)
 
-        error = numpy.sqrt((vm_ref_mean - vm_mean)**2)
+        error = numpy.sqrt((vm_ref_mean - vm_mean) ** 2)
         self.assertLess(numpy.max(error), 4.0e-4)
 
 
 def suite():
-
     suite = unittest.makeSuite(QuantalSTPSynapseTestCase, "test")
     return suite
 

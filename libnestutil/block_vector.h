@@ -324,7 +324,7 @@ inline BlockVector< value_type_ >::BlockVector( size_t n )
   : blockmap_( std::vector< std::vector< value_type_ > >( 1, std::vector< value_type_ >( max_block_size ) ) )
   , finish_( begin() )
 {
-  size_t num_blocks_needed = std::ceil( ( float ) n / max_block_size );
+  size_t num_blocks_needed = std::ceil( static_cast< double >( n ) / max_block_size );
   for ( size_t i = 0; i < num_blocks_needed - 1; ++i )
   {
     blockmap_.emplace_back( max_block_size );
@@ -344,7 +344,8 @@ template < typename value_type_ >
 inline BlockVector< value_type_ >::~BlockVector() = default;
 
 template < typename value_type_ >
-inline value_type_& BlockVector< value_type_ >::operator[]( const size_t pos )
+inline value_type_&
+BlockVector< value_type_ >::operator[]( const size_t pos )
 {
   // Using bitwise operations to efficiently map the index to the
   // right block and element.
@@ -354,7 +355,8 @@ inline value_type_& BlockVector< value_type_ >::operator[]( const size_t pos )
 }
 
 template < typename value_type_ >
-inline const value_type_& BlockVector< value_type_ >::operator[]( const size_t pos ) const
+inline const value_type_&
+BlockVector< value_type_ >::operator[]( const size_t pos ) const
 {
   // Using bitwise operations to efficiently map the index to the
   // right block and element.
@@ -705,8 +707,8 @@ bv_iterator< value_type_, ref_, ptr_ >::operator--( int )
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline
-  typename bv_iterator< value_type_, ref_, ptr_ >::reference bv_iterator< value_type_, ref_, ptr_ >::operator*() const
+inline typename bv_iterator< value_type_, ref_, ptr_ >::reference
+bv_iterator< value_type_, ref_, ptr_ >::operator*() const
 {
   // TODO: Using const_cast  to remove the constness isn't the most elegant
   // solution. There is probably a better way to do this.
@@ -714,8 +716,8 @@ inline
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline
-  typename bv_iterator< value_type_, ref_, ptr_ >::pointer bv_iterator< value_type_, ref_, ptr_ >::operator->() const
+inline typename bv_iterator< value_type_, ref_, ptr_ >::pointer
+bv_iterator< value_type_, ref_, ptr_ >::operator->() const
 {
   // TODO: Again, using const_cast  to remove the constness isn't the most
   // elegant solution. There is probably a better way to do this.
@@ -752,8 +754,8 @@ bv_iterator< value_type_, ref_, ptr_ >::operator=( const iterator& other )
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline typename bv_iterator< value_type_, ref_, ptr_ >::reference bv_iterator< value_type_, ref_, ptr_ >::operator[](
-  difference_type n ) const
+inline typename bv_iterator< value_type_, ref_, ptr_ >::reference
+bv_iterator< value_type_, ref_, ptr_ >::operator[]( difference_type n ) const
 {
   return *( *this + n );
 }

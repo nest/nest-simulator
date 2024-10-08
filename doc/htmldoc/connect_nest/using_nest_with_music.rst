@@ -92,7 +92,7 @@ generator.
 
    nest.Connect(sg, n, 'one_to_one', {'weight': 750.0, 'delay': 1.0})
 
-We then create a voltmeter, which will measure the membrane potenial, and
+We then create a voltmeter, which will measure the membrane potential, and
 connect it with the neuron.
 
 ::

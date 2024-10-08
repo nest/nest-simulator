@@ -20,6 +20,9 @@
  *
  */
 
+
+% SLI2PYComplexity: Medium
+
 /** @BeginDocumentation
 Name: testsuite::test_gamma_sup_generator - sli script for test of gamma_sup_generator output 
 

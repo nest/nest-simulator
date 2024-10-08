@@ -19,9 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
 import nest
 import numpy as np
-import unittest
 
 
 class FacetsTestCase(unittest.TestCase):
@@ -34,10 +35,9 @@ class FacetsTestCase(unittest.TestCase):
     """
 
     def test_facetshw_stdp(self):
-
         nest.ResetKernel()
 
-        modelName = 'stdp_facetshw_synapse_hom'
+        modelName = "stdp_facetshw_synapse_hom"
 
         # homogeneous parameters for all synapses
         Wmax = 100.0
@@ -65,38 +65,39 @@ class FacetsTestCase(unittest.TestCase):
         delay = 5.0
         spikesIn = np.arange(10.0, 60000.0, timeBetweenPairs)
 
-        synapseDict = {'tau_plus': tau,
-                       'tau_minus_stdp': tau,
-                       'Wmax': Wmax,
-                       'synapses_per_driver': 50,
-                       'driver_readout_time': 15.0,
-                       'lookuptable_0': lut_0,
-                       'lookuptable_1': lut_1,
-                       'lookuptable_2': lut_2,
-                       'configbit_0': config_0,
-                       'configbit_1': config_1,
-                       'reset_pattern': reset_pattern,
-                       'a_thresh_th': lut_th_causal,
-                       'a_thresh_tl': lut_th_acausal}
+        synapseDict = {
+            "tau_plus": tau,
+            "tau_minus_stdp": tau,
+            "Wmax": Wmax,
+            "synapses_per_driver": 50,
+            "driver_readout_time": 15.0,
+            "lookuptable_0": lut_0,
+            "lookuptable_1": lut_1,
+            "lookuptable_2": lut_2,
+            "configbit_0": config_0,
+            "configbit_1": config_1,
+            "reset_pattern": reset_pattern,
+            "a_thresh_th": lut_th_causal,
+            "a_thresh_tl": lut_th_acausal,
+        }
 
         # build network
-        stim = nest.Create('spike_generator')
-        neuronA = nest.Create('parrot_neuron')
-        neuronB = nest.Create('parrot_neuron')
-        nest.SetStatus(stim, [{'spike_times': spikesIn}])
+        stim = nest.Create("spike_generator")
+        neuronA = nest.Create("parrot_neuron")
+        neuronB = nest.Create("parrot_neuron")
+        nest.SetStatus(stim, [{"spike_times": spikesIn}])
 
         nest.SetDefaults(modelName, synapseDict)
 
         # check if GetDefaults returns same values as have been set
         synapseDictGet = nest.GetDefaults(modelName)
         for key in synapseDict.keys():
-            self.assertTrue(
-                all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
+            self.assertTrue(all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
 
         nest.Connect(nest.AllToAll(stim, neuronA))
-        syn_spec = nest.synapsemodels.SynapseModel(synapse_model=modelName,
-                                                   weight=float(startWeight) / 15.0 * Wmax,
-                                                   delay=delay)
+        syn_spec = nest.synapsemodels.SynapseModel(
+            synapse_model=modelName, weight=float(startWeight) / 15.0 * Wmax, delay=delay
+        )
         nest.Connect(nest.AllToAll(neuronA, neuronB, syn_spec=syn_spec))
 
         nest.Simulate(50.0)
@@ -105,11 +106,10 @@ class FacetsTestCase(unittest.TestCase):
             nest.Simulate(timeBetweenPairs)
 
             connections = nest.GetConnections(neuronA)
-            if (connections.get('synapse_model') == modelName):
+            if connections.get("synapse_model") == modelName:
                 weightTrace.append(
-                    [run, connections.get('weight'),
-                     connections.get('a_causal'),
-                     connections.get('a_acausal')])
+                    [run, connections.get("weight"), connections.get("a_causal"), connections.get("a_acausal")]
+                )
 
         # analysis
         weightTrace = np.array(weightTrace)
@@ -124,35 +124,34 @@ class FacetsTestCase(unittest.TestCase):
         for i in range(len(weightTraceMod36pre)):
             # check weight value before update
             # (after spike pair with index 35, 71, ...)
-            self.assertTrue(np.allclose(weightTraceMod36pre[i][1],
-                                        1.0 / 15.0 * weightIndex * Wmax,
-                                        atol=1e-6))
+            self.assertTrue(np.allclose(weightTraceMod36pre[i][1], 1.0 / 15.0 * weightIndex * Wmax, atol=1e-6))
             weightIndex = lut_0[weightIndex]
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36)):
             # check weight value after update
             # (after spike pair with index 0, 36, 72, ...)
-            self.assertTrue(np.allclose(weightTraceMod36[i][1],
-                                        1.0 / 15.0 * weightIndex * Wmax,
-                                        atol=1e-6))
+            self.assertTrue(np.allclose(weightTraceMod36[i][1], 1.0 / 15.0 * weightIndex * Wmax, atol=1e-6))
             # check charge on causal capacitor
-            self.assertTrue(np.allclose(weightTraceMod36[i][2],
-                                        np.ones_like(weightTraceMod36[i][2]) *
-                                        np.exp(-2 * delay / tau), atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    weightTraceMod36[i][2], np.ones_like(weightTraceMod36[i][2]) * np.exp(-2 * delay / tau), atol=1e-6
+                )
+            )
             weightIndex = lut_0[weightIndex]
 
         # check charge on anti-causal capacitor after each pair
         for i in range(len(weightTrace) - 1):
             # TODO: global params
-            self.assertTrue(np.allclose(weightTrace[i, 3], ((i % 36) + 1) *
-                                        np.exp(-(timeBetweenPairs -
-                                                 2 * delay) / tau),
-                                        atol=1e-6))
+            self.assertTrue(
+                np.allclose(
+                    weightTrace[i, 3], ((i % 36) + 1) * np.exp(-(timeBetweenPairs - 2 * delay) / tau), atol=1e-6
+                )
+            )
 
 
 def suite():
-    suite = unittest.makeSuite(FacetsTestCase, 'test')
+    suite = unittest.makeSuite(FacetsTestCase, "test")
     return suite
 
 

@@ -51,16 +51,16 @@ class RandomManager : public ManagerInterface
 {
 public:
   RandomManager();
-  ~RandomManager();
+  ~RandomManager() override;
 
   /**
    * Register available RNG types, set default RNG type and create RNGs.
    */
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void change_number_of_threads() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Get rank-synchronized random number generator.
@@ -84,7 +84,7 @@ public:
    *
    * @param tid ID of thread requesting generator
    **/
-  RngPtr get_vp_synced_rng( thread tid ) const;
+  RngPtr get_vp_synced_rng( size_t tid ) const;
 
   /**
    * Get VP-specific random number generator.
@@ -92,7 +92,7 @@ public:
    * Each VP (thread) can use this RNG freely and will receive an independent
    * random number sequence.
    */
-  RngPtr get_vp_specific_rng( thread tid ) const;
+  RngPtr get_vp_specific_rng( size_t tid ) const;
 
   /**
    * Confirm that rank- and thread-synchronized RNGs are in sync.
@@ -161,18 +161,16 @@ nest::RandomManager::get_rank_synced_rng() const
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_synced_rng( thread tid ) const
+nest::RandomManager::get_vp_synced_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
-  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_synced_rngs_[ tid ];
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_specific_rng( thread tid ) const
+nest::RandomManager::get_vp_specific_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
-  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_specific_rngs_[ tid ];
 }
 

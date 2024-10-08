@@ -107,25 +107,16 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * Add a compartment (or compartments) to the tree, so that the new compartment
    * has the compartment specified by "parent_idx" as parent. The parent
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single compartment or multiple compartments, depending on wether the
+   * single compartment or multiple compartments, depending on whether the
    * entry was a list of dicts or a single dict
    */
-  if ( statusdict->known( names::compartments ) )
+  const auto add_compartments_list_or_dict = [ this, statusdict ]( const Name name )
   {
-    /**
-     * Until an operator to explicititly append compartments is added to the
-     * API, we disable this functionality
-     */
-    if ( c_tree_.get_size() > 0 )
-    {
-      throw BadProperty( "\'compartments\' is already defined for this model" );
-    }
-
-    Datum* dat = ( *statusdict )[ names::compartments ].datum();
+    Datum* dat = ( *statusdict )[ name ].datum();
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       // A list of compartments is provided, we add them all to the tree
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
@@ -135,7 +126,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_compartment_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       // A single compartment is provided, we add add it to the tree
       add_compartment_( *dd );
@@ -146,31 +137,22 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         "\'compartments\' entry could not be identified, provide "
         "list of parameter dicts for multiple compartments" );
     }
-  }
+  };
 
   /**
    * Add a receptor (or receptors) to the tree, so that the new receptor
    * targets the compartment specified by "comp_idx". The compartment
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single receptor or multiple receptors, depending on wether the
+   * single receptor or multiple receptors, depending on whether the
    * entry was a list of dicts or a single dict
    */
-  if ( statusdict->known( names::receptors ) )
+  const auto add_receptors_list_or_dict = [ this, statusdict ]( const Name name )
   {
-    /**
-     * Until an operator to explicititly append receptors is added to the
-     * API, we disable this functionality
-     */
-    if ( long( syn_buffers_.size() ) > 0 )
-    {
-      throw BadProperty( "\'receptors\' is already defined for this model" );
-    }
-
-    Datum* dat = ( *statusdict )[ names::receptors ].datum();
+    Datum* dat = ( *statusdict )[ name ].datum();
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
     DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( ad != nullptr )
+    if ( ad )
     {
       for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt )
       {
@@ -179,7 +161,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         add_receptor_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
       }
     }
-    else if ( dd != nullptr )
+    else if ( dd )
     {
       add_receptor_( *dd );
     }
@@ -189,7 +171,39 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         "\'receptors\' entry could not be identified, provide "
         "list of parameter dicts for multiple receptors" );
     }
+  };
+
+  if ( statusdict->known( names::compartments ) )
+  {
+    // Compartments can only be set on a newly created compartment model.
+    // To add additional compartments, add_compartments should be used.
+    if ( c_tree_.get_size() > 0 )
+    {
+      throw BadProperty( "\'compartments\' is already defined for this model" );
+    }
+    add_compartments_list_or_dict( names::compartments );
   }
+
+  if ( statusdict->known( names::add_compartments ) )
+  {
+    add_compartments_list_or_dict( names::add_compartments );
+  }
+
+  if ( statusdict->known( names::receptors ) )
+  {
+    // Receptors can only be set on a newly created compartment model.
+    // To add additional receptors, add_receptors should be used.
+    if ( syn_buffers_.size() > 0 )
+    {
+      throw BadProperty( "\'receptors\' is already defined for this model" );
+    }
+    add_receptors_list_or_dict( names::receptors );
+  }
+  if ( statusdict->known( names::add_receptors ) )
+  {
+    add_receptors_list_or_dict( names::add_receptors );
+  }
+
   /**
    * we need to initialize the recordables pointers to guarantee that the
    * recordables of the new compartments and/or receptors will be in the
@@ -290,9 +304,6 @@ nest::cm_default::pre_run_hook()
 void
 nest::cm_default::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const double v_0_prev = c_tree_.get_root()->v_comp;
@@ -301,7 +312,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
     c_tree_.solve_matrix();
 
     // threshold crossing
-    if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
+    if ( c_tree_.get_root()->v_comp >= V_th_ and v_0_prev < V_th_ )
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -322,7 +333,7 @@ nest::cm_default::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
+  assert( e.get_rport() < syn_buffers_.size() );
 
   syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

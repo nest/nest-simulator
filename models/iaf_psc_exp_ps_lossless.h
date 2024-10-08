@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -74,7 +75,7 @@ meets the threshold.
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
@@ -92,7 +93,7 @@ Support for different time constants may be added in the future,
 see issue #921.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -135,6 +136,11 @@ See also
 
 iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_ps_lossless
+
 EndUserDocs */
 
 class iaf_psc_exp_ps_lossless : public ArchivingNode
@@ -163,24 +169,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, port );
-  port handles_test_event( CurrentEvent&, port );
-  port handles_test_event( DataLoggingRequest&, port );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const // uses off_grid events
+  is_off_grid() const override // uses off_grid events
   {
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -199,8 +205,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -219,7 +225,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -271,6 +277,10 @@ private:
    */
   double is_spike_( const double );
 
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
+
   // ----------------------------------------------------------------
 
   /**
@@ -299,11 +309,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 
@@ -315,7 +325,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -456,16 +466,16 @@ private:
   static RecordablesMap< iaf_psc_exp_ps_lossless > recordablesMap_;
 };
 
-inline port
-iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_psc_exp_ps_lossless::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_psc_exp_ps_lossless::handles_test_event( SpikeEvent&, port receptor_type )
+inline size_t
+iaf_psc_exp_ps_lossless::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -474,8 +484,8 @@ iaf_psc_exp_ps_lossless::handles_test_event( SpikeEvent&, port receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps_lossless::handles_test_event( CurrentEvent&, port receptor_type )
+inline size_t
+iaf_psc_exp_ps_lossless::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -484,8 +494,8 @@ iaf_psc_exp_ps_lossless::handles_test_event( CurrentEvent&, port receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
+inline size_t
+iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

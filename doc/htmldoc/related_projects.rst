@@ -3,7 +3,7 @@
 Related projects
 ================
 
-NEST simulator is part of a larger network of projects that focus on simulation, analysis, visualization, or modeling of
+NEST Simulator is part of a larger network of projects that focus on simulation, analysis, visualization, or modeling of
 biologically realistic neural networks.
 
 Here you can find further information about some of these projects.
@@ -40,6 +40,13 @@ NEST desktop
 The app enables the rapid construction, parametrization, and instrumentation of neuronal network models.
 
 * :doc:`Get started with NEST desktop <desktop:user/index>`
+
+NEST GPU
+--------
+
+NEST GPU is a GPU-MPI library for simulation of large-scale networks of spiking neurons. It can be used in Python, in C++ and in C.
+
+* :doc:`Get started with NEST GPU <gpu:index>`
 
 PyNN
 ----

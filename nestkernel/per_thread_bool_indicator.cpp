@@ -35,13 +35,14 @@ BoolIndicatorUInt64::BoolIndicatorUInt64( const bool status )
 {
 }
 
-BoolIndicatorUInt64& PerThreadBoolIndicator::operator[]( const thread tid )
+BoolIndicatorUInt64&
+PerThreadBoolIndicator::operator[]( const size_t tid )
 {
   return per_thread_status_[ tid ];
 }
 
 void
-PerThreadBoolIndicator::initialize( const thread num_threads, const bool status )
+PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status )
 {
   VPManager::assert_single_threaded();
   per_thread_status_.clear();
@@ -104,4 +105,4 @@ PerThreadBoolIndicator::any_true() const
   return false;
 }
 
-} /* namespace nest */
+} // namespace nest

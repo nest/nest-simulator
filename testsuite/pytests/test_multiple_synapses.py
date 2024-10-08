@@ -24,12 +24,12 @@ Multiple synapses tests
 """
 
 import unittest
+
 import nest
 
 
 @nest.ll_api.check_stack
 class MultipleSynapsesTestCase(unittest.TestCase):
-
     def setUp(self):
         nest.ResetKernel()
 
@@ -51,10 +51,16 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
     def test_MultipleSynapses(self):
         """Test co-location of synapses for very simple connection"""
-        node = nest.Create('iaf_psc_alpha')
-        nest.Connect(nest.AllToAll(node, node,
-                                   syn_spec=nest.CollocatedSynapses(nest.synapsemodels.static(weight=-2.),
-                                                                    nest.synapsemodels.static(weight=3.))))
+        node = nest.Create("iaf_psc_alpha")
+        nest.Connect(
+            nest.AllToAll(
+                node,
+                node,
+                syn_spec=nest.CollocatedSynapses(
+                    nest.synapsemodels.static(weight=-2.0), nest.synapsemodels.static(weight=3.0)
+                ),
+            )
+        )
         nest.BuildNetwork()
 
         self.assertEqual(2, nest.num_connections)
@@ -66,12 +72,14 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         """Test co-location of synapses when we use one_to_one as connection rule"""
         num_src = 7
         num_trg = 7
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.stdp(weight=-5.),
-                                           nest.synapsemodels.static(weight=-1.5),
-                                           nest.synapsemodels.stdp(weight=3))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.stdp(weight=-5.0),
+            nest.synapsemodels.static(weight=-1.5),
+            nest.synapsemodels.stdp(weight=3),
+        )
 
-        src = nest.Create('iaf_psc_alpha', num_src)
-        trgt = nest.Create('iaf_psc_alpha', num_trg)
+        src = nest.Create("iaf_psc_alpha", num_src)
+        trgt = nest.Create("iaf_psc_alpha", num_trg)
 
         nest.Connect(nest.OneToOne(src, trgt, syn_spec=syn_spec))
         conns = nest.GetConnections()
@@ -82,8 +90,8 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         ref_src = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec))]
         # target id's range from (num_src + 1 to (num_src + num_trgt + 1))
         ref_trgt = [t for t in range(num_src + 1, num_src + num_trg + 1) for _ in range(len(syn_spec))]
-        ref_weight = [-5., -1.5, 3.]*num_src
-        ref_synapse_modules = ['stdp_synapse', 'static_synapse', 'stdp_synapse']*num_src
+        ref_weight = [-5.0, -1.5, 3.0] * num_src
+        ref_synapse_modules = ["stdp_synapse", "static_synapse", "stdp_synapse"] * num_src
 
         ref_conn_list = list(zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
@@ -94,12 +102,14 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         """Test co-location of synapses when we use all_to_all as connection rule"""
         num_src = 3
         num_trg = 5
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-2.),
-                                           nest.synapsemodels.stdp(weight=-1.5),
-                                           nest.synapsemodels.static(weight=3))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(weight=-2.0),
+            nest.synapsemodels.stdp(weight=-1.5),
+            nest.synapsemodels.static(weight=3),
+        )
 
-        src = nest.Create('iaf_psc_alpha', num_src)
-        trgt = nest.Create('iaf_psc_alpha', num_trg)
+        src = nest.Create("iaf_psc_alpha", num_src)
+        trgt = nest.Create("iaf_psc_alpha", num_trg)
 
         nest.Connect(nest.AllToAll(src, trgt, syn_spec=syn_spec))
         conns = nest.GetConnections()
@@ -107,15 +117,15 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_src * num_trg * len(syn_spec), len(conns))
 
         # source id's range from 1 to num_src
-        ref_src = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec)*num_trg)]
+        ref_src = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec) * num_trg)]
         # target id's are 4, 5, 6, 7, 8
         ref_trgt = []
-        for t in [4, 5, 6, 7, 8]*num_src:
+        for t in [4, 5, 6, 7, 8] * num_src:
             # there are 3 elements in the syn_spec list
             ref_trgt.extend([t, t, t])
 
-        ref_weight = [-2., -1.5, 3.]*num_src*num_trg
-        ref_synapse_modules = ['static_synapse', 'stdp_synapse', 'static_synapse']*num_src*num_trg
+        ref_weight = [-2.0, -1.5, 3.0] * num_src * num_trg
+        ref_synapse_modules = ["static_synapse", "stdp_synapse", "static_synapse"] * num_src * num_trg
 
         ref_conn_list = list(zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
@@ -127,12 +137,14 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_src = 7
         num_trg = 3
         indegree = 2
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-2.),
-                                           nest.synapsemodels.stdp(weight=-1.5),
-                                           nest.synapsemodels.stdp(weight=3))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(weight=-2.0),
+            nest.synapsemodels.stdp(weight=-1.5),
+            nest.synapsemodels.stdp(weight=3),
+        )
 
-        src = nest.Create('iaf_psc_alpha', num_src)
-        trgt = nest.Create('iaf_psc_alpha', num_trg)
+        src = nest.Create("iaf_psc_alpha", num_src)
+        trgt = nest.Create("iaf_psc_alpha", num_trg)
 
         nest.Connect(nest.FixedIndegree(src, trgt, indegree=indegree, syn_spec=syn_spec))
         conns = nest.GetConnections()
@@ -140,9 +152,11 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_trg * indegree * len(syn_spec), len(conns))
 
         ref_trgt = [t for t in trgt.tolist() for _ in range(indegree * len(syn_spec))]
-        ref_sm = (['static_synapse']*num_trg*indegree +
-                  ['stdp_synapse']*num_trg*indegree +
-                  ['stdp_synapse']*num_trg*indegree)
+        ref_sm = (
+            ["static_synapse"] * num_trg * indegree
+            + ["stdp_synapse"] * num_trg * indegree
+            + ["stdp_synapse"] * num_trg * indegree
+        )
 
         self.assertEqual(sorted(ref_trgt), sorted(conns.target))
         self.assertEqual(sorted(ref_sm), sorted(conns.synapse_model))
@@ -153,15 +167,17 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_trgt = 37
         indegree = 3
 
-        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
-        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_alpha", n=num_src, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_alpha", n=num_trgt, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-3.),
-                                           nest.synapsemodels.static(
-                                               weight=nest.spatial_distributions.exponential(nest.spatial.distance),
-                                               delay=1.4))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(weight=-3.0),
+            nest.synapsemodels.static(weight=nest.spatial_distributions.exponential(nest.spatial.distance), delay=1.4),
+        )
 
         nest.Connect(nest.FixedIndegree(spatial_nodes_src, spatial_nodes_trgt, indegree=indegree, syn_spec=syn_spec))
         conns = nest.GetConnections()
@@ -169,7 +185,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_trgt * indegree * 2, len(conns))
 
         weights = conns.weight
-        self.assertEqual(sorted(weights)[:num_trgt * indegree], [-3]*num_trgt*indegree)
+        self.assertEqual(sorted(weights)[: num_trgt * indegree], [-3] * num_trgt * indegree)
 
     def test_MultipleSynapses_spatial_network_label(self):
         """test co-location of synapses for spatial networks with synapse label"""
@@ -177,24 +193,29 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_trgt = 37
         indegree = 3
 
-        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
-        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_alpha", n=num_src, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_alpha", n=num_trgt, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
 
         syn_label_a = 123
         syn_label_b = 456
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.stdp_lbl(weight=3., synapse_label=syn_label_a),
-                                           nest.synapsemodels.stdp_lbl(
-                                               weight=nest.spatial_distributions.exponential(nest.spatial.distance),
-                                               delay=1.4,
-                                               synapse_label=syn_label_b))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.stdp_lbl(weight=3.0, synapse_label=syn_label_a),
+            nest.synapsemodels.stdp_lbl(
+                weight=nest.spatial_distributions.exponential(nest.spatial.distance),
+                delay=1.4,
+                synapse_label=syn_label_b,
+            ),
+        )
         nest.Connect(nest.FixedIndegree(spatial_nodes_src, spatial_nodes_trgt, indegree=indegree, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         self.assertEqual(num_trgt * indegree * 2, len(conns))
-        reference = sorted([syn_label_a, syn_label_b]*num_trgt*indegree)
-        self.assertEqual(sorted(conns.get('synapse_label')), reference)
+        reference = sorted([syn_label_a, syn_label_b] * num_trgt * indegree)
+        self.assertEqual(sorted(conns.get("synapse_label")), reference)
 
     def test_MultipleSynapses_spatial_network_receptor_type(self):
         """test co-location of synapses for spatial networks with receptor_type"""
@@ -203,27 +224,36 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         indegree = 3
         max_receptor_type = 7
 
-        spatial_nodes_src = nest.Create('iaf_psc_exp_multisynapse', num_src,
-                                        {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
-        spatial_nodes_trgt = nest.Create('iaf_psc_exp_multisynapse', num_trgt,
-                                         {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_exp_multisynapse",
+            num_src,
+            {"tau_syn": [0.1 + i for i in range(max_receptor_type)]},
+            positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2),
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_exp_multisynapse",
+            num_trgt,
+            {"tau_syn": [0.1 + i for i in range(max_receptor_type)]},
+            positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2),
+        )
 
-        receptor_type_a = max_receptor_type-3
+        receptor_type_a = max_receptor_type - 3
         receptor_type_b = max_receptor_type
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=3., receptor_type=receptor_type_a),
-                                           nest.synapsemodels.static(
-                                               weight=nest.spatial_distributions.exponential(nest.spatial.distance),
-                                               delay=1.4,
-                                               receptor_type=receptor_type_b))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(weight=3.0, receptor_type=receptor_type_a),
+            nest.synapsemodels.static(
+                weight=nest.spatial_distributions.exponential(nest.spatial.distance),
+                delay=1.4,
+                receptor_type=receptor_type_b,
+            ),
+        )
 
         nest.Connect(nest.FixedIndegree(spatial_nodes_src, spatial_nodes_trgt, indegree=indegree, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         self.assertEqual(num_trgt * indegree * 2, len(conns))
-        reference = sorted([receptor_type_a, receptor_type_b]*num_trgt*indegree)
+        reference = sorted([receptor_type_a, receptor_type_b] * num_trgt * indegree)
         self.assertEqual(sorted(conns.receptor), reference)
 
     def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
@@ -232,16 +262,18 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_trgt = 23
         outdegree = 4
 
-        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
-        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_alpha", n=num_src, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_alpha", n=num_trgt, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        )
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.stdp(weight=-3.),
-                                           nest.synapsemodels.tsodyks(),
-                                           nest.synapsemodels.static(
-                                               weight=nest.spatial_distributions.exponential(nest.spatial.distance),
-                                               delay=1.4))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.stdp(weight=-3.0),
+            nest.synapsemodels.tsodyks(),
+            nest.synapsemodels.static(weight=nest.spatial_distributions.exponential(nest.spatial.distance), delay=1.4),
+        )
 
         nest.Connect(nest.FixedOutdegree(spatial_nodes_src, spatial_nodes_trgt, outdegree=outdegree, syn_spec=syn_spec))
 
@@ -250,11 +282,13 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_src * outdegree * 3, len(conns))
 
         weights = conns.weight
-        self.assertEqual(sorted(weights)[:num_src * outdegree], [-3]*num_src*outdegree)
+        self.assertEqual(sorted(weights)[: num_src * outdegree], [-3] * num_src * outdegree)
 
-        ref_synapse_model = (['stdp_synapse']*num_src*outdegree +
-                             ['tsodyks_synapse']*num_src*outdegree +
-                             ['static_synapse']*num_src*outdegree)
+        ref_synapse_model = (
+            ["stdp_synapse"] * num_src * outdegree
+            + ["tsodyks_synapse"] * num_src * outdegree
+            + ["static_synapse"] * num_src * outdegree
+        )
         self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
 
     def test_MultipleSynapses_spatial_network_bernoulliSource(self):
@@ -263,18 +297,18 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_trgt = 19
         p = 0.6
 
-        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
-        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_alpha", n=num_src, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3)
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_alpha", n=num_trgt, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3)
+        )
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(
-                                               delay=1.7,
-                                               weight=nest.spatial_distributions.gaussian(nest.spatial.distance)),
-                                           nest.synapsemodels.tsodyks(),
-                                           nest.synapsemodels.static(
-                                               weight=-nest.spatial_distributions.gaussian(nest.spatial.distance),
-                                               delay=1.4))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(delay=1.7, weight=nest.spatial_distributions.gaussian(nest.spatial.distance)),
+            nest.synapsemodels.tsodyks(),
+            nest.synapsemodels.static(weight=-nest.spatial_distributions.gaussian(nest.spatial.distance), delay=1.4),
+        )
 
         nest.Connect(nest.PairwiseBernoulli(spatial_nodes_src, spatial_nodes_trgt, p=p, syn_spec=syn_spec))
 
@@ -285,11 +319,11 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertLess(num_src * num_trgt * p * 2, len(conns))
 
         delays = [round(d, 1) for d in conns.delay]
-        ref_delays = [1.]*num_conns_synapse + [1.4]*num_conns_synapse + [1.7]*num_conns_synapse
+        ref_delays = [1.0] * num_conns_synapse + [1.4] * num_conns_synapse + [1.7] * num_conns_synapse
 
         self.assertEqual(sorted(delays), ref_delays)
 
-        ref_synapse_model = ['tsodyks_synapse']*num_conns_synapse + ['static_synapse']*2*num_conns_synapse
+        ref_synapse_model = ["tsodyks_synapse"] * num_conns_synapse + ["static_synapse"] * 2 * num_conns_synapse
         self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
 
         for w in sorted(conns.weight)[:num_conns_synapse]:
@@ -301,18 +335,21 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_trgt = 21
         p = 0.3
 
-        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
-                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
-        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
-                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+        spatial_nodes_src = nest.Create(
+            "iaf_psc_alpha", n=num_src, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3)
+        )
+        spatial_nodes_trgt = nest.Create(
+            "iaf_psc_alpha", n=num_trgt, positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3)
+        )
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(delay=1.7, weight=-1.4),
-                                           nest.synapsemodels.static(
-                                               delay=nest.spatial_distributions.gaussian(nest.spatial.distance),
-                                               weight=1.4))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.static(delay=1.7, weight=-1.4),
+            nest.synapsemodels.static(delay=nest.spatial_distributions.gaussian(nest.spatial.distance), weight=1.4),
+        )
 
-        nest.Connect(nest.PairwiseBernoulli(spatial_nodes_src, spatial_nodes_trgt, p=p, use_on_source=False,
-                                            syn_spec=syn_spec))
+        nest.Connect(
+            nest.PairwiseBernoulli(spatial_nodes_src, spatial_nodes_trgt, p=p, use_on_source=False, syn_spec=syn_spec)
+        )
 
         conns = nest.GetConnections()
         num_conns = len(conns)
@@ -321,11 +358,11 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertGreater(num_src * num_trgt * p * 3, num_conns)
 
         delays = [round(d, 1) for d in sorted(conns.delay)[num_conns_synapse:]]
-        ref_delays = [1.7]*num_conns_synapse
+        ref_delays = [1.7] * num_conns_synapse
 
         self.assertEqual(sorted(delays), ref_delays)
 
-        ref_weights = [-1.4]*num_conns_synapse + [1.4]*num_conns_synapse
+        ref_weights = [-1.4] * num_conns_synapse + [1.4] * num_conns_synapse
         self.assertEqual(sorted(conns.weight), ref_weights)
 
     def test_MultipleSynapses_make_symmetric(self):
@@ -333,11 +370,10 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_src = 11
         num_trg = 11
         num_symmetric = 2
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-1.5),
-                                           nest.synapsemodels.stdp(weight=3.))
+        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-1.5), nest.synapsemodels.stdp(weight=3.0))
 
-        src = nest.Create('iaf_psc_alpha', num_src)
-        trgt = nest.Create('iaf_psc_alpha', num_trg)
+        src = nest.Create("iaf_psc_alpha", num_src)
+        trgt = nest.Create("iaf_psc_alpha", num_trg)
 
         nest.Connect(nest.OneToOne(src, trgt, make_symmetric=True, syn_spec=syn_spec))
         conns = nest.GetConnections()
@@ -352,8 +388,8 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         ref_post = [t for t in range(num_src + 1, num_src + num_trg + 1) for _ in range(len(syn_spec))]
         ref_post = ref_post + [s for s in range(1, num_src + 1) for _ in range(len(syn_spec))]
 
-        ref_weight = [-1.5, 3.]*num_src*num_symmetric
-        ref_synapse_modules = ['static_synapse', 'stdp_synapse']*num_src*num_symmetric
+        ref_weight = [-1.5, 3.0] * num_src * num_symmetric
+        ref_synapse_modules = ["static_synapse", "stdp_synapse"] * num_src * num_symmetric
 
         ref_conn_list = list(zip(ref_pre, ref_post, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
@@ -365,19 +401,21 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_src = 7
         num_trg = 7
 
-        src = nest.Create('iaf_psc_exp_multisynapse', num_src)
-        trgt = nest.Create('iaf_psc_exp_multisynapse', num_trg, {'tau_syn': [0.1 + i for i in range(num_trg)]})
-        node = nest.Create('iaf_psc_alpha')
+        src = nest.Create("iaf_psc_exp_multisynapse", num_src)
+        trgt = nest.Create("iaf_psc_exp_multisynapse", num_trg, {"tau_syn": [0.1 + i for i in range(num_trg)]})
+        node = nest.Create("iaf_psc_alpha")
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.stdp(weight=5., receptor_type=2),
-                                           nest.synapsemodels.static(weight=1.5, receptor_type=7),
-                                           nest.synapsemodels.stdp(weight=3, receptor_type=5))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.stdp(weight=5.0, receptor_type=2),
+            nest.synapsemodels.static(weight=1.5, receptor_type=7),
+            nest.synapsemodels.stdp(weight=3, receptor_type=5),
+        )
 
         nest.Connect(nest.OneToOne(src, trgt, syn_spec=syn_spec))
         nest.Connect(nest.AllToAll(node, node))  # should have receptor 0
 
         conns = nest.GetConnections()
-        ref_receptor_type = [0] + [2]*num_src + [5]*num_src + [7]*num_src
+        ref_receptor_type = [0] + [2] * num_src + [5] * num_src + [7] * num_src
 
         self.assertEqual(ref_receptor_type, sorted(conns.receptor))
 
@@ -390,24 +428,26 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_src = 9
         num_trg = 9
 
-        src = nest.Create('ht_neuron', num_src)
-        trgt = nest.Create('ht_neuron', num_trg)
+        src = nest.Create("ht_neuron", num_src)
+        trgt = nest.Create("ht_neuron", num_trg)
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.stdp(weight=5., receptor_type=2),
-                                           nest.synapsemodels.static(weight=1.5, receptor_type=4),
-                                           nest.synapsemodels.stdp(weight=3, receptor_type=3))
+        syn_spec = nest.CollocatedSynapses(
+            nest.synapsemodels.stdp(weight=5.0, receptor_type=2),
+            nest.synapsemodels.static(weight=1.5, receptor_type=4),
+            nest.synapsemodels.stdp(weight=3, receptor_type=3),
+        )
 
         nest.Connect(nest.OneToOne(src, trgt, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         # receptors are 1 less than receptor_type for ht_neuron
-        ref_receptor_type = [1]*num_src + [2]*num_src + [3]*num_src
+        ref_receptor_type = [1] * num_src + [2] * num_src + [3] * num_src
 
         self.assertEqual(ref_receptor_type, sorted(conns.receptor))
 
 
 def suite():
-    suite = unittest.makeSuite(MultipleSynapsesTestCase, 'test')
+    suite = unittest.makeSuite(MultipleSynapsesTestCase, "test")
     return suite
 
 

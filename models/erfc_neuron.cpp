@@ -47,7 +47,7 @@ template <>
 void
 RecordablesMap< nest::erfc_neuron >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::S, &nest::erfc_neuron::get_output_state__ );
   insert_( names::h, &nest::erfc_neuron::get_input__ );
 }

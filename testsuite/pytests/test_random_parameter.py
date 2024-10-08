@@ -24,19 +24,21 @@ Tests of random Parameter distributions, using the Kolmogorov-Smirnov test.
 """
 
 import unittest
+
 import nest
 import numpy as np
 
 try:
     import scipy.stats
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity("M_WARNING")
 
 
-@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
+@unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
 class RandomParameterTestCase(unittest.TestCase):
     def ks_assert(self, param, cdf, cdf_args):
         """
@@ -56,7 +58,7 @@ class RandomParameterTestCase(unittest.TestCase):
         w_min = -1.3
         w_max = 2.7
 
-        cdf = 'uniform'
+        cdf = "uniform"
         cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
         param = nest.random.uniform(min=w_min, max=w_max)
 
@@ -67,7 +69,7 @@ class RandomParameterTestCase(unittest.TestCase):
         w_min = 0
         w_max = 100
 
-        cdf = 'randint'
+        cdf = "randint"
         cdf_args = (w_min, w_max)
         # Parameter distribution is in the range [0, max)
         param = nest.random.uniform_int(w_max)
@@ -79,7 +81,7 @@ class RandomParameterTestCase(unittest.TestCase):
         mean = 2.3
         std = 1.7
 
-        cdf = 'norm'
+        cdf = "norm"
         cdf_args = (mean, std)
         param = nest.random.normal(mean=mean, std=std)
 
@@ -87,12 +89,12 @@ class RandomParameterTestCase(unittest.TestCase):
 
     def test_lognormal(self):
         """Test lognormal distribution Parameter"""
-        loc = 0.  # Only for SciPy distribution
+        loc = 0.0  # Only for SciPy distribution
         std = 0.9
         mean = 1.7
         scale = np.exp(mean)
 
-        cdf = 'lognorm'
+        cdf = "lognorm"
         cdf_args = (std, loc, scale)
         param = nest.random.lognormal(mean=mean, std=std)
 
@@ -103,7 +105,7 @@ class RandomParameterTestCase(unittest.TestCase):
         loc = 0.0  # Only for SciPy distribution
         beta = 1.0
 
-        cdf = 'expon'
+        cdf = "expon"
         cdf_args = (loc, beta)
         param = nest.random.exponential(beta=beta)
 
@@ -115,11 +117,11 @@ class RandomParameterTestCase(unittest.TestCase):
         w_max = 2.7
         p_val_lim = 0.05
 
-        cdf = 'uniform'
+        cdf = "uniform"
         cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
         param = nest.random.uniform(min=w_min, max=w_max)
 
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
         nest.Connect(nest.AllToAll(nodes, nodes, syn_spec=nest.synapsemodels.static(weight=param)))
         weights = nest.GetConnections().weight
 
@@ -128,15 +130,15 @@ class RandomParameterTestCase(unittest.TestCase):
 
     def test_node_param_parameter(self):
         """Test uniformly distributed V_m"""
-        w_min = -60.
-        w_max = -50.
+        w_min = -60.0
+        w_max = -50.0
         p_val_lim = 0.05
 
-        cdf = 'uniform'
+        cdf = "uniform"
         cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
         param = nest.random.uniform(min=w_min, max=w_max)
 
-        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
         nodes.V_m = param
         vm = nodes.V_m
 
@@ -146,7 +148,7 @@ class RandomParameterTestCase(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(RandomParameterTestCase, 'test')
+    suite = unittest.makeSuite(RandomParameterTestCase, "test")
     return suite
 
 

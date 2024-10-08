@@ -19,14 +19,18 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
 import unittest
+
 import connect_test_base
 import nest
+import numpy as np
+
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@nest.ll_api.check_stack
 class TestOneToOne(connect_test_base.ConnectTestBase):
-
     # specify connection pattern
     conn_dict = nest.OneToOne(source=None, target=None)
     # sizes of populations
@@ -57,10 +61,10 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
 
     def testInputArray(self):
         syn_params = {}
-        for label in ['weight', 'delay']:
-            if label == 'weight':
+        for label in ["weight", "delay"]:
+            if label == "weight":
                 self.param_array = np.arange(self.N_array, dtype=float)
-            elif label == 'delay':
+            elif label == "delay":
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
 
@@ -73,8 +77,8 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
 
     def testInputArrayRPort(self):
         syn_params = nest.synapsemodels.static()
-        neuron_model = 'iaf_psc_exp_multisynapse'
-        neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N1)]}
+        neuron_model = "iaf_psc_exp_multisynapse"
+        neuron_dict = {"tau_syn": [0.1 + i for i in range(self.N1)]}
         self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.param_array = np.arange(1, self.N1 + 1, dtype=int)
@@ -82,11 +86,11 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
         conn_spec = nest.OneToOne(source=self.pop1, target=self.pop2, syn_spec=syn_params)
 
         nest.Connect(conn_spec)
-        M = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
+        M = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, "receptor")
         connect_test_base.mpi_assert(M, np.diag(self.param_array), self)
 
     def testInputArrayToStdpSynapse(self):
-        params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
+        params = ["Wmax", "alpha", "lambda", "mu_minus", "mu_plus", "tau_plus"]
         syn_params = {}
         values = [np.arange(self.N1, dtype=float) for i in range(6)]
         for i, param in enumerate(params):
@@ -95,8 +99,7 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
         conn_params = nest.OneToOne(source=None, target=None, syn_spec=syn_spec)
         self.setUpNetwork(conn_params)
         for i, param in enumerate(params):
-            a = connect_test_base.get_weighted_connectivity_matrix(
-                self.pop1, self.pop2, param)
+            a = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, param)
             connect_test_base.mpi_assert(np.diag(a), values[i], self)
 
 
@@ -110,5 +113,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

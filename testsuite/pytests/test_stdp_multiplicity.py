@@ -21,14 +21,14 @@
 
 # This script tests the parrot_neuron in NEST.
 
-import math
 import nest
 import numpy as np
 import pytest
 
 try:
-    import matplotlib as mpl
+    import matplotlib as mpl  # noqa: F401
     import matplotlib.pyplot as plt
+
     DEBUG_PLOTS = True
 except Exception:
     DEBUG_PLOTS = False
@@ -112,45 +112,34 @@ class TestStdpSpikeMultiplicity:
         """
 
         multiplicity = 2**3
-        resolution = 2.**-4
-        tics_per_ms = 1. / resolution * multiplicity * 4
+        resolution = 2.0**-4
+        tics_per_ms = 1.0 / resolution * multiplicity * 4
         deltas = [resolution / multiplicity / 2**m for m in range(2, 10)]
 
-        delay = 1.
+        delay = 1.0
 
         # k spikes will be emitted at these two times
-        pre_spike_times_base = [100., 200.]
+        pre_spike_times_base = [100.0, 200.0]
 
         nest.set_verbosity("M_WARNING")
 
-        post_weights = {'parrot': [], 'parrot_ps': []}
+        post_weights = {"parrot": [], "parrot_ps": []}
 
         for delta in deltas:
-            assert multiplicity * delta < resolution / 2., "Test inconsistent."
+            assert multiplicity * delta < resolution / 2.0, "Test inconsistent."
 
             nest.ResetKernel()
             # For co-dependent properties, we use `set()` instead of kernel attributes
             nest.set(resolution=resolution, tics_per_ms=tics_per_ms)
 
-            pre_times = sorted(t_base - k * delta
-                               for t_base in pre_spike_times_base
-                               for k in range(multiplicity))
-            post_times = [pre_time + pre_post_shift
-                          for pre_time in pre_times]
+            pre_times = sorted(t_base - k * delta for t_base in pre_spike_times_base for k in range(multiplicity))
+            post_times = [pre_time + pre_post_shift for pre_time in pre_times]
 
             # create spike_generators with these times
-            pre_sg = nest.Create("spike_generator",
-                                 params={"spike_times": pre_times,
-                                         'allow_offgrid_times': True})
-            post_sg = nest.Create("spike_generator",
-                                  params={"spike_times": post_times,
-                                          'allow_offgrid_times': True})
-            pre_sg_ps = nest.Create("spike_generator",
-                                    params={"spike_times": pre_times,
-                                            'precise_times': True})
-            post_sg_ps = nest.Create("spike_generator",
-                                     params={"spike_times": post_times,
-                                             'precise_times': True})
+            pre_sg = nest.Create("spike_generator", params={"spike_times": pre_times, "allow_offgrid_times": True})
+            post_sg = nest.Create("spike_generator", params={"spike_times": post_times, "allow_offgrid_times": True})
+            pre_sg_ps = nest.Create("spike_generator", params={"spike_times": pre_times, "precise_times": True})
+            post_sg_ps = nest.Create("spike_generator", params={"spike_times": post_times, "precise_times": True})
 
             # create parrot neurons and connect spike_generators
             pre_parrot = nest.Create("parrot_neuron")
@@ -171,30 +160,31 @@ class TestStdpSpikeMultiplicity:
             # thereby spikes transmitted through the stdp connection are
             # not repeated postsynaptically.
             nest.Connect(nest.AllToAll(pre_parrot, post_parrot, syn_spec=nest.synapsemodels.stdp(receptor_type=1)))
-            nest.Connect(nest.AllToAll(pre_parrot_ps, post_parrot_ps,
-                                       syn_spec=nest.synapsemodels.stdp(receptor_type=1)))
+            nest.Connect(
+                nest.AllToAll(pre_parrot_ps, post_parrot_ps, syn_spec=nest.synapsemodels.stdp(receptor_type=1))
+            )
 
             # get STDP synapse and weight before protocol
-            syn = nest.GetConnections(source=pre_parrot,
-                                      synapse_model="stdp_synapse")
-            w_pre = syn.get('weight')
-            syn_ps = nest.GetConnections(source=pre_parrot_ps,
-                                         synapse_model="stdp_synapse")
-            w_pre_ps = syn_ps.get('weight')
+            syn = nest.GetConnections(source=pre_parrot, synapse_model="stdp_synapse")
+            w_pre = syn.get("weight")
+            syn_ps = nest.GetConnections(source=pre_parrot_ps, synapse_model="stdp_synapse")
+            w_pre_ps = syn_ps.get("weight")
 
             sim_time = max(pre_times + post_times) + 5 * delay
             nest.Simulate(sim_time)
 
             # get weight post protocol
-            w_post = syn.get('weight')
-            w_post_ps = syn_ps.get('weight')
+            w_post = syn.get("weight")
+            w_post_ps = syn_ps.get("weight")
 
             assert w_post != w_pre, "Plain parrot weight did not change."
-            assert w_post_ps != w_pre_ps, "Precise parrot \
+            assert (
+                w_post_ps != w_pre_ps
+            ), "Precise parrot \
                 weight did not change."
 
-            post_weights['parrot'].append(w_post)
-            post_weights['parrot_ps'].append(w_post_ps)
+            post_weights["parrot"].append(w_post)
+            post_weights["parrot_ps"].append(w_post_ps)
 
         if DEBUG_PLOTS:
             fig, ax = plt.subplots(nrows=2)
@@ -203,8 +193,11 @@ class TestStdpSpikeMultiplicity:
             ax[0].plot(post_weights["parrot_ps"], marker="o", label="parrot_ps")
             ax[0].set_ylabel("final weight")
             ax[0].set_xticklabels([])
-            ax[1].semilogy(np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])),
-                           marker="o", label="error")
+            ax[1].semilogy(
+                np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])),
+                marker="o",
+                label="error",
+            )
             ax[1].set_xticks([i for i in range(len(deltas))])
             ax[1].set_xticklabels(["{0:.1E}".format(d) for d in deltas])
             ax[1].set_xlabel("timestep [ms]")
@@ -216,9 +209,8 @@ class TestStdpSpikeMultiplicity:
         print(post_weights)
         return post_weights
 
-    @pytest.mark.parametrize("pre_post_shift", [10.,    # test potentiation
-                                                -10.])    # test depression
-    def test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-3):
+    @pytest.mark.parametrize("pre_post_shift", [10.0, -10.0])  # test potentiation  # test depression
+    def test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1e-3):
         """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
         Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep
@@ -227,11 +219,15 @@ class TestStdpSpikeMultiplicity:
         Enforce that the error should strictly decrease with smaller timestep."""
 
         post_weights = self.run_protocol(pre_post_shift=pre_post_shift)
-        w_plain = np.array(post_weights['parrot'])
-        w_precise = np.array(post_weights['parrot_ps'])
+        w_plain = np.array(post_weights["parrot"])
+        w_precise = np.array(post_weights["parrot_ps"])
 
-        assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep!'
+        assert all(w_plain == w_plain[0]), "Plain weights should be independent of timestep!"
         abs_err = np.abs(w_precise - w_plain)
-        assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) \
-                                          + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
-        assert np.all(np.diff(abs_err) < 0), 'Error should decrease with smaller timestep!'
+        assert abs_err[-1] < max_abs_err, (
+            "Final absolute error is "
+            + "{0:.2E}".format(abs_err[-1])
+            + " but should be <= "
+            + "{0:.2E}".format(max_abs_err)
+        )
+        assert np.all(np.diff(abs_err) < 0), "Error should decrease with smaller timestep!"

@@ -46,7 +46,7 @@ IsetcallbackFunction::execute( SLIInterpreter* i ) const
   // move the hopefully present callback action
   // into the interpreters callback token.
   i->EStack.pop();
-  assert( dynamic_cast< CallbackDatum* >( i->EStack.top().datum() ) != NULL );
+  assert( dynamic_cast< CallbackDatum* >( i->EStack.top().datum() ) );
   i->EStack.pop_move( i->ct );
 }
 
@@ -54,10 +54,10 @@ void
 IiterateFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   ProcedureDatum const* pd = dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   std::cerr << "In procedure:" << std::endl;
 
@@ -133,10 +133,10 @@ void
 IloopFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   ProcedureDatum const* pd = dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   std::cerr << "During loop:" << std::endl;
 
@@ -185,13 +185,13 @@ void
 IrepeatFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
 
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   std::cerr << "During repeat with " << count->get() << " iterations remaining." << std::endl;
 
@@ -233,8 +233,8 @@ IforFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* inc = static_cast< IntegerDatum* >( i->EStack.pick( 5 ).datum() );
 
 
-  if ( ( ( inc->get() > 0 ) && ( count->get() <= lim->get() ) )
-    || ( ( inc->get() < 0 ) && ( count->get() >= lim->get() ) ) )
+  if ( ( ( inc->get() > 0 ) and ( count->get() <= lim->get() ) )
+    or ( ( inc->get() < 0 ) and ( count->get() >= lim->get() ) ) )
   {
     pos = 0; // reset procedure interator
 
@@ -252,11 +252,11 @@ void
 IforFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != NULL );
+  assert( count );
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( pd != NULL );
+  assert( pd );
   IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
-  assert( id != NULL );
+  assert( id );
 
   std::cerr << "During for at iterator value " << count->get() << "." << std::endl;
 
@@ -315,7 +315,7 @@ void
 IforallarrayFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forall (array) at iteration " << count->get() << "." << std::endl;
 }
@@ -353,7 +353,7 @@ void
 IforallindexedarrayFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forallindexed (array) at iteration " << count->get() - 1 << "." << std::endl;
 }
@@ -362,7 +362,7 @@ void
 IforallindexedstringFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forallindexed (string) at iteration " << count->get() - 1 << "." << std::endl;
 }
@@ -405,7 +405,7 @@ void
 IforallstringFunction::backtrace( SLIInterpreter* i, int p ) const
 {
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count != NULL );
+  assert( count );
 
   std::cerr << "During forall (string) at iteration " << count->get() - 1 << "." << std::endl;
 }

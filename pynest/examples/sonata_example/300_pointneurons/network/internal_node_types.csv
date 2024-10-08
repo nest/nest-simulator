@@ -1,0 +1,6 @@
+node_type_id ei model_template model_type dynamics_params model_name
+104 i nest:iaf_psc_alpha point_process 473862421_point.json PV2
+100 e nest:iaf_psc_alpha point_process 472363762_point.json Scnn1a
+101 e nest:iaf_psc_alpha point_process 473863510_point.json Rorb
+102 e nest:iaf_psc_alpha point_process 473863035_point.json Nr5a1
+103 i nest:iaf_psc_alpha point_process 472912177_point.json PV1

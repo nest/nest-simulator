@@ -23,20 +23,21 @@ Tests of Connect with sliced spatial populations.
 """
 
 import unittest
+
 import nest
 import numpy as np
 import numpy.testing as np_testing
 
-nest.set_verbosity('M_ERROR')
+nest.set_verbosity("M_ERROR")
 
 
 class ConnectSlicedSpatialTestCase(unittest.TestCase):
     N = 21
-    middle_node = N//2
-    free_pos = nest.spatial.free([[x, 0.] for x in np.linspace(0, 1.0, N)])
-    grid_pos = nest.spatial.grid([N, 1], extent=[1.05, 0.1], center=[0.5, 0.])
+    middle_node = N // 2
+    free_pos = nest.spatial.free([[x, 0.0] for x in np.linspace(0, 1.0, N)])
+    grid_pos = nest.spatial.grid([N, 1], extent=[1.05, 0.1], center=[0.5, 0.0])
     parameter = nest.logic.conditional(nest.spatial.distance < 0.19, 1.0, 0.0)
-    mask = {'rectangular': {'lower_left': [0., 0.], 'upper_right': [1., 1.]}}
+    mask = {"rectangular": {"lower_left": [0.0, 0.0], "upper_right": [1.0, 1.0]}}
 
     reference = np.zeros(N, dtype=np.int64)
     reference[7:14] = 1
@@ -49,77 +50,83 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
 
     def _assert_histogram(self, sources_or_targets, ref):
         """Create a histogram of input data and assert it against reference values"""
-        hist = np.histogram(sources_or_targets, bins=self.N, range=(1, self.N+1))
+        hist = np.histogram(sources_or_targets, bins=self.N, range=(1, self.N + 1))
         counts, _ = hist
         np_testing.assert_array_equal(counts, ref)
 
     def test_connect_sliced_spatial_on_target_free(self):
         """Connect sliced free spatial source population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.free_pos)
         projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_connect_sliced_spatial_on_target_grid(self):
         """Connect sliced grid spatial source population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.grid_pos)
         projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_masked_connect_sliced_spatial_on_target_free(self):
         """Masked connect sliced free spatial source population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.free_pos)
         projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter, mask=self.mask)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().target, self.reference_masked)
 
     def test_masked_connect_sliced_spatial_on_target_grid(self):
         """Masked connect sliced grid spatial source population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.grid_pos)
         projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter, mask=self.mask)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().target, self.reference_masked)
 
     def test_connect_sliced_spatial_on_source_free(self):
         """Connect sliced spatial free target population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.free_pos)
         projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().source, self.reference)
 
     def test_connect_sliced_spatial_on_source_grid(self):
         """Connect sliced spatial grid target population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.grid_pos)
         projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True)
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().source, self.reference)
 
     def test_masked_connect_sliced_spatial_on_source_free(self):
         """Masked connect sliced spatial free target population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
-        projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node],
-                                             p=self.parameter, use_on_source=True, mask=self.mask)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.free_pos)
+        projections = nest.PairwiseBernoulli(
+            nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True, mask=self.mask
+        )
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().source, self.reference_masked)
 
     def test_masked_connect_sliced_spatial_on_source_grid(self):
         """Masked connect sliced spatial grid target population"""
-        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
-        projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node],
-                                             p=self.parameter, use_on_source=True, mask=self.mask)
+        nodes = nest.Create("iaf_psc_alpha", positions=self.grid_pos)
+        projections = nest.PairwiseBernoulli(
+            nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True, mask=self.mask
+        )
         nest.Connect(projections)
         self._assert_histogram(nest.GetConnections().source, self.reference_masked)
 
     def test_sliced_spatial_inheritance(self):
         """Sliced spatial inherits attributes"""
         wrapped_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), num_dimensions=2, edge_wrap=True)
-        extent_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), extent=[5., 2.5])
+        extent_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), extent=[5.0, 2.5])
         for pos in [self.free_pos, self.grid_pos, wrapped_pos, extent_pos]:
             nest.ResetKernel()
-            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            if pos == self.grid_pos:
+                # Don't specify number of nodes if using grid_pos
+                nodes = nest.Create("iaf_psc_alpha", positions=pos)
+            else:
+                nodes = nest.Create("iaf_psc_alpha", 10, positions=pos)
             for nodes_sliced in nodes:
-                for attr in ['edge_wrap', 'extent']:
+                for attr in ["edge_wrap", "extent"]:
                     spatial_attr = nodes.spatial[attr]
                     sliced_spatial_attr = nodes_sliced.spatial[attr]
                     self.assertEqual(spatial_attr, sliced_spatial_attr, 'with attr="{}"'.format(attr))
@@ -133,7 +140,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         ref[end:] = 0
 
         for pos in [self.free_pos, self.grid_pos]:
-            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            nodes = nest.Create("iaf_psc_alpha", positions=pos)
             projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes[start:end], p=self.parameter)
             nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, ref)
@@ -145,14 +152,14 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         ref[1::step] = 0
 
         for pos in [self.free_pos, self.grid_pos]:
-            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            nodes = nest.Create("iaf_psc_alpha", positions=pos)
             projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes[::step], p=self.parameter)
             nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, ref)
 
 
 def suite():
-    suite = unittest.makeSuite(ConnectSlicedSpatialTestCase, 'test')
+    suite = unittest.makeSuite(ConnectSlicedSpatialTestCase, "test")
     return suite
 
 

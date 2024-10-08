@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PYComplexity: Low
+
 /** @BeginDocumentation
 
 Name: testsuite::test_count_connections - Test connection counting for total

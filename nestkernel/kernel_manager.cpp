@@ -22,14 +22,14 @@
 
 #include "kernel_manager.h"
 
-nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
+nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 
 void
 nest::KernelManager::create_kernel_manager()
 {
 #pragma omp critical( create_kernel_manager )
   {
-    if ( kernel_manager_instance_ == 0 )
+    if ( not kernel_manager_instance_ )
     {
       kernel_manager_instance_ = new KernelManager();
       assert( kernel_manager_instance_ );
@@ -90,6 +90,8 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
+  FULL_LOGGING_ONLY( dump_.open(
+    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
 }
 
 void
@@ -113,6 +115,8 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
+  FULL_LOGGING_ONLY( dump_.close(); )
+
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
@@ -128,7 +132,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread new_num_threads )
+nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.
@@ -163,5 +167,15 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   for ( auto& manager : managers )
   {
     manager->get_status( dict );
+  }
+}
+
+void
+nest::KernelManager::write_to_dump( const std::string& msg )
+{
+#pragma omp critical
+  // In critical section to avoid any garbling of output.
+  {
+    dump_ << msg << std::endl << std::flush;
   }
 }

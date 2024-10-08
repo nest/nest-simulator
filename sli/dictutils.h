@@ -26,6 +26,7 @@
 // C++ includes:
 #include <algorithm>
 #include <functional>
+#include <limits>
 #include <string>
 
 // Includes from sli:
@@ -90,16 +91,16 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  double x = 0.0;
+  double x = std::numeric_limits< double >::quiet_NaN();
 
-  if ( dd != 0 )
+  if ( dd )
   {
     x = dd->get();
   }
   else
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == 0 )
+    if ( not id )
     {
       throw TypeMismatch();
     }
@@ -154,16 +155,16 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
   // token.
   const Token& t = d->lookup2( n );
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  long x = 0;
+  long x = std::numeric_limits< long >::min();
 
-  if ( dd != 0 )
+  if ( dd )
   {
     x = dd->get();
   }
   else
   {
     IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == 0 )
+    if ( not id )
     {
       throw TypeMismatch();
     }
@@ -302,7 +303,7 @@ append_property( DictionaryDatum& d, Name propname, const PropT& prop )
   assert( not t.empty() );
 
   ArrayDatum* arrd = dynamic_cast< ArrayDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd );
 
   Token prop_token( prop );
   arrd->push_back_dont_clone( prop_token );
@@ -320,7 +321,7 @@ append_property< std::vector< double > >( DictionaryDatum& d, Name propname, con
   assert( not t.empty() );
 
   DoubleVectorDatum* arrd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd );
 
   ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
 }
@@ -338,7 +339,7 @@ append_property< std::vector< long > >( DictionaryDatum& d, Name propname, const
   assert( not t.empty() );
 
   IntVectorDatum* arrd = dynamic_cast< IntVectorDatum* >( t.datum() );
-  assert( arrd != 0 );
+  assert( arrd );
 
   ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
 }

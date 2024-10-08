@@ -87,9 +87,6 @@ public:
    */
   Position( const std::vector< T >& y );
 
-  /**
-   * Copy constructor.
-   */
   Position( const Position& other );
 
   template < class U >
@@ -123,6 +120,7 @@ public:
 
   /**
    * Moves Position variables into an array.
+   *
    * @returns array of positions stored as a token object.
    */
   Token getToken() const;
@@ -132,6 +130,7 @@ public:
 
   /**
    * Elementwise addition.
+   *
    * @returns elementwise sum of coordinates.
    */
   template < class OT >
@@ -139,6 +138,7 @@ public:
 
   /**
    * Elementwise subtraction.
+   *
    * @returns elementwise difference of coordinates.
    */
   template < class OT >
@@ -146,12 +146,14 @@ public:
 
   /**
    * Unary minus.
+   *
    * @returns opposite vector.
    */
   Position operator-() const;
 
   /**
    * Elementwise multiplication.
+   *
    * @returns elementwise product of coordinates.
    */
   template < class OT >
@@ -159,6 +161,7 @@ public:
 
   /**
    * Elementwise division.
+   *
    * @returns elementwise quotient of coordinates.
    */
   template < class OT >
@@ -166,30 +169,35 @@ public:
 
   /**
    * Elementwise addition with scalar
+   *
    * @returns position vector with scalar added to all coordinates
    */
   Position operator+( const T& ) const;
 
   /**
    * Elementwise subtraction with scalar
+   *
    * @returns position vector with scalar subtracted from all coordinates
    */
   Position operator-( const T& ) const;
 
   /**
    * Multiplication with scalar
+   *
    * @returns position vector multiplied with the scalar.
    */
   Position operator*( const T& ) const;
 
   /**
    * Division with scalar
+   *
    * @returns position vector divided by the scalar.
    */
   Position operator/( const T& ) const;
 
   /**
    * In-place elementwise addition.
+   *
    * @returns the Position itself after adding the other Position
    * elementwise.
    */
@@ -198,6 +206,7 @@ public:
 
   /**
    * In-place elementwise subtraction.
+   *
    * @returns the Position itself after subtracting the other Position
    * elementwise.
    */
@@ -206,6 +215,7 @@ public:
 
   /**
    * In-place elementwise multiplication.
+   *
    * @returns the Position itself after multiplying with the other
    * Position elementwise.
    */
@@ -214,6 +224,7 @@ public:
 
   /**
    * In-place elementwise division.
+   *
    * @returns the Position itself after dividing by the other Position
    * elementwise.
    */
@@ -222,12 +233,14 @@ public:
 
   /**
    * In-place elementwise addition with scalar.
+   *
    * @returns the Position itself after adding the scalar to all coordinates.
    */
   Position& operator+=( const T& );
 
   /**
    * In-place elementwise subtraction with scalar.
+   *
    * @returns the Position itself after subtracting the scalar from all
    * coordinates.
    */
@@ -235,12 +248,14 @@ public:
 
   /**
    * In-place multiplication by scalar.
+   *
    * @returns the Position itself after multiplying with the scalar.
    */
   Position& operator*=( const T& );
 
   /**
    * In-place elementwise division.
+   *
    * @returns the Position itself after dividing by the scalar.
    */
   Position& operator/=( const T& );
@@ -277,6 +292,7 @@ public:
 
   /**
    * Length of Position vector.
+   *
    * @returns Euclidian norm of the vector.
    */
   T length() const;
@@ -340,7 +356,7 @@ public:
   {
   }
 
-  MultiIndex( const Position< D, int >& ur )
+  explicit MultiIndex( const Position< D, int >& ur )
     : Position< D, int >()
     , lower_left_()
     , upper_right_( ur )
@@ -369,8 +385,7 @@ public:
       this->x_[ i ] = lower_left_[ i ];
     }
     // If we reach this point, we are outside of bounds. The upper
-    // right point is used as a marker to show that we have reached the
-    // end.
+    // right point is used as a marker to show that we have reached the end.
     for ( int i = 0; i < D; ++i )
     {
       this->x_[ i ] = upper_right_[ i ];
@@ -478,13 +493,15 @@ Position< D, T >::operator=( const std::vector< T >& y )
 }
 
 template < int D, class T >
-inline T& Position< D, T >::operator[]( int i )
+inline T&
+Position< D, T >::operator[]( int i )
 {
   return x_[ i ];
 }
 
 template < int D, class T >
-inline const T& Position< D, T >::operator[]( int i ) const
+inline const T&
+Position< D, T >::operator[]( int i ) const
 {
   return x_[ i ];
 }
@@ -545,7 +562,8 @@ Position< D, T >::operator-() const
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T > Position< D, T >::operator*( const Position< D, OT >& other ) const
+inline Position< D, T >
+Position< D, T >::operator*( const Position< D, OT >& other ) const
 {
   Position p = *this;
   p *= other;
@@ -581,7 +599,8 @@ Position< D, T >::operator-( const T& a ) const
 }
 
 template < int D, class T >
-inline Position< D, T > Position< D, T >::operator*( const T& a ) const
+inline Position< D, T >
+Position< D, T >::operator*( const T& a ) const
 {
   Position p = *this;
   p *= a;

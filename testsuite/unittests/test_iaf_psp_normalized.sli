@@ -34,7 +34,7 @@ the GNU Scientific Library (GSL) is not present the peak location is
 found by searching for the root of the derivative of the PSP. We then
 compute the peak value for a PSC with unit amplitude and show how the
 synaptic weight can be adjusted to cause a PSP of a specific
-amplitiude. Finally, we check whether the simulation indeed generates
+amplitude. Finally, we check whether the simulation indeed generates
 a PSP of the desired amplitude.
 
 In application code the test for the availability of the GSL is not

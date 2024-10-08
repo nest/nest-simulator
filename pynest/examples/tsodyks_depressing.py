@@ -49,51 +49,55 @@ See Also
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 from numpy import exp
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables. The neuron
 # and synapse parameters are stored into a dictionary.
 
-resolution = 0.1    # simulation step size (ms)
-Tau = 40.0          # membrane time constant
-Theta = 15.0        # threshold
-E_L = 0.0           # reset potential of membrane potential
-R = 0.1             # 100 M Ohm
-C = Tau / R         # Tau (ms)/R in NEST units
-TauR = 2.0          # refractory time
-Tau_psc = 3.0       # time constant of PSC (= Tau_inact)
-Tau_rec = 800.0     # recovery time
-Tau_fac = 0.0       # facilitation time
-U = 0.5             # facilitation parameter U
-A = 250.0           # PSC weight in pA
-f = 20.0 / 1000.0   # frequency in Hz converted to 1/ms
-Tend = 1200.0       # simulation time
-TIstart = 50.0      # start time of dc
-TIend = 1050.0      # end time of dc
+resolution = 0.1  # simulation step size (ms)
+Tau = 40.0  # membrane time constant
+Theta = 15.0  # threshold
+E_L = 0.0  # reset potential of membrane potential
+R = 0.1  # 100 M Ohm
+C = Tau / R  # Tau (ms)/R in NEST units
+TauR = 2.0  # refractory time
+Tau_psc = 3.0  # time constant of PSC (= Tau_inact)
+Tau_rec = 800.0  # recovery time
+Tau_fac = 0.0  # facilitation time
+U = 0.5  # facilitation parameter U
+A = 250.0  # PSC weight in pA
+f = 20.0 / 1000.0  # frequency in Hz converted to 1/ms
+Tend = 1200.0  # simulation time
+TIstart = 50.0  # start time of dc
+TIend = 1050.0  # end time of dc
 I0 = Theta * C / Tau / (1 - exp(-(1 / f - TauR) / Tau))  # dc amplitude
 
-neuron_param = {"tau_m": Tau,
-                "t_ref": TauR,
-                "tau_syn_ex": Tau_psc,
-                "tau_syn_in": Tau_psc,
-                "C_m": C,
-                "V_reset": E_L,
-                "E_L": E_L,
-                "V_m": E_L,
-                "V_th": Theta}
+neuron_param = {
+    "tau_m": Tau,
+    "t_ref": TauR,
+    "tau_syn_ex": Tau_psc,
+    "tau_syn_in": Tau_psc,
+    "C_m": C,
+    "V_reset": E_L,
+    "E_L": E_L,
+    "V_m": E_L,
+    "V_th": Theta,
+}
 
-syn_param = {"tau_psc": Tau_psc,
-             "tau_rec": Tau_rec,
-             "tau_fac": Tau_fac,
-             "U": U,
-             "delay": 0.1,
-             "weight": A,
-             "u": 0.0,
-             "x": 1.0}
+syn_param = {
+    "tau_psc": Tau_psc,
+    "tau_rec": Tau_rec,
+    "tau_fac": Tau_fac,
+    "U": U,
+    "delay": 0.1,
+    "weight": A,
+    "u": 0.0,
+    "x": 1.0,
+}
 
 ###############################################################################
 # Third, we reset the kernel and set the resolution using the corresponding
@@ -117,7 +121,7 @@ volts = nest.Create("voltmeter")
 
 neurons.set(neuron_param)
 dc_gen.set(amplitude=I0, start=TIstart, stop=TIend)
-volts.set(label="voltmeter", interval=1.)
+volts.set(label="voltmeter", interval=1.0)
 
 ###############################################################################
 # Sixth, the ``dc_generator`` is connected to the first neuron

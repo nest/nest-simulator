@@ -38,37 +38,39 @@ supplied when the IF_curve object is created.
 
 """
 
-import numpy
-import nest
 import shelve
+
+import nest
+import numpy
 
 ###############################################################################
 # Here we define which model and the neuron parameters to use for measuring
 # the transfer function.
 
-model = 'aeif_cond_exp'
-params = {'a': 4.0,
-          'b': 80.8,
-          'V_th': -50.4,
-          'Delta_T': 2.0,
-          'I_e': 0.0,
-          'C_m': 281.0,
-          'g_L': 30.0,
-          'V_reset': -70.6,
-          'tau_w': 144.0,
-          't_ref': 5.0,
-          'V_peak': -40.0,
-          'E_L': -70.6,
-          'E_ex': 0.,
-          'E_in': -70.}
+model = "aeif_cond_exp"
+params = {
+    "a": 4.0,
+    "b": 80.8,
+    "V_th": -50.4,
+    "Delta_T": 2.0,
+    "I_e": 0.0,
+    "C_m": 281.0,
+    "g_L": 30.0,
+    "V_reset": -70.6,
+    "tau_w": 144.0,
+    "t_ref": 5.0,
+    "V_peak": -40.0,
+    "E_L": -70.6,
+    "E_ex": 0.0,
+    "E_in": -70.0,
+}
 
 
-class IF_curve():
-
-    t_inter_trial = 200.  # Interval between two successive measurement trials
-    t_sim = 1000.         # Duration of a measurement trial
-    n_neurons = 100       # Number of neurons
-    n_threads = 4         # Nubmer of threads to run the simulation
+class IF_curve:
+    t_inter_trial = 200.0  # Interval between two successive measurement trials
+    t_sim = 1000.0  # Duration of a measurement trial
+    n_neurons = 100  # Number of neurons
+    n_threads = 4  # Nubmer of threads to run the simulation
 
     def __init__(self, model, params=None):
         self.model = model
@@ -88,8 +90,8 @@ class IF_curve():
         # We create neurons and devices with specified parameters.
 
         self.neuron = nest.Create(self.model, self.n_neurons, self.params)
-        self.noise = nest.Create('noise_generator')
-        self.spike_recorder = nest.Create('spike_recorder')
+        self.noise = nest.Create("noise_generator")
+        self.spike_recorder = nest.Create("spike_recorder")
 
     def connect(self):
         #######################################################################
@@ -107,16 +109,15 @@ class IF_curve():
         # We adjust the parameters of the noise according to the current
         # values.
 
-        self.noise.set(mean=mean, std=std, start=0.0, stop=1000., origin=0.)
+        self.noise.set(mean=mean, std=std, start=0.0, stop=1000.0, origin=0.0)
 
         # We simulate the network and calculate the rate.
 
         nest.Simulate(self.t_sim)
-        rate = self.spike_recorder.n_events * 1000. / (1. * self.n_neurons * self.t_sim)
+        rate = self.spike_recorder.n_events * 1000.0 / (1.0 * self.n_neurons * self.t_sim)
         return rate
 
-    def compute_transfer(self, i_mean=(400.0, 900.0, 50.0),
-                         i_std=(0.0, 600.0, 50.0)):
+    def compute_transfer(self, i_mean=(400.0, 900.0, 50.0), i_std=(0.0, 600.0, 50.0)):
         #######################################################################
         # We loop through all possible combinations of `(I_mean, I_sigma)`
         # and measure the output rate of the neuron.
@@ -124,9 +125,9 @@ class IF_curve():
         self.i_range = numpy.arange(*i_mean)
         self.std_range = numpy.arange(*i_std)
         self.rate = numpy.zeros((self.i_range.size, self.std_range.size))
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity("M_WARNING")
         for n, i in enumerate(self.i_range):
-            print('I  =  {0}'.format(i))
+            print("I  =  {0}".format(i))
             for m, std in enumerate(self.std_range):
                 self.rate[n, m] = self.output_rate(i, std)
 
@@ -138,7 +139,7 @@ transfer.compute_transfer()
 # After the simulation is finished, we store the data into a file for
 # later analysis.
 
-with shelve.open(model + '_transfer.dat') as dat:
-    dat['I_mean'] = transfer.i_range
-    dat['I_std'] = transfer.std_range
-    dat['rate'] = transfer.rate
+with shelve.open(model + "_transfer.dat") as dat:
+    dat["I_mean"] = transfer.i_range
+    dat["I_std"] = transfer.std_range
+    dat["rate"] = transfer.rate

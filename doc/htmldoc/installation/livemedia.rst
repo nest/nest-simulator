@@ -51,9 +51,9 @@ Older versions of VM images
 ---------------------------
 
 
-`NEST Live Media 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova>`_
+`NEST Live Media 3.3 <https://nest-simulator.org/downloads/gplreleases/nest-3.3.ova>`_
 
-`Checksum 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova.sha512sum>`_
+`Checksum 3.3 <https://nest-simulator.org/downloads/gplreleases/nest-3.3.ova.sha512sum>`_
 
 `NEST Live Media 2.20.2 <https://nest-simulator.org/downloads/gplreleases/nest-2.20.2.ova>`_
 

@@ -38,9 +38,9 @@ References
 
 """
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -54,7 +54,7 @@ neuron = nest.Create("aeif_cond_exp")
 ###############################################################################
 # Set the parameters of the neuron according to the paper.
 
-neuron.set(V_peak=20., E_L=-60.0, a=80.0, b=80.5, tau_w=720.0)
+neuron.set(V_peak=20.0, E_L=-60.0, a=80.0, b=80.5, tau_w=720.0)
 
 ###############################################################################
 # Create and configure the stimulus which is a step current.
@@ -72,7 +72,7 @@ nest.Connect(nest.AllToAll(dc, neuron))
 # And add a ``voltmeter`` to sample the membrane potentials from the neuron
 # in intervals of 0.1 ms.
 
-voltmeter = nest.Create("voltmeter", params={'interval': 0.1})
+voltmeter = nest.Create("voltmeter", params={"interval": 0.1})
 nest.Connect(nest.AllToAll(voltmeter, neuron))
 
 ###############################################################################

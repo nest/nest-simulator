@@ -70,9 +70,8 @@ References
 
 """
 
-import nest
-import numpy
 import matplotlib.pyplot as plt
+import nest
 
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
@@ -85,26 +84,22 @@ seed = 12345
 
 # We define the number of trials as well as the number of release sites.
 
-n_sites = 10.0  # number of synaptic release sites
+n_sites = 10  # number of synaptic release sites
 n_trials = 500  # number of measurement trials
 
 # The pre-synaptic neuron is driven by an injected current for a part of each
 # simulation cycle. We define here the parameters for this stimulation cycle.
 
-I_stim = 376.0   # [pA] stimulation current
-T_on = 500.0     # [ms] stimulation is on
-T_off = 1000.0   # [ms] stimulation is off
+I_stim = 376.0  # [pA] stimulation current
+T_on = 500.0  # [ms] stimulation is on
+T_off = 1000.0  # [ms] stimulation is off
 
-T_cycle = T_on + T_off   # total duration of each stimulation cycle
+T_cycle = T_on + T_off  # total duration of each stimulation cycle
 
 ###############################################################################
 # Next, we define parameter sets for facilitation and initial weight.
 
-fac_params = {"U": 0.02,
-              "u": 0.02,
-              "tau_fac": 500.,
-              "tau_rec": 200.,
-              "weight": 1.}
+fac_params = {"U": 0.02, "u": 0.02, "tau_fac": 500.0, "tau_rec": 200.0, "weight": 1.0}
 
 ###############################################################################
 # Then, we assign the parameter set to the synapse models
@@ -119,7 +114,7 @@ qsyn_params["n"] = n_sites
 # To make the responses comparable, we have to scale the weight by the
 # number of release sites.
 
-qsyn_params["weight"] = 1. / n_sites
+qsyn_params["weight"] = 1.0 / n_sites
 
 ###############################################################################
 # We reset NEST to have a well-defined starting point,
@@ -136,18 +131,13 @@ nest.rng_seed = seed
 # We exploit Python's unpacking mechanism to assign the neurons to named
 # variables directly.
 
-pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
-                                                   params={"tau_syn_ex": 3.},
-                                                   n=3)
+pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp", params={"tau_syn_ex": 3.0}, n=3)
 
 ###############################################################################
 # We create two voltmeters, one for each of the postsynaptic neurons.
 # We start recording only after a first cycle, which is used for equilibration.
 
-tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
-                                             params={"start": T_cycle,
-                                                     "interval": resolution},
-                                             n=2)
+tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter", params={"start": T_cycle, "interval": resolution}, n=2)
 
 ###############################################################################
 # Connect one neuron with the deterministic tsodyks2 synapse and the other neuron
@@ -213,15 +203,18 @@ vm_tsyn_mean = vm_tsyn.mean(axis=0)
 vm_qsyn_mean = vm_qsyn.mean(axis=0)
 rms_error = ((vm_tsyn_mean - vm_qsyn_mean) ** 2).mean() ** 0.5
 
-plt.plot(t_trial, vm_tsyn_mean, lw=2, alpha=0.7,
-         label="Tsodyks-2 synapse (deterministic)")
-plt.plot(t_trial, vm_qsyn_mean, lw=2, alpha=0.7,
-         label="Quantal STP synapse (stochastic)")
+plt.plot(t_trial, vm_tsyn_mean, lw=2, alpha=0.7, label="Tsodyks-2 synapse (deterministic)")
+plt.plot(t_trial, vm_qsyn_mean, lw=2, alpha=0.7, label="Quantal STP synapse (stochastic)")
 plt.xlabel("Time [ms]")
 plt.ylabel("Membrane potential [mV]")
 plt.title("Comparison of deterministic and stochastic plasicity rules")
-plt.text(0.95, 0.05, f"RMS error: {rms_error:.3g}",
-         horizontalalignment="right", verticalalignment="bottom",
-         transform=plt.gca().transAxes)  # relative coordinates for text placement
+plt.text(
+    0.95,
+    0.05,
+    f"RMS error: {rms_error:.3g}",
+    horizontalalignment="right",
+    verticalalignment="bottom",
+    transform=plt.gca().transAxes,
+)  # relative coordinates for text placement
 plt.legend()
 plt.show()

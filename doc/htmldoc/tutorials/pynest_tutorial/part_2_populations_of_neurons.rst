@@ -53,7 +53,7 @@ exploit the optional arguments of :py:func:`.Create`:
 The variable ``neuronpop`` is a NodeCollection representing all the ids of the created
 neurons.
 
-Parameterising the neurons at creation is more efficient than using
+Parametrizing the neurons at creation is more efficient than using
 :py:func:`.SetStatus` after creation, so try to do this wherever possible.
 
 We can also set the parameters of a neuron model *before* creation,
@@ -171,8 +171,8 @@ populations of ten neurons each.
     pop1 = nest.Create("iaf_psc_alpha", 10)
     pop1.set({"I_e": 376.0})
     pop2 = nest.Create("iaf_psc_alpha", 10)
-    multimeter = nest.Create("multimeter", 10)
-    multimeter.set({"record_from":["V_m"]})
+    multimeters = nest.Create("multimeter", 10)
+    multimeters.set({"record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected
 via the default rule, namely ``all_to_all``. Each neuron of ``pop1`` is
@@ -192,11 +192,11 @@ connections in total.
 
     nest.Connect(pop1, pop2, "one_to_one", syn_spec={"weight":20.0, "delay":1.0})
 
-Finally, the multimeters are connected using the default rule
+Finally, the multimeters are connected using the ``one_to_one`` rule
 
 ::
 
-    nest.Connect(multimeter, pop2)
+    nest.Connect(multimeters, pop2, "one_to_one")
 
 Here we have just used very simple connection schemes. Connectivity
 patterns requiring the specification of further parameters, such as

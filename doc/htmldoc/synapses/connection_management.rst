@@ -3,10 +3,6 @@
 Connection Management
 =====================
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 2
-
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
 :py:func:`.Connect` function. Although each connection is internally
@@ -37,34 +33,21 @@ be found in the section :ref:`Synapse Specification <synapse_spec>`.
 
 The :py:func:`.Connect` function can be called in any of the following ways:
 
-::
+.. code-block:: python
 
     Connect(pre, post)
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` ``NodeCollections``, defining the nodes of
+``pre`` and ``post`` are ``NodeCollections``, defining the nodes of
 origin (`sources`) and termination (`targets`) for the connections to
 be established.
 
 If ``conn_spec`` is not specified, the default connection rule
-``all_to_all`` will be used. When using a connection specification
-dictionary containing the rule name and rule-specific parameters, the
-additional switch ``allow_autapses`` (default: ``True``) can be set to
-allow or disallow self-connections. Likewise, ``allow_multapses``
-(default: ``True``) can be used to specify if multiple connections
-between the same pair of neurons are allowed or not.
-
-.. note::
-
-   The switches ``allow_autapses`` and ``allow_multapses`` are only
-   effective during each single call to :py:func:`.Connect`. Calling the
-   function multiple times with the same set of neurons might still
-   lead to violations of these constraints, even though the switches
-   were set to `False` in each individual call.
+``all_to_all`` will be used.
 
 The synapse specification ``syn_spec`` defaults to the synapse model
-``static_synapse``. By using the keyword variant (``Connect(pre, post,
+:hxt_ref:`static_synapse`. By using the keyword variant (``Connect(pre, post,
 syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call
 to :py:func:`.Connect` and will just take on the default value.
 
@@ -78,6 +61,21 @@ done using the corresponding kernel attribute:
 
 Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
+
+Multapses and autapses
+----------------------
+
+In the connection specification dictionary (containing the rule name and rule-
+specific parameters), the additional switch ``allow_autapses`` (default:
+``True``) can be set to allow or disallow self-connections.
+
+Likewise, ``allow_multapses`` (default: ``True``) can be used to specify if
+multiple connections between the same pair of neurons are allowed or not.
+
+These switches are only effective during each single call to
+:py:func:`.Connect`. Calling the function multiple times with the same set of
+neurons might still lead to violations of these constraints, even though the
+switches were set to `False` in each individual call.
 
 .. _conn_rules:
 
@@ -104,7 +102,7 @@ Each node in ``A`` is connected to every node in ``B``. Since
 ``all_to_all`` is the default, the rule doesn't actually have to be
 specified.
 
-::
+.. code-block:: python
 
     n, m = 10, 12
     A = nest.Create('iaf_psc_alpha', n)
@@ -143,7 +141,7 @@ Generator Interface and randomly connects 10% of the neurons from
 ``A`` to the neurons in ``B``, each connection having a weight of
 10000.0 pA and a delay of 1.0 ms:
 
-::
+.. code-block:: python
 
    A = nest.Create('iaf_psc_alpha', 100)
    B = nest.Create('iaf_psc_alpha', 100)
@@ -152,7 +150,7 @@ Generator Interface and randomly connects 10% of the neurons from
    import csa
    cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
-   # Map weight and delay indices to vaules from cg
+   # Map weight and delay indices to values from cg
    params_map = {'weight': 0, 'delay': 1}
 
    conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
@@ -166,9 +164,9 @@ fixed indegree
      :align: center
 
 The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``B`` has a fixed ``indegree`` of ``N``.
+that each node in ``B`` has a fixed :hxt_ref:`indegree` of ``N``.
 
-::
+.. code-block:: python
 
     n, m, N = 10, 12, 2
     A = nest.Create('iaf_psc_alpha', n)
@@ -184,9 +182,9 @@ fixed outdegree
      :align: center
 
 The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``A`` has a fixed ``outdegree`` of ``N``.
+that each node in ``A`` has a fixed :hxt_ref:`outdegree` of ``N``.
 
-::
+.. code-block:: python
 
     n, m, N = 10, 12, 2
     A = nest.Create('iaf_psc_alpha', n)
@@ -200,7 +198,7 @@ fixed total number
 The nodes in ``A`` are randomly connected with the nodes in ``B``
 such that the total number of connections equals ``N``.
 
-::
+.. code-block:: python
 
     n, m, N = 10, 12, 30
     A = nest.Create('iaf_psc_alpha', n)
@@ -219,7 +217,7 @@ The `i`\ th node in ``A`` is connected to the `i`\ th node in ``B``. The
 NodeCollections of ``A`` and ``B`` have to contain the same number of
 nodes.
 
-::
+.. code-block:: python
 
     n = 10
     A = nest.Create('iaf_psc_alpha', n)
@@ -232,7 +230,7 @@ pairwise bernoulli
 For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p``.
 
-::
+.. code-block:: python
 
     n, m, p = 10, 12, 0.2
     A = nest.Create('iaf_psc_alpha', n)
@@ -249,7 +247,7 @@ connection from ``B`` to ``A`` (two connections in total). To use
 this rule, ``allow_autapses`` must be ``False``, and ``make_symmetric``
 must be ``True``.
 
-::
+.. code-block:: python
 
     n, m, p = 10, 12, 0.2
     A = nest.Create('iaf_psc_alpha', n)
@@ -269,7 +267,7 @@ and parameters, or as a ``CollocatedSynapse`` object creating
 multiple synapses for each source-target pair as detailed in
 the section on :ref:`collocated synapses <collocated_synapses>`.
 
-::
+.. code-block:: python
 
     n = 10
     A = nest.Create('iaf_psc_alpha', n)
@@ -306,7 +304,7 @@ type integer. When a synapse parameter is given as a scalar, the value
 will be applied to all connections created in the current
 :py:func:`.Connect` call.
 
-::
+.. code-block:: python
 
     n = 10
     neuron_dict = {'tau_syn': [0.3, 1.5]}
@@ -326,30 +324,30 @@ Array parameters can be used with the rules ``all_to_all``,
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
-all-to-all
-^^^^^^^^^^
+rule: all-to-all
+^^^^^^^^^^^^^^^^
 
 When connecting with rule ``all_to_all``, the array parameter must
 have dimension `len(B) x len(A)`.
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 3)
     B = nest.Create('iaf_psc_alpha', 2)
     syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-fixed indegree
-^^^^^^^^^^^^^^
+rule: fixed indegree
+^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
-``indegree`` is the number of incoming connections per target neuron.
+:hxt_ref:`indegree` is the number of incoming connections per target neuron.
 This means that the rows describe the target, while the columns
 represent the connections converging on the target neuron, regardless
 of the identity of the source neurons.
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 5)
     B = nest.Create('iaf_psc_alpha', 3)
@@ -357,17 +355,17 @@ of the identity of the source neurons.
     syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-fixed outdegree
-^^^^^^^^^^^^^^^
+rule: fixed outdegree
+^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape ``(len(pre), outdegree)``, where
-``outdegree`` is the number of outgoing connections per source
+NumPy array or Python list with shape ``(len(A), outdegree)``, where
+:hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the
 columns represent the connections starting from the source neuron
 regardless of the identity of the target neuron.
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 2)
     B = nest.Create('iaf_psc_alpha', 5)
@@ -375,13 +373,13 @@ regardless of the identity of the target neuron.
     syn_spec_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-fixed total number
-^^^^^^^^^^^^^^^^^^
+rule: fixed total number
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 3)
     B = nest.Create('iaf_psc_alpha', 4)
@@ -389,13 +387,13 @@ number of connections ``N``.
     syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-one-to-one
-^^^^^^^^^^
+rule: one-to-one
+^^^^^^^^^^^^^^^^
 
 For rule ``one_to_one`` the array must have the same length as there
 are nodes in ``A`` and ``B``.
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 2)
     B = nest.Create('spike_recorder', 2)
@@ -427,7 +425,7 @@ For more information, check out the guide on
 :ref:`parametrization <param_ex>` or the documentation on the
 different :ref:`PyNEST APIs <pynest_api>`.
 
-::
+.. code-block:: python
 
     n = 10
     A = nest.Create('iaf_psc_alpha', n)
@@ -441,7 +439,7 @@ different :ref:`PyNEST APIs <pynest_api>`.
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
 In this example, the default connection rule ``all_to_all`` is used
-and connections will be using synapse model ``stdp_synapse``. All synapses
+and connections will be using synapse model :hxt_ref:`stdp_synapse`. All synapses
 are created with a static weight of 2.5 and a delay that is uniformly
 distributed in [0.8, 2.5]. The parameter ``alpha`` is drawn from a
 normal distribution with mean 5.0 and standard deviation 1.0;
@@ -451,7 +449,7 @@ Thus, the actual distribution is a slightly distorted Gaussian.
 If the synapse type is supposed to have a unique name and still use
 distributed parameters, it needs to be defined in two steps:
 
-::
+.. code-block:: python
 
     n = 10
     A = nest.Create('iaf_psc_alpha', n)
@@ -494,7 +492,7 @@ an object of type ``CollocatedSynapses``, whose constructor takes
 synapse specification dictionaries as arguments and applies the given
 dictionaries to each source-target pair internally.
 
-::
+.. code-block:: python
 
     nodes = nest.Create('iaf_psc_alpha', 3)
     syn_spec = nest.CollocatedSynapses({'weight': 4.0, 'delay': 1.5},
@@ -507,32 +505,40 @@ The example above will create 9 connections in total because there are
 3 neurons times 3 synapse specifications in the :py:func:`.CollocatedSynapses`
 object, and the connection rule ``one_to_one`` is used.
 
-  >>> print(nest.num_connections)
-  9
+
+.. code-block:: python
+
+    >>> print(nest.num_connections)
+    9
 
 In more detail, the connections have the following properties:
 
-* 3 are of type ``static_synapse`` with `weight` 4.0 and `delay` 1.5
-* 3 are of type ``stdp_synapse`` with the default value for `alpha`
-* 3 are of type ``stdp_synapse`` with an `alpha` of 3.0.
+* 3 are of type :hxt_ref:`static_synapse` with `weight` 4.0 and `delay` 1.5
+* 3 are of type :hxt_ref:`stdp_synapse` with the default value for `alpha`
+* 3 are of type :hxt_ref:`stdp_synapse` with an `alpha` of 3.0.
 
 If you want to connect with different :ref:`receptor types
 <receptor-types>`, you can do the following:
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_exp_multisynapse', 7)
     B = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
     syn_spec_dict = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
                                             {'weight': 1.5, 'receptor_type': 7})
     nest.Connect(A, B, 'one_to_one', syn_spec_dict)
-    print(nest.GetConnections().get())
+
+.. code-block:: python
+
+    >>> print(nest.GetConnections().get())
 
 You can see how many synapse parameters you have by calling ``len()`` on
 your ``CollocatedSynapses`` object:
 
-  >>> len(syn_spec)
-  2
+.. code-block:: python
+
+    >>> len(syn_spec_dict)
+    2
 
 Spatially-structured networks
 -----------------------------
@@ -575,11 +581,11 @@ post-synaptic nodes in ``B``. We also assume that we have our weight
 matrix given as a two-dimensional NumPy array `W`, with :math:`n`
 columns and :math:`m` rows.
 
-::
+.. code-block:: python
 
-    W = np.array([[0.5,  0.0, 1.5],
-                  [1.3,  0.2, 0.0],
-                  [0.0, 1.25, 1.3]])
+    W = numpy.array([[0.5,  0.0, 1.5],
+                     [1.3,  0.2, 0.0],
+                     [0.0, 1.25, 1.3]])
 
     A = nest.Create('iaf_psc_alpha', 3)
     B = nest.Create('iaf_psc_alpha', 3)
@@ -589,20 +595,20 @@ columns and :math:`m` rows.
         weights = W[:, i]
 
         # To only connect pairs with a nonzero weight, we use array indexing
-	# to extract the weights and post-synaptic neurons.
+        # to extract the weights and post-synaptic neurons.
         nonzero_indices = numpy.where(weights != 0)[0]
         weights = weights[nonzero_indices]
         post = B[nonzero_indices]
 
         # Generate an array of node IDs for the column of the weight
-	# matrix, with length based on the number of nonzero
-	# elements. The array's dtype must be an integer.
-        pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64) * pre.get('global_id')
+        # matrix, with length based on the number of nonzero
+        # elements. The array's dtype must be an integer.
+        pre_array = numpy.ones(len(nonzero_indices), dtype=int) * pre.get('global_id')
 
         # nest.Connect() automatically converts post to a NumPy array
-	# because pre_array contains multiple identical node IDs. When
-	# also specifying a one_to_one connection rule, the arrays of
-	# node IDs can then be connected.
+        # because pre_array contains multiple identical node IDs. When
+        # also specifying a one_to_one connection rule, the arrays of
+        # node IDs can then be connected.
         nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
 
 .. _receptor-types:
@@ -636,7 +642,7 @@ receptors.
      :width: 200px
      :align: center
 
-::
+.. code-block:: python
 
     A1 = nest.Create('iaf_psc_alpha')
     A2 = nest.Create('iaf_psc_alpha')
@@ -645,16 +651,21 @@ receptors.
     B = nest.Create('iaf_cond_alpha_mc')
 
     receptors = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
-    print(receptors)
-        {'soma_exc': 1,
-         'soma_inh': 2,
-         'soma_curr': 7,
-         'proximal_exc': 3
-         'proximal_inh': 4,
-         'proximal_curr': 8,
-         'distal_exc': 5,
-         'distal_inh': 6,
-         'distal_curr': 9,}
+
+.. code-block:: python
+
+    >>> print(receptors)
+    {'soma_exc': 1,
+     'soma_inh': 2,
+     'soma_curr': 7,
+     'proximal_exc': 3
+     'proximal_inh': 4,
+     'proximal_curr': 8,
+     'distal_exc': 5,
+     'distal_inh': 6,
+     'distal_curr': 9,}
+
+.. code-block:: python
 
     nest.Connect(A1, B, syn_spec={'receptor_type': receptors['distal_inh']})
     nest.Connect(A2, B, syn_spec={'receptor_type': receptors['proximal_inh']})
@@ -674,7 +685,7 @@ predefined, but determined only by the length of the ``tau_syn``
 vector that is supplied to the model instance. The following example
 shows the setup and connection of such a model in more detail:
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha')
     B = nest.Create('iaf_psc_exp_multisynapse', params={'tau_syn': [0.1, 0.2, 0.3]})
@@ -690,7 +701,7 @@ Synapse Types
 -------------
 
 NEST provides a number of built-in synapse models that can be used
-during connection setup. The default model is the ``static_synapse``,
+during connection setup. The default model is the :hxt_ref:`static_synapse`,
 whose only parameters ``weight`` and ``delay`` do not change over
 time. Other synapse models implement learning and adaptation in the
 form of long-term or short-term plasticity. A list of available
@@ -738,32 +749,30 @@ function :py:func:`.SetDefaults` takes the name of a synapse type and a
 parameter dictionary as arguments and will modify the defaults of the
 given model.
 
-::
+.. code-block:: python
 
-    print(nest.GetDefaults('static_synapse'))
-
-        {'delay': 1.0,
-         'has_delay': True,
-         'num_connections': 0,
-         'receptor_type': 0,
-         'requires_symmetric': False,
-         'sizeof': 32,
-         'synapse_model': 'static_synapse',
-         'weight': 1.0,
-         'weight_recorder': ()}
-
-    nest.SetDefaults('static_synapse', {'weight': 2.5})
+    >>> print(nest.GetDefaults('static_synapse'))
+    {'delay': 1.0,
+     'has_delay': True,
+     'num_connections': 0,
+     'receptor_type': 0,
+     'requires_symmetric': False,
+     'sizeof': 32,
+     'synapse_model': 'static_synapse',
+     'weight': 1.0,
+     'weight_recorder': ()}
+    >>> nest.SetDefaults('static_synapse', {'weight': 2.5})
 
 To further customize the process of creating synapses, it is often
 useful to have the same basic synapse model available with different
-parametizations. To this end, :py:func:`.CopyModel` can be used to
+parametrizations. To this end, :py:func:`.CopyModel` can be used to
 create custom synapse types from already existing synapse types. In
 the simplest case, it takes the names of the existing model and the
 copied type to be created. The optional argument ``params`` allows to
 directly customize the new type during the copy operation. If omitted,
 the defaults of the copied model are taken.
 
-::
+.. code-block:: python
 
     nest.CopyModel('static_synapse', 'inhibitory', {'weight': -2.5})
     nest.Connect(A, B, syn_spec='inhibitory')
@@ -777,9 +786,9 @@ In order to assert that the instantiated network model actually looks
 like what was intended, it is oftentimes useful to inspect the
 connections in the network. For this, NEST provides the function
 
-::
+.. code-block:: python
 
-  nest.GetConnections(source=None, target=None, synapse_model=None, synapse_label=None)
+    nest.GetConnections(source=None, target=None, synapse_model=None, synapse_label=None)
 
 This function returns a ``SynapseCollection`` object that contains the
 identifiers for connections that match the given filters.  ``source``
@@ -799,84 +808,100 @@ using the :py:meth:`~.SynapseCollection.get` function on the SynapseCollection d
 ways will yield a dictionary with the parameters of the connections
 that match the filter criterions given to ``nest.GetConnections()``:
 
-::
+.. code-block:: python
 
     A = nest.Create('iaf_psc_alpha', 2)
     B = nest.Create('iaf_psc_alpha')
     nest.Connect(A, B)
     conn = nest.GetConnections()
-    print(conn.get())
 
-        {'delay': [1.0, 1.0],
-         'port': [0, 1],
-         'receptor': [0, 0],
-         'sizeof': [32, 32],
-         'source': [1, 2],
-         'synapse_id': [18, 18],
-         'synapse_model': ['static_synapse', 'static_synapse'],
-         'target': [3, 3],
-         'target_thread': [0, 0],
-         'weight': [1.0, 1.0]}
+.. code-block:: python
+
+    >>> conn.get()
+    {'delay': [1.0, 1.0],
+     'port': [0, 1],
+     'receptor': [0, 0],
+     'sizeof': [32, 32],
+     'source': [1, 2],
+     'synapse_id': [18, 18],
+     'synapse_model': ['static_synapse', 'static_synapse'],
+     'target': [3, 3],
+     'target_thread': [0, 0],
+     'weight': [1.0, 1.0]}
 
 The ``get()`` function of a SynapseCollection can optionally also take
 a string or list of strings to only retrieve specific parameters. This
 is useful if you do not want to inspect the entire synapse dictionary:
 
-  >>>  conn.get('weight')
-       [1.0, 1.0]
+.. code-block:: python
 
-  >>>  conn.get(['source', 'target'])
-       {'source': [1, 2], 'target': [3, 3]}
+    >>> conn.get('weight')
+    [1.0, 1.0]
+
+.. code-block:: python
+
+    >>> conn.get(['source', 'target'])
+    {'source': [1, 2], 'target': [3, 3]}
 
 Another way of retrieving specific parameters is by getting them
 directly from the SynapseCollection using the dot-notation:
 
-  >>>  conn.delay
-       [1.0, 1.0]
+.. code-block:: python
+
+    >>> conn.delay
+    [1.0, 1.0]
 
 For :ref:`spatially distributed networks <spatial_networks>`, you can
 access the distance between the source-target pairs by querying
 `distance` on your SynapseCollection.
 
-  >>>  spatial_conn.distance
-       (0.47140452079103173,
-        0.33333333333333337,
-        0.4714045207910317,
-        0.33333333333333337,
-        3.925231146709438e-17,
-        0.33333333333333326,
-        0.4714045207910317,
-        0.33333333333333326,
-        0.47140452079103157)
+.. code-block:: python
+
+    >>> spatial_conn.distance
+        (0.47140452079103173,
+         0.33333333333333337,
+         0.4714045207910317,
+         0.33333333333333337,
+         3.925231146709438e-17,
+         0.33333333333333326,
+         0.4714045207910317,
+         0.33333333333333326,
+         0.47140452079103157)
 
 You can further examine the SynapseCollection by checking the length
 of it or by printing it to the terminal. The printout will be in the
 form of a table that lists source and target node IDs, synapse model,
 weight and delay:
 
-  >>>  len(conn)
-       2
-  >>>  print(conn)
-        source   target   synapse model   weight   delay
-       -------- -------- --------------- -------- -------
-             1        3  static_synapse    1.000   1.000
-             2        3  static_synapse    1.000   1.000
+.. code-block:: python
+
+    >>> len(conn)
+    2
+    >>>  print(conn)
+     source   target   synapse model   weight   delay
+    -------- -------- --------------- -------- -------
+          1        3  static_synapse    1.000   1.000
+          2        3  static_synapse    1.000   1.000
 
 A SynapseCollection can be indexed or sliced, if you only want to
 inspect a subset of the connections contained in it:
 
-  >>>  print(conn[0:2:2])
-        source   target   synapse model   weight   delay
-       -------- -------- --------------- -------- -------
-             1        3  static_synapse    1.000   1.000
+.. code-block:: python
+
+    >>> print(conn[0:2:2])
+     source   target   synapse model   weight   delay
+    -------- -------- --------------- -------- -------
+         1        3  static_synapse    1.000   1.000
 
 Last, but not least, SynapseCollection can be iterated, to retrieve
 one connection at a time:
 
-  >>>  for c in conn:
-  >>>      print(c.source)
-       1
-       2
+.. code-block:: python
+
+    >>>  for c in conn:
+    ...      print(c.source)
+    1
+    2
 
 Modifying Existing Connections
 ------------------------------
@@ -886,27 +911,27 @@ obtain handles to them using :py:func:`.GetConnections`. These handles
 can then be given as arguments to the :py:func:`.SetStatus` function,
 or by using the :py:meth:`~.SynapseCollection.set` function on the SynapseCollection directly:
 
-::
+.. code-block:: python
 
     n1 = nest.Create('iaf_psc_alpha', 2)
     n2 = nest.Create('iaf_psc_alpha', 2)
     nest.Connect(n1, n2)
-
     conn = nest.GetConnections()
     conn.set(weight=2.0)
 
-    print(conn.get())
+.. code-block:: python
 
-        {'delay': [1.0, 1.0, 1.0, 1.0],
-         'port': [0, 1, 2, 3],
-         'receptor': [0, 0, 0, 0],
-         'sizeof': [32, 32, 32, 32],
-         'source': [1, 1, 2, 2],
-         'synapse_id': [18, 18, 18, 18],
-         'synapse_model': ['static_synapse', 'static_synapse', 'static_synapse', 'static_synapse'],
-         'target': [3, 4, 3, 4],
-         'target_thread': [0, 0, 0, 0],
-         'weight': [2.0, 2.0, 2.0, 2.0]}
+    >>> conn.get()
+    {'delay': [1.0, 1.0, 1.0, 1.0],
+     'port': [0, 1, 2, 3],
+     'receptor': [0, 0, 0, 0],
+     'sizeof': [32, 32, 32, 32],
+     'source': [1, 1, 2, 2],
+     'synapse_id': [18, 18, 18, 18],
+     'synapse_model': ['static_synapse', 'static_synapse', 'static_synapse', static_synapse'],
+     'target': [3, 4, 3, 4],
+     'target_thread': [0, 0, 0, 0],
+     'weight': [2.0, 2.0, 2.0, 2.0]}
 
 To update a single parameter of a connection or a set of connections,
 you can call the ``set()`` function of the SynapseCollection with the
@@ -916,7 +941,9 @@ is given, the value is set on all connections. If you use a list to
 set the parameter, the list needs to be the same length as there are
 connections in the SynapseCollection.
 
-  >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
+.. code-block:: python
+
+    conn.set(weight=[4.0, 4.5, 5.0, 5.5])
 
 Similar to how you retrieve several parameters at once with the
 :py:meth:`~.SynapseCollection.get` function explained above, you can also set multiple
@@ -924,17 +951,21 @@ parameters at once using ``set(parameter_dictionary)``. Again, the
 values of the dictionary can be a single value, a list, or a
 ``nest.Parameter``.
 
-  >>>  conn.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
+.. code-block:: python
+
+    conn.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
 
 Finally, you can also directly set parameters on a SynapseCollection
 using the dot-notation:
 
-  >>>  conn.weight = 5.
-  >>>  conn.weight
-       [5.0, 5.0, 5.0, 5.0]
-  >>>  conn.delay = [5.1, 5.2, 5.3, 5.4]
-  >>>  conn.delay
-       [5.1, 5.2, 5.3, 5.4]
+.. code-block:: python
+
+    >>> conn.weight = 5.
+    >>> conn.weight
+    [5.0, 5.0, 5.0, 5.0]
+    >>> conn.delay = [5.1, 5.2, 5.3, 5.4]
+    >>> conn.delay
+    [5.1, 5.2, 5.3, 5.4]
 
 Note that some parameters like ``source`` and ``target`` are read-only and
 cannot be set. The documentation of a specific synapse model will

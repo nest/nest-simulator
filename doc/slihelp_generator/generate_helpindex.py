@@ -30,6 +30,7 @@ help_dir.
 
 import os
 import sys
+
 from writers import write_helpindex
 
 if len(sys.argv) != 2:

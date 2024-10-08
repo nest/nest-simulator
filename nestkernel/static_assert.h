@@ -36,7 +36,7 @@ namespace nest
  * or
  *
  * \code
- * typedef StaticAssert<bool-test>::sucess unique-type-name;
+ * typedef StaticAssert<bool-test>::success unique-type-name;
  * \endcode
  *
  * Allows compilation if the bool-test is true. If bool-test is false,
@@ -56,4 +56,4 @@ struct StaticAssert< true >
 };
 }
 
-#endif // STATIC_ASSERT
+#endif /* #ifndef STATIC_ASSERT */

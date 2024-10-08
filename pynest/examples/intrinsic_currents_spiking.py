@@ -51,8 +51,8 @@ See Also
 ###############################################################################
 # We imported all necessary modules for simulation, analysis and plotting.
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Additionally, we set the verbosity using ``set_verbosity`` to suppress info
@@ -70,9 +70,9 @@ nest.ResetKernel()
 #
 # Note that all parameter values should be doubles, since NEST expects doubles.
 
-rate_in = 100.
-w_recep = {'AMPA': 30., 'NMDA': 30., 'GABA_A': 5., 'GABA_B': 10.}
-t_sim = 250.
+rate_in = 100.0
+w_recep = {"AMPA": 30.0, "NMDA": 30.0, "GABA_A": 5.0, "GABA_B": 10.0}
+t_sim = 250.0
 
 num_recep = len(w_recep)
 
@@ -91,14 +91,15 @@ num_recep = len(w_recep)
 # See :doc:`intrinsic_currents_subthreshold` for more details on ``multimeter``
 # configuration.
 
-nrn = nest.Create('ht_neuron')
-p_gens = nest.Create('poisson_generator', 4, params={'rate': rate_in})
-mm = nest.Create('multimeter',
-                 params={'interval': 0.1,
-                         'record_from': ['V_m', 'theta',
-                                         'g_AMPA', 'g_NMDA',
-                                         'g_GABA_A', 'g_GABA_B',
-                                         'I_NaP', 'I_KNa', 'I_T', 'I_h']})
+nrn = nest.Create("ht_neuron")
+p_gens = nest.Create("poisson_generator", 4, params={"rate": rate_in})
+mm = nest.Create(
+    "multimeter",
+    params={
+        "interval": 0.1,
+        "record_from": ["V_m", "theta", "g_AMPA", "g_NMDA", "g_GABA_A", "g_GABA_B", "I_NaP", "I_KNa", "I_T", "I_h"],
+    },
+)
 
 ###############################################################################
 # We now connect each Poisson generator with the neuron through a different
@@ -115,10 +116,13 @@ mm = nest.Create('multimeter',
 # passing it to ``Connect``, because iterating over the `p_gens` list
 # makes `pg` a "naked" node ID.
 
-receptors = nest.GetDefaults('ht_neuron')['receptor_types']
+receptors = nest.GetDefaults("ht_neuron")["receptor_types"]
 for index, (rec_name, rec_wgt) in enumerate(w_recep.items()):
-    nest.Connect(nest.AllToAll(p_gens[index], nrn,
-                               syn_spec=nest.synapsemodels.static(receptor_type=receptors[rec_name], weight=rec_wgt)))
+    nest.Connect(
+        nest.AllToAll(
+            p_gens[index], nrn, syn_spec=nest.synapsemodels.static(receptor_type=receptors[rec_name], weight=rec_wgt)
+        )
+    )
 
 ###############################################################################
 # We then connect the ``multimeter``. Note that the multimeter is connected to
@@ -139,7 +143,7 @@ nest.Simulate(t_sim)
 # returned by the multimeter.
 
 data = mm.events
-t = data['times']
+t = data["times"]
 
 ###############################################################################
 # The following function turns a name such as ``I_NaP`` into proper TeX code
@@ -147,7 +151,8 @@ t = data['times']
 
 
 def texify_name(name):
-    return r'${}_{{\mathrm{{{}}}}}$'.format(*name.split('_'))
+    return r"${}_{{\mathrm{{{}}}}}$".format(*name.split("_"))
+
 
 ###############################################################################
 # The next step is to plot the results. We create a new figure, and add one
@@ -158,34 +163,33 @@ def texify_name(name):
 fig = plt.figure()
 
 Vax = fig.add_subplot(311)
-Vax.plot(t, data['V_m'], 'b', lw=2, label=r'$V_m$')
-Vax.plot(t, data['theta'], 'g', lw=2, label=r'$\Theta$')
-Vax.set_ylabel('Potential [mV]')
+Vax.plot(t, data["V_m"], "b", lw=2, label=r"$V_m$")
+Vax.plot(t, data["theta"], "g", lw=2, label=r"$\Theta$")
+Vax.set_ylabel("Potential [mV]")
 
 try:
-    Vax.legend(fontsize='small')
+    Vax.legend(fontsize="small")
 except TypeError:
     Vax.legend()  # work-around for older Matplotlib versions
-Vax.set_title('ht_neuron driven by Poisson processes')
+Vax.set_title("ht_neuron driven by Poisson processes")
 
 Gax = fig.add_subplot(312)
-for gname in ('g_AMPA', 'g_NMDA', 'g_GABA_A', 'g_GABA_B'):
+for gname in ("g_AMPA", "g_NMDA", "g_GABA_A", "g_GABA_B"):
     Gax.plot(t, data[gname], lw=2, label=texify_name(gname))
 
 try:
-    Gax.legend(fontsize='small')
+    Gax.legend(fontsize="small")
 except TypeError:
     Gax.legend()  # work-around for older Matplotlib versions
-Gax.set_ylabel('Conductance [nS]')
+Gax.set_ylabel("Conductance [nS]")
 
 Iax = fig.add_subplot(313)
-for iname, color in (('I_h', 'maroon'), ('I_T', 'orange'),
-                     ('I_NaP', 'crimson'), ('I_KNa', 'aqua')):
+for iname, color in (("I_h", "maroon"), ("I_T", "orange"), ("I_NaP", "crimson"), ("I_KNa", "aqua")):
     Iax.plot(t, data[iname], color=color, lw=2, label=texify_name(iname))
 
 try:
-    Iax.legend(fontsize='small')
+    Iax.legend(fontsize="small")
 except TypeError:
     Iax.legend()  # work-around for older Matplotlib versions
-Iax.set_ylabel('Current [pA]')
-Iax.set_xlabel('Time [ms]')
+Iax.set_ylabel("Current [pA]")
+Iax.set_xlabel("Time [ms]")

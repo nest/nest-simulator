@@ -22,11 +22,9 @@
 
 #include "gif_psc_exp_multisynapse.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -37,11 +35,8 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 #include "compose.hpp"
-#include "propagator_stability.h"
 
 namespace nest
 {
@@ -215,7 +210,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
-    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+    if ( has_connections_ and tau_tmp.size() < tau_syn_.size() )
     {
       throw BadProperty(
         "The neuron has connections, "
@@ -334,7 +329,8 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
     V_.P11_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
-    V_.P21_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], tau_m, P_.c_m_, h );
+
+    V_.P21_syn_[ i ] = IAFPropagatorExp( P_.tau_syn_[ i ], tau_m, P_.c_m_ ).evaluate( h );
 
     B_.spikes_[ i ].resize();
   }
@@ -347,10 +343,6 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
 void
 nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -431,7 +423,7 @@ void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

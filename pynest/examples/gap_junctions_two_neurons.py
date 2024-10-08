@@ -30,8 +30,8 @@ synchronize over time due to the gap-junction connection.
 
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 nest.ResetKernel()
@@ -42,16 +42,16 @@ nest.ResetKernel()
 
 nest.resolution = 0.05
 
-neuron = nest.Create('hh_psc_alpha_gap', 2)
+neuron = nest.Create("hh_psc_alpha_gap", 2)
 
-vm = nest.Create('voltmeter', params={'interval': 0.1})
+vm = nest.Create("voltmeter", params={"interval": 0.1})
 
 ###############################################################################
 # Then we set the constant current input, modify the inital membrane
 # potential of one of the neurons and connect the neurons to the ``voltmeter``.
 
-neuron.I_e = 100.
-neuron[0].V_m = -10.
+neuron.I_e = 100.0
+neuron[0].V_m = -10.0
 
 nest.Connect(nest.AllToAll(vm, neuron))
 
@@ -67,15 +67,15 @@ nest.Connect(nest.AllToAll(neuron, neuron, allow_autapses=False, syn_spec=nest.s
 # Finally we start the simulation and plot the membrane potentials of both
 # neurons.
 
-nest.Simulate(351.)
+nest.Simulate(351.0)
 
-senders = vm.events['senders']
-times = vm.events['times']
-v_m_values = vm.events['V_m']
+senders = vm.events["senders"]
+times = vm.events["times"]
+v_m_values = vm.events["V_m"]
 
 plt.figure(1)
-plt.plot(times[numpy.where(senders == 1)], v_m_values[numpy.where(senders == 1)], 'r-')
-plt.plot(times[numpy.where(senders == 2)], v_m_values[numpy.where(senders == 2)], 'g-')
-plt.xlabel('time (ms)')
-plt.ylabel('membrane potential (mV)')
+plt.plot(times[numpy.where(senders == 1)], v_m_values[numpy.where(senders == 1)], "r-")
+plt.plot(times[numpy.where(senders == 2)], v_m_values[numpy.where(senders == 2)], "g-")
+plt.xlabel("time (ms)")
+plt.ylabel("membrane potential (mV)")
 plt.show()

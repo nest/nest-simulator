@@ -123,6 +123,11 @@ CurrentEvent
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: erfc_neuron
+
 
 EndUserDocs */
 

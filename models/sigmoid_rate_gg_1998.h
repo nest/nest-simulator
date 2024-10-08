@@ -46,8 +46,7 @@ Description
 +++++++++++
 
 ``sigmoid_rate_gg_1998`` is an implementation of a nonlinear rate model with
-input function as in [1]_ :math:`input(h) = ( g \cdot h )^4 / ( .1^4 +
- ( g \cdot h )^4 )`.
+input function as in [1]_ :math:`input(h) = ( g \cdot h )^4 / ( .1^4 +( g \cdot h )^4 )`.
 
 It either models a rate neuron with input noise (see ``rate_neuron_ipn``)
 or a rate transformer (see ``rate_transformer_node``).
@@ -123,6 +122,12 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate_gg_1998
+
 EndUserDocs */
 
 class nonlinearities_sigmoid_rate_gg_1998
@@ -139,7 +144,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling

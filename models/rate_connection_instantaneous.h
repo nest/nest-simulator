@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, rate
+/* BeginUserDocs: synapse, rate, instantaneous
 
 Short description
 +++++++++++++++++
@@ -66,6 +66,11 @@ See also
 
 rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_connection_instantaneous
+
 EndUserDocs */
 
 /**
@@ -73,24 +78,27 @@ EndUserDocs */
  * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionInstantaneous : public Connection< targetidentifierT >
+class rate_connection_instantaneous : public Connection< targetidentifierT >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef InstantaneousRateConnectionEvent EventType;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  RateConnectionInstantaneous()
+  rate_connection_instantaneous()
     : ConnectionBase()
     , weight_( 1.0 )
   {
   }
+
+  SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -103,9 +111,9 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    InstantaneousRateConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -119,7 +127,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -150,8 +158,11 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties rate_connection_instantaneous< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -160,7 +171,7 @@ RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -172,6 +183,13 @@ RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDa
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+rate_connection_instantaneous< targetidentifierT >::get_secondary_event()
+{
+  return new InstantaneousRateConnectionEvent();
 }
 
 } // namespace

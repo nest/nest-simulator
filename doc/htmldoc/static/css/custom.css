@@ -1,365 +1,960 @@
- .wy-breadcrumbs-aside {
-    display: none !important;
+/* 
+ * Customize css to define NEST specific colors, style and format
+ *
+   primary styles, for custom index.html and layout.html pages (see templates/ folder)
+   Author: www.prowebdesign.ro
+   Simple Responsive Template v 1.2
+   Add your own styles to customize the project.
+
+   Sphinx theme: sphinx-material
+   https://bashtage.github.io/sphinx-material/index.html
+   Sphinx material theme properties use 'md' in variable names 
+   Extesion for grid / cards in reStructured Text see sphinx-design
+   https://sphinx-design.readthedocs.io/
+   Sphinx design properties use the sd in variable names
+ */
+/* Define colors*/
+:root {
+    --nest-orange: #ff6633;
+    --nest-blue: #1281B3;
+    --nest-green: #36B34F;
+    --sd-color-primary: var(--nest-orange);
+    --sd-color-primary-highlight: #e05a2d;
+    --sd-color-muted: #adadad;
+    --sd-color-info: var(--nest-blue);
+    --sd-color-success: var(--nest-green);
+    --sd-color-card-border-hover: var(--nest-orange);
+}
+/* Define base font color and style */
+body{
+	background:#fff;
+	color:#666;
+	font-family: 'Droid Sans', Arial, Helvetica, sans-serif;
+	/*font-size: medium;
+	line-height:1.5em;
+	font-weight:normal;*/
+}
+h1, h2, h3, h4, h5, h6{
+  /*font-size: 1.5em;*/
+	font-weight:600;
+	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+	/*line-height:1.5em;
+	margin:.45em 0;
+	padding:0;*/
 }
 
-.keep-us-sustainable {
-    background-color: #272525;
+/* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
+*{	box-sizing:border-box;
+	-moz-box-sizing:border-box;}
+
+/* links */
+a {color: var(--nest-orange);}
+a:visited,
+a:active {color:var(--nest-orange);}
+a:hover{color:var(--nest-orange); text-decoration:underline;}
+
+/* set api function and class names style */
+
+.sig-prename.descclassname {
+ display:None;
 }
-div.twocol {
-   width: 430px;
-   height: 180px;
-   border-top-width: 1px;
-   border-top-style: solid;
-   border-bottom-width: 1px;
-   border-bottom-style: solid;
+.sig.sig-object.py {
+   font-weight: bold;
+	 background-color: #ffd1c1;
+   font-family: "Roboto Mono","Courier New",Courier,monospace;
+ }
+section#kernel-attributes-nest-nestmodule em.property{
+  display: none;
+}
+dt:target {
+	margin-top: -0.55rem;
+	padding-top: 0.45rem;
+}
+section#kernel-attributes-nest-nestmodule dl.field-list.simple dt.field-odd{
+  position:absolute;
+  padding-left: 0.1rem;
+}
+
+section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
+  padding-left: 4rem;
+}
+
+dt#nest\.NestModule {
+ display: none;
+}
+section#kernel-attributes-nest-nestmodule dd {
+  margin-left: 0em;
+}
+.sphx-glr-download-link-note {
+
+ display: none;
 }
 
 
-div.leftside {
-    width: 150px;
-    padding: 10px 3px 0px 0px;
-    float: left;
+.autosummary tr {
+        border: none;
+        border-bottom: 1px solid #ddd;
 }
 
-div.rightside {
-    margin-left: 160px;
+/*************************************************************
+ * Rules for  mermaid diagrams
+ *************************************************************/
+
+.mermaid .cluster rect {
+	fill: #47555B21 !important;
+	stroke: None !important;
+	stroke-width: None !important;
 }
 
-.rst-content dl:not(.docutils) [class^="sig-prename descclassname"] {
+
+rect.basic.label-container {
+	fill: #e2e2e200; !important
+	stroke: #ff6633;
+	stroke-width: 1px;
+}
+
+figure.align-default {
+	text-align: center;
+}
+.mermaid svg {
+	/* outline: auto; */
+	outline-color: #f0f0f069;
+	outline-width: medium;
+	outline-style: groove;
+}
+
+
+/**************************************************************************************
+ Settings for overriding material design theme 
+ Setting nest colors to override sphinx material "orange" and other default colors
+
+**************************************************************************************/
+/* To ensure the headings in the theme have same weight as custom index page*/
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+   font-weight: 600;
+}
+.md-typeset h1[id]:before,
+.md-typeset h2[id]:before, 
+.md-typeset h3[id]:before,
+.md-typeset h4[id]:before {
+   margin-top: -3.4rem;
+  padding-top: 3.4rem;
+}
+
+[data-md-color-primary=orange] .md-tabs {
+  background-color: var(--nest-orange);
+ }
+
+/* To add matching styling for the header in index.html */
+div[role="main"] .md-header {
+  background-color: var(--nest-orange);
+  scale: 140%;
+  padding-top: 0.3rem;
+  height: 2.6rem;
+	transition: background-color .25s,color .25s,box-shadow .25s;
+	box-shadow: 0 0 .2rem rgba(0,0,0,.1),0 .2rem .4rem rgba(0,0,0,.2);
+}
+
+div[role="main"] .md-source {
     display: none;
 }
 
-.rst-content dl:not(.docutils) dt {
-    color: #272727;
-    background: none;
-    border-left: none;
-    border-top: none;
+.md-typeset blockquote {
+	border-left: none;
+}
+
+[data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
+  background-color: var(--nest-orange);
+}
+[data-md-color-primary="orange"] .md-nav__link--active, [data-md-color-primary="orange"] .md-nav__link:active {
+	color: var(--nest-orange);
+}
+[data-md-color-primary="orange"] .md-typeset a {
+  color: var(--nest-orange);
+}
+.md-typeset details {
+   background-color: white;
+}
+.md-typeset summary::after {
+  display: none;
+}
+.md-typeset details > summary::before {
+  display: none;
+}
+
+/* settings for icons */
+.md-typeset .sd-card-title img {
+  border: none;
+  opacity: 0.75;
+  width: 64px;
+  height: auto;
+  margin-right: 0.7em;
+}
+div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
+ margin-right: 2em;
+ margin-bottom: 0.5em;
+ 
+}
+
+.md-typeset .admonition, .md-typeset .admonition.tip {
+  border-left: .2rem solid var(--nest-blue);
+  border-radius: 5px;
+}
+
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before, .md-typeset .admonition.tip > .admonition-title::before {
+  color: #fff;
+}
+.md-typeset .admonition > .admonition-title, .md-typeset .admonition.tip > .admonition-title {
+  background-color: var(--nest-blue);
+  color: #fff;
+}
+.md-typeset .admonition {
+   background-color: #fff;
+   box-shadow: 0 .125rem .25rem var(--sd-color-shadow);
+   margin-left: 17px;
+   margin-right: 15px;
+}
+.md-typeset .admonition.seealso > .admonition-title, .md-typeset .admonition.important > .admonition-title {
+   background-color: var(--nest-green);
+}
+.md-typeset .admonition.seealso, .md-typeset .admonition.important {
+  border-left: .2rem solid var(--nest-green);
+}
+.md-typeset .admonition.warning {
+   border-left-color: #be1717;
+} 
+.md-typeset .admonition.warning > .admonition-title {
+   background-color: #be1717;
+}
+.md-typeset .admonition.danger > .admonition-title {
+   background-color: black;
+}
+/* add admonition warning / info (?) */
+.md-nav__extra_link{
+  color: var(--nest-orange);
+}
+div.admonition .md-typeset a > code {
+	color: white;
+}
+.md-nav__link, .md-nav__link:focus, .md-nav__link:hover {
+	color: var(--nest-orange);
+}
+
+ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
+ color: #fff;
+ opacity:0.9;
+}
+a.md-tabs__link, a.md-source {
+  color: #fff;
+}
+div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__icon{
+  color: #fff;
+}
+
+/*remove logo from header */
+.md-header-nav__button {
+  display: none;
+}
+/* remove space between the md_tabs bar and the header section */
+.md-container {
+ padding-top: 0px;
+}
+
+
+/***********************************
+ * Adjust settings for sphinx design
+ * *********************************/
+.sd-card-header .sd-card-text {
+  color: white;
+  text-align: center;
+}
+#pynest-examples img.sd-card-img-top {
+  width: auto;
+  height: max-content;
+}
+
+.sd-card-body {
+   padding: 0.6rem;
+}
+.sd-btn {
+	font-size: 1em;
+	padding: .375em .75em;
+}
+.sd-container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+.sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+/* ************************************
+ * Define styles for custom index.html
+ * ***********************************/
+/* structure */
+.wrapper{
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 50px;
+}
+#logo img {
+ max-width: 70%;
+ height: auto;
+ padding-top: 20px;
 
 }
 
-.rst-content dl:not(.docutils) dt[class^="sig sig-object py"] {
-	margin: 6px 0;
+#pulse span{
+	width: 31px;
+	border-radius: 50%;
+	background: #000;
+	color: #fff;
+  text-align: center;
+  width: 31px;
+  padding: 5px 0px;
+ }
+header.wrapper{
+	padding: 0;
+}
+
+.wrapper-92{
+	width: 92%;
+	margin: 0 auto;
+}
+
+header{
+  background-color: var(--nest-orange);
+  padding:15px 0;
+}
+
+#banner{
+    text-align:center;
+    position: absolute;
+}
+#hero,
+#page-header{
+	background:#f3f3f3;
+	border-top:1px solid #e2e2e2;
+	border-bottom:1px solid #e2e2e2;
+	padding:20px 0;
+}
+#page-header h1{
+	margin:0;
+}
+.flexslider{
+	display:none;
+}
+/*#content,
+aside,
+.vertical-padding{
+	padding:40px 0;
+}*/
+
+p{ margin:0 0 1.5em;}
+
+#particles{
+   width: 100%;
+   margin: 0;
+
+}
+
+/*MAIN MENU not displayed with sphinx material*/
+.menu-toggle{
+	display:none;
+	padding:10px;
+	margin:20px 0 0;
+	background:#666;
+	color:#fff;
+	cursor:pointer;
+	text-transform:uppercase;
+	font-size:20px;
+}
+.menu-toggle.toggled-on{
+	background:var(--nest-orange);
+}
+.srt-menu{
+	display:none;
+}
+.srt-menu.toggled-on{
+	display:block;
+	position:relative;
+	z-index:10;
+}
+
+.srt-menu{
+	clear:both;
+	margin-bottom:60px;
+
+}
+.srt-menu li a {
+	color:#666;
+	background:#dadada;
+	display:block;
+	margin:1px 0;
+	padding:10px;
+	text-decoration:none;
 	font-size: medium;
-	line-height: normal;
-	background: #ff663329;
-	color: #272727;
-	border-left: solid 3px #ff663385;
-	border-top: none;
-	padding: 6px;
+}
+.srt-menu li a:hover{
+	background:var(--nest-orange);
+	color:#fff;
+}
+.srt-menu li li a {
+	background:#e8e8e8;
+	padding-left:40px;
+}
+.srt-menu li li li a {
+	background:#efefef;
+	padding-left:80px;
+}
+
+/*SPACE GRID ELEMENTS VERTICALLY, SINCE THEY ARE ONE UNDER ANOTHER SO FAR*/
+.grid_1,
+.grid_2,
+.grid_3,
+.grid_4,
+.grid_5,
+.grid_6,
+.grid_7,
+.grid_8,
+.grid_9,
+.grid_10,
+.grid_11,
+.grid_12 {
+	margin-bottom:40px;
+	/*positioning and padding*/
 	position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.grid_3, .grid_6{
+
+  margin-top: auto;
+}
+/*FOOTER*/
+footer{
+	background:#333;
+	color:#ccc;
+	padding:20px 0;
+}
+footer ul{
+	margin:0 0 0 8%;
+	padding:0;
 }
 
-.rst-content dl:not(.docutils) dl dt {
-    border-left: none;
-    color: #272727;
-    background: none;
-}
-
-.rst-content code, .rst-content tt, code {
-    border: none;
-    font-size: 85%;
-    background: None;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
-t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal { 
-    color: #111;
-
-}
-.rst-content tt.xref, a .rst-content tt, .rst-content tt.xref, .rst-content code.xref { 
-    color: #f63;
-}
-
-p {
-    margin-bottom: 12px;
-}
-
-.wy-nav-content {
-    max-width: 950px;
-}
-
-.wy-side-nav-search {
-    background: linear-gradient(45deg, #fff, #eee);
-    color: #888;
-    border-bottom: 1px solid #e1e4e5;
-}
-
-.wy-side-nav-search input[type=text] {
-    border-color: #f63;
-}
-
-.wy-nav-side {
-   background: linear-gradient(90deg, #fff, #eee);
-   color: #888;
-   border-right: 1px solid #e1e4e5;
-}
-
-.wy-menu-vertical a,
-.wy-menu-vertical a:visited {
-   color: #444;
-}
-
-.wy-menu-vertical a:hover {
-    color: #aaa;
-}
-
-.wy-menu-vertical header, .wy-menu-vertical p.caption {
-    background-color: #c1c1c1;
-    color: #6f6f6f;
-    border-top: 1px solid #aaa;
-}
-
-.wy-menu-vertical li.current a {
-    color: #888;
-}
-
-.wy-nav-top {
-    display: none;
-    background: linear-gradient(90deg, #fff, #eee);;
-    color: #888;
-    padding: .4045em .809em;
-    position: relative;
-    line-height: 50px;
-    text-align: center;
-    font-size: 100%;
-    border-bottom: 1px solid #e1e4e5;
-}
-
-.wy-nav-top a {
-    color: #f63;
-    font-weight: bold;
-}
-
-@media screen and (max-width: 768px) {
-    .wy-nav-top {
-        display: block;
-    }
-}
-
-video {
-    margin-bottom: 20px;
-    background-color: lightgrey;
-    border: 1px solid lightgrey;
-}
-
-a:visited {
-    color: #f63;
-}
-
-a {
-    color: #f63;
+footer a, footer a:visited, footer a:active{
+    color:#777;
     text-decoration: none;
-    background-color: transparent;
-    cursor: pointer;
 }
 
-a:hover {
-    color: #f63;
+footer a:hover{
+    color:#888;
     text-decoration: underline;
 }
 
-.rst-content dl:not(.docutils) dt  em[class^='property']{
-     display:none;
+
+
+/*Some more colored elements*/
+a.buttonlink{
+	background:var(--nest-orange);
+	border-radius:7px;
+	color:#fff;
+	display:block;
+	float:left;
+	margin:10px 15px 10px 0;
+	padding:20px;
+	text-decoration:none;
+}
+a.buttonlink:hover{
+	background:#36B34F;
+  color: #fff;
+  text-decoration: underline;
+}
+.orangeelement{
+	background:var(--nest-orange);
+	color:#fff;
+}
+.blueelement{
+	background:var(--nest-blue);
+	color:#fff;
+  padding-bottom: 30px;
 }
 
-.rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
-    line-height: 1.3em;
+.greenelement{
+    background: var(--nest-green);
+    color:#fff;
 }
 
-.highlight {
-    background: rgba(255, 165, 0, 0.1);
+/* Contain floats*/
+.clearfix:before,
+.clearfix:after,
+.row:before,
+.row:after {
+  content: " ";
+  display: table;
 }
-
-.rst-content .admonition-title::before {
-    display:none;
-}
-
-.rst-content .admonition-title {
-    background: #333333;
-}
-
-.rst-content .danger .admonition-title {
-    background: #ff1133;
-}
-
-.rst-content .seealso .admonition-title, .rst-content .note .admonition-title {
-    background: #ffbb33;
-}
-
-.rst-content .warning .admonition-title {
-    background: #ff6633;
-
-}
-
-.wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
-    margin-bottom: 12px;
-}
-
-.rst-content .pull-quote {
-    background: #f0f3f3;
-    padding: 0.5em;
-    border: 1px solid #ff6633;
-    border-radius: 5px;
-}
-
-.rst-content .admonition {
-    background: #e9e9e9;
-
-}
-
-/* override table width restrictions */
-@media screen and (min-width: 767px) {
-
-   .wy-table-responsive table td {
-      /* !important prevents the common CSS stylesheets from overriding
-         this as on RTD they are loaded after this stylesheet */
-      white-space: normal !important;
-   }
-
-   .wy-table-responsive {
-      overflow: visible !important;
-      word-wrap: break-word;
-   }
-
-}
-
-/*html body div.wy-table-responsive {
-  margin-bottom: 0;
-}
-
-html body div.wy-table-responsive .footnote td {
-  padding-top: 1px;
-  padding-bottom: 4px;
-}*/
-
-.maroon {
-    color: maroon;
-}
-
-.red {
-    color: red;
-}
-
-.magenta {
-    color: magenta;
-}
-
-.pink {
-    color: pink;
-}
-
-.orange {
-    color: #f63;
-}
-
-.darkgreen {
-    color: #004f00;
+.clearfix:after,
+.container:after,
+.row:after{
+  clear: both;
 }
 
 .green {
-    color: green;
+   color: var(--nest-green);
 }
 
-.teal {
-    color: teal;
+.darkgreen {
+   color: #15471F;
 }
 
-.cyan {
-    color: cyan;
+.button-container {
+    width: 520px;
+    overflow-y: auto;
 }
 
-.aqua {
-    color: aqua;
+.icon {
+    margin: 0 auto;
+    height: 95px;
+    display: block;
 }
 
-.blue {
-    color: blue;
+hr {
+    margin: 25px auto;
 }
 
-.navy {
-    color: navy;
+#topics {
+    width: 80%;
+    margin: 0 auto;
 }
 
-.purple {
-    color: purple;
+html {
+  scroll-behavior: smooth;
 }
 
-.under {
-    text-decoration: underline;
+#gototop {
+    display: none;
 }
 
-.over {
-    text-decoration: overline;
+#gototop img {
+    position: fixed;
+    width: 75px;
+    height: 75px;
+    bottom: 25px;
+    right: 25px;
+    z-index: 100;
+    opacity: 0.6;
 }
 
-.blink {
-    text-decoration: blink;
+.narrow {
+    text-align: justify;
+    padding: 0 5%;
 }
 
-.strike {
-    text-decoration: line-through;
+#intro .accordion pre {
+    width: 65%;
+    margin: 0 auto;
+    background-color: #eee;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 0;
+    color: #666;
+    cursor: pointer;
 }
 
-@media screen and (min-width: 1270px)  {
-    /* Pop out the in-page links to the right instead of the lef */
-    /*div.wy-side-scroll li.toctree-l1.current > ul {
-     */
-   div[class^='contents'] {
-     position: fixed;
-     margin-left: 0px;
-     overflow-y: auto;
-     padding-left: 15px;
-     border-left: 1px solid #e1e4e5;
-         border-left-color: #e1e4e5;
-         border-left-style: solid;
-         border-left-width: 1px;
-     border-right: 1px, #e0e0e0, solid;
-         border-right-width: 1px;
-         border-right-color: #e0e0e0;
-         border-right-style: solid;
-     height: 100%;
-     width: 250px;
-     top: 0px;
-     left: 1250px;
-     padding-right: 10px;
-     background: linear-gradient(90deg, #fcfcfc, rgba(0, 0, 0, 0));
-     padding-top: 70px;
-    }
-    }
-    .rst-content .section ul p {
-        margin-bottom: 0px;
-    }
+
+#intro .accordion pre:first-of-type {
+    background: #ccc;
+    border-top: 1px solid #ccc;
+    border-radius: 10px 10px 0 0;
 }
 
- /*   div.wy-side-scroll li.toctree-l1.current a {
-        border-right: none;
-    }
+#intro .accordion pre:first-of-type code {
+    border-radius: 10px 10px 0 0;
+}
 
-    div.wy-side-scroll li.toctree-l1.current ul {
-        max-width: 400px;
-    }
+#intro .accordion pre:last-of-type {
+    background: #ccc;
+    border-radius: 0 0 10px 10px;
+}
 
-    div.wy-side-scroll li.toctree-l1.current ul, li.toctree-l1.current li, li.toctree-l1.current a {
-        background-color: transparent !important;
-    }
+#intro .accordion pre:last-of-type code {
+    border-radius: 0 0 10px 10px;
+}
 
-    /* All items should now be visible regardless of expandy state */
-    /*div.wy-side-scroll li.toctree-l1.current ul {
-      display: block !important;
-    }
+#intro.vertical-padding div#main.blueelement.wrapper.clearfix ul li a {
+  color: #fff;
 
-    /* hide the expandy buttons */
-   /* div.wy-side-scroll li.toctree-l1.current span.toctree-expand {
-        display: none !important;
-    }
+}
+#backmatter.greenelement.vertical-padding div.wrapper.clearfix p a {
+	color: #fff;
+	background-color: none;
+	font-weight: bold;
+}
 
-    /* Make the padding correct */
-    /*div.wy-side-scroll li.toctree-l2 li.toctree-l3 > a {
-      padding: .4045em 4.045em !important;
-    }
+#intro .accordion div {
+    display: none;
+    background-color: #f63;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    width: 65%;
+    margin: 0 auto;
+    padding: 1em;
+    box-shadow: inset 0 15px 15px -15px #444;
+}
 
-    div.wy-side-scroll li.toctree-l4 > a {
-      padding: .4045em 5.663em !important;
+.flexslider {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.flexslider img {
+    border-radius: 10px;
+}
+
+.flex-control-nav {
+    bottom: -40px;
+}
+
+.flexslider li span {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: white;
+    padding: 15px;
+    position:absolute;
+    z-index:1;
+    border-radius: 0 0 10px 10px;
+    transition: all 0.5s ease;
+}
+
+.flexslider li span h3 {
+    font-weight: bold;
+    background-size: 26px;
+}
+/****************************************
+*****************************************
+MEDIAQUERIES
+*****************************************
+****************************************/
+
+@media only screen and (min-width: 2048px) {
+
+.md-typeset .sd-card-title img {
+ width: 128px;
+ height: auto;
   }
-} */
+}
+@media only screen and (min-width: 1024px) {
+
+.particle-img
+ {
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-color: #ff6633;
+  height: 240px;
+ }
+
+header{
+  background-color: var(--nest-orange);
+  padding:15px 0;
+  height: 240px;
+ }
+.tsparticles-canvas-el {
+    margin-top: -275px;
+}
+
+}
+
+@media only screen and (max-width: 1023px) {
+ .particle-img
+ {
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-color: #ff6633;
+  height: 210px;
+
+ }
+header{
+  background-color: var(--nest-orange);
+  padding:0 0;
+  height: 210px;
+}
+ #banner{
+   padding-top: 50px;
+ }
+}
+
+
+
+
+/*
+LARGER MOBILE DEVICES
+This is for mobile devices with a bit larger screens.
+*/
+@media only screen and (min-width: 481px) {
+#banner{
+	float:left;
+	text-align:left;
+	margin: px 0 0 50px;
+}
+
+.menu-toggle{/*make menu float right, instead of sitting under the logo*/
+	margin-top:10px; /*this depends on the height of the logo*/
+	float:right;
+  display: None;
+
+}
+
+}
+
+/*
+TABLET & SMALLER LAPTOPS
+The average viewing window and preferred media query for those is 768px.
+But I think that some more breathing space is good:)
+*/
+@media only screen and (min-width: 920px) {
+
+
+header{
+	padding:0;
+}
+#banner{
+	float:left;
+	text-align:left;
+	margin: 55px 0 0 50px;
+}
+#hero{
+	padding:13px 0;
+}
+
+#content {
+	float:left;
+	width:65%;
+}
+#content.wide-content{
+	float:none;
+	width:100%;
+}
+
+.flexslider{
+	display:block;
+/*demo 1 slider theme*/
+margin: 0;
+}
+.flex-control-nav {bottom: 5px;}
+
+
+/*** MAIN MENU - ESSENTIAL STYLES ***/
+.menu-toggle{display:none;}
+#menu-main-navigation{display:block;}
+
+.srt-menu, .srt-menu * {
+	margin:			0;
+	padding:		0;
+	list-style:		none;
+}
+.srt-menu ul {
+	position:		absolute;
+	display:none;
+	width:			12em; /* left offset of submenus need to match (see below) */
+}
+.srt-menu ul li {
+	width:			100%;
+}
+.srt-menu li:hover {
+	visibility:		inherit; /* fixes IE7 'sticky bug' */
+}
+.srt-menu li {
+	float:			left;
+	position:		relative;
+	margin-left:1px;
+	height:25px;
+}
+.srt-menu li li {
+	margin-left:0px;
+	height:auto;
+}
+.srt-menu a {
+	display:		block;
+	position:		relative;
+}
+.srt-menu li:hover ul,
+.srt-menu li.sfHover ul {
+	display:block;
+	left:			0;
+	top:			42px; /* match top ul list item height */
+	z-index:		99;
+	-webkit-box-shadow:  2px 3px 2px 0px rgba(00, 00, 00, .3);
+    box-shadow:  2px 3px 2px 0px rgba(00, 00, 00, .3);
+}
+ul.srt-menu li:hover li ul,
+ul.srt-menu li.sfHover li ul {
+	top:			-999em;
+}
+ul.srt-menu li li:hover ul,
+ul.srt-menu li li.sfHover ul {
+	left:			12em; /* match ul width */
+	top:			0;
+}
+ul.srt-menu li li:hover li ul,
+ul.srt-menu li li.sfHover li ul {
+	top:			-999em;
+}
+ul.srt-menu li li li:hover ul,
+ul.srt-menu li li li.sfHover ul {
+	left:			10em; /* match ul width */
+	top:			0;
+}
+
+/*** DEMO2 SKIN ***/
+#topnav, .srt-menu {
+	float:right;
+	margin: 85px 100px 0 0;
+}
+.srt-menu a {
+	text-decoration:none;
+}
+.srt-menu li a{
+    background:#fff;
+    border-radius: 10px;
+	margin:5px;
+	padding:10px 20px;
+}
+.srt-menu a, .srt-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+	color:			#666;
+}
+.srt-menu li li a {
+		border-top:		1px solid rgba(255,255,255,.2);
+		background:		#333; /*fallback for old IE*/
+		background:rgba(0,0,0,.6);
+		color:	#fff;
+		padding-left:20px;
+}
+.srt-menu li li a:visited{color:#fff;}
+.srt-menu li li li a,
+.srt-menu li.current * li a{
+	padding-left:20px;
+	background:rgba(0,0,0,.6);
+}
+
+.srt-menu li:hover > a,
+.srt-menu li.current a{
+	color:#fff;
+	background:#1281B3;
+}
+.srt-menu li li:hover > a{
+	color:#fff;
+	background:#1281B3;
+}
+
+
+
+/*GRID*/
+/*
+ & Columns : 12
+ */
+ .row{
+	 margin-left: -15px;
+     margin-right: -15px;
+}
+
+.grid_1 { width: 8.33333333%; }
+.grid_2 { width: 16.66666667%; }
+.grid_3 { width: 70%; }
+.grid_4 { width: 33.33333333%; }
+.grid_5 { width: 41.66666667%; }
+.grid_6 { width: 50%; }
+.grid_7 { width: 58.33333333%; }
+.grid_8 { width: 66.66666667%; }
+.grid_9 { width: 75%; }
+.grid_10 { width: 83.33333333%; }
+.grid_11 { width: 91.66666667%; }
+.grid_12 { width: 100%; }
+
+.grid_1,
+.grid_2,
+.grid_3,
+.grid_4,
+.grid_5,
+.grid_6,
+.grid_7,
+.grid_8,
+.grid_9,
+.grid_10,
+.grid_11,
+.grid_12 {
+	float: left;
+	display: block;
+}
+
+.rightfloat{float:right;}
+/* @notation inspired by tinyGrid, .row and percentage by Twitter Bootstrap
+ */
+
+#hero .grid_8 {
+	margin:40px 0 -13px;
+}
+
+}
+
+/*
+DESKTOP
+This is the average viewing window. So Desktops, Laptops, and
+in general anyone not viewing on a mobile device. Here's where
+you can add resource intensive styles.
+*/
+@media only screen and (min-width: 1024px) {
+#hero h1{ font-size:1.4em;}
+}
+
+/*
+LARGE VIEWING SIZE
+This is for the larger monitors and possibly full screen viewers.
+*/
+@media only screen and (min-width: 1240px) {
+#hero h1{ font-size:2em;}
+}
+
+/*
+RETINA (2x RESOLUTION DEVICES)
+This applies to the retina iPhone (4s) and iPad (2,3) along with
+other displays with a 2x resolution.
+*/
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+       only screen and (min--moz-device-pixel-ratio: 1.5),
+       only screen and (min-device-pixel-ratio: 1.5) {
+
+
+}
+
+/*
+iPHONE 5 MEDIA QUERY
+iPhone 5 or iPod Touch 5th generation styles (you can include your own file if you want)
+*/
+@media (device-height: 568px) and (-webkit-min-device-pixel-ratio: 2) {
+
+}
+
+@media only screen and (max-width: 76.1875em) {
+ html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
+ 	background-color: #fff;
+ }
+ [data-md-color-primary="orange"] .md-nav__source {
+ 	background-color: #000;
+ }
+ html .md-nav--primary .md-nav__title {
+ 	white-space: initial;
+ }
+/* Make hamburger menu on small devices visible */
+ .md-icon.md-icon--menu.md-header-nav__button{
+  	display: flex;
+ }
+}

@@ -42,15 +42,14 @@ import nest
 import numpy as np
 from matplotlib import pyplot as plt
 
-
-amplitude = 100.  # Set externally applied current amplitude in pA
+amplitude = 100.0  # Set externally applied current amplitude in pA
 dt = 0.1  # simulation step length [ms]
 
-v_min = -100.  # Min membrane potential
-v_max = 42.  # Max membrane potential
+v_min = -100.0  # Min membrane potential
+v_max = 42.0  # Max membrane potential
 n_min = 0.1  # Min inactivation variable
 n_max = 0.81  # Max inactivation variable
-delta_v = 2.  # Membrane potential step length
+delta_v = 2.0  # Membrane potential step length
 delta_n = 0.01  # Inactivation variable step length
 
 V_vec = np.arange(v_min, v_max, delta_v)
@@ -60,10 +59,10 @@ num_v_steps = len(V_vec)
 num_n_steps = len(n_vec)
 
 nest.ResetKernel()
-nest.set_verbosity('M_ERROR')
+nest.set_verbosity("M_ERROR")
 nest.resolution = dt
 
-neuron = nest.Create('hh_psc_alpha')
+neuron = nest.Create("hh_psc_alpha")
 
 # Numerically obtain equilibrium state
 nest.Simulate(1000)
@@ -74,7 +73,7 @@ h_eq = neuron.Inact_h
 neuron.I_e = amplitude  # Apply external current
 
 # Scan state space
-print('Scanning phase space')
+print("Scanning phase space")
 
 V_matrix = np.zeros([num_n_steps, num_v_steps])
 n_matrix = np.zeros([num_n_steps, num_v_steps])
@@ -105,19 +104,19 @@ for i, V in enumerate(V_vec):
 
         if count % 10 == 0:
             # Write updated state next to old state
-            print('')
-            print('Vm:  \t', V_m)
-            print('new Vm:\t', V_m_new)
-            print('Act_n:', Act_n)
-            print('new Act_n:', Act_n_new)
+            print("")
+            print("Vm:  \t", V_m)
+            print("new Vm:\t", V_m_new)
+            print("Act_n:", Act_n)
+            print("new Act_n:", Act_n_new)
 
         count += 1
 
 # Set state for AP generation
-neuron.set(V_m=-34., Act_n=0.2, Act_m=m_eq, Inact_h=h_eq)
+neuron.set(V_m=-34.0, Act_n=0.2, Act_m=m_eq, Inact_h=h_eq)
 
-print('')
-print('AP-trajectory')
+print("")
+print("AP-trajectory")
 # ap will contain the trace of a single action potential as one possible
 # numerical solution in the vector field
 ap = np.zeros([1000, 2])
@@ -128,8 +127,8 @@ for i in range(1000):
 
     if i % 10 == 0:
         # Write new state next to old state
-        print('Vm: \t', V_m)
-        print('Act_n:', Act_n)
+        print("Vm: \t", V_m)
+        print("Act_n:", Act_n)
     ap[i] = np.array([V_m, Act_n])
 
     # Simulate again
@@ -137,13 +136,13 @@ for i in range(1000):
     nest.Simulate(dt)
 
 # Make analysis
-print('')
-print('Plot analysis')
+print("")
+print("Plot analysis")
 
 nullcline_V = []
 nullcline_n = []
 
-print('Searching nullclines')
+print("Searching nullclines")
 for i in range(0, len(V_vec)):
     index = np.nanargmin(V_matrix[:][i])
     if index != 0 and index != len(n_vec):
@@ -153,12 +152,14 @@ for i in range(0, len(V_vec)):
     if index != 0 and index != len(n_vec):
         nullcline_n.append([V_vec[i], n_vec[index]])
 
-print('Plotting vector field')
+print("Plotting vector field")
 factor = 0.1
 for i in range(0, np.shape(pp_data)[0], 3):
-    plt.plot([pp_data[i][0], pp_data[i][0] + factor * pp_data[i][2]],
-             [pp_data[i][1], pp_data[i][1] + factor * pp_data[i][3]],
-             color=[0.6, 0.6, 0.6])
+    plt.plot(
+        [pp_data[i][0], pp_data[i][0] + factor * pp_data[i][2]],
+        [pp_data[i][1], pp_data[i][1] + factor * pp_data[i][3]],
+        color=[0.6, 0.6, 0.6],
+    )
 
 plt.plot(nullcline_V[:][0], nullcline_V[:][1], linewidth=2.0)
 plt.plot(nullcline_n[:][0], nullcline_n[:][1], linewidth=2.0)
@@ -166,10 +167,10 @@ plt.plot(nullcline_n[:][0], nullcline_n[:][1], linewidth=2.0)
 plt.xlim([V_vec[0], V_vec[-1]])
 plt.ylim([n_vec[0], n_vec[-1]])
 
-plt.plot(ap[:][0], ap[:][1], color='black', linewidth=1.0)
+plt.plot(ap[:][0], ap[:][1], color="black", linewidth=1.0)
 
-plt.xlabel('Membrane potential V [mV]')
-plt.ylabel('Inactivation variable n')
-plt.title('Phase space of the Hodgkin-Huxley Neuron')
+plt.xlabel("Membrane potential V [mV]")
+plt.ylabel("Inactivation variable n")
+plt.title("Phase space of the Hodgkin-Huxley Neuron")
 
 plt.show()

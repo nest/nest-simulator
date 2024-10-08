@@ -22,13 +22,9 @@
 
 #include "weight_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -40,8 +36,6 @@
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()

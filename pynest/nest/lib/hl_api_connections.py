@@ -25,12 +25,16 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import check_stack, connect_arrays, sps, sr, spp
 from .. import pynestkernel as kernel
-
-from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
-                                        _connect_spatial, _process_conn_spec,
-                                        _process_spatial_projections, _process_syn_spec)
+from ..ll_api import check_stack, connect_arrays, spp, sps, sr
+from .hl_api_connection_helpers import (
+    _connect_layers_needed,
+    _connect_spatial,
+    _process_conn_spec,
+    _process_input_nodes,
+    _process_spatial_projections,
+    _process_syn_spec,
+)
 from .hl_api_helper import is_string
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
@@ -39,15 +43,14 @@ from .hl_api_projections import BuildNetwork
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    '_array_connect',
-    'Disconnect',
-    'GetConnections',
+    "_array_connect",
+    "Disconnect",
+    "GetConnections",
 ]
 
 
 @check_stack
-def GetConnections(source=None, target=None, synapse_model=None,
-                   synapse_label=None):
+def GetConnections(source=None, target=None, synapse_model=None, synapse_label=None):
     """Return a `SynapseCollection` representing the connection identifiers.
 
     Any combination of `source`, `target`, `synapse_model` and
@@ -88,21 +91,21 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     if source is not None:
         if isinstance(source, NodeCollection):
-            params['source'] = source
+            params["source"] = source
         else:
             raise TypeError("source must be NodeCollection.")
 
     if target is not None:
         if isinstance(target, NodeCollection):
-            params['target'] = target
+            params["target"] = target
         else:
             raise TypeError("target must be NodeCollection.")
 
     if synapse_model is not None:
-        params['synapse_model'] = kernel.SLILiteral(synapse_model)
+        params["synapse_model"] = kernel.SLILiteral(synapse_model)
 
     if synapse_label is not None:
-        params['synapse_label'] = synapse_label
+        params["synapse_label"] = synapse_label
 
     sps(params)
     sr("GetConnections")
@@ -140,21 +143,23 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
         If `weight`, `delay`, or `receptor_type` is specified, they must be given as
         single elements or as arrays with the length of pre and post.
     """
+
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
-    processed_syn_spec = _process_syn_spec(
-        syn_spec, processed_conn_spec, len(pre), len(post), use_connect_arrays)
+    processed_syn_spec = _process_syn_spec(syn_spec, processed_conn_spec, len(pre), len(post), use_connect_arrays)
 
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
     if use_connect_arrays:
         if processed_syn_spec is None:
-            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
-                             "be specified and contain at least the synapse model.")
+            raise ValueError(
+                "When connecting two arrays of node IDs, the synapse specification dictionary must "
+                "be specified and contain at least the synapse model."
+            )
 
         # In case of misspelling
         if "weights" in processed_syn_spec:
@@ -162,19 +167,22 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
         if "delays" in processed_syn_spec:
             raise ValueError("To specify delays, use 'delay' in syn_spec.")
 
-        weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
-        delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
+        weights = numpy.array(processed_syn_spec["weight"]) if "weight" in processed_syn_spec else None
+        delays = numpy.array(processed_syn_spec["delay"]) if "delay" in processed_syn_spec else None
 
         try:
-            synapse_model = processed_syn_spec['synapse_model']
+            synapse_model = processed_syn_spec["synapse_model"]
         except KeyError:
-            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
-                             "contain a synapse model.")
+            raise ValueError(
+                "When connecting two arrays of node IDs, the synapse specification dictionary must "
+                "contain a synapse model."
+            )
 
         # Split remaining syn_spec entries to key and value arrays
-        reduced_processed_syn_spec = {k: processed_syn_spec[k]
-                                      for k in set(processed_syn_spec.keys()).difference(
-                                          set(('weight', 'delay', 'synapse_model')))}
+        reduced_processed_syn_spec = {
+            k: processed_syn_spec[k]
+            for k in set(processed_syn_spec.keys()).difference(set(("weight", "delay", "synapse_model")))
+        }
 
         if len(reduced_processed_syn_spec) > 0:
             syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
@@ -192,23 +200,21 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
 
 
 @check_stack
-def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
-    """Disconnect `pre` neurons from `post` neurons.
+def Disconnect(*args, conn_spec=None, syn_spec=None):
+    """Disconnect connections in a SynapseCollection, or `pre` neurons from `post` neurons.
 
-    Neurons in `pre` and `post` are disconnected using the specified disconnection
+    When specifying `pre` and `post` nodes, they are disconnected using the specified disconnection
     rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the disconnection rule.
 
     Parameters
     ----------
-    pre : NodeCollection
-        Presynaptic nodes, given as `NodeCollection`
-    post : NodeCollection
-        Postsynaptic nodes, given as `NodeCollection`
+    args : SynapseCollection or NodeCollections
+        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as NodeCollections
     conn_spec : str or dict
-        Disconnection rule, see below
+        Disconnection rule when specifying pre- and postsynaptic nodes, see below
     syn_spec : str or dict
-        Synapse specifications, see below
+        Synapse specifications when specifying pre- and postsynaptic nodes, see below
 
     Notes
     -------
@@ -218,9 +224,9 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Apply the same rules as for connectivity specs in the :py:func:`.Connect` method
 
     Possible choices of the conn_spec are
-    ::
-     - 'one_to_one'
-     - 'all_to_all'
+
+    - 'one_to_one'
+    - 'all_to_all'
 
     **syn_spec**
 
@@ -255,15 +261,28 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     """
 
-    sps(pre)
-    sps(post)
-
-    if is_string(conn_spec):
-        conn_spec = {'rule': conn_spec}
-    if is_string(syn_spec):
-        syn_spec = {'synapse_model': syn_spec}
-
-    sps(conn_spec)
-    sps(syn_spec)
-
-    sr('Disconnect_g_g_D_D')
+    if len(args) == 1:
+        synapsecollection = args[0]
+        if not isinstance(synapsecollection, SynapseCollection):
+            raise TypeError("Arguments must be either a SynapseCollection or two NodeCollections")
+        if conn_spec is not None or syn_spec is not None:
+            raise ValueError("When disconnecting with a SynapseCollection, conn_spec and syn_spec cannot be specified")
+        synapsecollection.disconnect()
+    elif len(args) == 2:
+        # Fill default values
+        conn_spec = "one_to_one" if conn_spec is None else conn_spec
+        syn_spec = "static_synapse" if syn_spec is None else syn_spec
+        if is_string(conn_spec):
+            conn_spec = {"rule": conn_spec}
+        if is_string(syn_spec):
+            syn_spec = {"synapse_model": syn_spec}
+        pre, post = args
+        if not isinstance(pre, NodeCollection) or not isinstance(post, NodeCollection):
+            raise TypeError("Arguments must be either a SynapseCollection or two NodeCollections")
+        sps(pre)
+        sps(post)
+        sps(conn_spec)
+        sps(syn_spec)
+        sr("Disconnect_g_g_D_D")
+    else:
+        raise TypeError("Arguments must be either a SynapseCollection or two NodeCollections")

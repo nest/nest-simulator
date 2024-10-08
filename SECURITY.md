@@ -1,7 +1,7 @@
 
 # Security Policy
 
-The NEST simulator is research oriented software and as such is expected to
+The NEST Simulator is research oriented software and as such is expected to
 run mainly in well protected environments. In case it is found that this
 software can be used to violate security mechanisms, developers will try to
 provide patches that mitigate the risk of this misuse.

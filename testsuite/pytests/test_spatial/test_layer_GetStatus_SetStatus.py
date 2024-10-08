@@ -24,107 +24,99 @@ Tests for GetStatus, SetStatus, get and set calls for layer NodeCollections.
 """
 
 import unittest
+
 import nest
 
 
 class GetSetTestCase(unittest.TestCase):
-
     def setUp(self):
         nest.ResetKernel()
 
     def test_LayerSetStatus(self):
         """Test SetStatus on layer NodeCollection."""
 
-        layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(
-                                shape=[3, 3],
-                                extent=[2., 2.],
-                                edge_wrap=True))
+        layer = nest.Create(
+            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
+        )
 
         with self.assertRaises(nest.kernel.NESTErrors.DictError):
-            nest.SetStatus(layer, {'center': [1., 1.]})
+            nest.SetStatus(layer, {"center": [1.0, 1.0]})
 
-        nest.SetStatus(layer, 'V_m', -50.)
+        nest.SetStatus(layer, "V_m", -50.0)
 
-        self.assertEqual(nest.GetStatus(layer, 'V_m'),
-                         (-50., -50., -50., -50., -50.,
-                          -50., -50., -50., -50.))
+        self.assertEqual(nest.GetStatus(layer, "V_m"), (-50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0))
 
     def test_LayerSpatial(self):
         """Test spatial parameter on layer NodeCollection."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
-            shape=[3, 3], extent=[2., 2.], edge_wrap=True))
+        layer = nest.Create(
+            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
+        )
 
-        center = layer.spatial['center']
-        shape_x = layer.spatial['shape'][0]
-        edge_wrap = layer.spatial['edge_wrap']
-        extent = layer.spatial['extent']
-        network_size = layer.spatial['network_size']
-        shape_y = layer.spatial['shape'][1]
+        center = layer.spatial["center"]
+        shape_x = layer.spatial["shape"][0]
+        edge_wrap = layer.spatial["edge_wrap"]
+        extent = layer.spatial["extent"]
+        network_size = layer.spatial["network_size"]
+        shape_y = layer.spatial["shape"][1]
 
         self.assertEqual(center, (0.0, 0.0))
         self.assertEqual(shape_x, 3)
         self.assertTrue(edge_wrap)
-        self.assertEqual(extent, (2., 2.))
+        self.assertEqual(extent, (2.0, 2.0))
         self.assertEqual(network_size, 9)
         self.assertEqual(shape_y, 3)
 
-        self.assertEqual(layer.get('V_m'),
-                         (-70., -70., -70., -70., -70.,
-                          -70., -70., -70., -70.))
+        self.assertEqual(layer.get("V_m"), (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
 
         # Test get all values
         all_values = layer.spatial
         self.assertEqual(len(all_values.keys()), 5)
-        self.assertEqual(all_values['center'], (0.0, 0.0))
-        self.assertEqual(all_values['shape'][0], 3)
-        self.assertTrue(all_values['edge_wrap'])
-        self.assertEqual(all_values['extent'], (2., 2.))
-        self.assertEqual(all_values['network_size'], 9)
-        self.assertEqual(all_values['shape'][1], 3)
+        self.assertEqual(all_values["center"], (0.0, 0.0))
+        self.assertEqual(all_values["shape"][0], 3)
+        self.assertTrue(all_values["edge_wrap"])
+        self.assertEqual(all_values["extent"], (2.0, 2.0))
+        self.assertEqual(all_values["network_size"], 9)
+        self.assertEqual(all_values["shape"][1], 3)
 
     def test_SingleElementLayerSpatial(self):
         """Test spatial parameter on single element layer."""
 
-        layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 1]))
+        layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1]))
 
         self.assertEqual(len(layer), 1)
-        center = layer.spatial['center']
-        columns = layer.spatial['shape'][0]
+        center = layer.spatial["center"]
+        columns = layer.spatial["shape"][0]
         all_values = layer.spatial
 
-        self.assertEqual(center, (0., 0.))
+        self.assertEqual(center, (0.0, 0.0))
         self.assertEqual(columns, 1)
-        self.assertEqual(all_values['center'], (0.0, 0.0))
+        self.assertEqual(all_values["center"], (0.0, 0.0))
 
     def test_LayerGet(self):
         """Test get function on layer NodeCollection"""
 
-        layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(shape=[2, 2]))
+        layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[2, 2]))
 
-        self.assertEqual(layer.get('V_m'), (-70., -70., -70., -70.))
+        self.assertEqual(layer.get("V_m"), (-70.0, -70.0, -70.0, -70.0))
 
     def test_LayerSet(self):
         """Test set function on layer NodeCollection."""
 
-        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
-            shape=[3, 3], extent=[2., 2.], edge_wrap=True))
+        layer = nest.Create(
+            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
+        )
 
         with self.assertRaises(nest.kernel.NESTErrors.DictError):
-            layer.set({'center': [1., 1.]})
+            layer.set({"center": [1.0, 1.0]})
 
-        layer.set(V_m=-50.)
+        layer.set(V_m=-50.0)
 
-        self.assertEqual(layer.get('V_m'),
-                         (-50., -50., -50., -50., -50.,
-                          -50., -50., -50., -50.))
+        self.assertEqual(layer.get("V_m"), (-50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0))
 
 
 def suite():
-    suite = unittest.makeSuite(GetSetTestCase, 'test')
+    suite = unittest.makeSuite(GetSetTestCase, "test")
     return suite
 
 

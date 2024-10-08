@@ -33,6 +33,13 @@ please follow the guidelines below:
    to try to ask several diverse questions in one email. Some of your questions may get overlooked if
    there is just too much information to read through.
 
+.. grid:: 2
+
+   .. grid-item-card:: |mailicon| Access the mailing list
+       :link-type: url 
+       :link: https://www.nest-initiative.org/mailinglist/
+
+
 ----
 
 **Feel free to contribute to the conversation!**
@@ -41,6 +48,4 @@ The purpose of the mailing list
 is to share ideas and solutions. We encourage all our users to provide their
 knowledge and experience to those seeking advice.
 
-`Access the mailing list here <https://www.nest-initiative.org/mailinglist/>`_
-------------------------------------------------------------------------------------
-
+.. |mailicon| image:: ../../static/img/email_orange64.png

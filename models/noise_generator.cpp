@@ -37,7 +37,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -259,8 +258,8 @@ nest::noise_generator::pre_run_hook()
  * Update function and event hook
  * ---------------------------------------------------------------- */
 
-nest::port
-nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+size_t
+nest::noise_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -274,8 +273,8 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
   {
     CurrentEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
-    if ( p != invalid_port_ and not is_model_prototype() )
+    const size_t p = target.handles_test_event( e, receptor_type );
+    if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_;
     }
@@ -289,9 +288,6 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
 void
 nest::noise_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const long start = origin.get_steps();
 
   for ( long offs = from; offs < to; ++offs )
@@ -344,10 +340,10 @@ void
 nest::noise_generator::event_hook( DSCurrentEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.amps_.size() );
+  assert( prt < B_.amps_.size() );
 
   e.set_current( B_.amps_[ prt ] );
   e.get_receiver().handle( e );

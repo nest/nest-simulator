@@ -50,70 +50,69 @@ std::ostream& operator<<( std::ostream&, const nest::Time& );
 namespace nest
 {
 /**
-   Class to handle simulation time and realtime.
-   Main idea:
-
-   All times given in multiples of "tics":
-   A "tic" is a microsecond by default, but may be changed through
-   the option -Dtics_per_ms to configure.
-
-   User access to time only through accessor functions:
-   - Times can be added, subtracted, and multiplied by ints
-   - All real world time is given in ms as double
-   - All computation is done based on tics
-
-   Three time variables are kept:
-   #- time in tics
-   #- time in ms
-   #- time in steps
-
-   The largest representable time is available through Time::max().
-
-   @NOTE
-   - The time base (tics per millisecond) can only be set at
-     compile time and by the Time::set_resolution().
-   - Times in ms are rounded up to the next tic interval.
-     This ensures that the time intervals (0, h] are open at the left
-     point and closed at the right point. It also ensures compatibility with
-     precise timing, namely that the offset u fulfills -h > u >= 0.
-   - The resolution (tics per step) can only be set before the first
-     node is created and before the simulation starts. The resolution
-     can be changed after the network has been deleted and the time
-     reset.
-   - Implementers of models or methods containing persistent (member variable)
-     Time objects, must ensure that these are recalibrated before the
-     simulation starts. This is necessary to ensure that step values
-     are updated after a change in resolution.
-   - The default resolution can be changed using the --with-tics_per_step
-     option to configure.
-
-
-   @NOTE
-   The step-time counter is NOT changed when the resolution is
-   changed.  This is of no consequence, since changes in resolution
-   are permitted at t=0 only.
-
-   @NOTE
-   - Neurons update themselves in min-delay intervals. During such a min-delay
-     update step, time is in a sense undefined, since it is up to the model how
-     it takes its dynamics across the interval. Any spikes emitted and voltage
-     information returned must be fixed to time grid points.
-   - One may later consider to introduce per-tread simulation time variables.
-
-   @NOTE
-   Delays must be added to current time, and moduloed each time a
-   spike is inserted into a ring buffer.  That operation must be
-   very fast, and there is no time for conversions.  Thus, delays
-   must be stored in steps.  Given the large number of delays in a
-   system, we cannot use class Time with its three member variables
-   to store delays.  Delays must thus be stored explicitly as delay
-   steps.
-
-   Markus Diesmann,       2008-01-25
-   Hans Ekkehard Plesser, 2004-01-25, 2006-12-18
-   Marc-Oliver Gewaltig,  2004-01-27
-
-*/
+ *  Class to handle simulation time and realtime.
+ *
+ *  All times given in multiples of "tics":
+ *  A "tic" is a microsecond by default, but may be changed through
+ *  the option -Dtics_per_ms to configure.
+ *
+ *  User access to time only through accessor functions:
+ *  - Times can be added, subtracted, and multiplied by ints
+ *  - All real world time is given in ms as double
+ *  - All computation is done based on tics
+ *
+ *  Three time variables are kept:
+ *  #- time in tics
+ *  #- time in ms
+ *  #- time in steps
+ *
+ *  The largest representable time is available through Time::max().
+ *
+ *  @NOTE
+ *  - The time base (tics per millisecond) can only be set at
+ *    compile time and by the Time::set_resolution().
+ *  - Times in ms are rounded up to the next tic interval.
+ *    This ensures that the time intervals (0, h] are open at the left
+ *    point and closed at the right point. It also ensures compatibility with
+ *    precise timing, namely that the offset u fulfills -h > u >= 0.
+ *  - The resolution (tics per step) can only be set before the first
+ *    node is created and before the simulation starts. The resolution
+ *    can be changed after the network has been deleted and the time
+ *    reset.
+ *  - Implementers of models or methods containing persistent (member variable)
+ *    Time objects, must ensure that these are recalibrated before the
+ *    simulation starts. This is necessary to ensure that step values
+ *    are updated after a change in resolution.
+ *  - The default resolution can be changed using the --with-tics_per_step
+ *    option to configure.
+ *
+ *
+ *  @NOTE
+ *  The step-time counter is NOT changed when the resolution is
+ *  changed.  This is of no consequence, since changes in resolution
+ *  are permitted at t=0 only.
+ *
+ *  @NOTE
+ *  - Neurons update themselves in min-delay intervals. During such a min-delay
+ *    update step, time is in a sense undefined, since it is up to the model how
+ *    it takes its dynamics across the interval. Any spikes emitted and voltage
+ *    information returned must be fixed to time grid points.
+ *  - One may later consider to introduce per-tread simulation time variables.
+ *
+ *  @NOTE
+ *  Delays must be added to current time, and moduloed each time a
+ *  spike is inserted into a ring buffer.  That operation must be
+ *  very fast, and there is no time for conversions.  Thus, delays
+ *  must be stored in steps.  Given the large number of delays in a
+ *  system, we cannot use class Time with its three member variables
+ *  to store delays.  Delays must thus be stored explicitly as delay
+ *  steps.
+ *
+ *  Markus Diesmann,       2008-01-25
+ *  Hans Ekkehard Plesser, 2004-01-25, 2006-12-18
+ *  Marc-Oliver Gewaltig,  2004-01-27
+ *
+ */
 
 /////////////////////////////////////////////////////////////
 // Function to use internally
@@ -143,7 +142,6 @@ class Time
   // tic_t: tics in  a step, signed long or long long
   // delay: steps, signed long
   // double: milliseconds (double!)
-
   friend class TimeConverter;
 
   /////////////////////////////////////////////////////////////
@@ -197,7 +195,7 @@ protected:
   friend Time operator-( const Time& t1, const Time& t2 );
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
-  friend std::ostream&( ::operator<<)( std::ostream&, const Time& );
+  friend std::ostream&( ::operator<< )( std::ostream&, const Time& );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -207,10 +205,10 @@ protected:
   struct Limit
   {
     tic_t tics;
-    delay steps;
+    long steps;
     double ms;
 
-    Limit( tic_t tics, delay steps, double ms )
+    Limit( tic_t tics, long steps, double ms )
       : tics( tics )
       , steps( steps )
       , ms( ms )
@@ -227,14 +225,14 @@ protected:
   static struct LimitPosInf
   {
     static const tic_t tics = tic_t_max / Range::INF_MARGIN + 1;
-    static const delay steps = delay_max;
+    static const long steps = delay_max;
 #define LIM_POS_INF_ms DBL_MAX // because C++ bites
   } LIM_POS_INF;
 
   static struct LimitNegInf
   {
     static const tic_t tics = -tic_t_max / Range::INF_MARGIN - 1;
-    static const delay steps = -delay_max;
+    static const long steps = -delay_max;
 #define LIM_NEG_INF_ms ( -DBL_MAX ) // c++ bites
   } LIM_NEG_INF;
 
@@ -252,8 +250,8 @@ public:
 
   struct step
   {
-    delay t;
-    explicit step( delay t )
+    long t;
+    explicit step( long t )
       : t( t )
     {
     }
@@ -286,35 +284,35 @@ public:
   /////////////////////////////////////////////////////////////
 
 protected:
-  explicit Time( tic_t tics )
+  Time( tic_t tics )
     : tics( tics )
   {
-  } // This doesn't check ranges.
-  // Ergo: LIM_MAX.tics >= tics >= LIM_MIN.tics or
-  //       tics == LIM_POS_INF.tics or LIM_NEG_INF.tics
+    // This doesn't check ranges.
+    // Ergo: LIM_MAX.tics >= tics >= LIM_MIN.tics or tics == LIM_POS_INF.tics or LIM_NEG_INF.tics
+  }
 
 public:
   Time()
     : tics( 0 ) {};
 
-  // Default copy constructor: assumes legal time object
-  // Defined by compiler.
-  // Time(const Time& t);
-
   Time( tic t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
+        : ( t.t < 0 )                          ? LIM_NEG_INF.tics
+                                               : LIM_POS_INF.tics )
   {
   }
 
   Time( step t )
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
-                                                : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+        : ( t.t < 0 )                           ? LIM_NEG_INF.tics
+                                                : LIM_POS_INF.tics )
   {
   }
 
   Time( ms t )
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
-                                             : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+        : ( t.t < 0 )                        ? LIM_NEG_INF.tics
+                                             : LIM_POS_INF.tics )
   {
   }
 
@@ -386,18 +384,12 @@ public:
   bool
   is_neg_inf() const
   {
-    return tics <= LIM_NEG_INF.tics; // currently tics can never
-                                     // become smaller than
-                                     // LIM_NEG_INF.tics. however if
-                                     // LIM_NEG_INF.tics represent
-                                     // negative infinity, any smaller
-                                     // value cannot be larger and
-                                     // thus must be infinity as
-                                     // well. to be on the safe side
-                                     // we use less-or-equal instead
-                                     // of just equal.
+    // Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
+    // LIM_NEG_INF.tics represent negative infinity, any smaller
+    // value cannot be larger and thus must be infinity as well. to be on the safe side
+    // we use less-or-equal instead of just equal.
+    return tics <= LIM_NEG_INF.tics;
   }
-
   bool
   is_pos_inf() const
   {
@@ -518,7 +510,7 @@ public:
     return Range::MS_PER_TIC * tics;
   }
 
-  delay
+  long
   get_steps() const
   {
     if ( is_pos_inf() )
@@ -537,18 +529,19 @@ public:
 
   /**
    * Convert between delays given in steps and milliseconds.
+   *
    * This is not a reversible operation, since steps have a finite
    * rounding resolution. This is not a truncation, but rounding as per
    * ld_round, which is different from ms_stamp --> Time mapping, which rounds
    * up. See #903.
    */
   static double
-  delay_steps_to_ms( delay steps )
+  delay_steps_to_ms( long steps )
   {
     return steps * Range::MS_PER_STEP;
   }
 
-  static delay
+  static long
   delay_ms_to_steps( double ms )
   {
     return ld_round( ms * Range::STEPS_PER_MS );
@@ -615,7 +608,8 @@ operator-( const Time& t1, const Time& t2 )
   return Time::tic( t1.tics - t2.tics ); // check range
 }
 
-inline Time operator*( const long factor, const Time& t )
+inline Time
+operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
@@ -633,7 +627,8 @@ inline Time operator*( const long factor, const Time& t )
   }
 }
 
-inline Time operator*( const Time& t, long factor )
+inline Time
+operator*( const Time& t, long factor )
 {
   return factor * t;
 }

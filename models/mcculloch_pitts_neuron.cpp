@@ -45,7 +45,7 @@ template <>
 void
 RecordablesMap< nest::mcculloch_pitts_neuron >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::S, &nest::mcculloch_pitts_neuron::get_output_state__ );
   insert_( names::h, &nest::mcculloch_pitts_neuron::get_input__ );
 }

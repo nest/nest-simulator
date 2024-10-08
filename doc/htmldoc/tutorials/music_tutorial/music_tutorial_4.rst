@@ -7,7 +7,7 @@ MUSIC has recently acquired a `plain Python interface <https://github.com/INCF/M
 to go along with the C++ API. If you just want to connect with a simulation
 rather than adding MUSIC capability to a simulator, this Python interface can
 be a lot more convenient than C++. You have Numpy, Scipy and other high-level
-libraries available, and you don’t need to compile anything.
+libraries available, and you don't need to compile anything.
 
 The interface is closely modelled on the C++ API; indeed, the steps to
 use it is almost exactly the same. You can mostly refer to the :ref:`C++
@@ -16,7 +16,6 @@ differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
     import music
@@ -47,7 +46,7 @@ Unlike the C++ API, the index is not an object, but simply a label
 indicating global or local indexing. The ``map()`` call
 thus need to get the first ID and the number of elements mapped to this
 rank directly. Also note that the ``map()`` functions have
-a somewhat unexpected parameter order, so it’s best to use named
+a somewhat unexpected parameter order, so it's best to use named
 parameters just in case.
 
 The runtime looks the same as the C++ counterpart as well. We get the
@@ -55,7 +54,6 @@ current simulation time, and repeatedly send new sets of events as long
 as the current time is smaller than the simulation time.
 
 .. code-block:: python
-    :linenos:
 
     import Queue
 
@@ -89,7 +87,7 @@ our event queue.
 
 The input handler function has signature
 ``(float time, int indextype, int channel_id)``. The
-``time`` and ``channel_id`` are the event
+:hxt_ref:`time` and ``channel_id`` are the event
 times and IDs as before. The ``indextype`` is the type of
 the map index for this input and is ``music.Index.LOCAL``
 or ``music.Index.GLOBAL``.

@@ -39,6 +39,7 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 {
   <<
     /positions [[0.0 0.0]]
+    /extent [1.0 1.0]
     /elements /iaf_psc_alpha
   >>
   CreateLayer
@@ -46,6 +47,7 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 
   <<   % test 3d layer
     /positions [[0.0 0.0 0.0]]
+    /extent [1.0 1.0 1.0]
     /elements /iaf_psc_alpha
   >>
   CreateLayer
@@ -60,4 +62,3 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 
 }
 distributed_pass_or_die
-

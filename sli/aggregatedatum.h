@@ -63,7 +63,7 @@ protected:
 
 private:
   virtual Datum*
-  clone( void ) const
+  clone() const
   {
     return new AggregateDatum< C, slt >( *this );
   }
@@ -96,7 +96,7 @@ public:
     // to work.
 
     const AggregateDatum< C, slt >* ddc = dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
-    if ( ddc == NULL )
+    if ( not ddc )
     {
       return false;
     }
@@ -117,7 +117,7 @@ public:
   static void
   operator delete( void* p, size_t size )
   {
-    if ( p == NULL )
+    if ( not p )
     {
       return;
     }

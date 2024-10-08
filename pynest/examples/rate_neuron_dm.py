@@ -35,8 +35,8 @@ affects which neuron exhibits larger activity and hence which
 decision will be made.
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 ##########################################################################
@@ -49,15 +49,15 @@ def build_network(sigma, dt):
     nest.resolution = dt
     nest.use_wfr = False
 
-    Params = {'lambda': 0.1, 'sigma': sigma, 'tau': 1., 'rectify_output': True}
-    D1 = nest.Create('lin_rate_ipn', params=Params)
-    D2 = nest.Create('lin_rate_ipn', params=Params)
+    Params = {"lambda": 0.1, "sigma": sigma, "tau": 1.0, "rectify_output": True}
+    D1 = nest.Create("lin_rate_ipn", params=Params)
+    D2 = nest.Create("lin_rate_ipn", params=Params)
 
     nest.Connect(nest.AllToAll(D1, D2, syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=-0.2)))
     nest.Connect(nest.AllToAll(D2, D1, syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=-0.2)))
 
-    mm = nest.Create('multimeter')
-    mm.set(interval=dt, record_from=['rate'])
+    mm = nest.Create("multimeter")
+    mm.set(interval=dt, record_from=["rate"])
     nest.Connect(nest.AllToAll(mm, D1, syn_spec=nest.synapsemodels.static(delay=dt)))
     nest.Connect(nest.AllToAll(mm, D2, syn_spec=nest.synapsemodels.static(delay=dt)))
 
@@ -87,8 +87,8 @@ fig_size = [14, 8]
 fig_rows = 3
 fig_cols = 3
 fig_plots = fig_rows * fig_cols
-face = 'white'
-edge = 'white'
+face = "white"
+edge = "white"
 
 ax = [None] * fig_plots
 fig = plt.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
@@ -102,33 +102,31 @@ for i in range(9):
     r = int(i / 3)
     D1, D2, mm = build_network(sigma[r], dt)
 
-###########################################################################
-# First using build_network the network is build and the handles of
-# the decision units and the multimeter are stored in `D1`, `D2` and `mm`
+    ###########################################################################
+    # First using build_network the network is build and the handles of
+    # the decision units and the multimeter are stored in `D1`, `D2` and `mm`
 
     nest.Simulate(100.0)
-    D1.mu = 1. + dE[c]
-    D2.mu = 1. - dE[c]
+    D1.mu = 1.0 + dE[c]
+    D2.mu = 1.0 - dE[c]
     nest.Simulate(100.0)
 
-########################################################################
-# The network is simulated using ``Simulate``, which takes the desired
-# simulation time in milliseconds and advances the network state by
-# this amount of time. After an initial period in the absence of evidence
-# for either decision, evidence is given by changing the state of each
+    ########################################################################
+    # The network is simulated using ``Simulate``, which takes the desired
+    # simulation time in milliseconds and advances the network state by
+    # this amount of time. After an initial period in the absence of evidence
+    # for either decision, evidence is given by changing the state of each
 
-    senders = mm.get('events', 'senders')
-    voltages = mm.get('events', 'rate')
+    senders = mm.get("events", "senders")
+    voltages = mm.get("events", "rate")
 
-########################################################################
-# The activity values ('voltages') are read out by the multimeter
+    ########################################################################
+    # The activity values ('voltages') are read out by the multimeter
 
     ax[i] = fig.add_subplot(fig_rows, fig_cols, i + 1)
-    ax[i].plot(T, voltages[numpy.where(senders == D1.global_id)],
-               'b', linewidth=2, label="D1")
-    ax[i].plot(T, voltages[numpy.where(senders == D2.global_id)],
-               'r', linewidth=2, label="D2")
-    ax[i].set_ylim([-.5, 12.])
+    ax[i].plot(T, voltages[numpy.where(senders == D1.global_id)], "b", linewidth=2, label="D1")
+    ax[i].plot(T, voltages[numpy.where(senders == D2.global_id)], "r", linewidth=2, label="D2")
+    ax[i].set_ylim([-0.5, 12.0])
     ax[i].get_xaxis().set_ticks([])
     ax[i].get_yaxis().set_ticks([])
     if c == 0:
@@ -141,7 +139,7 @@ for i in range(9):
             plt.legend(loc=0)
     if r == 2:
         ax[i].get_xaxis().set_ticks([0, 50, 100, 150, 200])
-        ax[i].set_xlabel('time (ms)')
+        ax[i].set_xlabel("time (ms)")
 
 ########################################################################
 # The activity of the two units is plotted in each scenario.

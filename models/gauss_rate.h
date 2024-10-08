@@ -127,6 +127,11 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gauss_rate
+
 EndUserDocs */
 
 class nonlinearities_gauss_rate

@@ -1,0 +1,7 @@
+# The UserDocExtractor preprocesses `/models/*.h` and `/nestkernel/*.h` files into
+# .rst and .json files to be picked up during the Sphinx build.
+*.rst
+*.json
+# Only these files should be tracked.
+!models-main.rst
+!models-toc.rst

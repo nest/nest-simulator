@@ -102,7 +102,7 @@ is composed of a series of blocks in the following order:
 The data layout of the NEST SIONlib file format v2 is shown in the
 following figure.
 
-.. figure:: ../_static/img/nest_sionlib_file_format_v2.png
+.. figure:: ../static/img/nest_sionlib_file_format_v2.png
    :alt: NEST SIONlib binary file format
 
    NEST SIONlib binary file format.
@@ -302,7 +302,7 @@ private:
     {
     }
 
-    index node_id;
+    size_t node_id;
     unsigned int type;
     std::string name;
     std::string label;
@@ -332,10 +332,10 @@ private:
     SIONBuffer buffer;
   };
 
-  typedef std::vector< std::map< index, DeviceEntry > > device_map;
+  typedef std::vector< std::map< size_t, DeviceEntry > > device_map;
   device_map devices_;
 
-  typedef std::map< thread, FileEntry > file_map;
+  typedef std::map< size_t, FileEntry > file_map;
   file_map files_;
 
   std::string filename_;
@@ -365,4 +365,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_SIONLIB_H
+#endif /* #ifndef RECORDING_BACKEND_SIONLIB_H */

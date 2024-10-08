@@ -1,3 +1,7 @@
+:orphan:
+
+.. _models_contents:
+
 Models contents
 ===============
 
@@ -6,7 +10,7 @@ Models contents
     :maxdepth: 1
     :hidden:
 
-{% for item in nest_models %}
+    {% for item in nest_models %}
     {{ item }}
-{% endfor %}
+    {% endfor %}
 

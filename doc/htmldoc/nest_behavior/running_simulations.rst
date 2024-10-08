@@ -17,7 +17,7 @@ kernel attribute:
     nest.resolution = 0.1
 
 Even though a neuron model can use smaller time steps internally, the
-membrane potential will only be visible to a ``multimeter`` on the
+membrane potential will only be visible to a :hxt_ref:`multimeter` on the
 outside at time points that are multiples of the simulation resolution.
 
 In contrast to the update of nodes, an event-driven approach is used for
@@ -35,7 +35,7 @@ following figure shows the basic loop that is run upon a call to
    Simulation Loop
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark
-gray boxes denote MPI parallel parts. U(St) is the update operator that
+gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
 
 .. _simulation_resolution:
@@ -61,7 +61,7 @@ Two major optimizations in NEST are built on this decoupling:
    always for *dmin* time in one go, as to keep neurons in cache as long
    as possible.
 
-2. MPI processes only communicate in intervals of *dmin* as to minimize
+2. :hxt_ref:`MPI` processes only communicate in intervals of *dmin* as to minimize
    communication costs.
 
 These optimizations mean that the sizes of spike buffers in nodes and
@@ -82,7 +82,7 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
+to :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
@@ -103,6 +103,14 @@ extrema too wide without need leads to decreased performance due to more
 update calls and communication cycles (small *dmin*), or increased
 memory consumption of NEST (large *dmax*).
 
+Delays after changes in resolution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you change the resolution, then *dmin*, *dmax*, as well as the time-based model defaults (e.g., neuronal refractory times, synaptic delays) are adjusted to match the new resolution. In case the precision of these delays cannot be matched with the new resolution (e.g., *dmin=1.6*, *dmax=5.3* and *new_resolution=1.0*), *dmin* is rounded down (*dmin=1.0*), *dmax* is rounded up (*dmax=6.0*), and the time-based model defaults are rounded mathematically. When the new resolution value is larger than a time-based model default, this value is set to the new resolution.
+
+.. note::
+
+    Delays cannot be smaller than the resolution. Further, the resolution cannot be changed once model defaults have been changed or connections have been created.
+
 Spike generation and precision
 ------------------------------
 
@@ -117,7 +125,7 @@ also means that the membrane potential recording will never show values
 above the threshold. The time of the spike is always the time at *the
 end of the interval* during which the threshold was crossed.
 
-NEST also has a some models that determine the precise time of the
+NEST also has some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
 :ref:`precise spike time neurons <sim_precise_spike_times>`
 for details about neuron update in continuous time and the
@@ -251,7 +259,7 @@ instances in parallel; don't forget to use different
 :ref:`random seeds <random_numbers>`!
 
 The following example performs simulations of a single neuron driven by
-a Poisson spike train using different seeds and output files for each run:
+a Poisson :hxt_ref:`spike train` using different seeds and output files for each run:
 
 ::
 

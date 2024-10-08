@@ -31,11 +31,11 @@ Since a DC input affects only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
 """
 
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
 
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
 simtime = 1000
@@ -47,10 +47,10 @@ dcto = 2000
 
 h = 0.1  # simulation step size in mS
 
-neuron = nest.Create('hh_psc_alpha')
-sr = nest.Create('spike_recorder')
+neuron = nest.Create("hh_psc_alpha")
+sr = nest.Create("spike_recorder")
 
-sr.record_to = 'memory'
+sr.record_to = "memory"
 
 nest.Connect(nest.AllToAll(neuron, sr, syn_spec=nest.synapsemodels.static(weight=1.0, delay=h)))
 
@@ -67,7 +67,7 @@ for i, amp in enumerate(range(dcfrom, dcto, dcstep)):
 
     n_events = sr.n_events
     amplitudes[i] = amp
-    event_freqs[i] = n_events / (simtime / 1000.)
+    event_freqs[i] = n_events / (simtime / 1000.0)
 
 plt.plot(amplitudes, event_freqs)
 plt.show()

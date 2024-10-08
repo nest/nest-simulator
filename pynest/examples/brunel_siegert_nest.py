@@ -87,11 +87,12 @@ C_tot = int(CI + CE)  # total number of synapses per neuron
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
-neuron_params = {'tau_m': tauMem,
-                 't_ref': 2.0,
-                 'theta': theta,
-                 'V_reset': 0.0,
-                 }
+neuron_params = {
+    "tau_m": tauMem,
+    "t_ref": 2.0,
+    "theta": theta,
+    "V_reset": 0.0,
+}
 
 J = 0.1  # postsynaptic amplitude in mV in the SLIFN
 J_ex = J  # amplitude of excitatory postsynaptic potential
@@ -102,9 +103,9 @@ drift_factor_ext = tauMem * 1e-3 * J_ex
 drift_factor_ex = tauMem * 1e-3 * CE * J_ex
 drift_factor_in = tauMem * 1e-3 * CI * J_in
 # diffusion_factor for diffusion connections (see [1], eq. 29)
-diffusion_factor_ext = tauMem * 1e-3 * J_ex ** 2
-diffusion_factor_ex = tauMem * 1e-3 * CE * J_ex ** 2
-diffusion_factor_in = tauMem * 1e-3 * CI * J_in ** 2
+diffusion_factor_ext = tauMem * 1e-3 * J_ex**2
+diffusion_factor_ex = tauMem * 1e-3 * CE * J_ex**2
+diffusion_factor_in = tauMem * 1e-3 * CI * J_in**2
 
 ###############################################################################
 # External drive, this is equivalent to the drive in the SLIFN
@@ -139,13 +140,13 @@ siegert_in = nest.Create("siegert_neuron", params=neuron_params)
 # neuron is controlled by setting ``mean`` to the rate of the corresponding
 # poisson generator in the SLIFN.
 
-siegert_drive = nest.Create('siegert_neuron', params={'mean': p_rate})
+siegert_drive = nest.Create("siegert_neuron", params={"mean": p_rate})
 
 ###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter
 # ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
-multimeter = nest.Create('multimeter', params={'record_from': ['rate'], 'interval': dt})
+multimeter = nest.Create("multimeter", params={"record_from": ["rate"], "interval": dt})
 
 ###############################################################################
 # Connections between ``Siegert neurons`` are realized with the synapse model
@@ -185,8 +186,8 @@ nest.Simulate(simtime)
 # rates are identical. For comparison execute the example ``brunel_delta_nest.py``.
 
 data = multimeter.events
-rates_ex = data['rate'][numpy.where(data['senders'] == siegert_ex.global_id)]
-rates_in = data['rate'][numpy.where(data['senders'] == siegert_in.global_id)]
-times = data['times'][numpy.where(data['senders'] == siegert_in.global_id)]
+rates_ex = data["rate"][numpy.where(data["senders"] == siegert_ex.global_id)]
+rates_in = data["rate"][numpy.where(data["senders"] == siegert_in.global_id)]
+times = data["times"][numpy.where(data["senders"] == siegert_in.global_id)]
 print(f"Excitatory rate   : {rates_ex[-1]:.2f} Hz")
 print(f"Inhibitory rate   : {rates_in[-1]:.2f} Hz")

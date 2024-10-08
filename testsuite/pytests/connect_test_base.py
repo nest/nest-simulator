@@ -19,13 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
+import nest
 import numpy as np
 import scipy.stats
-import nest
-import unittest
 
 try:
     from mpi4py import MPI
+
     haveMPI4Py = True
 except ImportError:
     haveMPI4Py = False
@@ -45,7 +47,7 @@ class ConnectTestBase(unittest.TestCase):
     # We force subclassing by setting rule to None here and provide default
     # values for other parameters.
     rule = None
-    conn_dict = {'rule': rule}
+    conn_dict = {"rule": rule}
     # sizes of populations
     N1 = 6
     N2 = 6
@@ -55,7 +57,7 @@ class ConnectTestBase(unittest.TestCase):
     w0 = 1.0
     d0 = 1.0
     r0 = 0
-    syn0 = 'static_synapse'
+    syn0 = "static_synapse"
     # parameter for test of distributed parameter
     pval = 0.05  # minimum p-value to pass kolmogorov smirnov test
     # number of threads
@@ -72,10 +74,10 @@ class ConnectTestBase(unittest.TestCase):
             N1 = self.N1
         if N2 is None:
             N2 = self.N2
-        nest.set_verbosity('M_FATAL')
+        nest.set_verbosity("M_FATAL")
 
-        self.pop1 = nest.Create('iaf_psc_alpha', N1)
-        self.pop2 = nest.Create('iaf_psc_alpha', N2)
+        self.pop1 = nest.Create("iaf_psc_alpha", N1)
+        self.pop2 = nest.Create("iaf_psc_alpha", N2)
         projections.source = self.pop1
         projections.target = self.pop2
         nest.Connect(projections)
@@ -84,9 +86,9 @@ class ConnectTestBase(unittest.TestCase):
     def setUpNetworkOnePop(self, projections=None, N=None):
         if N is None:
             N = self.N1
-        nest.set_verbosity('M_FATAL')
+        nest.set_verbosity("M_FATAL")
 
-        self.pop = nest.Create('iaf_psc_alpha', N)
+        self.pop = nest.Create("iaf_psc_alpha", N)
         projections.source = self.pop
         projections.target = self.pop
         nest.Connect(projections)
@@ -97,10 +99,10 @@ class ConnectTestBase(unittest.TestCase):
 
         # one weight for all connections
         w0 = 0.351
-        label = 'weight'
+        label = "weight"
         syn_params = {label: w0}
         syn_params = nest.synapsemodels.static(weight=w0)
-        check_synapse([label], [syn_params.specs['weight']], syn_params, self)
+        check_synapse([label], [syn_params.specs["weight"]], syn_params, self)
 
     def testDelaySetting(self):
         # test if delays are set correctly
@@ -112,7 +114,7 @@ class ConnectTestBase(unittest.TestCase):
         conn_params.syn_spec = syn_params
         self.setUpNetwork(conn_params)
         connections = nest.GetConnections(self.pop1, self.pop2)
-        nest_delays = connections.get('delay')
+        nest_delays = connections.get("delay")
         # all delays need to be equal
         self.assertTrue(all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
@@ -121,8 +123,8 @@ class ConnectTestBase(unittest.TestCase):
     def testRPortSetting(self):
         conn_params = self.conn_dict.clone()
 
-        neuron_model = 'iaf_psc_exp_multisynapse'
-        neuron_dict = {'tau_syn': [0.5, 0.7]}
+        neuron_model = "iaf_psc_exp_multisynapse"
+        neuron_dict = {"tau_syn": [0.5, 0.7]}
         rtype = 2
         self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = nest.Create(neuron_model, self.N2, neuron_dict)
@@ -132,7 +134,7 @@ class ConnectTestBase(unittest.TestCase):
         conn_params.syn_spec = syn_params
         nest.Connect(conn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        ports = conns.get('receptor')
+        ports = conns.get("receptor")
         self.assertTrue(all_equal(ports))
         self.assertTrue(ports[0] == rtype)
 
@@ -143,7 +145,7 @@ class ConnectTestBase(unittest.TestCase):
         conn_params.syn_spec = test_syn
         self.setUpNetwork(conn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        syns = conns.get('synapse_model')
+        syns = conns.get("synapse_model")
         self.assertTrue(all_equal(syns))
         self.assertTrue(syns[0] == syn_model)
 
@@ -152,17 +154,17 @@ class ConnectTestBase(unittest.TestCase):
         conn_params = self.conn_dict.clone()
         self.setUpNetwork(conn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        self.assertTrue(all(x == self.w0 for x in conns.get('weight')))
-        self.assertTrue(all(x == self.d0 for x in conns.get('delay')))
-        self.assertTrue(all(x == self.r0 for x in conns.get('receptor')))
-        self.assertTrue(all(x == self.syn0 for x in conns.get('synapse_model')))
+        self.assertTrue(all(x == self.w0 for x in conns.get("weight")))
+        self.assertTrue(all(x == self.d0 for x in conns.get("delay")))
+        self.assertTrue(all(x == self.r0 for x in conns.get("receptor")))
+        self.assertTrue(all(x == self.syn0 for x in conns.get("synapse_model")))
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.clone()
 
         # test that autapses exist
         conn_params.allow_autapses = True
-        self.pop1 = nest.Create('iaf_psc_alpha', self.N1)
+        self.pop1 = nest.Create("iaf_psc_alpha", self.N1)
         conn_params.source = self.pop1
         conn_params.target = self.pop1
         nest.Connect(conn_params)
@@ -175,7 +177,7 @@ class ConnectTestBase(unittest.TestCase):
 
         # test that autapses were excluded
         conn_params.allow_autapses = False
-        self.pop1 = nest.Create('iaf_psc_alpha', self.N1)
+        self.pop1 = nest.Create("iaf_psc_alpha", self.N1)
         conn_params.source = self.pop1
         conn_params.target = self.pop1
         nest.Connect(conn_params)
@@ -184,49 +186,49 @@ class ConnectTestBase(unittest.TestCase):
         mpi_assert(np.diag(M), np.zeros(self.N1), self)
 
     def testHtSynapse(self):
-        params = ['P', 'delta_P']
+        params = ["P", "delta_P"]
         values = [0.987, 0.362]
         syn_params = nest.synapsemodels.ht()
         check_synapse(params, values, syn_params, self)
 
     def testQuantalStpSynapse(self):
-        params = ['U', 'tau_fac', 'tau_rec', 'u', 'a', 'n']
+        params = ["U", "tau_fac", "tau_rec", "u", "a", "n"]
         values = [0.679, 8.45, 746.2, 0.498, 10, 5]
         syn_params = nest.synapsemodels.quantal_stp()
         check_synapse(params, values, syn_params, self)
 
     def testStdpFacetshwSynapseHom(self):
-        params = ['a_acausal', 'a_causal', 'a_thresh_th', 'a_thresh_tl', 'next_readout_time']
+        params = ["a_acausal", "a_causal", "a_thresh_th", "a_thresh_tl", "next_readout_time"]
         values = [0.162, 0.263, 20.46, 19.83, 0.1]
         syn_params = nest.synapsemodels.stdp_facetshw_hom()
         check_synapse(params, values, syn_params, self)
 
     def testStdpPlSynapseHom(self):
-        params = ['Kplus']
+        params = ["Kplus"]
         values = [0.173]
         syn_params = nest.synapsemodels.stdp_pl_hom()
         check_synapse(params, values, syn_params, self)
 
     def testStdpSynapseHom(self):
-        params = ['Kplus']
+        params = ["Kplus"]
         values = [0.382]
         syn_params = nest.synapsemodels.stdp_hom()
         check_synapse(params, values, syn_params, self)
 
     def testStdpSynapse(self):
-        params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
+        params = ["Wmax", "alpha", "lambda", "mu_minus", "mu_plus", "tau_plus"]
         values = [98.34, 0.945, 0.02, 0.945, 1.26, 19.73]
         syn_params = nest.synapsemodels.stdp()
         check_synapse(params, values, syn_params, self)
 
     def testTsodyks2Synapse(self):
-        params = ['U', 'tau_fac', 'tau_rec', 'u', 'x']
+        params = ["U", "tau_fac", "tau_rec", "u", "x"]
         values = [0.362, 0.152, 789.2, 0.683, 0.945]
         syn_params = nest.synapsemodels.tsodyks2()
         check_synapse(params, values, syn_params, self)
 
     def testTsodyksSynapse(self):
-        params = ['U', 'tau_fac', 'tau_psc', 'tau_rec', 'x', 'y', 'u']
+        params = ["U", "tau_fac", "tau_psc", "tau_rec", "x", "y", "u"]
         values = [0.452, 0.263, 2.56, 801.34, 0.567, 0.376, 0.102]
         syn_params = nest.synapsemodels.tsodyks()
         check_synapse(params, values, syn_params, self)
@@ -235,99 +237,115 @@ class ConnectTestBase(unittest.TestCase):
         # ResetKernel() since parameter setting not thread save for this
         # synapse type
         nest.ResetKernel()
-        vol = nest.Create('volume_transmitter')
-        nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
-        params = ['c', 'n']
+        vol = nest.Create("volume_transmitter")
+        nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
+        params = ["c", "n"]
         values = [0.153, 0.365]
         syn_params = nest.synapsemodels.stdp_dopamine()
         check_synapse(params, values, syn_params, self)
 
     def testRPortAllSynapses(self):
-        syns = ['cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
-                'static_synapse_hom_w', 'stdp_dopamine_synapse',
-                'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
-                'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
-                'tsodyks_synapse'
-                ]
+        syns = [
+            "cont_delay_synapse",
+            "ht_synapse",
+            "quantal_stp_synapse",
+            "static_synapse_hom_w",
+            "stdp_dopamine_synapse",
+            "stdp_facetshw_synapse_hom",
+            "stdp_pl_synapse_hom",
+            "stdp_synapse_hom",
+            "stdp_synapse",
+            "tsodyks2_synapse",
+            "tsodyks_synapse",
+        ]
         syn_spec = nest.synapsemodels.SynapseModel(synapse_model=None)
         syn_spec.receptor_type = 1
 
         for i, syn in enumerate(syns):
             conn_params = self.conn_dict.clone()
-            if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+            if syn == "stdp_dopamine_synapse":
+                vol = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
 
             syn_spec.synapse_model = syn
-            self.pop1 = nest.Create('iaf_psc_exp_multisynapse', self.N1, {'tau_syn': [0.2, 0.5]})
-            self.pop2 = nest.Create('iaf_psc_exp_multisynapse', self.N2, {'tau_syn': [0.2, 0.5]})
+            self.pop1 = nest.Create("iaf_psc_exp_multisynapse", self.N1, {"tau_syn": [0.2, 0.5]})
+            self.pop2 = nest.Create("iaf_psc_exp_multisynapse", self.N2, {"tau_syn": [0.2, 0.5]})
 
             conn_params.source = self.pop1
             conn_params.target = self.pop2
             conn_params.syn_spec = syn_spec
             nest.Connect(conn_params)
             conns = nest.GetConnections(self.pop1, self.pop2)
-            conn_receptor = conns.get('receptor')
+            conn_receptor = conns.get("receptor")
             self.assertTrue(all_equal(conn_receptor))
-            self.assertTrue(conn_receptor[0] == syn_spec.specs['receptor_type'])
+            self.assertTrue(conn_receptor[0] == syn_spec.specs["receptor_type"])
             self.setUp()
 
     def testWeightAllSynapses(self):
         # test all synapses apart from static_synapse_hom_w where weight is not
         # settable
-        syns = ['cont_delay_synapse', 'ht_synapse', 'quantal_stp_synapse',
-                'stdp_dopamine_synapse',
-                'stdp_facetshw_synapse_hom',
-                'stdp_pl_synapse_hom',
-                'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
-                'tsodyks_synapse'
-                ]
+        syns = [
+            "cont_delay_synapse",
+            "ht_synapse",
+            "quantal_stp_synapse",
+            "stdp_dopamine_synapse",
+            "stdp_facetshw_synapse_hom",
+            "stdp_pl_synapse_hom",
+            "stdp_synapse_hom",
+            "stdp_synapse",
+            "tsodyks2_synapse",
+            "tsodyks_synapse",
+        ]
         syn_spec = nest.synapsemodels.SynapseModel(synapse_model=None)
         syn_spec.weight = 0.372
 
         for syn in syns:
-            if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+            if syn == "stdp_dopamine_synapse":
+                vol = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
             syn_spec.synapse_model = syn
-            check_synapse(['weight'], [syn_spec.specs['weight']], syn_spec, self)
+            check_synapse(["weight"], [syn_spec.specs["weight"]], syn_spec, self)
             self.setUp()
 
     def testDelayAllSynapses(self):
-        syns = ['cont_delay_synapse',
-                'ht_synapse', 'quantal_stp_synapse',
-                'static_synapse_hom_w',
-                'stdp_dopamine_synapse',
-                'stdp_facetshw_synapse_hom', 'stdp_pl_synapse_hom',
-                'stdp_synapse_hom', 'stdp_synapse', 'tsodyks2_synapse',
-                'tsodyks_synapse'
-                ]
+        syns = [
+            "cont_delay_synapse",
+            "ht_synapse",
+            "quantal_stp_synapse",
+            "static_synapse_hom_w",
+            "stdp_dopamine_synapse",
+            "stdp_facetshw_synapse_hom",
+            "stdp_pl_synapse_hom",
+            "stdp_synapse_hom",
+            "stdp_synapse",
+            "tsodyks2_synapse",
+            "tsodyks_synapse",
+        ]
         syn_spec = nest.synapsemodels.SynapseModel(synapse_model=None)
         syn_spec.delay = 0.4
 
         for syn in syns:
-            if syn == 'stdp_dopamine_synapse':
-                vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+            if syn == "stdp_dopamine_synapse":
+                vol = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
 
             syn_spec.synapse_model = syn
-            check_synapse(['delay'], [syn_spec.specs['delay']], syn_spec, self)
+            check_synapse(["delay"], [syn_spec.specs["delay"]], syn_spec, self)
             self.setUp()
 
 
 def gather_data(data_array):
-    '''
+    """
     Gathers data from all mpi processes by collecting all element in a list if
     data is a list and summing all elements to one numpy-array if data is one
     numpy-array. Returns gathered data if rank of current mpi node is zero and
     None otherwise.
-    '''
+    """
     if haveMPI4Py:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
         if MPI.COMM_WORLD.Get_rank() == 0:
             if isinstance(data_array, list):
-                gathered_data = [
-                    item for sublist in data_array_list for item in sublist]
+                gathered_data = [item for sublist in data_array_list for item in sublist]
             else:
                 gathered_data = sum(data_array_list)
             return gathered_data
@@ -347,9 +365,9 @@ def bcast_data(data):
 
 
 def is_array(data):
-    '''
+    """
     Returns True if data is a list or numpy-array and False otherwise.
-    '''
+    """
     return isinstance(data, (list, np.ndarray, np.generic))
 
 
@@ -359,64 +377,63 @@ def mpi_barrier():
 
 
 def mpi_assert(data_original, data_test, TestCase):
-    '''
+    """
     Compares data_original and data_test using assertTrue from the TestCase.
-    '''
+    """
 
     data_original = gather_data(data_original)
     # only test if on rank 0
     if data_original is not None:
-        if isinstance(data_original, (np.ndarray, np.generic)) \
-           and isinstance(data_test, (np.ndarray, np.generic)):
+        if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
             TestCase.assertTrue(np.allclose(data_original, data_test))
         else:
             TestCase.assertTrue(data_original == data_test)
 
 
 def all_equal(x):
-    '''
+    """
     Tests if all elements in a list are equal.
     Returns True or False
-    '''
+    """
     return x.count(x[0]) == len(x)
 
 
 def get_connectivity_matrix(pop1, pop2):
-    '''
+    """
     Returns a connectivity matrix describing all connections from pop1 to pop2
     such that M_ij describes the connection between the jth neuron in pop1 to
     the ith neuron in pop2.
-    '''
+    """
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get('global_id')] = count
+        index_dic[node.get("global_id")] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get('global_id')] = count
+        index_dic[node.get("global_id")] = count
     for source, target in zip(connections.sources(), connections.targets()):
         M[index_dic[target]][index_dic[source]] += 1
     return M
 
 
 def get_weighted_connectivity_matrix(pop1, pop2, label):
-    '''
+    """
     Returns a weighted connectivity matrix describing all connections from
     pop1 to pop2 such that M_ij describes the connection between the jth
     neuron in pop1 to the ith neuron in pop2. Only works without multapses.
-    '''
+    """
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
-    sources = connections.get('source')
-    targets = connections.get('target')
+    sources = connections.get("source")
+    targets = connections.get("target")
     weights = connections.get(label)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get('global_id')] = count
+        index_dic[node.get("global_id")] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get('global_id')] = count
+        index_dic[node.get("global_id")] = count
     for counter, weight in enumerate(weights):
         source_id = sources[counter]
         target_id = targets[counter]
@@ -436,11 +453,12 @@ def check_synapse(params, values, syn_params, TestCase):
         TestCase.assertTrue(all_equal(conn_params))
         TestCase.assertTrue(conn_params[0] == values[i])
 
+
 # copied from Masterthesis, Daniel Hjertholm
 
 
 def counter(x, fan, source_pop, target_pop):
-    '''
+    """
     Count similar elements in list.
 
     Parameters
@@ -450,9 +468,9 @@ def counter(x, fan, source_pop, target_pop):
     Return values
     -------------
         list containing counts of similar elements.
-    '''
+    """
 
-    N_p = len(source_pop) if fan == 'in' else len(target_pop)  # of pool nodes.
+    N_p = len(source_pop) if fan == "in" else len(target_pop)  # of pool nodes.
     start = min(x)
     counts = [0] * N_p
     for elem in x:
@@ -463,21 +481,23 @@ def counter(x, fan, source_pop, target_pop):
 
 def get_degrees(fan, pop1, pop2):
     M = get_connectivity_matrix(pop1, pop2)
-    if fan == 'in':
+    if fan == "in":
         degrees = np.sum(M, axis=1)
-    elif fan == 'out':
+    elif fan == "out":
         degrees = np.sum(M, axis=0)
     return degrees
+
 
 # adapted from Masterthesis, Daniel Hjertholm
 
 
 def get_expected_degrees_fixedDegrees(N, fan, len_source_pop, len_target_pop):
-    N_d = len_target_pop if fan == 'in' else len_source_pop  # of driver nodes.
-    N_p = len_source_pop if fan == 'in' else len_target_pop  # of pool nodes.
+    N_d = len_target_pop if fan == "in" else len_source_pop  # of driver nodes.
+    N_p = len_source_pop if fan == "in" else len_target_pop  # of pool nodes.
     expected_degree = N_d * N / float(N_p)
     expected = [expected_degree] * N_p
     return expected
+
 
 # adapted from Masterthesis, Daniel Hjertholm
 
@@ -485,16 +505,17 @@ def get_expected_degrees_fixedDegrees(N, fan, len_source_pop, len_target_pop):
 def get_expected_degrees_totalNumber(N, fan, len_source_pop, len_target_pop):
     expected_indegree = [N / float(len_target_pop)] * len_target_pop
     expected_outdegree = [N / float(len_source_pop)] * len_source_pop
-    if fan == 'in':
+    if fan == "in":
         return expected_indegree
-    elif fan == 'out':
+    elif fan == "out":
         return expected_outdegree
+
 
 # copied from Masterthesis, Daniel Hjertholm
 
 
 def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
-    '''
+    """
     Calculate expected degree distribution.
 
     Degrees with expected number of observations below e_min are combined
@@ -505,10 +526,10 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
         2D array. The four columns contain degree,
         expected number of observation, actual number observations, and
         the number of bins combined.
-    '''
+    """
 
-    n = len_source_pop if fan == 'in' else len_target_pop
-    n_p = len_target_pop if fan == 'in' else len_source_pop
+    n = len_source_pop if fan == "in" else len_target_pop
+    n_p = len_target_pop if fan == "in" else len_source_pop
     mid = int(round(n * p))
     e_min = 5
 
@@ -522,15 +543,13 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
         if cumexp < e_min:
             if degree == mid - 1:
                 if len(data_front) == 0:
-                    raise RuntimeWarning('Not enough data')
+                    raise RuntimeWarning("Not enough data")
                 deg, exp, obs, num = data_front[-1]
-                data_front[-1] = (deg, exp + cumexp, obs,
-                                  num + bins_combined)
+                data_front[-1] = (deg, exp + cumexp, obs, num + bins_combined)
             else:
                 continue
         else:
-            data_front.append((degree - bins_combined + 1, cumexp, 0,
-                               bins_combined))
+            data_front.append((degree - bins_combined + 1, cumexp, 0, bins_combined))
             cumexp = 0.0
             bins_combined = 0
 
@@ -544,10 +563,9 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
         if cumexp < e_min:
             if degree == mid:
                 if len(data_back) == 0:
-                    raise RuntimeWarning('Not enough data')
+                    raise RuntimeWarning("Not enough data")
                 deg, exp, obs, num = data_back[-1]
-                data_back[-1] = (degree, exp + cumexp, obs,
-                                 num + bins_combined)
+                data_back[-1] = (degree, exp + cumexp, obs, num + bins_combined)
             else:
                 continue
         else:
@@ -557,35 +575,37 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
     data_back.reverse()
 
     expected = np.array(data_front + data_back)
-    if fan == 'out':
-        assert (sum(expected[:, 3]) == len_target_pop + 1)
+    if fan == "out":
+        assert sum(expected[:, 3]) == len_target_pop + 1
     else:  # , 'Something is wrong'
-        assert (sum(expected[:, 3]) == len_source_pop + 1)
+        assert sum(expected[:, 3]) == len_source_pop + 1
 
     # np.hstack((np.asarray(data_front)[0], np.asarray(data_back)[0]))
     return expected
+
 
 # adapted from Masterthesis, Daniel Hjertholm
 
 
 def reset_seed(seed, nr_threads):
-    '''
+    """
     Reset the simulator and seed the PRNGs.
 
     Parameters
     ----------
         seed: PRNG seed value.
-    '''
+    """
 
     nest.ResetKernel()
     nest.local_num_threads = nr_threads
     nest.rng_seed = seed
 
+
 # copied from Masterthesis, Daniel Hjertholm
 
 
 def chi_squared_check(degrees, expected, distribution=None):
-    '''
+    """
     Create a single network and compare the resulting degree distribution
     with the expected distribution using Pearson's chi-squared GOF test.
 
@@ -599,9 +619,9 @@ def chi_squared_check(degrees, expected, distribution=None):
     -------------
         chi-squared statistic.
         p-value from chi-squared test.
-    '''
+    """
 
-    if distribution in ('pairwise_bernoulli', 'symmetric_pairwise_bernoulli'):
+    if distribution in ("pairwise_bernoulli", "symmetric_pairwise_bernoulli"):
         observed = {}
         for degree in degrees:
             if degree not in observed:
@@ -618,8 +638,7 @@ def chi_squared_check(degrees, expected, distribution=None):
                     row[2] += observed[deg]
 
         # ddof: adjustment to the degrees of freedom. df = k-1-ddof
-        return scipy.stats.chisquare(np.array(expected[:, 2]),
-                                     np.array(expected[:, 1]))
+        return scipy.stats.chisquare(np.array(expected[:, 2]), np.array(expected[:, 1]))
     else:
         # ddof: adjustment to the degrees of freedom. df = k-1-ddof
         return scipy.stats.chisquare(np.array(degrees), np.array(expected))

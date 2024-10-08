@@ -74,27 +74,36 @@ See also
 
 hh_psc_alpha_gap
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gap_junction
+
 EndUserDocs */
 
 template < typename targetidentifierT >
-class GapJunction : public Connection< targetidentifierT >
+class gap_junction : public Connection< targetidentifierT >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef GapJunctionEvent EventType;
+
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  GapJunction()
+  gap_junction()
     : ConnectionBase()
     , weight_( 1.0 )
   {
   }
+
+  SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -105,9 +114,9 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    GapJunctionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -121,7 +130,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -150,8 +159,11 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties gap_junction< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
+gap_junction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
@@ -162,8 +174,15 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 }
 
 template < typename targetidentifierT >
+SecondaryEvent*
+gap_junction< targetidentifierT >::get_secondary_event()
+{
+  return new GapJunctionEvent();
+}
+
+template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

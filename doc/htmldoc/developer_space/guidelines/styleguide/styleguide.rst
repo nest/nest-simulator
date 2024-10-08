@@ -3,10 +3,6 @@
 The NEST documentation style guide
 ==================================
 
-.. contents:: On this page, you will find
-   :local:
-   :depth: 1
-
 Why do we have a style guide?
 -----------------------------
 

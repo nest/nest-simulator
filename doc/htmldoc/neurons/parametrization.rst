@@ -27,29 +27,29 @@ Random parameters
 The `random` module contains random distributions that can be used to set node
 and connection parameters, as well as positions for spatially distributed nodes.
 
-  +--------------------------------------------------+--------------------------------------------+
-  | Parameter                                        | Description                                |
-  +==================================================+============================================+
-  |  ::                                              |                                            |
-  |                                                  |                                            |
-  |     nest.random.uniform(min=0.0, max=1.0)        | Draws samples based on a                   |
-  |                                                  | uniform distribution.                      |
-  +--------------------------------------------------+--------------------------------------------+
-  |  ::                                              |                                            |
-  |                                                  |                                            |
-  |     nest.random.normal(mean=0.0, std=1.0)        | Draws samples based on a                   |
-  |                                                  | normal distribution.                       |
-  +--------------------------------------------------+--------------------------------------------+
-  |  ::                                              |                                            |
-  |                                                  |                                            |
-  |     nest.random.exponential(beta=1.0)            | Draws samples based on a                   |
-  |                                                  | exponential distribution.                  |
-  +--------------------------------------------------+--------------------------------------------+
-  |  ::                                              |                                            |
-  |                                                  |                                            |
-  |     nest.random.lognormal(mean=0.0, std=1.0)     | Draws samples based on a                   |
-  |                                                  | lognormal distribution.                    |
-  +--------------------------------------------------+--------------------------------------------+
++--------------------------------------------------+--------------------------------------------+
+| Parameter                                        | Description                                |
++==================================================+============================================+
+|  ::                                              |                                            |
+|                                                  |                                            |
+|     nest.random.uniform(min=0.0, max=1.0)        | Draws samples based on a                   |
+|                                                  | uniform distribution.                      |
++--------------------------------------------------+--------------------------------------------+
+|  ::                                              |                                            |
+|                                                  |                                            |
+|     nest.random.normal(mean=0.0, std=1.0)        | Draws samples based on a                   |
+|                                                  | normal distribution.                       |
++--------------------------------------------------+--------------------------------------------+
+|  ::                                              |                                            |
+|                                                  |                                            |
+|     nest.random.exponential(beta=1.0)            | Draws samples based on a                   |
+|                                                  | exponential distribution.                  |
++--------------------------------------------------+--------------------------------------------+
+|  ::                                              |                                            |
+|                                                  |                                            |
+|     nest.random.lognormal(mean=0.0, std=1.0)     | Draws samples based on a                   |
+|                                                  | lognormal distribution.                    |
++--------------------------------------------------+--------------------------------------------+
 
 For every value to be generated, samples are drawn from a distribution. The distributions use
 NEST's random number generator, and are therefore thread-safe. Note that
@@ -88,25 +88,25 @@ nodes.
 To create spatially distributed nodes (see :ref:`spatial_networks` for more), use
 ``nest.spatial.grid()`` or ``nest.spatial.free``.
 
-  +----------------------------------------------------+-------------------------------------------------------+
-  | Parameter                                          | Description                                           |
-  +====================================================+=======================================================+
-  |  ::                                                |                                                       |
-  |                                                    | Create spatially positioned nodes distributed on a    |
-  |     nest.spatial.grid(shape, center=None,          | grid with dimensions given by `shape=[nx, ny(, nz)]`. |
-  |         extent=None, edge_wrap=False)              |                                                       |
-  +----------------------------------------------------+-------------------------------------------------------+
-  |  ::                                                |                                                       |
-  |                                                    | Create spatially positioned nodes distributed freely  |
-  |     nest.spatial.free(pos, extent=None,            | in space with dimensions given by `pos` or            |
-  |         edge_wrap=False, num_dimensions=None)      | `num_dimensions`.                                     |
-  |                                                    |                                                       |
-  +----------------------------------------------------+-------------------------------------------------------+
++----------------------------------------------------+-------------------------------------------------------+
+| Parameter                                          | Description                                           |
++====================================================+=======================================================+
+|  ::                                                |                                                       |
+|                                                    | Create spatially positioned nodes distributed on a    |
+|     nest.spatial.grid(shape, center=None,          | grid with dimensions given by `shape=[nx, ny(, nz)]`. |
+|         extent=None, edge_wrap=False)              |                                                       |
++----------------------------------------------------+-------------------------------------------------------+
+|  ::                                                |                                                       |
+|                                                    | Create spatially positioned nodes distributed freely  |
+|     nest.spatial.free(pos, extent=None,            | in space with dimensions given by `pos` or            |
+|         edge_wrap=False, num_dimensions=None)      | `num_dimensions`.                                     |
+|                                                    |                                                       |
++----------------------------------------------------+-------------------------------------------------------+
 
-  .. code-block:: ipython
+.. code-block:: ipython
 
-    grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
-    nest.PlotLayer(grid_nodes);
+  grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
+  nest.PlotLayer(grid_nodes);
 
 .. image:: ../static/img/NEST3_23_0.png
   :width: 500px
@@ -124,61 +124,61 @@ To create spatially distributed nodes (see :ref:`spatial_networks` for more), us
 After you have created your spatially distributed nodes, you can use  the `spatial` property to set
 node or connection parameters.
 
-  +----------------------------------+-------------------------------------------------------------------------+
-  | Parameter                        | Description                                                             |
-  +==================================+=========================================================================+
-  |  ::                              |                                                                         |
-  |                                  |                                                                         |
-  |     nest.spatial.pos.x           | | Position of a neuron, on the x, y, and z axis.                        |
-  |     nest.spatial.pos.y           | | Can be used to set node properties, but not for connecting.           |
-  |     nest.spatial.pos.z           |                                                                         |
-  +----------------------------------+-------------------------------------------------------------------------+
-  |  ::                              |                                                                         |
-  |                                  |                                                                         |
-  |     nest.spatial.source_pos.x    | | Position of the source neuron, on the x, y, and z axis.               |
-  |     nest.spatial.source_pos.y    | | Can only be used when connecting.                                     |
-  |     nest.spatial.source_pos.z    |                                                                         |
-  +----------------------------------+-------------------------------------------------------------------------+
-  |  ::                              |                                                                         |
-  |                                  |                                                                         |
-  |     nest.spatial.target_pos.x    |                                                                         |
-  |     nest.spatial.target_pos.y    | | Position of the target neuron, on the x, y, and z axis.               |
-  |     nest.spatial.target_pos.z    | | Can only be used when connecting.                                     |
-  +----------------------------------+-------------------------------------------------------------------------+
-  |  ::                              |                                                                         |
-  |                                  |                                                                         |
-  |     nest.spatial.distance        | | Distance between two nodes. Can only be used when connecting.         |
-  +----------------------------------+-------------------------------------------------------------------------+
-  |  ::                              |                                                                         |
-  |                                  |                                                                         |
-  |     nest.spatial.distance.x      |                                                                         |
-  |     nest.spatial.distance.y      | | Distance on the x, y and z axis between the source and target neuron. |
-  |     nest.spatial.distance.z      | | Can only be used when connecting.                                     |
-  +----------------------------------+-------------------------------------------------------------------------+
++----------------------------------+-------------------------------------------------------------------------+
+| Parameter                        | Description                                                             |
++==================================+=========================================================================+
+|  ::                              |                                                                         |
+|                                  |                                                                         |
+|     nest.spatial.pos.x           | | Position of a neuron, on the x, y, and z axis.                        |
+|     nest.spatial.pos.y           | | Can be used to set node properties, but not for connecting.           |
+|     nest.spatial.pos.z           |                                                                         |
++----------------------------------+-------------------------------------------------------------------------+
+|  ::                              |                                                                         |
+|                                  |                                                                         |
+|     nest.spatial.source_pos.x    | | Position of the source neuron, on the x, y, and z axis.               |
+|     nest.spatial.source_pos.y    | | Can only be used when connecting.                                     |
+|     nest.spatial.source_pos.z    |                                                                         |
++----------------------------------+-------------------------------------------------------------------------+
+|  ::                              |                                                                         |
+|                                  |                                                                         |
+|     nest.spatial.target_pos.x    |                                                                         |
+|     nest.spatial.target_pos.y    | | Position of the target neuron, on the x, y, and z axis.               |
+|     nest.spatial.target_pos.z    | | Can only be used when connecting.                                     |
++----------------------------------+-------------------------------------------------------------------------+
+|  ::                              |                                                                         |
+|                                  |                                                                         |
+|     nest.spatial.distance        | | Distance between two nodes. Can only be used when connecting.         |
++----------------------------------+-------------------------------------------------------------------------+
+|  ::                              |                                                                         |
+|                                  |                                                                         |
+|     nest.spatial.distance.x      |                                                                         |
+|     nest.spatial.distance.y      | | Distance on the x, y and z axis between the source and target neuron. |
+|     nest.spatial.distance.z      | | Can only be used when connecting.                                     |
++----------------------------------+-------------------------------------------------------------------------+
 
-  These parameters represent positions of neurons or distances between two
-  neurons. To set node parameters, only the node position can be used. The
-  others can be used when connecting.
+These parameters represent positions of neurons or distances between two
+neurons. To set node parameters, only the node position can be used. The
+others can be used when connecting.
 
 
-  .. code-block:: ipython
+.. code-block:: ipython
 
-    positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 10000)])
-    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
+   positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 10000)])
+   spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
-    parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
-    spatial_nodes.set('V_m'=parameter)
+   parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
+   spatial_nodes.set(V_m=parameter)
 
-    node_pos = np.array(nest.GetPosition(spatial_nodes))
-    node_pos[:,1]
-    v_m = spatial_nodes.get('V_m');
+   node_pos = np.array(nest.GetPosition(spatial_nodes))
+   node_pos[:,1]
+   v_m = spatial_nodes.get('V_m');
 
-    fig, ax = pyplot.subplots(figsize=(12, 6))
-    ax.plot(node_pos[:,0], v_m, '.', ms=3.5)
-    ax.set_xlabel('Node position on x-axis')
-    ax.set_ylabel('V_m');
+   fig, ax = pyplot.subplots(figsize=(12, 6))
+   ax.plot(node_pos[:,0], v_m, '.', ms=3.5)
+   ax.set_xlabel('Node position on x-axis')
+   ax.set_ylabel('V_m');
 
-  .. image:: ../static/img/NEST3_25_0.png
+.. image:: ../static/img/NEST3_25_0.png
 
 
 
@@ -191,45 +191,45 @@ The spatial_distributions module contains random distributions that take a spati
 parameter as input and applies the distribution on the parameter. They are used
 for spatially distributed nodes.
 
-  +----------------------------------------------+--------------------+------------------------------------------------------+
-  | Distribution function                        | Arguments          | Function                                             |
-  +==============================================+====================+======================================================+
-  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
-  | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
-  |                                              | | beta             |                                                      |
-  +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              | | x,               | .. math::                                            |
-  | ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
-  |                                              | | std              |     {2\text{std}^2}}                                 |
-  +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | .. math::                                            |
-  |                                              | | x,               |                                                      |
-  |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
-  |                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
-  | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
-  |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
-  |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
-  |                                              | | rho              |    {2(1-\rho^2)}}                                    |
-  |                                              |                    |                                                      |
-  +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
-  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
-  |                                              | | kappa            |                                                      |
-  +----------------------------------------------+--------------------+------------------------------------------------------+
++----------------------------------------------+--------------------+------------------------------------------------------+
+| Distribution function                        | Arguments          | Function                                             |
++==============================================+====================+======================================================+
+|                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
+| ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
+|                                              | | beta             |                                                      |
++----------------------------------------------+--------------------+------------------------------------------------------+
+|                                              | | x,               | .. math::                                            |
+| ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
+|                                              | | std              |     {2\text{std}^2}}                                 |
++----------------------------------------------+--------------------+------------------------------------------------------+
+|                                              |                    | .. math::                                            |
+|                                              | | x,               |                                                      |
+|                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
+|                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
+| ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
+|                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+|                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
+|                                              | | rho              |    {2(1-\rho^2)}}                                    |
+|                                              |                    |                                                      |
++----------------------------------------------+--------------------+------------------------------------------------------+
+|                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
+| ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
+|                                              | | kappa            |                                                      |
++----------------------------------------------+--------------------+------------------------------------------------------+
 
 With these functions, you can recreate for example a Gaussian kernel as a
 parameter:
 
-  +------------------------------------------------------------+-----------------------------------------------------------------+
-  | NEST 2.x                                                   | NEST 3.0                                                        |
-  +------------------------------------------------------------+-----------------------------------------------------------------+
-  |                                                            |                                                                 |
-  | ::                                                         | ::                                                              |
-  |                                                            |                                                                 |
-  |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.spatial_distributions.gaussian(                |
-  |                                                            |         nest.spatial.distance, p_center=1.0, std_deviation=1.0) |
-  |                                                            |                                                                 |
-  +------------------------------------------------------------+-----------------------------------------------------------------+
++------------------------------------------------------------+-----------------------------------------------------------------+
+| NEST 2.x                                                   | NEST 3.0                                                        |
++------------------------------------------------------------+-----------------------------------------------------------------+
+|                                                            |                                                                 |
+| ::                                                         | ::                                                              |
+|                                                            |                                                                 |
+|     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.spatial_distributions.gaussian(                |
+|                                                            |         nest.spatial.distance, p_center=1.0, std_deviation=1.0) |
+|                                                            |                                                                 |
++------------------------------------------------------------+-----------------------------------------------------------------+
 
 .. code-block:: ipython
 
@@ -252,7 +252,7 @@ parameter:
     fig, ax = pyplot.subplots(figsize=(12, 6))
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
-    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+1))
+    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+2))
     ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
@@ -266,21 +266,21 @@ parameter:
 Mathematical functions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  +----------------------------+---------------------------------------------+
-  | Parameter                  | Description                                 |
-  +============================+=============================================+
-  | ::                         |                                             |
-  |                            |                                             |
-  |     nest.random.exp(x)     | | Calculates the exponential of a parameter |
-  +----------------------------+---------------------------------------------+
-  | ::                         |                                             |
-  |                            |                                             |
-  |     nest.random.cos(x)     | | Calculates the cosine of a parameter      |
-  +----------------------------+---------------------------------------------+
-  | ::                         |                                             |
-  |                            |                                             |
-  |     nest.random.sin(x)     | | Calculates the sine of a parameter        |
-  +----------------------------+---------------------------------------------+
++----------------------------+---------------------------------------------+
+| Parameter                  | Description                                 |
++============================+=============================================+
+| ::                         |                                             |
+|                            |                                             |
+|     nest.random.exp(x)     | | Calculates the exponential of a parameter |
++----------------------------+---------------------------------------------+
+| ::                         |                                             |
+|                            |                                             |
+|     nest.random.cos(x)     | | Calculates the cosine of a parameter      |
++----------------------------+---------------------------------------------+
+| ::                         |                                             |
+|                            |                                             |
+|     nest.random.sin(x)     | | Calculates the sine of a parameter        |
++----------------------------+---------------------------------------------+
 
 The mathematical functions take a parameter object as argument, and return
 a new parameter which applies the mathematical function on the parameter
@@ -316,34 +316,34 @@ given as argument.
 Clipping, redraw, and conditionals
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  +----------------------------------------------------+-----------------------------------------------------+
-  | Parameter                                          | Description                                         |
-  +====================================================+=====================================================+
-  | ::                                                 |                                                     |
-  |                                                    |                                                     |
-  |     nest.math.min(x, value)                        | If a value from the Parameter is above a threshold, |
-  |                                                    | x, the value is replaced with the value of the      |
-  |                                                    | threshold.                                          |
-  +----------------------------------------------------+-----------------------------------------------------+
-  | ::                                                 |                                                     |
-  |                                                    |                                                     |
-  |     nest.math.max(x, value)                        | If a value from the parameter is below a threshold, |
-  |                                                    | x, the value is replaced with the value of          |
-  |                                                    | the threshold.                                      |
-  +----------------------------------------------------+-----------------------------------------------------+
-  | ::                                                 |                                                     |
-  |                                                    |                                                     |
-  |     nest.math.redraw(x, min, max)                  | If a value from the parameter is outside of the     |
-  |                                                    | limits given, the value is redrawn. Throws an error |
-  |                                                    | if a suitable value is not found after a certain    |
-  |                                                    | number of redraws.                                  |
-  +----------------------------------------------------+-----------------------------------------------------+
-  | ::                                                 |                                                     |
-  |                                                    |                                                     |
-  |     nest.logic.conditional(x, val_true, val_false) | Given a condition, yields one value or another      |
-  |                                                    | based on if the condition evaluates to true or      |
-  |                                                    | false.                                              |
-  +----------------------------------------------------+-----------------------------------------------------+
++----------------------------------------------------+-----------------------------------------------------+
+| Parameter                                          | Description                                         |
++====================================================+=====================================================+
+| ::                                                 |                                                     |
+|                                                    |                                                     |
+|     nest.math.min(x, value)                        | If a value from the Parameter is above a threshold, |
+|                                                    | x, the value is replaced with the value of the      |
+|                                                    | threshold.                                          |
++----------------------------------------------------+-----------------------------------------------------+
+| ::                                                 |                                                     |
+|                                                    |                                                     |
+|     nest.math.max(x, value)                        | If a value from the parameter is below a threshold, |
+|                                                    | x, the value is replaced with the value of          |
+|                                                    | the threshold.                                      |
++----------------------------------------------------+-----------------------------------------------------+
+| ::                                                 |                                                     |
+|                                                    |                                                     |
+|     nest.math.redraw(x, min, max)                  | If a value from the parameter is outside of the     |
+|                                                    | limits given, the value is redrawn. Throws an error |
+|                                                    | if a suitable value is not found after a certain    |
+|                                                    | number of redraws.                                  |
++----------------------------------------------------+-----------------------------------------------------+
+| ::                                                 |                                                     |
+|                                                    |                                                     |
+|     nest.logic.conditional(x, val_true, val_false) | Given a condition, yields one value or another      |
+|                                                    | based on if the condition evaluates to true or      |
+|                                                    | false.                                              |
++----------------------------------------------------+-----------------------------------------------------+
 
 Note that ``x`` is a ``nest.Parameter``.
 
@@ -351,6 +351,8 @@ The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a parameter. Essentially they work like the standard ``min()`` and
 ``max()`` functions, ``nest.math.min()`` yielding the smaller of two
 values, and ``nest.math.max()`` yielding the larger of two values.
+Note that the order of inputs matter, meaning that the first argument
+must be a parameter, and the second argument must be a threshold value.
 
 ::
 
@@ -460,15 +462,15 @@ Use parameters to set node properties
 
 Using parameters makes it easy to set node properties
 
-  +-----------------------------------------------+----------------------------------------------------+
-  | NEST 2.x                                      | NEST 3.0                                           |
-  +===============================================+====================================================+
-  |                                               |                                                    |
-  | ::                                            | ::                                                 |
-  |                                               |                                                    |
-  |     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
-  |       v_m = numpy.random.uniform(-20., 20.)   |                                                    |
-  |       nest.SetStatus([node_id], {'V_m': V_m}) |                                                    |
-  |                                               |                                                    |
-  |                                               |                                                    |
-  +-----------------------------------------------+----------------------------------------------------+
++-----------------------------------------------+----------------------------------------------------+
+| NEST 2.x                                      | NEST 3.0                                           |
++===============================================+====================================================+
+|                                               |                                                    |
+| ::                                            | ::                                                 |
+|                                               |                                                    |
+|     for gid in nrns:                          |     nrns.V_m = nest.random.uniform(-20.0, 20.0)    |
+|       v_m = numpy.random.uniform(-20.0, 20.0) |                                                    |
+|       nest.SetStatus(gid, {"V_m": v_m})       |                                                    |
+|                                               |                                                    |
+|                                               |                                                    |
++-----------------------------------------------+----------------------------------------------------+

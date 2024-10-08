@@ -1,14 +1,14 @@
 .. _faqs:
 
-Frequently Asked Questions
+Frequently asked questions
 ==========================
 
 Installation
 ------------
 
-1. **If I compile NEST with MPI support, I get errors about
+1. **If I compile NEST with :hxt_ref:`MPI` support, I get errors about
    ``SEEK_SET``, ``SEEK_CUR`` and ``SEEK_END`` being defined** This is a
-   known issue in some MPI implementations. A solution is to add
+   known issue in some :hxt_ref:`MPI` implementations. A solution is to add
    --with-debug="-DMPICH\_IGNORE\_CXX\_SEEK" to the configure command
    line. More details about this problem can be found
    `here <http://www-unix.mcs.anl.gov/mpi/mpich/faq.htm#cxxseek>`__
@@ -41,8 +41,7 @@ Installation
    which compiler was used. Then re-build NEST with the same compiler
    version.
 
-6. **I get a segmentation fault wher I use SciPy in the same script
-   together with PyNEST**. We recently observed that if PyNEST is used
+6. **I get a segmentation fault when I use SciPy and PyNEST in the same script**. We recently observed that if PyNEST is used
    with some versions of SciPy, a segmentation fault is caused. A
    workaround for the problem is to import SciPy before PyNEST. See
    https://github.com/numpy/numpy/issues/2521 for the official bug
@@ -58,7 +57,7 @@ running ``nest.data_path = "/path/to/data"``. In scripts, this
 property can be set via the environment variable ``NEST_DATA_PATH``.
 Please note that the directory ``/path/to/data`` has to exist and
 will not be created. A common prefix for all data file names can be
- set by running ``nest.data_prefix = "prefix"`` or by setting the
+set by running ``nest.data_prefix = "prefix"`` or by setting the
 environment variable ``NEST_DATA_PREFIX``.
 
 Neuron models
@@ -87,4 +86,6 @@ Connections
        nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
        nest.Simulate(10)
 
+.. _faqs_precise_neurons:
 
+.. include:: qa-precise-spike-times.rst

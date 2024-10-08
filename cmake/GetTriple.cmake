@@ -51,7 +51,7 @@ function( get_host_triple out out_arch out_vendor out_os )
   set( ${out_vendor} ${vendor} PARENT_SCOPE )
   set( ${out_os} ${os} PARENT_SCOPE )
 
-  message( STATUS "Host triple: ${triple}" )
+  printInfo( "Host triple: ${triple}" )
 endfunction ()
 
 
@@ -88,5 +88,5 @@ function( get_target_triple out out_arch out_vendor out_os )
   set( ${out_vendor} ${vendor} PARENT_SCOPE )
   set( ${out_os} ${os} PARENT_SCOPE )
 
-  message(STATUS "Target triple: ${triple}")
+  printInfo( "Target triple: ${triple}")
 endfunction()

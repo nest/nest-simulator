@@ -7,7 +7,7 @@ Cross-platform |macos| |linux| |windows|
 ----------------------------------------
 
 Docker
-~~~~~
+~~~~~~
 
 :ref:`See our docker installation instructions <docker>`.
 
@@ -17,7 +17,7 @@ Conda install
 You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
 
 Live media
-~~~~~~~~~
+~~~~~~~~~~
 
 We have live media (.ova) if you want to run NEST in a virtual machine.
 
@@ -26,8 +26,8 @@ We have live media (.ova) if you want to run NEST in a virtual machine.
 
 -------------
 
-|linux|  Linux
----------------
+Linux |linux|
+-------------
 
 Ubuntu
 ~~~~~~
@@ -96,7 +96,7 @@ Debian users can install NEST via the Ubuntu PPA repository.
     dpkg-genchanges --build=binary >../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.changes
 
 and note down the full package name. In the above example this would be
-`nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb`, where the number `202001311135` and potentially the
+``nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb``, where the number ``202001311135`` and potentially the
 Ubuntu version number may be different.
 
 6. Install the ready Debian package after the rebuild:
@@ -115,7 +115,9 @@ Ubuntu version number may be different.
    python3
    import nest
 
-|macos| macOS
+-------------
+
+macOS |macos|
 -------------
 
 1. `Install Homebrew <https://brew.sh/>`_.
@@ -126,19 +128,19 @@ Ubuntu version number may be different.
 
     brew install nest
 
------
-
-
 
 
 .. |linux| image:: ../static/img/linux.png
+   :class: no-scaled-link
    :scale: 11%
 
 .. |macos| image:: ../static/img/macos.png
+   :class: no-scaled-link
    :scale: 11%
 
 
 .. |windows| image:: ../static/img/windows.png
+   :class: no-scaled-link
    :scale: 11%
 
 

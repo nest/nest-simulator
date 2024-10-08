@@ -64,7 +64,6 @@ nest::poisson_generator_ps::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
@@ -178,10 +177,7 @@ nest::poisson_generator_ps::pre_run_hook()
 void
 nest::poisson_generator_ps::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
-  if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
   }
@@ -210,10 +206,10 @@ void
 nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
+  assert( prt < B_.next_spike_.size() );
 
   // obtain rng
   RngPtr rng = get_vp_specific_rng( get_thread() );

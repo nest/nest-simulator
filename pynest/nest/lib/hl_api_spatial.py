@@ -23,39 +23,43 @@
 Functions relating to spatial properties of nodes
 """
 
+import os
 
 import numpy as np
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp
-from .. import pynestkernel as kernel
-from .hl_api_helper import is_iterable
+from ..ll_api import sli_func
 from .hl_api_connections import GetConnections
+from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection
 
 try:
     import matplotlib as mpl
-    import matplotlib.path as mpath
     import matplotlib.patches as mpatches
+    import matplotlib.path as mpath
+
     HAVE_MPL = True
 except ImportError:
     HAVE_MPL = False
 
 __all__ = [
-    'CreateMask',
-    'Displacement',
-    'Distance',
-    'DumpLayerConnections',
-    'DumpLayerNodes',
-    'FindCenterElement',
-    'FindNearestElement',
-    'GetPosition',
-    'GetTargetNodes',
-    'GetTargetPositions',
-    'PlotLayer',
-    'PlotProbabilityParameter',
-    'PlotTargets',
-    'SelectNodesByMask',
+    "CreateMask",
+    "Displacement",
+    "Distance",
+    "DumpLayerConnections",
+    "DumpLayerNodes",
+    "FindCenterElement",
+    "FindNearestElement",
+    "GetPosition",
+    "GetTargetNodes",
+    "GetSourceNodes",
+    "GetTargetPositions",
+    "GetSourcePositions",
+    "PlotLayer",
+    "PlotProbabilityParameter",
+    "PlotTargets",
+    "PlotSources",
+    "SelectNodesByMask",
 ]
 
 
@@ -136,7 +140,7 @@ def CreateMask(masktype, specs, anchor=None):
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
                  'azimuth_angle: float  # default: 0.0,
-                 'polar_angle  : float  # defualt: 0.0}
+                 'polar_angle  : float  # default: 0.0}
             #or
             'spherical' :
                 {'radius' : float}
@@ -159,7 +163,7 @@ def CreateMask(masktype, specs, anchor=None):
         By default the top-left corner of a grid mask, i.e., the grid
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
-            ::
+        ::
 
                 'anchor' :
                     {'row' : float,
@@ -185,10 +189,9 @@ def CreateMask(masktype, specs, anchor=None):
             nest.Connect(l, l, conndict)
     """
     if anchor is None:
-        return sli_func('CreateMask', {masktype: specs})
+        return sli_func("CreateMask", {masktype: specs})
     else:
-        return sli_func('CreateMask',
-                        {masktype: specs, 'anchor': anchor})
+        return sli_func("CreateMask", {masktype: specs, "anchor": anchor})
 
 
 def GetPosition(nodes):
@@ -242,7 +245,7 @@ def GetPosition(nodes):
     if not isinstance(nodes, NodeCollection):
         raise TypeError("nodes must be a NodeCollection with spatial extent")
 
-    return sli_func('GetPosition', nodes)
+    return sli_func("GetPosition", nodes)
 
 
 def Displacement(from_arg, to_arg):
@@ -303,13 +306,12 @@ def Displacement(from_arg, to_arg):
         raise TypeError("to_arg must be a NodeCollection")
 
     if isinstance(from_arg, np.ndarray):
-        from_arg = (from_arg, )
+        from_arg = (from_arg,)
 
-    if (len(from_arg) > 1 and len(to_arg) > 1 and not
-            len(from_arg) == len(to_arg)):
+    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func('Displacement', from_arg, to_arg)
+    return sli_func("Displacement", from_arg, to_arg)
 
 
 def Distance(from_arg, to_arg):
@@ -371,13 +373,12 @@ def Distance(from_arg, to_arg):
         raise TypeError("to_arg must be a NodeCollection")
 
     if isinstance(from_arg, np.ndarray):
-        from_arg = (from_arg, )
+        from_arg = (from_arg,)
 
-    if (len(from_arg) > 1 and len(to_arg) > 1 and not
-            len(from_arg) == len(to_arg)):
+    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func('Distance', from_arg, to_arg)
+    return sli_func("Distance", from_arg, to_arg)
 
 
 def FindNearestElement(layer, locations, find_all=False):
@@ -440,7 +441,7 @@ def FindNearestElement(layer, locations, find_all=False):
 
     # Ensure locations is sequence, keeps code below simpler
     if not is_iterable(locations[0]):
-        locations = (locations, )
+        locations = (locations,)
 
     result = []
 
@@ -476,11 +477,11 @@ def _rank_specific_filename(basename):
         np = NumProcesses()
         np_digs = len(str(np - 1))  # for pretty formatting
         rk = Rank()
-        dot = basename.find('.')
+        dot = basename.find(".")
         if dot < 0:
-            return '%s-%0*d' % (basename, np_digs, rk)
+            return "%s-%0*d" % (basename, np_digs, rk)
         else:
-            return '%s-%0*d%s' % (basename[:dot], np_digs, rk, basename[dot:])
+            return "%s-%0*d%s" % (basename[:dot], np_digs, rk, basename[dot:])
 
 
 def DumpLayerNodes(layer, outname):
@@ -489,7 +490,8 @@ def DumpLayerNodes(layer, outname):
 
     Write `node ID` and position data to `outname` file. For each node in `layer`,
     a line with the following information is written:
-        ::
+
+    ::
 
             node ID x-position y-position [z-position]
 
@@ -529,13 +531,19 @@ def DumpLayerNodes(layer, outname):
             nest.DumpLayerNodes(s_nodes, 'positions.txt')
 
     """
+
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
 
-    sli_func("""
+    outname = stringify_path(outname)
+
+    sli_func(
+        """
              (w) file exch DumpLayerNodes close
              """,
-             layer, _rank_specific_filename(outname))
+        layer,
+        _rank_specific_filename(outname),
+    )
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -595,12 +603,17 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             # write connectivity information to file
             nest.DumpLayerConnections(s_nodes, s_nodes, 'static_synapse', 'conns.txt')
     """
+
     if not isinstance(source_layer, NodeCollection):
         raise TypeError("source_layer must be a NodeCollection")
+
     if not isinstance(target_layer, NodeCollection):
         raise TypeError("target_layer must be a NodeCollection")
 
-    sli_func("""
+    outname = stringify_path(outname)
+
+    sli_func(
+        """
              /oname  Set
              cvlit /synmod Set
              /lyr_target Set
@@ -608,8 +621,11 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
              oname (w) file lyr_source lyr_target synmod
              DumpLayerConnections close
              """,
-             source_layer, target_layer, synapse_model,
-             _rank_specific_filename(outname))
+        source_layer,
+        target_layer,
+        synapse_model,
+        _rank_specific_filename(outname),
+    )
 
 
 def FindCenterElement(layer):
@@ -648,9 +664,9 @@ def FindCenterElement(layer):
 
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
-    nearest_to_center = FindNearestElement(layer, layer.spatial['center'])[0]
-    index = layer.index(nearest_to_center.get('global_id'))
-    return layer[index:index+1]
+    nearest_to_center = FindNearestElement(layer, layer.spatial["center"])[0]
+    index = layer.index(nearest_to_center.get("global_id"))
+    return layer[index : index + 1]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
@@ -659,7 +675,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given synapse model.
 
     Parameters
     ----------
@@ -728,13 +744,87 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     return tuple(src_tgt_map[snode_id] for snode_id in sources.tolist())
 
 
+def GetSourceNodes(src_layer, targets, syn_model=None):
+    """
+    Obtain sources of `targets` in given `src_layer` population.
+
+    For each neuron in `targets`, this function finds all target elements
+    in `src_layer`. If `syn_model` is not given (default), all sources are
+    returned, otherwise only sources connected via the given synapse model.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        NodeCollection with node IDs of `src_layer`
+    targets : NodeCollection
+        NodeCollection with node IDs of `targets`
+    syn_model : [None | str], optional, default: None
+        Return only source positions for a given synapse model.
+
+    Returns
+    -------
+    tuple of NodeCollection:
+        Tuple of `NodeCollections` of source neurons fulfilling the given criteria, one `NodeCollection` per
+        target node ID in `target`.
+
+    See also
+    --------
+    GetSourcePositions: Obtain positions of sources in a given source layer connected to given target.
+    GetConnections: Return connection identifiers between sources and targets.
+
+    Notes
+    -----
+    * For distributed simulations, this function only returns source on the
+      local MPI process.
+
+    Example
+    -------
+        ::
+
+            import nest
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # get the node IDs of the targets of a source neuron
+            nest.GetSourceNodes(s_nodes, s_nodes[4])
+    """
+    if not isinstance(src_layer, NodeCollection):
+        raise TypeError("src_layer must be a NodeCollection")
+
+    if not isinstance(targets, NodeCollection):
+        raise TypeError("targets must be a NodeCollection.")
+
+    conns = GetConnections(src_layer, targets, synapse_model=syn_model)
+
+    # Re-organize conns into one list per target, containing only source node IDs.
+    tgt_src_map = dict((tnode_id, []) for tnode_id in targets.tolist())
+    for src, tgt in zip(conns.sources(), conns.targets()):
+        tgt_src_map[tgt].append(src)
+
+    for tgt in tgt_src_map.keys():
+        tgt_src_map[tgt] = NodeCollection(list(np.unique(tgt_src_map[tgt])))
+
+    # convert dict to nested list in same order as sources
+    return tuple(tgt_src_map[tnode_id] for tnode_id in targets.tolist())
+
+
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
     Obtain positions of targets to a given `NodeCollection` of `sources`.
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
-    returned, otherwise only targets of specific type.
+    returned, otherwise only targets connected via the given syanpse model.
 
     Parameters
     ----------
@@ -787,12 +877,11 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
-    first_tgt_node_id = tgt_layer[0].get('global_id')
+    first_tgt_node_id = tgt_layer[0].get("global_id")
 
-    connections = GetConnections(sources, tgt_layer,
-                                 synapse_model=syn_model)
-    srcs = connections.get('source')
-    tgts = connections.get('target')
+    connections = GetConnections(sources, tgt_layer, synapse_model=syn_model)
+    srcs = connections.get("source")
+    tgts = connections.get("target")
     if isinstance(srcs, int):
         srcs = [srcs]
     if isinstance(tgts, int):
@@ -808,6 +897,86 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Turn dict into list in same order as sources
     return [src_tgt_pos_map[snode_id] for snode_id in sources.tolist()]
+
+
+def GetSourcePositions(src_layer, targets, syn_model=None):
+    """
+    Obtain positions of sources to a given `NodeCollection` of `targets`.
+
+    For each neuron in `targets`, this function finds all source elements
+    in `src_layer`. If `syn_model` is not given (default), all targets are
+    returned, otherwise only sources connected via the given synapse model.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        `NodeCollection` of src_layer
+    targets : NodeCollection
+        `NodeCollection` with node ID(s) of target neurons
+    syn_type : [None | str], optional, default: None
+        Return only source positions for a given synapse model.
+
+    Returns
+    -------
+    list of list(s) of tuple(s) of floats:
+        Positions of source neurons fulfilling the given criteria as a nested
+        list, containing one list of positions per node in targets.
+
+    See also
+    --------
+    GetSourceNodes: Obtain sources of a `NodeCollection` of targets in a given source
+    population.
+
+    Notes
+    -----
+    * For distributed simulations, this function only returns sources on the
+      local MPI process.
+
+    Example
+    -------
+        ::
+
+            import nest
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # get the positions of the targets of a source neuron
+            nest.GetSourcePositions(s_nodes, s_nodes[5])
+    """
+    if not isinstance(targets, NodeCollection):
+        raise TypeError("targets must be a NodeCollection.")
+
+    # Find positions to all nodes in source layer
+    pos_all_srcs = GetPosition(src_layer)
+    first_src_node_id = src_layer[0].get("global_id")
+
+    connections = GetConnections(src_layer, targets, synapse_model=syn_model)
+    srcs = connections.get("source")
+    tgts = connections.get("target")
+    if isinstance(srcs, int):
+        srcs = [srcs]
+    if isinstance(tgts, int):
+        tgts = [tgts]
+
+    # Make dictionary where the keys are the target node_ids, which is mapped to a
+    # list with the positions of the sources connected to the targets.
+    tgt_src_pos_map = dict((tnode_id, []) for tnode_id in targets.tolist())
+    for i in range(len(connections)):
+        src_indx = srcs[i] - first_src_node_id
+        tgt_src_pos_map[tgts[i]].append(pos_all_srcs[src_indx])
+
+    # Turn dict into list in same order as target
+    return [tgt_src_pos_map[tnode_id] for tnode_id in targets.tolist()]
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
@@ -839,8 +1008,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    node_id_list = sli_func('SelectNodesByMask',
-                            layer, anchor, mask_datum)
+    node_id_list = sli_func("SelectNodesByMask", layer, anchor, mask_datum)
 
     # When creating a NodeCollection, the input list of nodes IDs must be sorted.
     return NodeCollection(sorted(node_id_list))
@@ -856,30 +1024,33 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
     # thin gray line indicating extent
     llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
     urx, ury = llx + xext, lly + yext
-    ax.add_patch(
-        plt.Rectangle((llx, lly), xext, yext, fc='none', ec='0.5', lw=1,
-                      zorder=1))
+    ax.add_patch(plt.Rectangle((llx, lly), xext, yext, fc="none", ec="0.5", lw=1, zorder=1))
 
     # set limits slightly outside extent
-    ax.set(aspect='equal',
-           xlim=(llx - 0.05 * xext, urx + 0.05 * xext),
-           ylim=(lly - 0.05 * yext, ury + 0.05 * yext),
-           xticks=tuple(), yticks=tuple())
+    ax.set(
+        aspect="equal",
+        xlim=(llx - 0.05 * xext, urx + 0.05 * xext),
+        ylim=(lly - 0.05 * yext, ury + 0.05 * yext),
+        xticks=tuple(),
+        yticks=tuple(),
+    )
 
 
 def _shifted_positions(pos, ext):
     """Get shifted positions corresponding to boundary conditions."""
-    return [[pos[0] + ext[0], pos[1]],
-            [pos[0] - ext[0], pos[1]],
-            [pos[0], pos[1] + ext[1]],
-            [pos[0], pos[1] - ext[1]],
-            [pos[0] + ext[0], pos[1] - ext[1]],
-            [pos[0] - ext[0], pos[1] + ext[1]],
-            [pos[0] + ext[0], pos[1] + ext[1]],
-            [pos[0] - ext[0], pos[1] - ext[1]]]
+    return [
+        [pos[0] + ext[0], pos[1]],
+        [pos[0] - ext[0], pos[1]],
+        [pos[0], pos[1] + ext[1]],
+        [pos[0], pos[1] - ext[1]],
+        [pos[0] + ext[0], pos[1] - ext[1]],
+        [pos[0] - ext[0], pos[1] + ext[1]],
+        [pos[0] + ext[0], pos[1] + ext[1]],
+        [pos[0] - ext[0], pos[1] - ext[1]],
+    ]
 
 
-def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
+def PlotLayer(layer, fig=None, nodecolor="b", nodesize=20):
     """
     Plot all nodes in a `layer`.
 
@@ -930,20 +1101,20 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
-        raise ImportError('Matplotlib could not be imported')
+        raise ImportError("Matplotlib could not be imported")
 
     if not isinstance(layer, NodeCollection):
-        raise TypeError('layer must be a NodeCollection.')
+        raise TypeError("layer must be a NodeCollection.")
 
     # get layer extent
-    ext = layer.spatial['extent']
+    ext = layer.spatial["extent"]
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = layer.spatial['center']
+        xctr, yctr = layer.spatial["center"]
 
         # extract position information, transpose to list of x and y pos
         if len(layer) == 1:
@@ -962,9 +1133,6 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     elif len(ext) == 3:
-        # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         # extract position information, transpose to list of x,y,z pos
         if len(layer) == 1:
             # handle case of single node
@@ -974,7 +1142,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
         if fig is None:
             fig = plt.figure()
-            ax = fig.add_subplot(111, projection='3d')
+            ax = fig.add_subplot(111, projection="3d")
         else:
             ax = fig.gca()
 
@@ -987,10 +1155,20 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     return fig
 
 
-def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
-                mask=None, probability_parameter=None,
-                src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
-                mask_color='yellow', probability_cmap='Greens'):
+def PlotTargets(
+    src_nrn,
+    tgt_layer,
+    syn_type=None,
+    fig=None,
+    mask=None,
+    probability_parameter=None,
+    src_color="red",
+    src_size=50,
+    tgt_color="blue",
+    tgt_size=20,
+    mask_color="yellow",
+    probability_cmap="Greens",
+):
     """
     Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
 
@@ -1027,6 +1205,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     See also
     --------
+    PlotSources: Plot all sources of target neuron in a source layer.
     GetTargetNodes: Obtain targets of a sources in a given target layer.
     GetTargetPositions: Obtain positions of targets of sources in a given target layer.
     probability_parameter: Add indication of connection probability and mask to axes.
@@ -1076,14 +1255,14 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     srcpos = GetPosition(src_nrn)
 
     # get layer extent
-    ext = tgt_layer.spatial['extent']
+    ext = tgt_layer.spatial["extent"]
 
     if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
         xext, yext = ext
-        xctr, yctr = tgt_layer.spatial['center']
+        xctr, yctr = tgt_layer.spatial["center"]
 
         if fig is None:
             fig = plt.figure()
@@ -1101,18 +1280,22 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
         if mask is not None or probability_parameter is not None:
             edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
-            PlotProbabilityParameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax,
-                                     prob_cmap=probability_cmap, mask_color=mask_color)
+            PlotProbabilityParameter(
+                src_nrn,
+                probability_parameter,
+                mask=mask,
+                edges=edges,
+                ax=ax,
+                prob_cmap=probability_cmap,
+                mask_color=mask_color,
+            )
 
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     else:
-        # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         if fig is None:
             fig = plt.figure()
-            ax = fig.add_subplot(111, projection='3d')
+            ax = fig.add_subplot(111, projection="3d")
         else:
             ax = fig.gca()
 
@@ -1129,37 +1312,193 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     return fig
 
 
-def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
-    """Create Matplotlib Patch objects representing the mask"""
+def PlotSources(
+    src_layer,
+    tgt_nrn,
+    syn_type=None,
+    fig=None,
+    mask=None,
+    probability_parameter=None,
+    tgt_color="red",
+    tgt_size=50,
+    src_color="blue",
+    src_size=20,
+    mask_color="yellow",
+    probability_cmap="Greens",
+):
+    """
+    Plot all sources of target neuron `tgt_nrn` in a source layer `src_layer`.
+
+    Parameters
+    ----------
+    src_layer : NodeCollection
+        `NodeCollection` of src_layer
+    tgt_nrn : NodeCollection
+        `NodeCollection` of target neuron (as single-element NodeCollection)
+    syn_type : [None | str], optional, default: None
+        Show only targets connected with a given synapse type
+    fig : [None | matplotlib.figure.Figure object], optional, default: None
+        Matplotlib figure to plot to. If not given, a new figure is created.
+    mask : [None | dict], optional, default: None
+        Draw mask with targets; see :py:func:`.PlotProbabilityParameter` for details.
+    probability_parameter : [None | Parameter], optional, default: None
+        Draw connection probability with targets; see :py:func:`.PlotProbabilityParameter` for details.
+    tgt_color : [None | any matplotlib color], optional, default: 'red'
+        Color used to mark target node position
+    tgt_size : float, optional, default: 50
+        Size of target marker (see scatter for details)
+    src_color : [None | any matplotlib color], optional, default: 'blue'
+        Color used to mark source node positions
+    src_size : float, optional, default: 20
+        Size of source markers (see scatter for details)
+    mask_color : [None | any matplotlib color], optional, default: 'red'
+        Color used for line marking mask
+    probability_cmap : [None | any matplotlib cmap color], optional, default: 'Greens'
+        Color used for lines marking probability parameter.
+
+    Returns
+    -------
+    matplotlib.figure.Figure object
+
+    See also
+    --------
+    PlotTargets: Plot all targets of source neuron in a target layer.
+    GetSourceNodes: Obtain sources of a target in a given source layer.
+    GetSourcePositions: Obtain positions of sources of target in a given source layer.
+    probability_parameter: Add indication of connection probability and mask to axes.
+    PlotLayer: Plot all nodes in a spatially distributed population.
+    matplotlib.pyplot.scatter : matplotlib scatter plot.
+
+    Notes
+    -----
+    * Do **not** use this function in distributed simulations.
+
+    **Example**
+        ::
+
+            import nest
+            import matplotlib.pyplot as plt
+
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+
+            # connectivity specifications with a mask
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'use_on_source': True,
+                        'mask': {'rectangular': {'lower_left': [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
+
+            # connect population s_nodes with itself according to the given
+            # specifications
+            nest.Connect(s_nodes, s_nodes, conndict)
+
+            # plot the targets of a source neuron
+            nest.PlotSources(s_nodes, s_nodes[4])
+            plt.show()
+    """
 
     # import pyplot here and not at toplevel to avoid preventing users
     # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
-    import matplotlib as mtpl
 
-    edge_color = 'black'
+    if not isinstance(tgt_nrn, NodeCollection) or len(tgt_nrn) != 1:
+        raise TypeError("tgt_nrn must be a single element NodeCollection.")
+    if not isinstance(src_layer, NodeCollection):
+        raise TypeError("src_layer must be a NodeCollection.")
+
+    # get position of source
+    tgtpos = GetPosition(tgt_nrn)
+
+    # get layer extent
+    ext = src_layer.spatial["extent"]
+
+    if len(ext) == 2:
+        # 2D layer
+
+        # get layer extent and center, x and y
+        xext, yext = ext
+        xctr, yctr = src_layer.spatial["center"]
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+        else:
+            ax = fig.gca()
+
+        # get positions, reorganize to x and y vectors
+        srcpos = GetSourcePositions(src_layer, tgt_nrn, syn_type)
+        if srcpos:
+            xpos, ypos = zip(*srcpos[0])
+            ax.scatter(xpos, ypos, s=src_size, facecolor=src_color)
+
+        ax.scatter(tgtpos[:1], tgtpos[1:], s=tgt_size, facecolor=src_color, alpha=0.4, zorder=-10)
+
+        if mask is not None or probability_parameter is not None:
+            edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
+            PlotProbabilityParameter(
+                tgt_nrn,
+                probability_parameter,
+                mask=mask,
+                edges=edges,
+                ax=ax,
+                prob_cmap=probability_cmap,
+                mask_color=mask_color,
+            )
+
+        _draw_extent(ax, xctr, yctr, xext, yext)
+
+    else:
+        # 3D layer
+        from mpl_toolkits.mplot3d import Axes3D
+
+        if fig is None:
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection="3d")
+        else:
+            ax = fig.gca()
+
+        # get positions, reorganize to x,y,z vectors
+        srcpos = GetSourcePositions(src_layer, tgt_nrn, syn_type)
+        if tgtpos:
+            xpos, ypos, zpos = zip(*srcpos[0])
+            ax.scatter3D(xpos, ypos, zpos, s=src_size, facecolor=tgt_color)
+
+        ax.scatter3D(tgtpos[:1], tgtpos[1:2], tgtpos[2:], s=tgt_size, facecolor=tgt_color, alpha=0.4, zorder=-10)
+
+    plt.draw_if_interactive()
+
+    return fig
+
+
+def _create_mask_patches(mask, periodic, extent, source_pos, face_color="yellow"):
+    """Create Matplotlib Patch objects representing the mask"""
+
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib as mtpl
+    import matplotlib.pyplot as plt
+
+    edge_color = "black"
     alpha = 0.2
     line_width = 2
     mask_patches = []
 
-    if 'anchor' in mask:
-        offs = np.array(mask['anchor'])
+    if "anchor" in mask:
+        offs = np.array(mask["anchor"])
     else:
-        offs = np.array([0., 0.])
+        offs = np.array([0.0, 0.0])
 
-    if 'circular' in mask:
-        r = mask['circular']['radius']
+    if "circular" in mask:
+        r = mask["circular"]["radius"]
 
-        patch = plt.Circle(source_pos + offs, radius=r,
-                           fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+        patch = plt.Circle(source_pos + offs, radius=r, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
         mask_patches.append(patch)
 
         if periodic:
             for pos in _shifted_positions(source_pos + offs, extent):
-                patch = plt.Circle(pos, radius=r,
-                                   fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+                patch = plt.Circle(pos, radius=r, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
                 mask_patches.append(patch)
-    elif 'doughnut' in mask:
+    elif "doughnut" in mask:
         # Mmm... doughnut
         def make_doughnut_patch(pos, r_out, r_in, ec, fc, alpha):
             def make_circle(r):
@@ -1168,6 +1507,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
                 x = r * np.cos(t)
                 y = r * np.sin(t)
                 return np.hstack((x, y))
+
             outside_verts = make_circle(r_out)[::-1]
             inside_verts = make_circle(r_in)
             codes = np.ones(len(inside_verts), dtype=mpath.Path.code_type) * mpath.Path.LINETO
@@ -1178,8 +1518,8 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
             path = mpath.Path(vertices, all_codes)
             return mpatches.PathPatch(path, fc=fc, ec=ec, alpha=alpha, lw=line_width)
 
-        r_in = mask['doughnut']['inner_radius']
-        r_out = mask['doughnut']['outer_radius']
+        r_in = mask["doughnut"]["inner_radius"]
+        r_out = mask["doughnut"]["outer_radius"]
         pos = source_pos + offs
         patch = make_doughnut_patch(pos, r_in, r_out, edge_color, face_color, alpha)
         mask_patches.append(patch)
@@ -1187,21 +1527,20 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
             for pos in _shifted_positions(source_pos + offs, extent):
                 patch = make_doughnut_patch(pos, r_in, r_out, edge_color, face_color, alpha)
                 mask_patches.append(patch)
-    elif 'rectangular' in mask:
-        ll = np.array(mask['rectangular']['lower_left'])
-        ur = np.array(mask['rectangular']['upper_right'])
+    elif "rectangular" in mask:
+        ll = np.array(mask["rectangular"]["lower_left"])
+        ur = np.array(mask["rectangular"]["upper_right"])
         width = ur[0] - ll[0]
         height = ur[1] - ll[1]
         pos = source_pos + ll + offs
-        cntr = [pos[0] + width/2, pos[1] + height/2]
+        cntr = [pos[0] + width / 2, pos[1] + height / 2]
 
-        if 'azimuth_angle' in mask['rectangular']:
-            angle = mask['rectangular']['azimuth_angle']
+        if "azimuth_angle" in mask["rectangular"]:
+            angle = mask["rectangular"]["azimuth_angle"]
         else:
             angle = 0.0
 
-        patch = plt.Rectangle(pos, width, height,
-                              fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+        patch = plt.Rectangle(pos, width, height, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
         # Need to rotate about center
         trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
         patch.set_transform(trnsf)
@@ -1209,42 +1548,57 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
 
         if periodic:
             for pos in _shifted_positions(source_pos + ll + offs, extent):
-                patch = plt.Rectangle(pos, width, height,
-                                      fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+                patch = plt.Rectangle(pos, width, height, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
 
-                cntr = [pos[0] + width/2, pos[1] + height/2]
+                cntr = [pos[0] + width / 2, pos[1] + height / 2]
                 # Need to rotate about center
                 trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
                 patch.set_transform(trnsf)
                 mask_patches.append(patch)
-    elif 'elliptical' in mask:
-        width = mask['elliptical']['major_axis']
-        height = mask['elliptical']['minor_axis']
-        if 'azimuth_angle' in mask['elliptical']:
-            angle = mask['elliptical']['azimuth_angle']
+    elif "elliptical" in mask:
+        width = mask["elliptical"]["major_axis"]
+        height = mask["elliptical"]["minor_axis"]
+        if "azimuth_angle" in mask["elliptical"]:
+            angle = mask["elliptical"]["azimuth_angle"]
         else:
             angle = 0.0
-        if 'anchor' in mask['elliptical']:
-            anchor = mask['elliptical']['anchor']
+        if "anchor" in mask["elliptical"]:
+            anchor = mask["elliptical"]["anchor"]
         else:
-            anchor = np.array([0., 0.])
-        patch = mpl.patches.Ellipse(source_pos + offs + anchor, width, height,
-                                    angle=angle, fc=face_color,
-                                    ec=edge_color, alpha=alpha, lw=line_width)
+            anchor = np.array([0.0, 0.0])
+        patch = mpl.patches.Ellipse(
+            source_pos + offs + anchor,
+            width,
+            height,
+            angle=angle,
+            fc=face_color,
+            ec=edge_color,
+            alpha=alpha,
+            lw=line_width,
+        )
         mask_patches.append(patch)
 
         if periodic:
             for pos in _shifted_positions(source_pos + offs + anchor, extent):
-                patch = mpl.patches.Ellipse(pos, width, height, angle=angle, fc=face_color,
-                                            ec=edge_color, alpha=alpha, lw=line_width)
+                patch = mpl.patches.Ellipse(
+                    pos, width, height, angle=angle, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width
+                )
                 mask_patches.append(patch)
     else:
-        raise ValueError('Mask type cannot be plotted with this version of PyNEST.')
+        raise ValueError("Mask type cannot be plotted with this version of PyNEST.")
     return mask_patches
 
 
-def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5, -0.5, 0.5], shape=[100, 100],
-                             ax=None, prob_cmap='Greens', mask_color='yellow'):
+def PlotProbabilityParameter(
+    source,
+    parameter=None,
+    mask=None,
+    edges=[-0.5, 0.5, -0.5, 0.5],
+    shape=[100, 100],
+    ax=None,
+    prob_cmap="Greens",
+    mask_color="yellow",
+):
     """
     Create a plot of the connection probability and/or mask.
 
@@ -1278,10 +1632,10 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
-        raise ImportError('Matplotlib could not be imported')
+        raise ImportError("Matplotlib could not be imported")
 
     if parameter is None and mask is None:
-        raise ValueError('At least one of parameter or mask must be specified')
+        raise ValueError("At least one of parameter or mask must be specified")
     if ax is None:
         fig, ax = plt.subplots()
     ax.set_xlim(*edges[:2])
@@ -1293,13 +1647,14 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
             positions = [[x, y] for y in np.linspace(edges[2], edges[3], shape[1])]
             values = parameter.apply(source, positions)
             z[:, i] = np.array(values)
-        img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
-                        origin='lower', cmap=prob_cmap, vmin=0., vmax=1.)
+        img = ax.imshow(
+            np.minimum(np.maximum(z, 0.0), 1.0), extent=edges, origin="lower", cmap=prob_cmap, vmin=0.0, vmax=1.0
+        )
         plt.colorbar(img, ax=ax, fraction=0.046, pad=0.04)
 
     if mask is not None:
-        periodic = source.spatial['edge_wrap']
-        extent = source.spatial['extent']
+        periodic = source.spatial["edge_wrap"]
+        extent = source.spatial["extent"]
         source_pos = GetPosition(source)
         patches = _create_mask_patches(mask, periodic, extent, source_pos, face_color=mask_color)
         for patch in patches:

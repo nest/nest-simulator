@@ -41,7 +41,7 @@ public:
   PopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class NpopFunction : public SLIFunction
@@ -50,7 +50,7 @@ public:
   NpopFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class DupFunction : public SLIFunction
@@ -59,7 +59,7 @@ public:
   DupFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ExchFunction : public SLIFunction
@@ -68,7 +68,7 @@ public:
   ExchFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class IndexFunction : public SLIFunction
@@ -77,7 +77,7 @@ public:
   IndexFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RollFunction : public SLIFunction
@@ -86,7 +86,7 @@ public:
   RollFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RolluFunction : public SLIFunction
@@ -95,7 +95,7 @@ public:
   RolluFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RolldFunction : public SLIFunction
@@ -104,7 +104,7 @@ public:
   RolldFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RotFunction : public SLIFunction
@@ -113,7 +113,7 @@ public:
   RotFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class OverFunction : public SLIFunction
@@ -122,7 +122,7 @@ public:
   OverFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CountFunction : public SLIFunction
@@ -131,7 +131,7 @@ public:
   CountFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class CopyFunction : public SLIFunction
@@ -140,7 +140,7 @@ public:
   CopyFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ClearFunction : public SLIFunction
@@ -149,7 +149,7 @@ public:
   ClearFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class ExecstackFunction : public SLIFunction
@@ -158,7 +158,7 @@ public:
   ExecstackFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RestoreestackFunction : public SLIFunction
@@ -167,7 +167,7 @@ public:
   RestoreestackFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class RestoreostackFunction : public SLIFunction
@@ -176,7 +176,7 @@ public:
   RestoreostackFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 
 class OperandstackFunction : public SLIFunction
@@ -185,6 +185,6 @@ public:
   OperandstackFunction()
   {
   }
-  void execute( SLIInterpreter* ) const;
+  void execute( SLIInterpreter* ) const override;
 };
 #endif

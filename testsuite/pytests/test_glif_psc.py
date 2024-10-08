@@ -20,18 +20,19 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 try:
     import scipy.stats
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
 
 
-@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
+@unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
 class GLIFPSCTestCase(unittest.TestCase):
-
     def setUp(self):
         """
         Clean up and initialize NEST before each test.
@@ -50,22 +51,27 @@ class GLIFPSCTestCase(unittest.TestCase):
         nrn = nest.Create("glif_psc", params=model_params)
 
         # Create and connect inputs to glif model
-        espikes = nest.Create("spike_generator",
-                              params={"spike_times": [10.0, 100.0,
-                                                      400.0, 700.0],
-                                      "spike_weights": [20.0]*4})
-        ispikes = nest.Create("spike_generator",
-                              params={"spike_times": [15.0, 99.0,
-                                                      300.0, 800.0],
-                                      "spike_weights": [-20.]*4})
+        espikes = nest.Create(
+            "spike_generator", params={"spike_times": [10.0, 100.0, 400.0, 700.0], "spike_weights": [20.0] * 4}
+        )
+        ispikes = nest.Create(
+            "spike_generator", params={"spike_times": [15.0, 99.0, 300.0, 800.0], "spike_weights": [-20.0] * 4}
+        )
 
-        cg = nest.Create("step_current_generator",
-                         params={"amplitude_values": [100.0, ],
-                                 "amplitude_times": [600.0, ],
-                                 "start": 600.0, "stop": 900.0})
-        pg = nest.Create("poisson_generator",
-                         params={"rate": 1000.,
-                                 "start": 200., "stop": 500.})
+        cg = nest.Create(
+            "step_current_generator",
+            params={
+                "amplitude_values": [
+                    100.0,
+                ],
+                "amplitude_times": [
+                    600.0,
+                ],
+                "start": 600.0,
+                "stop": 900.0,
+            },
+        )
+        pg = nest.Create("poisson_generator", params={"rate": 1000.0, "start": 200.0, "stop": 500.0})
         pn = nest.Create("parrot_neuron")
 
         nest.Connect(nest.AllToAll(espikes, nrn, syn_spec=nest.synapsemodels.static(receptor_type=1)))
@@ -75,7 +81,7 @@ class GLIFPSCTestCase(unittest.TestCase):
         nest.Connect(nest.AllToAll(pn, nrn, syn_spec=nest.synapsemodels.static(weight=35.0, receptor_type=1)))
 
         # For recording spikes and voltage traces
-        sr = nest.Create('spike_recorder')
+        sr = nest.Create("spike_recorder")
         nest.Connect(nest.AllToAll(nrn, sr))
 
         mm = nest.Create("multimeter", params={"record_from": ["V_m"]})
@@ -85,9 +91,9 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         nest.Simulate(1000.0)
 
-        times = nest.GetStatus(mm, 'events')[0]['times']
-        V_m = nest.GetStatus(mm, 'events')[0]['V_m']
-        spikes = nest.GetStatus(sr, 'events')[0]['times']
+        times = nest.GetStatus(mm, "events")[0]["times"]
+        V_m = nest.GetStatus(mm, "events")[0]["V_m"]
+        spikes = nest.GetStatus(sr, "events")[0]["times"]
 
         return times, V_m, spikes
 
@@ -98,7 +104,7 @@ class GLIFPSCTestCase(unittest.TestCase):
         p_value_lim = 0.9
         d_lim = 0.2
         d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
-        print(f'd={d}, p_value={p_value}')
+        print(f"d={d}, p_value={p_value}")
         self.assertGreater(p_value, p_value_lim)
         self.assertLess(d, d_lim)
 
@@ -110,15 +116,34 @@ class GLIFPSCTestCase(unittest.TestCase):
             "spike_dependent_threshold": False,
             "after_spike_currents": False,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_params)
-        spikes_expected = [394.67, 424.25, 483.25, 612.99, 628.73,
-                           644.47, 660.21, 675.95, 691.69, 706.3,
-                           722., 737.74, 753.48, 769.22, 784.96,
-                           800.7, 816.72, 832.46, 848.2, 863.94,
-                           879.68, 895.42]
+        spikes_expected = [
+            394.67,
+            424.25,
+            483.25,
+            612.99,
+            628.73,
+            644.47,
+            660.21,
+            675.95,
+            691.69,
+            706.3,
+            722.0,
+            737.74,
+            753.48,
+            769.22,
+            784.96,
+            800.7,
+            816.72,
+            832.46,
+            848.2,
+            863.94,
+            879.68,
+            895.42,
+        ]
 
         self.ks_assert_spikes(spikes, spikes_expected)
         self.assertAlmostEqual(V_m[0], -78.85)
@@ -131,14 +156,40 @@ class GLIFPSCTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": False,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
         times, V_m, spikes = self.simulate_w_stim(lif_r_params)
-        expected_spikes = [394.67, 400.67, 424.51, 484.48, 613.4, 621.31, 629.67,
-                           638.47, 647.7,  657.36, 667.42, 677.87, 688.67, 699.8,
-                           709.84, 721.58, 733.57, 745.76, 758.11, 770.6, 783.21,
-                           795.92, 811.36, 824.05, 836.81, 849.64, 862.54, 875.49,
-                           888.48]
+        expected_spikes = [
+            394.67,
+            400.67,
+            424.51,
+            484.48,
+            613.4,
+            621.31,
+            629.67,
+            638.47,
+            647.7,
+            657.36,
+            667.42,
+            677.87,
+            688.67,
+            699.8,
+            709.84,
+            721.58,
+            733.57,
+            745.76,
+            758.11,
+            770.6,
+            783.21,
+            795.92,
+            811.36,
+            824.05,
+            836.81,
+            849.64,
+            862.54,
+            875.49,
+            888.48,
+        ]
 
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
@@ -151,7 +202,7 @@ class GLIFPSCTestCase(unittest.TestCase):
             "spike_dependent_threshold": False,
             "after_spike_currents": True,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
@@ -168,7 +219,7 @@ class GLIFPSCTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": True,
             "adapting_threshold": False,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
@@ -184,7 +235,7 @@ class GLIFPSCTestCase(unittest.TestCase):
             "spike_dependent_threshold": True,
             "after_spike_currents": True,
             "adapting_threshold": True,
-            "V_m": -78.85
+            "V_m": -78.85,
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_a_params)
@@ -203,5 +254,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

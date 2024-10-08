@@ -116,7 +116,7 @@ Strings
 
 Strings are sequences of characters, delimited by parenthesis. In SLI,
 characters are represented by interger numbers, e.g. 97 represents the
-letter ‘a’, while 32 represents the *space* character.
+letter "a", while 32 represents the *space* character.
 
 The elements of a string are indexed, starting with zero (0) as the
 first index.
@@ -202,11 +202,21 @@ There are a number of different object types in SLI. Each type is
 represented by a literal name (i.e. a name with a prepended slash). Here
 is a list of the most important types:
 
-\|—————–|——————-\| \| ``/integertype`` \| ``/doubletype`` \| \|
-``/booltype`` \| ``/stringtype`` \| \| ``/nametype`` \| ``/literaltype``
-\| \| ``/arraytype`` \| ``/proceduretype`` \| \| ``/modeltype`` \|
-``/dictionarytype`` \| \| ``/ostreamtype`` \| ``/istreamtype`` \| \|
-``/xistreamtype`` \| ``/trietype`` \|
+* ``/integertype``
+* ``/doubletype``
+* ``/booltype``
+* ``/stringtype``
+* ``/nametype``
+* ``/literaltype``
+* ``/arraytype``
+* ``/proceduretype``
+* ``/modeltype``
+* ``/dictionarytype``
+* ``/ostreamtype``
+* ``/istreamtype``
+* ``/xistreamtype``
+* ``/trietype``
+
 
 Getting type information
 ~~~~~~~~~~~~~~~~~~~~~~~~

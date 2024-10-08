@@ -87,6 +87,13 @@ set( sli_sources
 set_source_files_properties( slistartup.cc PROPERTIES COMPILE_OPTIONS "-O0" )
 
 add_library( sli_lib ${sli_sources} )
+
+set_target_properties( sli_lib
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
 target_link_libraries( sli_lib nestutil OpenMP::OpenMP_CXX )
 
 # Make a separate target for linking against readline, so that
@@ -95,6 +102,13 @@ target_link_libraries( sli_lib nestutil OpenMP::OpenMP_CXX )
 # pull request for more information:
 # https://github.com/nest/nest-simulator/pull/323
 add_library( sli_readline gnureadline.cc gnureadline.h )
+
+set_target_properties( sli_readline
+    PROPERTIES
+    VERSION ${NEST_VERSION}
+    SOVERSION 3
+    )
+
 target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 # add the executable

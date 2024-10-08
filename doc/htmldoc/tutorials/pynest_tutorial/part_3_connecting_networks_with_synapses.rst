@@ -29,11 +29,11 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-Parameterising synapse models
+Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
-available models by using the command ``Models(synapses)``, which picks
+available models by using the command ``synapse_models``, which picks
 only the synapse models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You
@@ -65,16 +65,16 @@ STDP synapses
 For the majority of synapses, all of their parameters are accessible via
 :py:func:`.GetDefaults` and :py:func:`.SetDefaults`. Synapse models implementing
 spike-timing dependent plasticity are an exception to this, as their
-dynamics are driven by the postsynaptic spike train as well as the
+dynamics are driven by the postsynaptic :hxt_ref:`spike train` as well as the
 pre-synaptic one. As a consequence, the time constant of the depressing
-window of STDP is a parameter of the postsynaptic neuron. It can be set
+window of :hxt_ref:`STDP` is a parameter of the postsynaptic neuron. It can be set
 as follows:
 
 ::
 
     nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
 
-or by using any of the other methods of parameterising neurons
+or by using any of the other methods of parametrizing neurons
 demonstrated in the first two parts of this introduction.
 
 Connecting with synapse models
@@ -119,7 +119,7 @@ parameters associated with the distribution can be set (for example
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:ref:`Connection Managementi <connection_management>`, the most common
+:ref:`Connection Management <connection_management>`, the most common
 ones are:
 
 +-------------------+------------------------+
@@ -179,7 +179,7 @@ as above, or in any conjunction:
 will return all the connections that the neurons in ``epop1`` have to
 neurons in ``epop2`` of type :hxt_ref:`stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
-represented on that particular MPI process in a distributed simulation.
+represented on that particular :hxt_ref:`MPI` process in a distributed simulation.
 
 Once we have the SynapseCollection of connections, we can extract data from it using
 :py:meth:`~.SynapseCollection.get`. In the simplest case, this returns a dictionary of lists,
@@ -275,7 +275,7 @@ your code longer and harder to follow. Secondly, it is error-prone. A
 certain percentage of the time you will forget to make all the necessary
 modifications after the copy-and-paste, and this will introduce errors
 into your code that are hard to find, not only because they are
-semantically correct and so don’t cause an obvious error, but also
+semantically correct and so don't cause an obvious error, but also
 because your eye tends to drift over them:
 
 ::
@@ -396,5 +396,5 @@ Querying Synapses
    is represented by the following five
    entries: source-node_id, target-node_id, target-thread, synapse-id, port
 
-   *Note:* Only connections with targets on the MPI process executing
+   *Note:* Only connections with targets on the :hxt_ref:`MPI` process executing
    the command are returned.

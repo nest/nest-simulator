@@ -27,21 +27,26 @@ skip_if_without_music
 
 M_ERROR setverbosity
 
+% create voltmeter first to ensure same GID in sender and receiver
+/voltmeter Create /vm Set
+vm << /label (sender) /record_to /ascii >> SetStatus
+
 /spike_generator Create /sg Set
 sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 
 /iaf_psc_alpha Create /n Set
 
-sg n /one_to_one << /weight 750.0 >> Connect
+% create last to ensure same GID for neuron as in receiver
+/parrot_neuron Create /pn Set
 
-/voltmeter Create /vm Set
-vm << /label (sender) /record_to /ascii >> SetStatus
+sg pn Connect
+pn n /one_to_one << /weight 750.0 >> Connect
 
 vm n Connect
 
 /music_event_out_proxy Create /meop Set
 meop << /port_name (spikes_out) >> SetStatus
 
-sg meop /one_to_one << /music_channel 0 >> Connect
+pn meop /one_to_one << /music_channel 0 >> Connect
 
 10 Simulate

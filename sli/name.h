@@ -79,13 +79,13 @@ public:
   /**
    * Return string represented by Name.
    */
-  const std::string& toString( void ) const;
+  const std::string& toString() const;
 
   /**
    * Return table index for Name object.
    */
   handle_t
-  toIndex( void ) const
+  toIndex() const
   {
     return handle_;
   }
@@ -99,7 +99,7 @@ public:
   bool
   operator!=( const Name& n ) const
   {
-    return not( handle_ == n.handle_ );
+    return handle_ != n.handle_;
   }
 
   /**

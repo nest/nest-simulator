@@ -27,19 +27,15 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -185,7 +181,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* no
   const size_t old_n_receptors = this->n_receptors_();
   if ( updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ ) )
   {
-    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
+    if ( this->n_receptors_() != old_n_receptors and has_connections_ == true )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -315,8 +311,8 @@ iaf_psc_alpha_multisynapse::pre_run_hook()
     V_.P21_syn_[ i ] = h * V_.P11_syn_[ i ];
 
     // these are determined according to a numeric stability criterion
-    V_.P31_syn_[ i ] = propagator_31( P_.tau_syn_[ i ], P_.Tau_, P_.C_, h );
-    V_.P32_syn_[ i ] = propagator_32( P_.tau_syn_[ i ], P_.Tau_, P_.C_, h );
+    std::tie( V_.P31_syn_[ i ], V_.P32_syn_[ i ] ) =
+      IAFPropagatorAlpha( P_.tau_syn_[ i ], P_.Tau_, P_.C_ ).evaluate( h );
 
     V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
@@ -328,9 +324,6 @@ iaf_psc_alpha_multisynapse::pre_run_hook()
 void
 iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.refractory_steps_ == 0 )
@@ -385,10 +378,10 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
   }
 }
 
-port
-iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
+size_t
+iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

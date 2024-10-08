@@ -47,9 +47,9 @@ namespace nest
  * A templated struct `EnableBitMaskOperators` is defined, that, regardless of the template type, contains a single
  * static constant member `enable`, set to false. This is the "default", as the template may be specialised with any
  * type. However, we can override this behaviour by explicitly providing a template specialisation of
- * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyFlags`--with a static constant
- * member by the same name but with value set to true. If we then want to ask during function definition of bitmask
- * operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
+ * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyFlags`--with a static
+ * constant member by the same name but with value set to true. If we then want to ask during function definition of
+ * bitmask operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
  * `EnableBitMaskOperators` by this type `T`, and check the value of its `enable` member using `enable_if`.
  *
  * To enable the bitfield operators for our `MyFlags` class, we thus specialise the template:
@@ -68,7 +68,7 @@ namespace nest
  *
  *    MyFlags my_flags = MyFlags::FIRST_FLAG | MyFlags::FOURTH_FLAG;
  *    my_flags |= MyFlags::THIRD_FLAG;
- *    if ( enumFlagSet( my_flags, MyFlags::FOURTH_FLAG ) )
+ *    if ( flag_is_set( my_flags, MyFlags::FOURTH_FLAG ) )
  *    {
  *        std::cout << "Fourth flag is set!" << std::endl;
  *    }
@@ -81,26 +81,27 @@ struct EnableBitMaskOperators
 };
 
 template < typename Enum >
-typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
-operator|( Enum lhs, Enum rhs )
+constexpr typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator|( const Enum lhs, const Enum rhs )
 {
-  using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< Enum >( static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
+  using underlying = typename std::underlying_type< const Enum >::type;
+  return static_cast< const Enum >( static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
 }
 
 template < typename Enum >
-typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type operator&( Enum lhs, Enum rhs )
+constexpr typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator&( const Enum lhs, const Enum rhs )
 {
   using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< Enum >( static_cast< underlying >( lhs ) & static_cast< underlying >( rhs ) );
+  return static_cast< const Enum >( static_cast< underlying >( lhs ) & static_cast< underlying >( rhs ) );
 }
 
 template < typename Enum >
-typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
-operator^( Enum& lhs, Enum rhs )
+constexpr typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
+operator^( const Enum& lhs, const Enum rhs )
 {
   using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< Enum >( static_cast< underlying >( lhs ) ^ static_cast< underlying >( rhs ) );
+  return static_cast< const Enum >( static_cast< underlying >( lhs ) ^ static_cast< underlying >( rhs ) );
 }
 
 template < typename Enum >
@@ -132,7 +133,7 @@ operator^=( Enum& lhs, Enum rhs )
 
 template < typename Enum >
 bool
-enumFlagSet( const Enum en, const Enum flag )
+flag_is_set( const Enum en, const Enum flag )
 {
   using underlying = typename std::underlying_type< Enum >::type;
   return static_cast< underlying >( en & flag ) != 0;

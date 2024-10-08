@@ -19,9 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
-import nest
 import unittest
+
+import nest
+import numpy as np
 
 
 @nest.ll_api.check_stack
@@ -35,26 +36,26 @@ class Tsodyks2SynapseTest(unittest.TestCase):
     def setUp(self):
         self.resolution = 0.1  # [ms]
         self.presynaptic_firing_rate = 20.0  # [Hz]
-        self.simulation_duration = 1E3  # [ms]
-        self.hardcoded_trains_length = 15.  # [ms]
+        self.simulation_duration = 1e3  # [ms]
+        self.hardcoded_trains_length = 15.0  # [ms]
         self.synapse_parameters = {
             "receptor_type": 1,
             "delay": self.resolution,
             "U": 1.0,
             "u": 1.0,
             "x": 1.0,
-            "tau_rec": 100.,
-            "tau_fac": 0.,
-            "weight": 1.  # maximal possible response (absolute synaptic efficacy)
+            "tau_rec": 100.0,
+            "tau_fac": 0.0,
+            "weight": 1.0,  # maximal possible response (absolute synaptic efficacy)
         }
 
     def test_tsodyk2_synapse(self):
         pre_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
-            pre_spikes,
-            absolute_weight=self.synapse_parameters["weight"])
+            pre_spikes, absolute_weight=self.synapse_parameters["weight"]
+        )
 
-        np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1E-12)
+        np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1e-12)
 
     def do_the_nest_simulation(self):
         """
@@ -66,17 +67,17 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         nest.ResetKernel()
         nest.resolution = self.resolution
 
-        neurons = nest.Create(
-            "parrot_neuron",
-            2,
-            params={})
+        neurons = nest.Create("parrot_neuron", 2, params={})
         presynaptic_neuron = neurons[0]
         postsynaptic_neuron = neurons[1]
 
         presynaptic_generator = nest.Create(
             "poisson_generator",
-            params={"rate": self.presynaptic_firing_rate,
-                    "stop": (self.simulation_duration - self.hardcoded_trains_length)})
+            params={
+                "rate": self.presynaptic_firing_rate,
+                "stop": (self.simulation_duration - self.hardcoded_trains_length),
+            },
+        )
 
         spike_recorder = nest.Create("spike_recorder")
 
@@ -97,7 +98,7 @@ class Tsodyks2SynapseTest(unittest.TestCase):
 
         return (pre_spikes, weights)
 
-    def reproduce_weight_drift(self, _pre_spikes, absolute_weight=1.):
+    def reproduce_weight_drift(self, _pre_spikes, absolute_weight=1.0):
         """
         Returns the total weight change of the synapse
         computed outside of NEST.
@@ -116,8 +117,8 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         n_steps = 1 + int(np.ceil(self.simulation_duration / self.resolution))
         w_log = []
 
-        t_lastspike = 0.
-        R_ = 1.              # fraction of synaptic resources available for transmission in the range [0..1]
+        t_lastspike = 0.0
+        R_ = 1.0  # fraction of synaptic resources available for transmission in the range [0..1]
         u_ = self.synapse_parameters["U"]
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
@@ -128,16 +129,16 @@ class Tsodyks2SynapseTest(unittest.TestCase):
                 # Evaluating the depression rule.
                 h = t_spike - t_lastspike
                 R_decay = np.exp(-h / self.synapse_parameters["tau_rec"])
-                if self.synapse_parameters["tau_fac"] < 1E-10:
-                    u_decay = 0.
+                if self.synapse_parameters["tau_fac"] < 1e-10:
+                    u_decay = 0.0
                 else:
                     u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
 
                 w = R_ * u_ * absolute_weight
                 w_log.append(w)
 
-                R_ = 1. + (R_ - R_ * u_ - 1.) * R_decay
-                u_ = self.synapse_parameters["U"] + u_ * (1. - self.synapse_parameters["U"]) * u_decay
+                R_ = 1.0 + (R_ - R_ * u_ - 1.0) * R_decay
+                u_ = self.synapse_parameters["U"] + u_ * (1.0 - self.synapse_parameters["U"]) * u_decay
 
                 t_lastspike = t_spike
 

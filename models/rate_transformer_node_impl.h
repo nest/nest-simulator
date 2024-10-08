@@ -181,9 +181,6 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;
@@ -291,7 +288,7 @@ void
 nest::rate_transformer_node< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
+  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

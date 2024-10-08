@@ -43,8 +43,8 @@ Node::Node()
   , node_id_( 0 )
   , thread_lid_( invalid_index )
   , model_id_( -1 )
-  , thread_( 0 )
-  , vp_( invalid_thread_ )
+  , thread_( invalid_thread )
+  , vp_( invalid_thread )
   , frozen_( false )
   , initialized_( false )
   , node_uses_wfr_( false )
@@ -129,15 +129,16 @@ Node::get_status_dict_()
 }
 
 void
-Node::set_local_device_id( const index )
+Node::set_local_device_id( const size_t )
 {
-  assert( false && "set_local_device_id() called on a non-device node of type" );
+  assert( false and "set_local_device_id() called on a non-device node of type" );
 }
 
-index
+size_t
 Node::get_local_device_id() const
 {
-  assert( false && "set_local_device_id() called on a non-device node." );
+  assert( false and "get_local_device_id() called on a non-device node." );
+  return invalid_index;
 }
 
 DictionaryDatum
@@ -197,8 +198,8 @@ Node::wfr_update( Time const&, const long, const long )
 /**
  * Default implementation of check_connection just throws IllegalConnection
  */
-port
-Node::send_test_event( Node&, rport, synindex, bool )
+size_t
+Node::send_test_event( Node&, size_t, synindex, bool )
 {
   throw IllegalConnection(
     "Source node does not send output.\n"
@@ -227,8 +228,8 @@ Node::handle( SpikeEvent& )
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
 
-port
-Node::handles_test_event( SpikeEvent&, rport )
+size_t
+Node::handles_test_event( SpikeEvent&, size_t )
 {
   throw IllegalConnection(
     "The target node or synapse model does not support spike input.\n"
@@ -241,8 +242,8 @@ Node::handle( WeightRecorderEvent& )
   throw UnexpectedEvent( "The target node does not handle weight recorder events." );
 }
 
-port
-Node::handles_test_event( WeightRecorderEvent&, rport )
+size_t
+Node::handles_test_event( WeightRecorderEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support weight recorder events." );
 }
@@ -253,8 +254,8 @@ Node::handle( RateEvent& )
   throw UnexpectedEvent( "The target node does not handle rate input." );
 }
 
-port
-Node::handles_test_event( RateEvent&, rport )
+size_t
+Node::handles_test_event( RateEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support rate input." );
 }
@@ -265,8 +266,8 @@ Node::handle( CurrentEvent& )
   throw UnexpectedEvent( "The target node does not handle current input." );
 }
 
-port
-Node::handles_test_event( CurrentEvent&, rport )
+size_t
+Node::handles_test_event( CurrentEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support current input." );
 }
@@ -277,8 +278,8 @@ Node::handle( DataLoggingRequest& )
   throw UnexpectedEvent( "The target node does not handle data logging requests." );
 }
 
-port
-Node::handles_test_event( DataLoggingRequest&, rport )
+size_t
+Node::handles_test_event( DataLoggingRequest&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support data logging requests." );
 }
@@ -295,8 +296,8 @@ Node::handle( ConductanceEvent& )
   throw UnexpectedEvent( "The target node does not handle conductance input." );
 }
 
-port
-Node::handles_test_event( ConductanceEvent&, rport )
+size_t
+Node::handles_test_event( ConductanceEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support conductance input." );
 }
@@ -307,20 +308,20 @@ Node::handle( DoubleDataEvent& )
   throw UnexpectedEvent();
 }
 
-port
-Node::handles_test_event( DoubleDataEvent&, rport )
+size_t
+Node::handles_test_event( DoubleDataEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support double data event." );
 }
 
-port
-Node::handles_test_event( DSSpikeEvent&, rport )
+size_t
+Node::handles_test_event( DSSpikeEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support spike input." );
 }
 
-port
-Node::handles_test_event( DSCurrentEvent&, rport )
+size_t
+Node::handles_test_event( DSCurrentEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support DS current input." );
 }
@@ -331,11 +332,10 @@ Node::handle( GapJunctionEvent& )
   throw UnexpectedEvent( "The target node does not handle gap junction input." );
 }
 
-port
-Node::handles_test_event( GapJunctionEvent&, rport )
+size_t
+Node::handles_test_event( GapJunctionEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support gap junction input." );
-  return invalid_port_;
 }
 
 void
@@ -350,11 +350,10 @@ Node::handle( InstantaneousRateConnectionEvent& )
   throw UnexpectedEvent( "The target node does not handle instantaneous rate input." );
 }
 
-port
-Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
+size_t
+Node::handles_test_event( InstantaneousRateConnectionEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support instantaneous rate input." );
-  return invalid_port_;
 }
 
 void
@@ -369,11 +368,10 @@ Node::handle( DiffusionConnectionEvent& )
   throw UnexpectedEvent( "The target node does not handle diffusion input." );
 }
 
-port
-Node::handles_test_event( DiffusionConnectionEvent&, rport )
+size_t
+Node::handles_test_event( DiffusionConnectionEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support diffusion input." );
-  return invalid_port_;
 }
 
 void
@@ -388,11 +386,10 @@ Node::handle( DelayedRateConnectionEvent& )
   throw UnexpectedEvent( "The target node does not handle delayed rate input." );
 }
 
-port
-Node::handles_test_event( DelayedRateConnectionEvent&, rport )
+size_t
+Node::handles_test_event( DelayedRateConnectionEvent&, size_t )
 {
   throw IllegalConnection( "The target node or synapse model does not support delayed rate input." );
-  return invalid_port_;
 }
 
 void
@@ -401,6 +398,23 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 
+void
+Node::handle( SICEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+size_t
+Node::handles_test_event( SICEvent&, size_t )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( SICEvent& )
+{
+  throw IllegalConnection();
+}
 
 double
 Node::get_LTD_value( double )

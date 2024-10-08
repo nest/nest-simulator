@@ -38,9 +38,9 @@ References
 """
 
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -73,7 +73,7 @@ nest.Connect(nest.AllToAll(dc, neuron))
 # And add a ``voltmeter`` to sample the membrane potentials from the neuron
 # in intervals of 0.1 ms.
 
-voltmeter = nest.Create("voltmeter", params={'interval': 0.1})
+voltmeter = nest.Create("voltmeter", params={"interval": 0.1})
 nest.Connect(nest.AllToAll(voltmeter, neuron))
 
 ###############################################################################

@@ -109,7 +109,7 @@ vm npost 1.0 h Connect
 [ 8       -70      ]
 [ 9       -70      ]
 [ 10      -70      ]
-[ 11      -70      ] % <----- The spike arrives at the first synapse but has not yet effected the snynaptic current and membrane potential.
+[ 11      -70      ] % <----- The spike arrives at the first synapse but has not yet effected the synaptic current and membrane potential.
 [ 12      -69.9960 ] % <-
 [ 13      -69.9921 ] %   |
 [ 14      -69.9882 ] %   |

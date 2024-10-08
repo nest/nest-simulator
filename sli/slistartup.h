@@ -74,6 +74,10 @@ class SLIStartup : public SLIModule
 public:
   Name argv_name;
   Name version_name;
+  Name version_git_info_name;
+  Name version_git_hash_name;
+  Name version_git_branch_name;
+  Name version_git_remote_name;
   Name exitcode_name;
   Name prgbuilt_name;
   Name prefix_name;
@@ -106,7 +110,14 @@ public:
   Name have_music_name;
   Name have_libneurosim_name;
   Name have_sionlib_name;
+  Name have_hdf5_name;
   Name ndebug_name;
+
+  Name mpiexec_name;
+  Name mpiexec_numproc_flag_name;
+  Name mpiexec_max_numprocs_name;
+  Name mpiexec_preflags_name;
+  Name mpiexec_postflags_name;
 
   Name exitcodes_name;
   Name exitcode_success_name;
@@ -129,20 +140,20 @@ public:
   class GetenvFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   GetenvFunction getenvfunction;
 
   SLIStartup( int, char** );
-  ~SLIStartup()
+  ~SLIStartup() override
   {
   }
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   const std::string
-  name( void ) const
+  name() const override
   {
     return "SLIStartup";
   }

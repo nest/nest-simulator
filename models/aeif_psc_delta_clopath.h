@@ -93,6 +93,15 @@ For implementation details see the
 
 See also [2]_.
 
+.. note::
+
+    The default refractory period for ``aeif`` models is zero, consistent with the model definition in
+    Brette & Gerstner [4]_.
+    This means if the refractory period is zero, the ``aeif`` neurons can fire multiple spikes in a single time step,
+    which can lead to exploding spike numbers and extreme slow-down of simulations.
+
+    We recommend users set ``t_ref > 0``.
+
 Parameters
 ++++++++++
 
@@ -189,6 +198,11 @@ References
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://modeldb.science/144566?tab=1
+
+.. [4] Brette R and Gerstner W (2005). Adaptive exponential
+       integrate-and-fire model as an effective description of neuronal
+       activity. Journal of Neurophysiology. 943637-3642
+       DOI: https://doi.org/10.1152/jn.00686.2005
 
 See also
 ++++++++

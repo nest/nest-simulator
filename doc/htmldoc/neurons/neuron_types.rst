@@ -126,6 +126,10 @@ Hard threshold (integrate-and-fire)
           When the membrane potential reaches a certain threshold,
           the neuron "fires" an action potential
 
+            .. dropdown:: Hard threshold
+
+                  * iaf_*
+
         .. tab-item:: Technical details
 
           * :ref:`exact_integration`
@@ -150,10 +154,9 @@ Soft threshold
           .. tab-item:: General info
             :selected:
 
-            Hodgkin-Huxley model provides a detailed representation of the electrical
-            activity of neurons by explicitly modeling the ionic currents through
-            voltage-gated sodium and potassium channels, along with a leak current.
-            This model is particularly useful for studying the detailed mechanisms of action potential generation and propagation,
+             Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
+             whole spike wave form
+
 
             .. dropdown:: Soft threshold
 
@@ -172,13 +175,9 @@ Soft threshold
             * :doc:`/model_details/HillTononiModels`
 
 
-Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
-whole spike wave form
-
 Stochastic
 ^^^^^^^^^^
 
-Modeled by point process.
 
 .. grid:: 1 2 2 2
 
@@ -191,41 +190,13 @@ Modeled by point process.
    .. grid-item::
       :columns: 10
 
-      a spike-response model with escape-noise?
+      Modeled by point process.
 
       .. dropdown:: Point process
 
         pp_cond_exp_mc_urbanczik – Two-compartment point process neuron with conductance-based synapses
 
         pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
-
-Auxillary neurons
-^^^^^^^^^^^^^^^^^
-
-
-
-.. grid:: 1 2 2 2
-
-   .. grid-item::
-      :columns: 2
-      :class: sd-d-flex-row sd-align-major-center
-
-      .. image:: /static/img/parrot_neurons_nn.svg
-
-   .. grid-item::
-      :columns: 10
-
-      Neurons that repeat incoming spikes. Applications:
-
-      .. dropdown:: Auxillary neurons
-
-        ignore-and-fire
-
-        parrot_neuron – Neuron that repeats incoming spikes
-
-        parrot_neuron_ps – Neuron that repeats incoming spikes - precise spike timing version
-
-
 
 Input mechanism
 ~~~~~~~~~~~~~~~
@@ -285,7 +256,43 @@ Chemical
 - Astrocytes - Slow inward current?
 
 
-External inputs (Devices)
+- Mention External inputs (Devices)?
+
+Post-synaptic input currents
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Synaptic input currents can be modeled using different functions to represent
+how the current changes over time after a synaptic event.
+
+
+- synapntic kernel are normalized such that the peak value equals 1
+- time point of peak value differs between models, for delta and exp it is at the time point of the spike,
+  alpha and beta the max occurs after an upswing period, depending on time constants
+
+
+.. grid:: 1 2 2 2
+
+   .. grid-item-card:: Delta
+      :columns: 3
+
+      .. image:: /static/img/delta_nn.svg
+
+   .. grid-item-card:: Exp
+      :columns: 3
+
+      .. image:: /static/img/exp_nn.svg
+
+   .. grid-item-card:: Alpha
+      :columns: 3
+
+      .. image:: /static/img/alpha2.svg
+
+
+   .. grid-item-card:: Beta
+      :columns: 3
+
+      .. image:: /static/img/beta2.svg
+
 
 
 Adaptation mechanism
@@ -334,6 +341,36 @@ Adaptation mechanism
 
            * :doc:`/model_details/aeif_models_implementation`
 
+
+
+Auxillary neurons
+^^^^^^^^^^^^^^^^^
+
+
+
+.. grid:: 1 2 2 2
+
+   .. grid-item::
+      :columns: 2
+      :class: sd-d-flex-row sd-align-major-center
+
+      .. image:: /static/img/parrot_neurons_nn.svg
+
+   .. grid-item::
+      :columns: 10
+
+      Neurons that repeat incoming spikes. Applications:
+
+      .. dropdown:: Auxillary neurons
+
+        ignore-and-fire
+
+        parrot_neuron – Neuron that repeats incoming spikes
+
+        parrot_neuron_ps – Neuron that repeats incoming spikes - precise spike timing version
+
+
+
 Precise spike timing
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -350,7 +387,8 @@ Precise spike timing
 
       NEST convention: ``ps``
 
-      More computataionally heavy, but provide better resolution to spike times than a non-precise model.
+      Continuous time . . .
+      More computataionally heavy, but provide better resolution to spike times than a grid-constrained model.
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.
 
       .. dropdown:: Precise spike timing
@@ -360,36 +398,6 @@ Precise spike timing
 
          * iaf_psc_exp_ps_lossless – Current-based leaky integrate-and-fire neuron with exponential-shaped postsynaptic currents predicting the exact number of spikes using a state space analysis
          * iaf_psc_delta_ps – Current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents - precise spike timing version
-
-
-Post-synaptic input currents
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Synaptic input currents can be modeled using different functions to represent
-how the current changes over time after a synaptic event.
-
-.. grid:: 1 2 2 2
-
-   .. grid-item-card:: Delta
-      :columns: 3
-
-      .. image:: /static/img/delta_nn.svg
-
-   .. grid-item-card:: Exp
-      :columns: 3
-
-      .. image:: /static/img/exp_nn.svg
-
-   .. grid-item-card:: Alpha
-      :columns: 3
-
-      .. image:: /static/img/alpha2.svg
-
-
-   .. grid-item-card:: Beta
-      :columns: 3
-
-      .. image:: /static/img/beta2.svg
 
 
 |

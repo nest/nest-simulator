@@ -95,7 +95,7 @@ public:
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
-  ConnBuilder* get_conn_builder( const std::string& name,
+  std::unique_ptr< ConnBuilder > get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,

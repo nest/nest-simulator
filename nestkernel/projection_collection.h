@@ -25,9 +25,9 @@
 
 #include <vector>
 
+#include "connection_creator.h"
 #include "dictutils.h"
 #include "nest_datums.h"
-#include "connection_creator.h"
 #include "spatial.h"
 
 
@@ -59,18 +59,20 @@ private:
       ConnectionCreator spatial_builder;
     };
     ConnectionClassWrapper_() = delete;
+    ConnectionClassWrapper_( const ConnectionClassWrapper_& ) = delete;
+    ConnectionClassWrapper_( ConnectionClassWrapper_&& ) = default;
     // Regular connections
-    ConnectionClassWrapper_( ConnBuilder* const );
+    ConnectionClassWrapper_( std::unique_ptr< ConnBuilder > );
     // Spatial connections
-    ConnectionClassWrapper_( SpatialBuilderWrapper_* const );
+    ConnectionClassWrapper_( std::unique_ptr< SpatialBuilderWrapper_ > );
 
     void connect();
 
   private:
     // Regular connections
-    ConnBuilder* const conn_builder_;
+    std::unique_ptr< ConnBuilder > conn_builder_;
     // Spatial connections
-    SpatialBuilderWrapper_* const spatial_conn_creator_;
+    std::unique_ptr< SpatialBuilderWrapper_ > spatial_conn_creator_;
   };
 
   std::vector< ConnectionClassWrapper_ > projections_;

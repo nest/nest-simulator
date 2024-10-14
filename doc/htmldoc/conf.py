@@ -93,7 +93,7 @@ copybutton_prompt_text = ">>> "
 copybutton_only_copy_prompt_lines = True
 
 mermaid_output_format = "raw"
-mermaid_version = "10.2.0"
+mermaid_version = "10.3.0"
 
 # disable require js - mermaid doesn't work if require.js is loaded before it
 nbsphinx_requirejs_path = ""

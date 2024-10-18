@@ -291,8 +291,7 @@ def _process_input_nodes(pre, post, conn_spec):
 
     # check for 'one_to_one' conn_spec
     one_to_one_cspec = (
-        conn_spec if not isinstance(conn_spec, dict)
-        else conn_spec.get("rule", "all_to_all")
+        conn_spec if not isinstance(conn_spec, dict) else conn_spec.get("rule", "all_to_all")
     ) == "one_to_one"
 
     # check and convert input types

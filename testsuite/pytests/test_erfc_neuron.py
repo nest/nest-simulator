@@ -71,7 +71,6 @@ def activation_function_theory(sigma, theta):
 
 
 class ErfcNeuronTheoryTestCase(unittest.TestCase):
-
     """Compare results to theoretical predictions"""
 
     def setUp(self):

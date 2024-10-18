@@ -54,6 +54,11 @@ class TestDisconnect(unittest.TestCase):
             "eprop_learning_signal_connection_bsshslm_2020",
             "eprop_learning_signal_connection_bsshslm_2020_lbl",
             "eprop_learning_signal_connection_bsshslm_2020_hpc",
+            "eprop_synapse",
+            "eprop_synapse_hpc",
+            "eprop_learning_signal_connection",
+            "eprop_learning_signal_connection_lbl",
+            "eprop_learning_signal_connection_hpc",
             "sic_connection",
         ]
 

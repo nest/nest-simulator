@@ -20,3 +20,5 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from .hl_api_server import *  # noqa: F401,F403
+from .hl_api_server_helpers import *  # noqa: F401,F403
+from .hl_api_server_mpi import *  # noqa: F401,F403

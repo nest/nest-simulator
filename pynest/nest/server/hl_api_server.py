@@ -436,9 +436,9 @@ def get_modules_from_env():
 def get_or_error(func):
     """Wrapper to get data and status."""
 
-    def func_wrapper(call, args, kwargs):
+    def func_wrapper(call, *args, **kwargs):
         try:
-            return func(call, args, kwargs)
+            return func(call, *args, **kwargs)
 
         except NESTError as err:
             error_class = err.errorname + " (NESTError)"

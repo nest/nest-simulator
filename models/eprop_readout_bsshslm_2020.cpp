@@ -219,7 +219,7 @@ eprop_readout_bsshslm_2020::pre_run_hook()
 
   const double dt = Time::get_resolution().get_ms();
 
-  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ ); // called kappa in reference [1]
+  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
 }
@@ -259,10 +259,8 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     const long interval_step = ( t - shift ) % update_interval;
     const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
-
     if ( interval_step == 0 )
     {
-      erase_used_update_history();
       erase_used_eprop_history();
 
       if ( with_reset )
@@ -294,6 +292,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
+    append_new_eprop_history_entry( t );
     write_error_signal_to_history( t, S_.error_signal_ );
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;

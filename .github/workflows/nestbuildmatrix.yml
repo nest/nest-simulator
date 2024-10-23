@@ -547,7 +547,7 @@ jobs:
           python-version: "3.10"
 
       - name: "Restore apt cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         env:
           cache-name: "apt-cache"
         with:
@@ -588,7 +588,7 @@ jobs:
         # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         with:
           path: |
             $HOME/.ccache
@@ -604,7 +604,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -768,7 +768,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*

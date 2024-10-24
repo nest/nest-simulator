@@ -129,6 +129,8 @@ Hard threshold (integrate-and-fire)
             .. dropdown:: Hard threshold
 
                   * iaf_*
+                  * glif_*
+                  * amat_ / mat
 
         .. tab-item:: Technical details
 
@@ -192,11 +194,11 @@ Stochastic
 
       Modeled by point process.
 
-      .. dropdown:: Point process
+      .. dropdown::  Stochastic
 
-        pp_cond_exp_mc_urbanczik – Two-compartment point process neuron with conductance-based synapses
-
-        pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
+        * gif_*
+        * pp_cond_exp_mc_urbanczik – Two-compartment point process neuron with conductance-based synapses
+        * pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
 
 Input mechanism
 ~~~~~~~~~~~~~~~
@@ -253,16 +255,13 @@ Chemical
      synaptic inputs depending on the membrane potential, which can change over time.
 
 
-- Astrocytes - Slow inward current?
 
 
-- Mention External inputs (Devices)?
-
-Post-synaptic input currents
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Post-synaptic input interactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Synaptic input currents can be modeled using different functions to represent
-how the current changes over time after a synaptic event.
+how the `current or conductance or voltage` changes over time after a synaptic event.
 
 
 - synapntic kernel are normalized such that the peak value equals 1

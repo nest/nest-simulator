@@ -168,7 +168,7 @@ for the equation
 
 .. math::
 
-    \frac{dV}{dt}=\frac{-1}{Tau}V+\frac{1}{C}\iota
+    \frac{dV}{dt}=\frac{-1}{\tau}V+\frac{1}{C}\iota
 
 we get the homogeneous differential equation (for :math:`y=(y_1,y_2,y_3)^t`)
 

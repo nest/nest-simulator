@@ -1,6 +1,11 @@
 Neuron update algorithm
 =======================
 
+.. seealso::
+
+   Description of neuron types available in NEST
+
+   * :ref:`types_neurons`
 
 Example of flowchart + algorithm for iaf_psc_exp
 ------------------------------------------------

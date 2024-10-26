@@ -90,7 +90,7 @@ from IPython.display import Image
 # Schematic of network architecture
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # This figure, identical to the one in the description, shows the required network architecture in the center,
-# the input and output of the pattern generation task above, and lists of the required NEST device, neuron, and
+# the input and output of the classification task above, and lists of the required NEST device, neuron, and
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
@@ -122,7 +122,12 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
 batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 50  # number of iterations, 2000 in reference [2]
+n_iter_train = 50  # number of training iterations, 2000 in reference [2]
+n_iter_test = 4  # number of iterations for final test
+do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
+n_iter_validate_every = 10  # number of training iterations before validation
+n_iter_early_stop = 8  # number of iterations to average over to evaluate early stopping condition
+stop_crit = 0.07  # error value corresponding to stop criterion for early stopping
 
 input = {
     "n_symbols": 4,  # number of input populations, e.g. 4 = left, right, recall, noise
@@ -130,16 +135,6 @@ input = {
     "prob_group": 0.3,  # probability with which one input group is present
     "spike_prob": 0.04,  # spike probability of frozen input noise
 }
-
-do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
-n_validate_every = 10  # number of training iterations before validation
-n_early_stop = 8  # number of iterations to average over to evaluate early stopping condition
-stop_crit = 0.07  # error value corresponding to stop criterion for early stopping
-
-n_test = 4  # number of iterations for final test
-
-n_val = np.ceil(n_iter / n_validate_every)
-n_iter_max = int(n_iter + n_val + (n_val - 1) * (n_early_stop + 1) + n_test)
 
 steps = {
     "cue": 100,  # time steps in one cue presentation
@@ -158,7 +153,8 @@ steps.update(
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
         "delay_rec_out": 1,  # connection delay between recurrent and output neurons
         "delay_out_norm": 1,  # connection delay between output neurons for normalization
-        "extension_sim": 2,  # extra time step to close right-open simulation time interval in Simulate()
+        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
+        "final_update": 3,  # extra time steps to update all synapses at the end of task
     }
 )
 
@@ -189,6 +185,7 @@ params_setup = {
 
 nest.ResetKernel()
 nest.set(**params_setup)
+nest.set_verbosity("M_FATAL")
 
 # %% ###########################################################################################################
 # Create neurons
@@ -388,8 +385,8 @@ params_common_syn_eprop = {
     "weight_recorder": wr,
 }
 
-eta_test = 0.0
-eta_train = 5e-3
+eta_test = 0.0  # learning rate for test phase
+eta_train = 5e-3  # learning rate for training phase
 
 params_syn_base = {
     "synapse_model": "eprop_synapse_bsshslm_2020",
@@ -510,26 +507,14 @@ def generate_evidence_accumulation_input_output(batch_size, n_in, steps, input):
 
 
 def get_params_task_input_output(n_iter_interval):
+    iteration_offset = n_iter_interval * batch_size * duration["sequence"]
     dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
-    input_spike_bools_list = []
-    target_cues_list = []
+    input_spike_bools, target_cues = generate_evidence_accumulation_input_output(batch_size, n_in, steps, input)
 
-    for _ in range(n_iter_interval):
-        input_spike_bools, target_cues = generate_evidence_accumulation_input_output(batch_size, n_in, steps, input)
-        input_spike_bools_list.append(input_spike_bools)
-        target_cues_list.extend(target_cues)
-
-    input_spike_bools_arr = np.array(input_spike_bools_list).reshape(
-        n_iter_interval * batch_size * steps["sequence"], n_in
-    )
+    input_spike_bools_arr = np.array(input_spike_bools).reshape(batch_size * steps["sequence"], n_in)
     timeline_task = (
-        np.arange(
-            0.0,
-            n_iter_interval * batch_size * duration["sequence"],
-            duration["step"],
-        )
-        + duration["offset_gen"]
+        np.arange(0.0, batch_size * duration["sequence"], duration["step"]) + iteration_offset + duration["offset_gen"]
     )
 
     params_gen_spk_in = [
@@ -537,16 +522,13 @@ def get_params_task_input_output(n_iter_interval):
         for nrn_in_idx in range(n_in)
     ]
 
-    target_rate_changes = np.zeros((n_out, batch_size * n_iter_interval))
-    target_rate_changes[np.array(target_cues_list), np.arange(batch_size * n_iter_interval)] = 1
+    target_rate_changes = np.zeros((n_out, batch_size))
+    target_rate_changes[np.array(target_cues), np.arange(batch_size)] = 1
 
     params_gen_rate_target = [
         {
-            "amplitude_times": np.arange(
-                0.0,
-                n_iter_interval * batch_size * duration["sequence"],
-                duration["sequence"],
-            )
+            "amplitude_times": np.arange(0.0, batch_size * duration["sequence"], duration["sequence"])
+            + iteration_offset
             + duration["total_offset"],
             "amplitude_values": target_rate_changes[nrn_out_idx],
         }
@@ -555,13 +537,6 @@ def get_params_task_input_output(n_iter_interval):
 
     return params_gen_spk_in, params_gen_rate_target
 
-
-params_gen_spk_in, params_gen_rate_target = get_params_task_input_output(n_iter_max)
-
-####################
-
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 
 # %% ###########################################################################################################
 # Force final update
@@ -664,6 +639,10 @@ class TrainingPipeline:
         params_common_syn_eprop["optimizer"]["eta"] = eta
         nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
+        params_gen_spk_in, params_gen_rate_target = get_params_task_input_output(self.n_iter_sim)
+        nest.SetStatus(gen_spk_in, params_gen_spk_in)
+        nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
         self.simulate("extension_sim")
 
         if self.n_iter_sim > 0:
@@ -680,21 +659,21 @@ class TrainingPipeline:
         self.run_phase("training", eta_train)
 
     def run_validation(self):
-        if do_early_stopping and self.k_iter % n_validate_every == 0:
+        if do_early_stopping and self.k_iter % n_iter_validate_every == 0:
             self.run_phase("validation", eta_test)
 
     def run_early_stopping(self):
-        if do_early_stopping and self.k_iter % n_validate_every == 0:
+        if do_early_stopping and self.k_iter % n_iter_validate_every == 0:
             if self.k_iter > 0 and self.error < stop_crit:
                 errors_early_stop = []
-                for _ in range(n_early_stop):
+                for _ in range(n_iter_early_stop):
                     self.run_phase("early-stopping", eta_test)
                     errors_early_stop.append(self.error)
 
                 self.early_stop = np.mean(errors_early_stop) < stop_crit
 
     def run_test(self):
-        for _ in range(n_test):
+        for _ in range(n_iter_test):
             self.run_phase("test", eta_test)
 
     def simulate(self, k):
@@ -703,7 +682,7 @@ class TrainingPipeline:
     def run(self):
         self.simulate("total_offset")
 
-        while self.k_iter < n_iter and not self.early_stop:
+        while self.k_iter < n_iter_train and not self.early_stop:
             self.run_validation()
             self.run_early_stopping()
             self.run_training()
@@ -719,7 +698,7 @@ class TrainingPipeline:
 
         gen_spk_final_update.set({"spike_times": [duration["task"] + duration["extension_sim"] + 1]})
 
-        self.simulate("delays")
+        self.simulate("final_update")
 
     def get_results(self):
         for k, v in self.results_dict.items():
@@ -784,22 +763,21 @@ plt.rcParams.update(
 )
 
 # %% ###########################################################################################################
-# Plot error
-# ..........
-# We begin with two plots visualizing the error of the network: the loss and the recall error, both
+# Plot learning performance
+# .........................
+# We begin with two plots visualizing the learning performance of the network: the loss and the error, both
 # plotted against the iterations.
 
 fig, axs = plt.subplots(2, 1, sharex=True)
-fig.suptitle("Training error")
+fig.suptitle("Learning performance")
 
 for color, label in zip(colors, set(results_dict["label"])):
     idc = results_dict["label"] == label
     axs[0].scatter(results_dict["iteration"][idc], results_dict["loss"][idc], label=label)
     axs[1].scatter(results_dict["iteration"][idc], results_dict["error"][idc], label=label)
 
-axs[0].set_ylabel(r"$E = -\sum_{t,k} \pi_k^{*,t} \log \pi_k^t$")
-
-axs[1].set_ylabel("recall errors")
+axs[0].set_ylabel(r"$\mathcal{L} = -\sum_{t,k} \pi_k^{*,t} \log \pi_k^t$")
+axs[1].set_ylabel("error")
 
 axs[-1].set_xlabel("iteration")
 axs[-1].legend(bbox_to_anchor=(1.05, 0.5), loc="center left")
@@ -878,21 +856,25 @@ for title, xlims in zip(
 # the first time step and we add the initial weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_weight_record, label, ylabel):
+def plot_weight_time_course(ax, events, nrns, label, ylabel):
     sender_label, target_label = label.split("_")
-    nrns_senders = nrns_weight_record[sender_label]
-    nrns_targets = nrns_weight_record[target_label]
-    for sender in nrns_senders.tolist():
-        for target in nrns_targets.tolist():
-            idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                weights_pre_train[label]["target"] == target
-            )
+    nrns_senders = nrns[sender_label]
+    nrns_targets = nrns[target_label]
 
-            times = [0.0] + events["times"][idc_syn].tolist()
-            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+    for sender in set(events_wr["senders"]):
+        for target in set(events_wr["targets"]):
+            if sender in nrns_senders and target in nrns_targets:
+                idc_syn = (events["senders"] == sender) & (events["targets"] == target)
+                if np.any(idc_syn):
+                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                        weights_pre_train[label]["target"] == target
+                    )
+                    times = np.concatenate([[0.0], events["times"][idc_syn]])
 
-            ax.step(times, weights, c=colors["blue"])
+                    weights = np.concatenate(
+                        [np.array(weights_pre_train[label]["weight"])[idc_syn_pre], events["weights"][idc_syn]]
+                    )
+                    ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
@@ -900,15 +882,15 @@ def plot_weight_time_course(ax, events, nrns_weight_record, label, ylabel):
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 fig.suptitle("Weight time courses")
 
-nrns_weight_record = {
-    "in": nrns_in[:n_record_w],
-    "rec": nrns_rec[:n_record_w],
-    "out": nrns_out,
+nrns = {
+    "in": nrns_in.tolist(),
+    "rec": nrns_rec.tolist(),
+    "out": nrns_out.tolist(),
 }
 
-plot_weight_time_course(axs[0], events_wr, nrns_weight_record, "in_rec", r"$W_\text{in}$ (pA)")
-plot_weight_time_course(axs[1], events_wr, nrns_weight_record, "rec_rec", r"$W_\text{rec}$ (pA)")
-plot_weight_time_course(axs[2], events_wr, nrns_weight_record, "rec_out", r"$W_\text{out}$ (pA)")
+plot_weight_time_course(axs[0], events_wr, nrns, "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(axs[1], events_wr, nrns, "rec_rec", r"$W_\text{rec}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
 axs[-1].set_xlim(0, duration["task"])

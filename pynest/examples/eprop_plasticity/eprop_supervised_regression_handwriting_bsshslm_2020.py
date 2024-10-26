@@ -592,18 +592,19 @@ ax.axis("equal")
 fig.tight_layout()
 
 # %% ###########################################################################################################
-# Plot training error
+# Plot learning performance
 # ...................
-# We begin with a plot visualizing the training error of the network: the loss plotted against the iterations.
+# We begin with a plot visualizing the learning performance of the network: the loss plotted against the
+# iterations.
 
 fig, ax = plt.subplots()
-fig.suptitle("Training error")
+fig.suptitle("Learning performance")
 
-ax.plot(range(1, n_iter + 1), loss_list[0], label=r"$E_0$", alpha=0.8, c=colors["blue"], ls="--")
-ax.plot(range(1, n_iter + 1), loss_list[1], label=r"$E_1$", alpha=0.8, c=colors["blue"], ls="dotted")
-ax.plot(range(1, n_iter + 1), loss, label=r"$E$", c=colors["blue"])
-ax.set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
-ax.set_xlabel("training iteration")
+ax.plot(range(1, n_iter + 1), loss_list[0], label=r"$\mathcal{L}_0$", alpha=0.8, c=colors["blue"], ls="--")
+ax.plot(range(1, n_iter + 1), loss_list[1], label=r"$\mathcal{L}_1$", alpha=0.8, c=colors["blue"], ls="dotted")
+ax.plot(range(1, n_iter + 1), loss, label=r"$\mathcal{L}$", c=colors["blue"])
+ax.set_ylabel(r"\mathcal{L} = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
+ax.set_xlabel("iteration")
 ax.set_xlim(1, n_iter)
 ax.xaxis.get_major_locator().set_params(integer=True)
 ax.legend(bbox_to_anchor=(1.01, 0.5), loc="center left")
@@ -672,21 +673,25 @@ for title, xlims in zip(
 # the first time step and we add the initial weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_weight_record, label, ylabel):
+def plot_weight_time_course(ax, events, nrns, label, ylabel):
     sender_label, target_label = label.split("_")
-    nrns_senders = nrns_weight_record[sender_label]
-    nrns_targets = nrns_weight_record[target_label]
-    for sender in nrns_senders.tolist():
-        for target in nrns_targets.tolist():
-            idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                weights_pre_train[label]["target"] == target
-            )
+    nrns_senders = nrns[sender_label]
+    nrns_targets = nrns[target_label]
 
-            times = [0.0] + events["times"][idc_syn].tolist()
-            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+    for sender in set(events_wr["senders"]):
+        for target in set(events_wr["targets"]):
+            if sender in nrns_senders and target in nrns_targets:
+                idc_syn = (events["senders"] == sender) & (events["targets"] == target)
+                if np.any(idc_syn):
+                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                        weights_pre_train[label]["target"] == target
+                    )
+                    times = np.concatenate([[0.0], events["times"][idc_syn]])
 
-            ax.step(times, weights, c=colors["blue"])
+                    weights = np.concatenate(
+                        [np.array(weights_pre_train[label]["weight"])[idc_syn_pre], events["weights"][idc_syn]]
+                    )
+                    ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
@@ -694,18 +699,18 @@ def plot_weight_time_course(ax, events, nrns_weight_record, label, ylabel):
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 fig.suptitle("Weight time courses")
 
-nrns_weight_record = {
-    "in": nrns_in[:n_record_w],
-    "rec": nrns_rec[:n_record_w],
-    "out": nrns_out,
+nrns = {
+    "in": nrns_in.tolist(),
+    "rec": nrns_rec.tolist(),
+    "out": nrns_out.tolist(),
 }
 
-plot_weight_time_course(axs[0], events_wr, nrns_weight_record, "in_rec", r"$W_\text{in}$ (pA)")
-plot_weight_time_course(axs[1], events_wr, nrns_weight_record, "rec_rec", r"$W_\text{rec}$ (pA)")
-plot_weight_time_course(axs[2], events_wr, nrns_weight_record, "rec_out", r"$W_\text{out}$ (pA)")
+plot_weight_time_course(axs[0], events_wr, nrns, "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(axs[1], events_wr, nrns, "rec_rec", r"$W_\text{rec}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
-axs[-1].set_xlim(0, steps["task"])
+axs[-1].set_xlim(0, duration["task"])
 
 fig.align_ylabels()
 fig.tight_layout()

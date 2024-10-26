@@ -191,7 +191,8 @@ pixels_dict = {
 }
 
 pixels_dict["n_total"] = pixels_dict["n_x"] * pixels_dict["n_y"] * pixels_dict["n_polarity"]  # total number of pixels
-pixels_dict["n_active"] = len(pixels_blocklist)  # number of active pixels
+pixels_dict["active"] = sorted(set(range(pixels_dict["n_total"])) - set(pixels_blocklist))  # active pixels
+pixels_dict["n_active"] = len(pixels_dict["active"])  # number of active pixels
 
 n_in = pixels_dict["n_active"]  # number of input neurons
 n_rec = 150  # number of recurrent neurons
@@ -512,7 +513,7 @@ def load_image(file_path, pixels_dict):
     times = np.around(times * duration["sequence"] / time_max)  # map sample to sequence length
 
     pixels = polarities * pixels_dict["n_x"] * pixels_dict["n_y"] + y_coords * pixels_dict["n_x"] + x_coords
-    image = [times[pixels == pixel] for pixel in sorted(set(range(pixels_dict["n_total"])) - set(pixels_blocklist))]
+    image = [times[pixels == pixel] for pixel in pixels_dict["active"]]
     return image
 
 

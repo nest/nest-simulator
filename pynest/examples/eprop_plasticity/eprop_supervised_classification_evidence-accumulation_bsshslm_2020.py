@@ -643,12 +643,13 @@ class TrainingPipeline:
         nest.SetStatus(gen_spk_in, params_gen_spk_in)
         nest.SetStatus(gen_rate_target, params_gen_rate_target)
 
+        self.simulate("total_offset")
         self.simulate("extension_sim")
 
         if self.n_iter_sim > 0:
             self.evaluate()
 
-        duration["sim"] = batch_size * duration["sequence"] - duration["extension_sim"]
+        duration["sim"] = batch_size * duration["sequence"] - duration["total_offset"] - duration["extension_sim"]
 
         self.simulate("sim")
 
@@ -680,8 +681,6 @@ class TrainingPipeline:
         nest.Simulate(duration[k])
 
     def run(self):
-        self.simulate("total_offset")
-
         while self.k_iter < n_iter_train and not self.early_stop:
             self.run_validation()
             self.run_early_stopping()
@@ -690,6 +689,7 @@ class TrainingPipeline:
 
         self.run_test()
 
+        self.simulate("total_offset")
         self.simulate("extension_sim")
 
         self.evaluate()

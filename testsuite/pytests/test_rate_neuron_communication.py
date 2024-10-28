@@ -34,7 +34,6 @@ def H(x):
 
 @nest.ll_api.check_stack
 class RateNeuronCommunicationTestCase(unittest.TestCase):
-
     """Check rate_neuron"""
 
     def setUp(self):

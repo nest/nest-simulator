@@ -424,7 +424,9 @@ def sparsely_connect(weights, params_syn, nrns_pre, nrns_post):
     targets, sources = np.where(weights)
     params_syn["weight"] = weights[targets, sources].flatten()
     params_syn["delay"] = [params_syn["delay"] for _ in params_syn["weight"]]
-    nest.Connect(np.array(nrns_pre)[sources], np.array(nrns_post)[targets], params_conn_one_to_one, params_syn)
+    nrns_pre_arr = np.array(nrns_pre.tolist())
+    nrns_post_arr = np.array(nrns_post.tolist())
+    nest.Connect(nrns_pre_arr[sources], nrns_post_arr[targets], params_conn_one_to_one, params_syn)
 
 
 sparsely_connect(weights_in_rec, params_syn_in, nrns_in, nrns_rec)  # connection 2

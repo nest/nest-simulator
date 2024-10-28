@@ -47,6 +47,7 @@ namespace numerics
 extern const double e;
 extern const double pi;
 extern const double nan;
+extern const double sqrt_log_two;
 
 /** Supply expm1() function independent of system.
  *  @note Implemented inline for efficiency.

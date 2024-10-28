@@ -93,6 +93,8 @@ const double numerics::nan = NAN;
 const double numerics::nan = 0.0 / 0.0;
 #endif
 
+const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
+
 // later also in namespace
 long
 ld_round( double x )

@@ -49,8 +49,6 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_dryrun_mode( const size_t n_procs );
-
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
 /**
@@ -102,6 +100,7 @@ void connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& connectivity,
+  const DictionaryDatum& third_connectivity,
   const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**

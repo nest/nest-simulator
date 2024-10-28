@@ -33,16 +33,20 @@ except ImportError:
     haveMPI4Py = False
 
 
-def setup_network(conn_dict, syn_dict, N1, N2, primary_model="aeif_cond_alpha_astro", third_model="astrocyte_lr_1994"):
+def setup_network(
+    conn_dict, third_conn_dict, syn_dict, N1, N2, primary_model="aeif_cond_alpha_astro", third_model="astrocyte_lr_1994"
+):
     """Setup the network for the statistical test.
 
     A three-population network is created for a statictical test of the
-    "tripartite_bernoulli_with_pool" rule.
+    "third_factor_bernoulli_with_pool" rule.
 
     Parameters
     ---------
     conn_dict
-        Dictionary for the connectivity specifications (conn_spec).
+        Dictionary for the primary connectivity specifications (conn_spec).
+    third_conn_dict
+        Dictionary for the third-factor connectivity specifications (third_factor_conn_spec).
     syn_dict
         Dictionary for the synapse specifications (syn_spec).
     N1
@@ -62,7 +66,9 @@ def setup_network(conn_dict, syn_dict, N1, N2, primary_model="aeif_cond_alpha_as
     pop1 = nest.Create(primary_model, N1)
     pop2 = nest.Create(primary_model, N2)
     pop3 = nest.Create(third_model, N2)
-    nest.TripartiteConnect(pop1, pop2, pop3, conn_spec=conn_dict, syn_specs=syn_dict)
+    nest.TripartiteConnect(
+        pop1, pop2, pop3, conn_spec=conn_dict, third_factor_conn_spec=third_conn_dict, syn_specs=syn_dict
+    )
     return pop1, pop2, pop3
 
 
@@ -316,7 +322,7 @@ def mpi_assert(data_original, data_test):
 def test_statistics(p_primary):
     """
     A test for the parameters "p_primary" and "pool_size" in the
-    "tripartite_bernoulli_with_pool" rule.
+    "third_factor_bernoulli_with_pool" rule.
 
     Parameters
     ---------
@@ -328,7 +334,8 @@ def test_statistics(p_primary):
     N1 = 50
     N2 = 50
     pool_size = 5
-    conn_dict = {"rule": "tripartite_bernoulli_with_pool", "p_primary": p_primary, "pool_size": pool_size}
+    conn_dict = {"rule": "pairwise_bernoulli", "p": p_primary}
+    third_conn_dict = {"rule": "third_factor_bernoulli_with_pool", "pool_size": pool_size}
 
     # set test parameters
     stat_dict = {"alpha2": 0.05, "n_runs": 20}
@@ -341,7 +348,7 @@ def test_statistics(p_primary):
     # 1. p_primary yields the correct indegree and outdegree
     # 2. pool_size limits the number of third-population nodes connected to each target nodes
     for fan in ["in", "out"]:
-        expected = get_expected_degrees_bernoulli(conn_dict["p_primary"], fan, N1, N2)
+        expected = get_expected_degrees_bernoulli(conn_dict["p"], fan, N1, N2)
         pvalues = []
         n_third_nodes = []
         for i in range(stat_dict["n_runs"]):
@@ -349,7 +356,9 @@ def test_statistics(p_primary):
             nest.ResetKernel()
             nest.local_num_threads = nr_threads
             nest.rng_seed = i + 1
-            pop1, pop2, pop3 = setup_network(conn_dict, {"third_out": {"synapse_model": "sic_connection"}}, N1, N2)
+            pop1, pop2, pop3 = setup_network(
+                conn_dict, third_conn_dict, {"third_out": {"synapse_model": "sic_connection"}}, N1, N2
+            )
             # get indegree or outdegree
             degrees = get_degrees(fan, pop1, pop2)
             # gather data from MPI processes
@@ -388,9 +397,12 @@ def test_autapses_true(autapses):
     # set network and connectivity parameters
     N = 50
     conn_dict = {
-        "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": 1.0,
+        "rule": "pairwise_bernoulli",
+        "p": 1.0,
         "allow_autapses": autapses,
+    }
+    third_conn_dict = {
+        "rule": "third_factor_bernoulli_with_pool",
     }
 
     # set NEST verbosity
@@ -404,6 +416,7 @@ def test_autapses_true(autapses):
         pop_primay,
         pop_third,
         conn_spec=conn_dict,
+        third_factor_conn_spec=third_conn_dict,
         syn_specs={"third_out": {"synapse_model": "sic_connection"}},
     )
 

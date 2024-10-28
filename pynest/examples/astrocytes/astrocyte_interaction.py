@@ -85,7 +85,7 @@ poisson_rate_neuro = 1500.0
 # neuron parameters
 params_neuro = {"tau_syn_ex": 2.0}
 # astrocyte parameters
-params_astro = {"IP3_0": 0.16}
+params_astro = {"delta_IP3": 0.2}
 # weights of connections
 w_pre2astro = 1.0
 w_pre2post = 1.0

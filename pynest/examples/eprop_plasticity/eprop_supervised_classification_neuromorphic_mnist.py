@@ -537,7 +537,7 @@ class DataLoader:
 
         for label in self.selected_labels:
             label_dir_path = os.path.join(self.path, str(label))
-            all_files = os.listdir(label_dir_path)
+            all_files = sorted(os.listdir(label_dir_path))
 
             for sample in all_files:
                 all_sample_paths.append(os.path.join(label_dir_path, sample))

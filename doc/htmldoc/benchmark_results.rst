@@ -48,6 +48,7 @@ Strong scaling experiment of the Multi-area-model [5]_
        .. image:: /static/img/mam_ground-state_benchmark.png
 
        Dynamical regime: Metastable state
+       
        .. image:: /static/img/mam_metastable-state_benchmark.png
 
 

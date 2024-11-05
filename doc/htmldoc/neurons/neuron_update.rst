@@ -1,3 +1,5 @@
+.. _neuron_update:
+
 Neuron update algorithm
 =======================
 

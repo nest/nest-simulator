@@ -24,6 +24,7 @@ Types of neurons
      .. image:: /static/img/spiking_neurons.svg
 
 
+
    .. grid-item-card::
      :columns: 3
      :class-item: sd-text-center
@@ -53,6 +54,14 @@ Types of neurons
 
      .. image:: /static/img/astrocyte.svg
 
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item::
+     :columns: 3
+
+     For details on neuron ?algorthim / equations? see: :ref:`neuron_update`
 
 .. _spiking_neurons:
 
@@ -261,7 +270,7 @@ Post-synaptic input interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Synaptic input currents can be modeled using different functions to represent
-how the `current or conductance or voltage` changes over time after a synaptic event.
+how the `current, conductance, or voltage` changes over time after a synaptic event.
 
 
 - synapntic kernel are normalized such that the peak value equals 1

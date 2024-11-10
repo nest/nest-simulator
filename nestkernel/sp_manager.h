@@ -137,6 +137,8 @@ public:
 
   double get_structural_plasticity_update_interval() const;
 
+  double get_structural_plasticity_gaussian_kernel_sigma() const;
+
   /**
    * Returns the minimum delay of all SP builders.
    *
@@ -187,6 +189,18 @@ public:
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
+   std::vector<double> probability_list;
+  int get_neuron_pair_index(int id1,int id2);
+  double gaussianKernel(const std::vector<double>& pos1,const std::vector<double>& pos2, const double sigma);
+  void global_shuffle_spatial(std::vector< size_t >& pre_ids, std::vector<size_t>& post_ids,std::vector< size_t >& pre_ids_results,std::vector< size_t >& post_ids_results );
+  void build_problist();
+  void gather_global_positions_and_ids();
+
+  //int rouletteWheelSelection(const std::vector<double>& probabilities, std::mt19937& rng, std::uniform_real_distribution<double>& dist);  
+  void set_structural_plasticity_gaussian_kernel_sigma(double sigma) {
+    structural_plasticity_gaussian_kernel_sigma_ = sigma;
+  }
+
 
 private:
   /**
@@ -196,11 +210,21 @@ private:
   double structural_plasticity_update_interval_;
 
   /**
+   * 
+   */
+  double structural_plasticity_gaussian_kernel_sigma_;
+
+  bool structural_plasticity_cache_probabilities_;
+
+  /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
    * Off (False).
    */
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
+
+  std::vector<int> global_ids;
+  std::vector<double> global_positions;  
 
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
@@ -227,6 +251,11 @@ inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
+}
+inline double
+SPManager::get_structural_plasticity_gaussian_kernel_sigma() const
+{
+  return structural_plasticity_gaussian_kernel_sigma_;
 }
 
 } // namespace nest

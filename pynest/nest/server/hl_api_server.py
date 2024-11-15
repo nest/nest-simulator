@@ -41,8 +41,9 @@ from werkzeug.wrappers import Response
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.
-root = logging.getLogger()
-root.addHandler(default_handler)
+logger = logging.getLogger()
+logger.addHandler(default_handler)
+logger.setLevel(os.getenv("NEST_SERVER_MPI_LOGGER_LEVEL", "INFO"))
 
 
 def get_boolean_environ(env_key, default_value="false"):
@@ -228,7 +229,7 @@ def do_exec(args, kwargs):
 
 def log(call_name, msg):
     msg = f"==> MASTER 0/{time.time():.7f} ({call_name}): {msg}"
-    print(msg, flush=True)
+    logger.debug(msg)
 
 
 def do_call(call_name, args=[], kwargs={}):

@@ -25,6 +25,7 @@
 #include <boost/test/included/unit_test.hpp>
 
 // Includes from cpptests
+#include "test_distance_dependent_structural_plasticity.h"
 #include "test_block_vector.h"
 #include "test_enum_bitfield.h"
 #include "test_parameter.h"

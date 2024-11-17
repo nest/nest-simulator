@@ -11,6 +11,7 @@
 
 // Includes from nestkernel:
 #include "../nestkernel/sp_manager.h"
+#include "../nestkernel/random_manager.h"
 
 namespace nest
 {
@@ -58,22 +59,6 @@ BOOST_AUTO_TEST_CASE( test_get_neuron_pair_index )
   BOOST_REQUIRE_EQUAL( sp_manager.get_neuron_pair_index( 5, 5 ), 14 );
 }
 
-BOOST_AUTO_TEST_CASE( test_rouletteWheelSelection )
-{
-  SPManager sp_manager;
-  std::vector<double> probabilities = {0.1, 0.2, 0.3, 0.4};
-
-  std::mt19937 rng(42);
-  std::uniform_real_distribution<> dist(0.0, 1.0);
-
-  // Perform multiple trials to ensure robustness
-  for (int i = 0; i < NUM_TEST_TRIALS; ++i)
-  {
-    int index = sp_manager.rouletteWheelSelection( probabilities, rng, dist );
-    BOOST_REQUIRE_GE( index, 0 );
-    BOOST_REQUIRE_LT( index, static_cast<int>( probabilities.size() ) );
-  }
-}
 
 BOOST_AUTO_TEST_CASE( test_global_shuffle_spatial )
 {

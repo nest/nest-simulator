@@ -237,13 +237,10 @@ public:
    * Perform roulette wheel selection to randomly select an index based on probabilities.
    *
    * @param probabilities Vector of probabilities for selection.
-   * @param rng Random number generator.
-   * @param dist Uniform distribution for generating random numbers.
+   * @param rnd Random number.
    * @return Selected index.
    */
-  int rouletteWheelSelection( const std::vector< double >& probabilities,
-    std::mt19937& rng,
-    std::uniform_real_distribution<>& dist );
+  int rouletteWheelSelection( const std::vector< double >& probabilities,double rnd);
 
   void set_structural_plasticity_gaussian_kernel_sigma(double sigma) {
     structural_plasticity_gaussian_kernel_sigma_ = sigma;

@@ -269,7 +269,7 @@ int SPManager::get_neuron_pair_index(int id1,int id2){
 
 
 // Method to perform roulette wheel selection
-int SPManager::rouletteWheelSelection(const std::vector<double>& probabilities, std::mt19937& rng, std::uniform_real_distribution<>& dist) {
+int SPManager::rouletteWheelSelection(const std::vector<double>& probabilities, double rnd) {
     if (probabilities.empty()) {
         throw std::runtime_error("Probabilities vector is empty.");
     }
@@ -282,9 +282,10 @@ int SPManager::rouletteWheelSelection(const std::vector<double>& probabilities, 
     if (sum < 0.0) {
         throw std::runtime_error("Sum of probabilities must be greater than zero.");
     }
+  
 
     // Generate a random number in the range [0, sum)
-    double randomValue = dist(rng) * sum;
+    double randomValue = rnd * sum;
 
     // Perform binary search to find the selected index
     auto it = std::lower_bound(cumulative.begin(), cumulative.end(), randomValue);
@@ -867,77 +868,72 @@ void SPManager::global_shuffle_spatial(
     std::vector<size_t>& post_ids_results
 )
 {
-    std::mt19937 rng(std::random_device{}());  // Initialize random number generator
-    std::uniform_real_distribution<> dist(0.0, 1.0);  // Uniform distribution [0, 1]
-
     size_t maxIterations = std::min(pre_ids.size(), post_ids.size());  
 
     for (size_t iteration = 0; iteration < maxIterations; ++iteration) 
     {
-        if (pre_ids.empty() || post_ids.empty()) {
-            break;  // Stop if either vector is empty
+      if (pre_ids.empty() || post_ids.empty()) {
+        break;  // Stop if either vector is empty
+      }
+
+      size_t pre_id = pre_ids.back();  
+      pre_ids.pop_back(); 
+
+      std::vector<double> probabilities; 
+      std::vector<size_t> valid_post_ids;
+      double rnd;
+      for (size_t post_id : post_ids) 
+      {
+        if (post_id == pre_id) {
+          continue;  // Skip self-connections
         }
 
-        size_t pre_id = pre_ids.back();  
-        pre_ids.pop_back(); 
+        double prob;
+        if (structural_plasticity_cache_probabilities_) {
+          // Retrieve cached probability for the neuron pair
+          int pair_index = get_neuron_pair_index(pre_id, post_id);
+          if (pair_index < 0 || pair_index >= static_cast<int>(probability_list.size())) {
+            std::cerr << "Error: index out of bounds for pair (" << pre_id << ", " << post_id << ")" << std::endl;
+            continue;
+          }
+          prob = probability_list[pair_index];
+          } else {
+            size_t pre_index = pre_id - 1;  
+            std::vector<double> pre_pos(global_positions.begin() + pre_index * pos_dim,
+                                          global_positions.begin() + (pre_index + 1) * pos_dim);
 
-        std::vector<double> probabilities; 
-        std::vector<size_t> valid_post_ids;
+            size_t post_index = post_id - 1;
+            std::vector<double> post_pos(global_positions.begin() + post_index * pos_dim,
+                                          global_positions.begin() + (post_index + 1) * pos_dim);
 
-        for (size_t post_id : post_ids) 
-        {
-            if (post_id == pre_id) {
-                continue;  // Skip self-connections
-            }
+            prob = gaussianKernel(pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_);
+          }
+          if (prob>0){
+            probabilities.push_back(prob);
+            valid_post_ids.push_back(post_id); 
+          }
+      }
 
-            double prob;
-            if (structural_plasticity_cache_probabilities_) {
-                // Retrieve cached probability for the neuron pair
-                int pair_index = get_neuron_pair_index(pre_id, post_id);
-                if (pair_index < 0 || pair_index >= static_cast<int>(probability_list.size())) {
-                    std::cerr << "Error: index out of bounds for pair (" << pre_id << ", " << post_id << ")" << std::endl;
-                    continue;
-                }
-                prob = probability_list[pair_index];
-            } else {
-                size_t pre_index = pre_id - 1;  
-                std::vector<double> pre_pos(global_positions.begin() + pre_index * pos_dim,
-                                            global_positions.begin() + (pre_index + 1) * pos_dim);
+      if (probabilities.empty()) {
+        continue;  // Skip if no valid connections are found
+      }
 
-                size_t post_index = post_id - 1;
-                std::vector<double> post_pos(global_positions.begin() + post_index * pos_dim,
-                             global_positions.begin() + (post_index + 1) * pos_dim);
+      rnd = get_rank_synced_rng()->drand();
 
-                prob = gaussianKernel(pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_);
-            }
-            if (prob>0){
-              probabilities.push_back(prob);
-              valid_post_ids.push_back(post_id); 
-            }
-        }
+      // Select a post-synaptic neuron using roulette wheel selection
+      int selected_post_idx = rouletteWheelSelection(probabilities, rnd);
+      size_t selected_post_id = valid_post_ids[selected_post_idx];
 
-        if (probabilities.empty()) {
-            continue;  // Skip if no valid connections are found
-        }
+      // Remove the selected post-synaptic neuron from the list
+      auto post_it = std::find(post_ids.begin(), post_ids.end(), selected_post_id);
+      if (post_it != post_ids.end()) {
+        post_ids.erase(post_it);
+      }
 
-        try {
-            // Select a post-synaptic neuron using roulette wheel selection
-            int selected_post_idx = rouletteWheelSelection(probabilities, rng, dist);
-            size_t selected_post_id = valid_post_ids[selected_post_idx];
+      pre_ids_results.push_back(pre_id);  
+      post_ids_results.push_back(selected_post_id);
 
-            // Remove the selected post-synaptic neuron from the list
-            auto post_it = std::find(post_ids.begin(), post_ids.end(), selected_post_id);
-            if (post_it != post_ids.end()) {
-                post_ids.erase(post_it);
-            }
-
-            pre_ids_results.push_back(pre_id);  
-            post_ids_results.push_back(selected_post_id);
-        } 
-        catch (const std::runtime_error& e) {
-            std::cerr << "Error during roulette wheel selection: " << e.what() << std::endl;
-        }
-    }
+  }
 }
 
 

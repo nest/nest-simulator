@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <vector>
+#include <random>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
@@ -189,17 +190,82 @@ public:
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
-   std::vector<double> probability_list;
-  int get_neuron_pair_index(int id1,int id2);
-  double gaussianKernel(const std::vector<double>& pos1,const std::vector<double>& pos2, const double sigma);
-  void global_shuffle_spatial(std::vector< size_t >& pre_ids, std::vector<size_t>& post_ids,std::vector< size_t >& pre_ids_results,std::vector< size_t >& post_ids_results );
+ /**
+   * Calculate a unique index for a pair of neuron IDs for efficient lookup.
+   * The index is calculated independent of the order
+   *
+   * @param id1 First neuron ID.
+   * @param id2 Second neuron ID.
+   * @return Unique index corresponding to the neuron pair.
+   */
+  int get_neuron_pair_index( int id1, int id2 );
+
+  /**
+   * Compute the Gaussian kernel value between two positions.
+   *
+   * @param pos1 Position of the first neuron.
+   * @param pos2 Position of the second neuron.
+   * @param sigma Standard deviation for the Gaussian kernel.
+   * @return Gaussian kernel value.
+   */
+  double gaussianKernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
+
+  /**
+   * Perform global shuffling of pre- and post-synaptic neurons based on spatial probabilities.
+   *
+   * @param pre_ids Vector of pre-synaptic neuron IDs.
+   * @param post_ids Vector of post-synaptic neuron IDs.
+   * @param pre_ids_results Vector to store shuffled pre-synaptic IDs.
+   * @param post_ids_results Vector to store shuffled post-synaptic IDs.
+   */
+  void global_shuffle_spatial( std::vector< size_t >& pre_ids,
+    std::vector< size_t >& post_ids,
+    std::vector< size_t >& pre_ids_results,
+    std::vector< size_t >& post_ids_results );
+
+  /**
+   * Build a probability list for neuron connections based on spatial properties.
+   */
   void build_problist();
+
+  /**
+   * Gather global neuron positions and IDs from all nodes.
+   */
   void gather_global_positions_and_ids();
 
-  //int rouletteWheelSelection(const std::vector<double>& probabilities, std::mt19937& rng, std::uniform_real_distribution<double>& dist);  
+  /**
+   * Perform roulette wheel selection to randomly select an index based on probabilities.
+   *
+   * @param probabilities Vector of probabilities for selection.
+   * @param rng Random number generator.
+   * @param dist Uniform distribution for generating random numbers.
+   * @return Selected index.
+   */
+  int rouletteWheelSelection( const std::vector< double >& probabilities,
+    std::mt19937& rng,
+    std::uniform_real_distribution<>& dist );
+
   void set_structural_plasticity_gaussian_kernel_sigma(double sigma) {
     structural_plasticity_gaussian_kernel_sigma_ = sigma;
   }
+    /**
+   * Global list of neuron IDs used for structural plasticity computations.
+   */
+  std::vector<int> global_ids;
+
+  /**
+   * Global list of neuron positions used for spatial computations in 
+   * structural plasticity.
+   */
+  std::vector<double> global_positions;  
+
+  /**
+   * Standard deviation parameter for the Gaussian kernel used in 
+   * spatial probability calculations.
+   */
+  double structural_plasticity_gaussian_kernel_sigma_;
+
+
 
 
 private:
@@ -210,10 +276,20 @@ private:
   double structural_plasticity_update_interval_;
 
   /**
-   * 
+   * Dimentionality of the neuron positions
    */
-  double structural_plasticity_gaussian_kernel_sigma_;
+  int pos_dim;
 
+  /**
+   * List of precomputed probabilities for neuron connections, indexed 
+   * by neuron pair indices for efficient lookup.
+  */
+  std::vector<double> probability_list;
+
+  /**
+   * Flag indicating whether connection probabilities should be cached 
+   * for performance optimization.
+   */
   bool structural_plasticity_cache_probabilities_;
 
   /**
@@ -223,8 +299,6 @@ private:
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
 
-  std::vector<int> global_ids;
-  std::vector<double> global_positions;  
 
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.

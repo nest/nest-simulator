@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_classification_evidence-accumulation.py
+# eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py
 #
 # This file is part of NEST.
 #
@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to accumulate evidence with e-prop
--------------------------------------------------------
+Tutorial on learning to accumulate evidence with e-prop after Bellec et al. (2020)
+----------------------------------------------------------------------------------
 
 Training a classification model using supervised e-prop plasticity to accumulate evidence.
 
@@ -40,7 +40,7 @@ taking a left and a right turn of which one is correct. After a number of iterat
 infer the underlying rationale of the task. Here, the solution is to turn to the side in which more cues were
 presented.
 
-.. image:: eprop_supervised_classification_evidence-accumulation.png
+.. image:: eprop_supervised_classification_evidence-accumulation_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
@@ -55,7 +55,7 @@ cues, and a last group defining the recall window, in which the network has to d
 compares the network signal :math:`\pi_k` with the teacher target signal :math:`\pi_k^*`, which it receives from
 a rate generator. Since the decision is at the end and all the cues are relevant, the network has to keep the
 cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
-assessed by employing a mean squared error loss.
+assessed by employing a cross-entropy error loss.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
 
@@ -94,7 +94,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
-    Image(filename="./eprop_supervised_classification_evidence-accumulation.png")
+    Image(filename="./eprop_supervised_classification_evidence-accumulation_bsshslm_2020.png")
 except Exception:
     pass
 
@@ -115,15 +115,13 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
-# Even though each sample is processed independently during training, we aggregate predictions and true
-# labels across a group of samples during the evaluation phase. The number of samples in this group is
-# determined by the `group_size` parameter. This data is then used to assess the neural network's
-# performance metrics, such as average accuracy and mean error. Increasing the number of iterations enhances
-# learning performance up to the point where overfitting occurs. If early stopping is enabled, the
+# Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
+# The original number of iterations requires distributed computing. Increasing the number of iterations
+# enhances learning performance up to the point where overfitting occurs. If early stopping is enabled, the
 # classification error is tested in regular intervals and the training stopped as soon as the error selected as
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
-group_size = 32  # number of instances over which to evaluate the learning performance
+batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
 n_iter_train = 50  # number of training iterations, 2000 in reference [2]
 n_iter_test = 4  # number of iterations for final test
 do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
@@ -153,12 +151,14 @@ steps.update(
     {
         "offset_gen": 1,  # offset since generator signals start from time step 1
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
+        "delay_rec_out": 1,  # connection delay between recurrent and output neurons
+        "delay_out_norm": 1,  # connection delay between output neurons for normalization
         "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
         "final_update": 3,  # extra time steps to update all synapses at the end of task
     }
 )
 
-steps["delays"] = steps["delay_in_rec"]  # time steps of delays
+steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
@@ -170,9 +170,12 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # Set up simulation
 # .................
 # As last step of the setup, we reset the NEST kernel to remove all existing NEST simulation settings and
-# objects and set some NEST kernel parameters.
+# objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
+    "eprop_learning_window": duration["learning_window"],
+    "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
+    "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
@@ -201,23 +204,22 @@ n_out = 2  # number of readout neurons
 params_nrn_out = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "E_L": 0.0,  # mV, leak / resting membrane potential
-    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,  # pA, external current input
+    "loss": "cross_entropy",  # loss function
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "tau_m": 20.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
 }
 
 params_nrn_reg = {
-    "beta": 1.7,  # width scaling of the pseudo-derivative
+    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
-    "c_reg": 300.0 / duration["sequence"] * duration["learning_window"],  # coefficient of firing rate regularization
+    "c_reg": 300.0,  # coefficient of firing rate regularization - 2*learning_window*(TF c_reg) for technical reasons
     "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.5,  # height scaling of the pseudo-derivative
+    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
-    "kappa": 0.95,  # low-pass filter of the eligibility trace
-    "kappa_reg": 0.95,  # low-pass filter of the firing rate for regularization
+    "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,
@@ -225,19 +227,21 @@ params_nrn_reg = {
     "V_th": 0.6,  # mV, spike threshold membrane voltage
 }
 
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
+params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])  # prefactor is inside abs in the original definition
+
 params_nrn_ad = {
-    "beta": 1.7,
+    "beta": 1.0,
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "adaptation": 0.0,  # initial value of the spike threshold adaptation
     "C_m": 1.0,
-    "c_reg": 300.0 / duration["sequence"] * duration["learning_window"],
+    "c_reg": 300.0,
     "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,
-    "gamma": 0.5,
+    "gamma": 0.3,
     "I_e": 0.0,
-    "kappa": 0.95,
-    "kappa_reg": 0.95,
+    "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",
     "t_ref": 5.0,
     "tau_m": 20.0,
@@ -245,14 +249,13 @@ params_nrn_ad = {
     "V_th": 0.6,
 }
 
+params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
+params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
+
 params_nrn_ad["adapt_beta"] = 1.7 * (
     (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
     / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
-
-scale_factor = 1.0 - params_nrn_reg["kappa"]  # factor for rescaling due to removal of irregular spike arrival
-params_nrn_reg["c_reg"] /= scale_factor**2
-params_nrn_ad["c_reg"] /= scale_factor**2
 
 ####################
 
@@ -262,11 +265,13 @@ params_nrn_ad["c_reg"] /= scale_factor**2
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
 
-nrns_reg = nest.Create("eprop_iaf", n_reg, params_nrn_reg)
-nrns_ad = nest.Create("eprop_iaf_adapt", n_ad, params_nrn_ad)
-nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
+# The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
+# that introduced it by the first letter of the authors' last names and the publication year.
+
+nrns_reg = nest.Create("eprop_iaf_bsshslm_2020", n_reg, params_nrn_reg)
+nrns_ad = nest.Create("eprop_iaf_adapt_bsshslm_2020", n_ad, params_nrn_ad)
+nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
-gen_learning_window = nest.Create("step_rate_generator")
 
 nrns_rec = nrns_reg + nrns_ad
 
@@ -301,7 +306,7 @@ params_mm_ad = {
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "label": "multimeter_out",
 }
@@ -363,30 +368,30 @@ dtype_weights = np.float32  # data type of weights - for reproducing TF results 
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
-weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights) * scale_factor
-weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights) / scale_factor
+weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_weights)
+weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
 params_common_syn_eprop = {
     "optimizer": {
         "type": "adam",  # algorithm to optimize the weights
-        "batch_size": 1,
+        "batch_size": batch_size,
         "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
         "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
         "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
-        "optimize_each_step": True,  # call optimizer every time step (True) or once per spike (False); only
-        # True implements original Adam algorithm, False offers speed-up; choice can affect learning performance
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
+    "average_gradient": True,  # if True, average the gradient over the learning window
     "weight_recorder": wr,
 }
 
 eta_test = 0.0  # learning rate for test phase
-eta_train = 5e-3 / duration["learning_window"] * scale_factor**2  # learning rate for training phase
+eta_train = 5e-3  # learning rate for training phase
 
 params_syn_base = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_bsshslm_2020",
     "delay": duration["step"],  # ms, dendritic delay
+    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
 }
 
 params_syn_in = params_syn_base.copy()
@@ -399,15 +404,16 @@ params_syn_out = params_syn_base.copy()
 params_syn_out["weight"] = weights_rec_out
 
 params_syn_feedback = {
-    "synapse_model": "eprop_learning_signal_connection",
+    "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
     "delay": duration["step"],
     "weight": weights_out_rec,
 }
 
-params_syn_learning_window = {
+params_syn_out_out = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
-    "receptor_type": 1,  # receptor type over which readout neuron receives learning window signal
+    "receptor_type": 1,  # receptor type of readout neuron to receive other readout neuron's signals for softmax
+    "weight": 1.0,  # pA, weight 1.0 required for correct softmax computation for technical reasons
 }
 
 params_syn_rate_target = {
@@ -430,7 +436,7 @@ params_init_optimizer = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
@@ -438,7 +444,7 @@ nest.Connect(nrns_rec, nrns_rec, params_conn_all_to_all, params_syn_rec)  # conn
 nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
-nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection 7
+nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
 
 nest.Connect(nrns_in, sr_in, params_conn_all_to_all, params_syn_static)
 nest.Connect(nrns_reg, sr_reg, params_conn_all_to_all, params_syn_static)
@@ -460,27 +466,24 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # recall signal and one the background input throughout the task. The sequence of cues is drawn with a
 # probability that favors one side. For each such sequence, the favored side, the solution or target, is
 # assigned randomly to the left or right.
-# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
-# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
-# opens the learning window while passing a value of 0 closes it.
 
 
-def generate_evidence_accumulation_input_output(group_size, n_in, steps, input):
+def generate_evidence_accumulation_input_output(batch_size, n_in, steps, input):
     n_pop_nrn = n_in // input["n_symbols"]
 
     prob_choices = np.array([input["prob_group"], 1 - input["prob_group"]], dtype=np.float32)
-    idx = np.random.choice([0, 1], group_size)
-    probs = np.zeros((group_size, 2), dtype=np.float32)
+    idx = np.random.choice([0, 1], batch_size)
+    probs = np.zeros((batch_size, 2), dtype=np.float32)
     probs[:, 0] = prob_choices[idx]
     probs[:, 1] = prob_choices[1 - idx]
 
-    batched_cues = np.zeros((group_size, input["n_cues"]), dtype=int)
-    for b_idx in range(group_size):
+    batched_cues = np.zeros((batch_size, input["n_cues"]), dtype=int)
+    for b_idx in range(batch_size):
         batched_cues[b_idx, :] = np.random.choice([0, 1], input["n_cues"], p=probs[b_idx])
 
-    input_spike_probs = np.zeros((group_size, steps["sequence"], n_in))
+    input_spike_probs = np.zeros((batch_size, steps["sequence"], n_in))
 
-    for b_idx in range(group_size):
+    for b_idx in range(batch_size):
         for c_idx in range(input["n_cues"]):
             cue = batched_cues[b_idx, c_idx]
 
@@ -497,21 +500,21 @@ def generate_evidence_accumulation_input_output(group_size, n_in, steps, input):
     input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
     input_spike_bools[:, 0, :] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-    target_cues = np.zeros(group_size, dtype=int)
+    target_cues = np.zeros(batch_size, dtype=int)
     target_cues[:] = np.sum(batched_cues, axis=1) > int(input["n_cues"] / 2)
 
     return input_spike_bools, target_cues
 
 
 def get_params_task_input_output(n_iter_interval):
-    iteration_offset = n_iter_interval * group_size * duration["sequence"]
+    iteration_offset = n_iter_interval * batch_size * duration["sequence"]
     dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
-    input_spike_bools, target_cues = generate_evidence_accumulation_input_output(group_size, n_in, steps, input)
+    input_spike_bools, target_cues = generate_evidence_accumulation_input_output(batch_size, n_in, steps, input)
 
-    input_spike_bools_arr = np.array(input_spike_bools).reshape(group_size * steps["sequence"], n_in)
+    input_spike_bools_arr = np.array(input_spike_bools).reshape(batch_size * steps["sequence"], n_in)
     timeline_task = (
-        np.arange(0.0, group_size * duration["sequence"], duration["step"]) + iteration_offset + duration["offset_gen"]
+        np.arange(0.0, batch_size * duration["sequence"], duration["step"]) + iteration_offset + duration["offset_gen"]
     )
 
     params_gen_spk_in = [
@@ -519,12 +522,12 @@ def get_params_task_input_output(n_iter_interval):
         for nrn_in_idx in range(n_in)
     ]
 
-    target_rate_changes = np.zeros((n_out, group_size))
-    target_rate_changes[np.array(target_cues), np.arange(group_size)] = 1
+    target_rate_changes = np.zeros((n_out, batch_size))
+    target_rate_changes[np.array(target_cues), np.arange(batch_size)] = 1
 
     params_gen_rate_target = [
         {
-            "amplitude_times": np.arange(0.0, group_size * duration["sequence"], duration["sequence"])
+            "amplitude_times": np.arange(0.0, batch_size * duration["sequence"], duration["sequence"])
             + iteration_offset
             + duration["total_offset"],
             "amplitude_values": target_rate_changes[nrn_out_idx],
@@ -532,20 +535,7 @@ def get_params_task_input_output(n_iter_interval):
         for nrn_out_idx in range(n_out)
     ]
 
-    params_gen_learning_window = {
-        "amplitude_times": np.hstack(
-            [
-                np.array([0.0, duration["sequence"] - duration["learning_window"]])
-                + iteration_offset
-                + group_element * duration["sequence"]
-                + duration["total_offset"]
-                for group_element in range(group_size)
-            ]
-        ),
-        "amplitude_values": np.tile([0.0, 1.0], group_size),
-    }
-
-    return params_gen_spk_in, params_gen_rate_target, params_gen_learning_window
+    return params_gen_spk_in, params_gen_rate_target
 
 
 # %% ###########################################################################################################
@@ -613,25 +603,25 @@ class TrainingPipeline:
     def evaluate(self):
         events_mm_out = mm_out.get("events")
 
-        readout_signal = events_mm_out["readout_signal"]
+        readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
         target_signal = events_mm_out["target_signal"]
         senders = events_mm_out["senders"]
         times = events_mm_out["times"]
 
-        cond1 = times > (self.n_iter_sim - 1) * group_size * duration["sequence"] + duration["total_offset"]
-        cond2 = times <= self.n_iter_sim * group_size * duration["sequence"] + duration["total_offset"]
+        cond1 = times > (self.n_iter_sim - 1) * batch_size * duration["sequence"] + duration["total_offset"]
+        cond2 = times <= self.n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
         idc = cond1 & cond2
 
         readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in set(senders)])
         target_signal = np.array([target_signal[idc][senders[idc] == i] for i in set(senders)])
 
-        readout_signal = readout_signal.reshape((n_out, 1, group_size, steps["sequence"]))
-        target_signal = target_signal.reshape((n_out, 1, group_size, steps["sequence"]))
+        readout_signal = readout_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
+        target_signal = target_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
 
         readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
         target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
-        loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
+        loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 
         y_prediction = np.argmax(np.mean(readout_signal, axis=3), axis=0)
         y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
@@ -647,14 +637,11 @@ class TrainingPipeline:
 
     def run_phase(self, phase_label, eta):
         params_common_syn_eprop["optimizer"]["eta"] = eta
-        nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+        nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
-        params_gen_spk_in, params_gen_rate_target, params_gen_learning_window = get_params_task_input_output(
-            self.n_iter_sim
-        )
+        params_gen_spk_in, params_gen_rate_target = get_params_task_input_output(self.n_iter_sim)
         nest.SetStatus(gen_spk_in, params_gen_spk_in)
         nest.SetStatus(gen_rate_target, params_gen_rate_target)
-        nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")
@@ -662,7 +649,7 @@ class TrainingPipeline:
         if self.n_iter_sim > 0:
             self.evaluate()
 
-        duration["sim"] = group_size * duration["sequence"] - duration["total_offset"] - duration["extension_sim"]
+        duration["sim"] = batch_size * duration["sequence"] - duration["total_offset"] - duration["extension_sim"]
 
         self.simulate("sim")
 
@@ -707,7 +694,7 @@ class TrainingPipeline:
 
         self.evaluate()
 
-        duration["task"] = self.n_iter_sim * group_size * duration["sequence"] + duration["total_offset"]
+        duration["task"] = self.n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
 
         gen_spk_final_update.set({"spike_times": [duration["task"] + duration["extension_sim"] + 1]})
 
@@ -749,7 +736,6 @@ events_sr_reg = sr_reg.get("events")
 events_sr_ad = sr_ad.get("events")
 events_wr = wr.get("events")
 
-
 # %% ###########################################################################################################
 # Plot results
 # ~~~~~~~~~~~~
@@ -790,7 +776,7 @@ for color, label in zip(colors, set(results_dict["label"])):
     axs[0].scatter(results_dict["iteration"][idc], results_dict["loss"][idc], label=label)
     axs[1].scatter(results_dict["iteration"][idc], results_dict["error"][idc], label=label)
 
-axs[0].set_ylabel(r"$\mathcal{L} = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
+axs[0].set_ylabel(r"$\mathcal{L} = -\sum_{t,k} \pi_k^{*,t} \log \pi_k^t$")
 axs[1].set_ylabel("error")
 
 axs[-1].set_xlabel("iteration")
@@ -831,7 +817,7 @@ for title, xlims in zip(
     ["Dynamic variables before training", "Dynamic variables after training"],
     [
         (0, steps["sequence"]),
-        ((n_iter_sim - 1) * group_size * steps["sequence"], n_iter_sim * group_size * steps["sequence"]),
+        ((n_iter_sim - 1) * batch_size * steps["sequence"], n_iter_sim * batch_size * steps["sequence"]),
     ],
 ):
     fig, axs = plt.subplots(14, 1, sharex=True, figsize=(8, 14), gridspec_kw={"hspace": 0.4, "left": 0.2})
@@ -852,9 +838,9 @@ for title, xlims in zip(
     plot_recordable(axs[9], events_mm_ad, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_recordable(axs[10], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)
-    plot_recordable(axs[11], events_mm_out, "target_signal", r"$y^*_k$" + "\n", xlims)
-    plot_recordable(axs[12], events_mm_out, "readout_signal", r"$y_k$" + "\n", xlims)
-    plot_recordable(axs[13], events_mm_out, "error_signal", r"$y_k-y^*_k$" + "\n", xlims)
+    plot_recordable(axs[11], events_mm_out, "target_signal", r"$\pi^*_k$" + "\n", xlims)
+    plot_recordable(axs[12], events_mm_out, "readout_signal", r"$\pi_k$" + "\n", xlims)
+    plot_recordable(axs[13], events_mm_out, "error_signal", r"$\pi_k-\pi^*_k$" + "\n", xlims)
 
     axs[-1].set_xlabel(r"$t$ (ms)")
     axs[-1].set_xlim(*xlims)
@@ -890,7 +876,7 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
                     )
                     ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
-        ax.set_ylim(-1.5, 1.5)
+        ax.set_ylim(-0.6, 0.6)
 
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))

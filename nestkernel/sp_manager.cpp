@@ -269,7 +269,7 @@ int SPManager::get_neuron_pair_index(int id1,int id2){
 
 
 // Method to perform roulette wheel selection
-int SPManager::rouletteWheelSelection(const std::vector<double>& probabilities, double rnd) {
+int SPManager::roulette_wheel_selection(const std::vector<double>& probabilities, double rnd) {
     if (probabilities.empty()) {
         throw std::runtime_error("Probabilities vector is empty.");
     }
@@ -293,7 +293,7 @@ int SPManager::rouletteWheelSelection(const std::vector<double>& probabilities, 
 }
 
 
-double SPManager::gaussianKernel(const std::vector<double>& pos1, const std::vector<double>& pos2, const double sigma) 
+double SPManager::gaussian_kernel(const std::vector<double>& pos1, const std::vector<double>& pos2, const double sigma) 
 {
     double distanceSquared = 0.0;
     for (size_t i = 0; i < pos1.size(); ++i) {
@@ -303,7 +303,7 @@ double SPManager::gaussianKernel(const std::vector<double>& pos1, const std::vec
     return std::exp(-distanceSquared / (sigma * sigma));
 }
 
-void SPManager::build_problist() {
+void SPManager::build_probability_list() {
     size_t num_neurons = global_ids.size();
 
     if (global_positions.size() % num_neurons != 0) {
@@ -346,7 +346,7 @@ void SPManager::build_problist() {
                 std::vector<double> pos_j(global_positions.begin() + pos_dim * (id_j - 1),
                                           global_positions.begin() + pos_dim * id_j);
 
-                double prob = gaussianKernel(pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_);
+                double prob = gaussian_kernel(pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_);
                 probability_list[index] = prob;
             }
         }
@@ -906,7 +906,7 @@ void SPManager::global_shuffle_spatial(
             std::vector<double> post_pos(global_positions.begin() + post_index * pos_dim,
                                           global_positions.begin() + (post_index + 1) * pos_dim);
 
-            prob = gaussianKernel(pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_);
+            prob = gaussian_kernel(pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_);
           }
           if (prob>0){
             probabilities.push_back(prob);
@@ -921,7 +921,7 @@ void SPManager::global_shuffle_spatial(
       rnd = get_rank_synced_rng()->drand();
 
       // Select a post-synaptic neuron using roulette wheel selection
-      int selected_post_idx = rouletteWheelSelection(probabilities, rnd);
+      int selected_post_idx = roulette_wheel_selection(probabilities, rnd);
       size_t selected_post_id = valid_post_ids[selected_post_idx];
 
       // Remove the selected post-synaptic neuron from the list
@@ -961,7 +961,7 @@ nest::SPManager::enable_structural_plasticity()
     gather_global_positions_and_ids();
     if (structural_plasticity_cache_probabilities_)
     {
-      build_problist();
+      build_probability_list();
     }
   }
 }

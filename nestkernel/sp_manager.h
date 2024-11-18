@@ -208,7 +208,7 @@ public:
    * @param sigma Standard deviation for the Gaussian kernel.
    * @return Gaussian kernel value.
    */
-  double gaussianKernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
+  double gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
 
   /**
    * Perform global shuffling of pre- and post-synaptic neurons based on spatial probabilities.
@@ -226,7 +226,7 @@ public:
   /**
    * Build a probability list for neuron connections based on spatial properties.
    */
-  void build_problist();
+  void build_probability_list();
 
   /**
    * Gather global neuron positions and IDs from all nodes.
@@ -240,7 +240,7 @@ public:
    * @param rnd Random number.
    * @return Selected index.
    */
-  int rouletteWheelSelection( const std::vector< double >& probabilities,double rnd);
+  int roulette_wheel_selection( const std::vector< double >& probabilities,double rnd);
 
   void set_structural_plasticity_gaussian_kernel_sigma(double sigma) {
     structural_plasticity_gaussian_kernel_sigma_ = sigma;
@@ -261,8 +261,6 @@ public:
    * spatial probability calculations.
    */
   double structural_plasticity_gaussian_kernel_sigma_;
-
-
 
 
 private:

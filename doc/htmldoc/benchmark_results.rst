@@ -44,7 +44,13 @@ Strong scaling experiment of the Multi-area-model [5]_
        :class: sd-align-major-center
        :columns: 10
 
-       .. image:: /static/img/mam_benchmark.png
+       Dynamical regime: Ground state
+       
+       .. image:: /static/img/mam_ground-state_benchmark.png
+
+       Dynamical regime: Metastable state
+       
+       .. image:: /static/img/mam_metastable-state_benchmark.png
 
 
 .. grid:: 1 1 1 1
@@ -54,6 +60,7 @@ Strong scaling experiment of the Multi-area-model [5]_
        :class: sd-align-minor-center
 
        * The model has ~4.1 million neurons and ~24 billion synapses, minimal delay 0.1 ms
+       * It can be run in two different dynamical regimes: the ground state and the metastable state [5]_.
        * 2 MPI processes per node, 64 threads per MPI process
        * Steady decrease of run time with additional compute resources
        * Data averaged over 3 runs with different seeds, error bars indicate standard deviation

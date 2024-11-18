@@ -654,5 +654,23 @@ def _merge_dict(data: list[dict]) -> dict:
     return dict([(data_key, _flatten([d[data_key] for d in data])) for data_key in data_keys])
 
 
+def merge_response(response: list):
+    if "events" in response[0]["data"]:
+        events = [res["data"]["events"] for res in response]
+        merged = [_merge_event([e[idx] for e in events]) for idx in range(len(events[0]))]
+        return [{"data": {"events": merged}}]
+    else:
+        return response
+
+
+def _flatten(xss):
+    return [x for xs in xss for x in xs]
+
+
+def _merge_event(event: list):
+    eventKeys = list(set(_flatten([e for e in event])))
+    return dict([(eKey, _flatten([e[eKey] for e in event])) for eKey in eventKeys])
+
+
 if __name__ == "__main__":
     app.run()

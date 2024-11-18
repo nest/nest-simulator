@@ -217,7 +217,6 @@ class GaussianNumericSEI(SynapticElementIntegrator):
 
 
 class SigmoidNumericSEI(SynapticElementIntegrator):
-
     """
     Compute the number of synaptic element corresponding to a
     sigmoid growth curve

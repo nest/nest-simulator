@@ -77,5 +77,5 @@ else:
                 logger.error("Failed to execute call")
                 continue
 
-        log(call_name, f"sending response gather, data={response}")
-        comm.gather(nest.serializable(response), root=0)
+        log(call_name, f"sending reponse gather, data={response}")
+        comm.gather(nest.serialize_data(response), root=0)

@@ -61,7 +61,7 @@ Types of neurons
    .. grid-item::
      :columns: 3
 
-     For details on neuron ?algorthim / equations? see: :ref:`neuron_update`
+     For details on neuron update algorthims see: :ref:`neuron_update`
 
 .. _spiking_neurons:
 
@@ -112,8 +112,13 @@ Geometry
 Spiking mechanism
 ~~~~~~~~~~~~~~~~~
 
-Hard threshold (integrate-and-fire)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Spiking neuron models process synaptic inputs and generate discrete out put events which are called spikes. The mechanisms by which these
+spikes are generated can be classified with the following distinctions.
+
+
+Hard threshold
+^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
@@ -131,9 +136,12 @@ Hard threshold (integrate-and-fire)
         .. tab-item:: General info
           :selected:
 
-          The neuron's membrane potential integrates incoming synaptic inputs over time.
           When the membrane potential reaches a certain threshold,
-          the neuron "fires" an action potential
+          the neuron deterministically  "fires" an action potential
+          Neuron models iwth hard threshold do not contain intrinsic dynamics that produce the upswing of a spike. The downswing is realized
+          is by an artificial reset mechanism
+
+
 
             .. dropdown:: Hard threshold
 
@@ -165,9 +173,22 @@ Soft threshold
           .. tab-item:: General info
             :selected:
 
-             Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
-             whole spike wave form
+            Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
+            whole spike wave form
 
+
+
+            +------------------------+-----------------------------------------+-----------------------------------------+
+            | **Aspect**             | **Hard Threshold**                      | **Soft Threshold**                      |
+            +========================+=========================================+=========================================+
+            | **Spiking Rule**       | Deterministic (all-or-nothing)          | Probabilistic or graded                 |
+            +------------------------+-----------------------------------------+-----------------------------------------+
+            | **Transition**         | Abrupt                                  | Gradual                                 |
+            +------------------------+-----------------------------------------+-----------------------------------------+
+            | **Mathematical Model** | Fixed threshold (V > V_th)              | Sigmoidal or probabilistic function     |
+            +------------------------+-----------------------------------------+-----------------------------------------+
+            | **Realism**            | Idealized                               | More biologically plausible             |
+            +------------------------+-----------------------------------------+-----------------------------------------+
 
             .. dropdown:: Soft threshold
 
@@ -201,7 +222,15 @@ Stochastic
    .. grid-item::
       :columns: 10
 
-      Modeled by point process.
+      Stochastic spiking models do not produce deterministic spike events instead spike times are stochastic and described
+      by apoint process,with underlying time dependent firing rate that is determined by the membrane potential of a neuron.
+      Elevated membrane potential wrt the resting potential increaes the likelihood of output spikes.
+
+
+      * A point process is a mathematical framework used to describe events that occur randomly in time. In the context of stochastic spiking:
+
+          * Spikes are modeled as discrete events (points) in time.
+          * The rate of spiking (or intensity function) is influenced by the neuron’s state, inputs, and noise.
 
       .. dropdown::  Stochastic
 
@@ -212,13 +241,25 @@ Stochastic
 Input mechanism
 ~~~~~~~~~~~~~~~
 
+NEST supports various input mechaisms to neuron models
+Different input mechanisms are modeled in spiking neurons . . .
+
 Electrical
 ^^^^^^^^^^
 
-- Gap junctions
+- Gap junctions direct electrical connectons between neurons. The respecitvie membrane potetnials are instantanously
+  coupled to eachother.
 
 Chemical
 ^^^^^^^^
+
+Chemical synapsed couple neurons in delayed fashion, because of the translation of conversion of electircal and chemical
+signals at the synapse. Phenomologically, This process is captured by classes of models in NEST: current and conducantce baed
+synapses.
+
+.. seealso::
+
+   :doc:`../synapses/synapse_dynamics`
 
 - Current-based synapses
 
@@ -236,6 +277,10 @@ Chemical
 
      NEST convention: ``psc`` (aka CUBA)
 
+     Model post-synaptic responses to incoming spikes as changes in current.
+     response of hte post syn neuron is independent of the neuronal state.
+
+     see more details on ...
      Synaptic inputs are represented as fixed currents (I) injected into the neuron.
      These currents are independent of the membrane potential
      and are directly added to the neuron's equation governing voltage dynamics.
@@ -257,6 +302,10 @@ Chemical
 
      NEST convention: ``cond`` (aka COBA)
 
+     Model post-synaptic responses to incoming spikes as changes in conductances.
+     response of hte post syn neuron is dependent on the neuronal state.
+
+     see more details on ...
      Synaptic inputs are represented as changes in membrane conductance (`g`).
      These changes depend on the opening and closing of ion channels,
      which are often modeled based on voltage or neurotransmitter binding.
@@ -269,35 +318,48 @@ Chemical
 Post-synaptic input interactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Synaptic input currents can be modeled using different functions to represent
-how the `current, conductance, or voltage` changes over time after a synaptic event.
+Synaptic inputs can be modeled using different kernels to represent
+how the `current or conductance` changes over time after a synaptic event.
 
 
 - synapntic kernel are normalized such that the peak value equals 1
-- time point of peak value differs between models, for delta and exp it is at the time point of the spike,
-  alpha and beta the max occurs after an upswing period, depending on time constants
+  the kernels differ in shape while the delta kernel describes one pulse only at the time point at arrival spike
+  the exp models a temporal decay of th post syn  response.
+  alpha and beta model both rise and decay of post syn response.
 
+.. seealso::
+
+
+..note:: graphs - add y axis peak 1 picoampere
 
 .. grid:: 1 2 2 2
 
    .. grid-item-card:: Delta
       :columns: 3
+      :link: delta_synapse
+      :link-type: ref
 
       .. image:: /static/img/delta_nn.svg
 
    .. grid-item-card:: Exp
       :columns: 3
+      :link: exp_synapse
+      :link-type: ref
 
       .. image:: /static/img/exp_nn.svg
 
    .. grid-item-card:: Alpha
       :columns: 3
+      :link: alpha_synapse
+      :link-type: ref
 
       .. image:: /static/img/alpha2.svg
 
 
    .. grid-item-card:: Beta
       :columns: 3
+      :link: beta_synapse
+      :link-type: ref
 
       .. image:: /static/img/beta2.svg
 
@@ -327,7 +389,7 @@ Adaptation mechanism
             Unlike a fixed threshold, an adaptive threshold increases temporarily following each spike and
             gradually returns to its baseline value over time. This mechanism models phenomena
             such as spike-frequency adaptation, where a neuron's responsiveness decreases with sustained
-            high-frequency input, allowing for more realistic simulations of neuronal behavior.
+            high-frequency input.
 
             .. dropdown:: Adaptation
 
@@ -352,7 +414,7 @@ Adaptation mechanism
 
 
 Auxillary neurons
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
 
 
@@ -367,11 +429,12 @@ Auxillary neurons
    .. grid-item::
       :columns: 10
 
-      Neurons that repeat incoming spikes. Applications:
+      NEST provides a number of auxiallary neuron models that can be used to mimic spcecific purposes and
+      Neurons that repeat incoming spikes.
 
       .. dropdown:: Auxillary neurons
 
-        ignore-and-fire
+        ignore-and-fire - used for benchmarking . . .
 
         parrot_neuron – Neuron that repeats incoming spikes
 
@@ -395,8 +458,14 @@ Precise spike timing
 
       NEST convention: ``ps``
 
-      Continuous time . . .
-      More computataionally heavy, but provide better resolution to spike times than a grid-constrained model.
+      By default, the dynamics of neuranl models are evaluated on fixed time grid that can be specified before simulation.
+      >link to kernel options
+
+      Precise neuron models instead calculate precise rather thatn grid-constrained spike times. These models are more computataionally heavy,
+      but provide better resolution to spike times than a grid-constrained model.
+      Spiking neuron networks are often chaotic systems such that infinitismal shift in spike time might lead to changes in
+      the overall network dynamics.
+
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.
 
       .. dropdown:: Precise spike timing
@@ -430,7 +499,7 @@ Rate neurons
 
    .. grid-item::
 
-     Rate neurons can approximate biologically realistic neurons but they are also used in artificial learning
+     Rate neurons can approximate biologically realistic neurons but they are also used in artificial neuranl networks
      (aka recurrent neural networks RNNs)
 
      Most rate neurons in NEST are implemented as templates based on the non-linearity and noise type.

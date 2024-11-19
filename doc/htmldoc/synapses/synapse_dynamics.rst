@@ -53,6 +53,8 @@ trains :math:`s_{j}(t)=\sum_{k}\delta(t-t_{j}^{k})` defined by spike
 times :math:`t_{j}^{k}`. :math:`w_{j}` denotes the synaptic weight to
 presynaptic neuron :math:`j`
 
+.. _delta_synapse:
+
 Delta synapses
 ~~~~~~~~~~~~~~
 
@@ -72,6 +74,8 @@ Delta synapses
       .. math:: k(t)=\delta(t)
 
       that is a delta distribution.
+
+.. _exp_synapse:
 
 Exponential synapses
 ~~~~~~~~~~~~~~~~~~~~
@@ -113,6 +117,8 @@ Exponential synapses
           `[exp_dyn] <#exp_dyn>`__ with spiking input from all presynaptic
           neurons. This dynamics is solved using exact integration (link to exact
           integration page) (ref to Rotter and Diesmann 1999).
+
+.. _alpha_synapse:
 
 Alpha synapses
 ~~~~~~~~~~~~~~
@@ -173,6 +179,8 @@ Alpha synapses
           variables follow the dynamics of `[alpha1] <#alpha1>`__ and
           `[alpha2] <#alpha2>`__ and are solved using exact integration (link to
           exact integration page) (ref to Rotter and Diesmann 1999).
+
+.. _beta_synapse:
 
 Beta synapses
 ~~~~~~~~~~~~~

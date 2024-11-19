@@ -42,6 +42,8 @@ In this example, we are using 1 node, which contains 2 sockets and 64 cores per 
    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
    export OMP_PROC_BIND=TRUE
 
+   # Optional
+   python -c "import nest, subprocess as s, os; s.check_call(['/usr/bin/pldd', str(os.getpid())])" 2>&1 | tee -a "pldd-nest.out"
 
    # On some systems, MPI is run by SLURM
    srun --exclusive python3 my_nest_simulation.py
@@ -174,6 +176,21 @@ will prevent the threads from moving around.
 
 |
 
+::
+
+   python -c "import nest, subprocess as s, os; s.check_call(['/usr/bin/pldd', str(os.getpid())])" 2>&1 | tee -a "pldd-nest.out"
+
+Prints out the linked libraries into a file with name ``pldd-nest.out``.
+In this way, you can check whether dynamically linked librariries for
+the execution of ``nest`` is indeed used. For example, if you want to check if ``jemalloc`` is used for the network construction
+in highly parallel simulations.
+
+.. note::
+
+   The above command uses ``pldd`` which is commonly available in Linux distributions. However, you might need to change
+   the path, which you can find with the command ``which pldd``.
+
+|
 
 You can then tell the job script to schedule your simulation.
 Setting the ``exclusive`` option prevents other processes or jobs from doing work on the same node.
@@ -222,11 +239,3 @@ It should match the number of ``cpus-per-task``.
 .. seealso::
 
     :ref:`parallel_computing`
-
-
-
-
-
-
-
-

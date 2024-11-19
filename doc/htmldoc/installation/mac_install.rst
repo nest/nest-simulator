@@ -4,13 +4,13 @@ Building NEST on macOS
 ======================
 
 Building NEST on macOS requires some developer tools. There are several sources from
-which you can install them, e.g., Conda, Homebrew, or MacPorts. The most important
+which you can install them, e.g., Conda-forge, Homebrew, or MacPorts. The most important
 recommendation for an easy and stable build is *not to mix tools from different sources*.
-This includes your Python installation: Taking Python from Conda and all else from Homebrew
+This includes your Python installation: Taking Python from conda-forge and all else from Homebrew
 may work, but can also lead to various complications.
 
-This guide shows how to build NEST with a development environment created with Conda. The main
-advantage of Conda is that you can fully insulate the entire environment in a Conda environment.
+This guide shows how to build NEST with a development environment created with mamba. The main
+advantage of mamba is that you can fully insulate the entire environment in a mamba environment.
 If you want to base your setup on Homebrew or MacPorts, you can still use the
 ``environment.yml`` file as a guide to necessary packages.
 
@@ -24,12 +24,12 @@ Preparations
 
       xcode-select --install
 
-#. Create a conda environment with necessary tools (see also :ref:`conda_tips`)
+#. Create a mamba environment with necessary tools
 
    .. code:: sh
 
       cd <nest_source_dir>
-      conda env create -p conda/
+      mamba env create -p mamba/
 
    .. note::
 
@@ -40,10 +40,10 @@ Preparations
 
    .. code:: sh
 
-      conda activate conda/
+      mamba activate mamba/
 
-   This assumes that you have created the environment in the folder ``conda/`` as given above. Note that the trailing
-   slash is necessary for conda to distinguish it from a named environment.
+   This assumes that you have created the environment in the folder ``mamba/`` as given above. Note that the trailing
+   slash is necessary for mamba to distinguish it from a named environment.
 
 #. If you want to build NEST with MPI, you must digitally sign the ``orterun`` and ``orted`` binaries
 
@@ -57,7 +57,7 @@ Preparations
          codesign -f -s "gdb-cert" `which orted`
          codesign -f -s "gdb-cert" `which orterun`
 
-      Instead of the ``which`` command you can also give the full path to the binary inside your conda
+      Instead of the ``which`` command you can also give the full path to the binary inside your mamba
       environment.
 
       .. note::
@@ -80,17 +80,17 @@ Building NEST
 
       cmake <nest_source_dir>
 
-   If you have libraries required by NEST such as GSL installed with Homebrew and Conda, this
+   If you have libraries required by NEST such as GSL installed with Homebrew and mamba, this
    can lead to library conflicts (error messages like ``Initializing libomp.dylib, but found
-   libomp.dylib already initialized.``). To ensure that libraries are found first in your conda
+   libomp.dylib already initialized.``). To ensure that libraries are found first in your mamba
    environment, invoke ``cmake`` like this
 
    .. code-block:: sh
 
-      CMAKE_PREFIX_PATH=<conda_env_dir> cmake <nest_source_dir>
+      CMAKE_PREFIX_PATH=<mamba_env_dir> cmake <nest_source_dir>
 
-   You can find the ``<conda_env_dir>`` for the currently active conda environment by running
-   ``conda info`` and looking for the "active env location" entry in the output.
+   You can find the ``<mamba_env_dir>`` for the currently active mamba environment by running
+   ``mamba info`` and looking for the "active env location" entry in the output.
 
    To compile NEST with :ref:`MPI support <distributed_computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
    For further CMake options, see :ref:`cmake_options`.
@@ -119,14 +119,13 @@ module is impossible, and environment variables must be set before NEST can be u
 Troubleshooting
 ---------------
 
-Conda with Intel MKL
+Mamba with Intel MKL
 ~~~~~~~~~~~~~~~~~~~~
 
-A default installation of Anaconda or Miniconda will install a version of NumPy
-built on the Intel Math Kernel Library (MKL). This library uses a different OpenMP
+The Intel Math Kernel Library (MKL) uses a different OpenMP
 library to support threading than what's included with Apple Clang or GCC. This will lead
 to conflicts if NEST is built with support for threading, which is the default and
 usually desirable. One way to avoid this is to follow the instructions above. An
-alternative is to create a conda environment in which you install ``nomkl`` as *the
-very first package*. This will tell conda to install MKL-free versions of NumPy and
+alternative is to create a mamba environment in which you install ``nomkl`` as *the
+very first package*. This will tell mamba to install MKL-free versions of NumPy and
 other linear-algebra intensive packages.

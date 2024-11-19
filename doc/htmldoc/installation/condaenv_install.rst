@@ -1,24 +1,21 @@
 .. _condaenv:
 
-Install from source in a conda environment
+Install from source in a mamba environment
 ==========================================
 
-.. note:: 
+.. note::
 
-   If you encounter problems installing the NEST conda package and 
-   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
-   Mamba has the advantage of installing conda packages and 
+   We recommend using Mamba (https://mamba.readthedocs.io).
+   Mamba has the advantage of installing conda packages and
    environments more quickly and can be used as a complete drop-in replacement for conda.
 
-* Create a conda environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
-  We recommend specifying a dedicated location (``-p <path/to/conda/env>``) for your environment.
-  See the `conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#specifying-a-location-for-an-environment>`_
-  on using a custom location rather than the default envs folder.
+* Create a mamba environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
+  We recommend specifying a dedicated location (``-p <path/to/mamba/env>``) for your environment.
 
 .. code-block:: sh
 
-    conda env create -f nest-simulator/environment.yml --p <path/to/conda/env>
-    conda activate <path/to/conda/env>
+    mamba env create -f nest-simulator/environment.yml --p <path/to/mamba/env>
+    mamba activate <path/to/mamba/env>
 
 * Create a build directory:
 
@@ -32,12 +29,12 @@ Install from source in a conda environment
 
     cd build_dir
 
-* Configure NEST. Add the cmake option ``-CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX`` to link nest to your active conda environment.
+* Configure NEST. Add the cmake option ``-CDMAKE_INSTALL_PREFIX:PATH=$MAMBA_PREFIX`` to link nest to your active mamba environment.
   You may need additional ``cmake`` options (see :ref:`cmake_options`).
 
 .. code-block:: sh
 
-   cmake -DCMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX </path/to/NEST/src>
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=$MAMBA_PREFIX </path/to/NEST/src>
 
 * Compile and install NEST:
 
@@ -60,5 +57,3 @@ sourcing the script:
 .. note::
 
    To build the developer or user documentation see :ref:`doc_workflow`
-
-

@@ -101,7 +101,7 @@ where
 
 .. math::
 
-   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, X}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = \sum_{j} \sum_{k} i_{\text{syn, X}}(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
 or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,

@@ -37,6 +37,76 @@
 
 namespace nest
 {
+/* BeginUserDocs: neuron, SIRS
+
+Short description
++++++++++++++++++
+
+SIRS neuron with three discrete states: S, I, R.
+
+Description
++++++++++++
+
+The ``sirs_neuron`` is an implementation of a neuron which has three 
+discrete states: susceptible (S), infected (I) and recovered (R) [1]. 
+All ``sirs_neuron``s are updated synchronously. When an update occurs, 
+  1. all susceptible neurons are infected with probability equal to  
+  :math:`\min(beta h,1)`, where ``h`` is the number of infected pre-synaptic 
+  neurons, and ``beta_sirs`` is a parameter controlling the infectivity. 
+  Susceptible neurons that are not infected remain susceptible.
+  #. Infected neurons recover with probability ``mu_sirs``. Infected neurons
+  that do not recover remain infected. 
+  #. Recovered neurons become susceptible with probability ``eta_sirs``.
+The parameter ``tau_m`` controls the  length of the time step between updates,
+and hence has no influence on the dynamics. 
+The state of the neuron is encoded in the variables ``y`` ( :math:`y=0` for
+susceptible, :math:`y=1` for infected, :math:`y=2` for recovered) and ``h``, 
+which counts the number of infected pre-synaptic neurons. 
+
+
+Parameters
+++++++++++
+
+========= ============= =======================================================
+tau_m     ms            inter-update-interval
+beta_sirs probability   infectivity per update step
+mu_sirs   probability   prob. of recovery per update step
+eta_sirs  probability   prob. of becoming susceptible per update step
+========= ============= =======================================================
+
+.. admonition:: Special requirements for SIRS neurons
+
+   The following requirements must be observed. NEST does not
+   enforce them. Breaching the requirements can lead to meaningless
+   results.
+
+   1. SIRS neurons must only be connected to other SIRS neurons.
+
+   #. No more than one connection must be created between any pair of
+      SIRS neurons. When using probabilistic connection rules, specify
+      ``'allow_autapses': False`` to avoid accidental creation of
+      multiple connections between a pair of neurons.
+
+
+References
+++++++++++
+
+.. [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53,
+       33 (1991).
+
+Receives
+++++++++
+
+CurrentEvent
+
+See also
+++++++++
+
+Examples using this model
++++++++++++++++++++++++++
+
+
+EndUserDocs */
 /**
  * SIRS neuron with three discrete states: S, I, R.
  *

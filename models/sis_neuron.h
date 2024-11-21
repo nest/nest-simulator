@@ -37,8 +37,76 @@
 
 namespace nest
 {
+/* BeginUserDocs: neuron, SIS
+
+Short description
++++++++++++++++++
+
+SIS neuron with two discrete states: S, I.
+
+Description
++++++++++++
+
+The ``sis_neuron`` is an implementation of a neuron which has two 
+discrete states: susceptible (S) and infected (I). 
+All ``sis_neuron``s are updated synchronously. When an update occurs, 
+  1. all susceptible neurons are infected with probability equal to  
+  :math:`\min(beta h,1)`, where ``h`` is the number of infected pre-synaptic 
+  neurons, and ``beta_sis`` is a parameter controlling the infectivity. 
+  Susceptible neurons that are not infected remain susceptible.
+  #. Infected neurons become susceptible with probability ``mu_sis``.
+The parameter ``tau_m`` controls the  length of the time step between updates,
+and hence has no influence on the dynamics. 
+The state of the neuron is encoded in the variables ``y`` ( :math:`y=0` for
+susceptible, :math:`y=1` for infected) and ``h``, 
+which counts the number of infected pre-synaptic neurons. 
+
+
+Parameters
+++++++++++
+
+========= ============= =======================================================
+tau_m     ms            inter-update-interval
+beta_sis probability   infectivity per update step
+mu_sis   probability   prob. of becoming susceptible per update step
+========= ============= =======================================================
+
+.. admonition:: Special requirements for SIS neurons
+
+   The following requirements must be observed. NEST does not
+   enforce them. Breaching the requirements can lead to meaningless
+   results.
+
+   1. SIS neurons must only be connected to other SIS neurons.
+
+   #. No more than one connection must be created between any pair of
+      SIS neurons. When using probabilistic connection rules, specify
+      ``'allow_autapses': False`` to avoid accidental creation of
+      multiple connections between a pair of neurons.
+
+
+References
+++++++++++
+
+.. [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53,
+       33 (1991).
+
+Receives
+++++++++
+
+CurrentEvent
+
+See also
+++++++++
+
+Examples using this model
++++++++++++++++++++++++++
+
+
+EndUserDocs */
 /**
- * SIS neuron with three discrete states: S, I, R.
+/**
+ * SIS neuron with two discrete states: S, I.
  *
  * @note
  * This neuron has a special use for spike events to convey the

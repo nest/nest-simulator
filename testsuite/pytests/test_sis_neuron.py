@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_binary.py
+# test_sis_neuron.py
 #
 # This file is part of NEST.
 #

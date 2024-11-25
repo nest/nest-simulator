@@ -1,6 +1,6 @@
-# Conda environment specification for NEST Simulator.
+# Mamba environment specification for NEST Simulator.
 #
-# This file specifies a conda environment for those who would
+# This file specifies a mamba environment for those who would
 # like to compile NEST or build NEST documentation themselves.
 # If you just want to execute NEST, you should install NEST
 # directly as described in https://www.nest-simulator.org/installation.
@@ -19,7 +19,7 @@
 #
 # To create an environment from this file, run
 #
-#     conda env create --name <my_env_name> --file environment.yml
+#     mamba env create --name <my_env_name> --file environment.yml
 #
 # where <my_env_name> is a name of your choice.
 
@@ -42,11 +42,11 @@ dependencies:
   - doxygen
   - graphviz
 
-  # mpi4py must be installed by conda in order to automatically find the path
-  # to OpenMPI installed by conda. Note that mpi4py also is included in
+  # mpi4py must be installed by mamba in order to automatically find the path
+  # to OpenMPI installed by mamba. Note that mpi4py also is included in
   # requirements_pynest.txt in case someone wants to build an environment
-  # without conda. When this conda environment is built, the pip installation
-  # of mpi4py will be skipped since it is already installed by conda.
+  # without mamba. When this mamba environment is built, the pip installation
+  # of mpi4py will be skipped since it is already installed by mamba.
   - mpi4py
 
   - pip:

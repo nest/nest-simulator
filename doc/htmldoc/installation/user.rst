@@ -13,8 +13,8 @@ Docker |linux| |macos| |windows|
 :ref:`See our docker installation instructions <docker>`.
 
 
-Conda install |linux| |macos|
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+conda-forge install |linux| |macos|
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
 

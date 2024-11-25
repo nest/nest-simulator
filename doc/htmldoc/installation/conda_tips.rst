@@ -1,35 +1,27 @@
 .. _conda_tips:
 
-Tips for installing NEST with conda
+Tips for installing NEST with Mamba
 ===================================
 
-.. note:: 
+.. note::
 
-   If you encounter problems installing the NEST conda package and 
-   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
-   Mamba has the advantage of installing conda packages and 
+   We recommend using Mamba (https://mamba.readthedocs.io).
+   Mamba has the advantage of installing conda packages and
    environments more quickly and can be used as a complete drop-in replacement for conda.
 
 This page provides a series of recommendations for installing pre-built NEST with
 conda or to set up conda environments for building NEST and NEST documentation.
 
-Basic conda setup
+Basic mamba setup
 -----------------
 
-Choice of conda base installation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Apple systems
+~~~~~~~~~~~~~
 
-We test NEST in conda environments using Miniconda installations and thus recommend
-that you do the same. The recommendations that we provide here will also likely work with a
-full-sized Anaconda installation, but we can only provide limited support for this.
 
-You can either install
-
-- Miniconda from `<https://docs.conda.io/en/latest/miniconda.html>`_
-- Miniforge from `<https://github.com/conda-forge/miniforge>`_
-
-For Apple systems with an M1 chip, you must at present use Miniforge and
-select the ``arm64 (Apple Silicon)`` installer to create a conda environment
+For Apple systems with an M1 chip, you must at present use `Miniforge
+<https://github.com/conda-forge/miniforge>`_  and
+select the ``arm64 (Apple Silicon)`` installer to create a mamba environment
 that will support native builds of NEST.
 
 
@@ -38,32 +30,29 @@ Keep your base environment empty
 
 Your base environment should be as empty as possible in order to avoid
 conflicts with other environments. Always install packages only in the new
-environments (don't worry about duplicates, conda will link the packages
+environments (don't worry about duplicates, mamba will link the packages
 if they are used in multiple environments, and not produce disk eating copies).
 
 
-Get familiar with conda environments
+Get familiar with mamba environments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Conda environments are a powerful tool. See the `Conda documentation on Managing Environments
-<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
-for more information.
 
 To see which environments are installed on your system, use
 
 .. code:: sh
 
-   conda info --envs
+   mamba info --envs
 
 
-Installing NEST with Conda
---------------------------
+Installing NEST with conda-forge
+--------------------------------
 
-We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`_.
-Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_install>`.
+We provide pre-built versions of NEST on `conda-forge <https://conda-forge.org/docs/>`_.
+Follow :ref:`these instructions to install NEST from conda-forge <conda_forge_install>`.
 
 
-Creating a Conda environment for running and building NEST
+Creating a mamba environment for running and building NEST
 ----------------------------------------------------------
 
 If you want to compile NEST yourself, you can create an environment containing all necessary
@@ -72,15 +61,15 @@ software for running and building NEST by executing the following command from t
 .. code:: sh
 
    cd <nest-source-dir>
-   conda env create -p conda
+   mamba env create -p mamba
 
-This will create an environment in the folder ``conda/``. If you would like to activate the environment, use
+This will create an environment in the folder ``mamba/``. If you would like to activate the environment, use
 
 .. code:: sh
 
-   conda activate conda/
+   mamba activate mamba/
 
-Note that the trailing slash is required for conda not to confuse the path with a named environment (for example when
+Note that the trailing slash is required for mamba not to confuse the path with a named environment (for example when
 using ``--name``).
 
 
@@ -88,15 +77,10 @@ Get a good overview
 -------------------
 
 Obtain a good overview of which packages are installed where. You can use
-``conda env export -n base`` and ``conda env export -n yournestenv``
+``mamba env export -n base`` and ``mamba env export -n yournestenv``
 (replacing the ``yournestenv`` name with whatever you chose). Make
-sure each environment contains all dependencies. One way to make
-this obvious would be to reduce conda stack to ``0`` (see conda documentation on
-`nested activation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
-and/or to a certain degree by not auto-activating the base environment (see conda documentation on
-`conda init <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
-Then packages from base do not 'leak' into your new environments.
+sure each environment contains all dependencies.
 
 .. note::
-   Packages from your system will usually also be available in your conda
+   Packages from your system will usually also be available in your mamba
    environment and may cause similar conflicts.

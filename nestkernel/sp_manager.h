@@ -24,8 +24,8 @@
 #define SP_MANAGER_H
 
 // C++ includes:
-#include <vector>
 #include <random>
+#include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
@@ -190,7 +190,7 @@ public:
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
- /**
+  /**
    * Calculate a unique index for a pair of neuron IDs for efficient lookup.
    * The index is calculated independent of the order
    *
@@ -240,24 +240,26 @@ public:
    * @param rnd Random number.
    * @return Selected index.
    */
-  int roulette_wheel_selection( const std::vector< double >& probabilities,double rnd);
+  int roulette_wheel_selection( const std::vector< double >& probabilities, double rnd );
 
-  void set_structural_plasticity_gaussian_kernel_sigma(double sigma) {
+  void
+  set_structural_plasticity_gaussian_kernel_sigma( double sigma )
+  {
     structural_plasticity_gaussian_kernel_sigma_ = sigma;
   }
-    /**
+  /**
    * Global list of neuron IDs used for structural plasticity computations.
    */
-  std::vector<int> global_ids;
+  std::vector< int > global_ids;
 
   /**
-   * Global list of neuron positions used for spatial computations in 
+   * Global list of neuron positions used for spatial computations in
    * structural plasticity.
    */
-  std::vector<double> global_positions;  
+  std::vector< double > global_positions;
 
   /**
-   * Standard deviation parameter for the Gaussian kernel used in 
+   * Standard deviation parameter for the Gaussian kernel used in
    * spatial probability calculations.
    */
   double structural_plasticity_gaussian_kernel_sigma_;
@@ -276,13 +278,13 @@ private:
   int pos_dim;
 
   /**
-   * List of precomputed probabilities for neuron connections, indexed 
+   * List of precomputed probabilities for neuron connections, indexed
    * by neuron pair indices for efficient lookup.
-  */
-  std::vector<double> probability_list;
+   */
+  std::vector< double > probability_list;
 
   /**
-   * Flag indicating whether connection probabilities should be cached 
+   * Flag indicating whether connection probabilities should be cached
    * for performance optimization.
    */
   bool structural_plasticity_cache_probabilities_;

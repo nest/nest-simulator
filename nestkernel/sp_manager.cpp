@@ -128,8 +128,10 @@ void
 SPManager::set_status( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  updateValue< double >( d, names::structural_plasticity_gaussian_kernel_sigma, structural_plasticity_gaussian_kernel_sigma_ );
-  updateValue< bool >( d, names::structural_plasticity_cache_probabilities, structural_plasticity_cache_probabilities_ );
+  updateValue< double >(
+    d, names::structural_plasticity_gaussian_kernel_sigma, structural_plasticity_gaussian_kernel_sigma_ );
+  updateValue< bool >(
+    d, names::structural_plasticity_cache_probabilities, structural_plasticity_cache_probabilities_ );
 
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
@@ -179,178 +181,207 @@ SPManager::set_status( const DictionaryDatum& d )
   }
 }
 
-void SPManager::gather_global_positions_and_ids() {
-    std::vector<double> local_positions;
-    std::vector<int> local_ids; 
-    std::vector<int> displacements;
+void
+SPManager::gather_global_positions_and_ids()
+{
+  std::vector< double > local_positions;
+  std::vector< int > local_ids;
+  std::vector< int > displacements;
 
-    // Collect local positions and IDs
-    for (size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid) {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes(tid);
+  // Collect local positions and IDs
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
 
-        for (auto node_it = local_nodes.begin(); node_it < local_nodes.end(); ++node_it) {
-            int node_id = node_it->get_node_id();
-            if (node_id < 1) {
-                throw std::runtime_error("Invalid neuron ID (must be >= 1).");
-            }
+    for ( auto node_it = local_nodes.begin(); node_it < local_nodes.end(); ++node_it )
+    {
+      int node_id = node_it->get_node_id();
+      if ( node_id < 1 )
+      {
+        throw std::runtime_error( "Invalid neuron ID (must be >= 1)." );
+      }
 
-            std::vector<double> pos = get_position(node_id);
+      std::vector< double > pos = get_position( node_id );
 
-            if (std::none_of(pos.begin(), pos.end(), [](double v) { return std::isnan(v); })) {
-              local_ids.push_back(node_id); 
-              local_positions.insert(local_positions.end(), pos.begin(), pos.end()); 
-            }
-        }
+      if ( std::none_of( pos.begin(), pos.end(), []( double v ) { return std::isnan( v ); } ) )
+      {
+        local_ids.push_back( node_id );
+        local_positions.insert( local_positions.end(), pos.begin(), pos.end() );
+      }
     }
+  }
 
-    // Communicate positions and IDs
-    kernel().mpi_manager.communicate(local_positions, global_positions, displacements);
-    kernel().mpi_manager.communicate(local_ids, global_ids, displacements);
+  // Communicate positions and IDs
+  kernel().mpi_manager.communicate( local_positions, global_positions, displacements );
+  kernel().mpi_manager.communicate( local_ids, global_ids, displacements );
 
-    // Validate global_positions size consistency with global_ids
-    size_t num_neurons = global_ids.size();
-    size_t total_positions = global_positions.size();
+  // Validate global_positions size consistency with global_ids
+  size_t num_neurons = global_ids.size();
+  size_t total_positions = global_positions.size();
 
-    if (num_neurons == 0) {
-        throw std::runtime_error("No neurons found. Please provide positions, or disable distance dependency");
-    }   
-    if (total_positions == 0) {
-        throw std::runtime_error("No positions found. Please provide positions, or disable distance dependency.");
+  if ( num_neurons == 0 )
+  {
+    throw std::runtime_error( "No neurons found. Please provide positions, or disable distance dependency" );
+  }
+  if ( total_positions == 0 )
+  {
+    throw std::runtime_error( "No positions found. Please provide positions, or disable distance dependency." );
+  }
+
+  if ( total_positions % num_neurons != 0 )
+  {
+    throw std::runtime_error( "Mismatch in global positions dimensionality." );
+  }
+
+  pos_dim = total_positions / num_neurons;
+
+  // Pair global_ids with their positions
+  std::vector< std::pair< int, std::vector< double > > > id_pos_pairs;
+  id_pos_pairs.reserve( num_neurons );
+  for ( size_t i = 0; i < num_neurons; ++i )
+  {
+    int node_id = global_ids[ i ];
+    std::vector< double > pos( global_positions.begin() + i * pos_dim, global_positions.begin() + ( i + 1 ) * pos_dim );
+    id_pos_pairs.emplace_back( node_id, pos );
+  }
+
+  // Sort id_pos_pairs based on node_id to ensure ordering from 1 to num_neurons
+  std::sort( id_pos_pairs.begin(),
+    id_pos_pairs.end(),
+    []( const std::pair< int, std::vector< double > >& a, const std::pair< int, std::vector< double > >& b ) -> bool
+    { return a.first < b.first; } );
+
+  // Verify that IDs are sequential
+  for ( size_t i = 0; i < num_neurons; ++i )
+  {
+    if ( id_pos_pairs[ i ].first != static_cast< int >( i + 1 ) )
+    {
+      throw std::runtime_error( "Neuron IDs are not sequential after sorting." );
     }
+  }
 
-    if (total_positions % num_neurons != 0) {
-        throw std::runtime_error("Mismatch in global positions dimensionality.");
-    }
+  // Assign sorted positions to temp_positions
+  std::vector< double > temp_positions( num_neurons * pos_dim, 0.0 );
+  for ( size_t i = 0; i < num_neurons; ++i )
+  {
+    std::copy( id_pos_pairs[ i ].second.begin(), id_pos_pairs[ i ].second.end(), temp_positions.begin() + i * pos_dim );
+  }
 
-    pos_dim = total_positions / num_neurons;
-
-    // Pair global_ids with their positions
-    std::vector<std::pair<int, std::vector<double>>> id_pos_pairs;
-    id_pos_pairs.reserve(num_neurons);
-    for (size_t i = 0; i < num_neurons; ++i) {
-        int node_id = global_ids[i];
-        std::vector<double> pos(global_positions.begin() + i * pos_dim, global_positions.begin() + (i + 1) * pos_dim);
-        id_pos_pairs.emplace_back(node_id, pos);
-    }
-
-    // Sort id_pos_pairs based on node_id to ensure ordering from 1 to num_neurons
-    std::sort(id_pos_pairs.begin(), id_pos_pairs.end(),
-              [](const std::pair<int, std::vector<double>>& a, const std::pair<int, std::vector<double>>& b) -> bool {
-                  return a.first < b.first;
-              });
-
-    // Verify that IDs are sequential
-    for (size_t i = 0; i < num_neurons; ++i) {
-        if (id_pos_pairs[i].first != static_cast<int>(i + 1)) {
-            throw std::runtime_error("Neuron IDs are not sequential after sorting.");
-        }
-    }
-
-    // Assign sorted positions to temp_positions
-    std::vector<double> temp_positions(num_neurons * pos_dim, 0.0);
-    for (size_t i = 0; i < num_neurons; ++i) {
-        std::copy(id_pos_pairs[i].second.begin(),
-                  id_pos_pairs[i].second.end(),
-                  temp_positions.begin() + i * pos_dim);
-    }
-
-    // Update global_positions with sorted positions
-    global_positions = std::move(temp_positions);
+  // Update global_positions with sorted positions
+  global_positions = std::move( temp_positions );
 }
 
-// This method uses a formula based on triangular numbers 
-//to map two ids to one index indepndent of theirs order
-int SPManager::get_neuron_pair_index(int id1,int id2){
-  int max_id = std::max(id1, id2);
-  int min_id = std::min(id1, id2);
-  int index =  ((max_id) * (max_id - 1)) / 2 + (min_id - 1);
+// This method uses a formula based on triangular numbers
+// to map two ids to one index indepndent of theirs order
+int
+SPManager::get_neuron_pair_index( int id1, int id2 )
+{
+  int max_id = std::max( id1, id2 );
+  int min_id = std::min( id1, id2 );
+  int index = ( ( max_id ) * ( max_id - 1 ) ) / 2 + ( min_id - 1 );
   return index;
 }
 
 
 // Method to perform roulette wheel selection
-int SPManager::roulette_wheel_selection(const std::vector<double>& probabilities, double rnd) {
-    if (probabilities.empty()) {
-        throw std::runtime_error("Probabilities vector is empty.");
-    }
-
-    std::vector<double> cumulative(probabilities.size());
-    std::partial_sum(probabilities.begin(), probabilities.end(), cumulative.begin());
-
-    // Ensure the sum of probabilities is greater than zero
-    double sum = cumulative.back();
-    if (sum < 0.0) {
-        throw std::runtime_error("Sum of probabilities must be greater than zero.");
-    }
-  
-
-    // Generate a random number in the range [0, sum)
-    double randomValue = rnd * sum;
-
-    // Perform binary search to find the selected index
-    auto it = std::lower_bound(cumulative.begin(), cumulative.end(), randomValue);
-    return static_cast<int>(std::distance(cumulative.begin(), it));
-}
-
-
-double SPManager::gaussian_kernel(const std::vector<double>& pos1, const std::vector<double>& pos2, const double sigma) 
+int
+SPManager::roulette_wheel_selection( const std::vector< double >& probabilities, double rnd )
 {
-    double distanceSquared = 0.0;
-    for (size_t i = 0; i < pos1.size(); ++i) {
-        double diff = pos2[i] - pos1[i];
-        distanceSquared += diff * diff;
-    }
-    return std::exp(-distanceSquared / (sigma * sigma));
+  if ( probabilities.empty() )
+  {
+    throw std::runtime_error( "Probabilities vector is empty." );
+  }
+
+  std::vector< double > cumulative( probabilities.size() );
+  std::partial_sum( probabilities.begin(), probabilities.end(), cumulative.begin() );
+
+  // Ensure the sum of probabilities is greater than zero
+  double sum = cumulative.back();
+  if ( sum < 0.0 )
+  {
+    throw std::runtime_error( "Sum of probabilities must be greater than zero." );
+  }
+
+
+  // Generate a random number in the range [0, sum)
+  double randomValue = rnd * sum;
+
+  // Perform binary search to find the selected index
+  auto it = std::lower_bound( cumulative.begin(), cumulative.end(), randomValue );
+  return static_cast< int >( std::distance( cumulative.begin(), it ) );
 }
 
-void SPManager::build_probability_list() {
-    size_t num_neurons = global_ids.size();
 
-    if (global_positions.size() % num_neurons != 0) {
-        throw std::runtime_error("Mismatch in global positions dimensionality.");
+double
+SPManager::gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma )
+{
+  double distanceSquared = 0.0;
+  for ( size_t i = 0; i < pos1.size(); ++i )
+  {
+    double diff = pos2[ i ] - pos1[ i ];
+    distanceSquared += diff * diff;
+  }
+  return std::exp( -distanceSquared / ( sigma * sigma ) );
+}
+
+void
+SPManager::build_probability_list()
+{
+  size_t num_neurons = global_ids.size();
+
+  if ( global_positions.size() % num_neurons != 0 )
+  {
+    throw std::runtime_error( "Mismatch in global positions dimensionality." );
+  }
+
+  // Resize the probability list to accommodate all neuron pairs.
+  size_t total_pairs = ( num_neurons * ( num_neurons + 1 ) ) / 2;
+  probability_list.resize( total_pairs, -1.0 );
+
+  // Calculate probabilities for connections between all pairs of neurons.
+  for ( size_t i = 0; i < num_neurons; ++i )
+  {
+    size_t id_i = i + 1;
+    if ( id_i < 1 || id_i > num_neurons )
+    {
+      std::cerr << "Error: Neuron ID " << id_i << " out of valid range." << std::endl;
+      continue;
     }
 
-    // Resize the probability list to accommodate all neuron pairs.
-    size_t total_pairs = (num_neurons * (num_neurons + 1)) / 2;
-    probability_list.resize(total_pairs, -1.0);
+    std::vector< double > pos_i(
+      global_positions.begin() + pos_dim * ( id_i - 1 ), global_positions.begin() + pos_dim * id_i );
 
-    // Calculate probabilities for connections between all pairs of neurons.
-    for (size_t i = 0; i < num_neurons; ++i) {
-        size_t id_i = i+1;
-        if (id_i < 1 || id_i > num_neurons) {
-            std::cerr << "Error: Neuron ID " << id_i << " out of valid range." << std::endl;
-            continue;
-        }
+    for ( size_t j = i; j < num_neurons; ++j )
+    {
+      size_t id_j = j + 1;
+      if ( id_j < 1 || id_j > num_neurons )
+      {
+        std::cerr << "Error: Neuron ID " << id_j << " out of valid range." << std::endl;
+        continue;
+      }
 
-        std::vector<double> pos_i(global_positions.begin() + pos_dim * (id_i - 1),
-                                  global_positions.begin() + pos_dim * id_i);
+      size_t index = get_neuron_pair_index( id_i, id_j );
 
-        for (size_t j = i; j < num_neurons; ++j) {
-            size_t id_j = j+1;
-            if (id_j < 1 || id_j > num_neurons) {
-                std::cerr << "Error: Neuron ID " << id_j << " out of valid range." << std::endl;
-                continue;
-            }
+      if ( index >= probability_list.size() )
+      {
+        std::cerr << "Error: Index out of bounds: " << index << " for ids " << id_i << " and " << id_j << std::endl;
+        continue;
+      }
 
-            size_t index = get_neuron_pair_index(id_i, id_j);
+      if ( id_i == id_j )
+      {
+        probability_list[ index ] = 0.0; // Assign zero probability for self-connections
+      }
+      else
+      {
+        std::vector< double > pos_j(
+          global_positions.begin() + pos_dim * ( id_j - 1 ), global_positions.begin() + pos_dim * id_j );
 
-            if (index >= probability_list.size()) {
-                std::cerr << "Error: Index out of bounds: " << index
-                          << " for ids " << id_i << " and " << id_j << std::endl;
-                continue;
-            }
-
-            if (id_i == id_j) {
-                probability_list[index] = 0.0;  // Assign zero probability for self-connections
-            } else {
-                std::vector<double> pos_j(global_positions.begin() + pos_dim * (id_j - 1),
-                                          global_positions.begin() + pos_dim * id_j);
-
-                double prob = gaussian_kernel(pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_);
-                probability_list[index] = prob;
-            }
-        }
+        double prob = gaussian_kernel( pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_ );
+        probability_list[ index ] = prob;
+      }
     }
+  }
 }
 
 
@@ -595,11 +626,11 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   serialize_id( pre_id, pre_n, pre_id_rnd );
   serialize_id( post_id, post_n, post_id_rnd );
 
-  std::vector< size_t > pre_ids_results; 
+  std::vector< size_t > pre_ids_results;
   std::vector< size_t > post_ids_results;
 
-  if (structural_plasticity_gaussian_kernel_sigma_<= 0)
-  { 
+  if ( structural_plasticity_gaussian_kernel_sigma_ <= 0 )
+  {
     // Shuffle only the largest vector
     if ( pre_id_rnd.size() > post_id_rnd.size() )
     {
@@ -616,16 +647,17 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
       post_id_rnd.resize( pre_id_rnd.size() );
     }
 
-    pre_ids_results =pre_id_rnd;
-    post_ids_results =post_id_rnd;
+    pre_ids_results = pre_id_rnd;
+    post_ids_results = post_id_rnd;
   }
-  else{
-    global_shuffle_spatial(pre_id_rnd,post_id_rnd,pre_ids_results,post_ids_results);
+  else
+  {
+    global_shuffle_spatial( pre_id_rnd, post_id_rnd, pre_ids_results, post_ids_results );
   }
 
   // create synapse
   sp_conn_builder->sp_connect( pre_ids_results, post_ids_results );
-  
+
   return not pre_ids_results.empty();
 }
 
@@ -861,78 +893,85 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
   }
   v = v2;
 }
-void SPManager::global_shuffle_spatial(
-    std::vector<size_t>& pre_ids,
-    std::vector<size_t>& post_ids,
-    std::vector<size_t>& pre_ids_results,
-    std::vector<size_t>& post_ids_results
-)
+void
+SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
+  std::vector< size_t >& post_ids,
+  std::vector< size_t >& pre_ids_results,
+  std::vector< size_t >& post_ids_results )
 {
-    size_t maxIterations = std::min(pre_ids.size(), post_ids.size());  
+  size_t maxIterations = std::min( pre_ids.size(), post_ids.size() );
 
-    for (size_t iteration = 0; iteration < maxIterations; ++iteration) 
+  for ( size_t iteration = 0; iteration < maxIterations; ++iteration )
+  {
+    if ( pre_ids.empty() || post_ids.empty() )
     {
-      if (pre_ids.empty() || post_ids.empty()) {
-        break;  // Stop if either vector is empty
-      }
+      break; // Stop if either vector is empty
+    }
 
-      size_t pre_id = pre_ids.back();  
-      pre_ids.pop_back(); 
+    size_t pre_id = pre_ids.back();
+    pre_ids.pop_back();
 
-      std::vector<double> probabilities; 
-      std::vector<size_t> valid_post_ids;
-      double rnd;
-      for (size_t post_id : post_ids) 
+    std::vector< double > probabilities;
+    std::vector< size_t > valid_post_ids;
+    double rnd;
+    for ( size_t post_id : post_ids )
+    {
+      if ( post_id == pre_id )
       {
-        if (post_id == pre_id) {
-          continue;  // Skip self-connections
+        continue; // Skip self-connections
+      }
+
+      double prob;
+      if ( structural_plasticity_cache_probabilities_ )
+      {
+        // Retrieve cached probability for the neuron pair
+        int pair_index = get_neuron_pair_index( pre_id, post_id );
+        if ( pair_index < 0 || pair_index >= static_cast< int >( probability_list.size() ) )
+        {
+          std::cerr << "Error: index out of bounds for pair (" << pre_id << ", " << post_id << ")" << std::endl;
+          continue;
         }
-
-        double prob;
-        if (structural_plasticity_cache_probabilities_) {
-          // Retrieve cached probability for the neuron pair
-          int pair_index = get_neuron_pair_index(pre_id, post_id);
-          if (pair_index < 0 || pair_index >= static_cast<int>(probability_list.size())) {
-            std::cerr << "Error: index out of bounds for pair (" << pre_id << ", " << post_id << ")" << std::endl;
-            continue;
-          }
-          prob = probability_list[pair_index];
-          } else {
-            size_t pre_index = pre_id - 1;  
-            std::vector<double> pre_pos(global_positions.begin() + pre_index * pos_dim,
-                                          global_positions.begin() + (pre_index + 1) * pos_dim);
-
-            size_t post_index = post_id - 1;
-            std::vector<double> post_pos(global_positions.begin() + post_index * pos_dim,
-                                          global_positions.begin() + (post_index + 1) * pos_dim);
-
-            prob = gaussian_kernel(pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_);
-          }
-          if (prob>0){
-            probabilities.push_back(prob);
-            valid_post_ids.push_back(post_id); 
-          }
+        prob = probability_list[ pair_index ];
       }
+      else
+      {
+        size_t pre_index = pre_id - 1;
+        std::vector< double > pre_pos(
+          global_positions.begin() + pre_index * pos_dim, global_positions.begin() + ( pre_index + 1 ) * pos_dim );
 
-      if (probabilities.empty()) {
-        continue;  // Skip if no valid connections are found
+        size_t post_index = post_id - 1;
+        std::vector< double > post_pos(
+          global_positions.begin() + post_index * pos_dim, global_positions.begin() + ( post_index + 1 ) * pos_dim );
+
+        prob = gaussian_kernel( pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_ );
       }
-
-      rnd = get_rank_synced_rng()->drand();
-
-      // Select a post-synaptic neuron using roulette wheel selection
-      int selected_post_idx = roulette_wheel_selection(probabilities, rnd);
-      size_t selected_post_id = valid_post_ids[selected_post_idx];
-
-      // Remove the selected post-synaptic neuron from the list
-      auto post_it = std::find(post_ids.begin(), post_ids.end(), selected_post_id);
-      if (post_it != post_ids.end()) {
-        post_ids.erase(post_it);
+      if ( prob > 0 )
+      {
+        probabilities.push_back( prob );
+        valid_post_ids.push_back( post_id );
       }
+    }
 
-      pre_ids_results.push_back(pre_id);  
-      post_ids_results.push_back(selected_post_id);
+    if ( probabilities.empty() )
+    {
+      continue; // Skip if no valid connections are found
+    }
 
+    rnd = get_rank_synced_rng()->drand();
+
+    // Select a post-synaptic neuron using roulette wheel selection
+    int selected_post_idx = roulette_wheel_selection( probabilities, rnd );
+    size_t selected_post_id = valid_post_ids[ selected_post_idx ];
+
+    // Remove the selected post-synaptic neuron from the list
+    auto post_it = std::find( post_ids.begin(), post_ids.end(), selected_post_id );
+    if ( post_it != post_ids.end() )
+    {
+      post_ids.erase( post_it );
+    }
+
+    pre_ids_results.push_back( pre_id );
+    post_ids_results.push_back( selected_post_id );
   }
 }
 
@@ -957,9 +996,10 @@ nest::SPManager::enable_structural_plasticity()
       "has been set to false." );
   }
   structural_plasticity_enabled_ = true;
-  if(structural_plasticity_gaussian_kernel_sigma_>0){
+  if ( structural_plasticity_gaussian_kernel_sigma_ > 0 )
+  {
     gather_global_positions_and_ids();
-    if (structural_plasticity_cache_probabilities_)
+    if ( structural_plasticity_cache_probabilities_ )
     {
       build_probability_list();
     }

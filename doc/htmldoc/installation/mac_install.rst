@@ -4,7 +4,7 @@ Building NEST on macOS
 ======================
 
 Building NEST on macOS requires some developer tools. There are several sources from
-which you can install them, e.g., Conda-forge, Homebrew, or MacPorts. The most important
+which you can install them, e.g., conda-forge, Homebrew, or MacPorts. The most important
 recommendation for an easy and stable build is *not to mix tools from different sources*.
 This includes your Python installation: Taking Python from conda-forge and all else from Homebrew
 may work, but can also lead to various complications.

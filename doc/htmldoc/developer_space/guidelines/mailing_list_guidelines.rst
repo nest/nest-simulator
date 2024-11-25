@@ -30,7 +30,7 @@ please follow the guidelines below:
 
       * the steps you took that lead to the problem.
       * the specific error messages you get.
-      * relevant system and version information (e.g.,  Ubuntu 22.04/ NEST 3.5 installed using the conda-forge package).
+      * relevant system and version information (e.g.,  Ubuntu 22.04/ NEST 3.8 installed using the conda-forge package).
 
 #. Keep topics separate.
 

@@ -29,12 +29,12 @@ Install from source in a mamba environment
 
     cd build_dir
 
-* Configure NEST. Add the cmake option ``-CDMAKE_INSTALL_PREFIX:PATH=$MAMBA_PREFIX`` to link nest to your active mamba environment.
+* Configure NEST. Add the cmake option ``-CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX`` to link nest to your active mamba environment.
   You may need additional ``cmake`` options (see :ref:`cmake_options`).
 
 .. code-block:: sh
 
-   cmake -DCMAKE_INSTALL_PREFIX:PATH=$MAMBA_PREFIX </path/to/NEST/src>
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX </path/to/NEST/src>
 
 * Compile and install NEST:
 

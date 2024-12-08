@@ -67,7 +67,7 @@ recordables to have them sampled during simulation.
 ::
 
    mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex'],
-   'record_to': memory})
+   'record_to': 'memory'})
 
 The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter`` parameter ``interval``. The default value of
@@ -76,7 +76,7 @@ using the ``multimeter`` parameter ``interval``. The default value of
 
 ::
 
-   nest.SetStatus(mm, 'interval': 0.1})
+   nest.SetStatus(mm, {'interval': 0.1})
 
 The recording interval must be greater than or equal to the
 :ref:`simulation resolution <simulation_resolution>`, which defaults

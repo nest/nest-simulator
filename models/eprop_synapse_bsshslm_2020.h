@@ -88,49 +88,51 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-================ ======= =============== ======= ======================================================
+==================== ======= =============== ========= ======================================================
 **Common e-prop synapse parameters**
--------------------------------------------------------------------------------------------------------
-Parameter        Unit    Math equivalent Default Description
-================ ======= =============== ======= ======================================================
-average_gradient Boolean                   False If True, average the gradient over the learning window
-optimizer                                     {} Dictionary of optimizer parameters
-================ ======= =============== ======= ======================================================
+-------------------------------------------------------------------------------------------------------------
+Parameter            Unit    Math equivalent Default   Description
+==================== ======= =============== ========= ======================================================
+``average_gradient`` Boolean                 ``False`` If ``True``, average the gradient over the learning
+                                                       window
+``optimizer``                                     {}   Dictionary of optimizer parameters
+==================== ======= =============== ========= ======================================================
 
-============= ==== ========================= ======= =========================================================
+============= ==== ========================= ======= ================================
 **Individual synapse parameters**
---------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 Parameter     Unit Math equivalent           Default Description
-============= ==== ========================= ======= =========================================================
-delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
-============= ==== ========================= ======= =========================================================
+============= ==== ========================= ======= ================================
+``delay``     ms   :math:`d_{ji}`                1.0 Dendritic delay
+``weight``    pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+============= ==== ========================= ======= ================================
 
-============= ==== ========================= ======= =========================================================
+================= ==== ========================= ======= ==============================
 **Individual e-prop synapse parameters**
---------------------------------------------------------------------------------------------------------------
-Parameter     Unit Math equivalent           Default Description
-============= ==== ========================= ======= =========================================================
-tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
-============= ==== ========================= ======= =========================================================
+---------------------------------------------------------------------------------------
+Parameter         Unit Math equivalent           Default Description
+================= ==== ========================= ======= ==============================
+``tau_m_readout`` ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass
+                                                         filtering of eligibility trace
+================= ==== ========================= ======= ==============================
 
 Recordables
 +++++++++++
 
 The following variables can be recorded.
 
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ===============
 **Synapse recordables**
-----------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ===============
+``weight``         pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ===============
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -149,8 +151,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
        implementation of eligibility propagation (in preparation)
 
 See also
@@ -164,6 +166,8 @@ Examples using this model
 EndUserDocs */
 
 /**
+ * @brief Base class implementing common properties for e-prop synapses.
+ *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
@@ -210,6 +214,8 @@ public:
 void register_eprop_synapse_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a synapse model for e-prop plasticity.
+ *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
  * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al.
@@ -600,7 +606,8 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
     auto it = optimizer_dict->find( names::optimize_each_step );
     if ( it != optimizer_dict->end() )
     {
-      throw BadProperty( "eprop_synapse_bsshslm_2020 only supports optimize_each_step == False." );
+      throw BadProperty(
+        "eprop_synapse_bsshslm_2020 only supports optimization in each step optimize_each_step == False." );
     }
     if ( optimizer_ )
     {

@@ -58,7 +58,7 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, Clopath plasticity, current-based
+/* BeginUserDocs: neuron, adaptation, integrate-and-fire, Clopath plasticity, current-based
 
 Short description
 +++++++++++++++++

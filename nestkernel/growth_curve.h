@@ -227,8 +227,12 @@ public:
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
+  void compute_local_();
+
   double eta_;
   double eps_;
+  double inv_zeta_;
+  double xi_;
 };
 
 /** @BeginDocumentation

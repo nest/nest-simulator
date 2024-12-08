@@ -61,14 +61,14 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-========= ===== ================ ======= ===============
+========== ===== ================ ======= ===============
 **Individual synapse parameters**
---------------------------------------------------------
-Parameter  Unit  Math equivalent Default Description
-========= ===== ================ ======= ===============
-delay     ms    :math:`d_{jk}`       1.0 Dendritic delay
-weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
-========= ===== ================ ======= ===============
+---------------------------------------------------------
+Parameter  Unit  Math equivalent  Default Description
+========== ===== ================ ======= ===============
+``delay``  ms    :math:`d_{jk}`       1.0 Dendritic delay
+``weight`` pA    :math:`B_{jk}`       1.0 Synaptic weight
+========== ===== ================ ======= ===============
 
 Recordables
 +++++++++++
@@ -76,18 +76,18 @@ Recordables
 The following variables can be recorded. Note that since this connection lacks
 a plasticity mechanism the weight does not evolve over time.
 
-================== ==== =============== ============= ==========================================================
+============== ==== =============== ============= ===============
 **Synapse recordables**
-----------------------------------------------------------------------------------------------------------------
-State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
-================== ==== =============== ============= ==========================================================
+-----------------------------------------------------------------
+State variable Unit Math equivalent Initial value Description
+============== ==== =============== ============= ===============
+``weight``     pA   :math:`B_{jk}`            1.0 Synaptic weight
+============== ==== =============== ============= ===============
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -106,8 +106,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
        implementation of eligibility propagation (in preparation)
 
 See also
@@ -123,6 +123,8 @@ EndUserDocs */
 void register_eprop_learning_signal_connection( const std::string& name );
 
 /**
+ * @brief Class implementing a feedback connection model for e-prop plasticity with additional biological features.
+ *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
  * according to Bellec et al. (2020) with additional biological features described in
  * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).

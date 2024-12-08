@@ -82,36 +82,36 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-================== ==== ========================= ======= =================================
+====================== ==== ========================= ========= =================================
 **Common optimizer parameters**
--------------------------------------------------------------------------------------------
-Parameter          Unit Math equivalent           Default Description
-================== ==== ========================= ======= =================================
-batch_size                                              1 Size of batch
-eta                     :math:`\eta`                 1e-4 Learning rate
-optimize_each_step                                   True
-Wmax                 pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
-Wmin                 pA :math:`W_{ji}^\text{min}`  -100.0 Minimal value for synaptic weight
-================== ==== ========================= ======= =================================
+-------------------------------------------------------------------------------------------------
+Parameter              Unit Math equivalent           Default   Description
+====================== ==== ========================= ========= =================================
+``batch_size``                                              1   Size of batch
+``eta``                     :math:`\eta`                 1e-4   Learning rate
+``optimize_each_step``                                 ``True``
+``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
+``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
+====================== ==== ========================= ========= =================================
 
-========= ==== =============== ================ ==============
+========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
---------------------------------------------------------------
-Parameter Unit Math equivalent Default          Description
-========= ==== =============== ================ ==============
-type                           gradient_descent Optimizer type
-========= ==== =============== ================ ==============
+----------------------------------------------------------------
+Parameter Unit Math equivalent Default            Description
+========= ==== =============== ================== ==============
+``type``                       "gradient_descent" Optimizer type
+========= ==== =============== ================== ==============
 
-========= ==== ================ ======= =================================================
+=========== ==== ================ ======= =================================================
 **Adam optimizer parameters**
------------------------------------------------------------------------------------------
-Parameter Unit Math equivalent  Default Description
-========= ==== ================ ======= =================================================
-type                               adam Optimizer type
-beta_1         :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
-beta_2         :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
-epsilon        :math:`\epsilon`    1e-7 Small constant for numerical stability
-========= ==== ================ ======= =================================================
+-------------------------------------------------------------------------------------------
+Parameter   Unit Math equivalent  Default Description
+=========== ==== ================ ======= =================================================
+``type``                           "adam" Optimizer type
+``beta_1``       :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
+``beta_2``       :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
+``epsilon``      :math:`\epsilon`    1e-7 Small constant for numerical stability
+=========== ==== ================ ======= =================================================
 
 The following state variables evolve during simulation.
 
@@ -120,8 +120,8 @@ The following state variables evolve during simulation.
 ----------------------------------------------------------------------------
 State variable Unit Math equivalent Initial value Description
 ============== ==== =============== ============= ==========================
-m                   :math:`m`                 0.0 First moment estimate
-v                   :math:`v`                 0.0 Second moment raw estimate
+``m``               :math:`m`                 0.0 First moment estimate
+``v``               :math:`v`                 0.0 Second moment raw estimate
 ============== ==== =============== ============= ==========================
 
 
@@ -207,8 +207,14 @@ public:
   //! Size of an optimization batch.
   size_t batch_size_;
 
-  //! Learning rate.
+  //! Learning rate common to all synapses.
   double eta_;
+
+  //! First learning rate that differs from the default.
+  double eta_first_;
+
+  //! Number of changes to the learning rate.
+  long n_eta_change_;
 
   //! Minimal value for synaptic weight.
   double Wmin_;
@@ -252,7 +258,7 @@ public:
   virtual void set_status( const DictionaryDatum& d );
 
   //! Return optimized weight based on current weight.
-  double optimized_weight( const WeightOptimizerCommonProperties& cp,
+  double optimized_weight( WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
     const double gradient,
     double weight );
@@ -266,6 +272,12 @@ protected:
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
+
+  //! Learning rate private to the synapse.
+  double eta_;
+
+  //! Number of optimizations.
+  long n_optimize_;
 };
 
 /**

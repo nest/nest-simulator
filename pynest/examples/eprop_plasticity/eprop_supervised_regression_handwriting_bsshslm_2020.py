@@ -38,7 +38,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
 which encode the x and y coordinates of the handwritten word "chaos".
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_handwriting_bsshslm_2020.png
+.. image:: eprop_supervised_regression_handwriting_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
@@ -56,6 +56,16 @@ The development of this task and the hyper-parameter optimization were conducted
 Charl Linssen, inspired by activities and feedback received at the CapoCaccia Workshop toward Neuromorphic
 Intelligence 2023.
 
+
+Get the chaos_handwriting.txt file:
+
+.. grid::
+
+    .. grid-item-card::
+       :columns: 3
+
+       :download:`chaos_handwriting.txt`
+
 References
 ~~~~~~~~~~
 
@@ -65,8 +75,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Plesser HE, Bolten M, Diesmann M.
-       Event-based implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       implementation of eligibility propagation (in preparation)
+
 """  # pylint: disable=line-too-long # noqa: E501
 
 # %% ###########################################################################################################
@@ -89,7 +101,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_schematic_handwriting_bsshslm_2020.png")
+    Image(filename="./eprop_supervised_regression_handwriting_bsshslm_2020.png")
 except Exception:
     pass
 
@@ -194,7 +206,7 @@ params_nrn_rec = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "C_m": 250.0,
-    "c_reg": 150.0,  # firing rate regularization scaling
+    "c_reg": 150.0,  # coefficient of firing rate regularization
     "E_L": 0.0,
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
@@ -553,7 +565,6 @@ colors = {
 
 plt.rcParams.update(
     {
-        "font.sans-serif": "Arial",
         "axes.spines.right": False,
         "axes.spines.top": False,
         "axes.prop_cycle": cycler(color=[colors["blue"], colors["red"]]),
@@ -581,18 +592,19 @@ ax.axis("equal")
 fig.tight_layout()
 
 # %% ###########################################################################################################
-# Plot training error
+# Plot learning performance
 # ...................
-# We begin with a plot visualizing the training error of the network: the loss plotted against the iterations.
+# We begin with a plot visualizing the learning performance of the network: the loss plotted against the
+# iterations.
 
 fig, ax = plt.subplots()
-fig.suptitle("Training error")
+fig.suptitle("Learning performance")
 
-ax.plot(range(1, n_iter + 1), loss_list[0], label=r"$E_0$", alpha=0.8, c=colors["blue"], ls="--")
-ax.plot(range(1, n_iter + 1), loss_list[1], label=r"$E_1$", alpha=0.8, c=colors["blue"], ls="dotted")
-ax.plot(range(1, n_iter + 1), loss, label=r"$E$", c=colors["blue"])
-ax.set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
-ax.set_xlabel("training iteration")
+ax.plot(range(1, n_iter + 1), loss_list[0], label=r"$\mathcal{L}_0$", alpha=0.8, c=colors["blue"], ls="--")
+ax.plot(range(1, n_iter + 1), loss_list[1], label=r"$\mathcal{L}_1$", alpha=0.8, c=colors["blue"], ls="dotted")
+ax.plot(range(1, n_iter + 1), loss, label=r"$\mathcal{L}$", c=colors["blue"])
+ax.set_ylabel(r"\mathcal{L} = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
+ax.set_xlabel("iteration")
 ax.set_xlim(1, n_iter)
 ax.xaxis.get_major_locator().set_params(integer=True)
 ax.legend(bbox_to_anchor=(1.01, 0.5), loc="center left")
@@ -661,18 +673,25 @@ for title, xlims in zip(
 # the first time step and we add the initial weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
-    for sender in nrns_senders.tolist():
-        for target in nrns_targets.tolist():
-            idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                weights_pre_train[label]["target"] == target
-            )
+def plot_weight_time_course(ax, events, nrns, label, ylabel):
+    sender_label, target_label = label.split("_")
+    nrns_senders = nrns[sender_label]
+    nrns_targets = nrns[target_label]
 
-            times = [0.0] + events["times"][idc_syn].tolist()
-            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+    for sender in set(events_wr["senders"]):
+        for target in set(events_wr["targets"]):
+            if sender in nrns_senders and target in nrns_targets:
+                idc_syn = (events["senders"] == sender) & (events["targets"] == target)
+                if np.any(idc_syn):
+                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                        weights_pre_train[label]["target"] == target
+                    )
+                    times = np.concatenate([[0.0], events["times"][idc_syn]])
 
-            ax.step(times, weights, c=colors["blue"])
+                    weights = np.concatenate(
+                        [np.array(weights_pre_train[label]["weight"])[idc_syn_pre], events["weights"][idc_syn]]
+                    )
+                    ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
@@ -680,14 +699,18 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 fig.suptitle("Weight time courses")
 
-plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
-plot_weight_time_course(
-    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
-)
-plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
+nrns = {
+    "in": nrns_in.tolist(),
+    "rec": nrns_rec.tolist(),
+    "out": nrns_out.tolist(),
+}
+
+plot_weight_time_course(axs[0], events_wr, nrns, "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(axs[1], events_wr, nrns, "rec_rec", r"$W_\text{rec}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
-axs[-1].set_xlim(0, steps["task"])
+axs[-1].set_xlim(0, duration["task"])
 
 fig.align_ylabels()
 fig.tight_layout()

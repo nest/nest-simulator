@@ -17,17 +17,24 @@ E-prop plasticity in NEST
 -------------------------
 
 Another new NEST feature is eligibility propagation (e-prop) [1]_, a local and
-online learning algorithm for recurrent spiking neural networks (RSNNs) that
-serves as a biologically plausible approximation to backpropagation through time
-(BPTT). It relies on eligibility traces and neuron-specific learning signals to
-compute gradients without the need for error propagation backward in time. This
-approach aligns with the brain's learning mechanisms and offers a strong
-candidate for efficient training of RSNNs in low-power neuromorphic hardware.
+online learning algorithm for recurrent spiking neural networks (RSNNs) that is
+biologically plausible and approaches the performance of backpropagation through
+time (BPTT). It relies on eligibility traces and neuron-specific learning
+signals to compute gradients without the need for error propagation backward in
+time. This approach aligns with the brain's learning mechanisms and offers a
+strong candidate for efficient training of RSNNs in low-power neuromorphic
+hardware.
 
 For further information, see:
 
 * :doc:`/auto_examples/eprop_plasticity/index`
-* :doc:`/models/index_e-prop plasticity`
+* :doc:`/models/eprop_iaf_adapt_bsshslm_2020`
+* :doc:`/models/eprop_iaf_bsshslm_2020`
+* :doc:`/models/eprop_learning_signal_connection_bsshslm_2020`
+* :doc:`/models/eprop_readout_bsshslm_2020`
+* :doc:`/models/eprop_synapse_bsshslm_2020`
+
+
 
 Connectivity concepts
 ---------------------

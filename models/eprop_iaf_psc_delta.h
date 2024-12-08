@@ -23,7 +23,7 @@
 #ifndef EPROP_IAF_PSC_DELTA_H
 #define EPROP_IAF_PSC_DELTA_H
 
-// Includes from nestkernel:
+// nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
@@ -35,160 +35,307 @@
 
 namespace nest
 {
-// Disable clang-formatting for documentation due to over-wide table.
-// clang-format off
-/* BeginUserDocs: neuron, e-prop plasticity, integrate-and-fire, current-based
+
+/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire
 
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire model with delta-shaped input currents
-for e-prop plasticity
+Current-based leaky integrate-and-fire neuron model with delta-shaped
+postsynaptic currents for e-prop plasticity
 
 Description
 +++++++++++
 
-``iaf_psc_delta`` is a leaky integrate-and-fire neuron model with
+``eprop_iaf_psc_delta`` is an implementation of a leaky integrate-and-fire
+neuron model with delta-shaped postsynaptic currents used for eligibility
+propagation (e-prop) plasticity.
 
-* a hard threshold,
-* a fixed refractory period,
-* Dirac delta (:math:`\delta`)-shaped synaptic input currents.
-
-
-The `eprop_iaf_psc_delta` is the standard ``iaf_psc_delta`` model endowed with e-prop plasticity.
-
-Membrane potential evolution, spike emission, and refractoriness
-................................................................
-
-The membrane potential evolves according to
-
-.. math::
-
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
-
-where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
-a constant input current set as a model parameter.
-
-A spike is emitted at time step :math:`t^*=t_{k+1}` if
-
-.. math::
-
-   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
-
-Subsequently,
-
-.. math::
-
-   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
-
-that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
-
-Synaptic input
-..............
-
-The change in membrane potential due to synaptic inputs can be formulated as:
-
-.. math::
-
-   \dot{\Delta}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
-
-where :math:`j` indexes either excitatory (:math:`w_j > 0`)
-or inhibitory (:math:`w_j < 0`) presynaptic neurons,
-:math:`k` indexes the spike times of neuron :math:`j`, :math:`d_j`
-is the delay from neuron :math:`j`, and :math:`\delta` is the Dirac delta distribution.
-This implies that the jump in voltage upon a single synaptic input spike is
-
-.. math::
-
-   \Delta_{\text{syn}} = w \;,
-
-where :math:`w` is the corresponding synaptic weight in mV.
-
-
-The change in voltage caused by the synaptic input can be interpreted as being caused
-by individual post-synaptic currents (PSCs) given by
-
-.. math::
-
-   i_{\text{syn}}(t) = C_{\text{m}} \cdot w \cdot \delta(t).
-
-As a consequence, the total charge :math:`q` transferred by a single PSC is
-
-.. math::
-
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \cdot w \;.
-
-By default, :math:`V_\text{m}` is not bounded from below. To limit
-hyperpolarization to biophysically plausible values, set parameter
-:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
-
-
-
-
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
 .. note::
-   Spikes arriving while the neuron is refractory, are discarded by
-   default. If the property ``refractory_input`` is set to True, such
-   spikes are added to the membrane potential at the end of the
-   refractory period, dampened according to the interval between
-   arrival and end of refractoriness.
+  The neuron dynamics of the ``eprop_iaf_psc_delta`` model (excluding e-prop
+  plasticity) are similar to the neuron dynamics of the ``iaf_psc_delta`` model,
+  with minor differences, such as the propagator of the post-synaptic current
+  and the voltage reset upon a spike.
+
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
+
+.. math::
+  v_j^t &= \alpha v_j^{t-1} + \sum_{i \neq j} W_{ji}^\text{rec} z_i^{t-1}
+    + \sum_i W_{ji}^\text{in} x_i^t \,, \\
+  \alpha &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
+
+where :math:`W_{ji}^\text{rec}` and :math:`W_{ji}^\text{in}` are the recurrent and
+input synaptic weight matrices, and :math:`z_i^{t-1}` is the recurrent presynaptic
+state variable, while :math:`x_i^t` represents the input at time :math:`t`.
+
+Descriptions of further parameters and variables can be found in the table below.
+
+The spike state variable is expressed by a Heaviside function:
+
+.. math::
+  z_j^t = H \left( v_j^t - v_\text{th} \right) \,. \\
+
+If the membrane voltage crosses the threshold voltage :math:`v_\text{th}`, a spike is
+emitted and the membrane voltage is reset to :math:`v_\text{reset}`. After the time step
+of the spike emission, the neuron is not able to spike for an absolute refractory period
+:math:`t_\text{ref}` during which the membrane potential stays clamped to the reset voltage
+:math:`v_\text{reset}`, thus
+
+.. math::
+  v_m = v_\text{reset} \quad \text{for} \quad t_\text{spk} \leq t \leq t_\text{spk} + t_\text{ref} \,.
+
+Spikes arriving while the neuron is refractory are discarded by default. However,
+if ``refractory_input`` is set to ``True`` they are damped for each time step
+until the end of the refractory period and then added to the membrane voltage.
+
+An additional state variable and the corresponding differential equation
+represents a piecewise constant external current.
+
+See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
+for more information on the integration of the subthreshold dynamics.
+
+The change of the synaptic weight is calculated from the gradient :math:`g^t` of
+the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
+which depends on the presynaptic
+spikes :math:`z_i^{t-2}`, the surrogate gradient or pseudo-derivative
+of the spike state variable with respect to the postsynaptic membrane
+voltage :math:`\psi_j^{t-1}` (the product of which forms the eligibility
+trace :math:`e_{ji}^{t-1}`), and the learning signal :math:`L_j^t` emitted
+by the readout neurons.
+
+Surrogate gradients help overcome the challenge of the spiking function's
+non-differentiability, facilitating the use of gradient-based learning
+techniques such as e-prop. The non-existent derivative of the spiking
+variable with respect to the membrane voltage,
+:math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
+replaced with a variety of surrogate gradient functions, as detailed in
+various studies (see, e.g., [3]_). NEST currently provides four
+different surrogate gradient functions:
+
+1. A piecewise linear function used among others in [1]_:
+
+.. math::
+  \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
+    \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
+
+2. An exponential function used in [4]_:
+
+.. math::
+  \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
+
+3. The derivative of a fast sigmoid function used in [5]_:
+
+.. math::
+  \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
+
+4. An arctan function used in [6]_:
+
+.. math::
+  \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
+
+In the interval between two presynaptic spikes, the gradient is calculated
+at each time step until the cutoff time point. This computation occurs over
+the time range:
+
+:math:`t \in \left[ t_\text{spk,prev}, \min \left( t_\text{spk,prev} + \Delta t_\text{c}, t_\text{spk,curr} \right)
+\right]`.
+
+Here, :math:`t_\text{spk,prev}` represents the time of the previous spike that
+passed the synapse, while :math:`t_\text{spk,curr}` is the time of the
+current spike, which triggers the application of the learning rule and the
+subsequent synaptic weight update. The cutoff :math:`\Delta t_\text{c}`
+defines the maximum allowable interval for integration between spikes.
+The expression for the gradient is given by:
+
+.. math::
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } &= L_j^t \bar{e}_{ji}^{t-1} \,, \\
+  e_{ji}^{t-1} &= \psi_j^{t-1} \bar{z}_i^{t-2} \,, \\
+
+The eligibility trace and the presynaptic spike trains are low-pass filtered
+with the following exponential kernels:
+
+.. math::
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa \left( e_{ji}^t \right)
+    = \kappa \bar{e}_{ji}^{t-1} + \left( 1 - \kappa \right) e_{ji}^t \,, \\
+  \bar{z}_i^t &= \mathcal{F}_\alpha \left( z_{i}^t \right)= \alpha \bar{z}_i^{t-1} + z_i^t \,. \\
+
+Furthermore, a firing rate regularization mechanism keeps the exponential moving average of the postsynaptic
+neuron's firing rate :math:`f_j^{\text{ema},t}` close to a target firing rate
+:math:`f^\text{target}`. The gradient :math:`g_\text{reg}^t` of the regularization loss :math:`E_\text{reg}^t`
+with respect to the synaptic weight :math:`W_{ji}` is given by:
+
+.. math::
+  \frac{ \text{d} E_\text{reg}^t }{ \text{d} W_{ji}}
+    &\approx c_\text{reg} \left( f^{\text{ema},t}_j - f^\text{target} \right) \bar{e}_{ji}^t \,, \\
+  f^{\text{ema},t}_j &= \mathcal{F}_{\kappa_\text{reg}} \left( \frac{z_j^t}{\Delta t} \right)
+    = \kappa_\text{reg} f^{\text{ema},t-1}_j + \left( 1 - \kappa_\text{reg} \right) \frac{z_j^t}{\Delta t} \,, \\
+
+where :math:`c_\text{reg}` is a constant scaling factor.
+
+The overall gradient is given by the addition of the two gradients.
+
+As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
+for more information on the available optimizers):
+
+.. math::
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
+
+After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
+the next spike:
+
+.. math::
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
+  \bar{e}_{ji}^{t+p} &= \bar{e}_{ji}^t \kappa^p \,, \\
+  \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
+
+For more information on the implementation details of the neuron model, see [7]_ and [8]_.
+
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
+
+ * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`
+ * :doc:`eprop_readout<../models/eprop_readout/>`
+ * :doc:`eprop_synapse<../models/eprop_synapse/>`
+ * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+
+Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-==================== ================== =============================== ==================================================================================
-**Parameter**        **Default**        **Math equivalent**             **Description**
-==================== ================== =============================== ==================================================================================
-``E_L``              -70 mV             :math:`E_\text{L}`              Resting membrane potential
-``C_m``              250 pF             :math:`C_{\text{m}}`            Capacitance of the membrane
-``tau_m``            10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
-``t_ref``            2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
-``V_th``             -55 mV             :math:`V_{\text{th}}`           Spike threshold
-``V_reset``          -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``I_e``              0 pA               :math:`I_\text{e}`              Constant input current
-``V_min``            :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
-``refractory_input`` ``False``          None                            If set to True, spikes arriving during refractory period are integrated afterwards
-==================== ================== =============================== ==================================================================================
+=========================== ======= ======================= ================ ===================================
+**Neuron parameters**
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
+``C_m``                     pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+``E_L``                     mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
+``I_e``                     pA      :math:`I_\text{e}`                   0.0 Constant external input current
+``t_ref``                   ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
+``tau_m``                   ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
+                                                            value            membrane voltage
+                                                            representable
+                                                            by a ``double``
+                                                            type in C++
+``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
+``V_reset``                 mV      :math:`v_\text{reset}`             -70.0 Reset voltage
+``refractory_input``        Boolean                                ``False`` If ``True``, spikes arriving during
+                                                                             the refractory period are damped
+                                                                             until it ends and then added to the
+                                                                             membrane voltage
+=========================== ======= ======================= ================ ===================================
 
-=========================== ======= ========================== ================ ===================================
+=============================== ======= =========================== ================== =========================
 **E-prop parameters**
--------------------------------------------------------------------------------------------------------------------
-Parameter                   Unit    Math equivalent            Default          Description
-=========================== ======= ========================== ================ ===================================
-c_reg                               :math:`c_\text{reg}`                    0.0 Prefactor of firing rate
-                                                                                regularization
-f_target                    Hz      :math:`f^\text{target}`                10.0 Target firing rate of rate
-                                                                                regularization
-kappa                               :math:`\kappa`                         0.97 Low-pass filter of the
-                                                                                eligibility trace
-kappa_reg                           :math:`\kappa_\text{reg}`              0.97 Low-pass filter of the firing rate
-                                                                                for regularization
-beta                                :math:`\beta`                           1.0 Width scaling of surrogate gradient
-                                                                                / pseudo-derivative of membrane
-                                                                                voltage
-gamma                               :math:`\gamma`                          0.3 Height scaling of surrogate
-                                                                                gradient / pseudo-derivative of
-                                                                                membrane voltage
-surrogate_gradient_function         :math:`\psi`               piecewise_linear Surrogate gradient /
-                                                                                pseudo-derivative function
-                                                                                ["piecewise_linear", "exponential",
-                                                                                "fast_sigmoid_derivative",
-                                                                                "arctan"]
-=========================== ======= ========================== ================ ===================================
+----------------------------------------------------------------------------------------------------------------
+Parameter                       Unit    Math equivalent             Default            Description
+=============================== ======= =========================== ================== =========================
+``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
+                                                                                       rate regularization
+``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
+                                                                    representable      e-prop update between two
+                                                                    by a ``long``      spikes
+                                                                    type in C++
+``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
+                                                                                       rate regularization
+``kappa``                               :math:`\kappa`                          0.97   Low-pass filter of the
+                                                                                       eligibility trace
+``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
+                                                                                       firing rate for
+                                                                                       regularization
+``beta``                                :math:`\beta`                            1.0   Width scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``gamma``                               :math:`\gamma`                           0.3   Height scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``surrogate_gradient_function``         :math:`\psi`                "piecewise_linear" Surrogate gradient /
+                                                                                       pseudo-derivative
+                                                                                       function
+                                                                                       ["piecewise_linear",
+                                                                                       "exponential",
+                                                                                       "fast_sigmoid_derivative"
+                                                                                       , "arctan"]
+=============================== ======= =========================== ================== =========================
+
+Recordables
++++++++++++
+
+The following state variables evolve during simulation and can be recorded.
+
+================== ==== =============== ============= ========================
+**Neuron state variables and recordables**
+------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ========================
+``V_m``              mV :math:`v_j`             -70.0 Membrane voltage
+================== ==== =============== ============= ========================
+
+====================== ==== =============== ============= =========================================
+**E-prop state variables and recordables**
+---------------------------------------------------------------------------------------------------
+State variable         Unit Math equivalent Initial value Description
+====================== ==== =============== ============= =========================================
+``learning_signal``      pA :math:`L_j`               0.0 Learning signal
+``surrogate_gradient``      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of
+                                                          membrane voltage
+====================== ==== =============== ============= =========================================
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models
+and the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in several
+:doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
+reproducing among others the original proof-of-concept tasks in [1]_.
 
 References
 ++++++++++
 
-.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
+       Maass W (2020). A solution to the learning dilemma for recurrent
+       networks of spiking neurons. Nature Communications, 11:3625.
+       https://doi.org/10.1038/s41467-020-17236-y
+
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       implementation of eligibility propagation (in preparation)
+
+.. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
+       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
+       https://doi.org/10.1109/MSP.2019.2931595
+
+.. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
+       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+
+.. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
+       Spiking Neural Networks. Neural Computation, 30:1514–1541.
+       https://doi.org/10.1162/neco_a_01086
+
+.. [6] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
+       learning in spiking neural networks. Advances in Neural Information
+       Processing Systems, 34:21056–21069.
+       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
+
+.. [7] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biological Cybernetics
+       81:381-402.
+       https://doi.org/10.1007/s004220050570
+
+.. [8] Diesmann M, Gewaltig MO, Rotter S, Aertsen A (2001). State space analysis
+       of synchronous spiking in cortical neural networks. Neurocomputing
+       38-40:565-571.
+       https://doi.org/10.1016/S0925-2312(01)00409-X
 
 Sends
 +++++
@@ -198,12 +345,10 @@ SpikeEvent
 Receives
 ++++++++
 
-SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent, CurrentEvent, LearningSignalConnectionEvent, DataLoggingRequest
 
 See also
 ++++++++
-
-iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 Examples using this model
 +++++++++++++++++++++++++
@@ -212,35 +357,25 @@ Examples using this model
 
 EndUserDocs */
 
-/**
- * The present implementation uses individual variables for the
- * components of the state vector and the non-zero matrix elements of
- * the propagator. Because the propagator is a lower triangular matrix,
- * no full matrix multiplication needs to be carried out and the
- * computation can be done "in place", i.e. no temporary state vector
- * object is required.
- *
- * The template support of recent C++ compilers enables a more succinct
- * formulation without loss of runtime performance already at minimal
- * optimization levels. A future version of iaf_psc_delta will probably
- * address the problem of efficient usage of appropriate vector and
- * matrix objects.
- */
-
 void register_eprop_iaf_psc_delta( const std::string& name );
 
+/**
+ * @brief Class implementing an adaptive LIF neuron model for e-prop plasticity with additional biological features.
+ *
+ * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents
+ * and spike threshold adaptation for e-prop plasticity according to Bellec et al. (2020) with additional biological
+ * features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ */
 class eprop_iaf_psc_delta : public EpropArchivingNodeRecurrent
 {
 
 public:
+  //! Default constructor.
   eprop_iaf_psc_delta();
+
+  //! Copy constructor.
   eprop_iaf_psc_delta( const eprop_iaf_psc_delta& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
   using Node::handle;
   using Node::handles_test_event;
 
@@ -259,72 +394,67 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-
 private:
   void init_buffers_() override;
   void pre_run_hook() override;
 
   void update( Time const&, const long, const long ) override;
 
-  void compute_gradient( const long t_spike,
-    const long t_spike_previous,
-    double& z_previous_buffer,
-    double& z_bar,
-    double& e_bar,
-    double& e_bar_reg,
-    double& epsilon,
-    double& weight,
-    const CommonSynapseProperties& cp,
-    WeightOptimizer* optimizer ) override;
+  void compute_gradient( const long,
+    const long,
+    double&,
+    double&,
+    double&,
+    double&,
+    double&,
+    double&,
+    const CommonSynapseProperties&,
+    WeightOptimizer* ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
   long get_eprop_isi_trace_cutoff() const override;
 
-  //! Pointer to member function selected for computing the surrogate gradient
+  //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_;
 
-  // The next two classes need to be friends to access the State_ class/member
+  //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta >;
+
+  //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
   friend class UniversalDataLogger< eprop_iaf_psc_delta >;
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Independent parameters of the model.
-   */
+  //! Structure of parameters.
   struct Parameters_
   {
-    /** Membrane time constant in ms. */
+    //! Time constant of the membrane (ms).
     double tau_m_;
 
-    /** Membrane capacitance in pF. */
-    double c_m_;
+    //! Capacitance of the membrane (pF).
+    double C_m_;
 
-    /** Refractory period in ms. */
+    //! Duration of the refractory period (ms).
     double t_ref_;
 
-    /** Resting potential in mV. */
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
-    /** External DC current */
+    //! Constant external input current (pA).
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real threshold is (E_L_+V_th_). */
+    //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
-        I.e. the real lower bound is (V_min_+V_th_). */
+    //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    /** reset value of the membrane potential */
+    //! Reset voltage relative to the leak membrane potential (mV).
     double V_reset_;
 
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    //! If True, count spikes arriving during the refractory period.
+    bool with_refr_input_;
 
-    //! Prefactor of firing rate regularization.
+    //! Coefficient of firing rate regularization.
     double c_reg_;
 
     //! Target firing rate of rate regularization (spikes/s).
@@ -349,32 +479,29 @@ private:
     //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
     double eprop_isi_trace_cutoff_;
 
-    Parameters_(); //!< Sets default parameter values
+    //! Default constructor.
+    Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Get the parameters and their values.
+    void get( DictionaryDatum& ) const;
 
-    /** Set values from dictionary.
-     * @returns Change in reversal potential E_L, to be passed to State_::set()
-     */
-    double set( const DictionaryDatum&, Node* node );
+    //! Set the parameters and throw errors in case of invalid values.
+    double set( const DictionaryDatum&, Node* );
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * State variables of the model.
-   */
+  //! Structure of state variables.
   struct State_
   {
-    double y0_;
-    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double y3_;
+    //! Input current (pA).
+    double i_in_;
 
-    int r_; //!< Number of refractory steps remaining
+    //! Membrane voltage relative to the leak membrane potential (mV).
+    double v_m_;
 
-    /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
+    //! Number of remaining refractory steps.
+    int r_;
+
+    //! Count of spikes arriving during refractory period discounted for decay until end of refractory period.
     double refr_spikes_buffer_;
 
     //! Learning signal. Sum of weighted error signals coming from the readout neurons.
@@ -383,67 +510,56 @@ private:
     //! Surrogate gradient / pseudo-derivative of the membrane voltage.
     double surrogate_gradient_;
 
-    //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
-    double z_;
+    //! Default constructor.
+    State_();
 
-    State_(); //!< Default initialization
-
+    //! Get the state variables and their values.
     void get( DictionaryDatum&, const Parameters_& ) const;
 
-    /** Set values from dictionary.
-     * @param dictionary to take data from
-     * @param current parameters
-     * @param Change in reversal potential E_L specified by this dict
-     */
+    //! Set the state variables.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Buffers of the model.
-   */
+  //! Structure of buffers.
   struct Buffers_
   {
+    //! Default constructor.
     Buffers_( eprop_iaf_psc_delta& );
+
+    //! Copy constructor.
     Buffers_( const Buffers_&, eprop_iaf_psc_delta& );
 
-    /** buffers and summs up incoming spikes/currents */
+    //! Buffer for incoming spikes.
     RingBuffer spikes_;
+
+    //! Buffer for incoming currents.
     RingBuffer currents_;
 
-    //! Logger for all analog data
+    //! Logger for universal data.
     UniversalDataLogger< eprop_iaf_psc_delta > logger_;
   };
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Internal variables of the model.
-   */
+  //! Structure of internal variables.
   struct Variables_
   {
+    //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
+    double P_v_m_;
 
-    double P30_;
-    double P33_;
+    //! Propagator matrix entry for evolving the incoming currents.
+    double P_i_in_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables.
-    double P_z_in_;
-
+    //! Total refractory steps.
     int RefractoryCounts_;
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
-
   };
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out the real membrane potential
+  //! Get the current value of the membrane voltage.
   double
-  get_V_m_() const
+  get_v_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.v_m_ + P_.E_L_;
   }
 
   //! Get the current value of the surrogate gradient.
@@ -460,21 +576,21 @@ private:
     return S_.learning_signal_;
   }
 
-  // ----------------------------------------------------------------
+  // the order in which the structure instances are defined is important for speed
 
-  /**
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
+  //! Structure of parameters.
   Parameters_ P_;
-  State_ S_;
-  Variables_ V_;
-  Buffers_ B_;
-  /** @} */
 
-  //! Mapping of recordables names to access functions
+  //! Structure of state variables.
+  State_ S_;
+
+  //! Structure of internal variables.
+  Variables_ V_;
+
+  //! Structure of buffers.
+  Buffers_ B_;
+
+  //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
 };
 
@@ -485,7 +601,7 @@ eprop_iaf_psc_delta::get_eprop_isi_trace_cutoff() const
 }
 
 inline size_t
-nest::eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -499,6 +615,7 @@ eprop_iaf_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+
   return 0;
 }
 
@@ -509,6 +626,7 @@ eprop_iaf_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+
   return 0;
 }
 
@@ -530,6 +648,7 @@ eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t recepto
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -544,21 +663,18 @@ eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  // temporary copies in case of errors
+  Parameters_ ptmp = P_;
+  State_ stmp = S_;
 
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
+  // make sure that ptmp and stmp consistent - throw BadProperty if not
+  const double delta_EL = ptmp.set( d, this );
+  stmp.set( d, ptmp, delta_EL, this );
 
-  // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
 }
 
-} // namespace
+} // namespace nest
 
-#endif /* #ifndef EPROP_IAF_PSC_DELTA_H */
+#endif // EPROP_IAF_PSC_DELTA_H

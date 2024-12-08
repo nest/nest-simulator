@@ -211,7 +211,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_curr
 }
 
 void
-EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
+EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long time_step,
   const double z,
   const double f_target,
   const double kappa_reg,
@@ -230,7 +230,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
 
   firing_rate_reg_ = c_reg * ( f_av_ - f_target_ );
 
-  auto it_hist = get_eprop_history( t );
+  auto it_hist = get_eprop_history( time_step );
   it_hist->firing_rate_reg_ = firing_rate_reg_;
 }
 

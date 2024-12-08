@@ -484,14 +484,22 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
-   * Initialize the update history and register the eprop synapse.
+   * @brief Registers an eprop synapse and initializes the update history.
+   *
+   * The time for the first entry of the update history is set to the neuron specific shift if `is_bsshslm_2020`
+   * is true and to the negative transmission delay from the recurrent to the output layer otherwise.
+   *
+   * @param is_bsshslm_2020_model A boolean indicating whether the connection is for the bsshslm_2020 model(optional,
+   * default = true).
    *
    * @throws IllegalConnection
    */
   virtual void register_eprop_connection( const bool is_bsshslm_2020_model = true );
 
   /**
-   * Get the number of steps the time-point of the signal has to be shifted to
+   * @brief Retrieves the temporal shift of the signal.
+   *
+   * Retrieves the number of steps the time-point of the signal has to be shifted to
    * place it at the correct location in the e-prop-related histories.
    *
    * @note Unlike the original e-prop, where signals arise instantaneously, NEST
@@ -499,12 +507,20 @@ public:
    * compensate for the delays and synchronize the signals by shifting the
    * history.
    *
+   * @return The number of time steps to shift.
+   *
    * @throws IllegalConnection
    */
   virtual long get_shift() const;
 
   /**
-   * Register current update in the update history and deregister previous update.
+   *  Registers the current update in the update history and deregisters the previous update.
+   *
+   * @param t_previous_update The time step of the previous update.
+   * @param t_current_update The time step of the current update.
+   * @param eprop_isi_trace_cutoff The cutoff value for the eprop inter-spike interval trace (optional, default: 0).
+   * @param is_bsshslm_2020_model Flag indicating whether the model is the bsshslm_2020 model (optional, default =
+   * true).
    *
    * @throws IllegalConnection
    */
@@ -514,23 +530,26 @@ public:
     const bool is_bsshslm_2020_model = true );
 
   /**
-   * Get maximum number of time steps integrated between two consecutive spikes.
+   * Retrieves the maximum number of time steps integrated between two consecutive spikes.
+   *
+   * @return The cutoff value for the inter-spike interval eprop trace.
    *
    * @throws IllegalConnection
    */
   virtual long get_eprop_isi_trace_cutoff() const;
 
   /**
-   * Return if the node is part of the recurrent network (and thus not a readout neuron).
+   * Checks if the node is part of the recurrent network and thus not a readout neuron.
    *
    * @note The e-prop synapse calls this function of the target node. If true,
    * it skips weight updates within the first interval step of the update
    * interval.
    *
+   * @return true if the node is an eprop recurrent node, false otherwise.
+   *
    * @throws IllegalConnection
    */
   virtual bool is_eprop_recurrent_node() const;
-
 
   /**
    * Handle incoming spike events.
@@ -1003,6 +1022,19 @@ public:
    */
   DeprecationWarning deprecation_warning;
 
+  /**
+   * Set index in node collection; required by ThirdOutBuilder.
+   */
+  void set_tmp_nc_index( size_t index );
+
+  /**
+   * Return and invalidate index in node collection; required by ThirdOutBuilder.
+   *
+   * @note Not const since it invalidates index in node object.
+   */
+  size_t get_tmp_nc_index();
+
+
 private:
   void set_node_id_( size_t ); //!< Set global node id
 
@@ -1080,6 +1112,17 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
+
+  /**
+   * Store index in NodeCollection.
+   *
+   * @note This is only here so that the primary connection builder can inform the ThirdOutBuilder
+   * about the index of the target neuron in the targets node collection. This is required for block-based
+   * builders.
+   *
+   * @note Set by set_tmp_nc_index() and invalidated by get_tmp_nc_index().
+   */
+  size_t tmp_nc_index_;
 };
 
 inline bool
@@ -1218,6 +1261,24 @@ Node::get_thread_lid() const
 {
   return thread_lid_;
 }
+
+inline void
+Node::set_tmp_nc_index( size_t index )
+{
+  tmp_nc_index_ = index;
+}
+
+inline size_t
+Node::get_tmp_nc_index()
+{
+  assert( tmp_nc_index_ != invalid_index );
+
+  const auto index = tmp_nc_index_;
+  tmp_nc_index_ = invalid_index;
+
+  return index;
+}
+
 
 } // namespace
 

@@ -29,7 +29,7 @@ import pytest
 
 nest.set_verbosity("M_WARNING")
 
-supported_source_models = ["eprop_iaf", "eprop_iaf_adapt", "eprop_iaf_psc_delta"]
+supported_source_models = ["eprop_iaf", "eprop_iaf_adapt", "eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
 supported_target_models = supported_source_models + ["eprop_readout"]
 
 
@@ -41,7 +41,9 @@ def fix_resolution():
 @pytest.mark.parametrize("source_model", supported_source_models)
 @pytest.mark.parametrize("target_model", supported_target_models)
 def test_connect_with_eprop_synapse(source_model, target_model):
-    """Ensures that the restriction to supported neuron models works."""
+    """
+    Ensure that the restriction to supported neuron models works.
+    """
 
     # Connect supported models with e-prop synapse
     src = nest.Create(source_model)
@@ -51,7 +53,9 @@ def test_connect_with_eprop_synapse(source_model, target_model):
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
 def test_unsupported_model_raises(target_model):
-    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error."""
+    """
+    Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error.
+    """
 
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
@@ -67,46 +71,58 @@ def test_unsupported_model_raises(target_model):
             "eprop_iaf",
             "adam",
             [
-                0.13126137747586,
-                0.09395562983704,
-                0.00734052541014,
-                0.02909589949313,
-                0.00279041902009,
+                0.14000491891386,
+                0.28735818029752,
+                0.22263713699860,
+                0.23015072431384,
+                0.17565248170694,
             ],
         ),
         (
             "eprop_iaf_adapt",
             "gradient_descent",
             [
-                0.04298221363883,
-                0.03100545785399,
-                0.00930311104052,
-                0.00455478436740,
-                0.00017408818078,
+                0.02242584487453,
+                0.01916753791522,
+                0.00571493935652,
+                0.00037875376195,
+                0.00037823157578,
             ],
         ),
         (
             "eprop_iaf_psc_delta",
             "gradient_descent",
             [
-                0.32286231964124,
-                0.61322219696014,
-                0.63745062813969,
-                0.63844466107304,
-                0.58671835471489,
+                0.27039631749159,
+                0.51390204375229,
+                0.53473859833866,
+                0.53608474802202,
+                0.49323580244201,
+            ],
+        ),
+        (
+            "eprop_iaf_psc_delta_adapt",
+            "gradient_descent",
+            [
+                0.16416646182675,
+                0.27952159282830,
+                0.29937515524341,
+                0.26160957500433,
+                0.26384514215024,
             ],
         ),
     ],
 )
 def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     """
-    Test correct computation of losses for a regression task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
-    by comparing the simulated losses with NEST reference losses to catch scenarios in which the e-prop model does not
-    work as intended (e.g., potential future changes to the NEST code base or a faulty installation). These reference
-    losses were obtained from a simulation with the verified NEST e-prop implementation run with
-    Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and NEST@9b65de4bf.
-    """  # pylint: disable=line-too-long # noqa: E501
+    Test correct computation of losses for a regression task (for details on the task, see
+    nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py) by
+    comparing the simulated losses with NEST reference losses to catch scenarios in which the e-prop
+    model does not work as intended (e.g., potential future changes to the NEST code base or a
+    faulty installation). These reference losses were obtained from a simulation with the verified
+    NEST e-prop implementation run with Linux 6.5.0-28-generic, Python v3.12.3, Numpy v1.26.4, and
+    NEST@9b65de4bf.
+    """
 
     # Initialize random generator
     rng_seed = 1
@@ -164,7 +180,6 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "E_L": 0.0,
         "eprop_isi_trace_cutoff": 100,
         "I_e": 0.0,
-        "regular_spike_arrival": False,
         "tau_m": 30.0,
         "V_m": 0.0,
     }
@@ -180,7 +195,6 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "I_e": 0.0,
         "kappa": 0.97,
         "kappa_reg": 0.97,
-        "regular_spike_arrival": False,
         "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,
@@ -188,10 +202,11 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "V_th": 0.03,
     }
 
-    if neuron_model == "eprop_iaf_psc_delta":
-        del params_nrn_rec["regular_spike_arrival"]
+    scale_factor = 1.0 - params_nrn_rec["kappa"]
+
+    if neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
         params_nrn_rec["V_reset"] = -0.5
-        params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
+        params_nrn_rec["c_reg"] = 2.0 / duration["sequence"] / scale_factor**2
         params_nrn_rec["V_th"] = 0.5
     elif neuron_model == "eprop_iaf_adapt":
         params_nrn_rec["adapt_beta"] = 0.0174
@@ -252,14 +267,21 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
     weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
     np.fill_diagonal(weights_rec_rec, 0.0)
-    weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
+    weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights) * scale_factor
     weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
+
+    if neuron_model in ["eprop_iaf", "eprop_iaf_adapt"]:
+        weights_in_rec *= scale_factor
+        weights_rec_rec *= scale_factor
+        weights_out_rec *= scale_factor
+    elif neuron_model in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
+        weights_out_rec /= scale_factor
 
     params_common_syn_eprop = {
         "optimizer": {
             "type": optimizer,
             "batch_size": 1,
-            "eta": 1e-4,
+            "eta": 1e-4 * scale_factor**2,
             "optimize_each_step": True,
             "Wmin": -100.0,
             "Wmax": 100.0,
@@ -404,7 +426,9 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
 
 
 def test_unsupported_surrogate_gradient():
-    """Confirm that selecting an unsupported surrogate gradient raises an error."""
+    """
+    Confirm that selecting an unsupported surrogate gradient raises an error.
+    """
 
     params_nrn_rec = {
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
@@ -421,50 +445,51 @@ def test_unsupported_surrogate_gradient():
         (
             "piecewise_linear",
             [
-                0.06135126216450,
-                0.05456129183053,
-                0.04841747260500,
-                0.04285831508010,
-                0.03782818133881,
+                0.21030100902759,
+                0.18933659619924,
+                0.17036721102500,
+                0.15320300152221,
+                0.13767218251307,
             ],
         ),
         (
             "exponential",
             [
-                0.20795269433458,
-                0.20514779735629,
-                0.20264243938260,
-                0.20040187562686,
-                0.19839588646645,
+                0.28011776848615,
+                0.26861558105999,
+                0.25861553046549,
+                0.24988832085299,
+                0.24224569105944,
             ],
         ),
         (
             "fast_sigmoid_derivative",
             [
-                0.14187432621036,
-                0.13984381221999,
-                0.13804386008020,
-                0.13644497667035,
-                0.13502206566839,
+                0.20044113201621,
+                0.19020804299944,
+                0.18160934703950,
+                0.17432167613232,
+                0.16809903522604,
             ],
         ),
         (
             "arctan",
             [
-                0.01851467830587,
-                0.01801794405092,
-                0.01758480869073,
-                0.01720567699047,
-                0.01687268127553,
+                0.03689910976700,
+                0.03308744332685,
+                0.03008806500220,
+                0.02768876792046,
+                0.02574163163544,
             ],
         ),
     ],
 )
 def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_reference):
     """
-    Test correct computation of surrogate gradients by comparing the simulated surrogate gradients with NEST reference
-    surrogate gradients. These reference surrogate gradients were obtained from a simulation with the verified NEST
-    e-prop implementation run with Linux 5.8.7-1-default, Python v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
+    Test correct computation of surrogate gradients by comparing the simulated surrogate gradients
+    with NEST reference surrogate gradients. These reference surrogate gradients were obtained from
+    a simulation with the verified NEST e-prop implementation run with Linux 5.8.7-1-default, Python
+    v3.12.5, Numpy v2.0.1, and NEST@d04fe550d.
     """
 
     rng_seed = 1
@@ -491,7 +516,6 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
         "E_L": 0.0,
         "gamma": 0.5,
         "I_e": 0.0,
-        "regular_spike_arrival": False,
         "surrogate_gradient_function": surrogate_gradient_type,
         "t_ref": 3.0,
         "V_m": 0.0,

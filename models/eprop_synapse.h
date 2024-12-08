@@ -57,7 +57,7 @@ Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of
-archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``,
+archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``, ``eprop_iaf_psc_delta_adapt``,
 ``eprop_iaf_adapt``, and ``eprop_readout``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
@@ -90,7 +90,7 @@ The following parameters can be set in the status dictionary.
 ----------------------------------------------------------------------------------------------------
 Parameter        Unit Math equivalent Default Description
 ================ ==== =============== ======= ======================================================
-optimizer                                  {} Dictionary of optimizer parameters
+``optimizer``                              {} Dictionary of optimizer parameters
 ================ ==== =============== ======= ======================================================
 
 ============= ==== ========================= ======= =========================================================
@@ -98,8 +98,8 @@ optimizer                                  {} Dictionary of optimizer parameters
 --------------------------------------------------------------------------------------------------------------
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
-delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+``delay``     ms   :math:`d_{ji}`                1.0 Dendritic delay
+``weight``    pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 
 Recordables
@@ -112,13 +112,13 @@ The following variables can be recorded.
 ----------------------------------------------------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
 ================== ==== =============== ============= ==========================================================
-weight             pA   :math:`B_{jk}`            1.0 Synaptic weight
+``weight``         pA   :math:`B_{jk}`            1.0 Synaptic weight
 ================== ==== =============== ============= ==========================================================
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -137,8 +137,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
        implementation of eligibility propagation (in preparation)
 
 See also
@@ -152,6 +152,8 @@ Examples using this model
 EndUserDocs */
 
 /**
+ * @brief Base class implementing common properties for e-prop synapses with additional biological features.
+ *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
  * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
  * (in preparation).
@@ -197,6 +199,8 @@ public:
 void register_eprop_synapse( const std::string& name );
 
 /**
+ * @brief Class implementing a synapse model for e-prop plasticity with additional biological features.
+ *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
  * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *

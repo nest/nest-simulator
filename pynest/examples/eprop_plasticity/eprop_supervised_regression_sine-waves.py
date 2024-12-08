@@ -39,7 +39,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 network learns to reproduce with its overall spiking activity a one-dimensional, one-second-long target signal
 which is a superposition of four sine waves of different amplitudes, phases, and periods.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_sine-waves.png
+.. image:: eprop_supervised_regression_sine-waves.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
@@ -63,8 +63,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Plesser HE, Bolten M, Diesmann M.
-       Event-based implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       implementation of eligibility propagation (in preparation)
+
 """  # pylint: disable=line-too-long # noqa: E501
 
 # %% ###########################################################################################################
@@ -87,7 +89,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_schematic_sine-waves.png")
+    Image(filename="./eprop_supervised_regression_sine-waves.png")
 except Exception:
     pass
 
@@ -177,7 +179,6 @@ params_nrn_out = {
     "E_L": 0.0,  # mV, leak / resting membrane potential
     "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,  # pA, external current input
-    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
 }
@@ -185,7 +186,7 @@ params_nrn_out = {
 params_nrn_rec = {
     "beta": 33.3,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
-    "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
+    "c_reg": 300.0 / duration["sequence"],  # coefficient of firing rate regularization
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
@@ -193,7 +194,6 @@ params_nrn_rec = {
     "I_e": 0.0,
     "kappa": 0.97,  # low-pass filter of the eligibility trace
     "kappa_reg": 0.97,  # low-pass filter of the firing rate for regularization
-    "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,
@@ -201,10 +201,14 @@ params_nrn_rec = {
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
-if model_nrn_rec == "eprop_iaf_psc_delta":
-    del params_nrn_rec["regular_spike_arrival"]
+scale_factor = 1.0 - params_nrn_rec["kappa"]  # factor for rescaling due to removal of irregular spike arrival
+
+if model_nrn_rec == "eprop_iaf_adapt":
+    params_nrn_rec["adapt_beta"] = 0.0  # adaptation scaling
+
+if model_nrn_rec in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
     params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
-    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
+    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"] / scale_factor**2
     params_nrn_rec["V_th"] = 0.5
 
 ####################
@@ -295,14 +299,21 @@ dtype_weights = np.float32  # data type of weights - for reproducing TF results 
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
-weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
+weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights) * scale_factor
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
+
+if model_nrn_rec == "eprop_iaf":
+    weights_in_rec *= scale_factor
+    weights_rec_rec *= scale_factor
+    weights_out_rec *= scale_factor
+elif model_nrn_rec in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
+    weights_out_rec /= scale_factor
 
 params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": 1,
-        "eta": 1e-4,  # learning rate
+        "eta": 1e-4 * scale_factor**2,  # learning rate
         "optimize_each_step": False,  # call optimizer every time step (True) or once per spike (False); both
         # yield same results for gradient descent, False offers speed-up
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
@@ -543,7 +554,6 @@ colors = {
 
 plt.rcParams.update(
     {
-        "font.sans-serif": "Arial",
         "axes.spines.right": False,
         "axes.spines.top": False,
         "axes.prop_cycle": cycler(color=[colors["blue"], colors["red"]]),
@@ -551,16 +561,17 @@ plt.rcParams.update(
 )
 
 # %% ###########################################################################################################
-# Plot training error
-# ...................
-# We begin with a plot visualizing the training error of the network: the loss plotted against the iterations.
+# Plot learning performance
+# .........................
+# We begin with a plot visualizing the learning performance of the network: the loss plotted against the
+# iterations.
 
 fig, ax = plt.subplots()
-fig.suptitle("Training error")
+fig.suptitle("Learning performance")
 
 ax.plot(range(1, n_iter + 1), loss)
-ax.set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
-ax.set_xlabel("training iteration")
+ax.set_ylabel(r"$\mathcal{L} = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
+ax.set_xlabel("iteration")
 ax.set_xlim(1, n_iter)
 ax.xaxis.get_major_locator().set_params(integer=True)
 
@@ -627,18 +638,25 @@ for title, xlims in zip(
 # the first time step and we add the initial weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
-    for sender in nrns_senders.tolist():
-        for target in nrns_targets.tolist():
-            idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                weights_pre_train[label]["target"] == target
-            )
+def plot_weight_time_course(ax, events, nrns, label, ylabel):
+    sender_label, target_label = label.split("_")
+    nrns_senders = nrns[sender_label]
+    nrns_targets = nrns[target_label]
 
-            times = [0.0] + events["times"][idc_syn].tolist()
-            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+    for sender in set(events_wr["senders"]):
+        for target in set(events_wr["targets"]):
+            if sender in nrns_senders and target in nrns_targets:
+                idc_syn = (events["senders"] == sender) & (events["targets"] == target)
+                if np.any(idc_syn):
+                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                        weights_pre_train[label]["target"] == target
+                    )
+                    times = np.concatenate([[0.0], events["times"][idc_syn]])
 
-            ax.step(times, weights, c=colors["blue"])
+                    weights = np.concatenate(
+                        [np.array(weights_pre_train[label]["weight"])[idc_syn_pre], events["weights"][idc_syn]]
+                    )
+                    ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
@@ -646,14 +664,18 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 fig.suptitle("Weight time courses")
 
-plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
-plot_weight_time_course(
-    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
-)
-plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
+nrns = {
+    "in": nrns_in.tolist(),
+    "rec": nrns_rec.tolist(),
+    "out": nrns_out.tolist(),
+}
+
+plot_weight_time_course(axs[0], events_wr, nrns, "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(axs[1], events_wr, nrns, "rec_rec", r"$W_\text{rec}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
-axs[-1].set_xlim(0, steps["task"])
+axs[-1].set_xlim(0, duration["task"])
 
 fig.align_ylabels()
 fig.tight_layout()

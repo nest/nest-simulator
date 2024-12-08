@@ -63,12 +63,6 @@ reset_kernel()
 }
 
 void
-enable_dryrun_mode( const size_t n_procs )
-{
-  kernel().mpi_manager.set_num_processes( n_procs );
-}
-
-void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
   kernel().logging_manager.register_logging_client( client_callback );
@@ -192,9 +186,11 @@ connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& connectivity,
+  const DictionaryDatum& third_connectivity,
   const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
 {
-  kernel().connection_manager.connect_tripartite( sources, targets, third, connectivity, synapse_specs );
+  kernel().connection_manager.connect_tripartite(
+    sources, targets, third, connectivity, third_connectivity, synapse_specs );
 }
 
 void

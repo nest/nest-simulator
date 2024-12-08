@@ -56,7 +56,7 @@ voltmeter = nest.Create("voltmeter")
 ###############################################################################
 # Third, the Poisson generator is configured using ``SetStatus``, which expects
 # a list of node handles and a list of parameter dictionaries. We set the
-# Poisson generators to 8,000 Hz and 15,000 Hz, respectively. Note that we do
+# Poisson generators to 80,000 Hz and 15,000 Hz, respectively. Note that we do
 # not need to set parameters for the neuron and the voltmeter, since they have
 # satisfactory defaults.
 

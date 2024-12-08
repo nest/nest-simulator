@@ -79,7 +79,6 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , beta_( 1.0 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , regular_spike_arrival_( true )
   , surrogate_gradient_function_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -130,7 +129,6 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
-  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
@@ -165,7 +163,6 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -190,7 +187,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization prefactor c_reg ≥ 0 required." );
+    throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )
@@ -308,7 +305,6 @@ eprop_iaf_adapt::pre_run_hook()
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
-  V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
@@ -342,8 +338,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
-    S_.v_m_ -= P_.V_th_ * S_.z_;
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + S_.z_in_ + V_.P_v_m_ * S_.v_m_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
     S_.adapt_ = V_.P_adapt_ * S_.adapt_ + S_.z_;
@@ -360,6 +355,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
       kernel().event_delivery_manager.send( *this, se, lag );
 
       S_.z_ = 1.0;
+      S_.v_m_ -= P_.V_th_ * S_.z_;
       S_.r_ = V_.RefractoryCounts_;
     }
 
@@ -454,10 +450,10 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     L = eprop_hist_it->learning_signal_;
     firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    z_bar = V_.P_v_m_ * z_bar + z;
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
     epsilon = V_.P_adapt_ * epsilon + e;
-    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    e_bar = P_.kappa_ * e_bar + e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
     if ( optimize_each_step )
@@ -476,7 +472,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
   }
 
-  const long cutoff_to_spike_interval = t_spike - t_spike_previous - V_.eprop_isi_trace_cutoff_steps_;
+  const long cutoff_to_spike_interval = t_spike - t_compute_until;
 
   if ( cutoff_to_spike_interval > 0 )
   {

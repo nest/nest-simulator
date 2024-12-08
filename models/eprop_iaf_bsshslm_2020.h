@@ -161,71 +161,73 @@ The following parameters can be set in the status dictionary.
 ----------------------------------------------------------------------------------------------------------------
 Parameter                   Unit    Math equivalent         Default          Description
 =========================== ======= ======================= ================ ===================================
-C_m                         pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
-E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
-I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
-regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
-                                                                             the end of the time step, if
-                                                                             False at the beginning (determines
-                                                                             PSC scale)
-t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
-tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                       mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
+``C_m``                     pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+``E_L``                     mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
+``I_e``                     pA      :math:`I_\text{e}`                   0.0 Constant external input current
+``regular_spike_arrival``   Boolean                                 ``True`` If ``True``, the input spikes
+                                                                             arrive at the end of the time step,
+                                                                             if ``False`` at the beginning
+                                                                             (determines PSC scale)
+``t_ref``                   ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
+``tau_m``                   ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
                                                             a ``double``
                                                             type in C++
-V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
+``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
 
-=========================== ======= ======================= ================ ===================================
+=============================== ==== ======================= ================== ================================
 **E-prop parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter                   Unit    Math equivalent         Default          Description
-=========================== ======= ======================= ================ ===================================
-c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
-                                                                             regularization
-f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
-                                                                             regularization
-beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
-                                                                             / pseudo-derivative of membrane
-                                                                             voltage
-gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
-                                                                             gradient / pseudo-derivative of
-                                                                             membrane voltage
-surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
-                                                                             pseudo-derivative function
-                                                                             ["piecewise_linear", "exponential",
-                                                                             "fast_sigmoid_derivative",
-                                                                             "arctan"]
-=========================== ======= ======================= ================ ===================================
+Parameter                       Unit Math equivalent         Default            Description
+=============================== ==== ======================= ================== ================================
+``c_reg``                            :math:`c_\text{reg}`                 0.0   Coefficient of firing rate
+                                                                                regularization
+``f_target``                    Hz   :math:`f^\text{target}`             10.0   Target firing rate of rate
+                                                                                regularization
+``beta``                             :math:`\beta`                        1.0   Width scaling of surrogate
+                                                                                gradient / pseudo-derivative of
+                                                                                membrane voltage
+``gamma``                            :math:`\gamma`                       0.3   Height scaling of surrogate
+                                                                                gradient / pseudo-derivative of
+                                                                                membrane voltage
+``surrogate_gradient_function``      :math:`\psi`            "piecewise_linear" Surrogate gradient /
+                                                                                pseudo-derivative function
+                                                                                ["piecewise_linear",
+                                                                                "exponential",
+                                                                                "fast_sigmoid_derivative",
+                                                                                "arctan"]
+=============================== ==== ======================= ================== ================================
 
 Recordables
 +++++++++++
 
 The following state variables evolve during simulation and can be recorded.
 
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ================
 **Neuron state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------
 State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-V_m                mV   :math:`v_j`             -70.0 Membrane voltage
-================== ==== =============== ============= ==========================================================
+================== ==== =============== ============= ================
+``V_m``            mV   :math:`v_j`             -70.0 Membrane voltage
+================== ==== =============== ============= ================
 
-================== ==== =============== ============= ==========================================================
+====================== ==== =============== ============= =========================================
 **E-prop state variables and recordables**
-----------------------------------------------------------------------------------------------------------------
-State variable     Unit Math equivalent Initial value Description
-================== ==== =============== ============= ==========================================================
-learning_signal    pA   :math:`L_j`               0.0 Learning signal
-surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of membrane voltage
-================== ==== =============== ============= ==========================================================
+---------------------------------------------------------------------------------------------------
+State variable         Unit Math equivalent Initial value Description
+====================== ==== =============== ============= =========================================
+``learning_signal``      pA :math:`L_j`               0.0 Learning signal
+``surrogate_gradient``      :math:`\psi_j`            0.0 Surrogate gradient / pseudo-derivative of
+                                                          membrane voltage
+====================== ==== =============== ============= =========================================
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -239,8 +241,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
        implementation of eligibility propagation (in preparation)
 
 .. include:: ../models/eprop_iaf.rst
@@ -270,6 +272,8 @@ EndUserDocs */
 void register_eprop_iaf_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a LIF neuron model for e-prop plasticity.
+ *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020).
  */
@@ -307,16 +311,12 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  double compute_gradient( std::vector< long >& presyn_isis,
-    const long t_previous_update,
-    const long t_previous_trigger_spike,
-    const double kappa,
-    const bool average_gradient ) override;
+  double compute_gradient( std::vector< long >&, const long, const long, const double, const bool ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
 
-  //! Pointer to member function selected for computing the surrogate gradient
+  //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_;
 
   //! Map for storing a static set of recordables.
@@ -331,7 +331,7 @@ private:
     //! Capacitance of the membrane (pF).
     double C_m_;
 
-    //! Prefactor of firing rate regularization.
+    //! Coefficient of firing rate regularization.
     double c_reg_;
 
     //! Leak / resting membrane potential (mV).
@@ -396,10 +396,10 @@ private:
     //! Membrane voltage relative to the leak membrane potential (mV).
     double v_m_;
 
-    //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
 
-    //! Binary input spike variables - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary input spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_in_;
 
     //! Default constructor.
@@ -431,13 +431,13 @@ private:
     UniversalDataLogger< eprop_iaf_bsshslm_2020 > logger_;
   };
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! Propagator matrix entry for evolving the incoming spike state variables (mathematical symbol "zeta" in user
     //! documentation).
     double P_z_in_;
 
@@ -477,7 +477,7 @@ private:
   //! Structure of state variables.
   State_ S_;
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   Variables_ V_;
 
   //! Structure of buffers.

@@ -173,6 +173,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , ismpi_name( "is_mpi" )
   , have_gsl_name( "have_gsl" )
   , have_music_name( "have_music" )
+  , have_boost_name( "have_boost" )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
   , have_hdf5_name( "have_hdf5" )
@@ -190,6 +191,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcode_skipped_no_threading_name( "skipped_no_threading" )
   , exitcode_skipped_no_gsl_name( "skipped_no_gsl" )
   , exitcode_skipped_no_music_name( "skipped_no_music" )
+  , exitcode_skipped_no_boost_name( "skipped_no_boost" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -212,53 +214,55 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" or *sd == "--debug" )
+    const std::string myarg = argv[ i ];
+
+    if ( myarg == "-d" or myarg == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.
       continue;
     }
-    if ( *sd == "--verbosity=ALL" )
+    if ( myarg == "--verbosity=ALL" )
     {
       verbosity_ = SLIInterpreter::M_ALL;
       continue;
     }
-    if ( *sd == "--verbosity=DEBUG" )
+    if ( myarg == "--verbosity=DEBUG" )
     {
       verbosity_ = SLIInterpreter::M_DEBUG;
       continue;
     }
-    if ( *sd == "--verbosity=STATUS" )
+    if ( myarg == "--verbosity=STATUS" )
     {
       verbosity_ = SLIInterpreter::M_STATUS;
       continue;
     }
-    if ( *sd == "--verbosity=INFO" )
+    if ( myarg == "--verbosity=INFO" )
     {
       verbosity_ = SLIInterpreter::M_INFO;
       continue;
     }
-    if ( *sd == "--verbosity=DEPRECATED" )
+    if ( myarg == "--verbosity=DEPRECATED" )
     {
       verbosity_ = SLIInterpreter::M_DEPRECATED;
       continue;
     }
-    if ( *sd == "--verbosity=WARNING" )
+    if ( myarg == "--verbosity=WARNING" )
     {
       verbosity_ = SLIInterpreter::M_WARNING;
       continue;
     }
-    if ( *sd == "--verbosity=ERROR" )
+    if ( myarg == "--verbosity=ERROR" )
     {
       verbosity_ = SLIInterpreter::M_ERROR;
       continue;
     }
-    if ( *sd == "--verbosity=FATAL" )
+    if ( myarg == "--verbosity=FATAL" )
     {
       verbosity_ = SLIInterpreter::M_FATAL;
       continue;
     }
-    if ( *sd == "--verbosity=QUIET" )
+    if ( myarg == "--verbosity=QUIET" )
     {
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;
@@ -330,6 +334,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_music_name, Token( new BoolDatum( false ) ) );
 #endif
 
+#ifdef HAVE_BOOST
+  statusdict->insert( have_boost_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_boost_name, Token( new BoolDatum( false ) ) );
+#endif
+
 #ifdef HAVE_LIBNEUROSIM
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( true ) ) );
 #else
@@ -382,6 +392,7 @@ SLIStartup::init( SLIInterpreter* i )
   exitcodes->insert( exitcode_skipped_no_threading_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_THREADING ) ) );
   exitcodes->insert( exitcode_skipped_no_gsl_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_GSL ) ) );
   exitcodes->insert( exitcode_skipped_no_music_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MUSIC ) ) );
+  exitcodes->insert( exitcode_skipped_no_boost_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_BOOST ) ) );
   exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( EXITCODE_SCRIPTERROR ) ) );
   exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( EXITCODE_USERABORT ) ) );

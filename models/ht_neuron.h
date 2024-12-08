@@ -63,7 +63,7 @@ namespace nest
  */
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, Hill-Tononi plasticity
+/* BeginUserDocs: neuron, Hill-Tononi plasticity, adaptation, integrate-and-fire
 
 Short description
 +++++++++++++++++
@@ -76,7 +76,7 @@ Description
 This model neuron implements a slightly modified version of the
 neuron model described in [1]_. The most important properties are:
 
-- Integrate-and-fire with threshold adaptive threshold.
+- Integrate-and-fire with adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
 - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
   beta-function (difference of exponentials) time course.

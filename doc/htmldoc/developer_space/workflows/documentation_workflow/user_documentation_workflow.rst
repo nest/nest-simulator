@@ -181,22 +181,25 @@ you will need to build the documentation locally with Sphinx.
 
 #. Navigate to the ``doc/htmldoc`` folder:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   cd nest-simulator/doc/htmldoc
+      cd nest-simulator/doc/htmldoc
 
 #. Build the docs:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   sphinx-build . ../_build/html -b html
+      sphinx-build . ../_build/html -b html
 
 
 #. Preview files. They are located in ``doc/_build/html``
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   <browser> ../_build/html/index.html
+      cd ../_build/html/
+      python3 -m http.server
+
+   Open the provided URL in your browser.
 
 .. tip::
 
@@ -206,7 +209,6 @@ you will need to build the documentation locally with Sphinx.
 
        cmake -Dwith-userdoc=ON </path/to/NEST/src>
        make docs
-
 
 
 Create a pull request

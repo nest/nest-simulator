@@ -45,6 +45,7 @@
              /eprop_iaf                     % no ArchivingNode, thus no t_spike
 	           /eprop_iaf_adapt               % no ArchivingNode, thus no t_spike
 	           /eprop_iaf_psc_delta           % no ArchivingNode, thus no t_spike
+	           /eprop_iaf_psc_delta_adapt     % no ArchivingNode, thus no t_spike
 	           /eprop_readout                 % no ArchivingNode, thus no t_spike
 	   ] def
 

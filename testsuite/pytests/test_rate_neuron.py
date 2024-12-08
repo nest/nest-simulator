@@ -33,7 +33,6 @@ import numpy as np
 
 @nest.ll_api.check_stack
 class RateNeuronTestCase(unittest.TestCase):
-
     """Check rate_neuron"""
 
     def setUp(self):

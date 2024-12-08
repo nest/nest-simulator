@@ -374,8 +374,6 @@ const Name overwrite_files( "overwrite_files" );
 const Name P( "P" );
 const Name p( "p" );
 const Name p_copy( "p_copy" );
-const Name p_primary( "p_primary" );
-const Name p_third_if_primary( "p_third_if_primary" );
 const Name p_transmit( "p_transmit" );
 const Name pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );
 const Name pairwise_bernoulli_on_target( "pairwise_bernoulli_on_target" );

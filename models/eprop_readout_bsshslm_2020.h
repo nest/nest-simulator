@@ -147,62 +147,63 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===================== ======= ===================== ================== =========================================
+========================= ======= ===================== ================== =====================================
 **Neuron parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter             Unit    Math equivalent       Default            Description
-===================== ======= ===================== ================== =========================================
-C_m                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
-E_L                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
-I_e                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
-regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
-                                                                       end of the time step, if False at the
-                                                                       beginning (determines PSC scale)
-tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
-                                                    value              voltage
-                                                    representable by a
-                                                    ``double`` type in
-                                                    C++
-===================== ======= ===================== ================== =========================================
+Parameter                 Unit    Math equivalent       Default            Description
+========================= ======= ===================== ================== =====================================
+``C_m``                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+``E_L``                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
+``I_e``                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
+``regular_spike_arrival`` Boolean                                 ``True`` If ``True``, the input spikes arrive
+                                                                           at the end of the time step, if
+                                                                           ``False`` at the beginning
+                                                                           (determines PSC scale)
+``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
+                                                        value              voltage
+                                                        representable by a
+                                                        ``double`` type in
+                                                        C++
+========================= ======= ===================== ================== =====================================
 
-===================== ======= ===================== ================== =========================================
+========== ======= ===================== ==================== =========================================
 **E-prop parameters**
-----------------------------------------------------------------------------------------------------------------
-Parameter             Unit    Math equivalent       Default            Description
-===================== ======= ===================== ================== =========================================
-loss                          :math:`E`             mean_squared_error Loss function
-                                                                       ["mean_squared_error", "cross_entropy"]
-===================== ======= ===================== ================== =========================================
+-------------------------------------------------------------------------------------------------------
+Parameter  Unit    Math equivalent       Default              Description
+========== ======= ===================== ==================== =========================================
+``loss``           :math:`E`             "mean_squared_error" Loss function
+                                                              ["mean_squared_error", "cross_entropy"]
+========== ======= ===================== ==================== =========================================
 
 Recordables
 +++++++++++
 
 The following state variables evolve during simulation and can be recorded.
 
-===================== ==== =============== ============= ==========================
+=============== ==== =============== ============= ================
 **Neuron state variables and recordables**
------------------------------------------------------------------------------------
-State variable        Unit Math equivalent Initial value Description
-===================== ==== =============== ============= ==========================
-V_m                   mV   :math:`v_j`               0.0 Membrane voltage
-===================== ==== =============== ============= ==========================
+-------------------------------------------------------------------
+State variable  Unit Math equivalent Initial value Description
+=============== ==== =============== ============= ================
+``V_m``         mV   :math:`v_j`               0.0 Membrane voltage
+=============== ==== =============== ============= ================
 
-===================== ==== =============== ============= ==========================
+========================= ==== =============== ============= ===============================
 **E-prop state variables and recordables**
------------------------------------------------------------------------------------
-State variable        Unit Math equivalent Initial value Description
-===================== ==== =============== ============= ==========================
-error_signal          mV   :math:`L_j`               0.0 Error signal
-readout_signal        mV   :math:`y_j`               0.0 Readout signal
-readout_signal_unnorm mV                             0.0 Unnormalized readout signal
-target_signal         mV   :math:`y^*_j`             0.0 Target signal
-===================== ==== =============== ============= ==========================
+--------------------------------------------------------------------------------------------
+State variable            Unit Math equivalent Initial value Description
+========================= ==== =============== ============= ===============================
+``error_signal``          mV   :math:`L_j`               0.0 Error signal
+``readout_signal``        mV   :math:`y_j`               0.0 Readout signal
+``readout_signal_unnorm`` mV                             0.0 Unnormalized readout signal
+``target_signal``         mV   :math:`y^*_j`             0.0 Target signal
+========================= ==== =============== ============= ===============================
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
+This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
@@ -216,8 +217,8 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Plesser HE, Bolten M, Diesmann M. Event-based
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
        implementation of eligibility propagation (in preparation)
 
 Sends
@@ -243,6 +244,8 @@ EndUserDocs */
 void register_eprop_readout_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a readout neuron model for e-prop plasticity.
+ *
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020).
  */
@@ -369,7 +372,7 @@ private:
     //! Membrane voltage relative to the leak membrane potential (mV).
     double v_m_;
 
-    //! Binary input spike variables - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    //! Binary input spike state variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_in_;
 
     //! Default constructor.
@@ -404,13 +407,13 @@ private:
     UniversalDataLogger< eprop_readout_bsshslm_2020 > logger_;
   };
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike variables (mathematical symbol "zeta" in user
+    //! Propagator matrix entry for evolving the incoming spike state variables (mathematical symbol "zeta" in user
     //! documentation).
     double P_z_in_;
 
@@ -476,7 +479,7 @@ private:
   //! Structure of state variables.
   State_ S_;
 
-  //! Structure of general variables.
+  //! Structure of internal variables.
   Variables_ V_;
 
   //! Structure of buffers.

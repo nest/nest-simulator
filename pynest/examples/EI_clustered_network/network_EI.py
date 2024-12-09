@@ -147,14 +147,18 @@ class ClusteredNetwork:
             "t_ref": self._params["t_ref"],
             "V_th": self._params["V_th_E"],
             "V_reset": self._params["V_r"],
-            "I_e": I_xE
-            if self._params["delta_I_xE"] == 0
-            else I_xE * nest.random.uniform(1 - self._params["delta_I_xE"] / 2, 1 + self._params["delta_I_xE"] / 2),
+            "I_e": (
+                I_xE
+                if self._params["delta_I_xE"] == 0
+                else I_xE * nest.random.uniform(1 - self._params["delta_I_xE"] / 2, 1 + self._params["delta_I_xE"] / 2)
+            ),
             "tau_syn_ex": self._params["tau_syn_ex"],
             "tau_syn_in": self._params["tau_syn_in"],
-            "V_m": self._params["V_m"]
-            if not self._params["V_m"] == "rand"
-            else self._params["V_th_E"] - 20 * nest.random.lognormal(0, 1),
+            "V_m": (
+                self._params["V_m"]
+                if not self._params["V_m"] == "rand"
+                else self._params["V_th_E"] - 20 * nest.random.lognormal(0, 1)
+            ),
         }
         I_neuron_params = {
             "E_L": self._params["E_L"],
@@ -163,14 +167,18 @@ class ClusteredNetwork:
             "t_ref": self._params["t_ref"],
             "V_th": self._params["V_th_I"],
             "V_reset": self._params["V_r"],
-            "I_e": I_xI
-            if self._params["delta_I_xE"] == 0
-            else I_xI * nest.random.uniform(1 - self._params["delta_I_xE"] / 2, 1 + self._params["delta_I_xE"] / 2),
+            "I_e": (
+                I_xI
+                if self._params["delta_I_xE"] == 0
+                else I_xI * nest.random.uniform(1 - self._params["delta_I_xE"] / 2, 1 + self._params["delta_I_xE"] / 2)
+            ),
             "tau_syn_ex": self._params["tau_syn_ex"],
             "tau_syn_in": self._params["tau_syn_in"],
-            "V_m": self._params["V_m"]
-            if not self._params["V_m"] == "rand"
-            else self._params["V_th_I"] - 20 * nest.random.lognormal(0, 1),
+            "V_m": (
+                self._params["V_m"]
+                if not self._params["V_m"] == "rand"
+                else self._params["V_th_I"] - 20 * nest.random.lognormal(0, 1)
+            ),
         }
 
         # iaf_psc_exp allows stochasticity, if not used - don't supply the parameters and use

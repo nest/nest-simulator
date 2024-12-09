@@ -40,7 +40,8 @@ public:
   double t_;              //!< point in time when spike occurred (in ms)
   double Kminus_;         //!< value of Kminus at that time
   double Kminus_triplet_; //!< value of triplet STDP Kminus at that time
-  size_t access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
+  size_t
+    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 };
 
 /**
@@ -56,7 +57,8 @@ public:
 
   double t_; //!< point in time for the history entry (in ms)
   double dw_;
-  size_t access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
+  size_t
+    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 
   friend bool operator<( const histentry_extended he, double t );
 };

@@ -12,7 +12,7 @@
 
 [![Ubuntu version](https://img.shields.io/badge/ubuntu-(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
-[![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
+[![conda-forge version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
 [![Docker Image Version](https://img.shields.io/docker/v/nest/nest-simulator?color=blue&label=docker&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/nest/nest-simulator)
 [![Virtual applicance](https://img.shields.io/badge/VM-v3.7-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
@@ -127,5 +127,3 @@ to find out how to install NEST.
 Please cite NEST if you use it in your work.
 
 - You can find all the information for [citing NEST here](https://nest-simulator.readthedocs.io/en/latest/citing-nest.html)
-
-

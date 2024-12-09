@@ -29,12 +29,43 @@
 // C++ includes:
 #include <cassert>
 #include <iostream>
+#include <vector>
 
 namespace nest
 {
 
+/**
+ * Wrap timer code for easy enabling/disabling via -Dwith-threaded-timers=ON/OFF.
+ */
+#ifdef THREADED_TIMERS
+#define TIMER( timer, tid ) timer[ tid ]
+#else
+#define TIMER( timer, tid ) \
+  if ( tid == 0 )           \
+  timer
+#endif
+
+#ifdef THREADED_TIMERS
+#define OUTPUT_TIMER( dict, name, timer ) def< ArrayDatum >( dict, name, ArrayDatum( timer.elapsed() ) )
+#else
+#define OUTPUT_TIMER( dict, name, timer ) def< double >( dict, name, timer.elapsed() )
+#endif
+
+#ifdef TIMER_DETAILED
+#define DETAILED_TIMER_START( timer, tid ) TIMER( timer, tid ).start();
+#else
+#define DETAILED_TIMER_START( timer, tid )
+#endif
+
+#ifdef TIMER_DETAILED
+#define DETAILED_TIMER_STOP( timer, tid ) TIMER( timer, tid ).stop();
+#else
+#define DETAILED_TIMER_STOP( timer, tid )
+#endif
+
+// TODO JV: Update docs
 /***********************************************************************
- * Stopwatch                                                           *
+ * SingleStopwatch                                                           *
  *   Accumulates time between start and stop, and provides             *
  *   the elapsed time with different time units.                       *
  *                                                                     *
@@ -43,7 +74,7 @@ namespace nest
  *                    - Let each thread have its own stopwatch.        *
  *                                                                     *
  *   Usage example:                                                    *
- *     Stopwatch x;                                                    *
+ *     SingleStopwatch x;                                                    *
  *     x.start();                                                      *
  *     // ... do computations for 15.34 sec                            *
  *     x.stop(); // only pauses stopwatch                              *
@@ -59,11 +90,11 @@ namespace nest
  *     // ^ intermediate timing without stopping the stopwatch         *
  *     // ... more computations 1.7643 min                             *
  *     x.stop();                                                       *
- *     x.print("Time needed ", Stopwatch::MINUTES, std::cerr);         *
+ *     x.print("Time needed ", SingleStopwatch::MINUTES, std::cerr);         *
  *     // > Time needed 1,8593 min. (on cerr)                          *
  *     // other units and output streams possible                      *
  ***********************************************************************/
-class Stopwatch
+class SingleStopwatch
 {
 public:
   typedef size_t timestamp_t;
@@ -84,7 +115,7 @@ public:
   /**
    * Creates a stopwatch that is not running.
    */
-  Stopwatch()
+  SingleStopwatch()
   {
     reset();
   }
@@ -121,7 +152,7 @@ public:
    * runtime is added. If you want only the last measurement, you
    * have to reset the timer, before stating the measurement.
    * Does not change the running state.
-   * In contrast to Stopwatch::elapsed(), only the timestamp is returned,
+   * In contrast to SingleStopwatch::elapsed(), only the timestamp is returned,
    * that is the number if microseconds as an integer.
    */
   timestamp_t elapsed_timestamp() const;
@@ -140,7 +171,7 @@ public:
    * Convenient method for writing time in seconds
    * to some ostream.
    */
-  friend std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch );
+  friend std::ostream& operator<<( std::ostream& os, const SingleStopwatch& stopwatch );
 
 private:
 #ifndef DISABLE_TIMING
@@ -156,13 +187,13 @@ private:
 };
 
 inline bool
-Stopwatch::correct_timeunit( timeunit_t t )
+SingleStopwatch::correct_timeunit( timeunit_t t )
 {
   return t == MICROSEC or t == MILLISEC or t == SECONDS or t == MINUTES or t == HOURS or t == DAYS;
 }
 
 inline void
-nest::Stopwatch::start()
+nest::SingleStopwatch::start()
 {
 #ifndef DISABLE_TIMING
   if ( not isRunning() )
@@ -175,7 +206,7 @@ nest::Stopwatch::start()
 }
 
 inline void
-nest::Stopwatch::stop()
+nest::SingleStopwatch::stop()
 {
 #ifndef DISABLE_TIMING
   if ( isRunning() )
@@ -187,7 +218,7 @@ nest::Stopwatch::stop()
 }
 
 inline bool
-nest::Stopwatch::isRunning() const
+nest::SingleStopwatch::isRunning() const
 {
 #ifndef DISABLE_TIMING
   return _running;
@@ -197,7 +228,7 @@ nest::Stopwatch::isRunning() const
 }
 
 inline double
-nest::Stopwatch::elapsed( timeunit_t timeunit ) const
+nest::SingleStopwatch::elapsed( timeunit_t timeunit ) const
 {
 #ifndef DISABLE_TIMING
   assert( correct_timeunit( timeunit ) );
@@ -207,8 +238,8 @@ nest::Stopwatch::elapsed( timeunit_t timeunit ) const
 #endif
 }
 
-inline nest::Stopwatch::timestamp_t
-nest::Stopwatch::elapsed_timestamp() const
+inline nest::SingleStopwatch::timestamp_t
+nest::SingleStopwatch::elapsed_timestamp() const
 {
 #ifndef DISABLE_TIMING
   if ( isRunning() )
@@ -227,7 +258,7 @@ nest::Stopwatch::elapsed_timestamp() const
 }
 
 inline void
-nest::Stopwatch::reset()
+nest::SingleStopwatch::reset()
 {
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
@@ -238,7 +269,7 @@ nest::Stopwatch::reset()
 }
 
 inline void
-nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+nest::SingleStopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   assert( correct_timeunit( timeunit ) );
@@ -273,8 +304,8 @@ nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os )
 #endif
 }
 
-inline nest::Stopwatch::timestamp_t
-nest::Stopwatch::get_timestamp()
+inline nest::SingleStopwatch::timestamp_t
+nest::SingleStopwatch::get_timestamp()
 {
   // works with:
   // * hambach (Linux 2.6.32 x86_64)
@@ -282,9 +313,44 @@ nest::Stopwatch::get_timestamp()
   // * MacOS 10.9
   struct timeval now;
   gettimeofday( &now, static_cast< struct timezone* >( nullptr ) );
-  return ( nest::Stopwatch::timestamp_t ) now.tv_usec
-    + ( nest::Stopwatch::timestamp_t ) now.tv_sec * nest::Stopwatch::SECONDS;
+  return ( nest::SingleStopwatch::timestamp_t ) now.tv_usec
+    + ( nest::SingleStopwatch::timestamp_t ) now.tv_sec * nest::SingleStopwatch::SECONDS;
 }
+
+class StopwatchArray
+{
+public:
+  void reset();
+
+  std::vector< double > elapsed();
+
+  SingleStopwatch&
+  operator[]( const size_t tid )
+  {
+    return timers_[ tid ];
+  }
+
+private:
+  std::vector< SingleStopwatch > timers_;
+};
+
+inline std::vector< double >
+StopwatchArray::elapsed()
+{
+  std::vector< double > times;
+  times.reserve( timers_.size() );
+  for ( auto& timer : timers_ )
+  {
+    times.push_back( timer.elapsed() );
+  }
+  return times;
+}
+
+#ifdef THREADED_TIMERS
+typedef StopwatchArray Stopwatch;
+#else
+typedef SingleStopwatch Stopwatch;
+#endif
 
 } /* namespace timer */
 #endif /* STOPWATCH_H */

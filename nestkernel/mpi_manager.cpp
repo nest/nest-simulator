@@ -834,7 +834,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
+  SingleStopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
   {
@@ -870,7 +870,7 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   }
 
   // start time measurement here
-  Stopwatch foo;
+  SingleStopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
   {
@@ -898,7 +898,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   std::vector< OffGridSpike > test_send_buffer( packet_length );
   std::vector< OffGridSpike > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
+  SingleStopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
   {
@@ -932,7 +932,7 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   // start time measurement here
-  Stopwatch foo;
+  SingleStopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
   {
@@ -969,7 +969,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   }
 
   // start time measurement here
-  Stopwatch foo;
+  SingleStopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
   {

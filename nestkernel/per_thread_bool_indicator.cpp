@@ -64,6 +64,7 @@ PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status 
 bool
 PerThreadBoolIndicator::all_false() const
 {
+  DETAILED_TIMER_START( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
 // We need two barriers here to ensure that no thread can continue and change the result
 // before all threads have determined the result.
 #pragma omp barrier
@@ -71,33 +72,43 @@ PerThreadBoolIndicator::all_false() const
   // before all threads have determined the result.
   bool ret = ( are_true_ == 0 );
 #pragma omp barrier
+
+  DETAILED_TIMER_STOP( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::all_true() const
 {
+  DETAILED_TIMER_START( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
 #pragma omp barrier
   bool ret = ( are_true_ == size_ );
 #pragma omp barrier
+  DETAILED_TIMER_STOP( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_false() const
 {
+  DETAILED_TIMER_START( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
 #pragma omp barrier
   bool ret = ( are_true_ < size_ );
 #pragma omp barrier
+
+  DETAILED_TIMER_STOP( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_true() const
 {
+  DETAILED_TIMER_START( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
 #pragma omp barrier
   bool ret = ( are_true_ > 0 );
 #pragma omp barrier
+
+  DETAILED_TIMER_STOP( kernel().simulation_manager.get_idle_stopwatch(), kernel().vp_manager.get_thread_id() );
   return ret;
 }
 

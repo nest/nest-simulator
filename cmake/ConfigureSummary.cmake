@@ -151,6 +151,13 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   endif ()
 
   message( "" )
+  if ( THREADED_TIMERS )
+    message( "Threaded timers     : Yes" )
+  else ()
+    message( "Threaded timers     : No" )
+  endif ()
+
+  message( "" )
   if ( HAVE_MUSIC )
     message( "Use MUSIC           : Yes (MUSIC ${MUSIC_VERSION})" )
     message( "    Includes        : ${MUSIC_INCLUDE_DIRS}" )

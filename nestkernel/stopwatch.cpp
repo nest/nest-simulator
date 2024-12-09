@@ -21,13 +21,25 @@
  */
 
 #include "stopwatch.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
 std::ostream&
-operator<<( std::ostream& os, const Stopwatch& stopwatch )
+operator<<( std::ostream& os, const SingleStopwatch& stopwatch )
 {
-  stopwatch.print( "", Stopwatch::SECONDS, os );
+  stopwatch.print( "", SingleStopwatch::SECONDS, os );
   return os;
+}
+
+void
+StopwatchArray::reset()
+{
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  timers_.resize( num_threads );
+  for ( size_t i = 0; i < num_threads; ++i )
+  {
+    timers_[ i ].reset();
+  }
 }
 }

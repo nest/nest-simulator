@@ -86,7 +86,7 @@ available as kernel attributes:
 +--------------------------------+----------------------------------+----------------------------------+
 |``time_communicate_target_data``|Cumulative time for core MPI      |``time_gather_target_data``       |
 |                                |communication when gathering      |                                  |
-|				 |target data                       |                                  |
+|			                	 |target data                       |                                  |
 +--------------------------------+----------------------------------+----------------------------------+
 |``time_update``                 |Time for neuron update            |``time_simulate``                 |
 +--------------------------------+----------------------------------+----------------------------------+

@@ -1800,7 +1800,9 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
     } // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    DETAILED_TIMER_START( kernel().simulation_manager.get_idle_stopwatch(), tid );
 #pragma omp barrier
+    DETAILED_TIMER_STOP( kernel().simulation_manager.get_idle_stopwatch(), tid );
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );

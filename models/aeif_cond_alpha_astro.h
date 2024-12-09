@@ -68,7 +68,7 @@ extern "C" int aeif_cond_alpha_astro_dynamics( double, const double*, double*, v
  */
 extern "C" int aeif_cond_alpha_astro_dynamics_DT0( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based, astrocyte
+/* BeginUserDocs: neuron, integrate-and-fire, adaptation, conductance-based, astrocyte
 
 Short description
 +++++++++++++++++
@@ -110,7 +110,14 @@ For implementation details of the adaptive exponential integrate-and-fire neuron
 model, see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
-See also [1]_.
+
+.. note::
+
+    The default refractory period for ``aeif`` models is zero, consistent with the model definition in
+    Brette & Gerstner [1]_.  Thus, an ``aeif`` neuron with default parameters can fire multiple spikes in a single
+    time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+
+    To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
 Parameters
 ++++++++++

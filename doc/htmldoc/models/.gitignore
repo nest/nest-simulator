@@ -3,5 +3,4 @@
 *.rst
 *.json
 # Only these files should be tracked.
-!models-main.rst
-!models-toc.rst
+!index.rst

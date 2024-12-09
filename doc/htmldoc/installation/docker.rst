@@ -1,9 +1,10 @@
 .. _docker:
 
 Docker |macos| |linux|
-----------------------
+======================
 
 Docker provides an isolated container to run applications.
+Our docker image for NEST also includes NESTML.
 
 1. If you do not have Docker installed, follow the Docker
    installation instructions for your system here:
@@ -25,7 +26,7 @@ Docker provides an isolated container to run applications.
 
 
 Usage
-
+-----
 
 You can use the docker images directly out of https://hub.docker.com/r/nest/nest-simulator
 like this:
@@ -37,12 +38,15 @@ like this:
 ``<TAG>`` can be a version of NEST ``2.20.2`` or later. Alternatively, you can use ``dev`` for the
 development branch (master).
 
+.. _docker_compose:
+
 NEST 3.2 and later
-^^^^^^^^^^^^^^^^^^
+------------------
 
-As of NEST 3.2, you can use the docker-compose feature.
+As of NEST 3.2, you can use the docker-compose feature. This feature provides options to run additional applications along with NEST.
 
-To use 'docker-compose' you need the definition file from the git repository. Download it:
+To use ``docker-compose`` you need the definition file from the git repository.
+Download it:
 
 .. code-block:: bash
 
@@ -50,7 +54,8 @@ To use 'docker-compose' you need the definition file from the git repository. Do
 
 You can then run ``docker-compose up`` with one of the following options:
 
-- NEST server
+NEST server
+~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -66,7 +71,10 @@ or
 Starts the NEST API server container and opens the corresponding port 52425. Test it with `curl localhost:52425/api`.
 See the :ref:`nest_server` documentation for more details.
 
-- NEST desktop
+.. _docker_desktop:
+
+NEST Desktop
+~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -86,7 +94,8 @@ Open NEST Desktop in the web browser using the following http link: `http://loca
 
 Visit the :doc:`NEST Desktop <desktop:index>` documentation to learn more.
 
-- Jupyter notebook with NEST
+Jupyter notebook with NEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -103,7 +112,8 @@ Starts a notebook server with pre-installed NEST. The corresponding URL is displ
 d paste into your browser.
 
 
-- Jupyter lab with NEST
+Jupyter lab with NEST
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
@@ -119,12 +129,13 @@ or
 Starts a Jupyter lab server with pre-installed NEST. The corresponding URL is displayed in the console.
 Copy and paste the URL into your browser.
 
+Remove container
+----------------
 
-
-To stop and delete running containers use `docker-compose down`.
+To stop and delete running containers use ``docker-compose down``.
 
 To run NEST 2.20.2
-^^^^^^^^^^^^^^^^^^
+------------------
 
 Jupyter notebook with NEST 2.20.2:
 
@@ -134,7 +145,7 @@ Jupyter notebook with NEST 2.20.2:
                -p 8080:8080 nest/nest-simulator:2.20.2
 
 NEST dev
-^^^^^^^^
+--------
 
 If you want to use the compose configuration for the ``dev`` NEST version, you can use the following file option:
 
@@ -143,10 +154,16 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
     wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose-dev.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
+You can specify the container mode (nest-noteobook, nest-desktop, nest-server, or nest-jupyterlab)
+This will download the docker image with the pre-installed
+NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
+After booting, a URL is presented. Click on it or copy it to your browser.
+
+
 .. _docker_win:
 
 Run NEST on Windows |windows|
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 .. important::
 

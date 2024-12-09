@@ -195,8 +195,7 @@ def ResetKernel():
     * time
     * random generators
 
-    are reset. The only exception is that dynamically loaded modules are not
-    unloaded. This may change in a future version of NEST.
+    are reset. All dynamically loaded modules (via :py:func:`.Install()`) are unloaded.
 
     """
 

@@ -41,8 +41,10 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
+#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
+#include "connection_manager_impl.h"
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
@@ -66,6 +68,8 @@
 nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()
+  , thirdconnruledict_( new Dictionary() )
+  , thirdconnbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
@@ -91,10 +95,24 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize( const bool reset_kernel )
+nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
+    // Add connection rules
+    register_conn_builder< OneToOneBuilder >( "one_to_one" );
+    register_conn_builder< AllToAllBuilder >( "all_to_all" );
+    register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+    register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+    register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+    register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
+    register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+    register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+    register_third_conn_builder< ThirdBernoulliWithPoolBuilder >( "third_factor_bernoulli_with_pool" );
+#ifdef HAVE_LIBNEUROSIM
+    register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
+
     keep_source_table_ = true;
     connections_have_changed_ = false;
     get_connections_has_been_called_ = false;
@@ -137,7 +155,7 @@ nest::ConnectionManager::initialize( const bool reset_kernel )
 }
 
 void
-nest::ConnectionManager::finalize( const bool )
+nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -146,6 +164,23 @@ nest::ConnectionManager::finalize( const bool )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    for ( auto cbf : connbuilder_factories_ )
+    {
+      delete cbf;
+    }
+    connbuilder_factories_.clear();
+    connruledict_->clear();
+
+    for ( auto tcbf : thirdconnbuilder_factories_ )
+    {
+      delete tcbf;
+    }
+    thirdconnbuilder_factories_.clear();
+    thirdconnruledict_->clear();
+  }
 }
 
 void
@@ -350,29 +385,42 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
   return user_set_delay_extrema;
 }
 
-nest::ConnBuilder*
+nest::BipartiteConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  if ( not connruledict_->known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
+  }
+
   const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  BipartiteConnBuilder* cb =
+    connbuilder_factories_.at( rule_id )->create( sources, targets, third_out, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }
 
-nest::ConnBuilder*
-nest::ConnectionManager::get_conn_builder( const std::string& name,
+nest::ThirdOutBuilder*
+nest::ConnectionManager::get_third_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  NodeCollectionPTR third,
+  ThirdInBuilder* third_in,
   const DictionaryDatum& conn_spec,
-  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
-  const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
+  if ( not thirdconnruledict_->known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
+  }
+
+  const size_t rule_id = thirdconnruledict_->lookup( name );
+  ThirdOutBuilder* cb =
+    thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }
@@ -412,14 +460,14 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   {
     throw BadProperty( "The connection specification must contain a connection rule." );
   }
-  const std::string rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( not connruledict_->known( rule_name ) )
+  if ( not connruledict_->known( rule ) )
   {
-    throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
+    throw BadProperty( String::compose( "Unknown connection rule: %1", rule ) );
   }
 
-  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
+  ConnBuilder cb( rule, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -431,8 +479,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  cb.connect();
 }
 
 
@@ -777,6 +824,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& conn_spec,
+  const DictionaryDatum& third_conn_spec,
   const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
 {
   if ( sources->empty() )
@@ -805,14 +853,15 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   {
     throw BadProperty( "The connection specification must contain a connection rule." );
   }
-  const std::string rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
-
-  if ( not connruledict_->known( rule_name ) )
+  if ( not third_conn_spec->known( names::rule ) )
   {
-    throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
+    throw BadProperty( "The third-factor connection specification must contain a connection rule." );
   }
 
-  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, third, conn_spec, syn_specs );
+  const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+
+  ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -827,8 +876,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  cb.connect();
 }
 
 
@@ -876,13 +924,13 @@ nest::ConnectionManager::connect_( Node& source,
   {
 #pragma omp atomic write
     has_primary_connections_ = true;
-    check_primary_connections_[ tid ].set_true();
+    check_primary_connections_.set_true( tid );
   }
   else if ( check_secondary_connections_[ tid ].is_false() and not is_primary )
   {
 #pragma omp atomic write
     secondary_connections_exist_ = true;
-    check_secondary_connections_[ tid ].set_true();
+    check_secondary_connections_.set_true( tid );
   }
 }
 

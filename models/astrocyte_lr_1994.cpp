@@ -83,11 +83,11 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
   // shorthand for state variables
   const double& ip3 = y[ S::IP3 ];
-  // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
-  // in De Young & Keizer (1992) and Li & Rinzel (1994)
-  const double& calc = std::max( 0.0, std::min( y[ S::Ca_astro ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double& h_ip3r = y[ S::h_IP3R ];
 
+  // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
+  // in De Young & Keizer (1992) and Li & Rinzel (1994)
+  const double calc = std::max( 0.0, std::min( y[ S::Ca_astro ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double alpha_h_ip3r =
     node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 + node.P_.Kd_IP3_2_ );
   const double beta_h_ip3r = node.P_.k_IP3R_ * calc;
@@ -123,7 +123,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , Km_SERCA_( 0.1 )    // µM
   , SIC_scale_( 1.0 )
   , SIC_th_( 0.19669 )    // µM
-  , delta_IP3_( 5.0 )     // µM
+  , delta_IP3_( 0.0002 )  // µM
   , k_IP3R_( 0.0002 )     // 1/(µM*ms)
   , rate_IP3R_( 0.006 )   // 1/ms
   , rate_L_( 0.00011 )    // 1/ms

@@ -69,9 +69,9 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::initialize( const bool reset_kernel )
+nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not reset_kernel )
+  if ( adjust_number_of_threads_or_rng_only )
   {
     return;
   }
@@ -1108,12 +1108,11 @@ nest::SimulationManager::update_()
               sw_gather_secondary_data_.start();
 #endif
               kernel().event_delivery_manager.gather_secondary_events( true );
-            }
 #ifdef TIMER_DETAILED
-            sw_gather_secondary_data_.stop();
+              sw_gather_secondary_data_.stop();
 #endif
+            }
           }
-
 
           advance_time_();
 

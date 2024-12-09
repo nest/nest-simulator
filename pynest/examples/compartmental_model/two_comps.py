@@ -42,6 +42,7 @@ soma_params = {
     "g_C": 0.0,  # soma has no parent
     "g_L": 8.924572508,  # [nS] Leak conductance
     "e_L": -75.0,  # [mV] leak reversal
+    "v_comp": -75.0,  # [mV] compartment initialization
     # ion channel params
     "gbar_Na": 4608.698576715,  # [nS] Na maximal conductance
     "e_Na": 60.0,  # [mV] Na reversal
@@ -58,6 +59,7 @@ dend_params_passive = {
     "g_C": 1.255439494,
     "g_L": 0.192992878,
     "e_L": -75.0,
+    "v_comp": -75.0,
 }
 dend_params_active = {
     # passive parameters
@@ -65,6 +67,7 @@ dend_params_active = {
     "g_C": 1.255439494,  # [nS] Coupling conductance to parent (soma here)
     "g_L": 0.192992878,  # [nS] Leak conductance
     "e_L": -70.0,  # [mV] leak reversal
+    "v_comp": -70.0,  # [mV] compartment initialization
     # ion channel params
     "gbar_Na": 17.203212493,  # [nS] Na maximal conductance
     "e_Na": 60.0,  # [mV] Na reversal

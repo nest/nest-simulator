@@ -92,7 +92,7 @@ Layer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-Layer< D >::get_status( DictionaryDatum& d ) const
+Layer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
   ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
   ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
@@ -104,6 +104,13 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   else if ( periodic_.count() == D )
   {
     ( *d )[ names::edge_wrap ] = true;
+  }
+
+  if ( nc )
+  {
+    // This is for backward compatibility with some tests and scripts
+    // TODO: Rename parameter
+    ( *d )[ names::network_size ] = nc->size();
   }
 }
 
@@ -286,12 +293,12 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( NodeCollection::const_iterator it = this->node_collection_->MPI_local_begin();
+  for ( NodeCollection::const_iterator it = this->node_collection_->rank_local_begin();
         it < this->node_collection_->end();
         ++it )
   {
     out << ( *it ).node_id << ' ';
-    get_position( ( *it ).lid ).print( out );
+    get_position( ( *it ).nc_index ).print( out );
     out << std::endl;
   }
 }
@@ -303,53 +310,52 @@ Layer< D >::dump_connections( std::ostream& out,
   AbstractLayerPTR target_layer,
   const Token& syn_model )
 {
+  // Find all connections for given sources, targets and synapse model
+  DictionaryDatum conn_filter( new Dictionary );
+  def( conn_filter, names::source, NodeCollectionDatum( node_collection ) );
+  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
+  def( conn_filter, names::synapse_model, syn_model );
+  ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
+
+  // Get positions of remote nodes
   std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
 
-  // Dictionary with parameters for get_connections()
-  DictionaryDatum conn_filter( new Dictionary );
-  def( conn_filter, names::synapse_model, syn_model );
-  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
-
-  // Avoid setting up new array for each iteration of the loop
-  std::vector< size_t > source_array( 1 );
-
-  for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-        src_iter != src_vec->end();
-        ++src_iter )
+  // Iterate over connectome and write every connection, looking up source position only if source neuron changes
+  size_t previous_source_node_id = 0; // dummy initial value, cannot be node_id of any node
+  Position< D > source_pos;           // dummy value
+  for ( const auto& entry : connectome )
   {
+    ConnectionDatum conn = getValue< ConnectionDatum >( entry );
+    const size_t source_node_id = conn.get_source_node_id();
 
-    const size_t source_node_id = src_iter->second;
-    const Position< D > source_pos = src_iter->first;
-
-    source_array[ 0 ] = source_node_id;
-    def( conn_filter, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
-    ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
-
-    // Print information about all local connections for current source
-    for ( size_t i = 0; i < connectome.size(); ++i )
+    // Search source_pos for source node only if it is a different node
+    if ( source_node_id != previous_source_node_id )
     {
-      ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
-        con_id.get_target_node_id(),
-        con_id.get_target_thread(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port() );
+      const auto it = std::find_if( src_vec->begin(),
+        src_vec->end(),
+        [ source_node_id ]( const std::pair< Position< D >, size_t >& p ) { return p.second == source_node_id; } );
+      assert( it != src_vec->end() ); // internal error if node not found
 
-      long target_node_id = getValue< long >( result_dict, names::target );
-      double weight = getValue< double >( result_dict, names::weight );
-      double delay = getValue< double >( result_dict, names::delay );
-
-      // Print source, target, weight, delay, rports
-      out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
-
-      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
-
-      out << ' ';
-      const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
-      assert( tnode_lid >= 0 );
-      tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
-      out << '\n';
+      source_pos = it->first;
+      previous_source_node_id = source_node_id;
     }
+
+    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port() );
+    const long target_node_id = getValue< long >( result_dict, names::target );
+    const double weight = getValue< double >( result_dict, names::weight );
+    const double delay = getValue< double >( result_dict, names::delay );
+    const Layer< D >* const tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
+    const long tnode_lid = tgt_layer->node_collection_->get_nc_index( target_node_id );
+    assert( tnode_lid >= 0 );
+
+    // Print source, target, weight, delay, rports
+    out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay << ' ';
+    tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
+    out << '\n';
   }
 }
 

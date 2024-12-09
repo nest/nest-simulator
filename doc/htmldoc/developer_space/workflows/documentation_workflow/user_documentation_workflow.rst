@@ -84,29 +84,37 @@ If you have not done so alrealdy first
 Set up your environment
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using the Conda package (includes everything to build NEST, including documentation)
-````````````````````````````````````````````````````````````````````````````````````
+Using the conda-forge package (includes everything to build NEST, including documentation)
+```````````````````````````````````````````````````````````````````````````````````````````
 
-For details on Conda, see :ref:`conda_tips`
+For details on installation see :ref:`conda_forge_install`
 
 .. code-block:: bash
 
     cd <nest_source_dir>/
-    conda env create -p conda/
-    conda activate conda/
+    mamba env create -p mamba/
+    mamba activate mamba/
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
-   conda deactivate
-   rm -rf conda/
+   mamba deactivate
+   rm -rf mamba/
 
 Using pip (includes packages for documentation only)
 ````````````````````````````````````````````````````
 
 If you want to install only a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:
+
+Create and activate  a Python virtual environment:
+
+.. code-block:: bash
+
+   python -m venv <myvenv>
+
+   source <myvenv>/bin/activate
 
 .. code-block:: bash
 
@@ -181,22 +189,25 @@ you will need to build the documentation locally with Sphinx.
 
 #. Navigate to the ``doc/htmldoc`` folder:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   cd nest-simulator/doc/htmldoc
+      cd nest-simulator/doc/htmldoc
 
 #. Build the docs:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   sphinx-build . ../_build/html -b html
+      sphinx-build . ../_build/html -b html
 
 
 #. Preview files. They are located in ``doc/_build/html``
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   <browser> ../_build/html/index.html
+      cd ../_build/html/
+      python3 -m http.server
+
+   Open the provided URL in your browser.
 
 .. tip::
 
@@ -206,7 +217,6 @@ you will need to build the documentation locally with Sphinx.
 
        cmake -Dwith-userdoc=ON </path/to/NEST/src>
        make docs
-
 
 
 Create a pull request

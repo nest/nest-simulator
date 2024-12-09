@@ -106,7 +106,7 @@ J_in = -g * J_ex  # amplitude of inhibitory postsynaptic potential
 # Definition of threshold rate, which is the external rate needed to fix the
 # membrane potential around its threshold, the external firing rate and the
 # rate of the poisson generator which is multiplied by the in-degree CE and
-# converted to Hz by multiplication by 1000.
+# converted to spks/s by multiplication by 1000.
 
 nu_th = theta / (J * CE * tauMem)
 nu_ex = eta * nu_th

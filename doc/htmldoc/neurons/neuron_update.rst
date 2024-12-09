@@ -9,8 +9,14 @@ Neuron update algorithm
 
    * :ref:`types_neurons`
 
-Example of flowchart + algorithm for iaf_psc_exp
-------------------------------------------------
+Example of flowchart and algorithm for ``iaf_psc_exp``
+------------------------------------------------------
+
+
+This flowchart and associated algorithms can be applied to other models as well, with only
+slight modifications.
+
+
 
 .. grid::
    :gutter: 1
@@ -32,7 +38,7 @@ Example of flowchart + algorithm for iaf_psc_exp
    .. grid-item::
       :columns: 7
 
-      **Solution via exponential integration with propagatoras**
+      **Solution via exponential integration with propagators**
 
       .. math::
 

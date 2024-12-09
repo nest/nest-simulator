@@ -98,6 +98,7 @@ Geometry
 
       Neurons are subdivided into multiple compartments, like soma, dendrite, and axon, in which inputs can be received
       across all components.
+
       .. NEAT
 
       .. dropdown:: Multi-compartment neurons
@@ -113,8 +114,21 @@ Spiking mechanism
 ~~~~~~~~~~~~~~~~~
 
 
-Spiking neuron models process synaptic inputs and generate discrete out put events which are called spikes. The mechanisms by which these
-spikes are generated can be classified with the following distinctions.
+Spiking neuron models process synaptic inputs and generate discrete output events, which are called spikes.
+The mechanisms by which these spikes are generated can be classified with the following distinctions.
+
+
+ +------------------------+-----------------------------------------+-----------------------------------------+-----------------------------------------+
+ | **Aspect**             | **Hard Threshold**                      | **Soft Threshold**                      | **Stochastic**                          |
+ +========================+=========================================+=========================================+=========================================+
+ | **Spiking Rule**       | Deterministic (all-or-nothing)          | Probabilistic or graded                 |                                         |
+ +------------------------+-----------------------------------------+-----------------------------------------+-----------------------------------------+
+ | **Transition**         | Abrupt                                  | Gradual                                 |                                         |
+ +------------------------+-----------------------------------------+-----------------------------------------+-----------------------------------------+
+ | **Mathematical Model** | Fixed threshold (V > V_th)              | Sigmoidal or probabilistic function     |                                         |
+ +------------------------+-----------------------------------------+-----------------------------------------+-----------------------------------------+
+ | **Realism**            | Idealized                               | More biologically plausible             |                                         |
+ +------------------------+-----------------------------------------+-----------------------------------------+-----------------------------------------+
 
 
 Hard threshold
@@ -177,20 +191,7 @@ Soft threshold
             whole spike wave form
 
 
-
-            +------------------------+-----------------------------------------+-----------------------------------------+
-            | **Aspect**             | **Hard Threshold**                      | **Soft Threshold**                      |
-            +========================+=========================================+=========================================+
-            | **Spiking Rule**       | Deterministic (all-or-nothing)          | Probabilistic or graded                 |
-            +------------------------+-----------------------------------------+-----------------------------------------+
-            | **Transition**         | Abrupt                                  | Gradual                                 |
-            +------------------------+-----------------------------------------+-----------------------------------------+
-            | **Mathematical Model** | Fixed threshold (V > V_th)              | Sigmoidal or probabilistic function     |
-            +------------------------+-----------------------------------------+-----------------------------------------+
-            | **Realism**            | Idealized                               | More biologically plausible             |
-            +------------------------+-----------------------------------------+-----------------------------------------+
-
-            .. dropdown:: Soft threshold
+           .. dropdown:: Soft threshold
 
                * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
                * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
@@ -222,9 +223,9 @@ Stochastic
    .. grid-item::
       :columns: 10
 
-      Stochastic spiking models do not produce deterministic spike events instead spike times are stochastic and described
-      by apoint process,with underlying time dependent firing rate that is determined by the membrane potential of a neuron.
-      Elevated membrane potential wrt the resting potential increaes the likelihood of output spikes.
+      Stochastic spiking models do not produce deterministic spike events: instead spike times are stochastic and described
+      by a point process, with an underlying time dependent firing rate that is determined by the membrane potential of a neuron.
+      Elevated membrane potential with respect to the resting potential increaes the likelihood of output spikes.
 
 
       * A point process is a mathematical framework used to describe events that occur randomly in time. In the context of stochastic spiking:
@@ -247,14 +248,14 @@ Different input mechanisms are modeled in spiking neurons . . .
 Electrical
 ^^^^^^^^^^
 
-- Gap junctions direct electrical connectons between neurons. The respecitvie membrane potetnials are instantanously
+- Gap junctions direct electrical connections between neurons. The respective membrane potentials are instantaneously
   coupled to eachother.
 
 Chemical
 ^^^^^^^^
 
-Chemical synapsed couple neurons in delayed fashion, because of the translation of conversion of electircal and chemical
-signals at the synapse. Phenomologically, This process is captured by classes of models in NEST: current and conducantce baed
+Chemical synapsed couple neurons in delayed fashion, because of the translation of conversion of electrical and chemical
+signals at the synapse. This process is captured by classes of models in NEST as current and conductance based
 synapses.
 
 .. seealso::
@@ -278,13 +279,10 @@ synapses.
      NEST convention: ``psc`` (aka CUBA)
 
      Model post-synaptic responses to incoming spikes as changes in current.
-     response of hte post syn neuron is independent of the neuronal state.
+     response of the post synaptic neuron is independent of the neuronal state.
+     Computationally, they are less intensive than conductance-based models.
 
-     see more details on ...
-     Synaptic inputs are represented as fixed currents (I) injected into the neuron.
-     These currents are independent of the membrane potential
-     and are directly added to the neuron's equation governing voltage dynamics.
-     Computationally less intensive than conductance-based models.
+     For more details see :ref:`synapse_dynamics`.
 
 - Conductance-based synapses
 
@@ -304,15 +302,11 @@ synapses.
 
      Model post-synaptic responses to incoming spikes as changes in conductances.
      response of hte post syn neuron is dependent on the neuronal state.
-
-     see more details on ...
-     Synaptic inputs are represented as changes in membrane conductance (`g`).
-     These changes depend on the opening and closing of ion channels,
-     which are often modeled based on voltage or neurotransmitter binding.
      These models capture more realistic synaptic behavior, as they account for the varying impact of
      synaptic inputs depending on the membrane potential, which can change over time.
 
 
+     For more details see :ref:`synapse_dynamics`.
 
 
 Post-synaptic input interactions
@@ -322,13 +316,9 @@ Synaptic inputs can be modeled using different kernels to represent
 how the `current or conductance` changes over time after a synaptic event.
 
 
-- synapntic kernel are normalized such that the peak value equals 1
-  the kernels differ in shape while the delta kernel describes one pulse only at the time point at arrival spike
-  the exp models a temporal decay of th post syn  response.
-  alpha and beta model both rise and decay of post syn response.
-
 .. seealso::
 
+   For more details see :ref:`response_dynamics`
 
 ..note:: graphs - add y axis peak 1 picoampere
 

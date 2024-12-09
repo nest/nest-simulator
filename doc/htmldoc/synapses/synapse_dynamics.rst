@@ -1,3 +1,5 @@
+.. _synapse_dynamics:
+
 Synapse dynamics
 ================
 
@@ -22,6 +24,10 @@ The effect of the synaptic input therefore is not depending on the state
 capacitance, and the function :math:`f(V(t))` summarizes internal
 membrane properties, such as leak potentials.
 
+These currents are independent of the membrane potential
+and are directly added to the neuron's equation governing voltage dynamics.
+
+
 Conductance-based synapses
 --------------------------
 
@@ -36,12 +42,25 @@ The input therefore has a multiplicative effect that depends on the
 state (membrane potential distance from reversal potential
 :math:`V_{r}`) of the neuron.
 
+These changes depend on the opening and closing of ion channels,
+which are often modeled based on voltage or neurotransmitter binding.
+
+
+.. _response_dynamics:
+
 Response dynamics
 -----------------
 
+
 The synaptic dynamics is specified by a kernel :math:`k(t)` that
-describes the response to an incoming spike. The dynamics in general is
-given by
+describes the response to an incoming spike.
+Synapntic kernels are normalized such that the peak value equals 1.
+The kernels differ in shape while the delta kernel describes one pulse only at the time point of the arrival spike.
+The exponential models a temporal decay of the post synaptic response.
+Alpha and beta model both model the rise and decay of post synaptic response.
+
+
+The dynamics in general is given by
 
 .. math::
 
@@ -245,6 +264,11 @@ Beta synapses
           variables follow the dynamics of `[beta1] <#beta1>`__ and
           `[beta2] <#beta2>`__ and are solved using exact integration (link to
           exact integration page) (ref to Rotter and Diesmann 1999).
+
+---
+
+---
+
 
 Weight dynamics
 ===============

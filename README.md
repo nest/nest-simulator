@@ -108,7 +108,7 @@ later.
 
 ## Installing NEST
 
-Please see the online [NEST Installation Instructions](https://nest-simulator.readthedocs.io/en/stable/installation)
+Please see the online [NEST Installation Instructions](https://nest-simulator.org/documentation/installation)
 to find out how to install NEST.
 
 ## Getting help

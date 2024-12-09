@@ -59,11 +59,11 @@ For native installations, the requirements can be simply installed via ``pip``::
 
   pip3 install Flask Flask-Cors gunicorn RestrictedPython
 
-or by installing the full NEST development environment in case you prefer using ``mamba``::
+or by installing the full NEST development environment in case you prefer using ``conda``::
 
   cd <nest-source-dir>
-  mamba env create -p mamba/
-  mamba activate mamba/
+  conda env create -p conda/
+  conda activate conda/
 
 As an alternative to a native installation, NEST Server is available from the NEST Docker image. Please check out the
 corresponding :ref:`installation instructions <docker>` for more details.

@@ -22,7 +22,7 @@ The following basic time measurements are available:
 |Name                         |Explanation                       |
 +=============================+==================================+
 |``time_construction_create`` |Cumulative time NEST spent        |
-|			      |creating	neurons and devices      |
+|			                  |creating	neurons and devices      |
 +-----------------------------+----------------------------------+
 |``time_construction_connect``|Cumulative time NEST spent        |
 |                             |creating connections              |
@@ -54,7 +54,7 @@ attributes are:
 +-----------------------+----------------------------------+
 |``local_spike_counter``|Number of spikes emitted by the   |
 |                       |neurons represented on this MPI   |
-|			|rank during the last              |
+|			            |rank during the last              |
 |                       |``Simulate()``                    |
 +-----------------------+----------------------------------+
 
@@ -82,11 +82,11 @@ available as kernel attributes:
 +================================+==================================+==================================+
 |``time_gather_target_data``     |Cumulative time for communicating |``time_communicate_prepare``      |
 |                                |connection information from       |                                  |
-|				 |postsynaptic to presynaptic side  |                                  |
+|				                 |postsynaptic to presynaptic side  |                                  |
 +--------------------------------+----------------------------------+----------------------------------+
 |``time_communicate_target_data``|Cumulative time for core MPI      |``time_gather_target_data``       |
 |                                |communication when gathering      |                                  |
-|				 |target data                       |                                  |
+|			                	 |target data                       |                                  |
 +--------------------------------+----------------------------------+----------------------------------+
 |``time_update``                 |Time for neuron update            |``time_simulate``                 |
 +--------------------------------+----------------------------------+----------------------------------+

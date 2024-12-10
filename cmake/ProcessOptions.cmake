@@ -462,6 +462,13 @@ function( NEST_PROCESS_WITH_DETAILED_TIMERS )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_THREADED_TIMERS )
+  set( THREADED_TIMERS OFF PARENT_SCOPE )
+  if ( ${with-threaded-timers} STREQUAL "ON" )
+    set( THREADED_TIMERS ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_LIBNEUROSIM )
   # Find libneurosim
   set( HAVE_LIBNEUROSIM OFF PARENT_SCOPE )

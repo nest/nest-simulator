@@ -43,18 +43,10 @@ set-gunicorn_opts() {
   # Set opts for gunicorn.
   GUNICORN_OPTS="--bind ${HOST}:${PORT}"
   GUNICORN_OPTS="${GUNICORN_OPTS} --log-file ${LOGFILE}"
-  if [ "${DAEMON}" -eq 1 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
-  fi
-  if [ "${STDOUT}" -eq 0 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
-  fi
-  if [ "${TIMEOUT}" -ne 30 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --timeout ${TIMEOUT}"
-  fi
-  if [ "${WORKERS}" -gt 1 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --workers ${WORKERS}"
-  fi
+  [[ "${DAEMON}" -eq 1 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
+  [[ "${STDOUT}" -eq 0 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
+  [[ "${TIMEOUT}" -ne 30 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --timeout ${TIMEOUT}"
+  [[ "${WORKERS}" -gt 1 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --workers ${WORKERS}"
 }
 
 start() {
@@ -65,9 +57,7 @@ start() {
     echo "NEST Server is now running at http://${HOST}:${PORT}."
     if [ "${DAEMON}" -eq 0 ]; then
       echo "Use CTRL + C to stop this service."
-      if [ "${STDOUT}" -eq 1 ]; then
-        echo "-----------------------------------------------------"
-      fi
+      [[ "${STDOUT}" -eq 1 ]] && echo "-----------------------------------------------------"
     fi
 
     set-gunicorn_opts

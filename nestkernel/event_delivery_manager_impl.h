@@ -37,7 +37,9 @@ inline void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
+  const double offset = e.get_stamp().get_offset();    // offset might already have been set on the event by the sender; make sure to preserve it when setting the stamp time
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.get_stamp().set_offset( offset );    // restore offset field
   e.set_sender( source );
   const size_t t = source.get_thread();
   const size_t ldid = source.get_local_device_id();
@@ -48,8 +50,10 @@ inline void
 EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
 {
   assert( not source.has_proxies() );
+  const double offset = e.get_stamp().get_offset();    // offset might already have been set on the event by the sender; make sure to preserve it when setting the stamp time
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
+  e.get_stamp().set_offset( offset );    // restore offset field
   const size_t t = source.get_thread();
   const size_t ldid = source.get_local_device_id();
   kernel().connection_manager.send_from_device( t, ldid, e );
@@ -72,8 +76,9 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   if ( source.has_proxies() )
   {
     local_spike_counter_[ tid ] += e.get_multiplicity();
-
+    const double offset = e.get_stamp().get_offset();    // offset might already have been set on the event by the sender; make sure to preserve it when setting the stamp time
     e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+    e.get_stamp().set_offset( offset );    // restore offset field
     e.set_sender( source );
 
     if ( source.is_off_grid() )

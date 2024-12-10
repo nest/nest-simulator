@@ -1,5 +1,5 @@
 /*
- *  eprop_learning_signal_connection_bsshslm_2020.h
+ *  eprop_learning_signal_connection.h
  *
  *  This file is part of NEST.
  *
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
-#define EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
+#ifndef EPROP_LEARNING_SIGNAL_CONNECTION_H
+#define EPROP_LEARNING_SIGNAL_CONNECTION_H
 
 // nestkernel
 #include "connection.h"
@@ -40,23 +40,19 @@ Synapse model transmitting feedback learning signals for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_learning_signal_connection_bsshslm_2020`` is an implementation of a feedback connector from
-``eprop_readout_bsshslm_2020`` readout neurons to ``eprop_iaf_bsshslm_2020`` or ``eprop_iaf_adapt_bsshslm_2020``
+``eprop_learning_signal_connection`` is an implementation of a feedback connector from
+``eprop_readout`` readout neurons to ``eprop_iaf`` or ``eprop_iaf_adapt``
 recurrent neurons that transmits the learning signals :math:`L_j^t` for eligibility propagation (e-prop) plasticity and
 has a static weight :math:`B_{jk}`.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
- * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+ * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
+ * :doc:`eprop_readout<../models/eprop_readout/>`
+ * :doc:`eprop_synapse<../models/eprop_synapse/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -120,20 +116,21 @@ See also
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_learning_signal_connection_bsshslm_2020
+.. listexamples:: eprop_learning_signal_connection
 
 EndUserDocs */
 
-void register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name );
+void register_eprop_learning_signal_connection( const std::string& name );
 
 /**
- * @brief Class implementing a feedback connection model for e-prop plasticity.
+ * @brief Class implementing a feedback connection model for e-prop plasticity with additional biological features.
  *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
- * according to Bellec et al. (2020).
+ * according to Bellec et al. (2020) with additional biological features described in
+ * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
 template < typename targetidentifierT >
-class eprop_learning_signal_connection_bsshslm_2020 : public Connection< targetidentifierT >
+class eprop_learning_signal_connection : public Connection< targetidentifierT >
 {
 
 public:
@@ -147,7 +144,7 @@ public:
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY;
 
   //! Default constructor.
-  eprop_learning_signal_connection_bsshslm_2020()
+  eprop_learning_signal_connection()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -203,11 +200,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::properties;
+constexpr ConnectionModelProperties eprop_learning_signal_connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_learning_signal_connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -216,8 +213,7 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( 
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+eprop_learning_signal_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -225,11 +221,11 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( 
 
 template < typename targetidentifierT >
 SecondaryEvent*
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_secondary_event()
+eprop_learning_signal_connection< targetidentifierT >::get_secondary_event()
 {
   return new LearningSignalConnectionEvent();
 }
 
 } // namespace nest
 
-#endif // EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
+#endif // EPROP_LEARNING_SIGNAL_CONNECTION_H

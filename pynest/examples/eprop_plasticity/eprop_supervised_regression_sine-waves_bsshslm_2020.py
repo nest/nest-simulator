@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_regression_sine-waves.py
+# eprop_supervised_regression_sine-waves_bsshslm_2020.py
 #
 # This file is part of NEST.
 #
@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to generate sine waves with e-prop
--------------------------------------------------------
+Tutorial on learning to generate sine waves with e-prop after Bellec et al. (2020)
+----------------------------------------------------------------------------------
 
 Training a regression model using supervised e-prop plasticity to generate sine waves
 
@@ -29,8 +29,7 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
-is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_ with
-additional biological features described in [3]_.
+is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
 
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_.
@@ -39,7 +38,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 network learns to reproduce with its overall spiking activity a one-dimensional, one-second-long target signal
 which is a superposition of four sine waves of different amplitudes, phases, and periods.
 
-.. image:: eprop_supervised_regression_sine-waves.png
+.. image:: eprop_supervised_regression_sine-waves_bsshslm_2020.png
    :width: 70 %
    :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
@@ -89,7 +88,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_sine-waves.png")
+    Image(filename="./eprop_supervised_regression_sine-waves_bsshslm_2020.png")
 except Exception:
     pass
 
@@ -110,13 +109,9 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
-# Even though each sample is processed independently during training, we aggregate predictions and true
-# labels across a group of samples during the evaluation phase. The number of samples in this group is
-# determined by the `group_size` parameter. This data is then used to assess the neural network's
-# performance metrics, such as average accuracy and mean error. Increasing the number of iterations enhances
-# learning performance.
+# Increasing the number of iterations enhances learning performance.
 
-group_size = 1  # number of instances over which to evaluate the learning performance
+batch_size = 1  # batch size, 1 in reference [2]
 n_iter = 200  # number of iterations, 2000 in reference [2]
 
 steps = {
@@ -124,17 +119,19 @@ steps = {
 }
 
 steps["learning_window"] = steps["sequence"]  # time steps of window with non-zero learning signals
-steps["task"] = n_iter * group_size * steps["sequence"]  # time steps of task
+steps["task"] = n_iter * batch_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
         "offset_gen": 1,  # offset since generator signals start from time step 1
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
-        "extension_sim": 3,  # extra time step to close right-open simulation time interval in Simulate()
+        "delay_rec_out": 1,  # connection delay between recurrent and output neurons
+        "delay_out_norm": 1,  # connection delay between output neurons for normalization
+        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
-steps["delays"] = steps["delay_in_rec"]  # time steps of delays
+steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
@@ -148,9 +145,12 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # Set up simulation
 # .................
 # As last step of the setup, we reset the NEST kernel to remove all existing NEST simulation settings and
-# objects and set some NEST kernel parameters.
+# objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
+    "eprop_learning_window": duration["learning_window"],
+    "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
+    "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
@@ -172,28 +172,25 @@ n_in = 100  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 1  # number of readout neurons
 
-model_nrn_rec = "eprop_iaf"
-
 params_nrn_out = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "E_L": 0.0,  # mV, leak / resting membrane potential
-    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,  # pA, external current input
+    "loss": "mean_squared_error",  # loss function
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
 }
 
 params_nrn_rec = {
-    "beta": 33.3,  # width scaling of the pseudo-derivative
+    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
-    "c_reg": 300.0 / duration["sequence"],  # coefficient of firing rate regularization
+    "c_reg": 300.0,  # coefficient of firing rate regularization
     "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 10.0,  # height scaling of the pseudo-derivative
+    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
-    "kappa": 0.97,  # low-pass filter of the eligibility trace
-    "kappa_reg": 0.97,  # low-pass filter of the firing rate for regularization
+    "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,
@@ -201,15 +198,9 @@ params_nrn_rec = {
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
-scale_factor = 1.0 - params_nrn_rec["kappa"]  # factor for rescaling due to removal of irregular spike arrival
-
-if model_nrn_rec == "eprop_iaf_adapt":
-    params_nrn_rec["adapt_beta"] = 0.0  # adaptation scaling
-
-if model_nrn_rec in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
-    params_nrn_rec["V_reset"] = -0.5  # mV, reset membrane voltage
-    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"] / scale_factor**2
-    params_nrn_rec["V_th"] = 0.5
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
+params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
 
 ####################
 
@@ -219,10 +210,13 @@ if model_nrn_rec in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
 
-nrns_rec = nest.Create(model_nrn_rec, n_rec, params_nrn_rec)
-nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
+# The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
+# that introduced it by the first letter of the authors' last names and the publication year.
+
+nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
+nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
-gen_learning_window = nest.Create("step_rate_generator")
+
 
 # %% ###########################################################################################################
 # Create recorders
@@ -249,7 +243,7 @@ params_mm_rec = {
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
     "label": "multimeter_out",
@@ -299,32 +293,25 @@ dtype_weights = np.float32  # data type of weights - for reproducing TF results 
 weights_in_rec = np.array(np.random.randn(n_in, n_rec).T / np.sqrt(n_in), dtype=dtype_weights)
 weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dtype=dtype_weights)
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
-weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights) * scale_factor
+weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
-
-if model_nrn_rec == "eprop_iaf":
-    weights_in_rec *= scale_factor
-    weights_rec_rec *= scale_factor
-    weights_out_rec *= scale_factor
-elif model_nrn_rec in ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]:
-    weights_out_rec /= scale_factor
 
 params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
-        "batch_size": 1,
-        "eta": 1e-4 * scale_factor**2,  # learning rate
-        "optimize_each_step": False,  # call optimizer every time step (True) or once per spike (False); both
-        # yield same results for gradient descent, False offers speed-up
+        "batch_size": batch_size,
+        "eta": 1e-4,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
+    "average_gradient": False,  # if True, average the gradient over the learning window
     "weight_recorder": wr,
 }
 
 params_syn_base = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_bsshslm_2020",
     "delay": duration["step"],  # ms, dendritic delay
+    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
 }
 
 params_syn_in = params_syn_base.copy()
@@ -337,15 +324,9 @@ params_syn_out = params_syn_base.copy()
 params_syn_out["weight"] = weights_rec_out
 
 params_syn_feedback = {
-    "synapse_model": "eprop_learning_signal_connection",
+    "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
     "delay": duration["step"],
     "weight": weights_out_rec,
-}
-
-params_syn_learning_window = {
-    "synapse_model": "rate_connection_delayed",
-    "delay": duration["step"],
-    "receptor_type": 1,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_rate_target = {
@@ -361,7 +342,7 @@ params_syn_static = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
@@ -369,7 +350,6 @@ nest.Connect(nrns_rec, nrns_rec, params_conn_all_to_all, params_syn_rec)  # conn
 nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
-nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection 7
 
 nest.Connect(nrns_in, sr_in, params_conn_all_to_all, params_syn_static)
 nest.Connect(nrns_rec, sr_rec, params_conn_all_to_all, params_syn_static)
@@ -388,6 +368,7 @@ input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
+input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
@@ -429,28 +410,12 @@ target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 
 
 params_gen_rate_target = {
     "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
-    "amplitude_values": np.tile(target_signal, n_iter * group_size),
+    "amplitude_values": np.tile(target_signal, n_iter * batch_size),
 }
 
 ####################
 
 nest.SetStatus(gen_rate_target, params_gen_rate_target)
-
-# %% ###########################################################################################################
-# Create learning window
-# ~~~~~~~~~~~~~~~~~~~~~~
-# Custom learning windows, in which the network learns, can be defined with an additional signal. The error
-# signal is internally multiplied with this learning window signal. Passing a learning window signal of value 1
-# opens the learning window while passing a value of 0 closes it.
-
-params_gen_learning_window = {
-    "amplitude_times": [duration["total_offset"]],
-    "amplitude_values": [1.0],
-}
-
-####################
-
-nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################
 # Force final update
@@ -531,8 +496,8 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
 target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
-target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
+readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
 
 loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 

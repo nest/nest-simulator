@@ -63,12 +63,6 @@ reset_kernel()
 }
 
 void
-enable_dryrun_mode( const size_t n_procs )
-{
-  kernel().mpi_manager.set_num_processes( n_procs );
-}
-
-void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
   kernel().logging_manager.register_logging_client( client_callback );

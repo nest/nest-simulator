@@ -879,18 +879,6 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  enable_dryrun_mode( n_procs );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
-void
 NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
 {
   kernel().mpi_manager.synchronize();
@@ -2139,7 +2127,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
-  i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
   i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );

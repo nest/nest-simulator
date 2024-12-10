@@ -49,8 +49,6 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_dryrun_mode( const size_t n_procs );
-
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
 /**

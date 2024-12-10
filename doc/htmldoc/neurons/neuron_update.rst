@@ -22,7 +22,7 @@ slight modifications.
    :gutter: 1
 
    .. grid-item::
-      :columns: 5
+      :columns: 6
 
       **Differential equations defining the model**
 
@@ -34,6 +34,19 @@ slight modifications.
 
          \tau_{syn}\frac{dI_{syn}(t)}{dt}=-I_{syn}(t)+\tau_{syn}\sum_{j}w_{j}\sum_{k}\delta(t-t_{j}^{k}-d_{j})
 
+.. grid::
+   :gutter: 1
+
+   .. grid-item::
+      :columns: 5
+
+      **State variables**
+
+      y1
+
+      y2
+
+      . . .
 
    .. grid-item::
       :columns: 7
@@ -57,7 +70,7 @@ Update dynamics in :math:`\Delta t`
     :columns: 7
     :class: sd-text-center
 
-    .. image:: ../static/img/flowchart_mixedfont.png
+    .. image:: ../static/img/mixedfont-flowchart.png
       :width: 90%
 
 

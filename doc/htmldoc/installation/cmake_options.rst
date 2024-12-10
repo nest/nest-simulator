@@ -102,7 +102,7 @@ For more details, see the :ref:`Python binding <compile_with_python>` section be
 .. _performance_cmake:
 
 Maximize performance, reduce energy consumption
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following options help to optimize NEST for maximal performance and thus reduced energy consumption.
 
@@ -126,7 +126,7 @@ The following options help to optimize NEST for maximal performance and thus red
      in place.
    * Using ``-march=native`` requires that you build NEST on the same CPU architecture as you will use to run it.
    * For the technically minded: Even just using ``-O3`` removes some ``assert()`` statements from NEST since we
-     have wrapped some of them in functions, which get eliminated due to interprocedural optimization. 
+     have wrapped some of them in functions, which get eliminated due to interprocedural optimization.
 
 
 
@@ -196,6 +196,9 @@ NEST properties
 | ``-Dtics_per_ms=[number]``                    | Specify elementary unit of time [default=1000 tics per ms].    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-threaded-timers=[OFF|ON]``           | Build with one internal timer per thread [default=ON].         |
+|                                               | Multi-threaded timers can affect the performance.              |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |

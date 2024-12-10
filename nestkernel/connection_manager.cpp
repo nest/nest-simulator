@@ -55,6 +55,7 @@
 #include "nest_names.h"
 #include "node.h"
 #include "sonata_connector.h"
+#include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
@@ -1800,7 +1801,9 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
     } // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    kernel().get_omp_synchronization_stopwatch().start();
 #pragma omp barrier
+    kernel().get_omp_synchronization_stopwatch().stop();
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );

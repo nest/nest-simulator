@@ -182,6 +182,9 @@
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
 
+/* Whether to use one NEST internal timer per thread */
+#cmakedefine THREADED_TIMERS 1
+
 /* Whether to do full logging */
 #cmakedefine ENABLE_FULL_LOGGING 1
 

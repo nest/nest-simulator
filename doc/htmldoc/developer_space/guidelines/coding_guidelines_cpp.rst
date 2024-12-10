@@ -637,12 +637,12 @@ For example, the ``stopwatch.h`` file could look like:
     } /* namespace timer */
     #endif /* STOPWATCH_H */
 
-And the corresponding ``stopwatch.cpp``:
+And the corresponding ``stopwatch_impl.h``:
 
 .. code:: cpp
 
     /*
-     *  stopwatch.cpp
+     *  stopwatch_impl.h
      *
      *  This file is part of NEST.
      *

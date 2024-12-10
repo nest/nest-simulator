@@ -287,12 +287,28 @@ public:
   MUSICManager music_manager;
   NodeManager node_manager;
   /**@}*/
+
+  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded >&
+  get_omp_synchronization_stopwatch()
+  {
+    return sw_omp_synchronization_;
+  }
+
+  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly >&
+  get_mpi_synchronization_stopwatch()
+  {
+    return sw_mpi_synchronization_;
+  }
+
 private:
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
+
+  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded > sw_omp_synchronization_;
+  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly > sw_mpi_synchronization_;
 };
 
 KernelManager& kernel();

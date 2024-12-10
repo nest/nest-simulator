@@ -182,7 +182,7 @@ will prevent the threads from moving around.
 
 Prints out the linked libraries into a file with name ``pldd-nest.out``.
 In this way, you can check whether dynamically linked librariries for
-the execution of ``nest`` is indeed used. For example, if you want to check if ``jemalloc`` is used for the network construction
+the execution of ``nest`` is indeed used. For example, you can check if ``jemalloc`` is used for the network construction
 in highly parallel simulations.
 
 .. note::

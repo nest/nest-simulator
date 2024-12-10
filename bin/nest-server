@@ -71,7 +71,8 @@ start() {
     fi
 
     set-gunicorn_opts
-    exec gunicorn nest.server:app "${GUNICORN_OPTS}"
+    # shellcheck disable=SC2086
+    exec gunicorn nest.server:app $GUNICORN_OPTS
   fi
 }
 

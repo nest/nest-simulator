@@ -59,7 +59,7 @@ Types of neurons
    :gutter: 1
 
    .. grid-item::
-     :columns: 3
+     :columns: 12
 
      For details on neuron update algorthims see: :ref:`neuron_update`
 

@@ -20,10 +20,14 @@ All about neurons in NEST
        |neuron|  Neuron types in NEST
        ^^^
 
+       * :ref:`types_neurons`
+
        This page highlights the numerous types of neuron models and their various mechanisms available in NEST, along with guides to specific
        implementations
 
-       * :ref:`types_neurons`
+
+       * :ref:`neuron_update`
+
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white

@@ -80,7 +80,7 @@ status() {
   PS_AUX="$(pgrep -af "gunicorn nest.server.app")"
   printf "PID\t\tHTTP-SOCKET\t\tLOGFILE\n"
   echo "${PS_AUX}" | head -n 1 | \
-  awk '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 6 || i == 8 ) printf $i"\t\t"}; printf "\n" }'
+    awk '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 6 || i == 8 ) printf $i"\t\t"}; printf "\n" }'
 }
 
 stop() {

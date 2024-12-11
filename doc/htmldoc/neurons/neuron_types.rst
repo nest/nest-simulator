@@ -85,7 +85,7 @@ Geometry
       The most common type of neuron model in NEST.
       Point neurons are simplified models of biological neurons that represent
       the neuron as a single point where all inputs are processed,
-      without considering their complex structure (such as dendrites and axons).
+      without considering the complex neuronal morphology (such as dendrites and axons).
 
 
    .. grid-item::
@@ -96,8 +96,9 @@ Geometry
    .. grid-item:: Multi-compartment neurons
       :columns: 4
 
-      Neurons are subdivided into multiple compartments, like soma, dendrite, and axon, in which inputs can be received
-      across all components.
+      Neurons are subdivided into multiple compartments that can represent different parts of the neuronal morphology,
+      like soma, basal and apical dendrites. Inputs can be received in all compartments and are mediated across
+      compartments via electric coupling.
 
       .. NEAT
 
@@ -114,7 +115,8 @@ Spiking mechanism
 ~~~~~~~~~~~~~~~~~
 
 
-Spiking neuron models process synaptic inputs and generate discrete output events, which are called spikes.
+Spiking neuron models process synaptic inputs and generate discrete output events, which are called action
+potentials or spikes.
 The mechanisms by which these spikes are generated can be classified with the following distinctions.
 
 
@@ -174,8 +176,9 @@ Soft threshold
           .. tab-item:: General info
             :selected:
 
-            Model aspects of  the voltage dependent conductances, thereby produce dynamics, which mimic the upswing of a spike or
-            whole spike wave form
+            Neurons with a soft threshold model aspects of the voltage dependent conductances that underlie the
+            biophysics of spike generation. Models either produce dynamics, which mimic the upswing of a spike or
+            the whole whole spike wave form
 
 
            .. dropdown:: Soft threshold
@@ -214,12 +217,6 @@ Stochastic
       by a point process, with an underlying time dependent firing rate that is determined by the membrane potential of a neuron.
       Elevated membrane potential with respect to the resting potential increaes the likelihood of output spikes.
 
-
-      * A point process is a mathematical framework used to describe events that occur randomly in time. In the context of stochastic spiking:
-
-          * Spikes are modeled as discrete events (points) in time.
-          * The rate of spiking (or intensity function) is influenced by the neuron’s state, inputs, and noise.
-
       .. dropdown::  Stochastic
 
         * gif_*
@@ -229,27 +226,27 @@ Stochastic
 Input mechanism
 ~~~~~~~~~~~~~~~
 
-NEST supports various input mechaisms to neuron models
-Different input mechanisms are modeled in spiking neurons . . .
+NEST supports various input mechanisms to neuron models. The majority of mechanisms are related to chemical synapses
+that couple neurons witha delay, but there are also electrical synapses, which couple neurons instantaneously.
 
 Electrical
 ^^^^^^^^^^
 
-- Gap junctions direct electrical connections between neurons. The respective membrane potentials are instantaneously
-  coupled to eachother.
+- Gap junctions are direct electrical connections between neurons. The respective membrane potentials are instantaneously
+  coupled to each other.
 
 Chemical
 ^^^^^^^^
 
-Chemical synapsed couple neurons in delayed fashion, because of the translation of conversion of electrical and chemical
-signals at the synapse. This process is captured by classes of models in NEST as current and conductance based
-synapses.
+Chemical synapses couple neurons in a delayed fashion, because of the conversion of electrical and chemical
+signals at the synapse. This process is captured by two major classes of models in NEST that either model input currents
+or conductances.
 
 .. seealso::
 
    :doc:`../synapses/synapse_dynamics`
 
-- Current-based synapses
+- Current-based models:
 
 
 .. grid:: 1 2 2 2
@@ -266,12 +263,11 @@ synapses.
      NEST convention: ``psc`` (aka CUBA)
 
      Model post-synaptic responses to incoming spikes as changes in current.
-     response of the post synaptic neuron is independent of the neuronal state.
-     Computationally, they are less intensive than conductance-based models.
+     The response of the post-synaptic neuron is independent of the neuronal state.
 
      For more details see :ref:`synapse_dynamics`.
 
-- Conductance-based synapses
+- Conductance-based models
 
 
 .. grid:: 1 2 2 2
@@ -288,7 +284,7 @@ synapses.
      NEST convention: ``cond`` (aka COBA)
 
      Model post-synaptic responses to incoming spikes as changes in conductances.
-     response of hte post syn neuron is dependent on the neuronal state.
+     The response of the post-synaptic neuron depends on the neuronal state.
      These models capture more realistic synaptic behavior, as they account for the varying impact of
      synaptic inputs depending on the membrane potential, which can change over time.
 
@@ -296,8 +292,8 @@ synapses.
      For more details see :ref:`synapse_dynamics`.
 
 
-Post-synaptic input interactions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Post-synaptic input responses
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Synaptic inputs can be modeled using different kernels to represent
 how the `current or conductance` changes over time after a synaptic event.
@@ -390,8 +386,8 @@ Adaptation mechanism
 
 
 
-Auxillary neurons
-~~~~~~~~~~~~~~~~~
+Auxilliary neurons
+~~~~~~~~~~~~~~~~~~
 
 
 
@@ -406,8 +402,9 @@ Auxillary neurons
    .. grid-item::
       :columns: 10
 
-      NEST provides a number of auxiallary neuron models that can be used to mimic spcecific purposes and
-      Neurons that repeat incoming spikes.
+      NEST provides a number of auxilliary neuron models that can be used for specific purposes such as repeating or
+      ignoring particular incoming spike patterns. Use cases for such functionality include testing or benchmarking
+      simulator performance, or the creation of shared spiking input patterns to neurons.
 
       .. dropdown:: Auxillary neurons
 
@@ -435,12 +432,11 @@ Precise spike timing
 
       NEST convention: ``ps``
 
-      By default, the dynamics of neuranl models are evaluated on fixed time grid that can be specified before simulation.
-      >link to kernel options
+      By default, the dynamics of neuronal models are evaluated on a fixed time grid that can be specified before simulation.
 
-      Precise neuron models instead calculate precise rather thatn grid-constrained spike times. These models are more computataionally heavy,
-      but provide better resolution to spike times than a grid-constrained model.
-      Spiking neuron networks are often chaotic systems such that infinitismal shift in spike time might lead to changes in
+      Precise neuron models instead calculate precise rather than grid-constrained spike times. These models are more
+      computationally heavy,  but provide better resolution to spike times than a grid-constrained model.
+      Spiking neuron networks are often chaotic systems such that an infinitesimal shift in spike time might lead to changes in
       the overall network dynamics.
 
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.

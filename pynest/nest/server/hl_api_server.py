@@ -357,6 +357,7 @@ def error_handler(e):
     return jsonify(e.to_dict()), e.status_code
 
 
+# It comments lines starting with 'import' or 'from' otherwise the line number of error would be wrong.
 def clean_code(source):
     codes = source.split("\n")
     codes_cleaned = []  # noqa

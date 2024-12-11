@@ -401,9 +401,6 @@ def get_lineno(err, tb_idx):
         lineno = err.lineno
     else:
         tb = sys.exc_info()[2]
-        # if hasattr(tb, "tb_lineno") and tb.tb_lineno is not None:
-        #     lineno = tb.tb_lineno
-        # else:
         lineno = traceback.extract_tb(tb)[tb_idx][1]
     return lineno
 

@@ -68,28 +68,6 @@ Stopwatch< detailed_timer,
 }
 
 template < StopwatchVerbosity detailed_timer >
-StopwatchBase::timestamp_t
-Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::elapsed_timestamp() const
-{
-  return timers_[ kernel().vp_manager.get_thread_id() ].elapsed_timestamp();
-}
-
-template < StopwatchVerbosity detailed_timer >
-void
-Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::print( const char* msg,
-  StopwatchBase::timeunit_t timeunit,
-  std::ostream& os ) const
-{
-  timers_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
-}
-
-template < StopwatchVerbosity detailed_timer >
 void
 Stopwatch< detailed_timer,
   StopwatchType::Threaded,

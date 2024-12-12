@@ -733,9 +733,9 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 {
-  kernel().get_omp_synchronization_stopwatch().start();
+  kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_stopwatch().stop();
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
 
   sw_communicate_prepare_.start();
 
@@ -745,9 +745,9 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
   kernel().connection_manager.collect_compressed_spike_data( tid );
   sw_gather_target_data_.stop();
 
-  kernel().get_omp_synchronization_stopwatch().start();
+  kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier // wait for all threads to finish sorting
-  kernel().get_omp_synchronization_stopwatch().stop();
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {
@@ -762,11 +762,16 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
+    kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+
     kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
-    kernel().get_omp_synchronization_stopwatch().start();
+
+    kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_stopwatch().stop();
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+
 #pragma omp single
     {
       kernel().mpi_manager.communicate_recv_counts_secondary_events();
@@ -799,9 +804,9 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
 
-  kernel().get_omp_synchronization_stopwatch().start();
+  kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_stopwatch().stop();
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
   {
     kernel().connection_manager.clear_compressed_spike_data_map();
@@ -879,9 +884,9 @@ nest::SimulationManager::update_()
           // MUSIC *before* MUSIC time is advanced
 
           // wait until all threads are done -> synchronize
-          kernel().get_omp_synchronization_stopwatch().start();
+          kernel().get_omp_synchronization_run_stopwatch().start();
 #pragma omp barrier
-          kernel().get_omp_synchronization_stopwatch().stop();
+          kernel().get_omp_synchronization_run_stopwatch().stop();
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
@@ -944,9 +949,9 @@ nest::SimulationManager::update_()
               done.push_back( done_p );
             }
             // parallel section ends, wait until all threads are done -> synchronize
-            kernel().get_omp_synchronization_stopwatch().start();
+            kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-            kernel().get_omp_synchronization_stopwatch().stop();
+            kernel().get_omp_synchronization_simulation_stopwatch().stop();
 
 // the following block is executed by a single thread
 // the other threads wait at the end of the block
@@ -1006,9 +1011,9 @@ nest::SimulationManager::update_()
             Node* node = i->get_node();
             node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
           }
-          kernel().get_omp_synchronization_stopwatch().start();
+          kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-          kernel().get_omp_synchronization_stopwatch().stop();
+          kernel().get_omp_synchronization_simulation_stopwatch().stop();
 #pragma omp single
           {
             kernel().sp_manager.update_structural_plasticity();
@@ -1045,38 +1050,31 @@ nest::SimulationManager::update_()
         sw_update_.stop();
 
         // parallel section ends, wait until all threads are done -> synchronize
-        kernel().get_omp_synchronization_stopwatch().start();
+        kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-        kernel().get_omp_synchronization_stopwatch().stop();
+        kernel().get_omp_synchronization_simulation_stopwatch().stop();
 
         // the following block is executed by the master thread only
         // the other threads are enforced to wait at the end of the block
-
-        // gather and deliver only at end of slice, i.e., end of min_delay step
-        if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        {
-          if ( kernel().connection_manager.has_primary_connections() )
-          {
-            sw_gather_spike_data_.start();
 #pragma omp master
+        {
+          // gather and deliver only at end of slice, i.e., end of min_delay step
+          if ( to_step_ == kernel().connection_manager.get_min_delay() )
+          {
+            if ( kernel().connection_manager.has_primary_connections() )
             {
+              sw_gather_spike_data_.start();
               kernel().event_delivery_manager.gather_spike_data();
+              sw_gather_spike_data_.stop();
             }
-            sw_gather_spike_data_.stop();
-          }
-          if ( kernel().connection_manager.secondary_connections_exist() )
-          {
-            sw_gather_secondary_data_.start();
-#pragma omp master
+            if ( kernel().connection_manager.secondary_connections_exist() )
             {
+              sw_gather_secondary_data_.start();
               kernel().event_delivery_manager.gather_secondary_events( true );
+              sw_gather_secondary_data_.stop();
             }
-            sw_gather_secondary_data_.stop();
           }
-        }
 
-#pragma omp master
-        {
           advance_time_();
 
           if ( print_time_ )
@@ -1100,9 +1098,9 @@ nest::SimulationManager::update_()
 #ifdef HAVE_SIONLIB
         kernel().io_manager.post_step_hook();
         // enforce synchronization after post-step activities of the recording backends
-        kernel().get_omp_synchronization_stopwatch().start();
+        kernel().get_omp_synchronization_run_stopwatch().start();
 #pragma omp barrier
-        kernel().get_omp_synchronization_stopwatch().stop();
+        kernel().get_omp_synchronization_run_stopwatch().stop();
 #endif
 
         const double end_current_update = sw_simulate_.elapsed();

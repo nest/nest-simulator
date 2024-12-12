@@ -32,46 +32,51 @@
 #include "dictutils.h"
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <vector>
 
 namespace nest
 {
 
-constexpr bool use_detailed_timers = TIMER_DETAILED;
-constexpr bool use_threaded_timers = THREADED_TIMERS;
+// TODO JV: Set this variable via cmake instead
+#ifdef TIMER_DETAILED
+constexpr bool use_detailed_timers = true;
+#else
+constexpr bool use_detailed_timers = false;
+#endif
+#ifdef THREADED_TIMERS
+constexpr bool use_threaded_timers = true;
+#else
+constexpr bool use_threaded_timers = false;
+#endif
 
-// TODO JV: Update docs
-/***********************************************************************
- * StopwatchBase                                                           *
- *   Accumulates time between start and stop, and provides             *
- *   the elapsed time with different time units.                       *
- *                                                                     *
- *   Partly inspired by com.google.common.base.Stopwatch.java          *
- *   Not thread-safe: - Do not share stopwatches among threads.        *
- *                    - Let each thread have its own stopwatch.        *
- *                                                                     *
- *   Usage example:                                                    *
- *     StopwatchBase x;                                                    *
- *     x.start();                                                      *
- *     // ... do computations for 15.34 sec                            *
- *     x.stop(); // only pauses stopwatch                              *
- *     x.print("Time needed "); // > Time needed 15.34 sec.            *
- *     x.start(); // resumes stopwatch                                 *
- *     // ... next computations for 11.22 sec                          *
- *     x.stop();                                                       *
- *     x.print("Time needed "); // > Time needed 26,56 sec.            *
- *     x.reset(); // reset to default values                           *
- *     x.start(); // starts the stopwatch from 0                       *
- *     // ... computation 5.7 sec                                      *
- *     x.print("Time "); // > Time 5.7 sec.                            *
- *     // ^ intermediate timing without stopping the stopwatch         *
- *     // ... more computations 1.7643 min                             *
- *     x.stop();                                                       *
- *     x.print("Time needed ", StopwatchBase::MINUTES, std::cerr);         *
- *     // > Time needed 1,8593 min. (on cerr)                          *
- *     // other units and output streams possible                      *
- ***********************************************************************/
+/********************************************************************************
+ * Stopwatch                                                                    *
+ *   Accumulates time between start and stop, and provides the elapsed time     *
+ *   with different time units. Either runs multi-threaded or only on master.   *
+ *                                                                              *
+ *   Usage example:                                                             *
+ *     Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > x;    *
+ *     x.start();                                                               *
+ *     // ... do computations for 15.34 sec                                     *
+ *     x.stop(); // only pauses stopwatch                                       *
+ *     x.print("Time needed "); // > Time needed 15.34 sec.                     *
+ *     x.start(); // resumes stopwatch                                          *
+ *     // ... next computations for 11.22 sec                                   *
+ *     x.stop();                                                                *
+ *     x.print("Time needed "); // > Time needed 26,56 sec.                     *
+ *     x.reset(); // reset to default values                                    *
+ *     x.start(); // starts the stopwatch from 0                                *
+ *     // ... computation 5.7 sec                                               *
+ *     x.print("Time "); // > Time 5.7 sec.                                     *
+ *     // ^ intermediate timing without stopping the stopwatch                  *
+ *     // ... more computations 1.7643 min                                      *
+ *     x.stop();                                                                *
+ *     x.print("Time needed ", StopwatchBase::MINUTES, std::cerr);              *
+ *     // > Time needed 1,8593 min. (on cerr)                                   *
+ *     // other units and output streams possible                               *
+ ********************************************************************************/
 class StopwatchBase
 {
 public:
@@ -111,26 +116,12 @@ public:
   bool isRunning() const;
 
   /**
-   * Returns the time elapsed between the start and stop of the
-   * stopwatch. If it is running, it returns the time from start
-   * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurement, you
-   * have to reset the timer, before stating the measurement.
+   * Returns the time elapsed between the start and stop of the stopwatch in the given unit. If it is running, it
+   * returns the time from start until now. If the stopwatch is run previously, the previous runtime is added. If you
+   * want only the last measurement, you have to reset the timer, before stating the measurement.
    * Does not change the running state.
    */
   double elapsed( timeunit_t timeunit = SECONDS ) const;
-
-  /**
-   * Returns the time elapsed between the start and stop of the
-   * stopwatch. If it is running, it returns the time from start
-   * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurement, you
-   * have to reset the timer, before stating the measurement.
-   * Does not change the running state.
-   * In contrast to StopwatchBase::elapsed(), only the timestamp is returned,
-   * that is the number if microseconds as an integer.
-   */
-  timestamp_t elapsed_timestamp() const;
 
   /**
    * Resets the stopwatch.
@@ -158,36 +149,36 @@ private:
   /**
    * Returns current time in microseconds since EPOCH.
    */
-  static timestamp_t get_timestamp();
+  static size_t get_current_time();
 };
 
 inline void
-nest::StopwatchBase::start()
+StopwatchBase::start()
 {
 #ifndef DISABLE_TIMING
   if ( not isRunning() )
   {
-    _prev_elapsed += _end - _beg;  // store prev. time, if we resume
-    _end = _beg = get_timestamp(); // invariant: _end >= _beg
-    _running = true;               // we start running
+    _prev_elapsed += _end - _beg;     // store prev. time, if we resume
+    _end = _beg = get_current_time(); // invariant: _end >= _beg
+    _running = true;                  // we start running
   }
 #endif
 }
 
 inline void
-nest::StopwatchBase::stop()
+StopwatchBase::stop()
 {
 #ifndef DISABLE_TIMING
   if ( isRunning() )
   {
-    _end = get_timestamp(); // invariant: _end >= _beg
-    _running = false;       // we stopped running
+    _end = get_current_time(); // invariant: _end >= _beg
+    _running = false;          // we stopped running
   }
 #endif
 }
 
 inline bool
-nest::StopwatchBase::isRunning() const
+StopwatchBase::isRunning() const
 {
 #ifndef DISABLE_TIMING
   return _running;
@@ -197,36 +188,28 @@ nest::StopwatchBase::isRunning() const
 }
 
 inline double
-nest::StopwatchBase::elapsed( timeunit_t timeunit ) const
+StopwatchBase::elapsed( timeunit_t timeunit ) const
 {
 #ifndef DISABLE_TIMING
-  return 1.0 * elapsed_timestamp() / timeunit;
-#else
-  return 0.0;
-#endif
-}
-
-inline nest::StopwatchBase::timestamp_t
-nest::StopwatchBase::elapsed_timestamp() const
-{
-#ifndef DISABLE_TIMING
+  size_t time_elapsed;
   if ( isRunning() )
   {
     // get intermediate elapsed time; do not change _end, to be const
-    return get_timestamp() - _beg + _prev_elapsed;
+    time_elapsed = get_current_time() - _beg + _prev_elapsed;
   }
   else
   {
     // stopped before, get time of current measurement + last measurements
-    return _end - _beg + _prev_elapsed;
+    time_elapsed = _end - _beg + _prev_elapsed;
   }
+  return time_elapsed / timeunit;
 #else
-  return static_cast< timestamp_t >( 0 );
+  return 0.;
 #endif
 }
 
 inline void
-nest::StopwatchBase::reset()
+StopwatchBase::reset()
 {
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
@@ -237,7 +220,7 @@ nest::StopwatchBase::reset()
 }
 
 inline void
-nest::StopwatchBase::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+StopwatchBase::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   double e = elapsed( timeunit );
@@ -271,13 +254,14 @@ nest::StopwatchBase::print( const char* msg, timeunit_t timeunit, std::ostream& 
 #endif
 }
 
-inline nest::StopwatchBase::timestamp_t
-nest::StopwatchBase::get_timestamp()
+inline size_t
+StopwatchBase::get_current_time()
 {
+  // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
   struct timeval now;
   gettimeofday( &now, static_cast< struct timezone* >( nullptr ) );
-  return ( nest::StopwatchBase::timestamp_t ) now.tv_usec
-    + ( nest::StopwatchBase::timestamp_t ) now.tv_sec * nest::StopwatchBase::SECONDS;
+  return ( StopwatchBase::timestamp_t ) now.tv_usec
+    + ( StopwatchBase::timestamp_t ) now.tv_sec * StopwatchBase::SECONDS;
 }
 
 inline std::ostream&
@@ -351,17 +335,6 @@ public:
     return elapsed;
   }
 
-  StopwatchBase::timestamp_t
-  elapsed_timestamp() const
-  {
-    StopwatchBase::timestamp_t elapsed = 0;
-#pragma omp master
-    {
-      elapsed = timer_.elapsed_timestamp();
-    };
-    return elapsed;
-  }
-
   void
   reset()
   {
@@ -406,11 +379,6 @@ class Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly, std::e
   {
     return 0;
   }
-  StopwatchBase::timestamp_t
-  elapsed_timestamp() const
-  {
-    return 0;
-  }
   void
   reset()
   {
@@ -450,11 +418,6 @@ class Stopwatch< detailed_timer,
   {
     return 0;
   }
-  StopwatchBase::timestamp_t
-  elapsed_timestamp() const
-  {
-    return 0;
-  }
   void
   reset()
   {
@@ -488,8 +451,6 @@ public:
   bool isRunning() const;
 
   double elapsed( StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS ) const;
-
-  StopwatchBase::timestamp_t elapsed_timestamp() const;
 
   void reset();
 

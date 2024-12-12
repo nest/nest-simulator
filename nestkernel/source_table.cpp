@@ -230,9 +230,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       }
     }
   }
-  kernel().get_omp_synchronization_stopwatch().start();
+  kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_stopwatch().stop();
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {

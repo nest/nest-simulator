@@ -556,7 +556,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::elapsed_timestamp() const
+    nest::Stopwatch::elapsed_us() const
     {
     #ifndef DISABLE_TIMING
       if ( isRunning() )
@@ -622,7 +622,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::get_timestamp()
+    nest::Stopwatch::get_current_time()
     {
       // works with:
       // * hambach (Linux 2.6.32 x86_64)

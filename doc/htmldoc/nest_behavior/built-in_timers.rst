@@ -107,3 +107,7 @@ available as kernel attributes:
 |                                |buffers of the corresponding      |                                  |
 |                                |postsynaptic neurons              |                                  |
 +--------------------------------+----------------------------------+----------------------------------+
+
+
+with-mpi-sync-timer
+with-threaded-timers

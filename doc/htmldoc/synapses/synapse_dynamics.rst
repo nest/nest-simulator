@@ -3,15 +3,21 @@
 Synapse dynamics
 ================
 
-Models for synaptic dynamics are distinguished by two different
-features:
+The dynamics of synaptic interactions between neurons can be characterized in terms of three distinct factors:
 
-#. whether they describe a current (psc) or conductance (cond)
+- the postsynaptic response to a single, isolated presynaptic spike,
+- the dynamics of synaptic weights (aka synaptic plasticity), as well as
+- their across-trial variability  (aka synaptic stochasticity).
 
-#. the temporal response to an incoming spike.
+
+Postsynaptic response to a single presynaptic spike
+--------------------------------------------------
+
+Voltage dependence
+~~~~~~~~~~~~~~~~~~
 
 Current-based synapses
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 Current-based synapses model an input current :math:`I_{syn}(t)` that is
 fed as an additive term in the equation for the subthreshold membrane
@@ -24,17 +30,14 @@ The effect of the synaptic input therefore is not depending on the state
 capacitance, and the function :math:`f(V(t))` summarizes internal
 membrane properties, such as leak potentials.
 
-These currents are independent of the membrane potential
-and are directly added to the neuron's equation governing voltage dynamics.
-
 
 Conductance-based synapses
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Conductance-based synapses model input currents indirectly via the
 dynamics of a conductance :math:`g_{syn}(t)`. This conductance is
-multiplied with the membrane potential :math:`V(t)` of the neuron to
-yield the current :math:`g_{syn}(t)\,(V(t)-V_{r})`:
+multipled with the distance of the membrane potential :math:`V(t)` from the reversal (Nernst) potential
+:math:`V_\mathsf{r}` to yield the current :math:`g_{syn}(t)\,(V(t)-V_{r})`:
 
 .. math:: \tau\frac{dV(t)}{dt}=f(V(t))+\frac{1}{C_{m}}\,g_{syn}(t)\,(V(t)-V_{r})\,.
 
@@ -42,22 +45,18 @@ The input therefore has a multiplicative effect that depends on the
 state (membrane potential distance from reversal potential
 :math:`V_{r}`) of the neuron.
 
-These changes depend on the opening and closing of ion channels,
-which are often modeled based on voltage or neurotransmitter binding.
+The time dependence of the conductance :math:`g_\mathsf{s}(t)` describes the opening and closing of ion channels.
 
+.. _time_dependence:
 
-.. _response_dynamics:
+Time dependence
+~~~~~~~~~~~~~~~
 
-Response dynamics
------------------
-
-
-The synaptic dynamics is specified by a kernel :math:`k(t)` that
-describes the response to an incoming spike.
+The time dependence of the postsynaptic response to a single presynaptic spike is specified by a kernel :math:`k(t)`.
 Synapntic kernels are normalized such that the peak value equals 1.
-The kernels differ in shape while the delta kernel describes one pulse only at the time point of the arrival spike.
-The exponential models a temporal decay of the post synaptic response.
-Alpha and beta model both model the rise and decay of post synaptic response.
+The kernels differ in shape while the delta kernel describes one pulse only at the time point of the spike arrival.
+The exponential kernel models a temporal decay of the post synaptic response.
+Alpha- and beta-function kernels, in addition, account for the finite rise time of the postsynaptic response.
 
 
 The dynamics in general is given by
@@ -69,13 +68,14 @@ The dynamics in general is given by
 
 where :math:`\ast` denotes a temporal convolution with presynaptic spike
 trains :math:`s_{j}(t)=\sum_{k}\delta(t-t_{j}^{k})` defined by spike
-times :math:`t_{j}^{k}`. :math:`w_{j}` denotes the synaptic weight to
-presynaptic neuron :math:`j`
+times :math:`t_{j}^{k}`. :math:`w_{j}` denotes the weight of the connection from presynaptic neuron :math:`j`
+
 
 .. _delta_synapse:
 
-Delta synapses
-~~~~~~~~~~~~~~
+Delta kernel
+^^^^^^^^^^^^
+
 
 .. grid:: 1 2 2 2
 
@@ -87,17 +87,17 @@ Delta synapses
    .. grid-item::
       :columns: 10
 
-      For delta synapses (delta), there is no synaptic filtering taking place.
-      This corresponds to a kernel
+      In case synaptic filtering can be neglected, the kernel
 
       .. math:: k(t)=\delta(t)
 
-      that is a delta distribution.
+      can be regarded as a Dirac delta function.
+
 
 .. _exp_synapse:
 
-Exponential synapses
-~~~~~~~~~~~~~~~~~~~~
+Exponential kernel
+^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
@@ -114,14 +114,28 @@ Exponential synapses
 
        .. tab-item:: General info
 
-          The filter kernel for exponential synapses (exp) is an exponential
+          The exponential kernel
 
-          .. math:: k(t)=\exp(-t/\tau_{syn})\Theta(t)
+          .. math::
+
+            k(t) = exp(-t/\tau_\mathsf{s})\Theta(t)
+
+          with Heaviside function :math:`\Theta(t)` and time constant :math:`\tau_\mathsf{s}` represents
+          the solution of the ordinary first-order differential equation
+
+          .. math::
+
+            \tau_\mathsf{s} \frac{dk(t)}{dt} = - k(t) + \tau_\mathsf{s} \delta(t)
+
+          with Dirac delta function $\delta(t)$ and initial condition $k(-\infty)=0$.
+          Note that the kernel is defined such that its peak value at time $t=0$ is $1$.
+
+
 
           with Heaviside function :math:`\Theta(t)=0` for :math:`t<0` and
           :math:`\Theta(t)=1` for :math:`t\geq0`, and synaptic time constant
           :math:`\tau_{syn}`. The kernel is normalized to have a peak value
-          :math:`k(0)=1`\ (TODO check if correct). The kernel corresponds to the
+          :math:`k(0)=1`\. The kernel corresponds to the
           solution of the ordinary first-order differential equation
 
           .. math:: \tau_{syn}\frac{dk(t)}{dt}=-k(t)+\tau_{syn}\delta(t)\label{eq:exp_dyn}
@@ -139,8 +153,8 @@ Exponential synapses
 
 .. _alpha_synapse:
 
-Alpha synapses
-~~~~~~~~~~~~~~
+Alpha-function kernel
+^^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
@@ -171,9 +185,8 @@ Alpha synapses
 
           .. math::
 
-             \begin{aligned}
-             \tau_{syn}\frac{dk(t)}{dt} & =-k(t)+e\,\kappa(t)\label{eq:alpha1}\\
-             \tau_{syn}\frac{d\kappa(t)}{dt} & =-\kappa(t)+\tau_{syn}\delta(t)\label{eq:alpha2}\end{aligned}
+             \kappa' = - 1/\tau_\mathsf{s} \kappa + \frac{e}{\tau_\mathsf{s}} \delta(t) \\
+             k' = \kappa -1/\tau_\mathsf{s} k
 
           with Dirac input at :math:`t=0` and initial conditions
           :math:`\kappa(-\infty)=k(-\infty)=0`. The alpha kernel therefore
@@ -199,10 +212,11 @@ Alpha synapses
           `[alpha2] <#alpha2>`__ and are solved using exact integration (link to
           exact integration page) (ref to Rotter and Diesmann 1999).
 
+
 .. _beta_synapse:
 
-Beta synapses
-~~~~~~~~~~~~~
+Beta-function kernel
+^^^^^^^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 2
 
@@ -220,7 +234,33 @@ Beta synapses
        .. tab-item:: General info
 
           Beta synapses are defined by a kernel that is the difference of two
-          exponentials (TODO check how it is normalized in NEST, the description
+          exponentials.
+
+          **Tom**
+
+          The maximum of the beta kernel
+
+          .. math::
+
+            k(t) = \alpha ( \mathsf{exp}(-at) - \mathsf{exp}(-bt)) \Theta(t)
+
+          is at
+
+          .. math::
+
+            t^* = \frac{\mathsf{ln}(a)-\mathsf{ln}(b)}{a-b}
+
+          and not a :math:`t=a` as said in ``iaf_cond_beta``.
+
+          Exactly because of this, I find it somewhat confusing to use the subscripts "rise" and "decay" here.
+          If you decide to stick with this, then make sure that :math:`\tau_\mathsf{rise}=1/b` and
+          :math:`\tau_\mathsf{decay}=1/a`,
+          and not the other way around (the time constant of the the first term in the difference of exponentials
+          determines the duration of the decay, not of the rise).
+
+          **end Tom**
+
+          (TODO check how it is normalized in NEST, the description
           at
           https://nest-simulator.readthedocs.io/en/stable/models/iaf_cond_beta.html
           is strange because the kernel does not have a peak at
@@ -232,6 +272,17 @@ Beta synapses
           by :math:`\tau_{syn,rise}` and :math:`\tau_{syn,decay}`, respectively.
           The kernel corresponds to the solution of the system of ordinary
           differential equations
+
+          **tom:**
+
+          .. math::
+
+            \kappa' = -a \kappa + \beta \delta(t) \\
+            k' = \kappa - b k
+
+          with :math:`\beta = \alpha (b-a)`
+
+          **end Tom**
 
           .. math::
 
@@ -264,6 +315,50 @@ Beta synapses
           variables follow the dynamics of `[beta1] <#beta1>`__ and
           `[beta2] <#beta2>`__ and are solved using exact integration (link to
           exact integration page) (ref to Rotter and Diesmann 1999).
+
+
+
+Synaptic plasticity
+-------------------
+
+Static synapse
+~~~~~~~~~~~~~~
+
+Short term plasticity
+~~~~~~~~~~~~~~~~~~~~~
+
+?? Long-term potentiation (LTP) and depression (LTD)
+(Do we really have any models of LTP/LTD that do not belong to the category of STDP?)
+
+Spike-timing dependent plasticity (STDP)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Three-factor plasticity
+~~~~~~~~~~~~~~~~~~~~~~~
+
+(e.g., clopath*, urbanczik*, eprop*, jonke*, *dopamine*, ...)
+
+Structural plasticity
+~~~~~~~~~~~~~~~~~~~~~
+(We can regard structural plasticity as an extreme case of synaptic-weight dynamics, where weights switch between a finite value and zero.)
+
+
+Synaptic stochasticity
+-----------------------
+
+(e.g., bernoulli_synapse, quantal_stp_synapse)
+
+~~~~~~~
+
+Models for synaptic dynamics are distinguished by two different
+features:
+
+#. whether they describe a current (psc) or conductance (cond)
+
+#. the temporal response to an incoming spike.
+
+
+
 
 ---
 

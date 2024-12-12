@@ -301,7 +301,7 @@ how the `current or conductance` changes over time after a synaptic event.
 
 .. seealso::
 
-   For more details see :ref:`response_dynamics`
+   For more details see :ref:`time_dependence`
 
 ..note:: graphs - add y axis peak 1 picoampere
 

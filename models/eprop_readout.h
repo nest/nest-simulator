@@ -25,8 +25,8 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_archiving_node_readout.h"
 #include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
@@ -255,7 +255,7 @@ void register_eprop_readout( const std::string& name );
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
  * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
-class eprop_readout : public EpropArchivingNodeReadout
+class eprop_readout : public EpropArchivingNodeReadout< false >
 {
 
 public:
@@ -313,12 +313,6 @@ private:
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
   long get_eprop_isi_trace_cutoff() const override;
-
-  //! Compute the error signal based on the mean-squared error loss.
-  void compute_error_signal_mean_squared_error( const long lag );
-
-  //! Compute the error signal based on a loss function.
-  void ( eprop_readout::*compute_error_signal )( const long lag );
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout >;

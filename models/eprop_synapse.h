@@ -468,7 +468,7 @@ eprop_synapse< targetidentifierT >::check_connection( Node& s,
   ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  t.register_eprop_connection( false );
+  t.register_eprop_connection();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }

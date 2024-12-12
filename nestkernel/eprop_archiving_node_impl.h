@@ -50,10 +50,11 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::register_eprop_connection( const bool is_bsshslm_2020_model )
+EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
   ++eprop_indegree_;
 
+  // TODO: NEED TO GET THIS FIXED
   const long t_first_entry = is_bsshslm_2020_model ? get_shift() : -delay_rec_out_;
 
   const auto it_hist = get_update_history( t_first_entry );

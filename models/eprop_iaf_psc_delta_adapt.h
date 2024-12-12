@@ -25,8 +25,8 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
@@ -381,7 +381,7 @@ void register_eprop_iaf_psc_delta_adapt( const std::string& name );
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
  * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
-class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent
+class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent< false >
 {
 
 public:

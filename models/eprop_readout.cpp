@@ -201,8 +201,6 @@ eprop_readout::pre_run_hook()
 
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
-  compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
-
   const double dt = Time::get_resolution().get_ms();
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
@@ -241,7 +239,8 @@ eprop_readout::update( Time const& origin, const long from, const long to )
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + S_.z_in_ + V_.P_v_m_ * S_.v_m_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
-    ( this->*compute_error_signal )( lag );
+    S_.readout_signal_ = S_.v_m_ + P_.E_L_;
+    S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 
     S_.target_signal_ *= S_.learning_window_signal_;
     S_.readout_signal_ *= S_.learning_window_signal_;
@@ -249,8 +248,8 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
-    append_new_eprop_history_entry( t, false );
-    write_error_signal_to_history( t, S_.error_signal_, false );
+    append_new_eprop_history_entry( t );
+    write_error_signal_to_history( t, S_.error_signal_ );
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
@@ -262,17 +261,6 @@ eprop_readout::update( Time const& origin, const long from, const long to )
   kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
 
   return;
-}
-
-/* ----------------------------------------------------------------
- * Error signal functions
- * ---------------------------------------------------------------- */
-
-void
-eprop_readout::compute_error_signal_mean_squared_error( const long lag )
-{
-  S_.readout_signal_ = S_.v_m_ + P_.E_L_;
-  S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
 /* ----------------------------------------------------------------

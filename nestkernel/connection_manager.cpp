@@ -906,8 +906,12 @@ nest::ConnectionManager::connect_( Node& source,
 
   const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
   if ( eprop_archiving
-    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
-      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+    and not( true /*
+         dynamic_cast< EpropArchivingNodeRecurrent<false>* >( &target )
+      or dynamic_cast< EpropArchivingNodeRecurrent<true>* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout<false>* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout<true>* >( &target ) */
+      ) )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }

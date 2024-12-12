@@ -494,7 +494,7 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection( const bool is_bsshslm_2020_model = true );
+  virtual void register_eprop_connection();
 
   /**
    * @brief Retrieves the temporal shift of the signal.

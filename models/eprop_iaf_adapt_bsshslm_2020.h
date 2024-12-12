@@ -25,8 +25,8 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -292,7 +292,7 @@ void register_eprop_iaf_adapt_bsshslm_2020( const std::string& name );
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
  * threshold adaptation for e-prop plasticity according to Bellec et al. (2020).
  */
-class eprop_iaf_adapt_bsshslm_2020 : public EpropArchivingNodeRecurrent
+class eprop_iaf_adapt_bsshslm_2020 : public EpropArchivingNodeRecurrent< true >
 {
 
 public:

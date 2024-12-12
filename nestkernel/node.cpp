@@ -219,7 +219,7 @@ Node::register_stdp_connection( double, double )
 }
 
 void
-Node::register_eprop_connection( const bool )
+Node::register_eprop_connection()
 {
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }

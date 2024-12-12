@@ -89,9 +89,8 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
       eta_first_ = new_eta;
     }
     n_eta_change_ += 1;
+    eta_ = new_eta;
   }
-
-  eta_ = new_eta;
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;

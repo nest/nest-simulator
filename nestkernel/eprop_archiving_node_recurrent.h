@@ -251,6 +251,10 @@ public:
   //! Average firing rate.
   double f_av_;
 
+protected:
+  long model_dependent_history_shift_() const override;
+  bool hist_shift_required_() const override;
+
 private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;
@@ -280,6 +284,28 @@ EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
 {
   n_spikes_ = 0;
 }
+
+template < bool hist_shift_required >
+long
+EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shift_() const
+{
+  if constexpr ( hist_shift_required )
+  {
+    return get_shift();
+  }
+  else
+  {
+    return -delay_rec_out_;
+  }
+}
+
+template < bool hist_shift_required >
+bool
+EpropArchivingNodeRecurrent< hist_shift_required >::hist_shift_required_() const
+{
+  return hist_shift_required;
+}
+
 
 }
 

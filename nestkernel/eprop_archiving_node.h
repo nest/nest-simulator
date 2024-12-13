@@ -70,8 +70,7 @@ public:
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0,
-    const bool erase = false ) override;
+    const long eprop_isi_trace_cutoff = 0 ) override;
 
   /**
    * Retrieves the update history entry for a specific time step.
@@ -108,6 +107,16 @@ public:
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
 protected:
+  //! return correct shift for history depending on whether it is a normal or a bsshslm_2020 model
+  virtual long model_dependent_history_shift_() const = 0;
+
+  /**
+   * Provide access to template flag from base class
+   *
+   * @todo This should be removed once we revise the class structure.
+   */
+  virtual bool hist_shift_required_() const = 0;
+
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
 

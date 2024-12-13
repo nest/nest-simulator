@@ -77,6 +77,10 @@ public:
    * @param error_signal The error signal.
    */
   void write_error_signal_to_history( long time_step, const double error_signal );
+
+protected:
+  long model_dependent_history_shift_() const override;
+  bool hist_shift_required_() const override;
 };
 
 template < bool hist_shift_required >
@@ -113,6 +117,27 @@ EpropArchivingNodeReadout< hist_shift_required >::write_error_signal_to_history(
 
   auto it_hist = get_eprop_history( time_step );
   it_hist->error_signal_ = error_signal;
+}
+
+template < bool hist_shift_required >
+long
+EpropArchivingNodeReadout< hist_shift_required >::model_dependent_history_shift_() const
+{
+  if constexpr ( hist_shift_required )
+  {
+    return get_shift();
+  }
+  else
+  {
+    return -delay_rec_out_;
+  }
+}
+
+template < bool hist_shift_required >
+bool
+EpropArchivingNodeReadout< hist_shift_required >::hist_shift_required_() const
+{
+  return hist_shift_required;
 }
 
 }

@@ -786,7 +786,7 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::network_size, size() );
-  sw_construction_create_.output_timer( d, names::time_construction_create );
+  sw_construction_create_.output_timer( d, names::time_construction_create, names::time_construction_create_cpu );
 }
 
 void

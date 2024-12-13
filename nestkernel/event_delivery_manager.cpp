@@ -190,9 +190,11 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   ( *dict )[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
 
-  sw_collocate_spike_data_.output_timer( dict, names::time_collocate_spike_data );
-  sw_communicate_spike_data_.output_timer( dict, names::time_communicate_spike_data );
-  sw_communicate_target_data_.output_timer( dict, names::time_communicate_target_data );
+  sw_collocate_spike_data_.output_timer( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
+  sw_communicate_spike_data_.output_timer(
+    dict, names::time_communicate_spike_data, names::time_collocate_spike_data_cpu );
+  sw_communicate_target_data_.output_timer(
+    dict, names::time_communicate_target_data, names::time_communicate_target_data_cpu );
 }
 
 void

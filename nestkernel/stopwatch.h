@@ -73,24 +73,28 @@ constexpr bool use_threaded_timers = false;
  *     // ^ intermediate timing without stopping the stopwatch                  *
  *     // ... more computations 1.7643 min                                      *
  *     x.stop();                                                                *
- *     x.print("Time needed ", StopwatchBase::MINUTES, std::cerr);              *
+ *     x.print("Time needed ", StopwatchBase< clock_type >::MINUTES, std::cerr);              *
  *     // > Time needed 1,8593 min. (on cerr)                                   *
  *     // other units and output streams possible                               *
  ********************************************************************************/
+namespace timers
+{
+enum timeunit_t : size_t
+{
+  NANOSEC = 1,
+  MICROSEC = NANOSEC * 1000,
+  MILLISEC = MICROSEC * 1000,
+  SECONDS = MILLISEC * 1000,
+  MINUTES = SECONDS * 60,
+  HOURS = MINUTES * 60,
+  DAYS = HOURS * 24
+};
+
+template < size_t clock_type >
 class StopwatchBase
 {
 public:
   typedef size_t timestamp_t;
-
-  enum timeunit_t : size_t
-  {
-    MICROSEC = 1,
-    MILLISEC = MICROSEC * 1000,
-    SECONDS = MILLISEC * 1000,
-    MINUTES = SECONDS * 60,
-    HOURS = MINUTES * 60,
-    DAYS = HOURS * 24
-  };
 
   /**
    * Creates a stopwatch that is not running.
@@ -137,7 +141,7 @@ public:
    * Convenient method for writing time in seconds
    * to some ostream.
    */
-  friend std::ostream& operator<<( std::ostream& os, const StopwatchBase& stopwatch );
+  // friend std::ostream& operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch );
 
 private:
 #ifndef DISABLE_TIMING
@@ -152,8 +156,9 @@ private:
   static size_t get_current_time();
 };
 
+template < size_t clock_type >
 inline void
-StopwatchBase::start()
+StopwatchBase< clock_type >::start()
 {
 #ifndef DISABLE_TIMING
   if ( not isRunning() )
@@ -165,8 +170,9 @@ StopwatchBase::start()
 #endif
 }
 
+template < size_t clock_type >
 inline void
-StopwatchBase::stop()
+StopwatchBase< clock_type >::stop()
 {
 #ifndef DISABLE_TIMING
   if ( isRunning() )
@@ -177,8 +183,9 @@ StopwatchBase::stop()
 #endif
 }
 
+template < size_t clock_type >
 inline bool
-StopwatchBase::isRunning() const
+StopwatchBase< clock_type >::isRunning() const
 {
 #ifndef DISABLE_TIMING
   return _running;
@@ -187,8 +194,9 @@ StopwatchBase::isRunning() const
 #endif
 }
 
+template < size_t clock_type >
 inline double
-StopwatchBase::elapsed( timeunit_t timeunit ) const
+StopwatchBase< clock_type >::elapsed( timeunit_t timeunit ) const
 {
 #ifndef DISABLE_TIMING
   size_t time_elapsed;
@@ -202,14 +210,15 @@ StopwatchBase::elapsed( timeunit_t timeunit ) const
     // stopped before, get time of current measurement + last measurements
     time_elapsed = _end - _beg + _prev_elapsed;
   }
-  return time_elapsed / timeunit;
+  return static_cast< double >( time_elapsed ) / timeunit;
 #else
   return 0.;
 #endif
 }
 
+template < size_t clock_type >
 inline void
-StopwatchBase::reset()
+StopwatchBase< clock_type >::reset()
 {
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
@@ -219,8 +228,9 @@ StopwatchBase::reset()
 #endif
 }
 
+template < size_t clock_type >
 inline void
-StopwatchBase::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   double e = elapsed( timeunit );
@@ -254,21 +264,24 @@ StopwatchBase::print( const char* msg, timeunit_t timeunit, std::ostream& os ) c
 #endif
 }
 
+template < size_t clock_type >
 inline size_t
-StopwatchBase::get_current_time()
+StopwatchBase< clock_type >::get_current_time()
 {
   // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
-  struct timeval now;
-  gettimeofday( &now, static_cast< struct timezone* >( nullptr ) );
-  return ( StopwatchBase::timestamp_t ) now.tv_usec
-    + ( StopwatchBase::timestamp_t ) now.tv_sec * StopwatchBase::SECONDS;
+  timespec now;
+  clock_gettime( clock_type, &now );
+  return now.tv_nsec + now.tv_sec * timeunit_t::SECONDS;
 }
 
+/*template< size_t clock_type >
 inline std::ostream&
-operator<<( std::ostream& os, const StopwatchBase& stopwatch )
+operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch )
 {
-  stopwatch.print( "", StopwatchBase::timeunit_t::SECONDS, os );
+  stopwatch.print( "", timeunit_t::SECONDS, os );
   return os;
+}*/
+
 }
 
 enum StopwatchVerbosity
@@ -294,23 +307,23 @@ class Stopwatch
 {
 public:
   void
-  output_timer( DictionaryDatum& d, const Name& name )
-  {
-    def< double >( d, name, timer_.elapsed() );
-  }
-
-  void
   start()
   {
 #pragma omp master
-    timer_.start();
+    {
+      walltime_timer_.start();
+      cputime_timer_.start();
+    }
   }
 
   void
   stop()
   {
 #pragma omp master
-    timer_.stop();
+    {
+      walltime_timer_.stop();
+      cputime_timer_.stop();
+    }
   }
 
   bool
@@ -319,18 +332,18 @@ public:
     bool isRunning = false;
 #pragma omp master
     {
-      isRunning = timer_.isRunning();
+      isRunning = walltime_timer_.isRunning();
     };
     return isRunning;
   }
 
   double
-  elapsed( StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS ) const
+  elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const
   {
     double elapsed = 0.;
 #pragma omp master
     {
-      elapsed = timer_.elapsed( timeunit );
+      elapsed = walltime_timer_.elapsed( timeunit );
     };
     return elapsed;
   }
@@ -339,20 +352,31 @@ public:
   reset()
   {
 #pragma omp master
-    timer_.reset();
+    {
+      walltime_timer_.reset();
+      cputime_timer_.reset();
+    }
   }
 
   void
   print( const char* msg = "",
-    StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS,
+    timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const
   {
 #pragma omp master
-    timer_.print( msg, timeunit, os );
+    walltime_timer_.print( msg, timeunit, os );
+  }
+
+  void
+  output_timer( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name )
+  {
+    def< double >( d, walltime_name, walltime_timer_.elapsed() );
+    def< double >( d, cputime_name, cputime_timer_.elapsed() );
   }
 
 private:
-  StopwatchBase timer_;
+  timers::StopwatchBase< CLOCK_MONOTONIC > walltime_timer_;
+  timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
 /** If the user deactivated detailed timers, Stopwatch instance with the detailed flag will become an empty Stopwatch,
@@ -361,6 +385,7 @@ private:
 template <>
 class Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly, std::enable_if< not use_detailed_timers > >
 {
+public:
   void
   start()
   {
@@ -375,7 +400,7 @@ class Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly, std::e
     return false;
   }
   double
-  elapsed( StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS ) const
+  elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
   {
     return 0;
   }
@@ -384,9 +409,11 @@ class Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly, std::e
   {
   }
   void
-  print( const char* msg = "",
-    StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS,
-    std::ostream& os = std::cout ) const
+  print( const char* = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
+  {
+  }
+  void
+  output_timer( DictionaryDatum&, const Name&, const Name& )
   {
   }
 };
@@ -400,6 +427,7 @@ class Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers
     and ( detailed_timer == StopwatchVerbosity::Detailed and not use_detailed_timers ) > >
 {
+public:
   void
   start()
   {
@@ -414,7 +442,7 @@ class Stopwatch< detailed_timer,
     return false;
   }
   double
-  elapsed( StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS ) const
+  elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
   {
     return 0;
   }
@@ -423,9 +451,11 @@ class Stopwatch< detailed_timer,
   {
   }
   void
-  print( const char* msg = "",
-    StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS,
-    std::ostream& os = std::cout ) const
+  print( const char* = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
+  {
+  }
+  void
+  output_timer( DictionaryDatum&, const Name&, const Name& )
   {
   }
 };
@@ -435,31 +465,40 @@ class Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >
 {
 public:
-  void
-  output_timer( DictionaryDatum& d, const Name& name )
-  {
-    std::vector< double > times( timers_.size() );
-    std::transform(
-      timers_.begin(), timers_.end(), times.begin(), []( const StopwatchBase& timer ) { return timer.elapsed(); } );
-    def< ArrayDatum >( d, name, ArrayDatum( times ) );
-  }
-
   void start();
 
   void stop();
 
   bool isRunning() const;
 
-  double elapsed( StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS ) const;
+  double elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const;
 
   void reset();
 
   void print( const char* msg = "",
-    StopwatchBase::timeunit_t timeunit = StopwatchBase::timeunit_t::SECONDS,
+    timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const;
 
+  void
+  output_timer( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name )
+  {
+    std::vector< double > wall_times( walltime_timers_.size() );
+    std::transform( walltime_timers_.begin(),
+      walltime_timers_.end(),
+      wall_times.begin(),
+      []( const timers::StopwatchBase< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
+    def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
+    std::vector< double > cpu_times( cputime_timers_.size() );
+    std::transform( cputime_timers_.begin(),
+      cputime_timers_.end(),
+      cpu_times.begin(),
+      []( const timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
+    def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
+  }
+
 private:
-  std::vector< StopwatchBase > timers_;
+  std::vector< timers::StopwatchBase< CLOCK_MONOTONIC > > walltime_timers_;
+  std::vector< timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
 };
 
 } /* namespace timer */

@@ -33,7 +33,10 @@ Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers
     and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::start()
 {
-  timers_[ kernel().vp_manager.get_thread_id() ].start();
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].start();
+  cputime_timers_[ kernel().vp_manager.get_thread_id() ].start();
 }
 
 template < StopwatchVerbosity detailed_timer >
@@ -43,7 +46,10 @@ Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers
     and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::stop()
 {
-  timers_[ kernel().vp_manager.get_thread_id() ].stop();
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
+  cputime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
 }
 
 template < StopwatchVerbosity detailed_timer >
@@ -53,7 +59,9 @@ Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers
     and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::isRunning() const
 {
-  return timers_[ kernel().vp_manager.get_thread_id() ].isRunning();
+  kernel().vp_manager.assert_thread_parallel();
+
+  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].isRunning();
 }
 
 template < StopwatchVerbosity detailed_timer >
@@ -61,10 +69,26 @@ double
 Stopwatch< detailed_timer,
   StopwatchType::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::elapsed( StopwatchBase::timeunit_t
+    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::elapsed( timers::timeunit_t
     timeunit ) const
 {
-  return timers_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+  kernel().vp_manager.assert_thread_parallel();
+
+  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+}
+
+template < StopwatchVerbosity detailed_timer >
+void
+Stopwatch< detailed_timer,
+  StopwatchType::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::print( const char* msg,
+  timers::timeunit_t timeunit,
+  std::ostream& os ) const
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
 }
 
 template < StopwatchVerbosity detailed_timer >
@@ -74,11 +98,15 @@ Stopwatch< detailed_timer,
   std::enable_if_t< use_threaded_timers
     and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::reset()
 {
+  kernel().vp_manager.assert_single_threaded();
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
-  timers_.resize( num_threads );
+  walltime_timers_.resize( num_threads );
+  cputime_timers_.resize( num_threads );
   for ( size_t i = 0; i < num_threads; ++i )
   {
-    timers_[ i ].reset();
+    walltime_timers_[ i ].reset();
+    cputime_timers_[ i ].reset();
   }
 }
 }

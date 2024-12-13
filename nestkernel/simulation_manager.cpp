@@ -474,14 +474,15 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::min_update_time, min_update_time_ );
   def< double >( d, names::max_update_time, max_update_time_ );
 
-  sw_simulate_.output_timer( d, names::time_simulate );
-  sw_communicate_prepare_.output_timer( d, names::time_communicate_prepare );
-  sw_gather_spike_data_.output_timer( d, names::time_gather_spike_data );
-  sw_gather_secondary_data_.output_timer( d, names::time_gather_secondary_data );
-  sw_update_.output_timer( d, names::time_update );
-  sw_gather_target_data_.output_timer( d, names::time_gather_target_data );
-  sw_deliver_spike_data_.output_timer( d, names::time_deliver_spike_data );
-  sw_deliver_secondary_data_.output_timer( d, names::time_deliver_secondary_data );
+  sw_simulate_.output_timer( d, names::time_simulate, names::time_simulate_cpu );
+  sw_communicate_prepare_.output_timer( d, names::time_communicate_prepare, names::time_communicate_prepare_cpu );
+  sw_gather_spike_data_.output_timer( d, names::time_gather_spike_data, names::time_gather_spike_data_cpu );
+  sw_gather_secondary_data_.output_timer( d, names::time_gather_secondary_data, names::time_gather_secondary_data_cpu );
+  sw_update_.output_timer( d, names::time_update, names::time_update_cpu );
+  sw_gather_target_data_.output_timer( d, names::time_gather_target_data, names::time_gather_target_data_cpu );
+  sw_deliver_spike_data_.output_timer( d, names::time_deliver_spike_data, names::time_deliver_spike_data_cpu );
+  sw_deliver_secondary_data_.output_timer(
+    d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
   def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
   def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
   def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );

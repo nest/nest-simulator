@@ -111,7 +111,6 @@ nest::KernelManager::prepare()
     manager->prepare();
   }
 
-  sw_omp_synchronization_construction_.reset();
   sw_omp_synchronization_simulation_.reset();
   sw_mpi_synchronization_.reset();
 }
@@ -205,9 +204,11 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
     manager->get_status( dict );
   }
 
-  sw_omp_synchronization_construction_.output_timer( dict, names::time_omp_synchronization_construction );
-  sw_omp_synchronization_simulation_.output_timer( dict, names::time_omp_synchronization_simulation );
-  sw_mpi_synchronization_.output_timer( dict, names::time_mpi_synchronization );
+  sw_omp_synchronization_construction_.output_timer(
+    dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
+  sw_omp_synchronization_simulation_.output_timer(
+    dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
+  sw_mpi_synchronization_.output_timer( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void

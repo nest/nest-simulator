@@ -54,6 +54,7 @@ iaf_cond_beta
 iaf_cond_exp
 iaf_cond_exp_sfa_rr
 iaf_psc_alpha
+iaf_psc_alpha_hom
 iaf_psc_alpha_multisynapse
 iaf_psc_alpha_ps
 iaf_psc_delta

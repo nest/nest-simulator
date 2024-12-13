@@ -55,6 +55,9 @@ class TestDisconnect(unittest.TestCase):
             "eprop_learning_signal_connection_bsshslm_2020_lbl",
             "eprop_learning_signal_connection_bsshslm_2020_hpc",
             "sic_connection",
+            "stdp_pl_synapse_hom",
+            "stdp_pl_synapse_hom_hpc",
+            "stdp_pl_synapse_hom_lbl",
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

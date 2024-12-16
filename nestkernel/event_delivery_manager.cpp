@@ -192,7 +192,7 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 
   sw_collocate_spike_data_.output_timer( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
   sw_communicate_spike_data_.output_timer(
-    dict, names::time_communicate_spike_data, names::time_collocate_spike_data_cpu );
+    dict, names::time_communicate_spike_data, names::time_communicate_spike_data_cpu );
   sw_communicate_target_data_.output_timer(
     dict, names::time_communicate_target_data, names::time_communicate_target_data_cpu );
 }

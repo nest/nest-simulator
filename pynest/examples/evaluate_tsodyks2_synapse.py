@@ -89,8 +89,8 @@ fac_params = {"U": 0.1, "u": 0.1, "x": 1.0, "tau_fac": 1000.0, "tau_rec": 100.0,
 ###############################################################################
 # Now we assign the parameter set to the synapse models.
 
-tsodyks_params = dict(fac_params, synapse_model="tsodyks_synapse")  # for tsodyks_synapse
-tsodyks2_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
+tsodyks_params = dict(dep_params, synapse_model="tsodyks_synapse")  # for tsodyks_synapse
+tsodyks2_params = dict(dep_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
 
 ###############################################################################
 # Create three neurons.

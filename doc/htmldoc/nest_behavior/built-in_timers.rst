@@ -95,11 +95,9 @@ If detailed timers are active, the following time measurements are available as 
 |                                |buffers of the corresponding      |                                  |
 |                                |postsynaptic neurons              |                                  |
 +--------------------------------+----------------------------------+----------------------------------+
-|``time_communicate_spike_data`` |Time for communicating spikes     |``time_gather_spike_data``        |
-|                                |between compute nodes             |                                  |
+|``time_omp_synchronization_construction`` |Synchronization time of threads during network construction. |``time_construction_create``, ``time_construction_connect``, ``time_communicate_prepare``        |
 +--------------------------------+----------------------------------+----------------------------------+
-|``time_communicate_spike_data`` |Time for communicating spikes     |``time_gather_spike_data``        |
-|                                |between compute nodes             |                                  |
+|``time_omp_synchronization_simulation`` |Synchronization time of threads during simulation. |``time_simulate``        |
 +--------------------------------+----------------------------------+----------------------------------+
 
 MPI synchronization timer

@@ -885,9 +885,9 @@ nest::SimulationManager::update_()
           // MUSIC *before* MUSIC time is advanced
 
           // wait until all threads are done -> synchronize
-          kernel().get_omp_synchronization_run_stopwatch().start();
+          kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-          kernel().get_omp_synchronization_run_stopwatch().stop();
+          kernel().get_omp_synchronization_simulation_stopwatch().stop();
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
@@ -1099,9 +1099,9 @@ nest::SimulationManager::update_()
 #ifdef HAVE_SIONLIB
         kernel().io_manager.post_step_hook();
         // enforce synchronization after post-step activities of the recording backends
-        kernel().get_omp_synchronization_run_stopwatch().start();
+        kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-        kernel().get_omp_synchronization_run_stopwatch().stop();
+        kernel().get_omp_synchronization_simulation_stopwatch().stop();
 #endif
 
         const double end_current_update = sw_simulate_.elapsed();

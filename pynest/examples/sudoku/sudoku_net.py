@@ -232,6 +232,6 @@ class SudokuNet:
         Parameters
         ----------
         rate : float
-            average spike frequency in Hz
+            average spike rate in spks/s
         """
         self.noise.rate = rate

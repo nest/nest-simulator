@@ -90,7 +90,7 @@ enum timeunit_t : size_t
   DAYS = HOURS * 24
 };
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 class StopwatchBase
 {
 public:
@@ -156,7 +156,7 @@ private:
   static size_t get_current_time();
 };
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline void
 StopwatchBase< clock_type >::start()
 {
@@ -170,7 +170,7 @@ StopwatchBase< clock_type >::start()
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline void
 StopwatchBase< clock_type >::stop()
 {
@@ -183,7 +183,7 @@ StopwatchBase< clock_type >::stop()
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline bool
 StopwatchBase< clock_type >::isRunning() const
 {
@@ -194,7 +194,7 @@ StopwatchBase< clock_type >::isRunning() const
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline double
 StopwatchBase< clock_type >::elapsed( timeunit_t timeunit ) const
 {
@@ -216,7 +216,7 @@ StopwatchBase< clock_type >::elapsed( timeunit_t timeunit ) const
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline void
 StopwatchBase< clock_type >::reset()
 {
@@ -228,7 +228,7 @@ StopwatchBase< clock_type >::reset()
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline void
 StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
 {
@@ -264,7 +264,7 @@ StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::o
 #endif
 }
 
-template < size_t clock_type >
+template < clockid_t clock_type >
 inline size_t
 StopwatchBase< clock_type >::get_current_time()
 {
@@ -274,13 +274,13 @@ StopwatchBase< clock_type >::get_current_time()
   return now.tv_nsec + now.tv_sec * timeunit_t::SECONDS;
 }
 
-/*template< size_t clock_type >
+template< clockid_t clock_type >
 inline std::ostream&
 operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch )
 {
   stopwatch.print( "", timeunit_t::SECONDS, os );
   return os;
-}*/
+}
 
 }
 

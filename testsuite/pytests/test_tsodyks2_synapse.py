@@ -121,7 +121,7 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         n_steps = 1 + int(np.ceil(self.simulation_duration / self.resolution))
         w_log = []
 
-        t_lastspike = 0.0
+        t_lastspike = -1.0
         R_ = 1.0  # fraction of synaptic resources available for transmission in the range [0..1]
         u_ = self.synapse_parameters["U"]
         for time_in_simulation_steps in range(n_steps):
@@ -130,19 +130,20 @@ class Tsodyks2SynapseTest(unittest.TestCase):
                 # Adjusting the current time to make it exact.
                 t_spike = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
 
-                # Evaluating the depression rule.
-                h = t_spike - t_lastspike
-                R_decay = np.exp(-h / self.synapse_parameters["tau_rec"])
-                if self.synapse_parameters["tau_fac"] < 1e-10:
-                    u_decay = 0.0
-                else:
-                    u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
+                if t_lastspike >= 0.0:
+                    # Evaluating the depression rule.
+                    h = t_spike - t_lastspike
+                    R_decay = np.exp(-h / self.synapse_parameters["tau_rec"])
+                    if self.synapse_parameters["tau_fac"] < 1e-10:
+                        u_decay = 0.0
+                    else:
+                        u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
+
+                    R_ = 1.0 + (R_ - R_ * u_ - 1.0) * R_decay
+                    u_ = self.synapse_parameters["U"] + u_ * (1.0 - self.synapse_parameters["U"]) * u_decay
 
                 w = R_ * u_ * absolute_weight
                 w_log.append(w)
-
-                R_ = 1.0 + (R_ - R_ * u_ - 1.0) * R_decay
-                u_ = self.synapse_parameters["U"] + u_ * (1.0 - self.synapse_parameters["U"]) * u_decay
 
                 t_lastspike = t_spike
 

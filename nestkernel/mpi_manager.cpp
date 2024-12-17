@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 // Includes from libnestutil:
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -834,16 +834,16 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Allgather(
       &test_send_buffer[ 0 ], packet_length, MPI_UNSIGNED, &test_recv_buffer[ 0 ], packet_length, MPI_UNSIGNED, comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Allgatherv
@@ -870,16 +870,16 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   }
 
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     communicate_Allgatherv( test_send_buffer, test_recv_buffer, displacements, n_nodes );
   }
 
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes
@@ -898,8 +898,8 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   std::vector< OffGridSpike > test_send_buffer( packet_length );
   std::vector< OffGridSpike > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Allgather( &test_send_buffer[ 0 ],
@@ -911,8 +911,8 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
       comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Alltoall
@@ -932,16 +932,16 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Alltoall(
       &test_send_buffer[ 0 ], packet_length, MPI_UNSIGNED, &test_recv_buffer[ 0 ], packet_length, MPI_UNSIGNED, comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Alltoallv
@@ -969,8 +969,8 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   }
 
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Alltoallv( &test_send_buffer[ 0 ],
@@ -984,8 +984,8 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
       comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 #else /* #ifdef HAVE_MPI */

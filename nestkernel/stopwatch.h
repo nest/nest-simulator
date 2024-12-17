@@ -274,7 +274,7 @@ StopwatchBase< clock_type >::get_current_time()
   return now.tv_nsec + now.tv_sec * timeunit_t::SECONDS;
 }
 
-template< clockid_t clock_type >
+template < clockid_t clock_type >
 inline std::ostream&
 operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch )
 {

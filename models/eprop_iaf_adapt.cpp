@@ -58,6 +58,7 @@ template <>
 void
 RecordablesMap< eprop_iaf_adapt >::create()
 {
+  insert_( names::eprop_history_length_ms, &eprop_iaf_adapt::get_eprop_history_length_ms_ );
   insert_( names::adaptation, &eprop_iaf_adapt::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_adapt::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_adapt::get_learning_signal_ );

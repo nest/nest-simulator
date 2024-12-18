@@ -182,6 +182,13 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
     get_eprop_history( std::numeric_limits< long >::min() ), get_eprop_history( update_history_.begin()->t_ - 1 ) );
 }
 
+template < typename HistEntryT >
+inline size_t
+EpropArchivingNode< HistEntryT >::get_eprop_history_length_ms() const
+{
+  return eprop_history_.size();
+}
+
 } // namespace nest
 
 #endif // EPROP_ARCHIVING_NODE_IMPL_H

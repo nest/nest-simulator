@@ -214,53 +214,55 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" or *sd == "--debug" )
+    const std::string myarg = argv[ i ];
+
+    if ( myarg == "-d" or myarg == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.
       continue;
     }
-    if ( *sd == "--verbosity=ALL" )
+    if ( myarg == "--verbosity=ALL" )
     {
       verbosity_ = SLIInterpreter::M_ALL;
       continue;
     }
-    if ( *sd == "--verbosity=DEBUG" )
+    if ( myarg == "--verbosity=DEBUG" )
     {
       verbosity_ = SLIInterpreter::M_DEBUG;
       continue;
     }
-    if ( *sd == "--verbosity=STATUS" )
+    if ( myarg == "--verbosity=STATUS" )
     {
       verbosity_ = SLIInterpreter::M_STATUS;
       continue;
     }
-    if ( *sd == "--verbosity=INFO" )
+    if ( myarg == "--verbosity=INFO" )
     {
       verbosity_ = SLIInterpreter::M_INFO;
       continue;
     }
-    if ( *sd == "--verbosity=DEPRECATED" )
+    if ( myarg == "--verbosity=DEPRECATED" )
     {
       verbosity_ = SLIInterpreter::M_DEPRECATED;
       continue;
     }
-    if ( *sd == "--verbosity=WARNING" )
+    if ( myarg == "--verbosity=WARNING" )
     {
       verbosity_ = SLIInterpreter::M_WARNING;
       continue;
     }
-    if ( *sd == "--verbosity=ERROR" )
+    if ( myarg == "--verbosity=ERROR" )
     {
       verbosity_ = SLIInterpreter::M_ERROR;
       continue;
     }
-    if ( *sd == "--verbosity=FATAL" )
+    if ( myarg == "--verbosity=FATAL" )
     {
       verbosity_ = SLIInterpreter::M_FATAL;
       continue;
     }
-    if ( *sd == "--verbosity=QUIET" )
+    if ( myarg == "--verbosity=QUIET" )
     {
       verbosity_ = SLIInterpreter::M_QUIET;
       continue;

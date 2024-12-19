@@ -554,11 +554,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } ConnectSonata_D_Function;
 
-  class ConnectTripartite_g_g_g_D_DFunction : public SLIFunction
+  class ConnectTripartite_g_g_g_D_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const override;
-  } connect_tripartite_g_g_g_D_Dfunction;
+  } connect_tripartite_g_g_g_D_D_Dfunction;
 
   class ResetKernelFunction : public SLIFunction
   {
@@ -646,52 +646,6 @@ public:
   {
     void execute( SLIInterpreter* ) const override;
   } numprocessesfunction;
-
-  /** @BeginDocumentation
-   * Name: SetFakeNumProcesses - Set a fake number of MPI processes.
-   * Synopsis: n_procs SetFakeNumProcesses -> -
-   * Description:
-   * Sets the number of MPI processes to n_procs. Used for benchmarking purposes
-   * of memory consumption only.
-   * Please note:
-   * - Simulation of the network will not be possible after setting fake
-   *   processes.
-   * - It is not possible to use this function when running a script on multiple
-   *   actual MPI processes.
-   * - The setting of the fake number of processes has to happen before the kernel
-   *   reset and before the setting of the local number of threads.
-   *   After calling SetFakeNumProcesses, it is obligatory to call either
-   *   ResetKernel or SetStatus on the Kernel for the setting of the fake
-   *   number of processes to come into effect.
-   *
-   * A typical use case would be to test if a neuronal network fits on a machine
-   * of given size without using the actual resources.
-   *
-   * Example:
-   *           %%% Set fake number of processes
-   *           100 SetFakeNumProcesses
-   *
-   *           %%% Build network
-   *           /iaf_psc_alpha 100 Create
-   *           [1 100] Range /n Set
-   *
-   *           << /source n /target n >> Connect
-   *
-   *           %%% Measure memory consumption
-   *           memory_thisjob ==
-   *
-   *     Execute this script with
-   *           mpirun -np 1 nest example.sli
-   *
-   * Availability: NEST 2.2
-   * Author: Susanne Kunkel
-   * FirstVersion: July 2011
-   * SeeAlso: NumProcesses
-   */
-  class SetFakeNumProcesses_iFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const override;
-  } setfakenumprocesses_ifunction;
 
   /** @BeginDocumentation
    *  Name: SyncProcesses - Synchronize all MPI processes.

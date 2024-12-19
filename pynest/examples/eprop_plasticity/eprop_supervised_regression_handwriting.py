@@ -39,7 +39,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
 which encode the x and y coordinates of the handwritten word "chaos".
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_handwriting.png
+.. image:: eprop_supervised_regression_schematic_handwriting.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center
@@ -56,6 +56,16 @@ Details on the event-based NEST implementation of e-prop can be found in [3]_.
 The development of this task and the hyper-parameter optimization were conducted by Agnes Korcsak-Gorzo and
 Charl Linssen, inspired by activities and feedback received at the CapoCaccia Workshop toward Neuromorphic
 Intelligence 2023.
+
+
+Get the chaos_handwriting.txt file:
+
+.. grid::
+
+    .. grid-item-card::
+       :columns: 3
+
+       :download:`chaos_handwriting.txt`
 
 References
 ~~~~~~~~~~

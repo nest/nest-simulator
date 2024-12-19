@@ -35,12 +35,15 @@ namespace nest
 
 ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
+  assert( third_out == nullptr );
+
   updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
   if ( cg_->arity() != 0 )
   {

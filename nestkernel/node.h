@@ -282,33 +282,41 @@ public:
   }
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$.
+   * Advance the state of the node forward in time by one ``min_delay``
+   * interval. Precondition: state of the node corresponds to the time
+   * ``origin``. Postcondition: state of the node corresponds to the time
+   * ``origin + min_delay``.
    *
-   * n->update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1, ie, emitting events with time stamps
-   * T+from+1 .. T+to.
+   * This method is called every ``min_delay`` interval, with each step
+   * between ``from`` and ``to`` corresponding to one simulation resolution
+   * (``nest.resolution``) timestep.
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * ``update(T, from, to)`` performs the update steps in the interval
+   * ``T+from .. T+to-1``. If events are emitted, they have time stamps in
+   * the interval ``T+from+1 .. T+to``.
+   *
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual void update( Time const&, const long, const long ) = 0;
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
+   * Advance the state of the node forward in time by one ``min_delay``
+   * interval (see ``update()``); send SecondaryEvents (e.g. GapJunctionEvent)
+   * and then reset state variables to values at ``origin``.
    *
-   * n->wfr_update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1.
+   * ``wfr_update(T, from, to)`` performs the update steps in the interval
+   * ``T+from .. T+to-1``.
    *
    * Does not emit spikes, does not log state variables.
    *
    * throws UnexpectedEvent if not reimplemented in derived class
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual bool wfr_update( Time const&, const long, const long );

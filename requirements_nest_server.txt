@@ -15,7 +15,7 @@
 #     pip install -r requirements_nest_server.txt
 
 Flask
-Flask_Cors
+flask-cors
 gunicorn
 requests
 RestrictedPython

@@ -74,10 +74,12 @@ if ( HAVE_PYTHON )
       )
 
   install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      DESTINATION ${SKBUILD_PLATLIB_DIR}/nest
+      # DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
       PATTERN "versionchecker.py.in" EXCLUDE
   )
-  install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  install( TARGETS pynestkernel DESTINATION ${SKBUILD_PLATLIB_DIR}/nest )
+  #install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest

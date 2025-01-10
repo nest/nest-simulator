@@ -4,8 +4,9 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "nest-simulator"
-version = "3.8.post0.dev9"
+version = "3.8.post0.dev10"
 description = "NEST is a simulator for spiking neural network models that focuses on the dynamics, size and structure of neural systems rather than on the exact morphology of individual neurons."
+keywords = ["nest", "simulator", "neuroscience", "neural", "neuron", "network", "ai", "spike", "spiking"]
 readme = "README.md"
 license.file = "LICENSE"
 authors = [
@@ -14,11 +15,10 @@ authors = [
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.8, <4.0"
 classifiers = [
-  "Development Status :: 1 - Planning",
+  "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "Intended Audience :: Developers",
   "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
   "Operating System :: POSIX :: Linux",
   "Operating System :: MacOS",
@@ -32,6 +32,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Medical Science Apps.",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Typing :: Typed",
 ]
 dependencies = [
@@ -53,6 +54,14 @@ Changelog = "https://nest-simulator.readthedocs.io/en/stable/whats_new/index.htm
 sdist.include = ["./"]
 sdist.exclude = [".github"]
 build-dir = "build/{wheel_tag}"
+#wheel.install-dir = "nest"
+#wheel.packages = ["pynest", "pynest/nest", "pynest/nest/lib"]
+#wheel.packages = ["pynest/nest", "pynest/nest/lib"]
+
+#[tool.scikit-build.wheel.packages]
+#"pynest" = "pynest"
+#"nest" = "pynest/nest"
+#"lib" = "pynest/nest/lib"
 
 [tool.scikit-build.cmake.define]
 #with-optimize ="-O2"
@@ -133,8 +142,6 @@ repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest
 [tool.cibuildwheel.windows]
 
 [tool.cibuildwheel.pyodide]
-
-
 
 [tool.pytest.ini_options]
 markers = [

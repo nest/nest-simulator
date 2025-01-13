@@ -821,6 +821,13 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     ],
 )
 def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
+    """
+    Test the e-prop archiving mechanism's cleaning process by ensuring that the length of the `eprop_history`
+    buffer matches the expected values based on a given input firing pattern. These reference length values
+    were obtained from a simulation with the verified NEST e-prop implementation run with Linux 5.8.7-1-default,
+    Python v3.12.5, Numpy v2.0.1, and NEST@3a1c2c914.
+    """
+
     # Define timing of task
 
     duration = {"step": 1.0, "sequence": 20.0}

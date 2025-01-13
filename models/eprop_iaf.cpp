@@ -58,7 +58,7 @@ template <>
 void
 RecordablesMap< eprop_iaf >::create()
 {
-  insert_( names::eprop_history_length_ms, &eprop_iaf::get_eprop_history_length_ms_ );
+  insert_( names::eprop_history_duration, &eprop_iaf::get_eprop_history_duration );
   insert_( names::learning_signal, &eprop_iaf::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf::get_surrogate_gradient_ );
   insert_( names::V_m, &eprop_iaf::get_v_m_ );

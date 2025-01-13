@@ -183,10 +183,10 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
 }
 
 template < typename HistEntryT >
-inline size_t
-EpropArchivingNode< HistEntryT >::get_eprop_history_length_ms() const
+inline double
+EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
 {
-  return eprop_history_.size();
+  return Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ) * eprop_history_.size();
 }
 
 } // namespace nest

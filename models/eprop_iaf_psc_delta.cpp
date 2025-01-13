@@ -58,7 +58,7 @@ template <>
 void
 RecordablesMap< eprop_iaf_psc_delta >::create()
 {
-  insert_( names::eprop_history_length_ms, &eprop_iaf_psc_delta::get_eprop_history_length_ms_ );
+  insert_( names::eprop_history_duration, &eprop_iaf_psc_delta::get_eprop_history_duration );
   insert_( names::V_m, &eprop_iaf_psc_delta::get_v_m_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );

@@ -558,45 +558,23 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
 
 
 @pytest.mark.parametrize(
-    "neuron_model,eprop_isi_trace_cutoff,eprop_history_length_ms_reference",
+    "neuron_model,eprop_isi_trace_cutoff,eprop_history_duration_reference",
     [
         (
             "eprop_iaf",
             5.0,
-            [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
-             13.0, 14.0, 15.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 16.0, 17.0, 18.0, 19.0, 20.0,
-             21.0, 22.0, 23.0, 24.0, 25.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 17.0, 18.0, 19.0,
-             20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0,
-             23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0,
-             41.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0,
-             29.0],
+            np.hstack(
+                [
+                    np.arange(x, y)
+                    for x, y in [[1, 12], [6, 16], [11, 21], [16, 26], [21, 31], [17, 27], [12, 42], [12, 30]]
+                ]
+            ),
         ),
-        (
-            "eprop_iaf",
-            100000.0,
-            [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0,
-             19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0,
-             37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0, 33.0, 34.0, 35.0,
-             36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0,
-             34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0,
-             52.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0, 52.0, 53.0, 54.0, 55.0, 56.0, 57.0, 58.0, 59.0,
-             60.0],
-        ),
-        (
-            "eprop_readout",
-            100000.0,
-            [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0,
-             19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0,
-             37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0, 33.0, 34.0, 35.0,
-             36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0,
-             34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0,
-             52.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0, 52.0, 53.0, 54.0, 55.0, 56.0, 57.0, 58.0, 59.0,
-             60.0],
-        ),                 
+        ("eprop_iaf", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
+        ("eprop_readout", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
     ],
 )
-def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_history_length_ms_reference):
-
+def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_history_duration_reference):
     # Define timing of task
 
     duration = {"step": 1.0}
@@ -626,7 +604,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
 
     params_mm_rec = {
         "interval": duration["step"],
-        "record_from": ["eprop_history_length_ms"],
+        "record_from": ["eprop_history_duration"],
     }
 
     mm_rec = nest.Create("multimeter", params_mm_rec)
@@ -672,9 +650,9 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
     # Evaluate eprop history size
 
     events_mm_rec = mm_rec.get("events")
-    
-    eprop_history_length_ms = events_mm_rec["eprop_history_length_ms"]
-    senders = events_mm_rec["senders"]
-    eprop_history_length_ms = np.array([eprop_history_length_ms[senders == i] for i in set(senders)])[0]
 
-    assert np.allclose(eprop_history_length_ms, eprop_history_length_ms_reference, rtol=1e-8)
+    eprop_history_duration = events_mm_rec["eprop_history_duration"]
+    senders = events_mm_rec["senders"]
+    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
+
+    assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

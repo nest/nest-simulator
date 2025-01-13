@@ -513,15 +513,6 @@ private:
     return S_.adapt_;
   }
 
-  //! Get the size of the eprop history in milliseconds.
-  double
-  get_eprop_history_length_ms_() const
-  {
-    double step_ms = Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() );
-
-    return step_ms * get_eprop_history_length_ms();
-  }
-
   // the order in which the structure instances are defined is important for speed
 
   //! Structure of parameters.

@@ -42,6 +42,12 @@
 #include "iostreamdatum.h"
 #include "stringdatum.h"
 
+// Include whereami
+#include "whereami.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 // Access to environement variables.
 #ifdef __APPLE__
 #include <crt_externs.h>
@@ -132,11 +138,40 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+const char*
+getCurrentPath()
+{
+  // Aufruf der Funktion aus whereami.c, die den Pfad zurückgibt
+  char* path = NULL;
+  int length, dirname_length;
+  printf( "library loaded\n" );
+  length = wai_getExecutablePath( NULL, 0, &dirname_length );
+  if ( SKBUILD )
+  {
+    path = ( char* ) malloc( length + 1 );
+    wai_getModulePath( path, length, &dirname_length );
+    path[ length ] = '\0';
+    printf( "module path: %s\n", path );
+    path[ dirname_length ] = '\0';
+    printf( "  dirname: %s\n", path );
+    printf( "  basename: %s\n", path + dirname_length + 1 );
+    // free(path);
+  }
+  else
+  {
+    path = NEST_INSTALL_PREFIX;
+  }
+  return path;
+  printf( "library loaded\n" );
+  // return getcwd(buffer, sizeof(buffer)); // Beispiel mit getcwd
+}
+
 SLIStartup::SLIStartup( int argc, char** argv )
   // To avoid problems due to string substitution in NEST binaries during
   // Conda installation, we need to convert the literal to string, cstr and back,
   // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
-  : sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
+  : sliprefix( std::string( getCurrentPath() ).c_str() )
+  //: sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
   , slilibdir( sliprefix + "/" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )

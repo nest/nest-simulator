@@ -113,7 +113,7 @@ public:
    * Retrieves the size of the eprop history buffer.
    */
 
-  size_t get_eprop_history_length_ms() const;
+  double get_eprop_history_duration() const;
 
 protected:
   //! Number of incoming eprop synapses

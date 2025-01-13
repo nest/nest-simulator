@@ -176,7 +176,7 @@ const Name elements( "elements" );
 const Name elementsize( "elementsize" );
 const Name ellipsoidal( "ellipsoidal" );
 const Name elliptical( "elliptical" );
-const Name eprop_history_length_ms( "eprop_history_length_ms" );
+const Name eprop_history_duration( "eprop_history_duration" );
 const Name eprop_isi_trace_cutoff( "eprop_isi_trace_cutoff" );
 const Name eprop_learning_window( "eprop_learning_window" );
 const Name eprop_reset_neurons_on_update( "eprop_reset_neurons_on_update" );

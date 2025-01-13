@@ -58,7 +58,7 @@ template <>
 void
 RecordablesMap< eprop_readout >::create()
 {
-  insert_( names::eprop_history_length_ms, &eprop_readout::get_eprop_history_length_ms_ );
+  insert_( names::eprop_history_duration, &eprop_readout::get_eprop_history_duration );
   insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );

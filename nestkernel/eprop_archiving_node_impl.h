@@ -186,7 +186,7 @@ template < typename HistEntryT >
 inline double
 EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
 {
-  return Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ) * eprop_history_.size();
+  return Time::get_resolution().get_ms() * eprop_history_.size();
 }
 
 } // namespace nest

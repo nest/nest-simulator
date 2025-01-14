@@ -41,10 +41,10 @@ set( thirdparty_headers
     Random123/features/clangfeatures.h
     Random123/features/msvcfeatures.h
     Random123/features/gccfeatures.h
+    whereami.h
     )
 
 
-install( FILES compose.hpp randutils.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+install( FILES compose.hpp randutils.hpp whereami.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
 install( DIRECTORY Random123/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest/Random123
          FILES_MATCHING PATTERN "*.h" )
-

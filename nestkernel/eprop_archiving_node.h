@@ -111,7 +111,7 @@ protected:
   virtual long model_dependent_history_shift_() const = 0;
 
   /**
-   * Provide access to template flag from base class
+   * Provides access to the template flag from the base class.
    *
    * @todo This should be removed once we revise the class structure.
    */

@@ -10,7 +10,7 @@ keywords = ["nest", "simulator", "neuroscience", "neural", "neuron", "network", 
 readme = "README.md"
 license.file = "LICENSE"
 authors = [
-  { name = "NEST Initiative", email = "users.nest-simulator.or" },
+  { name = "NEST Initiative", email = "users.nest-simulator.org" },
 ]
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },

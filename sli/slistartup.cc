@@ -149,10 +149,6 @@ getCurrentPath()
   wai_getModulePath( path, length, &dirname_length );
   path[ length ] = '\0';
   path[ dirname_length ] = '\0';
-  printf( "  dirname: %s\n", path );
-  printf( "  basename: %s\n", path + dirname_length + 1 );
-  printf( "  NEST_INSTALL_DATADIR: %s\n", NEST_INSTALL_DATADIR );
-  printf( "  NEST_INSTALL_DOCDIR: %s\n", NEST_INSTALL_DOCDIR );
   return path;
   free( path );
 }
@@ -162,7 +158,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
   // Conda installation, we need to convert the literal to string, cstr and back,
   // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
   : sliprefix( std::string( getCurrentPath() ).c_str() )
-  //: sliprefix( std::string( NEST_INSTALL_PREFIX ).c_str() )
   , slilibdir( sliprefix + "/../../" + NEST_INSTALL_DATADIR )
   , slidocdir( sliprefix + "/../../" + NEST_INSTALL_DOCDIR )
   , startupfile( slilibdir + "/sli/sli-init.sli" )

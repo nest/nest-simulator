@@ -253,7 +253,7 @@ public:
 
 protected:
   long model_dependent_history_shift_() const override;
-  bool hist_shift_required_() const override;
+  bool history_shift_required_() const override;
 
 private:
   //! Count of the emitted spikes for the firing rate regularization.
@@ -301,7 +301,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shif
 
 template < bool hist_shift_required >
 bool
-EpropArchivingNodeRecurrent< hist_shift_required >::hist_shift_required_() const
+EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
 {
   return hist_shift_required;
 }

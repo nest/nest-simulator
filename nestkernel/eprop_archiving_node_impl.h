@@ -91,7 +91,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
-    if ( not hist_shift_required_() )
+    if ( not history_shift_required_() )
     {
       erase_used_eprop_history( eprop_isi_trace_cutoff );
     }

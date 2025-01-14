@@ -115,7 +115,7 @@ protected:
    *
    * @todo This should be removed once we revise the class structure.
    */
-  virtual bool hist_shift_required_() const = 0;
+  virtual bool history_shift_required_() const = 0;
 
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;

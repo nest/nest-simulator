@@ -80,7 +80,7 @@ public:
 
 protected:
   long model_dependent_history_shift_() const override;
-  bool hist_shift_required_() const override;
+  bool history_shift_required_() const override;
 };
 
 template < bool hist_shift_required >
@@ -135,7 +135,7 @@ EpropArchivingNodeReadout< hist_shift_required >::model_dependent_history_shift_
 
 template < bool hist_shift_required >
 bool
-EpropArchivingNodeReadout< hist_shift_required >::hist_shift_required_() const
+EpropArchivingNodeReadout< hist_shift_required >::history_shift_required_() const
 {
   return hist_shift_required;
 }

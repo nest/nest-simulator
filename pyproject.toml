@@ -10,7 +10,7 @@ keywords = ["nest", "simulator", "neuroscience", "neural", "neuron", "network", 
 readme = "README.md"
 license.file = "LICENSE"
 authors = [
-  { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
+  { name = "NEST Initiative", email = "users.nest-simulator.or" },
 ]
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
@@ -54,34 +54,27 @@ Changelog = "https://nest-simulator.readthedocs.io/en/stable/whats_new/index.htm
 sdist.include = ["./"]
 sdist.exclude = [".github"]
 build-dir = "build/{wheel_tag}"
-#wheel.install-dir = "nest"
-#wheel.packages = ["pynest", "pynest/nest", "pynest/nest/lib"]
-#wheel.packages = ["pynest/nest", "pynest/nest/lib"]
-
-#[tool.scikit-build.wheel.packages]
-#"pynest" = "pynest"
-#"nest" = "pynest/nest"
-#"lib" = "pynest/nest/lib"
 
 [tool.scikit-build.cmake.define]
-#with-optimize ="-O2"
-#with-warning = "ON"
-#with-python = "ON"
-#with-boost = "ON"
-#with-gsl = "ON"
-#with-readline = "ON"
-#with-ltdl = "ON"
-#with-openmp = "ON"
-#with-userdoc ="OFF"
-#with-mpi = "OFF"
-#with-libneurosim = "OFF"
-#with-sionlib = "OFF"
-#with-music = "OFF"
-#with-hdf5 = "OFF"
+with-optimize ="-O2"
+with-warning = "ON"
+with-python = "ON"
+with-boost = "ON"
+with-gsl = "ON"
+with-readline = "ON"
+with-ltdl = "ON"
+with-openmp = "ON"
+with-userdoc ="OFF"
+with-mpi = "OFF"
+with-libneurosim = "OFF"
+with-sionlib = "OFF"
+with-music = "OFF"
+with-hdf5 = "OFF"
 
 [tool.cibuildwheel]
 build-frontend = "default"
-build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+# build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+build = ["cp312-*"]
 skip = "*-win* *-manylinux_i686" # Skip
 test-skip = ""
 free-threaded-support = false
@@ -93,12 +86,6 @@ environment-pass = []
 build-verbosity = 2
 before-all =  """
   NEST_SRC_DIR=${PWD}
-    # Apply patches
-  # git apply -v ./build_support/nest_vars.sh.in.patch
-  # git apply -v ./build_support/slistartup.cc.patch
-  # git apply -v ./build_support/nest-config.in.patch
-  # git apply -v ./build_support/module_manager.cpp.patch
-  # Install packages
   if [ $AUDITWHEEL_POLICY == "musllinux_1_2" ]
   then
     apk add git readline readline-dev libc6-compat gsl gsl-dev ncurses ncurses-dev wget bzip2 hdf5

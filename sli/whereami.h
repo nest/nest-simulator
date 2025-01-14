@@ -65,8 +65,10 @@ extern "C"
 
 #ifdef __cplusplus
 }
-#endif
 
 extern const char* getCurrentPath();
+
+#endif
+
 
 #endif // #ifndef WHEREAMI_H

@@ -73,19 +73,20 @@ if ( HAVE_PYTHON )
       -D_IS_PYNEST
       )
 
-  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
-      if ( SKBUILD )
-        DESTINATION ${SKBUILD_PLATLIB_DIR}/nest
-      else()
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
-      endif()
-      PATTERN "versionchecker.py.in" EXCLUDE
-  )
   if ( SKBUILD )
+    install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+      DESTINATION ${SKBUILD_PLATLIB_DIR}/nest
+      PATTERN "versionchecker.py.in" EXCLUDE
+    )
     install( TARGETS pynestkernel DESTINATION ${SKBUILD_PLATLIB_DIR}/nest )
-  else()
-    install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
-  endif()
+  else ()
+    install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      PATTERN "versionchecker.py.in" EXCLUDE
+    )
+      install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  endif ()
+
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
   )

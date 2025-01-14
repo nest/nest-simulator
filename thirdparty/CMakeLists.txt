@@ -45,6 +45,6 @@ set( thirdparty_headers
     )
 
 
-install( FILES compose.hpp randutils.hpp whereami.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+install( FILES compose.hpp randutils.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
 install( DIRECTORY Random123/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest/Random123
          FILES_MATCHING PATTERN "*.h" )

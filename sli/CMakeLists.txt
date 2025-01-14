@@ -80,6 +80,7 @@ set( sli_sources
     typearray.h
     typechk.cc typechk.h
     utils.cc utils.h
+    ../thirdparty/whereami.c ../thirdparty/whereami.h
     )
 
 

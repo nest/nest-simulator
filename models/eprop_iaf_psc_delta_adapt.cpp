@@ -58,6 +58,7 @@ template <>
 void
 RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
+  insert_( names::eprop_history_duration, &eprop_iaf_psc_delta_adapt::get_eprop_history_duration );
   insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
   insert_( names::adaptation, &eprop_iaf_psc_delta_adapt::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_psc_delta_adapt::get_v_th_adapt_ );

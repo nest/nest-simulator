@@ -58,6 +58,7 @@ template <>
 void
 RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >::create()
 {
+  insert_( names::eprop_history_duration, &eprop_iaf_adapt_bsshslm_2020::get_eprop_history_duration );
   insert_( names::adaptation, &eprop_iaf_adapt_bsshslm_2020::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_adapt_bsshslm_2020::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_adapt_bsshslm_2020::get_learning_signal_ );

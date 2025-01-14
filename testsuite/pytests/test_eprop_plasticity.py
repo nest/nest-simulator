@@ -555,3 +555,111 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
     surrogate_gradient = events_mm_rec["surrogate_gradient"][-5:]
 
     assert np.allclose(surrogate_gradient, surrogate_gradient_reference, rtol=1e-8)
+
+
+@pytest.mark.parametrize(
+    "neuron_model,eprop_isi_trace_cutoff,eprop_history_duration_reference",
+    [
+        (
+            "eprop_iaf",
+            5.0,
+            np.hstack(
+                [
+                    np.arange(x, y)
+                    for x, y in [[1, 12], [6, 16], [11, 21], [16, 26], [21, 31], [17, 27], [12, 42], [12, 30]]
+                ]
+            ),
+        ),
+        ("eprop_iaf", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
+        ("eprop_readout", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
+    ],
+)
+def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_history_duration_reference):
+    """
+    Test the e-prop archiving mechanism's cleaning process by ensuring that the length of the `eprop_history`
+    buffer matches the expected values based on a given input firing pattern. These reference length values
+    were obtained from a simulation with the verified NEST e-prop implementation run with Linux 5.8.7-1-default,
+    Python v3.12.5, Numpy v2.0.1, and NEST@3a1c2c914.
+    """
+
+    # Define timing of task
+
+    duration = {"step": 1.0}
+
+    # Set up simulation
+
+    params_setup = {
+        "print_time": False,
+        "resolution": duration["step"],
+        "total_num_virtual_procs": 1,
+    }
+
+    nest.ResetKernel()
+    nest.set(**params_setup)
+
+    # Create neurons
+
+    params_nrn_rec = {
+        "eprop_isi_trace_cutoff": eprop_isi_trace_cutoff,
+    }
+
+    gen_spk_in = nest.Create("spike_generator", 3)
+    nrns_in = nest.Create("parrot_neuron", 3)
+    nrns_rec = nest.Create(neuron_model, 1, params_nrn_rec)
+
+    # Create recorders
+
+    params_mm_rec = {
+        "interval": duration["step"],
+        "record_from": ["eprop_history_duration"],
+    }
+
+    mm_rec = nest.Create("multimeter", params_mm_rec)
+
+    # Create connections
+
+    params_conn_all_to_all = {"rule": "all_to_all", "allow_autapses": False}
+    params_conn_one_to_one = {"rule": "one_to_one"}
+
+    params_syn_base = {
+        "synapse_model": "eprop_synapse",
+        "delay": duration["step"],
+        "weight": 1.0,
+    }
+
+    params_syn_static = {
+        "synapse_model": "static_synapse",
+        "delay": duration["step"],
+    }
+
+    params_syn_in = params_syn_base.copy()
+
+    nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
+    nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)
+    nest.Connect(mm_rec, nrns_rec, params_conn_all_to_all, params_syn_static)
+
+    # Create input
+
+    input_spike_times = [
+        [10.0, 20.0, 50.0, 60.0],
+        [10.0, 30.0, 50.0, 90.0],
+        [40.0, 60.0],
+    ]
+
+    params_gen_spk_in = [{"spike_times": spike_times} for spike_times in input_spike_times]
+
+    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+
+    # Simulate
+
+    nest.Simulate(110.0)
+
+    # Evaluate eprop history size
+
+    events_mm_rec = mm_rec.get("events")
+
+    eprop_history_duration = events_mm_rec["eprop_history_duration"]
+    senders = events_mm_rec["senders"]
+    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
+
+    assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

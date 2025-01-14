@@ -107,6 +107,14 @@ public:
    */
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
+  /**
+   * @brief Retrieves eprop history size.
+   *
+   * Retrieves the size of the eprop history buffer.
+   */
+
+  double get_eprop_history_duration() const;
+
 protected:
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;

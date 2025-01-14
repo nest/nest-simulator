@@ -107,7 +107,7 @@ public:
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
 protected:
-  //! return correct shift for history depending on whether it is a normal or a bsshslm_2020 model
+  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
   virtual long model_dependent_history_shift_() const = 0;
 
   /**

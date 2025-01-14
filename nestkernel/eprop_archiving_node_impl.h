@@ -50,11 +50,11 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::register_eprop_connection( const bool is_bsshslm_2020_model )
+EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
   ++eprop_indegree_;
 
-  const long t_first_entry = is_bsshslm_2020_model ? get_shift() : -delay_rec_out_;
+  const long t_first_entry = model_dependent_history_shift_();
 
   const auto it_hist = get_update_history( t_first_entry );
 
@@ -72,15 +72,14 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
-  const long eprop_isi_trace_cutoff,
-  const bool is_bsshslm_2020_model )
+  const long eprop_isi_trace_cutoff )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = is_bsshslm_2020_model ? get_shift() : -delay_rec_out_;
+  const long shift = model_dependent_history_shift_();
 
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
@@ -91,7 +90,8 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   else
   {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
-    if ( not is_bsshslm_2020_model )
+
+    if ( not history_shift_required_() )
     {
       erase_used_eprop_history( eprop_isi_trace_cutoff );
     }

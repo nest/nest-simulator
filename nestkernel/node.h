@@ -486,15 +486,12 @@ public:
   /**
    * @brief Registers an eprop synapse and initializes the update history.
    *
-   * The time for the first entry of the update history is set to the neuron specific shift if `is_bsshslm_2020`
-   * is true and to the negative transmission delay from the recurrent to the output layer otherwise.
-   *
-   * @param is_bsshslm_2020_model A boolean indicating whether the connection is for the bsshslm_2020 model(optional,
-   * default = true).
+   * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
+   * models and to the negative transmission delay from the recurrent to the output layer otherwise.
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection( const bool is_bsshslm_2020_model = true );
+  virtual void register_eprop_connection();
 
   /**
    * @brief Retrieves the temporal shift of the signal.
@@ -519,15 +516,12 @@ public:
    * @param t_previous_update The time step of the previous update.
    * @param t_current_update The time step of the current update.
    * @param eprop_isi_trace_cutoff The cutoff value for the eprop inter-spike interval trace (optional, default: 0).
-   * @param is_bsshslm_2020_model Flag indicating whether the model is the bsshslm_2020 model (optional, default =
-   * true).
    *
    * @throws IllegalConnection
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0,
-    const bool is_bsshslm_2020_model = true );
+    const long eprop_isi_trace_cutoff = 0 );
 
   /**
    * Retrieves the maximum number of time steps integrated between two consecutive spikes.

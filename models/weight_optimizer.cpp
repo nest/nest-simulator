@@ -125,7 +125,7 @@ WeightOptimizer::set_status( const DictionaryDatum& d )
 }
 
 double
-WeightOptimizer::optimized_weight( WeightOptimizerCommonProperties& cp,
+WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const size_t idx_current_update,
   const double gradient,
   double weight )

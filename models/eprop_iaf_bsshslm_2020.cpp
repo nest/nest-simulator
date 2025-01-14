@@ -31,6 +31,7 @@
 #include "numerics.h"
 
 // nestkernel
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"

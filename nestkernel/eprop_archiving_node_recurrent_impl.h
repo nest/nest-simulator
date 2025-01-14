@@ -1,5 +1,5 @@
 /*
- *  eprop_archiving_node.cpp
+ *  eprop_archiving_node_recurrent_impl.h
  *
  *  This file is part of NEST.
  *
@@ -23,6 +23,7 @@
 // nestkernel
 #include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "kernel_manager.h"
 
 // sli
@@ -31,16 +32,19 @@
 namespace nest
 {
 
-std::map< std::string, EpropArchivingNodeRecurrent::surrogate_gradient_function >
-  EpropArchivingNodeRecurrent::surrogate_gradient_funcs_ = {
-    { "piecewise_linear", &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient },
-    { "exponential", &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient },
-    { "fast_sigmoid_derivative", &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient },
-    { "arctan", &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient }
+template < bool hist_shift_required >
+std::map< std::string, typename EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_function >
+  EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_funcs_ = {
+    { "piecewise_linear",
+      &EpropArchivingNodeRecurrent< hist_shift_required >::compute_piecewise_linear_surrogate_gradient },
+    { "exponential", &EpropArchivingNodeRecurrent< hist_shift_required >::compute_exponential_surrogate_gradient },
+    { "fast_sigmoid_derivative",
+      &EpropArchivingNodeRecurrent< hist_shift_required >::compute_fast_sigmoid_derivative_surrogate_gradient },
+    { "arctan", &EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_surrogate_gradient }
   };
 
-
-EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
+template < bool hist_shift_required >
+EpropArchivingNodeRecurrent< hist_shift_required >::EpropArchivingNodeRecurrent()
   : EpropArchivingNode()
   , firing_rate_reg_( 0.0 )
   , f_av_( 0.0 )
@@ -48,7 +52,8 @@ EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
 {
 }
 
-EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& n )
+template < bool hist_shift_required >
+EpropArchivingNodeRecurrent< hist_shift_required >::EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& n )
   : EpropArchivingNode( n )
   , firing_rate_reg_( n.firing_rate_reg_ )
   , f_av_( n.f_av_ )
@@ -56,8 +61,10 @@ EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNo
 {
 }
 
-EpropArchivingNodeRecurrent::surrogate_gradient_function
-EpropArchivingNodeRecurrent::select_surrogate_gradient( const std::string& surrogate_gradient_function_name )
+template < bool hist_shift_required >
+typename EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_function
+EpropArchivingNodeRecurrent< hist_shift_required >::select_surrogate_gradient(
+  const std::string& surrogate_gradient_function_name )
 {
   const auto found_entry_it = surrogate_gradient_funcs_.find( surrogate_gradient_function_name );
 
@@ -78,8 +85,9 @@ EpropArchivingNodeRecurrent::select_surrogate_gradient( const std::string& surro
 }
 
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const double r,
+EpropArchivingNodeRecurrent< hist_shift_required >::compute_piecewise_linear_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
   const double beta,
@@ -93,8 +101,9 @@ EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const 
   return gamma * std::max( 0.0, 1.0 - beta * std::abs( ( v_m - v_th ) ) );
 }
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const double r,
+EpropArchivingNodeRecurrent< hist_shift_required >::compute_exponential_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
   const double beta,
@@ -108,8 +117,9 @@ EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const doubl
   return gamma * std::exp( -beta * std::abs( v_m - v_th ) );
 }
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
+EpropArchivingNodeRecurrent< hist_shift_required >::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
   const double beta,
@@ -123,8 +133,9 @@ EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient(
   return gamma * std::pow( 1.0 + beta * std::abs( v_m - v_th ), -2 );
 }
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
+EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
   const double beta,
@@ -138,8 +149,9 @@ EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
   return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th ), 2 ) ) );
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::append_new_eprop_history_entry( const long time_step )
+EpropArchivingNodeRecurrent< hist_shift_required >::append_new_eprop_history_entry( const long time_step )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -149,8 +161,9 @@ EpropArchivingNodeRecurrent::append_new_eprop_history_entry( const long time_ste
   eprop_history_.emplace_back( time_step, 0.0, 0.0, 0.0 );
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long time_step,
+EpropArchivingNodeRecurrent< hist_shift_required >::write_surrogate_gradient_to_history( const long time_step,
   const double surrogate_gradient )
 {
   if ( eprop_indegree_ == 0 )
@@ -162,8 +175,9 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
   it_hist->surrogate_gradient_ = surrogate_gradient;
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step,
+EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_history( const long time_step,
   const double learning_signal,
   const bool has_norm_step )
 {
@@ -189,8 +203,9 @@ EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_s
   }
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_current_update,
+EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_history( const long t_current_update,
   const double f_target,
   const double c_reg )
 {
@@ -210,8 +225,9 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_curr
   firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long time_step,
+EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_history( const long time_step,
   const double z,
   const double f_target,
   const double kappa_reg,
@@ -234,8 +250,9 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long time_s
   it_hist->firing_rate_reg_ = firing_rate_reg_;
 }
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
+EpropArchivingNodeRecurrent< hist_shift_required >::get_firing_rate_reg_history( const long time_step )
 {
   const auto it_hist = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
   assert( it_hist != firing_rate_reg_history_.end() );
@@ -243,8 +260,10 @@ EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
   return it_hist->firing_rate_reg_;
 }
 
+template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step, const bool has_norm_step )
+EpropArchivingNodeRecurrent< hist_shift_required >::get_learning_signal_from_history( const long time_step,
+  const bool has_norm_step )
 {
   long shift = delay_rec_out_ + delay_out_rec_;
 
@@ -262,8 +281,9 @@ EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_s
   return it->learning_signal_;
 }
 
+template < bool hist_shift_required >
 void
-EpropArchivingNodeRecurrent::erase_used_firing_rate_reg_history()
+EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_history()
 {
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
@@ -280,45 +300,6 @@ EpropArchivingNodeRecurrent::erase_used_firing_rate_reg_history()
     }
     ++it_update_hist;
   }
-}
-
-EpropArchivingNodeReadout::EpropArchivingNodeReadout()
-  : EpropArchivingNode()
-{
-}
-
-EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeReadout& n )
-  : EpropArchivingNode( n )
-{
-}
-
-void
-EpropArchivingNodeReadout::append_new_eprop_history_entry( const long time_step, const bool has_norm_step )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  const long shift = has_norm_step ? delay_out_norm_ : 0;
-
-  eprop_history_.emplace_back( time_step - shift, 0.0 );
-}
-
-void
-EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step,
-  const double error_signal,
-  const bool has_norm_step )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  const long shift = has_norm_step ? delay_out_norm_ : 0;
-
-  auto it_hist = get_eprop_history( time_step - shift );
-  it_hist->error_signal_ = error_signal;
 }
 
 

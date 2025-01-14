@@ -468,7 +468,7 @@ eprop_synapse< targetidentifierT >::check_connection( Node& s,
   ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  t.register_eprop_connection( false );
+  t.register_eprop_connection();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
@@ -497,7 +497,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff, false );
+  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff );
 
   t_spike_previous_ = t_spike;
 

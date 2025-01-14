@@ -598,21 +598,9 @@ void
 eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer ) )
+  if ( d->known( names::optimizer ) and optimizer_ )
   {
-    // We must pass here if called by SetDefaults. In that case, the user will get and error
-    // message because the parameters for the synapse-specific optimizer have not been accessed.
-    auto optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
-    auto it = optimizer_dict->find( names::optimize_each_step );
-    if ( it != optimizer_dict->end() )
-    {
-      throw BadProperty(
-        "eprop_synapse_bsshslm_2020 only supports optimization in each step optimize_each_step == False." );
-    }
-    if ( optimizer_ )
-    {
-      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
-    }
+    optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
   }
 
   updateValue< double >( d, names::weight, weight_ );

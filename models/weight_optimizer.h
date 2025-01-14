@@ -258,7 +258,7 @@ public:
   virtual void set_status( const DictionaryDatum& d );
 
   //! Return optimized weight based on current weight.
-  double optimized_weight( WeightOptimizerCommonProperties& cp,
+  double optimized_weight( const WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
     const double gradient,
     double weight );

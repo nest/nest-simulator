@@ -153,6 +153,7 @@ getCurrentPath()
   free( path );
 }
 
+
 SLIStartup::SLIStartup( int argc, char** argv )
   // To avoid problems due to string substitution in NEST binaries during
   // Conda installation, we need to convert the literal to string, cstr and back,

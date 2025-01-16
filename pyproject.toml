@@ -97,6 +97,8 @@ before-all =  """
     echo "Build OS"
     echo $OSTYPE
     brew install llvm libomp gcc boost gsl cmake libtool readline open-mpi graphviz
+    export CC=/usr/local/opt/llvm/bin/clang
+    export CXX=/usr/local/opt/llvm/bin/clang++
     export CFLAGS="-I/usr/local/opt/libomp/include -Xclang -fopenmp"
     export CXXFLAGS="-I/usr/local/opt/libomp/include -Xclang -fopenmp"
     export LDFLAGS="-L/usr/local/opt/libomp/lib"

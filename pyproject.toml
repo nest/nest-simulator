@@ -101,12 +101,17 @@ before-all =  """
     export CXX=$(brew --prefix)/llvm/opt/bin/clang++
     export CFLAGS="-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
     export CXXFLAGS="-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
-    export LDFLAGS="-L$(brew --prefix)/opt/libomp/lib"
+    export LDFLAGS="-L$(brew --prefix)/lib"
     export OpenMP_ROOT=$(brew --prefix)/opt/libomp
-    export OpenMP_CXX_FLAGS=-Xclang -fopenmp
+    # export OpenMP_CXX_FLAGS=-Xclang -fopenmp
     export OpenMP_CXX_INCLUDE_DIR=$(brew --prefix)/opt/libomp/include
     export OpenMP_CXX_LIB_NAMES=libomp
     export OpenMP_libomp_LIBRARY=$(brew --prefix)/opt/libomp/lib/libomp.dylib
+    export OpenMP_C_FOUND=TRUE
+    export OpenMP_CXX_FOUND=TRUE
+    export OpenMP_CXX_FLAGS=-fopenmp
+    export OpenMP_C_FLAGS=-fopenmp
+    export OpenMP_C_LIB_NAMES=libomp
 
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2

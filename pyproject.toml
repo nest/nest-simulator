@@ -63,7 +63,7 @@ with-python = "ON"
 # with-gsl = "ON"
 # with-readline = "ON"
 # with-ltdl = "ON"
-# with-openmp = "ON"
+with-openmp = "ON"
 with-userdoc ="OFF"
 with-mpi = "OFF"
 with-libneurosim = "OFF"
@@ -81,7 +81,6 @@ free-threaded-support = false
 archs = ["auto64"]
 config-settings = {}
 dependency-versions = "pinned"
-#environment = { CFLAGS="", CXXFLAGS="" }
 environment-pass = []
 build-verbosity = 2
 before-all =  """
@@ -97,7 +96,10 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
-    brew install llvm libomp gcc boost gsl cmake libtool readline
+    brew install llvm libomp gcc boost gsl cmake libtool readline open-mpi graphviz
+    export CFLAGS="-I/usr/local/opt/libomp/include -Xclang -fopenmp"
+    export CXXFLAGS="-I/usr/local/opt/libomp/include -Xclang -fopenmp"
+    export LDFLAGS="-L/usr/local/opt/libomp/lib"
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
     tar --bzip2 -xf boost_1_73_0.tar.bz2

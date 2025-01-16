@@ -81,7 +81,7 @@ free-threaded-support = false
 archs = ["auto64"]
 config-settings = {}
 dependency-versions = "pinned"
-environment = { CFLAGS="-fopenmp", CXXFLAGS="-fopenmp" }
+environment = { CFLAGS="", CXXFLAGS="-fopenmp" }
 environment-pass = []
 build-verbosity = 2
 before-all =  """

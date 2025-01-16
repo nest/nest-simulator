@@ -93,11 +93,19 @@ before-all =  """
     yum install -y git glibc glibc-devel readline readline-devel gsl gsl-devel ncurses ncurses-devel wget bzip2 hdf5
   fi
   # Install boost
-  wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
-  tar --bzip2 -xf boost_1_73_0.tar.bz2
-  cd boost_1_73_0
-  ./bootstrap.sh
-  ./b2 install
+  if [[ "$OSTYPE" == "darwin"* ]];
+  then
+    echo "Build OS"
+    echo $OSTYPE
+    brew install boost
+  else
+    wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
+    tar --bzip2 -xf boost_1_73_0.tar.bz2
+    cd boost_1_73_0
+    ./bootstrap.sh
+    ./b2 install
+  fi
+
   """
 before-build = ""
 repair-wheel-command = ""

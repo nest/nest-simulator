@@ -96,7 +96,7 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
-    brew install llvm libomp gcc boost gsl cmake libtool readline open-mpi graphviz ncurses
+    brew install llvm libomp gcc boost gsl cmake libtool readline ncurses open-mpi graphviz ncurses
 
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
@@ -131,23 +131,23 @@ musllinux-s390x-image = "musllinux_1_2"
 select = "*-macos*"
 inherit.environment = "append"
 environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
-config-settings."cmake.define.CC" = "/usr/local/opt/llvm/bin/clang"
-config-settings."cmake.define.CXX" = "/usr/local/llvm/opt/bin/clang++"
-config-settings."cmake.define.CFLAGS" = "-I/usr/local/opt/libomp/include -Xclang -fopenmp"
-config-settings."cmake.define.CXXFLAGS" = "-I/usr/local/opt/libomp/include -Xclang -fopenmp"
-config-settings."cmake.define.LDFLAGS" = "-L/usr/local/lib"
-config-settings."cmake.define.OpenMP_ROOT" = "/usr/local/opt/libomp"
+#config-settings."cmake.define.CC" = "/usr/local/opt/llvm/bin/clang"
+#config-settings."cmake.define.CXX" = "/usr/local/llvm/opt/bin/clang++"
+#config-settings."cmake.define.CFLAGS" = "-I/usr/local/opt/libomp/include -Xclang -fopenmp"
+#config-settings."cmake.define.CXXFLAGS" = "-I/usr/local/opt/libomp/include -Xclang -fopenmp"
+#config-settings."cmake.define.LDFLAGS" = "-L/usr/local/lib"
+config-settings."cmake.define.OpenMP_ROOT" = "/usr/local/Cellar/libomp/19.1.7"
 # config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-Xclang -fopenmp"
-config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "/usr/local/opt/libomp/include"
+config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "/usr/local/Cellar/libomp/19.1.7/include"
 config-settings."cmake.define.OpenMP_CXX_LIB_NAMES" = "libomp"
-config-settings."cmake.define.OpenMP_libomp_LIBRARY" = "/usr/local/opt/libomp/lib/libomp.dylib"
+config-settings."cmake.define.OpenMP_libomp_LIBRARY" = "/usr/local/Cellar/libomp/19.1.7/lib/libomp.dylib"
 config-settings."cmake.define.OpenMP_C_FOUND" = "TRUE"
 config-settings."cmake.define.OpenMP_CXX_FOUND" = "TRUE"
 config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-fopenmp"
 config-settings."cmake.define.OpenMP_C_FLAGS" = "-fopenmp"
 config-settings."cmake.define.OpenMP_C_LIB_NAMES" = "libomp"
-config-settings."cmake.define.READLINE_LIBRARY" = "/usr/lib/libreadline.dylib"
-config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/lib/libncurses.dylib"
+config-settings."cmake.define.READLINE_LIBRARY" = "/usr/local/Cellar/readline/8.2.13/lib/libreadline.dylib"
+config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/local/Cellar/ncurses/6.5/lib/libncurses.dylib"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"

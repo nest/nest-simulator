@@ -96,6 +96,7 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
+    export MACOSX_DEPLOYMENT_TARGET=10.15
     brew install llvm libomp gcc boost gsl cmake libtool readline open-mpi graphviz ncurses
     export CC=$(brew --prefix)/opt/llvm/bin/clang
     export CXX=$(brew --prefix)/llvm/opt/bin/clang++

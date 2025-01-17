@@ -96,23 +96,7 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
-    export MACOSX_DEPLOYMENT_TARGET=10.15
     brew install llvm libomp gcc boost gsl cmake libtool readline open-mpi graphviz ncurses
-    export CC=$(brew --prefix)/opt/llvm/bin/clang
-    export CXX=$(brew --prefix)/llvm/opt/bin/clang++
-    export CFLAGS="-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
-    export CXXFLAGS="-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
-    export LDFLAGS="-L$(brew --prefix)/lib"
-    export OpenMP_ROOT=$(brew --prefix)/opt/libomp
-    # export OpenMP_CXX_FLAGS=-Xclang -fopenmp
-    export OpenMP_CXX_INCLUDE_DIR=$(brew --prefix)/opt/libomp/include
-    export OpenMP_CXX_LIB_NAMES=libomp
-    export OpenMP_libomp_LIBRARY=$(brew --prefix)/opt/libomp/lib/libomp.dylib
-    export OpenMP_C_FOUND=TRUE
-    export OpenMP_CXX_FOUND=TRUE
-    export OpenMP_CXX_FLAGS=-fopenmp
-    export OpenMP_C_FLAGS=-fopenmp
-    export OpenMP_C_LIB_NAMES=libomp
 
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
@@ -142,6 +126,26 @@ musllinux-i686-image = "musllinux_1_2"
 musllinux-aarch64-image = "musllinux_1_2"
 musllinux-ppc64le-image = "musllinux_1_2"
 musllinux-s390x-image = "musllinux_1_2"
+
+[[tool.cibuildwheel.overrides]]
+select = "*-macos*"
+inherit.environment = "append"
+environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
+config-settings."cmake.define.CC" = "$(brew --prefix)/opt/llvm/bin/clang"
+config-settings."cmake.define.CXX" = "$(brew --prefix)/llvm/opt/bin/clang++"
+config-settings."cmake.define.CFLAGS" = "-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
+config-settings."cmake.define.CXXFLAGS" = "-I$(brew --prefix)/opt/libomp/include -Xclang -fopenmp"
+config-settings."cmake.define.LDFLAGS" = "-L$(brew --prefix)/lib"
+config-settings."cmake.define.OpenMP_ROOT" = "$(brew --prefix)/opt/libomp"
+# config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-Xclang -fopenmp"
+config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "$(brew --prefix)/opt/libomp/include"
+config-settings."cmake.define.OpenMP_CXX_LIB_NAMES" = "libomp"
+config-settings."cmake.define.OpenMP_libomp_LIBRARY" = "$(brew --prefix)/opt/libomp/lib/libomp.dylib"
+config-settings."cmake.define.OpenMP_C_FOUND" = "TRUE"
+config-settings."cmake.define.OpenMP_CXX_FOUND" = "TRUE"
+config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-fopenmp"
+config-settings."cmake.define.OpenMP_C_FLAGS" = "-fopenmp"
+config-settings."cmake.define.OpenMP_C_LIB_NAMES" = "libomp"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"

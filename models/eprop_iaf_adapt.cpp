@@ -365,7 +365,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
     write_firing_rate_reg_to_history( t, S_.z_, P_.f_target_, P_.kappa_reg_, P_.c_reg_ );
 
-    S_.learning_signal_ = get_learning_signal_from_history( t, false );
+    S_.learning_signal_ = get_learning_signal_from_history( t );
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
@@ -405,7 +405,7 @@ eprop_iaf_adapt::handle( LearningSignalConnectionEvent& e )
     const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
-    write_learning_signal_to_history( time_step, learning_signal, false );
+    write_learning_signal_to_history( time_step, learning_signal );
   }
 }
 

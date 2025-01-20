@@ -175,12 +175,8 @@ public:
    *
    * @param time_step The time step.
    * @param learning_signal The learning signal.
-   * @param has_norm_step Flag indicating if an extra time step is used for communication between readout
-   * neurons to normalize the readout signal outputs, as for softmax.
    */
-  void write_learning_signal_to_history( const long time_step,
-    const double learning_signal,
-    const bool has_norm_step = true );
+  void write_learning_signal_to_history( const long time_step, const double learning_signal );
 
   /**
    * Calculates the firing rate regularization for the current update and writes it to a new entry in the firing rate
@@ -220,12 +216,10 @@ public:
    * Retrieves the learning signal from the eprop history at the specified time step.
    *
    * @param time_step The time step.
-   * @param has_norm_step Flag indicating if an extra time step is used for communication between readout neurons to
-   * normalize the readout signal outputs, as for softmax.
    *
    * @return The learning signal at the specified time step or zero if time step is not in the history.
    */
-  double get_learning_signal_from_history( const long time_step, const bool has_norm_step = true );
+  double get_learning_signal_from_history( const long time_step );
 
   /**
    * @brief Erases the history of the used firing rate regularization history.

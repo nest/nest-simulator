@@ -178,8 +178,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_surrogate_gradient_to_
 template < bool hist_shift_required >
 void
 EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_history( const long time_step,
-  const double learning_signal,
-  const bool has_norm_step )
+  const double learning_signal )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -188,7 +187,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_his
 
   long shift = delay_rec_out_ + delay_out_rec_;
 
-  if ( has_norm_step )
+  if constexpr ( hist_shift_required )
   {
     shift += delay_out_norm_;
   }
@@ -262,12 +261,11 @@ EpropArchivingNodeRecurrent< hist_shift_required >::get_firing_rate_reg_history(
 
 template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent< hist_shift_required >::get_learning_signal_from_history( const long time_step,
-  const bool has_norm_step )
+EpropArchivingNodeRecurrent< hist_shift_required >::get_learning_signal_from_history( const long time_step )
 {
   long shift = delay_rec_out_ + delay_out_rec_;
 
-  if ( has_norm_step )
+  if ( hist_shift_required )
   {
     shift += delay_out_norm_;
   }

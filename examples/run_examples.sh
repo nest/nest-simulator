@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if ! which nest; then
+if ! command -v nest; then
     echo "ERROR: command 'nest' not found. Please make sure PATH is set correctly"
     echo "       by sourcing the script nest_vars.sh from your NEST installation."
     exit 1
@@ -41,16 +41,15 @@ if [ "${#}" -eq 0 ]; then
     # Find all examples that have a line containing "autorun=true"
     # The examples can be found in subdirectory nest and in the
     # examples installation path.
-    {
-        if [ -d "nest/" ] ; then
-            grep -rl --include=\*\.sli 'autorun=true' nest/
-        else
-            grep -rl --include=\*\.sli 'autorun=true' examples/
-        fi
-        find ../pynest/examples -name '*.py'  # FIXME: is this really "../pynest" ?
-    } | while read -r example; do
-        EXAMPLES+=( "$example" )  # append each example found above
-    done
+    EXAMPLELIST="$(mktemp examplelist.XXXXXXXXXX)"
+    if [ -d "nest/" ] ; then
+        grep -rl --include='*.sli' 'autorun=true' nest/ >>"$EXAMPLELIST"
+    else
+        grep -rl --include='*.sli' 'autorun=true' examples/ >>"$EXAMPLELIST"
+    fi
+    find pynest/examples -name '*.py' >>"$EXAMPLELIST"
+    readarray -t EXAMPLES <"$EXAMPLELIST"  # append each example found above
+    rm "$EXAMPLELIST"
 else
     EXAMPLES+=( "${@}" )
 fi

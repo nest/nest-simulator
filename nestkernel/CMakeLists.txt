@@ -45,10 +45,7 @@ set ( nestkernel_sources
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager_impl.h model_manager.cpp
-      nest_types.h
       nest_names.h
-      nest_datums.h nest_datums.cpp
-      nest_names.cpp nest_names.h
       nest_time.h nest_time.cpp
       nest_timeconverter.h nest_timeconverter.cpp
       modelrange.h modelrange.cpp
@@ -117,14 +114,9 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
-<<<<<<< HEAD
-)
-=======
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
       )
->>>>>>> master
-
 
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
@@ -141,12 +133,7 @@ if ( HAVE_MPI )
   )
 endif ()
 
-<<<<<<< HEAD
-# Prevent problems with Conda path substitution (see #2348)
-=======
-
 # Prevent problems with Mamba path substitution (see #2348)
->>>>>>> master
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 add_library( nestkernel STATIC ${nestkernel_sources} )
@@ -158,14 +145,8 @@ endif ()
 set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 
 target_link_libraries( nestkernel
-<<<<<<< HEAD
   nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
-=======
-    nestutil sli_lib models
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
-    )
->>>>>>> master
 
 target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/thirdparty

@@ -1391,7 +1391,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // check for potential errors
-  long n_sources = static_cast< long >( sources_->size() );
+  const size_t n_sources = sources_->size();
   if ( n_sources == 0 )
   {
     throw BadProperty( "Source array must not be empty." );

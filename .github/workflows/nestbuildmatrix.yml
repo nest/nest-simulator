@@ -67,9 +67,26 @@ jobs:
         run: |
           pip install pre-commit
 
-      - name: "Run shellcheck..."
+      - name: "Run pre-commit checks..."
         run: |
           pre-commit run --all-files
+
+  no-crlf:
+    # While pre-commit-hook mixed-line-endings could check for this, it would
+    # be incompatible with "git smudge", as users may decide to use any
+    # formatting in their editor consistently.
+    # https://github.com/pre-commit/pre-commit-hooks?tab=readme-ov-file#mixed-line-ending
+    #
+    # This check makes sure the repository is always consistent NL line endings.
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Check all files for broken line endings…"
+        run: '! find . -not -type d -exec file "{}" ";" | grep CRLF'
 
   cppcheck:
     runs-on: "ubuntu-22.04"

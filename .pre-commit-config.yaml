@@ -26,14 +26,13 @@ repos:
       - id: black
         language_version: python3
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.10.0
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
         # explicitly add input files that are not "*.sh"
-        args: [
-          # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
-          "bin/nest_vars.sh.in",
+        args: [ # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
+          "bin/nest_vars.sh.in",   # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
         ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format

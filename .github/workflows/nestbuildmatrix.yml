@@ -48,7 +48,8 @@ jobs:
 
       - name: "Run shellcheck..."
         run: |
-          find . -iname "*.sh" | xargs shellcheck
+          shellcheck --version
+          find . -iname "*.sh" -o -iname "*.sh.in" | xargs shellcheck
 
   pre-commit-hooks:
     runs-on: "ubuntu-20.04"

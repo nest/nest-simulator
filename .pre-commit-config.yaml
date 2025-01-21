@@ -30,6 +30,11 @@ repos:
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
+        # explicitly add input files that are not "*.sh"
+        args: [
+          "bin/nest_vars.sh.in"  # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
+
+        ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v17.0.4

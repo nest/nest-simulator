@@ -1,4 +1,4 @@
-
+#!/bin/bash
 # junit_xml.sh
 #
 # This file is part of NEST.
@@ -39,16 +39,16 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    t_start=$( date +%s%N )
+    t_start="$( date +%s%N )"
     $1
-    t_end=$( date +%s%N )
+    t_end="$( date +%s%N )"
 
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
-    if test "x${t_start: -1}" != xN ; then     # space before -1 required!
-        echo $(( ( ${t_end} - ${t_start} ) / 1000000000 ))
+    if test "${t_start: -1}" != "N" ; then     # space before -1 required!
+        echo "$(( ( t_end - t_start ) / 1000000000 ))"
     else
-        echo $(( ${t_end%N} - ${t_start%N} ))
+        echo "$(( ${t_end%N} - ${t_start%N} ))"
     fi
 }
 
@@ -79,7 +79,7 @@ TIME_ELAPSED=0
 #
 junit_open ()
 {
-    if test "x$1" = x ; then
+    if test -z "$1"; then
         bail_out 'junit_open: file_name not given!'
     fi
 
@@ -93,14 +93,16 @@ junit_open ()
     # Be compatible with BSD date; no --rfc-3339 and :z modifier
     timestamp="$( date -u '+%FT%T+00:00' )"
 
-    echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
+    {
+        echo '<?xml version="1.0" encoding="UTF-8" ?>'
 
-    echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skipped=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
-    echo '  <properties>' >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />" >> "${JUNIT_FILE}"
-    echo '  </properties>' >> "${JUNIT_FILE}"
+        echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skipped=XXX time=XXX timestamp=\"${timestamp}\">"
+        echo '  <properties>'
+        echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />"
+        echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />"
+        echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />"
+        echo '  </properties>'
+    } >"${JUNIT_FILE}"
 }
 
 #
@@ -108,26 +110,28 @@ junit_open ()
 #
 junit_write ()
 {
-    if test "x${JUNIT_FILE}" = x ; then
+    if test -z "${JUNIT_FILE}"; then
         bail_out 'junit_write: report file not open, call junit_open first!'
     fi
 
-    if test "x$1" = x || test "x$2" = x ; then
+    if test -z "$1" -o -z "$2"; then
         bail_out 'junit_write: classname and testname arguments are mandatory!'
     fi
 
-    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\">" >> "${JUNIT_FILE}"
+    {
+        printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\">"
 
-    if test "x$3" = xskipped ; then
-        echo "    <skipped message=\"$4\" type=\"\"></skipped>" >> "${JUNIT_FILE}"
-    fi
+        if test "$3" = "skipped" ; then
+            echo "    <skipped message=\"$4\" type=\"\"></skipped>"
+        fi
 
-    if test "x$3" = xfailure ; then
-        echo "    <failure message=\"$4\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
-        echo "$5" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
-        echo "]]></failure>" >> "${JUNIT_FILE}"
-    fi
-    echo "  </testcase>" >> "${JUNIT_FILE}"
+        if test "$3" = "failure" ; then
+            echo "    <failure message=\"$4\" type=\"\"><![CDATA["
+            echo "${5/]]>/]]>]]\&gt;<\![CDATA[}"
+            echo "]]></failure>"
+        fi
+        echo "  </testcase>"
+    } >>"${JUNIT_FILE}"
 }
 
 #
@@ -135,7 +139,7 @@ junit_write ()
 #
 junit_close ()
 {
-    if test "x${JUNIT_FILE}" = x ; then
+    if test "${JUNIT_FILE}" = "" ; then
         bail_out 'junit_close: report file not open, call junit_open first!'
     fi
 
@@ -144,9 +148,11 @@ junit_close ()
     portable_inplace_sed "${JUNIT_FILE}" "s/skipped=XXX/skipped=\"${JUNIT_SKIPS}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
 
-    echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"
-    echo '  <system-err><![CDATA[]]></system-err>' >> "${JUNIT_FILE}"
-    echo '</testsuite>' >> "${JUNIT_FILE}"
+    {
+        echo '  <system-out><![CDATA[]]></system-out>'
+        echo '  <system-err><![CDATA[]]></system-err>'
+        echo '</testsuite>'
+    } >>"${JUNIT_FILE}"
 
     JUNIT_FILE=
 }

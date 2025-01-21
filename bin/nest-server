@@ -35,16 +35,17 @@ pid() {
   pgrep -f "gunicorn nest.server.app --bind ${HOST}:${PORT}"
 }
 
+declare -a GUNICORN_OPTS
 set-gunicorn_opts() {
   # Set opts for gunicorn.
-  GUNICORN_OPTS="--bind ${HOST}:${PORT}"
+  GUNICORN_OPTS+=( "--bind" "${HOST}:${PORT}" )
   if [ "${DAEMON}" -eq 1 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
+    GUNICORN_OPTS+=( "--daemon" )
   fi
   if [ "${STDOUT}" -eq 0 ]; then
-    GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
+    GUNICORN_OPTS+=( "--capture-output" )
   fi
-  GUNICORN_OPTS="${GUNICORN_OPTS} --log-file ${LOGFILE}"
+  GUNICORN_OPTS+=( "--log-file" "${LOGFILE}" )
 }
 
 start() {
@@ -61,12 +62,17 @@ start() {
     fi
 
     set-gunicorn_opts
-    exec gunicorn nest.server:app ${GUNICORN_OPTS}
+    exec gunicorn nest.server:app "${GUNICORN_OPTS[@]}"
   fi
 }
 
 status() {
   # List all processes of NEST Server.
+  #
+  # NOTE: The following noqa should not be necessary. Please refactor the awk
+  #       to use pgrep output if you know how.
+  # SC2009 (info): Consider using pgrep instead of grepping ps output.
+  # shellcheck disable=SC2009
   PS_AUX="$(ps aux | grep "[g]unicorn nest.server.app")"
   printf "USER\t\t\tPID\t\tHTTP-SOCKET\n"
   echo "${PS_AUX}" | head -n 1 | awk '{ for(i=1;i<=NF;i++) {if ( i == 1 || i == 2 || i == 15 ) printf $i"\t\t"}; printf "\n" }'
@@ -85,11 +91,12 @@ stop() {
 
 CMD=$1; shift
 while getopts "dh:op:" opt; do
-    case $opt in
+    case "$opt" in
         d) DAEMON=1 ;;
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;
+        *) usage ;;
     esac
 done
 

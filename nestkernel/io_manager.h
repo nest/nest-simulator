@@ -56,11 +56,6 @@ public:
   void set_status( const dictionary& ) override;
   void get_status( dictionary& ) override;
 
-  void change_number_of_threads() override;
-
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
-
   void set_recording_backend_status( std::string, const dictionary& );
   dictionary get_recording_backend_status( std::string );
 

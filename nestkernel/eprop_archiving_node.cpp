@@ -25,9 +25,6 @@
 #include "eprop_archiving_node_impl.h"
 #include "kernel_manager.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 

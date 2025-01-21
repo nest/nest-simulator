@@ -275,7 +275,7 @@ void
 nest::astrocyte_lr_1994::State_::get( dictionary& d ) const
 {
   d[ names::IP3 ] = y_[ IP3 ];
-  d[ names::Ca ] = y_[ Ca ];
+  d[ names::Ca ] = y_[ Ca_astro ];
   d[ names::h_IP3R ] = y_[ h_IP3R ];
 }
 
@@ -283,7 +283,7 @@ void
 nest::astrocyte_lr_1994::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::IP3, y_[ IP3 ], node );
-  update_value_param( d, names::Ca, y_[ Ca ], node );
+  update_value_param( d, names::Ca, y_[ Ca_astro ], node );
   update_value_param( d, names::h_IP3R, y_[ h_IP3R ], node );
 
   if ( y_[ IP3 ] < 0 )

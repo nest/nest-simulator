@@ -59,8 +59,6 @@ void reset_kernel();
 severity_t get_verbosity();
 void set_verbosity( severity_t s );
 
-void enable_dryrun_mode( const size_t n_procs );
-
 void enable_structural_plasticity();
 void disable_structural_plasticity();
 
@@ -148,9 +146,9 @@ void disconnect( NodeCollectionPTR sources,
 void connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& connectivity,
-  const DictionaryDatum& third_connectivity,
-  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
+  const dictionary& connectivity,
+  const dictionary& third_connectivity,
+  const std::map< std::string, std::vector< dictionary > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one

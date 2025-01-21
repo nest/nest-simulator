@@ -484,7 +484,7 @@ public:
     NodeCollectionPTR third,
     const dictionary& conn_spec,
     const dictionary& third_conn_spec,
-    const std::map< Name, std::vector< dictionary > >& syn_specs );
+    const std::map< std::string, std::vector< dictionary > >& syn_specs );
 
   ~ConnBuilder();
 
@@ -742,7 +742,7 @@ protected:
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
+  ParameterPTR pairwise_avg_num_conns_; //!< Mean number of connections
 };
 
 class SymmetricBernoulliBuilder : public BipartiteConnBuilder

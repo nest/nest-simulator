@@ -219,8 +219,8 @@ public:
    * Functions for getting/setting parameters and state values.
    * ------------------------------------------------------------------------- */
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   void init_state_() override;
@@ -271,8 +271,8 @@ private:
      **/
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -315,8 +315,8 @@ public:
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
 private:
@@ -503,25 +503,25 @@ iaf_bw_2001_exact::handles_test_event( DataLoggingRequest& dlr, size_t receptor_
 }
 
 inline void
-iaf_bw_2001_exact::get_status( DictionaryDatum& d ) const
+iaf_bw_2001_exact::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  DictionaryDatum receptor_type = new Dictionary();
+  dictionary receptor_type;
 
-  ( *receptor_type )[ names::AMPA ] = AMPA;
-  ( *receptor_type )[ names::GABA ] = GABA;
-  ( *receptor_type )[ names::NMDA ] = NMDA;
+  receptor_type[ names::AMPA ] = AMPA;
+  receptor_type[ names::GABA ] = GABA;
+  receptor_type[ names::NMDA ] = NMDA;
 
-  ( *d )[ names::receptor_types ] = receptor_type;
+  d[ names::receptor_types ] = receptor_type;
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_bw_2001_exact::set_status( const DictionaryDatum& d )
+iaf_bw_2001_exact::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

@@ -31,6 +31,24 @@
 // Includes from thirdparty:
 #include "compose.hpp"
 
+
+nest::WrappedThreadException::WrappedThreadException( const std::exception& exc )
+  : KernelException( exc.what() )
+{
+  /* PYNEST NG: Review
+  KernelException const* se = dynamic_cast< KernelException const* >( &exc );
+  if ( se )
+  {
+    message_ = se->message();
+  }
+  else
+  {
+    message_ = std::string( "C++ exception: " ) + exc.what();
+  }
+  */
+}
+
+
 std::string
 nest::UnknownModelName::compose_msg_( const std::string& model_name ) const
 {

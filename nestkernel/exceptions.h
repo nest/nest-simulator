@@ -86,6 +86,25 @@ public:
 };
 
 /**
+ * Exception to be thrown if loading or unloading a dynamically loaded module fails
+ * @ingroup KernelExceptions
+ */
+class DynamicModuleManagementError : public KernelException
+{
+public:
+  explicit DynamicModuleManagementError( const std::string& msg )
+    : KernelException( msg )
+  {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "DynamicModuleManagementError";
+  }
+};
+
+/**
  * Exception to be thrown if a feature is unavailable.
  * @ingroup KernelExceptions
  */
@@ -103,6 +122,23 @@ public:
     return "NotImplemented";
   }
 };
+
+/**
+ * Class for packaging exceptions thrown in threads.
+ *
+ * This class is used to wrap exceptions thrown in threads.
+ * It essentially packages the message of the wrapped exception,
+ * avoiding the need of a clone() operation for each exception type.
+ */
+class WrappedThreadException : public KernelException
+{
+public:
+  WrappedThreadException( const std::exception& );
+  ~WrappedThreadException() throw() override
+  {
+  }
+};
+
 
 /**
  * Exception to be thrown if a given type does not match the expected type.

@@ -195,9 +195,9 @@ public:
   void connect_tripartite( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
-    const DictionaryDatum& connectivity,
-    const DictionaryDatum& third_connectivity,
-    const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
+    const dictionary& connectivity,
+    const dictionary& third_connectivity,
+    const std::map< std::string, std::vector< dictionary > >& synapse_specs );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
@@ -645,7 +645,7 @@ private:
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericBipartiteConnBuilderFactory* > connbuilder_factories_;
 
-  DictionaryDatum thirdconnruledict_; //!< Dictionary for third-factor connection rules.
+  dictionary thirdconnruledict_; //!< Dictionary for third-factor connection rules.
 
   //! Third-factor ConnBuilder factories, indexed by thirdconnruledict_ elements.
   std::vector< GenericThirdConnBuilderFactory* > thirdconnbuilder_factories_;

@@ -83,17 +83,17 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     register_recording_backend< RecordingBackendSIONlib >( "sionlib" );
 #endif
 
-    DictionaryDatum dict( new Dictionary );
+    dictionary dict;
     // The properties data_path and data_prefix can be set via environment variables
     char* data_path = std::getenv( "NEST_DATA_PATH" );
     if ( data_path )
     {
-      ( *dict )[ names::data_path ] = std::string( data_path );
+      dict[ names::data_path ] = std::string( data_path );
     }
     char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
     if ( data_prefix )
     {
-      ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+      dict[ names::data_prefix ] = std::string( data_prefix );
     }
 
     set_data_path_prefix_( dict );

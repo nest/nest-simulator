@@ -82,7 +82,7 @@ SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
       delete gcf;
     }
     growthcurve_factories_.clear();
-    growthcurvedict_->clear();
+    growthcurvedict_.clear();
   }
 }
 
@@ -252,7 +252,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
   BipartiteConnBuilder* cb = nullptr;
   conn_spec.init_access_flags();
-  syn_specs.init_access_flags();
+  syn_spec.init_access_flags();
 
   if ( not conn_spec.known( names::rule ) )
   {
@@ -270,7 +270,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string syn_model = syn_specs[ 0 ].get< std::string >( names::synapse_model );
+      std::string syn_model = syn_spec.get< std::string >( names::synapse_model );
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name,
@@ -297,7 +297,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );
-  syn_specs[ 0 ].all_entries_accessed( "Disconnect", "syn_spec" );
+  syn_spec.all_entries_accessed( "Disconnect", "syn_spec" );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();

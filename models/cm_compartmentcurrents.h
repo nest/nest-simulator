@@ -414,7 +414,7 @@ private:
 
 public:
   CompartmentCurrents( double v_comp );
-  CompartmentCurrents( double v_comp, const DictionaryDatum& channel_params );
+  CompartmentCurrents( double v_comp, const dictionary& channel_params );
   ~CompartmentCurrents() {};
 
   void
@@ -477,7 +477,7 @@ public:
   void
   add_synapse( const std::string& type, const long syn_idx, const dictionary& receptor_params )
   {
-    receptor_params->clear_access_flags();
+    receptor_params.init_access_flags();
 
     if ( type == "AMPA" )
     {
@@ -504,7 +504,7 @@ public:
       assert( false );
     }
 
-    ALL_ENTRIES_ACCESSED( *receptor_params, "receptor_params", "Unread dictionary entries: " );
+    receptor_params.all_entries_accessed( "receptor_params", "Unread dictionary entries: " );
   };
 
   void

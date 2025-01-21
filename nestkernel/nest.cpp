@@ -29,7 +29,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
-#include "node_collection_impl.h"
 #include "parameter.h"
 
 #include "sp_manager.h"
@@ -50,8 +49,6 @@
 
 #include "config.h"
 #include "dictionary.h"
-
-#include "modelsmodule.h"
 
 namespace nest
 {
@@ -105,8 +102,6 @@ init_nest( int* argc, char** argv[] )
   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
-
-  register_stuff();
 }
 
 void
@@ -135,12 +130,6 @@ void
 set_verbosity( severity_t s )
 {
   kernel().logging_manager.set_logging_level( s );
-}
-
-void
-enable_dryrun_mode( const size_t n_procs )
-{
-  kernel().mpi_manager.set_num_processes( n_procs );
 }
 
 void
@@ -256,12 +245,13 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
   }
   else if ( nc->size() == params.size() )
   {
-    for ( auto it = nc->begin(); it < nc->end(); ++it )
+    size_t idx = 0;
+    for ( auto const& node : *nc )
     {
-      size_t i = ( *it ).lid;
-      params[ i ].init_access_flags();
-      kernel().node_manager.set_status( ( *it ).node_id, params[ i ] );
-      params[ i ].all_entries_accessed( "NodeCollection.set()", "params" );
+      params[ idx ].init_access_flags();
+      kernel().node_manager.set_status( node.node_id, params[ idx ] );
+      params[ idx ].all_entries_accessed( "NodeCollection.set()", "params" );
+      ++idx;
     }
   }
   else
@@ -459,7 +449,7 @@ contains( const NodeCollectionPTR nc, const size_t node_id )
 long
 find( const NodeCollectionPTR nc, size_t node_id )
 {
-  return nc->get_lid( node_id );
+  return nc->get_nc_index( node_id );
 }
 
 dictionary
@@ -470,7 +460,9 @@ get_metadata( const NodeCollectionPTR nc )
   // Fill the status dictionary only if the NodeCollection has valid metadata.
   if ( meta.get() )
   {
-    meta->get_status( status_dict );
+    /* PYNESTNG NEEDS REVIEW */
+    // meta->get_status( status_dict, nc );
+    assert( false );
     slice_positions_if_sliced_nc( status_dict, nc );
     status_dict[ names::network_size ] = nc->size();
   }
@@ -495,13 +487,13 @@ disconnect( NodeCollectionPTR sources,
   kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 }
 
-
+void
 connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& connectivity,
-  const DictionaryDatum& third_connectivity,
-  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
+  const dictionary& connectivity,
+  const dictionary& third_connectivity,
+  const std::map< std::string, std::vector< dictionary > >& synapse_specs )
 {
   kernel().connection_manager.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
@@ -810,15 +802,21 @@ slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
     {
       std::vector< std::vector< double > > sliced_points;
       // Iterate only local nodes
-      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
+      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->rank_local_begin() : nc->begin();
       NodeCollection::const_iterator nc_end = nc->end();
       for ( auto node = nc_begin; node < nc_end; ++node )
       {
         // Because the local ID also includes non-local nodes, it must be adapted to represent
         // the index for the local node position.
+        /*
+         PYNEST-NG NEEDS review
+         */
+        assert( false );
+        /*
         const auto index =
           static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
         sliced_points.push_back( positions[ index ] );
+         */
       }
       dict[ names::positions ] = sliced_points;
     }

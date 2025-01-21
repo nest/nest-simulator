@@ -100,7 +100,7 @@ public:
     // compare based on all metadata, irrespective of any slicing
     get_status( dict, /* nc */ nullptr );
     rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
-    return *dict == *rhs_dict;
+    return dict == rhs_dict;
   }
 
 private:

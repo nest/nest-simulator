@@ -26,9 +26,6 @@
 #include "exceptions.h"
 #include "nest_names.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
@@ -48,20 +45,20 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
 }
 
 void
-WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonProperties::get_status( dictionary& d ) const
 {
-  def< std::string >( d, names::optimizer, get_name() );
-  def< long >( d, names::batch_size, batch_size_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
+  d[ names::optimizer ] = get_name();
+  d[ names::batch_size ] = batch_size_;
+  d[ names::eta ] = eta_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
 }
 
 void
-WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonProperties::set_status( const dictionary& d )
 {
   long new_batch_size = batch_size_;
-  updateValue< long >( d, names::batch_size, new_batch_size );
+  d.update_value( names::batch_size, new_batch_size );
   if ( new_batch_size <= 0 )
   {
     throw BadProperty( "Optimization batch_size > 0 required." );
@@ -69,7 +66,7 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   batch_size_ = new_batch_size;
 
   double new_eta = eta_;
-  updateValue< double >( d, names::eta, new_eta );
+  d.update_value( names::eta, new_eta );
   if ( new_eta < 0 )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
@@ -78,8 +75,8 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;
-  updateValue< double >( d, names::Wmin, new_Wmin );
-  updateValue< double >( d, names::Wmax, new_Wmax );
+  d.update_value( names::Wmin, new_Wmin );
+  d.update_value( names::Wmax, new_Wmax );
   if ( new_Wmin > new_Wmax )
   {
     throw BadProperty( "Minimal weight Wmin ≤ maximal weight Wmax required." );
@@ -95,12 +92,12 @@ WeightOptimizer::WeightOptimizer()
 }
 
 void
-WeightOptimizer::get_status( DictionaryDatum& d ) const
+WeightOptimizer::get_status( dictionary& d ) const
 {
 }
 
 void
-WeightOptimizer::set_status( const DictionaryDatum& d )
+WeightOptimizer::set_status( const dictionary& d )
 {
 }
 
@@ -169,23 +166,23 @@ WeightOptimizerCommonPropertiesAdam::get_optimizer() const
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonPropertiesAdam::get_status( dictionary& d ) const
 {
   WeightOptimizerCommonProperties::get_status( d );
 
-  def< double >( d, names::beta_1, beta_1_ );
-  def< double >( d, names::beta_2, beta_2_ );
-  def< double >( d, names::epsilon, epsilon_ );
+  d[ names::beta_1 ] = beta_1_;
+  d[ names::beta_2 ] = beta_2_;
+  d[ names::epsilon ] = epsilon_;
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonPropertiesAdam::set_status( const dictionary& d )
 {
   WeightOptimizerCommonProperties::set_status( d );
 
-  updateValue< double >( d, names::beta_1, beta_1_ );
-  updateValue< double >( d, names::beta_2, beta_2_ );
-  updateValue< double >( d, names::epsilon, epsilon_ );
+  d.update_value( names::beta_1, beta_1_ );
+  d.update_value( names::beta_2, beta_2_ );
+  d.update_value( names::epsilon, epsilon_ );
 
   if ( beta_1_ < 0.0 or 1.0 <= beta_1_ )
   {
@@ -211,19 +208,19 @@ WeightOptimizerAdam::WeightOptimizerAdam()
 }
 
 void
-WeightOptimizerAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerAdam::get_status( dictionary& d ) const
 {
   WeightOptimizer::get_status( d );
-  def< double >( d, names::m, m_ );
-  def< double >( d, names::v, v_ );
+  d[ names::m ] = m_;
+  d[ names::v ] = v_;
 }
 
 void
-WeightOptimizerAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerAdam::set_status( const dictionary& d )
 {
   WeightOptimizer::set_status( d );
-  updateValue< double >( d, names::m, m_ );
-  updateValue< double >( d, names::v, v_ );
+  d.update_value( names::m, m_ );
+  d.update_value( names::v, v_ );
 }
 
 

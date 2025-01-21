@@ -138,16 +138,16 @@ GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+GenericConnectorModel< ConnectionT >::check_synapse_params( const dictionary& syn_spec ) const
 {
   // This is called just once per Connect() call, so we need not worry much about performance.
   // We get a dictionary with synapse default values and check if any of its keys are in syn_spec.
-  DictionaryDatum dummy( new Dictionary );
+  dictionary dummy;
   cp_.get_status( dummy );
 
-  for ( [[maybe_unused]] const auto& [ key, val ] : *syn_spec )
+  for ( [[maybe_unused]] const auto& [ key, val ] : syn_spec )
   {
-    if ( dummy->known( key ) )
+    if ( dummy.known( key ) )
     {
       throw NotImplemented(
         String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );

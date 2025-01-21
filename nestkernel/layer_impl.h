@@ -108,7 +108,7 @@ Layer< D >::get_status( dictionary& d, NodeCollection const* nc ) const
   {
     // This is for backward compatibility with some tests and scripts
     // TODO: Rename parameter
-    ( *d )[ names::network_size ] = nc->size();
+    d[ names::network_size ] = nc->size();
   }
 }
 

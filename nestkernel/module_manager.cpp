@@ -31,9 +31,6 @@
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
 
@@ -96,18 +93,18 @@ ModuleManager::reinitialize_dynamic_modules()
 }
 
 void
-ModuleManager::get_status( DictionaryDatum& d )
+ModuleManager::get_status( dictionary& d )
 {
-  ArrayDatum loaded;
+  std::vector< std::string > loaded;
   for ( const auto& [ name, module_info ] : modules_ )
   {
-    loaded.push_back( new LiteralDatum( name ) );
+    loaded.emplace_back( name );
   }
-  ( *d )[ names::modules ] = loaded;
+  d[ names::modules ] = loaded;
 }
 
 void
-ModuleManager::set_status( const DictionaryDatum& d )
+ModuleManager::set_status( const dictionary& d )
 {
 }
 

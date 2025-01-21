@@ -81,7 +81,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
 {
   kernel().vp_manager.assert_single_threaded();
 
-  if ( synapsedict_->known( name ) )
+  if ( synapsedict_.known( name ) )
   {
     std::string msg =
       String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
@@ -97,7 +97,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     throw KernelException( "Synapse model count exceeded" );
   }
 
-  synapsedict_->insert( name, new_syn_id );
+  synapsedict_[ name ] = new_syn_id;
 
 #pragma omp parallel
   {

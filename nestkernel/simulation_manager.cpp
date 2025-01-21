@@ -417,7 +417,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // eprop update interval
   double eprop_update_interval_new = 0.0;
-  if ( updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_new ) )
+  if ( d.update_value( names::eprop_update_interval, eprop_update_interval_new ) )
   {
     if ( eprop_update_interval_new <= 0 )
     {
@@ -430,7 +430,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 
   // eprop learning window
   double eprop_learning_window_new = 0.0;
-  if ( updateValue< double >( d, names::eprop_learning_window, eprop_learning_window_new ) )
+  if ( d.update_value( names::eprop_learning_window, eprop_learning_window_new ) )
   {
     if ( eprop_learning_window_new <= 0 )
     {
@@ -446,7 +446,7 @@ nest::SimulationManager::set_status( const dictionary& d )
     eprop_learning_window_ = eprop_learning_window_new;
   }
 
-  updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
+  d.update_value( names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
 
 void
@@ -489,9 +489,9 @@ nest::SimulationManager::get_status( dictionary& d )
   d[ names::time_deliver_secondary_data ] = sw_deliver_secondary_data_.elapsed();
 #endif
 
-  def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
-  def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
-  def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
+  d[ names::eprop_update_interval ] = eprop_update_interval_;
+  d[ names::eprop_learning_window ] = eprop_learning_window_;
+  d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
 }
 
 void

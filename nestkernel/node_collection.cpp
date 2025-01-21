@@ -29,7 +29,6 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "node.h"
-#include "node_collection_impl.h"
 #include "vp_manager_impl.h"
 
 // C++ includes:
@@ -318,50 +317,6 @@ NodeCollection::NodeCollection()
 {
 }
 
-// NodeCollectionPTR
-// NodeCollection::create( const IntVectorDatum& node_ids_datum )
-// {
-//   if ( node_ids_datum->empty() )
-//   {
-//     return NodeCollection::create_();
-//   }
-
-//   std::vector< size_t > node_ids;
-//   node_ids.reserve( node_ids_datum->size() );
-//   for ( const auto& datum : *node_ids_datum )
-//   {
-//     node_ids.push_back( static_cast< size_t >( getValue< long >( datum ) ) );
-//   }
-
-//   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-//   {
-//     throw BadProperty( "Node IDs must be sorted in ascending order" );
-//   }
-//   return NodeCollection::create_( node_ids );
-// }
-
-// NodeCollectionPTR
-// NodeCollection::create( const TokenArray& node_ids_array )
-// {
-//   if ( node_ids_array.empty() )
-//   {
-//     return NodeCollection::create_();
-//   }
-
-//   std::vector< size_t > node_ids;
-//   node_ids.reserve( node_ids_array.size() );
-//   for ( const auto& node_id_token : node_ids_array )
-//   {
-//     node_ids.push_back( static_cast< size_t >( getValue< long >( node_id_token ) ) );
-//   }
-
-//   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-//   {
-//     throw BadProperty( "Node IDs must be sorted in ascending order" );
-//   }
-//   return NodeCollection::create_( node_ids );
-// }
-
 NodeCollectionPTR
 NodeCollection::create( const size_t node_id )
 {
@@ -377,6 +332,20 @@ NodeCollection::create( const Node* node )
     return NodeCollection::create( node->get_node_id() );
   }
   return NodeCollection::create_();
+}
+
+NodeCollectionPTR
+NodeCollection::create( const std::vector< size_t >& node_ids_vector )
+{
+  if ( node_ids_vector.empty() )
+  {
+    return NodeCollection::create_();
+  }
+  if ( not std::is_sorted( node_ids_vector.begin(), node_ids_vector.end() ) )
+  {
+    throw BadProperty( "Indices must be sorted in ascending order" );
+  }
+  return NodeCollection::create_( node_ids_vector );
 }
 
 NodeCollectionPTR
@@ -440,7 +409,7 @@ NodeCollection::valid() const
 }
 
 void
-NodeCollection::get_metadata_status( DictionaryDatum& d ) const
+NodeCollection::get_metadata_status( dictionary& d ) const
 {
   NodeCollectionMetadataPTR meta = get_metadata();
   if ( not meta )
@@ -1221,248 +1190,253 @@ NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
   {
     return end( cp );
   }
+}
 
-  NodeCollectionPTR NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
+NodeCollectionPTR
+NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
+{
+  if ( not( start < end ) )
   {
-    if ( not( start < end ) )
-    {
-      throw BadParameter( "start < stop required." );
-    }
-    if ( not( end <= size() ) )
-    {
-      throw BadParameter( "end <= size() required." );
-    }
-    if ( not valid() )
-    {
-      throw KernelException(
-        "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
-    }
-
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice()" ); )
-    const auto new_composite = NodeCollectionComposite( *this, start, end, stride );
-    FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice() --- DONE" ); )
-
-    if ( stride == 1 and new_composite.first_part_ == new_composite.last_part_ )
-    {
-      // Return only the primitive; pass last_elem_+1 because slice() expects end argument
-      return new_composite.parts_[ new_composite.first_part_ ].slice(
-        new_composite.first_elem_, new_composite.last_elem_ + 1 );
-    }
-
-    FULL_LOGGING_ONLY(
-      kernel().write_to_dump( String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
-        new_composite.first_part_,
-        new_composite.first_elem_,
-        new_composite.last_part_,
-        new_composite.last_elem_,
-        new_composite.size_,
-        new_composite.stride_ ) ); )
-
-    return std::make_shared< NodeCollectionComposite >( new_composite );
+    throw BadParameter( "start < stop required." );
+  }
+  if ( not( end <= size() ) )
+  {
+    throw BadParameter( "end <= size() required." );
+  }
+  if ( not valid() )
+  {
+    throw KernelException(
+      "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  void NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive > & parts ) const
-  {
-    bool did_merge = true; // initialize to enter the while loop
-    size_t last_i = 0;
-    while ( did_merge ) // if parts is changed, it has to be checked again
-    {
-      did_merge = false;
-      for ( size_t i = last_i; i < parts.size() - 1; ++i )
-      {
-        if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
-        {
-          NodeCollectionPTR merged_primitivesPTR =
-            parts[ i ] + std::make_shared< NodeCollectionPrimitive >( parts[ i + 1 ] );
-          auto const* const merged_primitives =
-            dynamic_cast< NodeCollectionPrimitive const* >( merged_primitivesPTR.get() );
+  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice()" ); )
+  const auto new_composite = NodeCollectionComposite( *this, start, end, stride );
+  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice() --- DONE" ); )
 
-          parts[ i ] = *merged_primitives;
-          parts.erase( parts.begin() + i + 1 );
-          did_merge = true;
-          last_i = i;
-          break;
-        }
+  if ( stride == 1 and new_composite.first_part_ == new_composite.last_part_ )
+  {
+    // Return only the primitive; pass last_elem_+1 because slice() expects end argument
+    return new_composite.parts_[ new_composite.first_part_ ].slice(
+      new_composite.first_elem_, new_composite.last_elem_ + 1 );
+  }
+
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
+      new_composite.first_part_,
+      new_composite.first_elem_,
+      new_composite.last_part_,
+      new_composite.last_elem_,
+      new_composite.size_,
+      new_composite.stride_ ) ); )
+
+  return std::make_shared< NodeCollectionComposite >( new_composite );
+}
+
+void
+NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const
+{
+  bool did_merge = true; // initialize to enter the while loop
+  size_t last_i = 0;
+  while ( did_merge ) // if parts is changed, it has to be checked again
+  {
+    did_merge = false;
+    for ( size_t i = last_i; i < parts.size() - 1; ++i )
+    {
+      if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
+      {
+        NodeCollectionPTR merged_primitivesPTR =
+          parts[ i ] + std::make_shared< NodeCollectionPrimitive >( parts[ i + 1 ] );
+        auto const* const merged_primitives =
+          dynamic_cast< NodeCollectionPrimitive const* >( merged_primitivesPTR.get() );
+
+        parts[ i ] = *merged_primitives;
+        parts.erase( parts.begin() + i + 1 );
+        did_merge = true;
+        last_i = i;
+        break;
       }
     }
   }
+}
 
-  long NodeCollectionComposite::get_nc_index( const size_t node_id ) const
+long
+NodeCollectionComposite::get_nc_index( const size_t node_id ) const
+{
+  // Check if node is in node collection
+  if ( node_id < parts_[ first_part_ ][ first_elem_ ] or parts_[ last_part_ ][ last_elem_ ] < node_id )
   {
-    // Check if node is in node collection
-    if ( node_id < parts_[ first_part_ ][ first_elem_ ] or parts_[ last_part_ ][ last_elem_ ] < node_id )
+    return -1;
+  }
+
+  // Find part to which node belongs
+  size_t lower = first_part_;
+  size_t upper = last_part_;
+  while ( lower < upper )
+  {
+    // Because lower < upper, we are guaranteed that mid < upper
+    const size_t mid = ( lower + upper ) / 2;
+
+    // Because mid < upper <=> mid < last_part_, we do not need to worry about last_elem_
+    if ( parts_[ mid ][ parts_[ mid ].size() - 1 ] < node_id )
     {
-      return -1;
+      lower = mid + 1;
     }
-
-    // Find part to which node belongs
-    size_t lower = first_part_;
-    size_t upper = last_part_;
-    while ( lower < upper )
+    // mid == first_part_ is possible, but if node_id is before start_elem_,
+    // we handled that at the beginning, so here we just check if the node_id
+    // comes before the mid part
+    else if ( node_id < parts_[ mid ][ 0 ] )
     {
-      // Because lower < upper, we are guaranteed that mid < upper
-      const size_t mid = ( lower + upper ) / 2;
-
-      // Because mid < upper <=> mid < last_part_, we do not need to worry about last_elem_
-      if ( parts_[ mid ][ parts_[ mid ].size() - 1 ] < node_id )
-      {
-        lower = mid + 1;
-      }
-      // mid == first_part_ is possible, but if node_id is before start_elem_,
-      // we handled that at the beginning, so here we just check if the node_id
-      // comes before the mid part
-      else if ( node_id < parts_[ mid ][ 0 ] )
-      {
-        upper = mid - 1;
-      }
-      else
-      {
-        lower = upper = mid;
-      }
-    }
-
-    // If node_id is not in the NodeCollection, lower may pass upper in the loop above
-    // See test_regression_issue-3213.py for an example case.
-    assert( lower >= upper );
-
-    if ( lower > upper or node_id < parts_[ lower ][ 0 ] or parts_[ lower ][ parts_[ lower ].size() - 1 ] < node_id )
-    {
-      // node_id is in a gap of nc
-      return -1;
-    }
-
-    // We now know that lower == upper and that if the node is in this part
-    // if it is in the node collection. We do not need to check for first/last,
-    // since we did that above.
-    const auto part_begin_idx = lower == 0 ? 0 : cumul_abs_size_[ lower - 1 ];
-    const auto node_idx = part_begin_idx + parts_[ lower ].get_nc_index( node_id );
-
-    if ( not is_sliced_ )
-    {
-      // Since NC is not sliced, node_idx is the desired index
-      assert( this->operator[]( node_idx ) == node_id );
-      return node_idx;
+      upper = mid - 1;
     }
     else
     {
-      // We need to take stride into account
-      const auto distance_from_first = node_idx - first_elem_;
-
-      // Exploit that same stride applies to all parts
-      if ( distance_from_first % stride_ == 0 )
-      {
-        const auto sliced_node_idx = distance_from_first / stride_;
-        assert( this->operator[]( sliced_node_idx ) == node_id );
-        return sliced_node_idx;
-      }
-      else
-      {
-        return -1;
-      }
+      lower = upper = mid;
     }
   }
 
-  bool NodeCollectionComposite::has_proxies() const
+  // If node_id is not in the NodeCollection, lower may pass upper in the loop above
+  // See test_regression_issue-3213.py for an example case.
+  assert( lower >= upper );
+
+  if ( lower > upper or node_id < parts_[ lower ][ 0 ] or parts_[ lower ][ parts_[ lower ].size() - 1 ] < node_id )
   {
-    return std::all_of(
-      parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
+    // node_id is in a gap of nc
+    return -1;
   }
 
-  void NodeCollectionComposite::print_me( std::ostream & out ) const
+  // We now know that lower == upper and that if the node is in this part
+  // if it is in the node collection. We do not need to check for first/last,
+  // since we did that above.
+  const auto part_begin_idx = lower == 0 ? 0 : cumul_abs_size_[ lower - 1 ];
+  const auto node_idx = part_begin_idx + parts_[ lower ].get_nc_index( node_id );
+
+  if ( not is_sliced_ )
   {
-    std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
-    std::string nc = "NodeCollection(";
-    std::string space( nc.size(), ' ' );
+    // Since NC is not sliced, node_idx is the desired index
+    assert( this->operator[]( node_idx ) == node_id );
+    return node_idx;
+  }
+  else
+  {
+    // We need to take stride into account
+    const auto distance_from_first = node_idx - first_elem_;
 
-    if ( is_sliced_ )
+    // Exploit that same stride applies to all parts
+    if ( distance_from_first % stride_ == 0 )
     {
-      size_t current_part = 0;
-      size_t current_offset = 0;
-      size_t previous_part = std::numeric_limits< size_t >::infinity();
-      size_t primitive_last = 0;
+      const auto sliced_node_idx = distance_from_first / stride_;
+      assert( this->operator[]( sliced_node_idx ) == node_id );
+      return sliced_node_idx;
+    }
+    else
+    {
+      return -1;
+    }
+  }
+}
 
-      size_t primitive_size = 0;
-      NodeIDTriple first_in_primitive = *begin();
+bool
+NodeCollectionComposite::has_proxies() const
+{
+  return std::all_of(
+    parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
+}
 
-      std::vector< std::string > string_vector;
+void
+NodeCollectionComposite::print_me( std::ostream& out ) const
+{
+  std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
+  std::string nc = "NodeCollection(";
+  std::string space( nc.size(), ' ' );
 
-      out << nc << "metadata=" << metadata << ",";
+  if ( is_sliced_ )
+  {
+    size_t current_part = 0;
+    size_t current_offset = 0;
+    size_t previous_part = std::numeric_limits< size_t >::infinity();
+    size_t primitive_last = 0;
 
-      const auto end_it = end();
-      for ( nc_const_iterator it = begin(); it < end_it; ++it )
+    size_t primitive_size = 0;
+    NodeIDTriple first_in_primitive = *begin();
+
+    std::vector< std::string > string_vector;
+
+    out << nc << "metadata=" << metadata << ",";
+
+    const auto end_it = end();
+    for ( nc_const_iterator it = begin(); it < end_it; ++it )
+    {
+      std::tie( current_part, current_offset ) = it.get_part_offset();
+      if ( current_part != previous_part ) // New primitive
       {
-        std::tie( current_part, current_offset ) = it.get_part_offset();
-        if ( current_part != previous_part ) // New primitive
+        if ( it > begin() )
         {
-          if ( it > begin() )
+          // Need to count the primitive, so can't start at begin()
+          out << "\n" + space
+              << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
+              << ", size=" << primitive_size << ", ";
+          if ( primitive_size == 1 )
           {
-            // Need to count the primitive, so can't start at begin()
-            out << "\n" + space
-                << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
-                << ", size=" << primitive_size << ", ";
-            if ( primitive_size == 1 )
+            out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id << ";";
+          }
+          else
+          {
+            out << "first=" << first_in_primitive.node_id << ", last=";
+            out << primitive_last;
+            if ( stride_ > 1 )
             {
-              out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id << ";";
-            }
-            else
-            {
-              out << "first=" << first_in_primitive.node_id << ", last=";
-              out << primitive_last;
-              if ( stride_ > 1 )
-              {
-                out << ", step=" << stride_ << ";";
-              }
+              out << ", step=" << stride_ << ";";
             }
           }
-          primitive_size = 1;
-          first_in_primitive = *it;
         }
-        else
-        {
-          ++primitive_size;
-        }
-        primitive_last = ( *it ).node_id;
-        previous_part = current_part;
-      }
-
-      // Need to also print the last primitive
-      out << "\n" + space
-          << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
-          << ", size=" << primitive_size << ", ";
-      if ( primitive_size == 1 )
-      {
-        out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id;
+        primitive_size = 1;
+        first_in_primitive = *it;
       }
       else
       {
-        out << "first=" << first_in_primitive.node_id << ", last=";
-        out << primitive_last;
-        if ( stride_ > 1 )
-        {
-          out << ", step=" << stride_;
-        }
+        ++primitive_size;
       }
+      primitive_last = ( *it ).node_id;
+      previous_part = current_part;
+    }
+
+    // Need to also print the last primitive
+    out << "\n" + space << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
+        << ", size=" << primitive_size << ", ";
+    if ( primitive_size == 1 )
+    {
+      out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id;
     }
     else
     {
-      // Unsliced Composite NodeCollection
-      out << nc << "metadata=" << metadata << ",";
-      for ( auto it = parts_.begin(); it < parts_.end(); ++it )
+      out << "first=" << first_in_primitive.node_id << ", last=";
+      out << primitive_last;
+      if ( stride_ > 1 )
       {
-        if ( it == parts_.end() - 1 )
-        {
-          out << "\n" + space;
-          it->print_primitive( out );
-        }
-        else
-        {
-          out << "\n" + space;
-          it->print_primitive( out );
-          out << ";";
-        }
+        out << ", step=" << stride_;
       }
     }
-    out << ")";
   }
+  else
+  {
+    // Unsliced Composite NodeCollection
+    out << nc << "metadata=" << metadata << ",";
+    for ( auto it = parts_.begin(); it < parts_.end(); ++it )
+    {
+      if ( it == parts_.end() - 1 )
+      {
+        out << "\n" + space;
+        it->print_primitive( out );
+      }
+      else
+      {
+        out << "\n" + space;
+        it->print_primitive( out );
+        out << ";";
+      }
+    }
+  }
+  out << ")";
+}
 
 } // namespace nest

@@ -136,7 +136,7 @@ ModelManager::get_status( dictionary& dict )
 }
 
 void
-ModelManager::copy_model( Name old_name, Name new_name, const dictionary& params )
+ModelManager::copy_model( const std::string& old_name, const std::string& new_name, const dictionary& params )
 {
   if ( modeldict_.known( new_name ) or synapsedict_.known( new_name ) )
   {
@@ -174,7 +174,6 @@ ModelManager::register_node_model_( Model* model )
 
   node_models_.push_back( model );
   modeldict_[ name ] = id;
-  modeldict_->insert( name, id );
 
 #pragma omp parallel
   {
@@ -186,7 +185,7 @@ ModelManager::register_node_model_( Model* model )
 }
 
 void
-ModelManager::copy_node_model_( const size_t old_id, Name new_name, const dictionary& params )
+ModelManager::copy_node_model_( const size_t old_id, const std::string& new_name, const dictionary& params )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
@@ -208,7 +207,7 @@ ModelManager::copy_node_model_( const size_t old_id, Name new_name, const dictio
 }
 
 void
-ModelManager::copy_connection_model_( const size_t old_id, Name new_name, const dictionary& params )
+ModelManager::copy_connection_model_( const size_t old_id, const std::string& new_name, const dictionary& params )
 {
   kernel().vp_manager.assert_single_threaded();
 
@@ -227,8 +226,7 @@ ModelManager::copy_connection_model_( const size_t old_id, Name new_name, const 
 #pragma omp parallel
   {
     const size_t thread_id = kernel().vp_manager.get_thread_id();
-    connection_models_.at( thread_id )
-      .push_back( get_connection_model( old_id, thread_id ).clone( new_name.toString(), new_id ) );
+    connection_models_.at( thread_id ).push_back( get_connection_model( old_id, thread_id ).clone( new_name, new_id ) );
 
     kernel().connection_manager.resize_connections();
   }
@@ -238,7 +236,7 @@ ModelManager::copy_connection_model_( const size_t old_id, Name new_name, const 
 
 
 bool
-ModelManager::set_model_defaults( std::string name, dictionary params )
+ModelManager::set_model_defaults( const std::string& name, const dictionary& params )
 {
   size_t id;
   if ( modeldict_.known( name ) )
@@ -396,7 +394,7 @@ ModelManager::clear_connection_models_()
     connection_models_[ t ].clear();
   }
   connection_models_.clear();
-  synapsedict_->clear();
+  synapsedict_.clear();
 }
 
 void

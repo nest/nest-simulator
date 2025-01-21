@@ -63,7 +63,7 @@
 nest::ConnectionManager::ConnectionManager()
   : connruledict_()
   , connbuilder_factories_()
-  , thirdconnruledict_( new Dictionary() )
+  , thirdconnruledict_()
   , thirdconnbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
@@ -167,14 +167,14 @@ nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_on
       delete cbf;
     }
     connbuilder_factories_.clear();
-    connruledict_->clear();
+    connruledict_.clear();
 
     for ( auto tcbf : thirdconnbuilder_factories_ )
     {
       delete tcbf;
     }
     thirdconnbuilder_factories_.clear();
-    thirdconnruledict_->clear();
+    thirdconnruledict_.clear();
   }
 }
 
@@ -461,7 +461,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
   }
 
-  ConnBuilder cb( rule, sources, targets, conn_spec, syn_specs );
+  ConnBuilder cb( rule_name, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Connect", "conn_spec" );
@@ -819,9 +819,9 @@ void
 nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& conn_spec,
-  const DictionaryDatum& third_conn_spec,
-  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  const dictionary& conn_spec,
+  const dictionary& third_conn_spec,
+  const std::map< std::string, std::vector< dictionary > >& syn_specs )
 {
   if ( sources->empty() )
   {
@@ -836,36 +836,36 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
     throw IllegalConnection( "Third-factor nodes cannot be an empty NodeCollection" );
   }
 
-  conn_spec->clear_access_flags();
+  conn_spec.init_access_flags();
   for ( auto& [ key, syn_spec_array ] : syn_specs )
   {
     for ( auto& syn_spec : syn_spec_array )
     {
-      syn_spec->clear_access_flags();
+      syn_spec.init_access_flags();
     }
   }
 
-  if ( not conn_spec->known( names::rule ) )
+  if ( not conn_spec.known( names::rule ) )
   {
     throw BadProperty( "The connection specification must contain a connection rule." );
   }
-  if ( not third_conn_spec->known( names::rule ) )
+  if ( not third_conn_spec.known( names::rule ) )
   {
     throw BadProperty( "The third-factor connection specification must contain a connection rule." );
   }
 
-  const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
-  const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+  const std::string primary_rule = conn_spec.get< std::string >( names::rule );
+  const std::string third_rule = third_conn_spec.get< std::string >( names::rule );
 
   ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  conn_spec.all_entries_accessed( "Connect", "Unread dictionary entries in conn_spec: " );
   for ( auto& [ key, syn_spec_array ] : syn_specs )
   {
     for ( auto& syn_spec : syn_spec_array )
     {
-      ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_specs: " );
+      syn_spec.all_entries_accessed( "Connect", "Unread dictionary entries in syn_specs: " );
     }
   }
 

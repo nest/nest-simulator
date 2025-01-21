@@ -628,8 +628,7 @@ public:
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  template < typename T >
-  static NodeCollectionPTR create( const std::vector< T >& node_ids );
+  static NodeCollectionPTR create( const std::vector< size_t >& node_ids );
 
   /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
@@ -792,7 +791,7 @@ public:
   /**
    * Collect metadata into dictionary.
    */
-  void get_metadata_status( DictionaryDatum& ) const;
+  void get_metadata_status( dictionary& ) const;
 
   /**
    * return the first stored ID (i.e, ID at index zero) inside the NodeCollection
@@ -808,9 +807,7 @@ public:
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
-
-  template < typename T >
-  static NodeCollectionPTR create_( const std::vector< T >& );
+  static NodeCollectionPTR create_( const std::vector< size_t >& );
 };
 
 /**

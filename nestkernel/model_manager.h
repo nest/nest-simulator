@@ -121,7 +121,7 @@ public:
    * @param params default parameters of new model.
    * @see copy_node_model_, copy_connection_model_
    */
-  void copy_model( Name old_name, Name new_name, const dictionary& params );
+  void copy_model( const std::string& old_name, const std::string& new_name, const dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -131,7 +131,7 @@ public:
    * @return true if the operation succeeded, else false
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  bool set_model_defaults( Name name, const dictionary& params );
+  bool set_model_defaults( const std::string& name, const dictionary& params );
 
   /**
    * @return The model ID for a Model with a given name
@@ -195,7 +195,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_connection_model_()
    */
-  void copy_node_model_( const size_t old_id, Name new_name, const dictionary& params );
+  void copy_node_model_( const size_t old_id, const std::string& new_name, const dictionary& params );
 
   /**
    * Copy an existing synapse model and register it as a new model.
@@ -204,7 +204,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_node_model_()
    */
-  void copy_connection_model_( const size_t old_id, Name new_name, const dictionary& params );
+  void copy_connection_model_( const size_t old_id, const std::string& new_name, const dictionary& params );
 
   /**
    * Set the default parameters of a model.

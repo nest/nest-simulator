@@ -195,7 +195,7 @@ public:
   size_t get_syn_id() const override;
   void set_syn_id( synindex syn_id ) override;
 
-  void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
+  void check_synapse_params( const dictionary& syn_spec ) const override;
 
   SecondaryEvent*
   get_secondary_event() override

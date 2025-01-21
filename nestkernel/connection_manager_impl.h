@@ -55,12 +55,12 @@ template < typename ThirdConnBuilder >
 void
 ConnectionManager::register_third_conn_builder( const std::string& name )
 {
-  assert( not thirdconnruledict_->known( name ) );
+  assert( not thirdconnruledict_.known( name ) );
   GenericThirdConnBuilderFactory* cb = new ThirdConnBuilderFactory< ThirdConnBuilder >();
   assert( cb );
   const int id = thirdconnbuilder_factories_.size();
   thirdconnbuilder_factories_.push_back( cb );
-  thirdconnruledict_->insert( name, id );
+  thirdconnruledict_[ name ] = id;
 }
 
 inline void

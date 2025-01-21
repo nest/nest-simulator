@@ -705,7 +705,7 @@ nest::CompartmentCurrents::CompartmentCurrents( double v_comp )
 {
 }
 
-nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const DictionaryDatum& channel_params )
+nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const dictionary& channel_params )
   : Na_chan_( v_comp, channel_params )
   , K_chan_( v_comp, channel_params )
 {

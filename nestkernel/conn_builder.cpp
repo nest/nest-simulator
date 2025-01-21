@@ -62,24 +62,24 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR third,
   const dictionary& conn_spec,
   const dictionary& third_conn_spec,
-  const std::map< Name, std::vector< dictionary > >& syn_specs )
+  const std::map< std::string, std::vector< dictionary > >& syn_specs )
   : third_in_builder_( new ThirdInBuilder( sources,
     third,
     third_conn_spec,
-    const_cast< std::map< Name, std::vector< dictionary > >& >( syn_specs )[ names::third_in ] ) )
+    const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::third_in ] ) )
   , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
       targets,
       third_in_builder_,
       third_conn_spec,
       // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
-      const_cast< std::map< Name, std::vector< dictionary > >& >( syn_specs )[ names::third_out ] ) )
+      const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::third_out ] ) )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
       conn_spec,
-      const_cast< std::map< Name, std::vector< dictionary > >& >( syn_specs )[ names::primary ] ) )
+      const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::primary ] ) )
 {
 }
 
@@ -794,10 +794,10 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   , targets_per_third_( targets->size() / third->size() )
   , pools_( kernel().vp_manager.get_num_threads(), nullptr )
 {
-  updateValue< double >( conn_spec, names::p, p_ );
-  updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  conn_spec.update_value( names::p, p_ );
+  conn_spec.update_value( names::pool_size, pool_size_ );
   std::string pool_type;
-  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
+  if ( conn_spec.update_value( names::pool_type, pool_type ) )
   {
     if ( pool_type == "random" )
     {
@@ -1968,15 +1968,16 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   const std::vector< dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
+  ParameterPTR pd = conn_spec.get< ParameterPTR >( names::pairwise_avg_num_conns );
   if ( pd )
   {
-    pairwise_avg_num_conns_ = *pd;
+    assert( false ); // PYNEST NG requires review
+    // pairwise_avg_num_conns_ = *pd;
   }
   else
   {
     // Assume pairwise_avg_num_conns is a scalar
-    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
+    const double value = conn_spec.get< double >( names::pairwise_avg_num_conns );
     if ( value < 0 )
     {
       throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
@@ -2037,9 +2038,10 @@ nest::PoissonBuilder::connect_()
     }
     catch ( std::exception& err )
     {
+      assert( false ); // PYNEST NG requires review
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // of omp parallel
 }
@@ -2085,7 +2087,7 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
-  , p_( ( *conn_spec )[ names::p ] )
+  , p_( conn_spec.get< double >( names::p ) )
 {
   // This connector takes care of symmetric connections on its own
   creates_symmetric_connections_ = true;

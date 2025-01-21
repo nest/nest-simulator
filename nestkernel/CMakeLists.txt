@@ -40,7 +40,7 @@ set ( nestkernel_sources
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
-      node_collection.h node_collection_impl.h node_collection.cpp
+      node_collection.h node_collection.cpp
       generic_factory.h
       histentry.h histentry.cpp
       model.h model.cpp

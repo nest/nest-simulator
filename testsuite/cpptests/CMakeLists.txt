@@ -22,7 +22,7 @@ if ( HAVE_BOOST )
 
   add_executable( run_all_cpptests run_all.cpp )
 
-  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel models )
+  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel models OpenMP::OpenMP_CXX )
 
   target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

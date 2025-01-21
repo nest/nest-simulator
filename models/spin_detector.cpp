@@ -29,6 +29,15 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
+
+void
+nest::register_spin_detector( const std::string& name )
+{
+  register_node_model< spin_detector >( name );
+}
 
 
 nest::spin_detector::spin_detector()

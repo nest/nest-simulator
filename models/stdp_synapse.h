@@ -111,6 +111,8 @@ EndUserDocs */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 
+void register_stdp_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_synapse : public Connection< targetidentifierT >
 {
@@ -161,7 +163,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -231,7 +233,7 @@ constexpr ConnectionModelProperties stdp_synapse< targetidentifierT >::propertie
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -281,6 +283,8 @@ stdp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapse
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

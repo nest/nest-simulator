@@ -32,6 +32,7 @@
 #include "connector_model.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
+#include "sp_manager_impl.h"
 
 namespace nest
 {
@@ -48,24 +49,41 @@ SPManager::SPManager()
 
 SPManager::~SPManager()
 {
-  finalize();
 }
 
 void
-SPManager::initialize()
+SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    // Add MSP growth curves
+    register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
+    register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+    register_growth_curve< GrowthCurveLinear >( "linear" );
+  }
+
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
 void
-SPManager::finalize()
+SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
-  for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
-    delete *i;
+    for ( auto spcb : sp_conn_builders_ )
+    {
+      delete spcb;
+    }
+    sp_conn_builders_.clear();
+
+    for ( auto gcf : growthcurve_factories_ )
+    {
+      delete gcf;
+    }
+    growthcurve_factories_.clear();
+    growthcurvedict_->clear();
   }
-  sp_conn_builders_.clear();
 }
 
 void
@@ -134,7 +152,7 @@ SPManager::set_status( const dictionary& d )
     }
 
     // We use a ConnBuilder with dummy values to check the synapse parameters
-    SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
+    SPBuilder* conn_builder = new SPBuilder( sources, targets, /* third_out */ nullptr, conn_spec, { syn_spec } );
     conn_builder->set_name( kv_pair.first );
 
     // check that the user defined the min and max delay properly, if the
@@ -232,13 +250,9 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  // The ConnBuilder expects synapse specifications in a vector. We have to define
-  // the vector here to keep track of access flags.
-  const std::vector< dictionary > syn_specs = { syn_spec };
-
-  ConnBuilder* cb = nullptr;
+  BipartiteConnBuilder* cb = nullptr;
   conn_spec.init_access_flags();
-  syn_specs[ 0 ].init_access_flags();
+  syn_specs.init_access_flags();
 
   if ( not conn_spec.known( names::rule ) )
   {
@@ -259,7 +273,12 @@ SPManager::disconnect( NodeCollectionPTR sources,
       std::string syn_model = syn_specs[ 0 ].get< std::string >( names::synapse_model );
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
-        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
+        cb = kernel().connection_manager.get_conn_builder( rule_name,
+          sources,
+          targets,
+          /* third_out */ nullptr,
+          conn_spec,
+          { syn_spec } );
         cb->set_synaptic_element_names(
           ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
@@ -267,7 +286,12 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   else
   {
-    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
+    cb = kernel().connection_manager.get_conn_builder( rule_name,
+      sources,
+      targets,
+      /* third_out */ nullptr,
+      conn_spec,
+      { syn_spec } );
   }
   assert( cb );
 

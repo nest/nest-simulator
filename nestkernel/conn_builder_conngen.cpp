@@ -33,13 +33,17 @@ namespace nest
 
 ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , cg_()
   , params_map_()
 {
+  assert( third_out == nullptr );
+
   conn_spec.update_value( "cg", cg_ );
+
   if ( cg_->arity() != 0 )
   {
     if ( not conn_spec.known( "params_map" ) )

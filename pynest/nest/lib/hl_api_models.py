@@ -39,7 +39,7 @@ __all__ = [
 
 @deprecated("nest.node_models or nest.synapse_models")
 def Models(mtype="all", sel=None):
-    """Return a tuple of neuron, device, or synapse model names.
+    r"""Return a tuple of neuron, device, or synapse model names.
 
     Parameters
     ----------
@@ -62,7 +62,7 @@ def Models(mtype="all", sel=None):
     Notes
     -----
     - Synapse model names ending in ``_hpc`` require less memory because of
-      thread-local indices for target neuron IDs and fixed ``rport``s of 0.
+      thread-local indices for target neuron IDs and fixed ``rport``\s of 0.
     - Synapse model names ending in ``_lbl`` allow to assign an integer label
       (``synapse_label``) to each individual synapse, at the cost of increased
       memory requirements.

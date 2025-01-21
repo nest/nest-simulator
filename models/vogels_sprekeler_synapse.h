@@ -89,6 +89,8 @@ EndUserDocs */
 // target index addressing)
 // derived from generic connection template
 
+void register_vogels_sprekeler_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class vogels_sprekeler_synapse : public Connection< targetidentifierT >
 {
@@ -142,7 +144,7 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -211,7 +213,7 @@ constexpr ConnectionModelProperties vogels_sprekeler_synapse< targetidentifierT 
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 vogels_sprekeler_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -262,6 +264,8 @@ vogels_sprekeler_synapse< targetidentifierT >::send( Event& e, size_t t, const C
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

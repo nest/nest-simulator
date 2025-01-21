@@ -30,7 +30,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -204,6 +204,8 @@ EndUserDocs */
 
 namespace nest
 {
+
+void register_glif_psc( const std::string& name );
 
 class glif_psc : public ArchivingNode
 {

@@ -74,7 +74,7 @@ spike-frequency adaptation and relative refractory mechanisms as described in
 
 Incoming spike events induce a postsynaptic change of conductance modelled by
 an exponential function. The exponential function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS.
+event of weight 1.0 results in a peak conductance of 1 nS.
 
 Outgoing spike events induce a change of the adaptation and relative refractory
 conductances by ``q_sfa`` and ``q_rr``, respectively. Otherwise these conductances
@@ -149,6 +149,8 @@ Examples using this model
 .. listexamples:: iaf_cond_exp_sfa_rr
 
 EndUserDocs */
+
+void register_iaf_cond_exp_sfa_rr( const std::string& name );
 
 class iaf_cond_exp_sfa_rr : public ArchivingNode
 {

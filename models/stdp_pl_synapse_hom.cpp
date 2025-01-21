@@ -26,7 +26,13 @@
 #include "common_synapse_properties.h"
 #include "connector_model.h"
 #include "event.h"
+#include "nest_impl.h"
 
+void
+nest::register_stdp_pl_synapse_hom( const std::string& name )
+{
+  register_connection_model< stdp_pl_synapse_hom >( name );
+}
 
 namespace nest
 {

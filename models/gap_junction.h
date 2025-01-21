@@ -81,6 +81,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_gap_junction( const std::string& name );
+
 template < typename targetidentifierT >
 class gap_junction : public Connection< targetidentifierT >
 {
@@ -129,13 +131,14 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+    return true;
   }
 
   void get_status( dictionary& d ) const;

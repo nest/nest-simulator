@@ -188,6 +188,8 @@ EndUserDocs */
  *   entries, then registers new entries in histogram
  */
 
+void register_correlation_detector( const std::string& name );
+
 class correlation_detector : public Node
 {
 

@@ -32,10 +32,17 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest
 {
+void
+register_ac_generator( const std::string& name )
+{
+  register_node_model< ac_generator >( name );
+}
+
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;
 
 template <>

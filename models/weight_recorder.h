@@ -63,7 +63,7 @@ synapses that fulfill the given criteria.
 
 ::
 
-   >>> wr = nest.Create('weight_recorder')
+   >>> wr = nest.Create("weight_recorder")
    >>> nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
 
    >>> pre = nest.Create("iaf_psc_alpha", 10)
@@ -86,6 +86,8 @@ EndUserDocs */
 
 namespace nest
 {
+
+void register_weight_recorder( const std::string& name );
 
 class weight_recorder : public RecordingDevice
 {

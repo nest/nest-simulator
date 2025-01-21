@@ -23,27 +23,40 @@ import ast
 import importlib
 import inspect
 import io
+import logging
 import os
 import sys
 import time
 import traceback
 from copy import deepcopy
 
+import flask
 import nest
 import RestrictedPython
 from flask import Flask, jsonify, request
-from flask_cors import CORS, cross_origin
-from werkzeug.exceptions import abort
-from werkzeug.wrappers import Response
+from flask.logging import default_handler
+from flask_cors import CORS
+from nest.lib.hl_api_exceptions import NESTError
 
-MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
-RESTRICTION_OFF = bool(os.environ.get("NEST_SERVER_RESTRICTION_OFF", False))
+# This ensures that the logging information shows up in the console running the server,
+# even when Flask's event loop is running.
+root = logging.getLogger()
+root.addHandler(default_handler)
+
+
+def get_boolean_environ(env_key, default_value="false"):
+    env_value = os.environ.get(env_key, default_value)
+    return env_value.lower() in ["yes", "true", "t", "1"]
+
+
+_default_origins = "http://localhost:*,http://127.0.0.1:*"
+ACCESS_TOKEN = os.environ.get("NEST_SERVER_ACCESS_TOKEN", "")
+AUTH_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_AUTH")
+CORS_ORIGINS = os.environ.get("NEST_SERVER_CORS_ORIGINS", _default_origins).split(",")
+EXEC_CALL_ENABLED = get_boolean_environ("NEST_SERVER_ENABLE_EXEC_CALL")
+MODULES = os.environ.get("NEST_SERVER_MODULES", "import nest")
+RESTRICTION_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_RESTRICTION")
 EXCEPTION_ERROR_STATUS = 400
-
-if RESTRICTION_OFF:
-    msg = "NEST Server runs without a RestrictedPython trusted environment."
-    print(f"***\n*** WARNING: {msg}\n***")
-
 
 __all__ = [
     "app",
@@ -54,9 +67,114 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app)
+# Inform client-side user agents that they should not attempt to call our server from any
+# non-whitelisted domain.
+CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
+
+
+def _check_security():
+    """
+    Checks the security level of the NEST Server instance.
+    """
+
+    msg = []
+    if AUTH_DISABLED:
+        msg.append("AUTH:\tThe authorization settings are disabled.")
+    if "*" in CORS_ORIGINS:
+        msg.append("CORS:\tThe allowed origins are not restricted.")
+    if EXEC_CALL_ENABLED:
+        msg.append("EXEC CALL:\tThe exec route is enabled and scripts can be executed.")
+        if RESTRICTION_DISABLED:
+            msg.append("RESTRICTION: The execution of scripts is not protected by RestrictedPython.")
+
+    if len(msg) > 0:
+        print(
+            "WARNING: You chose to disable important access restrictions!\n"
+            " This allows other computers to execute code on this machine as the current user!\n"
+            " Be sure you understand the implications of these settings and take"
+            " appropriate measures to protect your runtime environment!"
+        )
+        print("\n - ".join([" "] + msg) + "\n")
+
+
+@app.before_request
+def _setup_auth():
+    """
+    Authentication function that generates and validates the NESTServerAuth header with a
+    bearer token.
+
+    Cleans up references to itself and the running `app` from this module, as it may be
+    accessible when the code execution sandbox fails.
+    """
+    try:
+        # Import the modules inside of the auth function, so that if they fail the auth
+        # returns a forbidden error.
+        import gc  # noqa
+        import hashlib  # noqa
+        import inspect  # noqa
+        import time  # noqa
+
+        # Find our reference to the current function in the garbage collector.
+        frame = inspect.currentframe()
+        code = frame.f_code
+        globs = frame.f_globals
+        functype = type(lambda: 0)
+        funcs = []
+        for func in gc.get_referrers(code):
+            if type(func) is functype:
+                if getattr(func, "__code__", None) is code:
+                    if getattr(func, "__globals__", None) is globs:
+                        funcs.append(func)
+                        if len(funcs) > 1:
+                            return ("Unauthorized", 403)
+        self = funcs[0]
+
+        # Use the salted hash (unless `PYTHONHASHSEED` is fixed) of the location of this
+        # function in the Python heap and the current timestamp to create a SHA512 hash.
+        if not hasattr(self, "_hash"):
+            if ACCESS_TOKEN:
+                self._hash = ACCESS_TOKEN
+            else:
+                hasher = hashlib.sha512()
+                hasher.update(str(hash(id(self))).encode("utf-8"))
+                hasher.update(str(time.perf_counter()).encode("utf-8"))
+                self._hash = hasher.hexdigest()[:48]
+            if not AUTH_DISABLED:
+                print(f"   Access token to NEST Server: {self._hash}")
+                print("   Add this to the headers: {'NESTServerAuth': '<access_token>'}\n")
+
+        if request.method == "OPTIONS":
+            return
+
+        # The first time we hit the line below is when below the function definition we
+        # call `setup_auth` without any Flask request existing yet, so the function errors
+        # and exits here after generating and storing the auth hash.
+        auth = request.headers.get("NESTServerAuth", None)
+        # We continue here the next time this function is called, before the Flask app
+        # handles the first request. At that point we also remove this module's reference
+        # to the running app.
+        try:
+            del globals()["app"]
+        except KeyError:
+            pass
+        # Things get more straightforward here: Every time a request is handled, compare
+        # the NESTServerAuth header to the hash, with a constant-time algorithm to avoid
+        # timing attacks.
+        if not (AUTH_DISABLED or auth == self._hash):
+            return ("Unauthorized", 403)
+    # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
+    # `SystemExit` exceptions should not bypass authentication!
+    except Exception:  # noqa
+        return ("Unauthorized", 403)
+
+
+print(80 * "*")
+_check_security()
+_setup_auth()
+del _setup_auth
+print(80 * "*")
 
 
 @app.route("/", methods=["GET"])
@@ -70,41 +188,36 @@ def index():
 
 
 def do_exec(args, kwargs):
-    try:
-        source_code = kwargs.get("source", "")
-        source_cleaned = clean_code(source_code)
+    source_code = kwargs.get("source", "")
+    source_cleaned = clean_code(source_code)
 
-        locals_ = dict()
-        response = dict()
-        if RESTRICTION_OFF:
-            with Capturing() as stdout:
-                globals_ = globals().copy()
-                globals_.update(get_modules_from_env())
-                exec(source_cleaned, globals_, locals_)
-            if len(stdout) > 0:
-                response["stdout"] = "\n".join(stdout)
-        else:
-            code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
-            globals_ = get_restricted_globals()
+    locals_ = dict()
+    response = dict()
+    if RESTRICTION_DISABLED:
+        with Capturing() as stdout:
+            globals_ = globals().copy()
             globals_.update(get_modules_from_env())
-            exec(code, globals_, locals_)
-            if "_print" in locals_:
-                response["stdout"] = "".join(locals_["_print"].txt)
+            get_or_error(exec)(source_cleaned, globals_, locals_)
+        if len(stdout) > 0:
+            response["stdout"] = "\n".join(stdout)
+    else:
+        code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
+        globals_ = get_restricted_globals()
+        globals_.update(get_modules_from_env())
+        get_or_error(exec)(code, globals_, locals_)
+        if "_print" in locals_:
+            response["stdout"] = "".join(locals_["_print"].txt)
 
-        if "return" in kwargs:
-            if isinstance(kwargs["return"], list):
-                data = dict()
-                for variable in kwargs["return"]:
-                    data[variable] = locals_.get(variable, None)
-            else:
-                data = locals_.get(kwargs["return"], None)
-            response["data"] = nest.serialize_data(data)
-        return response
+    if "return" in kwargs:
+        if isinstance(kwargs["return"], list):
+            data = dict()
+            for variable in kwargs["return"]:
+                data[variable] = locals_.get(variable, None)
+        else:
+            data = locals_.get(kwargs["return"], None)
 
-    except Exception as e:
-        for line in traceback.format_exception(*sys.exc_info()):
-            print(line, flush=True)
-        abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+            response["data"] = get_or_error(nest.serialize_data)(data)
+    return response
 
 
 def log(call_name, msg):
@@ -159,13 +272,18 @@ def do_call(call_name, args=[], kwargs={}):
 
 
 @app.route("/exec", methods=["GET", "POST"])
-@cross_origin()
 def route_exec():
     """Route to execute script in Python."""
 
-    args, kwargs = get_arguments(request)
-    response = do_call("exec", args, kwargs)
-    return jsonify(response)
+    if EXEC_CALL_ENABLED:
+        args, kwargs = get_arguments(request)
+        response = do_call("exec", args, kwargs)
+        return jsonify(response)
+    else:
+        flask.abort(
+            403,
+            "The route `/exec` has been disabled. Please contact the server administrator.",
+        )
 
 
 # --------------------------
@@ -178,14 +296,12 @@ nest_calls.sort()
 
 
 @app.route("/api", methods=["GET"])
-@cross_origin()
 def route_api():
     """Route to list call functions in NEST."""
     return jsonify(nest_calls)
 
 
 @app.route("/api/<call>", methods=["GET", "POST"])
-@cross_origin()
 def route_api_call(call):
     """Route to call function in NEST."""
     print(f"\n{'='*40}\n", flush=True)
@@ -214,10 +330,43 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
+class ErrorHandler(Exception):
+    status_code = 400
+    lineno = -1
+
+    def __init__(self, message: str, lineno: int = None, status_code: int = None, payload=None):
+        super().__init__()
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        if lineno is not None:
+            self.lineno = lineno
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv["message"] = self.message
+        if self.lineno != -1:
+            rv["lineNumber"] = self.lineno
+        return rv
+
+
+# https://flask.palletsprojects.com/en/2.3.x/errorhandling/
+@app.errorhandler(ErrorHandler)
+def error_handler(e):
+    return jsonify(e.to_dict()), e.status_code
+
+
+# It comments lines starting with 'import' or 'from' otherwise the line number of error would be wrong.
 def clean_code(source):
     codes = source.split("\n")
-    code_cleaned = filter(lambda code: not (code.startswith("import") or code.startswith("from")), codes)  # noqa
-    return "\n".join(code_cleaned)
+    codes_cleaned = []  # noqa
+    for code in codes:
+        if code.startswith("import") or code.startswith("from"):
+            codes_cleaned.append("#" + code)
+        else:
+            codes_cleaned.append(code)
+    return "\n".join(codes_cleaned)
 
 
 def get_arguments(request):
@@ -244,6 +393,16 @@ def get_arguments(request):
         else:
             kwargs = request.args.to_dict()
     return list(args), kwargs
+
+
+def get_lineno(err, tb_idx):
+    lineno = -1
+    if hasattr(err, "lineno") and err.lineno is not None:
+        lineno = err.lineno
+    else:
+        tb = sys.exc_info()[2]
+        lineno = traceback.extract_tb(tb)[tb_idx][1]
+    return lineno
 
 
 def get_modules_from_env():
@@ -275,13 +434,34 @@ def get_modules_from_env():
 def get_or_error(func):
     """Wrapper to get data and status."""
 
-    def func_wrapper(call, args, kwargs):
+    def func_wrapper(call, *args, **kwargs):
         try:
-            return func(call, args, kwargs)
-        except Exception as e:
-            for line in traceback.format_exception(*sys.exc_info()):
-                print(line, flush=True)
-            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+            return func(call, *args, **kwargs)
+
+        except NESTError as err:
+            error_class = err.errorname + " (NESTError)"
+            detail = err.errormessage
+            lineno = get_lineno(err, 1)
+
+        except (KeyError, SyntaxError, TypeError, ValueError) as err:
+            error_class = err.__class__.__name__
+            detail = err.args[0]
+            lineno = get_lineno(err, 1)
+
+        except Exception as err:
+            error_class = err.__class__.__name__
+            detail = err.args[0]
+            lineno = get_lineno(err, -1)
+
+        for line in traceback.format_exception(*sys.exc_info()):
+            print(line, flush=True)
+
+        if lineno == -1:
+            message = "%s: %s" % (error_class, detail)
+        else:
+            message = "%s at line %d: %s" % (error_class, lineno, detail)
+
+        raise ErrorHandler(message, lineno)
 
     return func_wrapper
 

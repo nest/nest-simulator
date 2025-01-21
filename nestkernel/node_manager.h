@@ -49,9 +49,8 @@ public:
   NodeManager();
   ~NodeManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const dictionary& ) override;
   void get_status( dictionary& ) override;
 
@@ -137,13 +136,12 @@ public:
    *
    * The function expects that
    * the given node ID and thread are valid. If they are not, an assertion
-   * will fail. In case the given Node does not exist on the fiven
+   * will fail. In case the given Node does not exist on the given
    * thread, a proxy is returned instead.
    *
    * @param node_id index of the Node
    * @param tid local thread index of the Node
    *
-   * @ingroup net_access
    */
   Node* get_node_or_proxy( size_t node_id, size_t tid );
 
@@ -170,7 +168,6 @@ public:
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
-   * @ingroup net_access
    */
   std::vector< Node* > get_thread_siblings( size_t n ) const;
 

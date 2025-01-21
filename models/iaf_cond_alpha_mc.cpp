@@ -36,6 +36,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 std::vector< std::string > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
@@ -44,8 +45,13 @@ nest::RecordablesMap< nest::iaf_cond_alpha_mc > nest::iaf_cond_alpha_mc::recorda
 
 namespace nest
 {
-// specialization must be placed in namespace
+void
+register_iaf_cond_alpha_mc( const std::string& name )
+{
+  register_node_model< iaf_cond_alpha_mc >( name );
+}
 
+// specialization must be placed in namespace
 template <>
 void
 RecordablesMap< iaf_cond_alpha_mc >::create()

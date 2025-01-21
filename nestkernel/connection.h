@@ -152,6 +152,8 @@ public:
    *
    * @note Classes requiring checks need to override the function with their own
    * implementation, as this base class implementation does not do anything.
+   *
+   * @see ConnectorModel::check_synapse_params
    */
   void check_synapse_params( const dictionary& d ) const;
 
@@ -394,7 +396,8 @@ template < typename targetidentifierT >
 SecondaryEvent*
 Connection< targetidentifierT >::get_secondary_event()
 {
-  assert( false );
+  assert( false and "Non-primary connections have to provide get_secondary_event()" );
+  return nullptr;
 }
 
 } // namespace nest

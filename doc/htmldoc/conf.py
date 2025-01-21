@@ -32,9 +32,6 @@ from urllib.request import urlretrieve
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
-from extract_api_functions import ExtractPyNESTAPIS  # noqa
-from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")
 # Add the NEST Python module to the path (just the py files, the binaries are mocked)
@@ -54,22 +51,28 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
+    "sphinx_carousel.carousel",
+    "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
+    "model_tag_setup",
     "nbsphinx",
+    "extract_api_functions",
     "sphinx_design",
-    "HoverXTooltip",
     "VersionSyncRole",
+    "HoverXTooltip",
     "sphinx_copybutton",
     "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
+# To run plantuml locally see the user documentation workflow
+plantuml = "java -jar /tmp/plantuml.jar"
+plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",
@@ -77,6 +80,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
+    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile|.*\.txt",
 }
 
 # General information about the project.
@@ -89,7 +93,7 @@ copybutton_prompt_text = ">>> "
 copybutton_only_copy_prompt_lines = True
 
 mermaid_output_format = "raw"
-mermaid_version = "10.2.0"
+mermaid_version = "10.3.0"
 
 # disable require js - mermaid doesn't work if require.js is loaded before it
 nbsphinx_requirejs_path = ""
@@ -120,9 +124,6 @@ exclude_patterns = [
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "manni"
-
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
 
 # add numbered figure link
 numfig = True
@@ -157,13 +158,11 @@ html_theme_options = {
     "color_primary": "orange",
     "color_accent": "white",
     "theme_color": "ff6633",
-    "master_doc": True,
+    "master_doc": False,
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/nest/nest-simulator/",
     "repo_name": "NEST Simulator",
-    # "nav_links": [
-    #     {"href": "index", "internal": True, "title": "NEST docs home"}
-    #     ],
+    "nav_links": [{"href": "index", "internal": True, "title": "NEST docs home"}],
     # Visible levels of the global TOC; -1 means unlimited
     "globaltoc_depth": 1,
     # If False, expand all TOC entries
@@ -174,7 +173,17 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
-html_additional_pages = {"index": "index.html"}
+
+html_css_files = [
+    "css/custom.css",
+    "css/filter_models.css",
+    "css/pygments.css",
+]
+
+html_js_files = [
+    "js/filter_models.js",
+    "js/custom.js",
+]
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
 html_favicon = "static/img/nest_favicon.ico"
@@ -203,49 +212,6 @@ intersphinx_mapping = {
     "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
-
-
-def config_inited_handler(app, config):
-    models_rst_dir = os.path.abspath("models")
-    ExtractUserDocs(
-        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
-        basedir=repo_root_dir,
-        outdir=models_rst_dir,
-    )
-
-
-def get_pynest_list(app, env, docname):
-    ExtractPyNESTAPIS()
-
-
-def api_customizer(app, docname, source):
-    if docname == "ref_material/pynest_api/index":
-        list_apis = json.load(open("api_function_list.json"))
-        html_context = {"api_dict": list_apis}
-        api_source = source[0]
-        rendered = app.builder.templates.render_string(api_source, html_context)
-        source[0] = rendered
-
-
-def toc_customizer(app, docname, source):
-    if docname == "models/models-toc":
-        models_toc = json.load(open("models/toc-tree.json"))
-        html_context = {"nest_models": models_toc}
-        models_source = source[0]
-        rendered = app.builder.templates.render_string(models_source, html_context)
-        source[0] = rendered
-
-
-def setup(app):
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect("source-read", toc_customizer)
-    app.connect("source-read", api_customizer)
-    app.add_css_file("css/custom.css")
-    app.add_css_file("css/pygments.css")
-    app.add_js_file("js/custom.js")
-    app.connect("env-before-read-docs", get_pynest_list)
-    app.connect("config-inited", config_inited_handler)
 
 
 nitpick_ignore = [
@@ -293,14 +259,6 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
-
-def copy_example_file(src):
-    copyfile(os.path.join(pynest_dir, src), Path("examples") / Path(src).parts[-1])
-
-
-# -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/hpc_benchmark_connectivity.svg")
 
 
 def patch_documentation(patch_url):

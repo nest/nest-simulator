@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
@@ -48,6 +49,12 @@ nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_iaf_cond_beta( const std::string& name )
+{
+  register_node_model< iaf_cond_beta >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.

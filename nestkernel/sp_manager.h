@@ -56,8 +56,8 @@ public:
   SPManager();
   ~SPManager() override;
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
 
   void get_status( dictionary& ) override;
 

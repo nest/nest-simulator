@@ -51,8 +51,10 @@ public:
   IOManager();
   ~IOManager() override;
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   void change_number_of_threads() override;
 

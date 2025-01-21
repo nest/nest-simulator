@@ -74,7 +74,7 @@ neuron_params = {
     # time constant of neuronal dynamics in ms
     "mu": 2.0,
     # mean input
-    "sigma": 5.0
+    "sigma": 5.0,
     # noise parameter
 }
 

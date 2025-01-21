@@ -38,11 +38,18 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
 namespace nest
 {
+void
+register_sinusoidal_gamma_generator( const std::string& name )
+{
+  register_node_model< sinusoidal_gamma_generator >( name );
+}
+
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
 template <>

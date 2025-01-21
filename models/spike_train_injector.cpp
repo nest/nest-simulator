@@ -26,12 +26,20 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 namespace nest
 {
+void
+register_spike_train_injector( const std::string& name )
+{
+  register_node_model< spike_train_injector >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

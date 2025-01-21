@@ -61,12 +61,20 @@ nest::SimulationManager::SimulationManager()
   , update_time_limit_( std::numeric_limits< double >::infinity() )
   , min_update_time_( std::numeric_limits< double >::infinity() )
   , max_update_time_( -std::numeric_limits< double >::infinity() )
+  , eprop_update_interval_( 1000. )
+  , eprop_learning_window_( 1000. )
+  , eprop_reset_neurons_on_update_( true )
 {
 }
 
 void
-nest::SimulationManager::initialize()
+nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
   Time::reset_to_defaults();
   Time::reset_resolution();
 
@@ -100,7 +108,7 @@ nest::SimulationManager::initialize()
 }
 
 void
-nest::SimulationManager::finalize()
+nest::SimulationManager::finalize( const bool )
 {
 }
 
@@ -119,8 +127,10 @@ nest::SimulationManager::reset_timers_for_dynamics()
   sw_simulate_.reset();
 #ifdef TIMER_DETAILED
   sw_gather_spike_data_.reset();
+  sw_gather_secondary_data_.reset();
   sw_update_.reset();
   sw_deliver_spike_data_.reset();
+  sw_deliver_secondary_data_.reset();
 #endif
 }
 
@@ -404,6 +414,39 @@ nest::SimulationManager::set_status( const dictionary& d )
 
     update_time_limit_ = t_new;
   }
+
+  // eprop update interval
+  double eprop_update_interval_new = 0.0;
+  if ( updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_new ) )
+  {
+    if ( eprop_update_interval_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_update_interval > 0 required." );
+      throw KernelException();
+    }
+
+    eprop_update_interval_ = eprop_update_interval_new;
+  }
+
+  // eprop learning window
+  double eprop_learning_window_new = 0.0;
+  if ( updateValue< double >( d, names::eprop_learning_window, eprop_learning_window_new ) )
+  {
+    if ( eprop_learning_window_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_learning_window > 0 required." );
+      throw KernelException();
+    }
+    if ( eprop_learning_window_new > eprop_update_interval_ )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_learning_window <= eprop_update_interval required." );
+      throw KernelException();
+    }
+
+    eprop_learning_window_ = eprop_learning_window_new;
+  }
+
+  updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
 
 void
@@ -436,12 +479,19 @@ nest::SimulationManager::get_status( dictionary& d )
 
   d[ names::time_simulate ] = sw_simulate_.elapsed();
   d[ names::time_communicate_prepare ] = sw_communicate_prepare_.elapsed();
+
 #ifdef TIMER_DETAILED
   d[ names::time_gather_spike_data ] = sw_gather_spike_data_.elapsed();
+  d[ names::time_gather_secondary_data ] = sw_gather_secondary_data_.elapsed();
   d[ names::time_update ] = sw_update_.elapsed();
   d[ names::time_gather_target_data ] = sw_gather_target_data_.elapsed();
   d[ names::time_deliver_spike_data ] = sw_deliver_spike_data_.elapsed();
+  d[ names::time_deliver_secondary_data ] = sw_deliver_secondary_data_.elapsed();
 #endif
+
+  def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
+  def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
+  def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
 
 void
@@ -815,6 +865,28 @@ nest::SimulationManager::update_()
         // and invalid markers have not been properly set in send buffers.
         if ( slice_ > 0 and from_step_ == 0 )
         {
+          // Deliver secondary events before primary events
+          //
+          // Delivering secondary events ahead of primary events ensures that LearningSignalConnectionEvents
+          // reach target neurons before spikes are propagated through eprop synapses.
+          // This sequence safeguards the gradient computation from missing critical information
+          // from the time step preceding the arrival of the spike triggering the weight update.
+          if ( kernel().connection_manager.secondary_connections_exist() )
+          {
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_secondary_data_.start();
+            }
+#endif
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_secondary_data_.stop();
+            }
+#endif
+          }
 
           if ( kernel().connection_manager.has_primary_connections() )
           {
@@ -834,11 +906,6 @@ nest::SimulationManager::update_()
             }
 #endif
           }
-          if ( kernel().connection_manager.secondary_connections_exist() )
-          {
-            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
-          }
-
 
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
@@ -1039,10 +1106,15 @@ nest::SimulationManager::update_()
             }
             if ( kernel().connection_manager.secondary_connections_exist() )
             {
+#ifdef TIMER_DETAILED
+              sw_gather_secondary_data_.start();
+#endif
               kernel().event_delivery_manager.gather_secondary_events( true );
+#ifdef TIMER_DETAILED
+              sw_gather_secondary_data_.stop();
+#endif
             }
           }
-
 
           advance_time_();
 

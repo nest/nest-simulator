@@ -55,10 +55,13 @@ PyNEST examples
            * :doc:`../auto_examples/pong/generate_gif`
 
     .. grid-item-card:: Astrocytes
-           :img-top: ../static/img/astrocyte_tripartite.png
+           :img-top: ../static/img/astrocyte_interaction.png
 
-           * :doc:`../auto_examples/astrocyte_single`
-           * :doc:`../auto_examples/astrocyte_tripartite`
+           * :doc:`../auto_examples/astrocytes/astrocyte_single`
+           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
+           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_bernoulli`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_fixed_indegree`
 
 
 .. grid:: 1 1 2 3
@@ -74,9 +77,20 @@ PyNEST examples
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../static/img/potjans_2014_raster_plot.png
+           :img-top: ../auto_examples/Potjans_2014/potjans_2014_raster_plot.png
 
            * :doc:`../auto_examples/Potjans_2014/index`
+
+
+
+    .. grid-item-card:: EI clustered network (Rostami et al)
+           :img-top: ../auto_examples/EI_clustered_network/EI_clustered_network_schematic.png
+
+           :doc:`../auto_examples/EI_clustered_network/index`
+
+
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
@@ -85,22 +99,11 @@ PyNEST examples
            * :doc:`../auto_examples/glif_psc_neuron`
            * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
 
-
-
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Compartmental neurons
            :img-top: ../static/img/pynest/dendritic_synapse_conductances.png
 
            * :doc:`../auto_examples/compartmental_model/receptors_and_current`
            * :doc:`../auto_examples/compartmental_model/two_comps`
-
-
-    .. grid-item-card:: Rate neurons
-           :img-top: ../static/img/pynest/rate_neuron.png
-
-           * :doc:`../auto_examples/lin_rate_ipn_network`
-           * :doc:`../auto_examples/rate_neuron_dm`
 
 
 
@@ -114,6 +117,13 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: Rate neurons
+           :img-top: ../static/img/pynest/rate_neuron.png
+
+           * :doc:`../auto_examples/lin_rate_ipn_network`
+           * :doc:`../auto_examples/rate_neuron_dm`
+
+
     .. grid-item-card:: Hodgkin-Huxley
            :img-top: ../static/img/pynest/hh_phase.png
 
@@ -125,13 +135,13 @@ PyNEST examples
 
            * :doc:`../auto_examples/BrodyHopfield`
 
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
            * :doc:`../auto_examples/brette_gerstner_fig_2c`
            * :doc:`../auto_examples/brette_gerstner_fig_3d`
-
-.. grid:: 1 1 2 3
 
 
     .. grid-item-card:: Precise spiking
@@ -144,11 +154,12 @@ PyNEST examples
 
            * :doc:`../auto_examples/CampbellSiegert`
 
-    .. grid-item-card:: SONATA network
-           :img-top: ../static/img/300_pointneurons.png
+.. grid:: 1 1 2 3
 
-           * :doc:`../auto_examples/sonata_example/sonata_network`
+      .. grid-item-card:: Decision making in recurrent network (after Wang 2002)
+           :img-top: ../static/img/nest_logo-faded.png
 
+           * :doc:`../auto_examples/wang_decision_making`
 
 .. grid:: 1 1 2 3
 
@@ -188,13 +199,23 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: Tsodyks
+    .. grid-item-card:: Short-term plasticity
            :img-top: ../static/img/pynest/tsodyks_dep.png
 
-           * :doc:`../auto_examples/tsodyks_depressing`
-           * :doc:`../auto_examples/tsodyks_facilitating`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_facilitation`
            * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
 
+
+.. grid:: 1 1 2 3
+
+    .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
+           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
 
 .. grid:: 1 1 2 3
@@ -230,8 +251,13 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: SONATA network
+           :img-top: ../static/img/300_pointneurons.png
+
+           * :doc:`../auto_examples/sonata_example/sonata_network`
+
     .. grid-item-card:: HPC benchmark
-           :img-top: ../static/img/nest_logo-faded.png
+           :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
 
@@ -283,8 +309,8 @@ PyNEST examples
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/urbanczik_synapse_example
-   ../auto_examples/tsodyks_depressing
-   ../auto_examples/tsodyks_facilitating
+   ../auto_examples/iaf_tum_2000_short_term_depression
+   ../auto_examples/iaf_tum_2000_short_term_facilitation
    ../auto_examples/compartmental_model/receptors_and_current
    ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network
@@ -325,8 +351,14 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
-   ../auto_examples/astrocyte_single
-   ../auto_examples/astrocyte_tripartite
+   ../auto_examples/astrocytes/index
+   ../auto_examples/astrocytes/astrocyte_single
+   ../auto_examples/astrocytes/astrocyte_interaction
+   ../auto_examples/astrocytes/astrocyte_small_network
+   ../auto_examples/astrocytes/astrocyte_brunel
+   ../auto_examples/EI_clustered_network/index
+   ../auto_examples/eprop_plasticity/index
+   ../auto_examples/wang_decision_making
 
 .. toctree::
    :hidden:

@@ -19,11 +19,20 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "cm_default.h"
 
+// Includes from nestkernel:
+#include "nest_impl.h"
 
 namespace nest
 {
+void
+register_cm_default( const std::string& name )
+{
+  register_node_model< cm_default >( name );
+}
+
 
 /*
  * For some reason this code block is needed. However, I have found no
@@ -201,9 +210,12 @@ nest::cm_default::set_status( const dictionary& statusdict )
    */
   init_recordables_pointers_();
 }
+
 void
 nest::cm_default::add_compartment_( const dictionary& dd )
 {
+  dd.init_access_flags();
+
   if ( dd.known( names::params ) )
   {
     c_tree_.add_compartment( dd.get< long >( names::parent_idx ), dd.get< dictionary >( names::params ) );
@@ -212,10 +224,15 @@ nest::cm_default::add_compartment_( const dictionary& dd )
   {
     c_tree_.add_compartment( dd.get< long >( names::parent_idx ) );
   }
+
+  dd.all_entries_accessed( "cm_default::add_compartment_", "Unread dictionary entries: " );
 }
+
 void
 nest::cm_default::add_receptor_( const dictionary& dd )
 {
+  dd.init_access_flags();
+
   const long compartment_idx = dd.get< long >( names::comp_idx );
   const std::string receptor_type = dd.get< std::string >( names::receptor_type );
 
@@ -236,6 +253,8 @@ nest::cm_default::add_receptor_( const dictionary& dd )
   {
     compartment->compartment_currents.add_synapse( receptor_type, syn_idx );
   }
+
+  dd.all_entries_accessed( "cm_default::add_receptor_", "Unread dictionary entries: " );
 }
 
 void

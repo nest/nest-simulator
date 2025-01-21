@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -128,6 +128,9 @@ The following parameters can be set in the status dictionary:
      implementation to avoid a degenerate case of the ODE describing the
      model [1]_.  For very similar values, numerics will be unstable.
 
+   - Some parameter values given in Table 1 of [4]_ are incorrect. For
+     correct values, see Table 4 of [5]_.
+
 References
 ++++++++++
 
@@ -147,6 +150,10 @@ References
        for reproducing diverse firing patterns and predicting precise
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
+.. [5] Heiberg T, Kriener B, Tetzlaff T, Einevoll GT, Plesser HE (2018).
+       Firing-rate model for neurons with a broad repertoire of spiking behaviors.
+       J Comput Neurosci, 45:103.
+       DOI: https://doi.org/10.1007/s10827-018-0693-9
 
 Sends
 +++++
@@ -158,7 +165,14 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: amat2_psc_exp
+
 EndUserDocs */
+
+void register_amat2_psc_exp( const std::string& name );
 
 class amat2_psc_exp : public ArchivingNode
 {
@@ -382,7 +396,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup amat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

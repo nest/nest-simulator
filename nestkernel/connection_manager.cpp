@@ -41,12 +41,15 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
+#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connection_label.h"
+#include "connection_manager_impl.h"
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "eprop_archiving_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -60,6 +63,8 @@
 nest::ConnectionManager::ConnectionManager()
   : connruledict_()
   , connbuilder_factories_()
+  , thirdconnruledict_( new Dictionary() )
+  , thirdconnbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
@@ -85,27 +90,52 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize()
+nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    // Add connection rules
+    register_conn_builder< OneToOneBuilder >( "one_to_one" );
+    register_conn_builder< AllToAllBuilder >( "all_to_all" );
+    register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+    register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+    register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+    register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
+    register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+    register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+    register_third_conn_builder< ThirdBernoulliWithPoolBuilder >( "third_factor_bernoulli_with_pool" );
+#ifdef HAVE_LIBNEUROSIM
+    register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
+
+    keep_source_table_ = true;
+    connections_have_changed_ = false;
+    get_connections_has_been_called_ = false;
+    use_compressed_spikes_ = true;
+    stdp_eps_ = 1.0e-6;
+    min_delay_ = max_delay_ = 1;
+    sw_construction_connect.reset();
+  }
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  keep_source_table_ = true;
-  connections_have_changed_ = false;
-  get_connections_has_been_called_ = false;
-  use_compressed_spikes_ = true;
   compressed_spike_data_.resize( 0 );
+
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
   secondary_connections_exist_ = false;
   check_secondary_connections_.initialize( num_threads, false );
-  stdp_eps_ = 1.0e-6;
+
+  // We need to obtain this while in serial context to avoid problems when
+  // increasing the number of threads.
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
 
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_[ tid ] = std::vector< ConnectorBase* >( kernel().model_manager.get_num_connection_models() );
-    secondary_recv_buffer_pos_[ tid ] = std::vector< std::vector< size_t > >();
+    connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+    secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
   } // of omp parallel
 
   source_table_.initialize();
@@ -117,16 +147,10 @@ nest::ConnectionManager::initialize()
 
   std::vector< std::vector< size_t > > tmp2( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
   num_connections_.swap( tmp2 );
-
-  // The following line is executed by all processes, no need to communicate
-  // this change in delays.
-  min_delay_ = max_delay_ = 1;
-
-  sw_construction_connect.reset();
 }
 
 void
-nest::ConnectionManager::finalize()
+nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -135,13 +159,23 @@ nest::ConnectionManager::finalize()
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
-}
 
-void
-nest::ConnectionManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    for ( auto cbf : connbuilder_factories_ )
+    {
+      delete cbf;
+    }
+    connbuilder_factories_.clear();
+    connruledict_->clear();
+
+    for ( auto tcbf : thirdconnbuilder_factories_ )
+    {
+      delete tcbf;
+    }
+    thirdconnbuilder_factories_.clear();
+    thirdconnruledict_->clear();
+  }
 }
 
 void
@@ -204,11 +238,11 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   const synindex syn_id,
   const size_t lcid ) const
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   dictionary dict;
   dict[ names::source ] = source_node_id;
-  dict[ names::synapse_model ] = kernel().model_manager.get_connection_model( syn_id ).get_name();
+  dict[ names::synapse_model ] = kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name();
   dict[ names::target_thread ] = tid;
   dict[ names::synapse_id ] = syn_id;
   dict[ names::port ] = lcid;
@@ -249,7 +283,7 @@ nest::ConnectionManager::set_synapse_status( const size_t source_node_id,
   const size_t lcid,
   const dictionary& dict )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -345,15 +379,44 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
   return user_set_delay_extrema;
 }
 
-nest::ConnBuilder*
+nest::BipartiteConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
 {
-  const auto rule_id = connruledict_.get< int >( name );
-  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  if ( not connruledict_.known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
+  }
+
+  const size_t rule_id = connruledict_.get< int >( name );
+  BipartiteConnBuilder* cb =
+    connbuilder_factories_.at( rule_id )->create( sources, targets, third_out, conn_spec, syn_specs );
+  assert( cb );
+  return cb;
+}
+
+nest::ThirdOutBuilder*
+nest::ConnectionManager::get_third_conn_builder( const std::string& name,
+  NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdInBuilder* third_in,
+  const dictionary& conn_spec,
+  const std::vector< dictionary >& syn_specs )
+{
+  if ( not thirdconnruledict_.known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
+  }
+
+  const size_t rule_id = thirdconnruledict_.get< int >( name );
+  ThirdOutBuilder* cb =
+    thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );
+  assert( cb );
+  return cb;
 }
 
 void
@@ -398,7 +461,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
   }
 
-  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
+  ConnBuilder cb( rule, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Connect", "conn_spec" );
@@ -410,11 +473,10 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  cb.connect();
 }
 
-// PYNEST-NG: This needs conversion
+// PYNEST-NG: This needs conversion --- NOT SURE WHAT AND WHY, HEP 2025-01-21
 void
 nest::ConnectionManager::connect( std::vector< size_t > sources,
   std::vector< size_t > targets,
@@ -442,9 +504,17 @@ nest::ConnectionManager::connect( std::vector< size_t > sources,
   }
 }
 
+
 void
 nest::ConnectionManager::update_delay_extrema_()
 {
+  if ( kernel().simulation_manager.has_been_simulated() )
+  {
+    // Once simulation has started, min/max_delay can no longer change,
+    // so there is nothing to update.
+    return;
+  }
+
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
@@ -456,7 +526,13 @@ nest::ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // so all ranks are up to date already. Also, once the user has set min/max_delay
+  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // with other ranks if the user has not set the extrema and connections may have
+  // been created.
+  if ( not kernel().connection_manager.get_user_set_delay_extrema()
+    and kernel().connection_manager.connections_have_changed() and kernel().mpi_manager.get_num_processes() > 1 )
   {
     std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
@@ -485,7 +561,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const double delay,
   const double weight )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
@@ -514,7 +590,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const dictionary& params,
   const synindex syn_id )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const size_t tid = kernel().vp_manager.get_thread_id();
 
@@ -740,6 +816,67 @@ nest::ConnectionManager::connect_sonata( const dictionary& graph_specs, const lo
 }
 
 void
+nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& third_conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+{
+  if ( sources->empty() )
+  {
+    throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( targets->empty() )
+  {
+    throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( third->empty() )
+  {
+    throw IllegalConnection( "Third-factor nodes cannot be an empty NodeCollection" );
+  }
+
+  conn_spec->clear_access_flags();
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      syn_spec->clear_access_flags();
+    }
+  }
+
+  if ( not conn_spec->known( names::rule ) )
+  {
+    throw BadProperty( "The connection specification must contain a connection rule." );
+  }
+  if ( not third_conn_spec->known( names::rule ) )
+  {
+    throw BadProperty( "The third-factor connection specification must contain a connection rule." );
+  }
+
+  const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+
+  ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
+
+  // at this point, all entries in conn_spec and syn_spec have been checked
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_specs: " );
+    }
+  }
+
+  // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  set_connections_have_changed();
+
+  cb.connect();
+}
+
+
+void
 nest::ConnectionManager::connect_( Node& source,
   Node& target,
   const size_t s_node_id,
@@ -763,6 +900,14 @@ nest::ConnectionManager::connect_( Node& source,
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
+  const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
+  if ( eprop_archiving
+    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+  {
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
+  }
+
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
   conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
@@ -775,13 +920,13 @@ nest::ConnectionManager::connect_( Node& source,
   {
 #pragma omp atomic write
     has_primary_connections_ = true;
-    check_primary_connections_[ tid ].set_true();
+    check_primary_connections_.set_true( tid );
   }
   else if ( check_secondary_connections_[ tid ].is_false() and not is_primary )
   {
 #pragma omp atomic write
     secondary_connections_exist_ = true;
-    check_secondary_connections_[ tid ].set_true();
+    check_secondary_connections_.set_true( tid );
   }
 }
 
@@ -1514,7 +1659,7 @@ nest::ConnectionManager::deliver_secondary_events( const size_t tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
     if ( not called_from_wfr_update or supports_wfr )
     {
@@ -1582,17 +1727,11 @@ nest::ConnectionManager::remove_disabled_connections( const size_t tid )
 void
 nest::ConnectionManager::resize_connections()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel().vp_manager.assert_thread_parallel();
 
-  // Resize data structures for connections between neurons
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    connections_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
-    source_table_.resize_sources( tid );
-  }
+  connections_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 
-  // Resize data structures for connections between neurons and
-  // devices
+  source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 

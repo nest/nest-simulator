@@ -35,10 +35,17 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_aeif_cond_beta_multisynapse( const std::string& name )
+{
+  register_node_model< aeif_cond_beta_multisynapse >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -341,7 +348,7 @@ aeif_cond_beta_multisynapse::Buffers_::Buffers_( aeif_cond_beta_multisynapse& n 
   , c_( nullptr )
   , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
-  , IntegrationStep_( std::min( 0.01, step_ ) )
+  , IntegrationStep_( step_ )
   , I_stim_( 0.0 )
 {
 }
@@ -410,9 +417,9 @@ aeif_cond_beta_multisynapse::init_buffers_()
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
-
-  // We must integrate this model with high-precision to obtain decent results
-  B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
+  B_.IntegrationStep_ =
+    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {

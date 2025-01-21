@@ -25,7 +25,14 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connector_model.h"
+#include "nest_impl.h"
 
+
+void
+nest::register_stdp_synapse_hom( const std::string& name )
+{
+  register_connection_model< stdp_synapse_hom >( name );
+}
 
 namespace nest
 {

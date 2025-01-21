@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
@@ -32,6 +33,12 @@
 
 namespace nest
 {
+void
+register_dc_generator( const std::string& name )
+{
+  register_node_model< dc_generator >( name );
+}
+
 RecordablesMap< dc_generator > dc_generator::recordablesMap_;
 
 template <>

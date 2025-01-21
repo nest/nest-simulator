@@ -36,11 +36,18 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
 namespace nest
 {
+void
+register_gif_cond_exp_multisynapse( const std::string& name )
+{
+  register_node_model< gif_cond_exp_multisynapse >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map

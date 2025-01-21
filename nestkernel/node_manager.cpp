@@ -38,7 +38,7 @@
 #include "model.h"
 #include "model_manager_impl.h"
 #include "node.h"
-#include "node_collection_impl.h"
+#include "secondary_event_impl.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
@@ -67,7 +67,7 @@ NodeManager::~NodeManager()
 }
 
 void
-NodeManager::initialize()
+NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
@@ -75,22 +75,17 @@ NodeManager::initialize()
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
-  sw_construction_create_.reset();
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    sw_construction_create_.reset();
+  }
 }
 
 void
-NodeManager::finalize()
+NodeManager::finalize( const bool )
 {
   destruct_nodes_();
   clear_node_collection_container();
-}
-
-void
-NodeManager::change_number_of_threads()
-{
-  // No nodes exist at this point, so nothing to tear down. See
-  // checks for node_manager.size() in VPManager::set_status()
-  initialize();
 }
 
 dictionary
@@ -178,7 +173,12 @@ NodeManager::add_node( size_t model_id, long n )
   // resize the target table for delivery of events to devices to make sure the first dimension
   // matches the number of local nodes and the second dimension matches number of synapse types
   kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
-  kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+
+#pragma omp parallel
+  {
+    // must be called in parallel context to properly configure per-thread data structures
+    kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+  }
 
   sw_construction_create_.stop();
 
@@ -730,6 +730,7 @@ NodeManager::check_wfr_use()
   InstantaneousRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   DelayedRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   DiffusionConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
+  LearningSignalConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   SICEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
 }
 
@@ -787,4 +788,5 @@ void
 NodeManager::set_status( const dictionary& )
 {
 }
-}
+
+} // namespace nest

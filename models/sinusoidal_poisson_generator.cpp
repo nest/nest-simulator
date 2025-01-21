@@ -34,11 +34,18 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
 namespace nest
 {
+void
+register_sinusoidal_poisson_generator( const std::string& name )
+{
+  register_node_model< sinusoidal_poisson_generator >( name );
+}
+
 RecordablesMap< sinusoidal_poisson_generator > sinusoidal_poisson_generator::recordablesMap_;
 
 template <>
@@ -269,7 +276,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    // store rate in Hz
+    // store rate in spks/s
     B_.logger_.record_data( origin.get_steps() + lag );
   }
 }

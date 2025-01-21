@@ -164,15 +164,15 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======  ========= =============================================================
+======== ========= =============================================================
 **Dynamic state variables**
--------------------------------------------------------------------------------
-IP3     µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
-                  cytosol
-Ca      µM        Calcium concentration in the astrocytic cytosol
-h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
-                  yet inactivated by calcium
-======  ========= =============================================================
+--------------------------------------------------------------------------------
+IP3      µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
+                   cytosol
+Ca_astro µM        Calcium concentration in the astrocytic cytosol
+h_IP3R   unitless  Fraction of IP3 receptors on the astrocytic ER that are not
+                   yet inactivated by calcium
+======== ========= =============================================================
 
 =============== ========= =====================================================
 **Parameters**
@@ -239,9 +239,16 @@ See also
 
 aeif_cond_alpha_astro, sic_connection
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: astrocyte_lr_1994
+
 EndUserDocs */
 
-class astrocyte_lr_1994 : public ArchivingNode
+void register_astrocyte_lr_1994( const std::string& name );
+
+class astrocyte_lr_1994 : public StructuralPlasticityNode
 {
 
 public:
@@ -271,9 +278,6 @@ public:
   sends_secondary_event( SICEvent& ) override
   {
   }
-
-  // disable the use of STDP connections in this model
-  void register_stdp_connection( double t_first_read, double delay ) override;
 
   void get_status( dictionary& ) const override;
   void set_status( const dictionary& ) override;
@@ -350,8 +354,8 @@ public:
     enum StateVecElems
     {
       IP3 = 0,
-      Ca,     // 1
-      h_IP3R, // 2
+      Ca_astro, // 1
+      h_IP3R,   // 2
       STATE_VEC_SIZE
     };
 
@@ -467,7 +471,7 @@ astrocyte_lr_1994::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
-  ArchivingNode::get_status( d );
+  StructuralPlasticityNode::get_status( d );
 
   d[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -484,7 +488,7 @@ astrocyte_lr_1994::set_status( const dictionary& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  ArchivingNode::set_status( d );
+  StructuralPlasticityNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

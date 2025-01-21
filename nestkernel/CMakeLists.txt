@@ -24,6 +24,7 @@ set ( nestkernel_sources
       buffer_resize_log.h buffer_resize_log.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h
@@ -35,6 +36,7 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
+      module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -45,6 +47,8 @@ set ( nestkernel_sources
       model_manager.h model_manager_impl.h model_manager.cpp
       nest_types.h
       nest_names.h
+      nest_datums.h nest_datums.cpp
+      nest_names.cpp nest_names.h
       nest_time.h nest_time.cpp
       nest_timeconverter.h nest_timeconverter.cpp
       modelrange.h modelrange.cpp
@@ -57,7 +61,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
-      secondary_event.h
+      secondary_event.h secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -113,7 +117,13 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+<<<<<<< HEAD
 )
+=======
+      buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
+      )
+>>>>>>> master
 
 
 if ( HAVE_SIONLIB )
@@ -131,7 +141,12 @@ if ( HAVE_MPI )
   )
 endif ()
 
+<<<<<<< HEAD
 # Prevent problems with Conda path substitution (see #2348)
+=======
+
+# Prevent problems with Mamba path substitution (see #2348)
+>>>>>>> master
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 add_library( nestkernel STATIC ${nestkernel_sources} )
@@ -143,8 +158,14 @@ endif ()
 set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 
 target_link_libraries( nestkernel
+<<<<<<< HEAD
   nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
+=======
+    nestutil sli_lib models
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+    )
+>>>>>>> master
 
 target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/thirdparty

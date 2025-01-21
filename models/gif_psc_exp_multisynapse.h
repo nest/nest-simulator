@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -209,6 +209,8 @@ Examples using this model
 .. listexamples:: gif_psc_exp_multisynapse
 
 EndUserDocs */
+
+void register_gif_psc_exp_multisynapse( const std::string& name );
 
 class gif_psc_exp_multisynapse : public ArchivingNode
 {
@@ -397,7 +399,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

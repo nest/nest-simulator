@@ -95,6 +95,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_poisson_generator_ps( const std::string& name );
+
 class poisson_generator_ps : public StimulationDevice
 {
 
@@ -146,7 +148,7 @@ private:
    */
   struct Parameters_
   {
-    double rate_;      //!< process rate [Hz]
+    double rate_;      //!< process rate [spks/s]
     double dead_time_; //!< dead time [ms]
 
     /**

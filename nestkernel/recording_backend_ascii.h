@@ -31,10 +31,10 @@
 /* BeginUserDocs: NOINDEX
 
 Recording backend `ascii` - Write data to plain text files
-##########################################################
+----------------------------------------------------------
 
 Description
-+++++++++++
+~~~~~~~~~~~
 
 The `ascii` recording backend writes collected data persistently to a
 plain text ASCII file. It can be used for small to medium sized
@@ -46,7 +46,7 @@ each MPI process. This can cause a high load on the file system in
 large simulations. This backend can become prohibitively inefficient,
 particularly on machines with distributed filesystems. In case you
 experience such scaling problems, the :doc:`recording backend for
-SIONlib <recording_backend_sionlib>` may be a possible alternative.
+SIONlib </models/recording_backend_sionlib>` may be a possible alternative.
 
 Filenames of data files are determined according to the following
 pattern:
@@ -77,7 +77,7 @@ for avoiding name clashes is to set the kernel attributes
 ``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
-+++++++++++
+~~~~~~~~~~~
 
 Any file written by the `ascii` recording backend starts with an
 informational header. The first header line contains the NEST version,
@@ -105,7 +105,7 @@ point offset in ms from the next integer grid point.
    controlled using the recorder property ``precision``.
 
 Parameter summary
-+++++++++++++++++
+~~~~~~~~~~~~~~~~~
 
 file_extension
     A string (default: *"dat"*) that specifies the file name extension,

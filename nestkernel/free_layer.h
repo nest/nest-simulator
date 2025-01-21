@@ -46,9 +46,9 @@ template < int D >
 class FreeLayer : public Layer< D >
 {
 public:
-  Position< D > get_position( size_t sind ) const;
-  void set_status( const dictionary& );
-  void get_status( dictionary& ) const;
+  Position< D > get_position( size_t sind ) const override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary&, NodeCollection const* ) const override;
 
 protected:
   /**
@@ -59,14 +59,14 @@ protected:
   template < class Ins >
   void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );
 
-  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection ) override;
   void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
-    NodeCollectionPTR node_collection );
+    NodeCollectionPTR node_collection ) override;
 
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
    *
-   * @param lid local ID of the node
+   * @param lid global index of node within layer
    * @return index in the local position vector
    */
   size_t lid_to_position_id_( size_t lid ) const;
@@ -251,14 +251,44 @@ FreeLayer< D >::set_status( const dictionary& d )
 
 template < int D >
 void
-FreeLayer< D >::get_status( dictionary& d ) const
+FreeLayer< D >::get_status( dictionary& d, NodeCollection const* nc ) const
 {
-  Layer< D >::get_status( d );
+  Layer< D >::get_status( d, nc );
 
   std::vector< std::vector< double > > points;
-  for ( auto& pos : positions_ )
+
+  if ( not nc )
   {
-    points.emplace_back( pos.get_vector() );
+    // This is needed by NodeCollectionMetadata::operator==() which does not have access to the node collection
+    for ( const auto& pos : positions_ )
+    {
+      points.emplace_back( pos.get_vector() );
+    }
+  }
+  else
+  {
+    // Selecting the right positions
+    // - Coordinates for all nodes in the underlying primitive node collection
+    //   which belong to this rank are stored in positions_
+    // - nc has information on which nodes actually belong to it, especially
+    //   important for sliced collections with step > 1.
+    // - Use the rank-local iterator over the node collection to pick the right
+    //   nodes, then step in lockstep through the positions_ array.
+    auto nc_it = nc->rank_local_begin();
+    const auto nc_end = nc->end();
+    if ( nc_it < nc_end )
+    {
+      // Node index in node collection is global to NEST, so we need to scale down
+      // to get right indices into positions_, which has only rank-local data.
+      const size_t n_procs = kernel().mpi_manager.get_num_processes();
+      size_t pos_idx = ( *nc_it ).nc_index / n_procs;
+      const size_t step = nc_it.get_step_size() / n_procs;
+
+      for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
+      {
+        points.emplace_back( positions_.at( pos_idx ).get_vector() );
+      }
+    }
   }
 
   d[ names::positions ] = points;
@@ -285,7 +315,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   // know that all nodes in the NodeCollection have proxies. Likewise, if it returns false we know that
   // no nodes have proxies.
   NodeCollection::const_iterator nc_begin =
-    node_collection->has_proxies() ? node_collection->MPI_local_begin() : node_collection->begin();
+    node_collection->has_proxies() ? node_collection->rank_local_begin() : node_collection->begin();
   NodeCollection::const_iterator nc_end = node_collection->end();
 
   // Reserve capacity in the vector based on number of local nodes. If the NodeCollection is sliced,
@@ -296,7 +326,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
     // Push node ID into array to communicate
     local_node_id_pos.push_back( ( *nc_it ).node_id );
     // Push coordinates one by one
-    const auto pos = get_position( ( *nc_it ).lid );
+    const auto pos = get_position( ( *nc_it ).nc_index );
     for ( int j = 0; j < D; ++j )
     {
       local_node_id_pos.push_back( pos[ j ] );

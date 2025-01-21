@@ -58,17 +58,11 @@ class Event;
  * @defgroup KernelExceptions NEST kernel exception classes
  *
  * Exception classes that are thrown by the NEST kernel to indicate
- * a user error.
- *
- * @ingroup Exceptions
+ * an error.
  */
 
 /**
  * Base class for all Kernel exceptions.
- *
- * std::runtime_error will handle the error string, so there is no need
- * to override what()
- * @ingroup Exceptions
  * @ingroup KernelExceptions
  */
 class KernelException : public std::runtime_error

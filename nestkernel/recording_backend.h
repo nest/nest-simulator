@@ -61,7 +61,6 @@ class Event;
  * device is enrolled with. Cleanup on the user level finally calls
  * the cleanup() function of all backends.
  *
- * @ingroup NESTio
  */
 
 class RecordingBackend
@@ -112,7 +111,6 @@ public:
    *
    * @see set_value_names(), disenroll(), write(),
    *
-   * @ingroup NESTio
    */
   virtual void enroll( const RecordingDevice& device, const dictionary& params ) = 0;
 
@@ -130,7 +128,6 @@ public:
    *
    * @see enroll()
    *
-   * @ingroup NESTio
    */
   virtual void disenroll( const RecordingDevice& device ) = 0;
 
@@ -151,7 +148,6 @@ public:
    *
    * @see enroll(), disenroll(), write(),
    *
-   * @ingroup NESTio
    */
   virtual void set_value_names( const RecordingDevice& device,
     const std::vector< std::string >& double_value_names,
@@ -166,7 +162,6 @@ public:
    *
    * @see cleanup()
    *
-   * @ingroup NESTio
    */
   virtual void prepare() = 0;
 
@@ -179,7 +174,6 @@ public:
    *
    * @see prepare()
    *
-   * @ingroup NESTio
    */
   virtual void cleanup() = 0;
 
@@ -193,7 +187,6 @@ public:
    *
    * @see post_run_hook()
    *
-   * @ingroup NESTio
    */
   virtual void pre_run_hook() = 0;
 
@@ -207,7 +200,6 @@ public:
    *
    * @see pre_run_hook()
    *
-   * @ingroup NESTio
    */
   virtual void post_run_hook() = 0;
 
@@ -220,7 +212,6 @@ public:
    *
    * @see pre_run_hook()
    *
-   * @ingroup NESTio
    */
   virtual void post_step_hook() = 0;
 
@@ -237,7 +228,6 @@ public:
    * @param double_values vector of double valued to be written
    * @param long_values vector of long values to be written
    *
-   * @ingroup NESTio
    */
   virtual void write( const RecordingDevice& device,
     const Event& event,
@@ -252,7 +242,6 @@ public:
    *
    * @see get_status()
    *
-   * @ingroup NESTio
    */
   virtual void set_status( const dictionary& params ) = 0;
 
@@ -264,7 +253,6 @@ public:
    *
    * @see set_status()
    *
-   * @ingroup NESTio
    */
   virtual void get_status( dictionary& params ) const = 0;
 
@@ -283,7 +271,6 @@ public:
    *
    * @see get_device_defaults(), get_device_status()
    *
-   * @ingroup NESTio
    */
   virtual void check_device_status( const dictionary& params ) const = 0;
 
@@ -295,7 +282,6 @@ public:
    *
    * @see check_device_status(), get_device_status()
    *
-   * @ingroup NESTio
    */
   virtual void get_device_defaults( dictionary& params ) const = 0;
 
@@ -312,7 +298,6 @@ public:
    *
    * @see enroll(), check_device_status(), get_device_defaults()
    *
-   * @ingroup NESTio
    */
   virtual void get_device_status( const RecordingDevice& device, dictionary& params ) const = 0;
 

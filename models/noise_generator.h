@@ -146,6 +146,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_noise_generator( const std::string& name );
+
 class noise_generator : public StimulationDevice
 {
 

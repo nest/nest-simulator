@@ -103,7 +103,6 @@ class Node
   friend class NodeManager;
   friend class ModelManager;
   friend class proxynode;
-  friend class Synapse;
   friend class Model;
   friend class SimulationManager;
 
@@ -208,15 +207,6 @@ public:
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Prints out one line of the tree view of the network.
-   */
-  virtual std::string
-  print_network( int, int, std::string = "" )
-  {
-    return std::string();
-  }
 
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
@@ -417,6 +407,7 @@ public:
   virtual size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DiffusionConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( SICEvent&, size_t receptor_type );
 
   /**
@@ -460,7 +451,17 @@ public:
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
-   * Required to check, if source node may send a SICEvent.
+   * Required to check if source node may send a LearningSignalConnectionEvent.
+   *
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( LearningSignalConnectionEvent& re );
+
+  /**
+   * Required to check if source node may send a SICEvent.
    *
    * This base class implementation throws IllegalConnection
    * and needs to be overwritten in the derived class.
@@ -476,6 +477,45 @@ public:
    *
    */
   virtual void register_stdp_connection( double, double );
+
+  /**
+   * Initialize the update history and register the eprop synapse.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void register_eprop_connection();
+
+  /**
+   * Get the number of steps the time-point of the signal has to be shifted to
+   * place it at the correct location in the e-prop-related histories.
+   *
+   * @note Unlike the original e-prop, where signals arise instantaneously, NEST
+   * considers connection delays. Thus, to reproduce the original results, we
+   * compensate for the delays and synchronize the signals by shifting the
+   * history.
+   *
+   * @throws IllegalConnection
+   */
+  virtual long get_shift() const;
+
+  /**
+   * Register current update in the update history and deregister previous update.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
+
+  /**
+   * Return if the node is part of the recurrent network (and thus not a readout neuron).
+   *
+   * @note The e-prop synapse calls this function of the target node. If true,
+   * it skips weight updates within the first interval step of the update
+   * interval.
+   *
+   * @throws IllegalConnection
+   */
+  virtual bool is_eprop_recurrent_node() const;
+
 
   /**
    * Handle incoming spike events.
@@ -596,7 +636,17 @@ public:
   virtual void handle( DelayedRateConnectionEvent& e );
 
   /**
+   * Handler for learning signal connection events.
+   *
+   * @see handle(thread, LearningSignalConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( LearningSignalConnectionEvent& e );
+
+  /**
    * Handler for slow inward current events (SICEvents).
+   *
    * @see handle(thread,SICEvent&)
    * @ingroup event_interface
    * @throws UnexpectedEvent
@@ -748,6 +798,19 @@ public:
   virtual double get_tau_syn_in( int comp );
 
   /**
+   * Compute gradient change for eprop synapses.
+   *
+   * This method is called from an eprop synapse on the eprop target neuron and returns the change in gradient.
+   *
+   * @params presyn_isis  is cleared during call
+   */
+  virtual double compute_gradient( std::vector< long >& presyn_isis,
+    const long t_previous_update,
+    const long t_previous_trigger_spike,
+    const double kappa,
+    const bool average_gradient );
+
+  /**
    * Modify Event object parameters during event delivery.
    *
    * Some Nodes want to perform a function on an event for each
@@ -886,6 +949,19 @@ public:
    */
   DeprecationWarning deprecation_warning;
 
+  /**
+   * Set index in node collection; required by ThirdOutBuilder.
+   */
+  void set_tmp_nc_index( size_t index );
+
+  /**
+   * Return and invalidate index in node collection; required by ThirdOutBuilder.
+   *
+   * @note Not const since it invalidates index in node object.
+   */
+  size_t get_tmp_nc_index();
+
+
 private:
   void set_node_id_( size_t ); //!< Set global node id
 
@@ -963,6 +1039,17 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
+
+  /**
+   * Store index in NodeCollection.
+   *
+   * @note This is only here so that the primary connection builder can inform the ThirdOutBuilder
+   * about the index of the target neuron in the targets node collection. This is required for block-based
+   * builders.
+   *
+   * @note Set by set_tmp_nc_index() and invalidated by get_tmp_nc_index().
+   */
+  size_t tmp_nc_index_;
 };
 
 inline bool
@@ -1101,6 +1188,24 @@ Node::get_thread_lid() const
 {
   return thread_lid_;
 }
+
+inline void
+Node::set_tmp_nc_index( size_t index )
+{
+  tmp_nc_index_ = index;
+}
+
+inline size_t
+Node::get_tmp_nc_index()
+{
+  assert( tmp_nc_index_ != invalid_index );
+
+  const auto index = tmp_nc_index_;
+  tmp_nc_index_ = invalid_index;
+
+  return index;
+}
+
 
 } // namespace
 

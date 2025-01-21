@@ -3,6 +3,12 @@
 Randomness in NEST Simulations
 ==============================
 
+.. admonition:: osx-arm64: missing random number generators
+
+   Due to a cross-compiling issue in the conda-forge NEST package, some random number
+   generators are not available if you are using macOS arm64 architecture.
+   The available generators are the Mersenne Twister generators `mt19937` and `mt19937_64`.
+
 Random numbers in network simulations
 -------------------------------------
 
@@ -293,7 +299,7 @@ node).
 We consider first an example setting a random membrane potential.
 We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/doc/stable/reference/random/>`__.
 
-.. admonition:: Don't do this in Python!
+.. warning:: Don't do this in Python!
 
    The randomization example below is shown only to demonstrate how you in principle could
    use random values generated at the Python level in a NEST simulation in a way consistent

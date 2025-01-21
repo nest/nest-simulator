@@ -56,7 +56,7 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, adaptation, integrate-and-fire, conductance-based
 
 Short description
 +++++++++++++++++
@@ -113,6 +113,14 @@ When the neuron fires a spike, the adaptation current `w <- w + b`.
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
+.. note::
+
+    The default refractory period for ``aeif`` models is zero, consistent with the model definition in
+    Brette & Gerstner [1]_.  Thus, an ``aeif`` neuron with default parameters can fire multiple spikes in a single
+    time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+
+    To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
+
 Parameters
 ++++++++++
 
@@ -142,7 +150,7 @@ The following parameters can be set in the status dictionary.
 ======== ======= ==================================
 **Spike adaptation parameters**
 ---------------------------------------------------
- a       ns      Subthreshold adaptation
+ a       nS      Subthreshold adaptation
  b       pA      Spike-triggered adaptation
  tau_w   ms      Adaptation time constant
 ======== ======= ==================================
@@ -172,6 +180,14 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+References
+++++++++++
+
+.. [1] Brette R and Gerstner W (2005). Adaptive exponential
+       integrate-and-fire model as an effective description of neuronal
+       activity. Journal of Neurophysiology. 943637-3642
+       DOI: https://doi.org/10.1152/jn.00686.2005
+
 See also
 ++++++++
 
@@ -183,6 +199,8 @@ Examples using this model
 .. listexamples:: aeif_cond_beta_multisynapse
 
 EndUserDocs */
+
+void register_aeif_cond_beta_multisynapse( const std::string& name );
 
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {
@@ -369,7 +387,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup aeif_cond_beta_multisynapse
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

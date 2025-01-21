@@ -112,22 +112,13 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
+# Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 
-# create the report directory in TEST_BASEDIR. Save and restore the old value
-# of TMPDIR.
-
-if [[ "${TMPDIR-}" ]]; then
-    OLD_TMPDIR=$TMPDIR
-fi
-
-TMPDIR=$TEST_BASEDIR
-REPORTDIR="$(mktemp -d test_report_XXX)"
-
-if [[ "${OLD_TMPDIR-}" ]]; then
-    TMPDIR=OLD_TMPDIR
-    unset OLD_TMPDIR
-fi
+# Create the report directory in the directory in which make installcheck is called (do_tests.sh is run).
+# Use absolute pathnames, this is necessary for MUSIC tests which otherwis will not find the logfiles
+# while running in temporary directories.
+REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
@@ -212,23 +203,40 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
+    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
     set -e
 
-    # Run tests in the mpi* subdirectories, grouped by number of processes
+    # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
+    if test "${HAVE_MPI}" = "True" && test "${HAVE_OPENMP}" = "true" ; then
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+	env
+	set +e
+	"${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+		    "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+	set -e
+    fi
+
+    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "True"; then
         if test "${MPI_LAUNCHER}"; then
+	    # Loop over subdirectories whose names are the number of mpi procs to use
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+
+		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+		    PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"
+		fi
+
 		set +e
 		echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS}"
                 $(${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS}) 2>&1 | tee -a "${TEST_LOGFILE}"
+
 		set -e
             done
         fi

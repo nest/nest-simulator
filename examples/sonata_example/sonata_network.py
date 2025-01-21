@@ -27,8 +27,8 @@ This script builds and simulates a network of point neurons represented by
 the SONATA format [1]_. The network model consists of 300 internal nodes
 (explicitly simulated) and 100 external nodes (only provide inputs to the
 simulated system). The SONATA files can be found in the
-`pynest/examples/300_pointneurons
-<https://github.com/nest/nest-simulator/tree/master/pynest/examples/300_pointneurons>`_
+`pynest/examples/sonata_example/300_pointneurons
+<https://github.com/nest/nest-simulator/tree/master/pynest/examples/sonata_example/300_pointneurons>`_
 directory.
 
 See the :ref:`nest_sonata` for details on the NEST support of the SONATA format.

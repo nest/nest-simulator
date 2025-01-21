@@ -36,11 +36,18 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
 namespace nest
 {
+void
+register_pp_psc_delta( const std::string& name )
+{
+  register_node_model< pp_psc_delta >( name );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */

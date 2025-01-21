@@ -55,7 +55,7 @@ voltmeter = nest.Create("voltmeter")
 
 ###############################################################################
 # Third, the rates of the Poisson generator are configured. We set the
-# generators to 8,000 Hz and 15,000 Hz, respectively. Note that we do
+# generators to 80,000 Hz and 15,000 Hz, respectively. Note that we do
 # not need to set parameters for the neuron and the voltmeter, since
 # they have satisfactory defaults.
 

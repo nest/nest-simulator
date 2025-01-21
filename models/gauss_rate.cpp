@@ -22,8 +22,25 @@
 
 #include "gauss_rate.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_gauss_rate_ipn( const std::string& name )
+{
+  register_node_model< gauss_rate_ipn >( name );
+}
+
+void
+register_rate_transformer_gauss( const std::string& name )
+{
+  register_node_model< rate_transformer_gauss >( name );
+}
+
 
 void
 nonlinearities_gauss_rate::get( dictionary& d ) const

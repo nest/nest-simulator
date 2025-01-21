@@ -40,7 +40,7 @@ quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   , U_( 0.5 )
   , u_( U_ )
   , tau_rec_( 800.0 )
-  , tau_fac_( 10.0 )
+  , tau_fac_( 0.0 )
   , n_( 1 )
   , a_( n_ )
   , t_lastspike_( 0.0 )
@@ -67,6 +67,7 @@ void
 quantal_stp_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
+
   d.update_value( names::weight, weight_ );
 
   d.update_value( names::dU, U_ );
@@ -75,6 +76,26 @@ quantal_stp_synapse< targetidentifierT >::set_status( const dictionary& d, Conne
   d.update_value( names::tau_fac, tau_fac_ );
   d.update_integer_value( names::n, n_ );
   d.update_integer_value( names::a, a_ );
+
+  if ( U_ > 1.0 or U_ < 0.0 )
+  {
+    throw BadProperty( "'U' must be in [0,1]." );
+  }
+
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
+
+  if ( tau_rec_ <= 0.0 )
+  {
+    throw BadProperty( "'tau_rec' must be > 0." );
+  }
+
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "'tau_fac' must be >= 0." );
+  }
 }
 
 } // of namespace nest

@@ -33,6 +33,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
@@ -44,6 +45,12 @@ nest::RecordablesMap< nest::izhikevich > nest::izhikevich::recordablesMap_;
 
 namespace nest
 {
+void
+register_izhikevich( const std::string& name )
+{
+  register_node_model< izhikevich >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

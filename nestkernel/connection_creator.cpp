@@ -137,6 +137,10 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
       type_ = Pairwise_bernoulli_on_source;
     }
   }
+  else if ( connection_type == names::pairwise_poisson )
+  {
+    type_ = Pairwise_poisson;
+  }
   else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
     if ( dict.known( names::number_of_connections ) )

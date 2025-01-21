@@ -99,6 +99,12 @@ dictionary get_metadata( const NodeCollectionPTR nc );
 bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
 bool contains( const NodeCollectionPTR nc, const size_t node_id );
 
+/**
+ * Register node model (i.e. an instance of a class inheriting from `Node`).
+ */
+template < typename NodeModelT >
+void register_node_model( const std::string& name, std::string deprecation_info = std::string() );
+
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();
@@ -120,6 +126,9 @@ dictionary get_metadata( const NodeCollectionPTR nc );
 bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
 bool contains( const NodeCollectionPTR nc, const size_t node_id );
 
+/**
+ * Create bipartite connections.
+ */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& connectivity,
@@ -129,6 +138,19 @@ void disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& connectivity,
   const dictionary& synapse_params );
+
+/**
+ * Create tripartite connections
+ *
+ * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+ * entries are optional.
+ */
+void connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& third_connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -279,7 +301,6 @@ create_mask( const std::string& name, const dictionary& d )
 {
   return MaskPTR( mask_factory_().create( name, d ) );
 }
-
 }
 
 

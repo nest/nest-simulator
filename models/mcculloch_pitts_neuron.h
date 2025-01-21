@@ -152,6 +152,8 @@ gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 }
 
 typedef binary_neuron< gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+void register_mcculloch_pitts_neuron( const std::string& name );
+
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

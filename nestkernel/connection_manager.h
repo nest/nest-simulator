@@ -48,7 +48,8 @@
 
 namespace nest
 {
-class GenericConnBuilderFactory;
+class GenericBipartiteConnBuilderFactory;
+class GenericThirdConnBuilderFactory;
 class spikecounter;
 class Node;
 class Event;
@@ -72,9 +73,8 @@ public:
   ConnectionManager();
   ~ConnectionManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const dictionary& ) override;
   void get_status( dictionary& ) override;
 
@@ -91,9 +91,25 @@ public:
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
-  ConnBuilder* get_conn_builder( const std::string& name,
+  /**
+   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
+   */
+  template < typename ThirdConnBuilder >
+  void register_third_conn_builder( const std::string& name );
+
+  //! Obtain builder for bipartite connections
+  BipartiteConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs );
+
+  //! Obtain builder for bipartite connections
+  ThirdOutBuilder* get_third_conn_builder( const std::string& name,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
     const dictionary& conn_spec,
     const std::vector< dictionary >& syn_specs );
 
@@ -169,6 +185,19 @@ public:
    * @param hyberslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
   void connect_sonata( const dictionary& graph_specs, const long hyberslab_size );
+
+  /**
+   * @brief Create tripartite connections
+   *
+   * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+   * keys are optional
+   */
+  void connect_tripartite( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& connectivity,
+    const DictionaryDatum& third_connectivity,
+    const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
@@ -457,8 +486,7 @@ private:
   /**
    * Update delay extrema to current values.
    *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
+   * @note This entails MPI communication.
    */
   void update_delay_extrema_();
 
@@ -615,7 +643,12 @@ private:
   dictionary connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
-  std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
+  std::vector< GenericBipartiteConnBuilderFactory* > connbuilder_factories_;
+
+  DictionaryDatum thirdconnruledict_; //!< Dictionary for third-factor connection rules.
+
+  //! Third-factor ConnBuilder factories, indexed by thirdconnruledict_ elements.
+  std::vector< GenericThirdConnBuilderFactory* > thirdconnbuilder_factories_;
 
   long min_delay_; //!< Value of the smallest delay in the network.
 

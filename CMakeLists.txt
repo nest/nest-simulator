@@ -70,7 +70,6 @@ set( with-modelset "full" CACHE STRING "The modelset to include. Sample configur
 set( with-models OFF CACHE STRING "The models to include as a semicolon-separated list of model headers (without the .h extension). This option is mutually exclusive with -Dwith-modelset. [default=OFF]." )
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
 set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
-set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )
 set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
 
@@ -79,6 +78,7 @@ option( static-libraries "Build static executable and libraries [default=OFF]" O
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
+set( with-cpp-std "c++17" CACHE STRING "C++ standard to use for compilation [default='c++17']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
@@ -115,7 +115,6 @@ include( CheckIncludesSymbols )
 
 # These includes publish function names.
 include( ProcessOptions )
-include( WriteStaticModules_h )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
@@ -138,7 +137,6 @@ nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
 nest_process_static_libraries()
-nest_process_external_modules()
 nest_process_tics_per_ms()
 nest_process_tics_per_step()
 nest_process_with_libltdl()
@@ -169,9 +167,6 @@ nest_process_with_debug()
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
-
-# TODO PYNEST-NG
-# nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
 
 # check additionals
 nest_check_exitcode_abort()
@@ -274,12 +269,12 @@ endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
-  "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
+  "${OpenMP_CXX_LIBRARIES}"
   "${SIONLIB_LIBRARIES}"
   "${BOOST_LIBRARIES}" )
 

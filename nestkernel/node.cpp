@@ -43,6 +43,7 @@ Node::Node()
   , frozen_( false )
   , initialized_( false )
   , node_uses_wfr_( false )
+  , tmp_nc_index_( invalid_index )
 {
 }
 
@@ -57,6 +58,7 @@ Node::Node( const Node& n )
   // copy must always initialized its own buffers
   , initialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
+  , tmp_nc_index_( invalid_index )
 {
 }
 
@@ -209,6 +211,30 @@ void
 Node::register_stdp_connection( double, double )
 {
   throw IllegalConnection( "The target node does not support STDP synapses." );
+}
+
+void
+Node::register_eprop_connection()
+{
+  throw IllegalConnection( "The target node does not support eprop synapses." );
+}
+
+long
+Node::get_shift() const
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
+Node::write_update_to_history( const long t_previous_update, const long t_current_update )
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+bool
+Node::is_eprop_recurrent_node() const
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
 /**
@@ -394,9 +420,30 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
 }
 
 void
+Node::handle( LearningSignalConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
 Node::handle( SICEvent& )
 {
   throw UnexpectedEvent();
+}
+
+size_t
+Node::handles_test_event( LearningSignalConnectionEvent&, size_t )
+{
+  throw IllegalConnection(
+    "The target node cannot handle learning signal events or"
+    " synapse is not of type eprop_learning_signal_connection_bsshslm_2020." );
+  return invalid_port;
+}
+
+void
+Node::sends_secondary_event( LearningSignalConnectionEvent& )
+{
+  throw IllegalConnection();
 }
 
 size_t
@@ -489,6 +536,12 @@ double
 nest::Node::get_tau_syn_in( int )
 {
   throw UnexpectedEvent();
+}
+
+double
+nest::Node::compute_gradient( std::vector< long >&, const long, const long, const double, const bool )
+{
+  throw IllegalConnection( "The target node does not support compute_gradient()." );
 }
 
 void

@@ -182,8 +182,7 @@ def ResetKernel():
     * time
     * random generators
 
-    are reset. The only exception is that dynamically loaded modules are not
-    unloaded. This may change in a future version of NEST.
+    are reset. All dynamically loaded modules (via :py:func:`.Install()`) are unloaded.
 
     """
     nestkernel.llapi_reset_kernel()
@@ -192,7 +191,7 @@ def ResetKernel():
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
-    See the documentation of :ref:`sec:kernel_attributes` for a valid
+    See the documentation of :ref:`sec_kernel_attributes` for a valid
     list of params.
 
     Parameters

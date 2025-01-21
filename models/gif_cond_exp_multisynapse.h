@@ -46,7 +46,7 @@ namespace nest
 
 extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, adaptation
 
 Short description
 +++++++++++++++++
@@ -220,6 +220,8 @@ Examples using this model
 .. listexamples:: gif_cond_exp_multisynapse
 
 EndUserDocs */
+
+void register_gif_cond_exp_multisynapse( const std::string& name );
 
 class gif_cond_exp_multisynapse : public ArchivingNode
 {

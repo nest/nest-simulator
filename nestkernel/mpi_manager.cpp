@@ -176,8 +176,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #endif /* #ifdef HAVE_MPI */
 
 void
-nest::MPIManager::initialize()
+nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
@@ -209,7 +214,7 @@ nest::MPIManager::initialize()
 }
 
 void
-nest::MPIManager::finalize()
+nest::MPIManager::finalize( const bool )
 {
 }
 
@@ -462,7 +467,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
   int disp = 0;
   unsigned int max_recv_count = send_buffer_size_;
   bool overflow = false;
-  for ( int pid = 0; pid < get_num_processes(); ++pid )
+  for ( size_t pid = 0; pid < get_num_processes(); ++pid )
   {
     unsigned int block_disp = pid * send_buffer_size_;
     displacements[ pid ] = disp;

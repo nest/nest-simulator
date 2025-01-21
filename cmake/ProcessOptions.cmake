@@ -214,43 +214,6 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_EXTERNAL_MODULES )
-  if ( external-modules )
-    # headers from external modules will be installed here
-    include_directories( "${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
-
-    # put all external libs into this variable
-    set( EXTERNAL_MODULE_LIBRARIES )
-    # put all external headers into this variable
-    set( EXTERNAL_MODULE_INCLUDES )
-    foreach ( mod ${external-modules} )
-      # find module header
-      find_file( ${mod}_EXT_MOD_INCLUDE
-          NAMES ${mod}module.h
-          HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module"
-          )
-      if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
-         printError( "Cannot find header for external module '${mod}'. "
-          "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module/${mod}module.h' ." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
-
-      # find module library
-      find_library( ${mod}_EXT_MOD_LIBRARY
-          NAMES ${mod}module
-          HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
-          )
-      if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
-        printError( "Cannot find library for external module '${mod}'." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}" )
-    endforeach ()
-
-    set( EXTERNAL_MODULE_LIBRARIES ${EXTERNAL_MODULE_LIBRARIES} PARENT_SCOPE )
-    set( EXTERNAL_MODULE_INCLUDES ${EXTERNAL_MODULE_INCLUDES} PARENT_SCOPE )
-  endif ()
-endfunction()
-
 function( NEST_PROCESS_TICS_PER_MS )
   # Set tics per ms / step
   if ( tics_per_ms )
@@ -272,7 +235,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" )
+      set( LTDL_ROOT "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )
@@ -290,20 +253,42 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_READLINE )
+  # Find readline
+  set( HAVE_READLINE OFF PARENT_SCOPE )
+  if ( with-readline )
+    if ( NOT ${with-readline} STREQUAL "ON" )
+      # a path is set
+      set( Readline_ROOT "${with-readline}" )
+    endif ()
+
+    find_package( Readline )
+    if ( READLINE_FOUND )
+      set( HAVE_READLINE ON PARENT_SCOPE )
+      # export found variables to parent scope
+      set( READLINE_FOUND "${READLINE_FOUND}" PARENT_SCOPE )
+      set( READLINE_LIBRARIES "${READLINE_LIBRARIES}" PARENT_SCOPE )
+      set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( READLINE_VERSION "${READLINE_VERSION}" PARENT_SCOPE )
+
+      include_directories( ${READLINE_INCLUDE_DIRS} )
+      # is linked in sli/CMakeLists.txt
+    endif ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_GSL )
   # Find GSL
   set( HAVE_GSL OFF PARENT_SCOPE )
   if ( with-gsl )
     if ( NOT ${with-gsl} STREQUAL "ON" )
       # if set, use this prefix
-      set( GSL_ROOT_DIR "${with-gsl}" )
+      set( GSL_ROOT "${with-gsl}" )
     endif ()
 
-    find_package( GSL )
+    find_package( GSL 1.11 )
 
-    # only allow GSL 1.11 and later
-    if ( GSL_FOUND AND ( "${GSL_VERSION}" VERSION_GREATER "1.11"
-        OR "${GSL_VERSION}" VERSION_EQUAL "1.11" ))
+    if ( GSL_FOUND )
       set( HAVE_GSL ON PARENT_SCOPE )
 
       # export found variables to parent scope
@@ -390,24 +375,39 @@ endfunction()
 function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
   if ( with-openmp )
-    find_package( OpenMP REQUIRED )
-    set( OpenMP_FOUND ON PARENT_SCOPE )
-    set( OpenMP_VERSION ${OpenMP_CXX_VERSION} PARENT_SCOPE )
-    set( OpenMP_CXX_FLAGS ${OpenMP_CXX_FLAGS} PARENT_SCOPE )
-    set( OpenMP_CXX_LIBRARIES ${OpenMP_CXX_LIBRARIES} PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-    foreach ( lib ${OpenMP_CXX_LIBRARIES} )
-      link_libraries( "${lib}" )
-    endforeach ()
-  else ()
-    set( OpenMP_FOUND OFF PARENT_SCOPE )
+    if ( NOT "${with-openmp}" STREQUAL "ON" )
+      printInfo( "Set OpenMP argument: ${with-openmp}")
+      # set variables in this scope
+      set( OPENMP_FOUND ON )
+      set( OpenMP_C_FLAGS "${with-openmp}" )
+      set( OpenMP_CXX_FLAGS "${with-openmp}" )
+      set( OpenMP_CXX_LIBRARIES "${with-openmp}" )
+    else ()
+      find_package( OpenMP )
+    endif ()
+    if ( OPENMP_FOUND )
+      # export found variables to parent scope
+      set( OPENMP_FOUND "${OPENMP_FOUND}" PARENT_SCOPE )
+      set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
+      set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+      set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
+      # set flags
+      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      printError( "CMake can not find OpenMP." )
+    endif ()
   endif ()
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
-  if ( with-mpi )
+  if ( NOT "${with-mpi}" STREQUAL "OFF" )
+    if ( NOT ${with-mpi} STREQUAL "ON" )
+      # if set, use this prefix
+      set( MPI_ROOT "${with-mpi}" )
+    endif ()
     find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )
@@ -453,7 +453,7 @@ function( NEST_PROCESS_WITH_LIBNEUROSIM )
   if ( with-libneurosim )
     if ( NOT ${with-libneurosim} STREQUAL "ON" )
       # a path is set
-      set( LIBNEUROSIM_ROOT ${with-libneurosim} )
+      set( LibNeurosim_ROOT ${with-libneurosim} )
     endif ()
 
     find_package( LibNeurosim )
@@ -477,7 +477,7 @@ function( NEST_PROCESS_WITH_MUSIC )
   if ( with-music )
     if ( NOT ${with-music} STREQUAL "ON" )
       # a path is set
-      set( MUSIC_ROOT_DIR "${with-music}" )
+      set( Music_ROOT "${with-music}" )
     endif ()
 
     if ( NOT HAVE_MPI )
@@ -503,7 +503,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
+      set( SIONlib_ROOT "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )
@@ -526,14 +526,15 @@ function( NEST_PROCESS_WITH_BOOST )
   if ( with-boost )
     if ( NOT ${with-boost} STREQUAL "ON" )
       # a path is set
-      set( BOOST_ROOT "${with-boost}" )
+      set( Boost_ROOT "${with-boost}" )
     endif ()
 
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
     set(Boost_USE_RELEASE_LIBS ON) # only find release libs
     # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
     # Require Boost version >=1.69.0 due to change in Boost sort
-    find_package( Boost 1.69.0 )
+    # Require Boost version >=1.70.0 due to change in package finding
+    find_package( Boost 1.70 CONFIG )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
@@ -636,7 +637,7 @@ function( NEST_PROCESS_WITH_MPI4PY )
 endfunction ()
 
 function( NEST_PROCESS_USERDOC )
-  if ( with-userdoc )
+  if ( ${with-userdoc} STREQUAL "ON")
     message( STATUS "Configuring user documentation" )
     find_package( Sphinx REQUIRED)
     find_package( Pandoc REQUIRED)
@@ -646,7 +647,7 @@ function( NEST_PROCESS_USERDOC )
 endfunction ()
 
 function( NEST_PROCESS_DEVDOC )
-  if ( with-devdoc )
+  if ( ${with-devdoc} STREQUAL "ON" )
     message( STATUS "Configuring developer documentation" )
     find_package( Doxygen REQUIRED dot )
     set( BUILD_DOXYGEN_DOCS ON PARENT_SCOPE )
@@ -655,7 +656,7 @@ function( NEST_PROCESS_DEVDOC )
 endfunction ()
 
 function( NEST_PROCESS_FULL_LOGGING )
-  if ( with-full-logging )
+  if ( ${with-full-logging} STREQUAL "ON" )
     message( STATUS "Configuring full logging" )
     set( ENABLE_FULL_LOGGING ON PARENT_SCOPE )
   endif ()

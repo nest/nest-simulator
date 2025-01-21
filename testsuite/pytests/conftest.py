@@ -47,6 +47,18 @@ import testsimulation  # noqa
 import testutil  # noqa
 
 
+def pytest_configure(config):
+    """
+    Add NEST-specific markers.
+
+    See https://docs.pytest.org/en/8.0.x/how-to/mark.html.
+    """
+    config.addinivalue_line(
+        "markers",
+        "requires_many_cores: mark tests as needing many cores (deselect with '-m \"not requires_many_cores\"')",
+    )
+
+
 @pytest.fixture(scope="module", autouse=True)
 def safety_reset():
     """

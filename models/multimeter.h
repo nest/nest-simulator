@@ -62,7 +62,8 @@ recordables to have them sampled during simulation.
 
 ::
 
-   mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
+   mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex'],
+   'record_to': 'memory'})
 
 The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter`` parameter ``interval``. The default value of
@@ -71,7 +72,7 @@ using the ``multimeter`` parameter ``interval``. The default value of
 
 ::
 
-   nest.SetStatus(mm, 'interval': 0.1})
+   nest.SetStatus(mm, {'interval': 0.1})
 
 The recording interval must be greater than or equal to the
 :ref:`simulation resolution <simulation_resolution>`, which defaults
@@ -92,8 +93,8 @@ it should record from by using the standard ``Connect`` routine.
     nest.Connect(mm, neurons)
 
 To learn more about possible connection patterns and additional
-options when using ``Connect``, see the guide on :ref:`connection
-management <connection_management>`.
+options when using ``Connect``, see the guide on :ref:`connectivity
+concepts <connectivity_concepts>`.
 
 The above call to ``Connect`` would fail if the neurons would not
 support the sampling of the values ``V_m`` and ``g_ex``. It would also
@@ -129,6 +130,9 @@ EndUserDocs */
 
 namespace nest
 {
+
+void register_multimeter( const std::string& name );
+void register_voltmeter( const std::string& name );
 
 class multimeter : public RecordingDevice
 {

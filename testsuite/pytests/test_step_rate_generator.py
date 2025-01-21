@@ -26,7 +26,6 @@ import numpy as np
 
 
 class StepRateGeneratorTestCase(unittest.TestCase):
-
     """
     Test whether the step_rate_generator produces and
     communicates the desired rates

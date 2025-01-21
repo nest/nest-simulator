@@ -30,6 +30,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
@@ -39,6 +40,12 @@
 
 namespace nest
 {
+void
+register_iaf_psc_alpha_multisynapse( const std::string& name )
+{
+  register_node_model< iaf_psc_alpha_multisynapse >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -99,7 +106,6 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
 iaf_psc_alpha_multisynapse::State_::State_()
   : I_const_( 0.0 )
   , V_m_( 0.0 )
-  , current_( 0.0 )
   , refractory_steps_( 0 )
 {
   y1_syn_.clear();
@@ -322,11 +328,9 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
       // neuron not refractory
       S_.V_m_ = V_.P30_ * ( S_.I_const_ + P_.I_e_ ) + V_.P33_ * S_.V_m_;
 
-      S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
         S_.V_m_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ] + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
-        S_.current_ += S_.y2_syn_[ i ];
       }
 
       // lower bound of membrane potential

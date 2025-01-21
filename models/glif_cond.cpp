@@ -35,12 +35,20 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "name.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 using namespace nest;
 
 namespace nest
 {
+void
+register_glif_cond( const std::string& name )
+{
+  register_node_model< glif_cond >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -450,7 +458,7 @@ nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
   , c_( nullptr )
   , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
-  , IntegrationStep_( std::min( 0.01, step_ ) )
+  , IntegrationStep_( step_ )
   , I_( 0.0 )
 {
 }
@@ -519,8 +527,9 @@ nest::glif_cond::init_buffers_()
   B_.logger_.reset();   // includes resize
 
   B_.step_ = Time::get_resolution().get_ms();
-  // We must integrate this model with high-precision to obtain decent results
-  B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
+  B_.IntegrationStep_ =
+    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {

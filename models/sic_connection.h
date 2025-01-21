@@ -43,7 +43,7 @@ induced by the astrocyte. The amplitude of the current is the product of the ast
 ``sic_connection``.
 
 The source node of a ``sic_connection`` must be an astrocyte emitting a slow inward current, and the target node must be
-able to handle slow inward current input. Currently, :doc:`aeif_conda_alpha_astro` is the only neuron model that can
+able to handle slow inward current input. Currently, :doc:`aeif_cond_alpha_astro` is the only neuron model that can
 receive ``sic_connection``. The connection may have a delay.
 
 Sends
@@ -56,7 +56,14 @@ See also
 
 astrocyte_lr_1994, aeif_cond_alpha_astro
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sic_connection
+
 EndUserDocs */
+
+void register_sic_connection( const std::string& name );
 
 template < typename targetidentifierT >
 class sic_connection : public Connection< targetidentifierT >
@@ -105,7 +112,7 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
@@ -113,6 +120,8 @@ public:
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+
+    return true;
   }
 
   void get_status( dictionary& d ) const;

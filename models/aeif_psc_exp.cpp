@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -49,6 +50,12 @@ nest::RecordablesMap< nest::aeif_psc_exp > nest::aeif_psc_exp::recordablesMap_;
 
 namespace nest
 {
+void
+register_aeif_psc_exp( const std::string& name )
+{
+  register_node_model< aeif_psc_exp >( name );
+}
+
 /*
  * template specialization must be placed in namespace
  *
@@ -360,9 +367,9 @@ nest::aeif_psc_exp::init_buffers_()
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
-
-  // We must integrate this model with high-precision to obtain decent results
-  B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
+  B_.IntegrationStep_ =
+    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.s_ )
   {

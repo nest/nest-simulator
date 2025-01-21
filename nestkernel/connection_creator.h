@@ -66,6 +66,7 @@ public:
   {
     Pairwise_bernoulli_on_source,
     Pairwise_bernoulli_on_target,
+    Pairwise_poisson,
     Fixed_indegree,
     Fixed_outdegree
   };
@@ -84,8 +85,6 @@ public:
    * - "mask": Mask definition (dictionary or masktype).
    * - "kernel": Kernel definition (dictionary, parametertype, or double).
    * - "synapse_model": The synapse model to use.
-   * - "targets": Which targets (model or lid) to select (dictionary).
-   * - "sources": Which targets (model or lid) to select (dictionary).
    * - "weight": Synaptic weight (dictionary, parametertype, or double).
    * - "delay": Synaptic delays (dictionary, parametertype, or double).
    * - other parameters are interpreted as synapse parameters, and may
@@ -142,6 +141,14 @@ private:
     size_t tgt_thread,
     const Layer< D >& source );
 
+  template < typename Iterator, int D >
+  void connect_to_target_poisson_( Iterator from,
+    Iterator to,
+    Node* tgt_ptr,
+    const Position< D >& tgt_pos,
+    size_t tgt_thread,
+    const Layer< D >& source );
+
   template < int D >
   void pairwise_bernoulli_on_source_( Layer< D >& source,
     NodeCollectionPTR source_nc,
@@ -153,6 +160,10 @@ private:
     NodeCollectionPTR source_nc,
     Layer< D >& target,
     NodeCollectionPTR target_nc );
+
+  template < int D >
+  void
+  pairwise_poisson_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
   void

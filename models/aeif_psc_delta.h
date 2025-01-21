@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, adaptation, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
@@ -97,7 +97,13 @@ the value of `J` after a spike.
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
-See also [1]_.
+.. note::
+
+    The default refractory period for ``aeif`` models is zero, consistent with the model definition in
+    Brette & Gerstner [1]_.  Thus, an ``aeif`` neuron with default parameters can fire multiple spikes in a single
+    time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+
+    To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
 Parameters
 ++++++++++
@@ -171,6 +177,8 @@ Examples using this model
 .. listexamples:: aeif_psc_delta
 
 EndUserDocs */
+
+void register_aeif_psc_delta( const std::string& name );
 
 class aeif_psc_delta : public ArchivingNode
 {

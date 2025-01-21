@@ -159,6 +159,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_hh_psc_alpha_gap( const std::string& name );
+
 class hh_psc_alpha_gap : public ArchivingNode
 {
 

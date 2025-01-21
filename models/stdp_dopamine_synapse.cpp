@@ -27,7 +27,14 @@
 #include "connector_model.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
+
+void
+nest::register_stdp_dopamine_synapse( const std::string& name )
+{
+  register_connection_model< stdp_dopamine_synapse >( name );
+}
 
 namespace nest
 {

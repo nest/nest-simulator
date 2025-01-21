@@ -30,6 +30,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 
@@ -41,6 +42,12 @@ nest::RecordablesMap< nest::mat2_psc_exp > nest::mat2_psc_exp::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_mat2_psc_exp( const std::string& name )
+{
+  register_node_model< mat2_psc_exp >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.

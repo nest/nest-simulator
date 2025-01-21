@@ -37,12 +37,19 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 nest::RecordablesMap< nest::astrocyte_lr_1994 > nest::astrocyte_lr_1994::recordablesMap_;
 
 namespace nest
 {
+void
+register_astrocyte_lr_1994( const std::string& name )
+{
+  register_node_model< astrocyte_lr_1994 >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -51,7 +58,7 @@ RecordablesMap< astrocyte_lr_1994 >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::IP3, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::IP3 > );
-  insert_( names::Ca, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::Ca > );
+  insert_( names::Ca_astro, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::Ca_astro > );
   insert_( names::h_IP3R, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::h_IP3R > );
 }
 
@@ -73,11 +80,11 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
   // shorthand for state variables
   const double& ip3 = y[ S::IP3 ];
-  // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
-  // in De Young & Keizer (1992) and Li & Rinzel (1994)
-  const double& calc = std::max( 0.0, std::min( y[ S::Ca ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double& h_ip3r = y[ S::h_IP3R ];
 
+  // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
+  // in De Young & Keizer (1992) and Li & Rinzel (1994)
+  const double calc = std::max( 0.0, std::min( y[ S::Ca_astro ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double alpha_h_ip3r =
     node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 + node.P_.Kd_IP3_2_ );
   const double beta_h_ip3r = node.P_.k_IP3R_ * calc;
@@ -91,7 +98,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
     * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
 
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
-  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.J_noise_;
+  f[ S::Ca_astro ] = J_channel - J_pump + J_leak + node.B_.J_noise_;
   f[ S::h_IP3R ] = alpha_h_ip3r * ( 1.0 - h_ip3r ) - beta_h_ip3r * h_ip3r;
 
   return GSL_SUCCESS;
@@ -113,7 +120,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , Km_SERCA_( 0.1 )    // µM
   , SIC_scale_( 1.0 )
   , SIC_th_( 0.19669 )    // µM
-  , delta_IP3_( 5.0 )     // µM
+  , delta_IP3_( 0.0002 )  // µM
   , k_IP3R_( 0.0002 )     // 1/(µM*ms)
   , rate_IP3R_( 0.006 )   // 1/ms
   , rate_L_( 0.00011 )    // 1/ms
@@ -127,7 +134,7 @@ nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
   // initial values based on Li & Rinzel (1994) and Nadkarni & Jung (2003)
   y_[ IP3 ] = p.IP3_0_;
-  y_[ Ca ] = 0.073;
+  y_[ Ca_astro ] = 0.073;
   y_[ h_IP3R ] = 0.793;
 }
 
@@ -283,7 +290,7 @@ nest::astrocyte_lr_1994::State_::set( const dictionary& d, const Parameters_&, N
   {
     throw BadProperty( "IP3 concentration must be non-negative." );
   }
-  if ( y_[ Ca ] < 0 )
+  if ( y_[ Ca_astro ] < 0 )
   {
     throw BadProperty( "Calcium concentration must be non-negative." );
   }
@@ -318,7 +325,7 @@ nest::astrocyte_lr_1994::Buffers_::Buffers_( const Buffers_&, astrocyte_lr_1994&
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994()
-  : ArchivingNode()
+  : StructuralPlasticityNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -327,7 +334,7 @@ nest::astrocyte_lr_1994::astrocyte_lr_1994()
 }
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
-  : ArchivingNode( n )
+  : StructuralPlasticityNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -362,8 +369,6 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.currents_.clear();
   B_.sic_values.resize(
     kernel().connection_manager.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
-
-  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -457,7 +462,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
 
     // keep calcium within limits
-    S_.y_[ State_::Ca ] = std::max( 0.0, std::min( S_.y_[ State_::Ca ], P_.Ca_tot_ ) );
+    S_.y_[ State_::Ca_astro ] = std::max( 0.0, std::min( S_.y_[ State_::Ca_astro ], P_.Ca_tot_ ) );
 
     // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
@@ -465,7 +470,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // SIC generation according to Nadkarni & Jung, 2003
     //   Suprathreshold log of calcium concentration determines SIC generation
     //   1000.0: change unit to nM as in the original paper
-    const double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
+    const double calc_thr = ( S_.y_[ State_::Ca_astro ] - P_.SIC_th_ ) * 1000.0;
     const double sic_value = calc_thr > 1.0 ? std::log( calc_thr ) * P_.SIC_scale_ : 0.0;
     B_.sic_values[ lag ] = sic_value;
 
@@ -480,16 +485,6 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
   SICEvent sic;
   sic.set_coeffarray( B_.sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
-}
-
-/**
- * Default implementation of register_stdp_connection() just
- * throws IllegalConnection
- */
-void
-nest::astrocyte_lr_1994::register_stdp_connection( double, double )
-{
-  throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 
 void

@@ -127,6 +127,8 @@ Examples using this model
 
 EndUserDocs*/
 
+void register_iaf_cond_exp( const std::string& name );
+
 class iaf_cond_exp : public ArchivingNode
 {
 

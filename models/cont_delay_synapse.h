@@ -78,6 +78,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_cont_delay_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class cont_delay_synapse : public Connection< targetidentifierT >
 {
@@ -145,7 +147,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -214,7 +216,7 @@ private:
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
@@ -239,6 +241,8 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonS
   e();
   // reset offset to original value
   e.set_offset( orig_event_offset );
+
+  return true;
 }
 
 template < typename targetidentifierT >

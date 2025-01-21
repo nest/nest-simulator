@@ -97,6 +97,8 @@ EndUserDocs */
  * stores them via its RecordingDevice.
  *
  */
+void register_spin_detector( const std::string& name );
+
 class spin_detector : public RecordingDevice
 {
 

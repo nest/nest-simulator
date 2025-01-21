@@ -123,13 +123,13 @@ nest.Connect(noise, neuron, syn_spec={"weight": [[epsc, ipsc]], "delay": 1.0})
 
 
 def output_rate(guess):
-    print("Inhibitory rate estimate: %5.2f Hz" % guess)
+    print(f"Inhibitory rate estimate: {guess:5.2f} spks/s")
     rate = float(abs(n_in * guess))
     noise[1].rate = rate
     spikerecorder.n_events = 0
     nest.Simulate(t_sim)
     out = spikerecorder.n_events * 1000.0 / t_sim
-    print("  -> Neuron rate: %6.2f Hz (goal: %4.2f Hz)" % (out, r_ex))
+    print(f"  -> Neuron rate: {out:6.2f} spks/s (goal: {r_ex:4.2f} spks/s)")
     return out
 
 
@@ -143,13 +143,13 @@ def output_rate(guess):
 # During simulation, the ``spike_recorder`` counts the spikes of the target
 # neuron and the total number is read out at the end of the simulation
 # period. The return value of ``output_rate()`` is the firing rate of the
-# target neuron in Hz.
+# target neuron in spks/s.
 #
 # Second, the scipy function ``bisect`` is used to determine the optimal
 # firing rate of the neurons of the inhibitory population.
 
 in_rate = bisect(lambda x: output_rate(x) - r_ex, lower, upper, xtol=prec)
-print("Optimal rate for the inhibitory population: %.2f Hz" % in_rate)
+print(f"Optimal rate for the inhibitory population: {in_rate:.2f} spks/s")
 
 ###############################################################################
 # The function ``bisect`` takes four arguments: first a function whose

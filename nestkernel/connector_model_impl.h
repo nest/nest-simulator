@@ -38,6 +38,7 @@
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "secondary_event_impl.h"
 
 
 namespace nest
@@ -137,6 +138,28 @@ GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 
 template < typename ConnectionT >
 void
+GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+{
+  // This is called just once per Connect() call, so we need not worry much about performance.
+  // We get a dictionary with synapse default values and check if any of its keys are in syn_spec.
+  DictionaryDatum dummy( new Dictionary );
+  cp_.get_status( dummy );
+
+  for ( [[maybe_unused]] const auto& [ key, val ] : *syn_spec )
+  {
+    if ( dummy->known( key ) )
+    {
+      throw NotImplemented(
+        String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );
+    }
+  }
+
+  default_connection_.check_synapse_params( syn_spec );
+}
+
+
+template < typename ConnectionT >
+void
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
@@ -176,6 +199,13 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     }
     default_delay_needs_check_ = false;
   }
+}
+
+template < typename ConnectionT >
+size_t
+GenericConnectorModel< ConnectionT >::get_syn_id() const
+{
+  return default_connection_.get_syn_id();
 }
 
 template < typename ConnectionT >
@@ -286,7 +316,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   assert( connector );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
-  vc->push_back( connection );
+  vc->push_back( std::move( connection ) );
 }
 
 } // namespace nest

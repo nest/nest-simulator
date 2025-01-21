@@ -37,11 +37,8 @@ if ( HAVE_PYTHON )
     message( FATAL_ERROR "Building PyNEST requires Cython." )
   endif ()
 
-  # TODO PYNEST NG: Add models, once the refacoring of the module system is done.
-  target_link_libraries( nestkernel_api
-    nestutil nestkernel
-    ${EXTERNAL_MODULE_LIBRARIES}
-  )
+  # TODO PYNEST NG: Add models, once the refactoring of the module system is done.
+  target_link_libraries( nestkernel_api nestutil nestkernel )
 
   if ( APPLE )
     set_target_properties( nestkernel_api PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )

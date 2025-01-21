@@ -12,3 +12,4 @@ const-naming-style = snake_case
 method-naming-style = PascalCase
 
 max-line-length = 120
+fail-under = 9.98

@@ -30,10 +30,17 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 
 namespace nest
 {
+void
+register_parrot_neuron( const std::string& name )
+{
+  register_node_model< parrot_neuron >( name );
+}
+
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()

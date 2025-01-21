@@ -55,9 +55,8 @@ public:
   /**
    * Register available RNG types, set default RNG type and create RNGs.
    */
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const dictionary& ) override;
   void get_status( dictionary& ) override;
 
@@ -108,7 +107,7 @@ public:
    * @param RNG_TYPE Class fulfilling requirements of C++ RNG.
    **/
   template < typename RNG_TYPE >
-  void register_rng_type( std::string name );
+  void register_rng_type( const std::string& name );
 
 private:
   /** Available RNG types. */
@@ -128,14 +127,6 @@ private:
 
   /** Random number generators specific to VPs. */
   std::vector< RngPtr > vp_specific_rngs_;
-
-  /**
-   * Replace current RNGs with newly seeded generators.
-   *
-   * The new generators will be of type `current_rng_type_` and will be
-   * seeded using `base_seed_`.
-   **/
-  void reset_rngs_();
 
   /** RNG type used by default. */
   static const std::string DEFAULT_RNG_TYPE_;

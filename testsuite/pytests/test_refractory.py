@@ -55,10 +55,11 @@ neurons_interspike = [
     "mat2_psc_exp",
 ]
 
-neurons_interspike_ps = [
-    "iaf_psc_alpha_ps",
-    "iaf_psc_delta_ps",
-    "iaf_psc_exp_ps",
+neurons_interspike_ps = ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps"]
+
+neurons_eprop = [
+    "eprop_iaf_bsshslm_2020",
+    "eprop_iaf_adapt_bsshslm_2020",
 ]
 
 # Models that first clamp the membrane potential at a higher value
@@ -83,6 +84,10 @@ ignore_model = [
     "iaf_psc_exp_ps_lossless",  # This one use presice times
     "siegert_neuron",  # This one does not connect to voltmeter
     "step_rate_generator",  # No regular neuron model
+    "eprop_readout_bsshslm_2020",  # This one does not spike
+    "iaf_tum_2000",  # Hijacks the offset field, see #2912
+    "iaf_bw_2001",  # Hijacks the offset field, see #2912
+    "iaf_bw_2001_exact",  # Hijacks the offset field, see #2912
 ]
 
 tested_models = [
@@ -93,14 +98,6 @@ tested_models = [
 add_connect_param = {
     "iaf_cond_alpha_mc": {"receptor_type": 7},
 }
-
-
-# --------------------------------------------------------------------------- #
-#  Simulation time and refractory time limits
-# --------------------------------------------------------------------------- #
-
-simtime = 100
-resolution = 0.1
 
 
 # --------------------------------------------------------------------------- #
@@ -116,7 +113,7 @@ class TestRefractoryCase(unittest.TestCase):
     def reset(self):
         nest.ResetKernel()
 
-        nest.resolution = resolution
+        nest.resolution = self.resolution
         nest.rng_seed = 123456
 
     def compute_reftime(self, model, sr, vm, neuron):
@@ -140,12 +137,12 @@ class TestRefractoryCase(unittest.TestCase):
             Value of the simulated refractory period.
         """
 
-        spike_times = sr.events["times"]
+        spike_times = sr.events[0]["times"]
 
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution
-            return spike_times[1] - spike_times[0] - resolution
-        elif model in neurons_interspike_ps:
+            return spike_times[1] - spike_times[0] - self.resolution
+        elif model in neurons_interspike_ps + neurons_eprop:
             return spike_times[1] - spike_times[0]
         else:
             Vr = neuron.V_reset
@@ -156,12 +153,12 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model in mc_models else "V_m"
             Vs = vm.events[name_Vm]
 
-            # Get the index at which the spike occurred
+            # Get the index at which the first spike occurred
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
 
             # Find end of refractory period between 1st and 2nd spike
             idx_end = np.where(np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
-            t_ref_sim = idx_end * resolution
+            t_ref_sim = idx_end * self.resolution
 
             return t_ref_sim
 
@@ -169,20 +166,23 @@ class TestRefractoryCase(unittest.TestCase):
         """
         Check that refractory time implementation is correct.
         """
+
+        simtime = 100
+
         for model in tested_models:
+            self.resolution = 0.1
+            t_ref = 1.7
             self.reset()
 
             if "t_ref" not in nest.GetDefaults(model):
                 continue
 
-            # Randomly set a refractory period
-            t_ref = 1.7
             # Create the neuron and devices
             nparams = {"t_ref": t_ref}
             neuron = nest.Create(model, params=nparams)
 
             name_Vm = "V_m.s" if model in mc_models else "V_m"
-            vm_params = {"interval": resolution, "record_from": [name_Vm]}
+            vm_params = {"interval": self.resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
             sr = nest.Create("spike_recorder")
             cg = nest.Create("dc_generator", params={"amplitude": 1200.0})
@@ -190,7 +190,7 @@ class TestRefractoryCase(unittest.TestCase):
             # For models that do not clamp V_m, use very large current to
             # trigger almost immediate spiking => t_ref almost equals
             # interspike
-            if model in neurons_interspike_ps:
+            if model in neurons_interspike_ps + neurons_eprop:
                 cg.amplitude = 10000000.0
             elif model == "ht_neuron":
                 # ht_neuron use too long time with a very large amplitude
@@ -212,7 +212,7 @@ class TestRefractoryCase(unittest.TestCase):
                 t_ref_sim = t_ref_sim - neuron.t_clamp
 
             # Approximate result for precise spikes (interpolation error)
-            if model in neurons_interspike_ps:
+            if model in neurons_interspike_ps + neurons_eprop:
                 self.assertAlmostEqual(
                     t_ref,
                     t_ref_sim,

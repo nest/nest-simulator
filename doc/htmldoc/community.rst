@@ -64,7 +64,7 @@ Contact us
 Get help
 --------
 
-.. grid:: 
+.. grid::
 
    .. grid-item-card:: Command line help
       :link: command_help
@@ -102,7 +102,7 @@ Explore the NEST ecosystem
        :link: https://nest-simulator.org
        :link-type: url
 
-   .. grid-item-card:: Become a NEST initiative member 
+   .. grid-item-card:: Become a NEST initiative member
          :link: https://www.nest-initiative.org/
          :link-type: url
 
@@ -115,4 +115,3 @@ Explore the NEST ecosystem
   related_projects
   citing-nest
   getting_help
-

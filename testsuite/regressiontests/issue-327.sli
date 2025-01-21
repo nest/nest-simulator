@@ -43,43 +43,41 @@ M_ERROR setverbosity
   << /resolution 0.1 >> SetKernelStatus
 
   /sg
-  /spike_generator 
-    << 
+  /spike_generator
+    <<
        % PyNN uses precise spike times
        /precise_times true
-       
+
        % PyNN adjusts for use of parrot_neuron by subtracting
        % min_delay. Only this computation provokes the error.
-       /spike_times [ 353538.4 0.1 sub ] 
+       /spike_times [ 353538.4 0.1 sub ]
     >>
   Create
   def
-  
+
   /pn /parrot_neuron_ps Create def
-  
-  /sr /spike_recorder 
+
+  /sr /spike_recorder
     <<
        /time_in_steps true
     >>
   Create
   def
-  
+
   sg pn Connect
   pn sr Connect
-  
+
   360000 Simulate
-  
+
   sr /events get
   dup /times get /steps Set
   /offsets get /offs Set
-  
+
   % check correct step, account for delay 1 ms
   steps 0 get dup == 3535393 eq
-  
+
   % check for correct offset, precision limited by
   % spike time * eps
   offs 0 get dup == abs 1e9 mul 1. lt
   and
 } assert_or_die
-  
-  

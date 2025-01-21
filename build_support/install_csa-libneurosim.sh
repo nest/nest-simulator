@@ -1,4 +1,4 @@
-#!/bin/bash                                                                           
+#!/bin/bash
 # Install libneurosim
 git clone https://github.com/INCF/libneurosim.git libneurosim.src
 pushd libneurosim.src

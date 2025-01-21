@@ -24,13 +24,13 @@
 /** @BeginDocumentation
     Name: testsuite::test_gap_junctions_mpi - Test gap junction functionality in parallel
 
-    Synopsis: (test_gap_junctions_mpi) run -> - 
+    Synopsis: (test_gap_junctions_mpi) run -> -
 
     Description:
     test_gap_junctions_mpi.sli is an overall test of the hh_psc_alpha_gap model connected
     by gap_junction connection. The test checks if the gap junction functionality
     works in parallel.
-    
+
     Author:  Jan Hahne, Hans Ekkehard Plesser
     SeeAlso: testsuite::test_gap_junction, hh_psc_alpha_gap, gap_junction
 */
@@ -48,9 +48,9 @@ skip_if_without_gsl
 [1 2 4]
 {
   0.1 /h Set
-  
-  << 
-        /total_num_virtual_procs total_vps 
+
+  <<
+        /total_num_virtual_procs total_vps
         /resolution h
         /use_wfr true
         /wfr_tol 0.0001
@@ -58,44 +58,44 @@ skip_if_without_gsl
         /wfr_max_iterations 10
         /wfr_comm_interval 1.0
     >> SetKernelStatus
-      
+
   /hh_psc_alpha_gap Create /neuron1 Set
   /hh_psc_alpha_gap Create /neuron2 Set
   /hh_psc_alpha_gap Create /neuron3 Set
   /hh_psc_alpha_gap Create /neuron4 Set
-  
+
   neuron1
-  << 
+  <<
     /I_e 400.
   >> SetStatus
-  
+
   /sr /spike_recorder Create def
-  
+
   neuron1 neuron2
-  << /rule /one_to_one /make_symmetric true >> 
+  << /rule /one_to_one /make_symmetric true >>
   << /synapse_model /gap_junction /weight 10.0 >>
   Connect
-  
+
   neuron1 neuron3
-  << /rule /one_to_one /make_symmetric true >> 
+  << /rule /one_to_one /make_symmetric true >>
   << /synapse_model /gap_junction /weight 8.0 >>
   Connect
-  
+
   neuron1 neuron4
-  << /rule /one_to_one /make_symmetric true >> 
+  << /rule /one_to_one /make_symmetric true >>
   << /synapse_model /gap_junction /weight 12.0 >>
   Connect
-  
+
   neuron1 sr Connect
   neuron2 sr Connect
   neuron3 sr Connect
   neuron4 sr Connect
-  
+
   50 Simulate
 
-  % get events, replace vectors with SLI arrays    
+  % get events, replace vectors with SLI arrays
   /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
-  ev 
+  ev
 
 } distributed_process_invariant_events_assert_or_die

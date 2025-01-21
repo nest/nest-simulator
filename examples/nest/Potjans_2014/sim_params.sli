@@ -37,7 +37,7 @@
 %%   see Gewaltig et al. (2012) for details
 %%
 
-/rng_seed 123456 def   % NEST kernel seed 
+/rng_seed 123456 def   % NEST kernel seed
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

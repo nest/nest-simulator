@@ -42,7 +42,7 @@ time_cmd()
     t_start=$( date +%s%N )
     $1
     t_end=$( date +%s%N )
-    
+
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
     if test "x${t_start: -1}" != xN ; then     # space before -1 required!

@@ -41,7 +41,7 @@ IFS=$' \n\t'
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
     # Find all examples that have a line containing "autorun=true"
-    # The examples can be found in subdirectory nest and in the 
+    # The examples can be found in subdirectory nest and in the
     # examples installation path.
     if [ -d "nest/" ] ; then
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' nest/)"

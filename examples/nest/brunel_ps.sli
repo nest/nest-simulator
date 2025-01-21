@@ -203,7 +203,7 @@ tic % start timer on construction
 
   % all neurons
   /allNeurons E_neurons I_neurons join def
-  
+
   (Creating excitatory Poisson generator.) =
   /expoisson /poisson_generator_ps Create def
   expoisson

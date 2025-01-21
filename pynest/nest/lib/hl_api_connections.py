@@ -34,7 +34,6 @@ from .hl_api_connection_helpers import (
     _process_spatial_projections,
     _process_syn_spec,
 )
-from .hl_api_helper import is_string
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
 from .hl_api_types import (
@@ -282,7 +281,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         return GetConnections(pre, post)
 
 
-@check_stack
 def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_specs=None):
     """
     Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
@@ -403,7 +401,6 @@ def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_s
     sr("ConnectTripartite_g_g_g_D_D_D")
 
 
-@check_stack
 def Disconnect(*args, conn_spec=None, syn_spec=None):
     """Disconnect connections in a SynapseCollection, or `pre` neurons from `post` neurons.
 

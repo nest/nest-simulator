@@ -26,8 +26,8 @@ repos:
       - id: black
         language_version: python3
 
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
     hooks:
       - id: shellcheck
         # explicitly add input files that are not "*.sh"

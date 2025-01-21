@@ -564,7 +564,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -782,7 +782,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"

@@ -63,19 +63,7 @@ init_nest( int* argc, char** argv[] )
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
 
-
-  // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
-#ifdef HAVE_LIBNEUROSIM
-  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
-
+  // TODO: register_parameter() and register_mask() should be moved, see #3149
   register_parameter< ConstantParameter >( "constant" );
   register_parameter< UniformParameter >( "uniform" );
   register_parameter< UniformIntParameter >( "uniform_int" );
@@ -98,10 +86,6 @@ init_nest( int* argc, char** argv[] )
   register_mask< BoxMask< 3 > >();
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
-
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 }
 
 void

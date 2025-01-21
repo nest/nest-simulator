@@ -143,7 +143,6 @@ ModelManager::copy_model( const std::string& old_name, const std::string& new_na
     throw NewModelNameExists( new_name );
   }
 
-  size_t new_id;
   if ( modeldict_.known( old_name ) )
   {
     const size_t old_id = modeldict_.get< size_t >( old_name );

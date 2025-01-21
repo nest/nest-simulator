@@ -98,7 +98,7 @@ References
        in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+       https://modeldb.science/144566?tab=1
 
 See also
 ++++++++
@@ -167,7 +167,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -234,7 +234,7 @@ constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::proper
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
@@ -279,6 +279,8 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   x_bar_ = x_bar_ * std::exp( ( t_lastspike_ - t_spike ) / tau_x_ ) + 1.0 / tau_x_;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

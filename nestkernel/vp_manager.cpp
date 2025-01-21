@@ -48,8 +48,13 @@ nest::VPManager::VPManager()
 }
 
 void
-nest::VPManager::initialize()
+nest::VPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
 // When the VPManager is initialized, you will have 1 thread again.
 // Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
@@ -73,7 +78,7 @@ nest::VPManager::initialize()
 }
 
 void
-nest::VPManager::finalize()
+nest::VPManager::finalize( const bool )
 {
 }
 
@@ -147,7 +152,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     }
     if ( force_singlethreading_ and n_threads > 1 )
     {
-      errors.push_back( "This installation of NEST does not support for multiple threads" );
+      errors.push_back( "This installation of NEST does not support multiple threads" );
     }
 
     if ( not errors.empty() )
@@ -186,13 +191,5 @@ nest::VPManager::set_num_threads( size_t n_threads )
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
-#endif
-}
-
-void
-nest::VPManager::assert_single_threaded()
-{
-#ifdef _OPENMP
-  assert( omp_get_num_threads() == 1 );
 #endif
 }

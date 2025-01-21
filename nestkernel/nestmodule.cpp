@@ -30,9 +30,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "connection_creator_impl.h"
-#include "connection_manager_impl.h"
 #include "free_layer.h"
 #include "genericmodel.h"
 #include "grid_layer.h"
@@ -48,7 +46,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "parameter.h"
-#include "sp_manager_impl.h"
 #include "spatial.h"
 
 // Includes from sli:
@@ -94,7 +91,7 @@ NestModule::~NestModule()
 const std::string
 NestModule::name() const
 {
-  return std::string( "NEST Kernel 2" ); // Return name of the module
+  return std::string( "NEST Kernel" ); // Return name of the module
 }
 
 const std::string
@@ -513,17 +510,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  NodeCollectionMetadataPTR meta = nc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-
-  // return empty dict if NC does not have metadata
-  if ( meta.get() )
-  {
-    meta->get_status( dict );
-    slice_positions_if_sliced_nc( dict, nc );
-
-    ( *dict )[ names::network_size ] = nc->size();
-  }
+  nc->get_metadata_status( dict );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -564,6 +552,19 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
   i->OStack.push( dict );
+  i->EStack.pop();
+}
+
+void
+NestModule::Install_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const std::string modulename = getValue< std::string >( i->OStack.pick( 0 ) );
+
+  kernel().module_manager.install( modulename );
+
+  i->OStack.pop();
   i->EStack.pop();
 }
 
@@ -767,6 +768,45 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
+
+void
+NestModule::ConnectTripartite_g_g_g_D_D_DFunction::execute( SLIInterpreter* i ) const
+{
+  kernel().connection_manager.sw_construction_connect.start();
+
+  i->assert_stack_load( 6 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 5 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 4 ) );
+  NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum third_connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_specs_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  std::map< Name, std::vector< DictionaryDatum > > synapse_specs {
+    { names::primary, {} }, { names::third_in, {} }, { names::third_out, {} }
+  };
+
+  for ( auto& [ key, syn_spec_array ] : synapse_specs )
+  {
+    ArrayDatum spec = getValue< ArrayDatum >( ( *synapse_specs_dict )[ key ] );
+
+    for ( auto syn_param : spec )
+    {
+      syn_spec_array.push_back( getValue< DictionaryDatum >( syn_param ) );
+    }
+  }
+
+  // dictionary access checking is handled by connect
+  connect_tripartite( sources, targets, third, connectivity, third_connectivity, synapse_specs );
+
+  i->OStack.pop( 6 );
+  i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
+}
+
+
 void
 NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
 {
@@ -835,18 +875,6 @@ void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
   i->OStack.push( kernel().mpi_manager.get_num_processes() );
-  i->EStack.pop();
-}
-
-void
-NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  enable_dryrun_mode( n_procs );
-
-  i->OStack.pop( 1 );
   i->EStack.pop();
 }
 
@@ -1005,13 +1033,16 @@ NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
+NestModule::Cva_g_lFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
-  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum node_ids = nodecollection->to_array();
+  i->assert_stack_load( 2 );
 
-  i->OStack.pop();
+  const std::string selection = getValue< std::string >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+
+  ArrayDatum node_ids = nodecollection->to_array( selection );
+
+  i->OStack.pop( 2 );
   i->OStack.push( node_ids );
   i->EStack.pop();
 }
@@ -1072,7 +1103,7 @@ NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = nodecollection->get_lid( node_id );
+  const auto res = nodecollection->get_nc_index( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -2049,6 +2080,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
+  i->createcommand( "Install", &install_sfunction );
+
   i->createcommand( "Create_l_i", &create_l_ifunction );
 
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
@@ -2083,6 +2116,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
   i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
+  i->createcommand( "ConnectTripartite_g_g_g_D_D_D", &connect_tripartite_g_g_g_D_D_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
@@ -2093,7 +2127,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
-  i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
   i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );
@@ -2109,7 +2142,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
   i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
   i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
-  i->createcommand( "cva_g", &cva_gfunction );
+  i->createcommand( "cva_g_l", &cva_g_lfunction );
   i->createcommand( "size_g", &size_gfunction );
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
@@ -2156,24 +2189,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
-
-
-  // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
-#ifdef HAVE_LIBNEUROSIM
-  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
-
-  // Add MSP growth curves
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

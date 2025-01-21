@@ -26,12 +26,14 @@ neuron-astrocyte circuits.
 
 See examples using astrocyte models:
 
-* :doc:`../../../auto_examples/astrocyte_single`
-* :doc:`../../../auto_examples/astrocyte_tripartite`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_single`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_interaction`
 
 See model docs:
 
-* :doc:`../../../models/index_astrocyte`
+* :doc:`/models/astrocyte_lr_1994`
+* :doc:`/models/aeif_cond_alpha_astro`
+* :doc:`/models/sic_connection`
 
 New model: glif_psc_double_alpha
 --------------------------------

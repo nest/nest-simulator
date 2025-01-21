@@ -249,7 +249,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
+  bool send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
 
   void trigger_update_weight( size_t t,
     const std::vector< spikecounter >& dopa_spikes,
@@ -393,13 +393,6 @@ template < typename targetidentifierT >
 void
 stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
-  if ( syn_spec->known( names::volume_transmitter ) )
-  {
-    throw NotImplemented(
-      "Connect doesn't support the direct specification of the "
-      "volume transmitter of stdp_dopamine_synapse in syn_spec."
-      "Use SetDefaults() or CopyModel()." );
-  }
   // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
@@ -416,18 +409,6 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
         "For multi-threading Connect doesn't support the setting "
         "of parameter n in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
-    }
-  }
-  std::string param_arr[] = { "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus" };
-
-  const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
-  for ( size_t n = 0; n < n_param; ++n )
-  {
-    if ( syn_spec->known( param_arr[ n ] ) )
-    {
-      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
-        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel().";
-      throw NotImplemented( msg );
     }
   }
 }
@@ -542,7 +523,7 @@ stdp_dopamine_synapse< targetidentifierT >::depress_( double kminus, const STDPD
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDPDopaCommonProperties& cp )
 {
   Node* target = get_target( t );
@@ -591,6 +572,8 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDP
   Kplus_ = Kplus_ * std::exp( ( t_last_update_ - t_spike ) / cp.tau_plus_ ) + 1.0;
   t_last_update_ = t_spike;
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

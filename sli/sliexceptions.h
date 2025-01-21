@@ -34,9 +34,6 @@
 class SLIInterpreter;
 
 
-#define UNKNOWN "unknown"
-#define UNKNOWN_NUM -1
-
 /**
  * @addtogroup Exceptions Exception classes
  * Exception classes that are thrown to indicate

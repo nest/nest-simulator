@@ -97,6 +97,8 @@ EndUserDocs*/
 
 namespace nest
 {
+void register_music_rate_in_proxy( const std::string& name );
+
 /**
  * Emit rate at times received from another application via a
  * MUSIC port.

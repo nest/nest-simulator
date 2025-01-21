@@ -451,6 +451,9 @@ def get_degrees(fan, pop1, pop2):
         degrees = np.sum(M, axis=1)
     elif fan == "out":
         degrees = np.sum(M, axis=0)
+    else:
+        raise ValueError(f"fan must be 'in' or 'out', got '{fan}'.")
+
     return degrees
 
 
@@ -551,6 +554,15 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
 
 
 # adapted from Masterthesis, Daniel Hjertholm
+
+
+def get_expected_degrees_poisson(pairwise_avg_num_conns, fan, len_source_pop, len_target_pop):
+    expected_indegree = pairwise_avg_num_conns * len_source_pop
+    expected_outdegree = pairwise_avg_num_conns * len_target_pop
+    if fan == "in":
+        return expected_indegree
+    elif fan == "out":
+        return expected_outdegree
 
 
 def reset_seed(seed, nr_threads):

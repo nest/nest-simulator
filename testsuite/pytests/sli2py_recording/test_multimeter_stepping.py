@@ -29,6 +29,7 @@ import pandas.testing as pdtest
 import pytest
 
 skip_models = [
+    "eprop_readout_bsshslm_2020",  # extra timestep added to some recordables in update function
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron
     "mcculloch_pitts_neuron",  # binary neuron
@@ -71,6 +72,8 @@ extra_params = {
     "aeif_cond_alpha_multisynapse": {"receptor_type": 1},
     "aeif_cond_beta_multisynapse": {"receptor_type": 1},
     "pp_cond_exp_mc_urbanczik": {"receptor_type": 1},
+    "iaf_bw_2001": {"receptor_type": 1},
+    "iaf_bw_2001_exact": {"receptor_type": 1},
 }
 
 # Obtain all models with non-empty recordables list
@@ -88,10 +91,9 @@ def build_net(model):
     """
 
     nest.ResetKernel()
-
     nrn = nest.Create(model)
     pg = nest.Create("poisson_generator", params={"rate": 1e4})
-    mm = nest.Create("multimeter", {"interval": 0.1, "record_from": nrn.recordables})
+    mm = nest.Create("multimeter", {"interval": nest.resolution, "record_from": nrn.recordables})
 
     receptor_type = 0
     if model in extra_params.keys():

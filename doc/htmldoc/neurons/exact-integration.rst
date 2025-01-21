@@ -22,9 +22,9 @@ The leaky integrate-and fire model
 In the leaky integrate-and-fire model, the memory problem is solved by adding a "leak" term :math:`\frac{-1}{R}V` (:math:`R` is the resistance and :math:`\tau=RC`) to the membrane potential:
 
 .. math::
+    :label: membrane
 
     \frac{dV}{dt}=\frac{-1}{\tau}V+\frac{1}{C}I.
-    :label: membrane
 
 This reflects the diffusion of ions that occurs through the membrane when some equilibrium is not reached in the cell.
 
@@ -168,7 +168,7 @@ for the equation
 
 .. math::
 
-    \frac{dV}{dt}=\frac{-1}{Tau}V+\frac{1}{C}\iota
+    \frac{dV}{dt}=\frac{-1}{\tau}V+\frac{1}{C}\iota
 
 we get the homogeneous differential equation (for :math:`y=(y_1,y_2,y_3)^t`)
 
@@ -208,7 +208,7 @@ Every matrix entry is calculated twice. For inhibitory postsynaptic inputs (with
 
 The update is performed `here <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L305-L307>`_. The first multiplication evolves the external input. The others are the multiplication of the matrix :math:`e^{Ah}` with :math:`y` (for inhibitory and excitatory inputs).
 
-If synaptic and membrane time constants become very close, :math:`\tau_m\approx \tau_{syn}`, the matrix :math:`e^{Ah}` becomes numerically unstable. NEST handles this gracefully as described in the `IAF Integration Singularity notebook <model_details/IAF_Integration_Singularity.ipynb>`_.
+If synaptic and membrane time constants become very close, :math:`\tau_m\approx \tau_{syn}`, the matrix :math:`e^{Ah}` becomes numerically unstable. NEST handles this gracefully as described in the `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
 For more information see [1]_.

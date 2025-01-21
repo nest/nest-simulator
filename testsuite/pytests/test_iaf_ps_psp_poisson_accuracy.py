@@ -75,20 +75,30 @@ neuron_params = {
 }
 
 
-def alpha_fn(t):
+def V_m_response_fn(t):
+    """
+    Returns the value of the membrane potential at time t, assuming
+    alpha-shaped post-synaptic currents and an incoming spike at t=0.
+    The weight and neuron parameters are taken from outer scope.
+    """
     if t < 0.0:
         return 0.0
     prefactor = weight * math.e / (tau_syn * C_m)
-    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
-    t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
-    return prefactor * (t1 - t2)
+    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
+    term2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+    return prefactor * (term1 - term2)
 
 
 def spiketrain_response(spiketrain):
+    """
+    Compute the value of the membrane potential at time T
+    given a spiketrain. Assumes all synaptic variables
+    and membrane potential to have values 0 at time t=0.
+    """
     response = 0.0
     for sp in spiketrain:
         t = T - delay - sp
-        response += alpha_fn(t)
+        response += V_m_response_fn(t)
     return response
 
 

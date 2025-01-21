@@ -9,15 +9,15 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
 
    .. grid-item::
 
-     .. image:: ../../static/img/potjans_2014_microcircuit.png
+     .. image:: potjans_2014_microcircuit.png
 
    .. grid-item::
 
-     .. image:: ../../static/img/potjans_2014_raster_plot.png
+     .. image:: potjans_2014_raster_plot.png
 
    .. grid-item::
 
-     .. image:: ../../static/img/potjans_2014_box_plot.png
+     .. image:: potjans_2014_box_plot.png
 
 
 
@@ -56,7 +56,7 @@ To run the simulation, simply use:
 
 The output will be saved in the ``data`` directory.
 
-The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these features.
+The code can be :ref:`parallelized <parallel_computing>` using OpenMP and MPI, if NEST has been built with these features.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
 
 

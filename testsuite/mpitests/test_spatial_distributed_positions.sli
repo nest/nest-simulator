@@ -30,18 +30,13 @@ skip_if_not_threaded
   ResetKernel
   << /total_num_virtual_procs 4 >> SetKernelStatus
 
- << /uniform << /min 0.0 /max 1.0  >> >> CreateParameter /pos_param Set
- pos_param pos_param dimension2d /pos Set
-
   /layer_spec
-  << /positions pos
-    /n 4
+  << /positions [ 1 4 ] { 0 2 arraystore } Table
     /edge_wrap false
     /elements /iaf_psc_alpha
   >> def
 
   /layer layer_spec CreateLayer def
-
   layer GetMetadata /meta Set
 
   {

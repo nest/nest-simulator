@@ -118,7 +118,7 @@ This error message means something in your environment is not set correctly, dep
 
 1. Check which Python version you are running
 
-   You must use **Python 3.8** or newer if you installed NEST with
+   You must use Python :version:`python` or newer if you installed NEST with
 
    a. the Ubuntu PPA,
    b. the conda-forge package,
@@ -150,7 +150,7 @@ If your Python version is correct and you still have the same error, then try on
 
         .. code-block:: bash
 
-            conda info -e
+            mamba info -e
 
     An asterisk (\*) indicates the active environment.
 
@@ -158,7 +158,7 @@ If your Python version is correct and you still have the same error, then try on
 
         .. code-block:: bash
 
-            conda activate ENVNAME
+            mamba activate ENVNAME
 
     Try to ``import nest`` in Python.
 
@@ -175,22 +175,22 @@ If your Python version is correct and you still have the same error, then try on
 
          .. code-block:: bash
 
-             /path/to/conda/envs/ENVNAME/bin/python3
-             /path/to/conda/envs/ENVNAME/bin/nest
+             /path/to/mamba/envs/ENVNAME/bin/python3
+             /path/to/mamba/envs/ENVNAME/bin/nest
 
 
     You can also view the list of packages in the active environment, by running:
 
         .. code-block:: bash
 
-            conda list
+            mamba list
 
     If the package is not in your environment, then it needs to be installed.
 
-    If something is missing, you can try to  ``conda install <package>`` BUT be aware that this **may break pre-installed packages**!
+    If something is missing, you can try to  ``mamba install <package>`` BUT be aware that this **may break pre-installed packages**!
 
-    You may be better off creating a new Conda environment and install NEST with all needed packages at one time!
-    See the section on :ref:`installation for Conda <install_nest>`.
+    You may be better off creating a new mamba environment and install NEST with all needed packages at one time!
+    See the section on :ref:`installation for NEST with conda-forge <install_nest>`.
 
 
 

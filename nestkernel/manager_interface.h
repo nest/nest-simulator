@@ -41,7 +41,6 @@ namespace nest
  * @note Each manager shall be instantiated only once. Therefore, copy
  * constructor and assignment operator are declared private and not implemented.
  *
- * @ingroup KernelManagers
  */
 class ManagerInterface
 {
@@ -69,9 +68,13 @@ public:
    * is responsible for calling the initialization routines on the
    * specific managers in correct order.
    *
+   * @param adjust_number_of_threads_or_rng_only  Pass true if calling from kernel_manager::change_number_of_threads()
+   * or RandomManager::get_status() to limit operations to those necessary for thread adjustment or switch or re-seeding
+   * of RNG.
+   *
    * @see finalize()
    */
-  virtual void initialize() = 0;
+  virtual void initialize( const bool adjust_number_of_threads_or_rng_only ) = 0;
 
   /**
    * Take down manager after operation.
@@ -86,19 +89,12 @@ public:
    * specific managers in correct order, i.e., the opposite order of
    * initialize() calls.
    *
+   * @param adjust_number_of_threads_or_rng_only  Pass true if calling from kernel_manager::change_number_of_threads()
+   * to limit operations to those necessary for thread adjustment.
+   *
    * @see initialize()
    */
-  virtual void finalize() = 0;
-
-  /**
-   * Change the number of threads
-   *
-   * Many data structures within the different managers depend on the
-   * number of threads. This function is called on each manager upon a
-   * change of that number and allows the manager to re-allocate data
-   * structures accordingly.
-   */
-  virtual void change_number_of_threads() {};
+  virtual void finalize( const bool adjust_number_of_threads_or_rng_only ) = 0;
 
   /**
    * Set the status of the manager

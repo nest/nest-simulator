@@ -1,6 +1,5 @@
 # Full modelset for NEST including spiking, binary and rate models
 
-
 ac_generator
 aeif_cond_alpha
 aeif_cond_alpha_astro
@@ -22,6 +21,11 @@ correlomatrix_detector
 correlospinmatrix_detector
 dc_generator
 diffusion_connection
+eprop_iaf_bsshslm_2020
+eprop_iaf_adapt_bsshslm_2020
+eprop_readout_bsshslm_2020
+eprop_synapse_bsshslm_2020
+eprop_learning_signal_connection_bsshslm_2020
 erfc_neuron
 gamma_sup_generator
 gap_junction
@@ -60,6 +64,9 @@ iaf_psc_exp_multisynapse
 iaf_psc_exp_ps
 iaf_psc_exp_ps_lossless
 iaf_tum_2000
+iaf_bw_2001
+iaf_bw_2001_exact
+ignore_and_fire
 izhikevich
 jonke_synapse
 lin_rate

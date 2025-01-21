@@ -95,7 +95,7 @@ w_ex = 30.0  # synaptic weights inside the population (pA)
 # GIF neurons population.
 
 N_noise = 50  # size of Poisson group
-rate_noise = 10.0  # firing rate of Poisson neurons (Hz)
+rate_noise = 10.0  # firing rate of Poisson neurons (spks/s)
 w_noise = 20.0  # synaptic weights from Poisson to population neurons (pA)
 
 ###############################################################################

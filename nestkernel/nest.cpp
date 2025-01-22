@@ -421,7 +421,6 @@ get_metadata( const NodeCollectionPTR nc )
   if ( meta.get() )
   {
     meta->get_status( status_dict, nc );
-    slice_positions_if_sliced_nc( status_dict, nc );
     status_dict[ names::network_size ] = nc->size();
   }
   return status_dict;
@@ -739,39 +738,6 @@ node_collection_array_index( NodeCollectionPTR nc, const bool* array, unsigned l
     }
   }
   return NodeCollection::create( node_ids );
-}
-
-void
-slice_positions_if_sliced_nc( dictionary& dict, const NodeCollectionPTR nc )
-{
-  // If metadata contains node positions and the NodeCollection is sliced, get only positions of the sliced nodes.
-  if ( dict.known( names::positions ) )
-  {
-    // PyNEST-NG: Check if TokenArray is the correct type here
-    const auto positions = dict.get< std::vector< std::vector< double > > >( names::positions );
-    if ( nc->size() != positions.size() )
-    {
-      std::vector< std::vector< double > > sliced_points;
-      // Iterate only local nodes
-      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->rank_local_begin() : nc->begin();
-      NodeCollection::const_iterator nc_end = nc->end();
-      for ( auto node = nc_begin; node < nc_end; ++node )
-      {
-        // Because the local ID also includes non-local nodes, it must be adapted to represent
-        // the index for the local node position.
-        /*
-         PYNEST-NG NEEDS review
-         */
-        assert( false );
-        /*
-        const auto index =
-          static_cast< size_t >( std::floor( ( *node ).lid / kernel().mpi_manager.get_num_processes() ) );
-        sliced_points.push_back( positions[ index ] );
-         */
-      }
-      dict[ names::positions ] = sliced_points;
-    }
-  }
 }
 
 AbstractMask*

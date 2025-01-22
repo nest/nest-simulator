@@ -152,13 +152,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  // PYNEST-NG: There is no safety net here. If the list of syn_specs
-  // is sent empty from the Python level, this will segfault. Maybe
-  // defaults should be filled here on the C++ level in case they are
-  // not given?
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
-
 
   // loop through vector of synapse dictionaries, and set synapse parameters
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
@@ -1968,11 +1962,11 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   const std::vector< dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
-  ParameterPTR pd = conn_spec.get< ParameterPTR >( names::pairwise_avg_num_conns );
-  if ( pd )
+
+  auto p = conn_spec.at( names::pairwise_avg_num_conns );
+  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    assert( false ); // PYNEST NG requires review
-    // pairwise_avg_num_conns_ = *pd;
+    pairwise_avg_num_conns_ = boost::any_cast< ParameterPTR >( p );
   }
   else
   {
@@ -1982,11 +1976,12 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
     {
       throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
     }
-    if ( not allow_multapses_ )
-    {
-      throw BadProperty( "Multapses must be allowed for this connection rule." );
-    }
-    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    pairwise_avg_num_conns_ = ParameterPTR( new ConstantParameter( value ) );
+  }
+
+  if ( not allow_multapses_ )
+  {
+    throw BadProperty( "Multapses must be allowed for this connection rule." );
   }
 }
 
@@ -2036,12 +2031,9 @@ nest::PoissonBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      assert( false ); // PYNEST NG requires review
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      // exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 }

@@ -79,7 +79,7 @@ public:
   }
 
   virtual std::string
-  exception_name()
+  exception_name() const
   {
     return "KernelException";
   }
@@ -98,7 +98,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "DynamicModuleManagementError";
   }
@@ -117,25 +117,9 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NotImplemented";
-  }
-};
-
-/**
- * Class for packaging exceptions thrown in threads.
- *
- * This class is used to wrap exceptions thrown in threads.
- * It essentially packages the message of the wrapped exception,
- * avoiding the need of a clone() operation for each exception type.
- */
-class WrappedThreadException : public KernelException
-{
-public:
-  WrappedThreadException( const std::exception& );
-  ~WrappedThreadException() throw() override
-  {
   }
 };
 
@@ -164,7 +148,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "TypeMismatch";
   }
@@ -188,7 +172,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnaccessedDictionaryEntry";
   }
@@ -211,7 +195,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownModelName";
   }
@@ -234,7 +218,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownComponent";
   }
@@ -256,7 +240,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NewModelNameExists";
   }
@@ -280,7 +264,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "ModelInUse";
   }
@@ -308,7 +292,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownSynapseType";
   }
@@ -338,7 +322,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownNode";
   }
@@ -368,7 +352,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NoThreadSiblingsAvailable";
   }
@@ -385,7 +369,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "LocalNodeExpected";
   }
@@ -402,7 +386,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NodeWithProxiesExpected";
   }
@@ -423,7 +407,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownCompartment";
   }
@@ -444,7 +428,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownReceptorType";
   }
@@ -465,7 +449,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "IncompatibleReceptorType";
   }
@@ -494,7 +478,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownPort";
   }
@@ -520,7 +504,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "IllegalConnection";
   }
@@ -559,7 +543,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "InexistentConnection";
   }
@@ -588,7 +572,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnknownThread";
   }
@@ -618,7 +602,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BadDelay";
   }
@@ -660,7 +644,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnexpectedEvent";
   }
@@ -684,7 +668,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnsupportedEvent";
   }
@@ -721,7 +705,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BadProperty";
   }
@@ -758,7 +742,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BadParameter";
   }
@@ -791,7 +775,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BadParameterValue";
   }
@@ -834,7 +818,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "DimensionMismatch";
   }
@@ -854,7 +838,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "DistributionError";
   }
@@ -898,7 +882,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "InvalidDefaultResolution";
   }
@@ -942,7 +926,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "InvalidTimeInModel";
   }
@@ -983,7 +967,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "StepMultipleRequired";
   }
@@ -1030,7 +1014,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "TimeMultipleRequired";
   }
@@ -1069,7 +1053,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "GSLSolverFailure";
   }
@@ -1103,7 +1087,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NumericalInstability";
   }
@@ -1134,7 +1118,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "NamingConflict";
   }
@@ -1172,7 +1156,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "RangeCheck";
   }
@@ -1201,7 +1185,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "IOError";
   }
@@ -1235,7 +1219,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "KeyError";
   }
@@ -1270,7 +1254,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "InternalError";
   }
@@ -1311,7 +1295,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICPortUnconnected";
   }
@@ -1351,7 +1335,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICPortHasNoWidth";
   }
@@ -1391,7 +1375,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICPortAlreadyPublished";
   }
@@ -1429,7 +1413,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICSimulationHasRun";
   }
@@ -1471,7 +1455,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICChannelUnknown";
   }
@@ -1504,7 +1488,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICPortUnknown";
   }
@@ -1546,7 +1530,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MUSICChannelAlreadyMapped";
   }
@@ -1575,7 +1559,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MPIPortsUnknown";
   }
@@ -1603,7 +1587,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MPIPortsFileMissing";
   }
@@ -1632,7 +1616,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "MPIErrorCode";
   }
@@ -1662,7 +1646,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UnmatchedSteps";
   }
@@ -1696,7 +1680,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BackendPrepared";
   }
@@ -1730,7 +1714,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BackendAlreadyRegistered";
   }
@@ -1771,7 +1755,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "BackendNotPrepared";
   }
@@ -1786,7 +1770,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "LayerExpected";
   }
@@ -1801,7 +1785,7 @@ public:
   }
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "LayerNodeExpected";
   }
@@ -1826,7 +1810,7 @@ public:
   };
 
   std::string
-  exception_name() override
+  exception_name() const override
   {
     return "UndefinedName";
   }

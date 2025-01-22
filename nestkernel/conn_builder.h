@@ -98,6 +98,7 @@ public:
     {
       throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
     }
+    assert( not synapse_model_id_.empty() );
     return synapse_model_id_[ 0 ];
   }
 
@@ -108,6 +109,7 @@ public:
     {
       throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
     }
+    assert( not default_delay_.empty() );
     return default_delay_[ 0 ];
   }
 

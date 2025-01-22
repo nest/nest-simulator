@@ -395,7 +395,7 @@ if test "${HAVE_MPI}" = "true"; then
     CODES_SUCCESS="${SAVE_CODES_SUCCESS}"
     CODES_FAILURE="${SAVE_CODES_FAILURE}"
 
-    find_files "${TEST_BASEDIR}/mpitests" "*.sli" | while read -r test_name; do
+    list_files "${TEST_BASEDIR}/mpitests" "*.sli" | while read -r test_name; do
         run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 

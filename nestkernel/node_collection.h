@@ -582,28 +582,6 @@ public:
   virtual ~NodeCollection() = default;
 
   /**
-   * Create a NodeCollection from a vector of node IDs.
-   *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
-   *
-   * @param node_ids Vector of node IDs from which to create the NodeCollection
-   * @return a NodeCollection pointer to the created NodeCollection
-   */
-  // static NodeCollectionPTR create( const IntVectorDatum& node_ids );
-
-  /**
-   * Create a NodeCollection from an array of node IDs.
-   *
-   * Results in a primitive if the node IDs are homogeneous and
-   * contiguous, or a composite otherwise.
-   *
-   * @param node_ids Array of node IDs from which to create the NodeCollection
-   * @return a NodeCollection pointer to the created NodeCollection
-   */
-  // static NodeCollectionPTR create( const TokenArray& node_ids );
-
-  /**
    * Create a NodeCollection from a single node ID.
    *
    * Results in a primitive unconditionally.

@@ -53,9 +53,6 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
 }
 
 nest::weight_recorder::Parameters_::Parameters_()
-  // PYNEST-NG: check if " new NodeCollectionPrimitive()" is needed here
-  : senders_( new NodeCollectionPrimitive() )
-  , targets_( new NodeCollectionPrimitive() )
 {
 }
 

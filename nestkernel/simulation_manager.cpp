@@ -178,7 +178,7 @@ nest::SimulationManager::set_status( const dictionary& d )
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
-  long tics_per_ms = 0; // TODO: PYNEST-NG: Was double, but why???
+  long tics_per_ms = 0;
   bool tics_per_ms_updated = d.update_value( names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
   bool res_updated = d.update_value( names::resolution, resd );

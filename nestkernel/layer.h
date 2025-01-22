@@ -70,9 +70,9 @@ public:
    * entries in the status dictionary, respects slicing of given NodeCollection
    * @param d Dictionary.
    *
-   * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
+   * @note If passing nullptr-valued NodeCollectionPTR, full metadata irrespective of any slicing is returned.
    */
-  virtual void get_status( dictionary&, NodeCollection const* ) const = 0;
+  virtual void get_status( dictionary&, NodeCollection const* const ) const = 0;
 
   virtual unsigned int get_num_dimensions() const = 0;
 
@@ -235,7 +235,7 @@ public:
   void set_status( const dictionary& ) override;
 
   //! Retrieve status, slice according to node collection if given
-  void get_status( dictionary&, NodeCollection const* ) const override;
+  void get_status( dictionary&, NodeCollection const* const ) const override;
 
   unsigned int
   get_num_dimensions() const override

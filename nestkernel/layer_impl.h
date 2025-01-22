@@ -90,7 +90,7 @@ Layer< D >::set_status( const dictionary& d )
 
 template < int D >
 void
-Layer< D >::get_status( dictionary& d, NodeCollection const* nc ) const
+Layer< D >::get_status( dictionary& d, NodeCollection const* const nc ) const
 {
   d[ names::extent ] = std::vector< double >( extent_.get_vector() );
   d[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );

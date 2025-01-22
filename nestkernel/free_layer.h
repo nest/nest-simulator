@@ -48,7 +48,7 @@ class FreeLayer : public Layer< D >
 public:
   Position< D > get_position( size_t sind ) const override;
   void set_status( const dictionary& ) override;
-  void get_status( dictionary&, NodeCollection const* ) const override;
+  void get_status( dictionary&, NodeCollection const* const ) const override;
 
 protected:
   /**
@@ -251,7 +251,7 @@ FreeLayer< D >::set_status( const dictionary& d )
 
 template < int D >
 void
-FreeLayer< D >::get_status( dictionary& d, NodeCollection const* nc ) const
+FreeLayer< D >::get_status( dictionary& d, NodeCollection const* const nc ) const
 {
   Layer< D >::get_status( d, nc );
 

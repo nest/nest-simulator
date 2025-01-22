@@ -154,7 +154,7 @@ pprint_to_string( NodeCollectionPTR nc )
   }
   else
   {
-    // PYNEST-ng: added this, not sure why this can happen now, but could not previously
+    // PYNEST-NG: added this, not sure why this can happen now, but could not previously
     std::cout << "pprint_to_string: nc is not assigned" << std::endl;
     return "";
   }
@@ -262,34 +262,10 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
   dict.all_entries_accessed( "connection.set()", "params" );
 }
 
-//// void
-//// set_connection_status( const std::deque< ConnectionID >& conn, const dictionary& dict )
-//// {
-////   // TODO_PYNEST-NG: Get ConnectionDatum dict
-////   // dictionary conn_dict = conn.get_dict();
-////   dictionary conn_dict;
-////   const index source_node_id = conn_dict.get< long >( nest::names::source );
-////   const index target_node_id = conn_dict.get< long >( nest::names::target );
-////   const thread tid = conn_dict.get< long >( nest::names::target_thread );
-////   const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid );
-////   const port p = conn_dict.get< long >( nest::names::port );
-////
-////   // TODO_PYNEST-NG: Access flags
-////   // dict->clear_access_flags();
-////
-////   kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
-////
-////   // ALL_ENTRIES_ACCESSED2( *dict,
-////   //   "SetStatus",
-////   //   "Unread dictionary entries: ",
-////   //   "Maybe you tried to set common synapse properties through an individual "
-////   //   "synapse?" );
-//// }
-
-
 void
 set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts )
 {
+  // PYNEST-NG: Access checks?
   if ( conns.size() != dicts.size() )
   {
     throw BadParameter( "List of dictionaries must contain one dictionary per connection" );
@@ -353,7 +329,6 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
 {
   const size_t g_size = nc->size();
 
-  // TODO-PYNEST-NG: Zero-based indexing?
   if ( step < 1 )
   {
     throw BadParameter( "Slicing step must be strictly positive." );
@@ -399,12 +374,13 @@ create_spatial( const dictionary& layer_dict )
   return create_layer( layer_dict );
 }
 
-// std::vector< std::vector< double > >
-// get_position( NodeCollectionPTR layer_nc )
-//{
-//   return get_position( layer );  // PYNEST-NG: is this call creating a copy?
-// }
-
+/*
+std::vector< std::vector< double > >
+get_position( NodeCollectionPTR layer_nc )
+{
+   return get_position( layer_nc );  // PYNEST-NG POSITIONS: is this call creating a copy?
+}
+ */
 
 NodeCollectionPTR
 make_nodecollection( const std::vector< size_t > node_ids )
@@ -444,9 +420,7 @@ get_metadata( const NodeCollectionPTR nc )
   // Fill the status dictionary only if the NodeCollection has valid metadata.
   if ( meta.get() )
   {
-    /* PYNESTNG NEEDS REVIEW */
-    // meta->get_status( status_dict, nc );
-    assert( false );
+    meta->get_status( status_dict, nc );
     slice_positions_if_sliced_nc( status_dict, nc );
     status_dict[ names::network_size ] = nc->size();
   }

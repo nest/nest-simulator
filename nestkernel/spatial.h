@@ -53,9 +53,15 @@ public:
   void set_status( const dictionary&, bool ) override {};
 
   void
-  get_status( dictionary& d, NodeCollection const* nc ) const override
+  get_status( dictionary& d, NodeCollection const* const nc ) const override
   {
     layer_->get_status( d, nc );
+  }
+
+  void
+  get_status( dictionary& d, const NodeCollectionPTR nc ) const override
+  {
+    get_status( d, nc.get() );
   }
 
   //! Returns pointer to object with layer representation

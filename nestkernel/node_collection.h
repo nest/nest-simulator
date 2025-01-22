@@ -72,8 +72,12 @@ public:
    *
    * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
    *  This is used by NodeCollectionMetadata::operator==() which does not have access to the NodeCollection.
+   *
+   * @note This method is provided both accepting a naked pointer and a NodeCollectionPTR to allow calling
+   * from node collection itself, passing this, and with pointer provided from outside.
    */
-  virtual void get_status( dictionary&, NodeCollection const* ) const = 0;
+  virtual void get_status( dictionary&, NodeCollection const* const ) const = 0;
+  virtual void get_status( dictionary&, const NodeCollectionPTR ) const = 0;
 
   virtual void set_first_node_id( size_t ) = 0;
   virtual size_t get_first_node_id() const = 0;

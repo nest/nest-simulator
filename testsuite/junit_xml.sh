@@ -114,7 +114,7 @@ junit_write ()
         bail_out 'junit_write: report file not open, call junit_open first!'
     fi
 
-    if test -z "$1" -o -z "$2"; then
+    if test -z "$1" -o -z "$2"; then  # Note: this aborts due to "undefined variable", not because of `-z`
         bail_out 'junit_write: classname and testname arguments are mandatory!'
     fi
 
@@ -126,8 +126,9 @@ junit_write ()
         fi
 
         if test "$3" = "failure" ; then
-            echo "    <failure message=\"$4\" type=\"\"><![CDATA["
-            echo "${5/]]>/]]>]]\&gt;<\![CDATA[}"
+            msgdata="${5:-}"
+            echo "    <failure message=\"${4:-}\" type=\"\"><![CDATA["
+            echo "${msgdata/]]>/]]>]]\&gt;<\![CDATA[}"
             echo "]]></failure>"
         fi
         echo "  </testcase>"

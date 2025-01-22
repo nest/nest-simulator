@@ -24,6 +24,7 @@ import itertools
 
 import nest
 import pytest
+from numpy.testing import assert_array_equal
 
 """
 Test in this file were developed for regressions under three MPI processes.
@@ -189,7 +190,7 @@ def test_get_positions_with_mpi(n_threads, start, step):
         npos for npos, nrk in zip(node_pos[start::step], node_ranks[start::step]) if nrk == nest.Rank()
     )
 
-    assert pos == expected_pos
+    assert_array_equal(pos, expected_pos)
 
 
 @pytest.mark.parametrize("n_threads", num_threads)
@@ -219,7 +220,7 @@ def test_get_spatial_for_single_element_and_mpi(n_threads, pick):
 
     pick_rank = layer[pick].vp % nest.NumProcesses()
     if pick_rank == nest.Rank():
-        assert sp[0] == node_pos[pick]
+        assert_array_equal(sp[0], node_pos[pick])
     else:
         assert len(sp) == 0
 

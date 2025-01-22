@@ -511,9 +511,9 @@ iaf_bw_2001_exact::get_status( dictionary& d ) const
 
   dictionary receptor_type;
 
-  receptor_type[ names::AMPA ] = AMPA;
-  receptor_type[ names::GABA ] = GABA;
-  receptor_type[ names::NMDA ] = NMDA;
+  receptor_type[ names::AMPA ] = static_cast< long >( AMPA );
+  receptor_type[ names::GABA ] = static_cast< long >( GABA );
+  receptor_type[ names::NMDA ] = static_cast< long >( NMDA );
 
   d[ names::receptor_types ] = receptor_type;
 

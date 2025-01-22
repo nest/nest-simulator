@@ -499,8 +499,8 @@ eprop_readout_bsshslm_2020::get_status( dictionary& d ) const
   d[ names::recordables ] = recordablesMap_.get_list();
 
   dictionary receptor_dict_;
-  receptor_dict_[ names::readout_signal ] = READOUT_SIG;
-  receptor_dict_[ names::target_signal ] = TARGET_SIG;
+  receptor_dict_[ names::readout_signal ] = static_cast< long >( READOUT_SIG );
+  receptor_dict_[ names::target_signal ] = static_cast< long >( TARGET_SIG );
 
   d[ names::receptor_types ] = receptor_dict_;
 }

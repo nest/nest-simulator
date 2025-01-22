@@ -150,8 +150,15 @@ public:
    */
   ConstantParameter( const dictionary& d )
   {
-    value_ = d.get< double >( "value" ); // PYNEST-NG: Must be able to pass value as long and double
-    returns_int_only_ = value_is_integer_( value_ );
+    try
+    {
+      value_ = d.get< double >( "value" );
+    }
+    catch ( const TypeMismatch& )
+    {
+      value_ = d.get< long >( "value" );
+      returns_int_only_ = true;
+    }
   }
 
   ~ConstantParameter() override = default;

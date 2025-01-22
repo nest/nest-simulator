@@ -732,6 +732,12 @@ node_collection_array_index( NodeCollectionPTR nc, const bool* array, unsigned l
   return NodeCollection::create( node_ids );
 }
 
+std::vector< size_t >
+node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection )
+{
+  return node_collection->to_array( selection );
+}
+
 AbstractMask*
 create_doughnut( const dictionary& d )
 {

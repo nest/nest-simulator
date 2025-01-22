@@ -399,6 +399,9 @@ def llapi_get_position(NodeCollectionObject layer):
     else:
         return result
 
+def llapi_node_collection_to_array( NodeCollectionObject nc, selection):
+    cdef vector[size_t] result = node_collection_to_array( nc.thisptr, pystr_to_string(selection) )
+    return result
 
 def llapi_spatial_distance(object from_arg, to_arg):
     cdef vector[vector[double]] from_vec
@@ -827,7 +830,6 @@ def llapi_get_connections(object params):
         inc(it)
 
     return nest.SynapseCollection(connections_list)
-
 
 def llapi_get_connection_status(object conns):
     cdef vector[dictionary] connection_statuses

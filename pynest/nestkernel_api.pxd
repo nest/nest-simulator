@@ -178,6 +178,9 @@ cdef extern from "nest.h" namespace "nest":
     cbool is_spatial( const ParameterPTR param ) except +custom_exception_handler
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +custom_exception_handler
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const cbool* array, unsigned long n) except +custom_exception_handler
+
+    vector[size_t] node_collection_to_array( NodeCollectionPTR node_collection, const string& selection ) except +custom_exception_handler
+
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +custom_exception_handler

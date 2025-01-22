@@ -250,6 +250,9 @@ std::vector< double > apply( const ParameterPTR param, const dictionary& positio
 NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const long* array, unsigned long n );
 NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const bool* array, unsigned long n );
 
+// for debugging and testing mostly
+std::vector< size_t > node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection );
+
 template < class T >
 inline bool
 register_parameter( const std::string& name )

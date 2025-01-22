@@ -38,10 +38,7 @@ The connect tests test that NodeCollection::thread_local_begin() works.
 # Experiences severe slowdown on Github runners under Linux with MPI and OpenMP
 pytestmark = pytest.mark.requires_many_cores
 
-if nest.ll_api.sli_func("is_threaded"):
-    num_threads = [1, 2, 3, 4]
-else:
-    num_threads = [1]
+num_threads = [1, 2, 3, 4] if nest.build_info["have_threads"] else [1]
 
 
 @pytest.mark.parametrize("n_threads", num_threads)

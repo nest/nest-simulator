@@ -526,7 +526,7 @@ class NodeCollection:
         separate lists are returned for all local threads independently.
         """
 
-        res = sli_func("cva_g_l", self, selection)
+        res = nestkernel.llapi_node_collection_to_array(self._datum, selection)
 
         if selection == "all":
             return {"All": res}

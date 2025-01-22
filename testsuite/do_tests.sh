@@ -180,6 +180,8 @@ list_files() {
     #   list_files <somedir> <some_pattern> | while read -r test_name; do ... done
     if test "${INFO_OS}" = "Darwin"; then
         # ref https://stackoverflow.com/a/752893
+        # Note that on GNU systems an additional '-r' would be needed for
+        # xargs, which is not available here.
         find "${1}" -maxdepth 1 -name "${2}" -print0 | xargs -0 -n1 basename
     else
         find "${1}" -maxdepth 1 -name "${2}" -printf '%f\n'

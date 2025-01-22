@@ -79,7 +79,7 @@ jobs:
     # https://github.com/pre-commit/pre-commit-hooks?tab=readme-ov-file#mixed-line-ending
     #
     # This check makes sure the files in the repository are always consistent
-    # in their line endings, i.e. new line, and not carrige return+line feed.
+    # in their line endings, i.e. new line, and not carriage return+line feed.
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"

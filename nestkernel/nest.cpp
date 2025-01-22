@@ -374,14 +374,6 @@ create_spatial( const dictionary& layer_dict )
   return create_layer( layer_dict );
 }
 
-/*
-std::vector< std::vector< double > >
-get_position( NodeCollectionPTR layer_nc )
-{
-   return get_position( layer_nc );  // PYNEST-NG POSITIONS: is this call creating a copy?
-}
- */
-
 NodeCollectionPTR
 make_nodecollection( const std::vector< size_t >& node_ids )
 {

@@ -394,9 +394,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
   if ( not local_only )
   {
     std::vector< size_t > globalnodes;
-    // TODO: PYNEST-NG create communicate( vector<size_t>, vector<size_t> )
-    // kernel().mpi_manager.communicate( nodes, globalnodes );
-    assert( false );
+    kernel().mpi_manager.communicate( nodes, globalnodes );
 
     for ( size_t i = 0; i < globalnodes.size(); ++i )
     {
@@ -408,8 +406,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
 
     // get rid of any multiple entries
     std::sort( nodes.begin(), nodes.end() );
-    std::vector< size_t >::iterator it;
-    it = std::unique( nodes.begin(), nodes.end() );
+    const auto it = std::unique( nodes.begin(), nodes.end() );
     nodes.resize( it - nodes.begin() );
   }
 

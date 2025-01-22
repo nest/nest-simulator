@@ -345,6 +345,36 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
 }
 
 void
+nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t >& global_nodes )
+{
+  size_t np = get_num_processes();
+  // Get size of buffers
+  std::vector< int > num_nodes_per_rank( np );
+  num_nodes_per_rank[ get_rank() ] = local_nodes.size();
+  communicate( num_nodes_per_rank );
+
+  size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  global_nodes.resize( num_globals, 0L );
+
+  // Set up displacements vector. Entry i specifies the displacement (relative
+  // to recv_buffer ) at which to place the incoming data from process i
+  std::vector< int > displacements( np, 0 );
+  for ( size_t i = 1; i < np; ++i )
+  {
+    displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
+  }
+
+  MPI_Allgatherv( &( *local_nodes.begin() ),
+    local_nodes.size(),
+    MPI_Type< size_t >::type,
+    &global_nodes[ 0 ],
+    &num_nodes_per_rank[ 0 ],
+    &displacements[ 0 ],
+    MPI_Type< size_t >::type,
+    comm );
+}
+
+void
 nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   std::vector< unsigned int >& recv_buffer,
   std::vector< int >& displacements )
@@ -1058,6 +1088,11 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 
 void
 nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
+{
+}
+
+void
+nest::MPIManager::communicate( std::vector< size_t >&, std::vector< size_t >& )
 {
 }
 

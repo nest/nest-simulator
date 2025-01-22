@@ -133,10 +133,10 @@ cdef extern from "nest.h" namespace "nest":
     void enable_structural_plasticity() except +custom_exception_handler
     void disable_structural_plasticity() except +custom_exception_handler
 
-    NodeCollectionPTR create( const string model_name, const long n ) except +custom_exception_handler
+    NodeCollectionPTR create( const string& model_name, const long n ) except +custom_exception_handler
     NodeCollectionPTR create_spatial( const dictionary& ) except +custom_exception_handler
 
-    NodeCollectionPTR make_nodecollection( const vector[size_t] node_ids ) except +custom_exception_handler
+    NodeCollectionPTR make_nodecollection( const vector[size_t]& node_ids ) except +custom_exception_handler
 
     cbool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs ) except +custom_exception_handler
     cbool contains( const NodeCollectionPTR nc, const size_t node_id ) except +custom_exception_handler

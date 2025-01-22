@@ -85,10 +85,10 @@ std::vector< dictionary > get_connection_status( const std::deque< ConnectionID 
 
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 
-NodeCollectionPTR create( const std::string model_name, const size_t n );
+NodeCollectionPTR create( const std::string& model_name, const size_t n );
 NodeCollectionPTR create_spatial( const dictionary& layer_dict );
 
-NodeCollectionPTR make_nodecollection( const std::vector< size_t > node_ids );
+NodeCollectionPTR make_nodecollection( const std::vector< size_t >& node_ids );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 long find( const NodeCollectionPTR nc, size_t node_id );
@@ -111,18 +111,6 @@ RngPtr get_vp_specific_rng( size_t tid );
 
 void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
-
-NodeCollectionPTR create( const std::string model_name, const size_t n );
-NodeCollectionPTR create_spatial( const dictionary& layer_dict );
-
-NodeCollectionPTR make_nodecollection( const std::vector< size_t > node_ids );
-
-NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
-long find( const NodeCollectionPTR nc, size_t node_id );
-dictionary get_metadata( const NodeCollectionPTR nc );
-
-bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
-bool contains( const NodeCollectionPTR nc, const size_t node_id );
 
 /**
  * Create bipartite connections.
@@ -182,7 +170,7 @@ std::deque< ConnectionID > get_connections( const dictionary& dict );
 
 void disconnect( const std::deque< ConnectionID >& conns );
 
-void simulate( const double& t );
+void simulate( const double t );
 
 /**
  * @fn run(const double& time)
@@ -199,7 +187,7 @@ void simulate( const double& t );
  * @see prepare()
  * @see cleanup()
  */
-void run( const double& t );
+void run( const double t );
 
 /**
  * @fn prepare()
@@ -250,13 +238,12 @@ using ParameterFactory = GenericFactory< Parameter >;
 using MaskFactory = GenericFactory< AbstractMask >;
 using MaskCreatorFunction = MaskFactory::CreatorFunction;
 
-
 ParameterFactory& parameter_factory_();
 MaskFactory& mask_factory_();
 
-
 double get_value( const ParameterPTR param );
 bool is_spatial( const ParameterPTR param );
+
 std::vector< double > apply( const ParameterPTR param, const NodeCollectionPTR nc );
 std::vector< double > apply( const ParameterPTR param, const dictionary& positions );
 

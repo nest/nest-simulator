@@ -331,7 +331,7 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
 
   if ( step < 1 )
   {
-    throw BadParameter( "Slicing step must be strictly positive." );
+    throw BadParameterValue( "Slicing step must be strictly positive." );
   }
 
   if ( start >= 0 )
@@ -357,7 +357,7 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
 }
 
 NodeCollectionPTR
-create( const std::string model_name, const size_t n_nodes )
+create( const std::string& model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
@@ -383,7 +383,7 @@ get_position( NodeCollectionPTR layer_nc )
  */
 
 NodeCollectionPTR
-make_nodecollection( const std::vector< size_t > node_ids )
+make_nodecollection( const std::vector< size_t >& node_ids )
 {
   return NodeCollection::create( node_ids );
 }
@@ -499,7 +499,7 @@ disconnect( const std::deque< ConnectionID >& conns )
 }
 
 void
-simulate( const double& t )
+simulate( const double t )
 {
   prepare();
   run( t );
@@ -507,7 +507,7 @@ simulate( const double& t )
 }
 
 void
-run( const double& time )
+run( const double time )
 {
   const Time t_sim = Time::ms( time );
 

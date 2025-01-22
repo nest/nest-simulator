@@ -121,8 +121,6 @@ public:
     const dictionary& conn_spec,
     const std::vector< dictionary >& syn_specs );
 
-  void connect( std::vector< size_t > sources, std::vector< size_t > targets, const dictionary& syn_spec );
-
   /**
    * Connect two nodes.
    *

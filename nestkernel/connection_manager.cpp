@@ -476,35 +476,6 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   cb.connect();
 }
 
-// PYNEST-NG: This needs conversion --- NOT SURE WHAT AND WHY, HEP 2025-01-21
-void
-nest::ConnectionManager::connect( std::vector< size_t > sources,
-  std::vector< size_t > targets,
-  const dictionary& syn_spec )
-{
-  size_t syn_id = 0; // Use "static_synapse" (which has id 0) if no model is given
-
-  if ( syn_spec.known( names::model ) )
-  {
-    std::string synmodel_name = syn_spec.get< std::string >( names::model );
-    // The following throws UnknownSynapseType for invalid synmodel_name
-    syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
-  }
-
-  // Connect all sources to all targets
-  for ( auto&& source : sources )
-  {
-    auto source_node = kernel().node_manager.get_node_or_proxy( source );
-    for ( auto&& target : targets )
-    {
-      auto target_node = kernel().node_manager.get_node_or_proxy( target );
-      auto target_thread = target_node->get_thread();
-      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
-    }
-  }
-}
-
-
 void
 nest::ConnectionManager::update_delay_extrema_()
 {

@@ -361,7 +361,7 @@ create( const std::string model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
-    throw RangeCheck();
+    throw BadParameterValue( "n_nodes > 0 expected" );
   }
 
   const size_t model_id = kernel().model_manager.get_node_model_id( model_name );

@@ -1134,19 +1134,10 @@ private:
   std::string msg_;
 
 public:
-  RangeCheck( int size = 0 )
+  RangeCheck( const size_t expected_size )
     : KernelException( "RangeCheck" )
+    , msg_( String::compose( "Array with length %1 expected.", expected_size ) )
   {
-    if ( size > 0 )
-    {
-      msg_ = String::compose( "Array with length %1 expected.", size );
-    }
-    else
-    {
-      // TODO-PYNEST-NG: Fix usage, the comment below has been there already
-      // Empty message. Added due to incorrect use of RangeCheck in nest.cpp
-      msg_ = "";
-    }
   }
 
   const char*

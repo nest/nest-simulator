@@ -623,13 +623,6 @@ create_parameter( const boost::any& value )
 }
 
 ParameterPTR
-create_parameter( const ParameterPTR param )
-{
-  // TODO-PYNEST-NG: do we need this function?
-  return param;
-}
-
-ParameterPTR
 create_parameter( const double value )
 {
   const auto param = new ConstantParameter( value );

@@ -241,7 +241,6 @@ dictionary get_model_defaults( const std::string& model_name );
 
 // TODO-PYNEST-NG: static functions?
 ParameterPTR create_parameter( const boost::any& );
-ParameterPTR create_parameter( const ParameterPTR );
 ParameterPTR create_parameter( const double );
 ParameterPTR create_parameter( const int );
 ParameterPTR create_parameter( const dictionary& param_dict );

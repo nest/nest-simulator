@@ -24,10 +24,12 @@
 
 # import cython
 
+# PYNEST-NG: for all libc* imports, prefix names in python with std_ to avoid collisions, also in pxd
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
 from libc.stdlib cimport free, malloc
 from libcpp.deque cimport deque
+from libcpp.map cimport map as std_map
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
@@ -218,6 +220,7 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         if type(value) is tuple:
             value = list(value)
         if type(value) is int or isinstance(value, numpy.integer):
+	    # PYTEST-NG: Should we guard against overflow given that python int has infinite range?
             cdict[pystr_to_string(key)] = <long>value
         elif type(value) is float or isinstance(value, numpy.floating):
             cdict[pystr_to_string(key)] = <double>value
@@ -467,6 +470,23 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
     connect(pre.thisptr, post.thisptr,
             pydict_to_dictionary(conn_params),
             syn_param_vec)
+
+
+def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post, NodeCollectionObject third,
+                             object conn_params, object third_factor_conn_params, object synapse_params):
+    # PYNEST-NG: See if we should add some more checks as in llapi_connect above (rule)
+
+
+    # We are guaranteed that syn_param_vec is a dict {'primary': sc_p, 'third_in': sc_i, 'third_out': sc_o}
+    # where all sc_* are SynapseCollection objects
+
+    cdef std_map[string, vector[dictionary]] syn_param_map
+    for k, colloc_syns in synapse_params.items():
+        syn_param_map[pystr_to_string(k)] = pylist_to_dictvec(colloc_syns.syn_specs)
+
+    connect_tripartite(pre.thisptr, post.thisptr, third.thisptr,
+    	               pydict_to_dictionary(conn_params), pydict_to_dictionary(third_factor_conn_params),
+                       syn_param_map)
 
 
 def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):

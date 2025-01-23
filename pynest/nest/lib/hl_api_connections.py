@@ -392,13 +392,9 @@ def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_s
                         f"but 'syn_specs[{key}][{entry}]' is a list or similar."
                     )
 
-    sps(pre)
-    sps(post)
-    sps(third)
-    sps(conn_spec)
-    sps(third_factor_conn_spec)
-    sps(syn_specs)
-    sr("ConnectTripartite_g_g_g_D_D_D")
+    nestkernel.llapi_connect_tripartite(
+        pre._datum, post._datum, third._datum, conn_spec, third_factor_conn_spec, syn_specs
+    )
 
 
 def Disconnect(*args, conn_spec=None, syn_spec=None):

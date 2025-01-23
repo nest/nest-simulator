@@ -789,7 +789,15 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   , pools_( kernel().vp_manager.get_num_threads(), nullptr )
 {
   conn_spec.update_value( names::p, p_ );
-  conn_spec.update_value( names::pool_size, pool_size_ );
+
+  long pool_size_tmp;
+  conn_spec.update_value( names::pool_size, pool_size_tmp );
+  if ( pool_size_tmp < 1 or third->size() < pool_size_tmp )
+  {
+    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
+  }
+  pool_size_ = static_cast< size_t >( pool_size_tmp );
+
   std::string pool_type;
   if ( conn_spec.update_value( names::pool_type, pool_type ) )
   {
@@ -810,11 +818,6 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   if ( p_ < 0 or 1 < p_ )
   {
     throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_third_if_primary ≤ 1 required" );
-  }
-
-  if ( pool_size_ < 1 or third->size() < pool_size_ )
-  {
-    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
   }
 
   if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )

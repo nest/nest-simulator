@@ -21,6 +21,7 @@
 
 from libcpp cimport bool as cbool
 from libcpp.deque cimport deque
+from libcpp.map cimport map as std_map
 from libcpp.memory cimport shared_ptr
 from libcpp.string cimport string
 from libcpp.utility cimport pair
@@ -148,6 +149,12 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const vector[dictionary]& synapse_params ) except +custom_exception_handler
+    void connect_tripartite(NodeCollectionPTR sources,
+                            NodeCollectionPTR targets,
+			    NodeCollectionPTR third,
+                            const dictionary& connectivity,
+                            const dictionary& third_connectivity,
+                            const std_map[string, vector[dictionary]]& synapse_params ) except +custom_exception_handler
     void connect_sonata( const dictionary& graph_specs, const long hyperslab_size ) except +custom_exception_handler
     void disconnect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,

@@ -37,14 +37,14 @@ def set_kernel():
 
 def test_set_bad_property_on_default_raises():
     # test defaults
-    with pytest.raises(nest.NESTErrors.TypeMismatch):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("iaf_psc_alpha", {"tau_m": -10})
 
 
 def test_set_bad_property_on_neuron_raises():
     # test neuron
     n = nest.Create("iaf_psc_alpha")
-    with pytest.raises(nest.NESTErrors.TypeMismatch):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         n.set({"tau_m": -10})
 
 

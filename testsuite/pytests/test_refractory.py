@@ -137,7 +137,7 @@ class TestRefractoryCase(unittest.TestCase):
             Value of the simulated refractory period.
         """
 
-        spike_times = sr.events[0]["times"]
+        spike_times = sr.events["times"]
 
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution

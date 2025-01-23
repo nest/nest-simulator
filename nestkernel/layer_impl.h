@@ -191,7 +191,7 @@ Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
   if ( cached_vector_md_ == node_collection->get_metadata() )
   {
     // Convert from vector to Ntree
-
+    // PYNEST-NG: Why different from Master?
     typename std::back_insert_iterator< Ntree< D, size_t > > to = std::back_inserter( *cached_ntree_ );
 
     for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator from = cached_vector_->begin();
@@ -403,7 +403,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     Position< D > lower_left = ext / dims * grid_mask.get_upper_left() - ext / dims * 0.5;
     Position< D > upper_right = ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
 
-    double y = lower_left[ 1 ];
+    const double y = lower_left[ 1 ];
     lower_left[ 1 ] = -upper_right[ 1 ];
     upper_right[ 1 ] = -y;
 

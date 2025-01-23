@@ -387,14 +387,14 @@ create_mask( const dictionary& mask_dict )
     // For grid layers only, it is also possible to provide an array of longs.
     try
     {
-      std::vector< long > anchor = mask_dict.get< std::vector< long > >( names::anchor );
+      const std::vector< long >& anchor = mask_dict.get< std::vector< long > >( names::anchor );
 
       switch ( anchor.size() )
       {
       case 2:
         try
         {
-          auto grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
+          auto& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
           grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
         }
         catch ( std::bad_cast& e )
@@ -405,7 +405,7 @@ create_mask( const dictionary& mask_dict )
       case 3:
         try
         {
-          auto grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
+          auto& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
           grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
         }
         catch ( std::bad_cast& e )

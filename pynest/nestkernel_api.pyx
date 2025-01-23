@@ -882,7 +882,7 @@ def llapi_set_connection_status(object conns, object params):
         raise TypeError('params must be a dict or a list of dicts')
 
 
-def ll_api_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
+def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
     """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
 
     if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
@@ -894,7 +894,7 @@ def ll_api_connect_arrays(sources, targets, weights, delays, synapse_model, syn_
     if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
         raise TypeError('delays must be a 1-dimensional NumPy array')
     if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
-                                            numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
+                                            numpy.issubdtype(syn_param_keys.dtype, numpy.str_)):
         raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
     if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
         raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
@@ -935,8 +935,8 @@ def ll_api_connect_arrays(sources, targets, weights, delays, synapse_model, syn_
     # Storing parameter keys in a vector of strings
     cdef vector[string] param_keys_ptr
     if syn_param_keys is not None:
-        for i, key in enumerate(syn_param_keys):
-            param_keys_ptr.push_back(key)
+        for key in syn_param_keys:
+            param_keys_ptr.push_back(pystr_to_string(key))
 
     cdef double[:, ::1] param_values_mv
     cdef double* param_values_ptr = NULL

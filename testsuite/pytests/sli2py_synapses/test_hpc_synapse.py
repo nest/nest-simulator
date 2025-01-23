@@ -55,7 +55,12 @@ def has_hpc_suffix(syn_model):
 
 
 def get_hpc_models():
-    ignore_list = ["clopath_synapse_hpc", "stdp_dopamine_synapse_hpc", "urbanczik_synapse_hpc"]
+    ignore_list = [
+        "clopath_synapse_hpc",
+        "eprop_synapse_bsshslm_2020_hpc",
+        "stdp_dopamine_synapse_hpc",
+        "urbanczik_synapse_hpc",
+    ]
 
     hpc_models = [model for model in nest.synapse_models if has_hpc_suffix(model) and model not in ignore_list]
 

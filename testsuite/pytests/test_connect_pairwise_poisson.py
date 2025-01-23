@@ -28,11 +28,10 @@ import numpy as np
 import scipy.stats
 from connect_test_base import get_connectivity_matrix
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_OPENMP = nest.build_info["have_threads"]
 
 
 @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
 class TestPairwisePoisson(connect_test_base.ConnectTestBase):
     # specify connection pattern and specific params
     rule = "pairwise_poisson"
@@ -51,7 +50,7 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         conn_params["allow_multapses"] = False
         try:
             self.setUpNetwork(conn_params)
-        except nest.kernel.NESTError:
+        except nest.NESTError:
             got_error = True
         self.assertTrue(got_error)
 

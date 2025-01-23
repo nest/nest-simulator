@@ -56,7 +56,7 @@ def test_unsupported_model_raises(target_model):
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse_bsshslm_2020"})
 
 

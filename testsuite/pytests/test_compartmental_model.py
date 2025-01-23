@@ -1066,7 +1066,7 @@ class CompartmentsTestCase(unittest.TestCase):
         cm = nest.Create("cm_default")
 
         with self.assertRaisesRegex(
-            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"
+            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"
         ):
             cm.compartments = [
                 {"parent_idx": -1, "params": sp_fake},
@@ -1076,7 +1076,7 @@ class CompartmentsTestCase(unittest.TestCase):
         cm = nest.Create("cm_default")
 
         with self.assertRaisesRegex(
-            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
+            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
         ):
             cm.compartments = [
                 {"parent_idx": -1, "params_name": sp_fake},
@@ -1089,7 +1089,7 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
 
         with self.assertRaisesRegex(
-            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"
+            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"
         ):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params": rp_fake},
@@ -1102,7 +1102,7 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
 
         with self.assertRaisesRegex(
-            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
+            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
         ):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params_name": rp_real},

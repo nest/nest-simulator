@@ -236,5 +236,5 @@ def test_illegal_connection_error():
     nrn_bw = nest.Create("iaf_bw_2001")
     receptor_types = nrn_bw.receptor_types
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(nrn_ce, nrn_bw, syn_spec=nmda_syn_spec)

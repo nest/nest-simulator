@@ -169,5 +169,5 @@ def test_connect_NMDA_after_simulate():
 
     nest.Connect(presyn, postsyn, syn_spec=nmda_syn_spec)
     nest.Simulate(1.0)
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(postsyn, presyn, syn_spec=nmda_syn_spec)

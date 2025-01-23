@@ -198,7 +198,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # plain connection
             if syn in self.eprop_connections or syn in self.eprop_synapses:
                 # try set on connect
-                with self.assertRaises(nest.kernel.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Connect(
                         a[:2],
                         a[-2:],
@@ -213,7 +213,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 )
             else:
                 # try set on connect
-                with self.assertRaises(nest.kernel.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Connect(
                         a,
                         a,

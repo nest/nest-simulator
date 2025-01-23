@@ -1103,7 +1103,7 @@ class Parameter:
     def __rmul__(self, lhs):
         return self * lhs
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         return nestkernel.llapi_divide_parameter(self._datum, self._arg_as_parameter(other)._datum)
 
     def __rtruediv__(self, lhs):

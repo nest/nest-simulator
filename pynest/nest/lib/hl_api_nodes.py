@@ -138,6 +138,8 @@ def Create(model, n=1, params=None, positions=None):
         layer.set(params if params else {})
         return layer
 
+    # PYNEST-NG: This breaks some use cases, e.g., setting individual_spike_trains on sinusiodal generators
+    # Could we go back to initializing via Defaults?
     node_ids = nestkernel.llapi_create(model, n)
 
     if (isinstance(params, dict) and params) or isinstance(params, (list, tuple)):

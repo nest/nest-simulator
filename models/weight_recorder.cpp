@@ -53,6 +53,8 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
 }
 
 nest::weight_recorder::Parameters_::Parameters_()
+  : senders_( nullptr )
+  , targets_( nullptr )
 {
 }
 
@@ -149,8 +151,8 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( P_.senders_->size() != 0 and not P_.senders_->contains( e.get_sender_node_id() ) )
-      or ( P_.targets_->size() != 0 and not P_.targets_->contains( e.get_receiver_node_id() ) ) )
+    if ( ( P_.senders_ and P_.senders_->size() != 0 and not P_.senders_->contains( e.get_sender_node_id() ) )
+      or ( P_.targets_ and P_.targets_->size() != 0 and not P_.targets_->contains( e.get_receiver_node_id() ) ) )
     {
       return;
     }

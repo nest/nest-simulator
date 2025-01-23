@@ -132,6 +132,8 @@ get_build_info ()
 
 NEST="nest_serial"
 HAVE_MPI="$(get_build_info have_mpi)"
+HAVE_OPENMP="$(get_build_info have_threads)"
+
 if test "${HAVE_MPI}" = "True"; then
     MPI_LAUNCHER="$(get_build_info mpiexec)"
     MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"

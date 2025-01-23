@@ -595,11 +595,11 @@ create_parameter( const boost::any& value )
   }
   else if ( is_type< int >( value ) )
   {
-    return create_parameter( boost::any_cast< int >( value ) );
+    return create_parameter( static_cast< long >( boost::any_cast< int >( value ) ) );
   }
   else if ( is_type< long >( value ) )
   {
-    return create_parameter( static_cast< int >( boost::any_cast< long >( value ) ) );
+    return create_parameter( boost::any_cast< long >( value ) );
   }
   else if ( is_type< dictionary >( value ) )
   {
@@ -607,7 +607,7 @@ create_parameter( const boost::any& value )
   }
   else if ( is_type< ParameterPTR >( value ) )
   {
-    return create_parameter( boost::any_cast< ParameterPTR >( value ) );
+    return boost::any_cast< ParameterPTR >( value );
   }
   throw BadProperty(
     std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
@@ -621,7 +621,7 @@ create_parameter( const double value )
 }
 
 ParameterPTR
-create_parameter( const int value )
+create_parameter( const long value )
 {
   const auto param = new ConstantParameter( value );
   return ParameterPTR( param );

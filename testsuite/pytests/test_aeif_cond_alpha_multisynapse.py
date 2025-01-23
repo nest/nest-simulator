@@ -23,7 +23,7 @@
 This test creates a multisynapse neuron and first checks if time constants
 can be set correctly.
 
-Afterwards, it simulates the mutisynapse neuron with n (n=4) different time
+Afterwards, it simulates the multisynapse neuron with n (n=4) different time
 constants and records the neuron's synaptic current. At the same time, it simulates
 n (n=4) single synapse neurons with according parameters.
 At the end, it compares the multisynapse neuron currents with each according single
@@ -117,7 +117,7 @@ class TestAeifCondAlphaMultisynapse:
 
         summed_V_m = np.zeros_like(multisynapse_neuron_vm.events["V_m"], dtype=float)
         for i in range(4):
-            summed_V_m += singlesynapse_neuron_vm[i].events["V_m"][0] - V_m_steadystate
+            summed_V_m += singlesynapse_neuron_vm[i].events["V_m"] - V_m_steadystate
 
         summed_V_m += V_m_steadystate
 

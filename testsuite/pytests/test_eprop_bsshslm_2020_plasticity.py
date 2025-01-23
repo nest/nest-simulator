@@ -27,7 +27,7 @@ import nest
 import numpy as np
 import pytest
 
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 supported_source_models = ["eprop_iaf_bsshslm_2020", "eprop_iaf_adapt_bsshslm_2020"]
 supported_target_models = supported_source_models + ["eprop_readout_bsshslm_2020"]
@@ -188,10 +188,10 @@ def test_eprop_regression():
         "targets": nrns_rec[:n_record_w] + nrns_out,
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
-    mm_out = nest.Create("multimeter", params_mm_out)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
+    mm_out = nest.Create("multimeter", params=params_mm_out)
     sr = nest.Create("spike_recorder")
-    wr = nest.Create("weight_recorder", params_wr)
+    wr = nest.Create("weight_recorder", params=params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]
 
@@ -287,7 +287,7 @@ def test_eprop_regression():
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
         params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+    gen_spk_in.set(params_gen_spk_in)
 
     # Create output
 
@@ -314,7 +314,7 @@ def test_eprop_regression():
         "amplitude_values": np.tile(target_signal, n_iter * n_batch),
     }
 
-    nest.SetStatus(gen_rate_target, params_gen_rate_target)
+    gen_rate_target.set(params_gen_rate_target)
 
     # Simulate
 
@@ -522,10 +522,10 @@ def test_eprop_classification():
         "targets": nrns_rec[:n_record_w] + nrns_out,
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
-    mm_out = nest.Create("multimeter", params_mm_out)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
+    mm_out = nest.Create("multimeter", params=params_mm_out)
     sr = nest.Create("spike_recorder")
-    wr = nest.Create("weight_recorder", params_wr)
+    wr = nest.Create("weight_recorder", params=params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]
 
@@ -695,8 +695,8 @@ def test_eprop_classification():
         for nrn_out_idx in range(n_out)
     ]
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
-    nest.SetStatus(gen_rate_target, params_gen_rate_target)
+    gen_spk_in.set(params_gen_spk_in)
+    gen_rate_target.set(params_gen_rate_target)
 
     # Simulate
 

@@ -790,7 +790,8 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
 {
   conn_spec.update_value( names::p, p_ );
 
-  long pool_size_tmp;
+  // PYTEST-NG: Consider cleaner scheme for handling size_t vs long
+  long pool_size_tmp = static_cast< long >( pool_size_ );
   conn_spec.update_value( names::pool_size, pool_size_tmp );
   if ( pool_size_tmp < 1 or third->size() < pool_size_tmp )
   {

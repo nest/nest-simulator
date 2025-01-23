@@ -925,7 +925,7 @@ class CompartmentsTestCase(unittest.TestCase):
         nest.Simulate(12.0)
         nest.Simulate(88.0)
 
-        events_neat_1 = m_neat.events[0]
+        events_neat_1 = m_neat.events
 
         for key in recordables:
             assert np.allclose(events_neat_0[key], events_neat_1[key])
@@ -1065,19 +1065,12 @@ class CompartmentsTestCase(unittest.TestCase):
         # test unused compartment param
         cm = nest.Create("cm_default")
 
-        with self.assertRaisesRegex(
-            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"
-        ):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             cm.compartments = [
                 {"parent_idx": -1, "params": sp_fake},
             ]
 
-        # test unused compartment param
-        cm = nest.Create("cm_default")
-
-        with self.assertRaisesRegex(
-            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
-        ):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             cm.compartments = [
                 {"parent_idx": -1, "params_name": sp_fake},
             ]
@@ -1088,9 +1081,7 @@ class CompartmentsTestCase(unittest.TestCase):
             {"parent_idx": -1, "params": sp_real},
         ]
 
-        with self.assertRaisesRegex(
-            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"
-        ):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params": rp_fake},
             ]
@@ -1101,9 +1092,7 @@ class CompartmentsTestCase(unittest.TestCase):
             {"parent_idx": -1, "params": sp_real},
         ]
 
-        with self.assertRaisesRegex(
-            nest.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
-        ):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params_name": rp_real},
             ]

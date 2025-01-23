@@ -81,6 +81,12 @@ nest::KernelManager::get_build_info_()
   build_info[ "have_gsl" ] = false;
 #endif
 
+#ifdef HAVE_BOOST
+  build_info[ "have_boost" ] = true;
+#else
+  build_info[ "have_boost" ] = false;
+#endif
+
 #ifdef HAVE_MUSIC
   build_info[ "have_music" ] = true;
 #else

@@ -101,6 +101,38 @@ private:
     }
   }
 
+  template <>
+  double
+  cast_value_< double >( const boost::any& value, const std::string& key ) const
+  {
+    try
+    {
+      if ( is_type< double >( value ) )
+      {
+        return boost::any_cast< double >( value );
+      }
+      if ( is_type< long >( value ) )
+      {
+        return static_cast< double >( boost::any_cast< long >( value ) );
+      }
+      if ( is_type< size_t >( value ) )
+      {
+        return static_cast< double >( boost::any_cast< size_t >( value ) );
+      }
+      if ( is_type< int >( value ) )
+      {
+        return static_cast< double >( boost::any_cast< int >( value ) );
+      }
+      throw boost::bad_any_cast(); // deflect to error handling below
+    }
+    catch ( const boost::bad_any_cast& )
+    {
+      const std::string msg =
+        std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type double.";
+      throw nest::TypeMismatch( msg );
+    }
+  }
+
   /**
    * @brief Cast the specified value to an integer.
    *

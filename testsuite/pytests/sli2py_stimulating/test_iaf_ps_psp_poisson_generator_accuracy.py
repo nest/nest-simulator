@@ -115,7 +115,7 @@ def create_spiketrain():
     nest.ResetKernel()
     nest.set(tics_per_ms=2**-min_exponent, resolution=1)
 
-    pg = nest.Create("poisson_generator_ps", {"rate": poisson_rate})
+    pg = nest.Create("poisson_generator_ps", params={"rate": poisson_rate})
     sr = nest.Create("spike_recorder")
 
     nest.Connect(pg, sr)
@@ -133,7 +133,7 @@ def test_poisson_spikes_different_stepsizes(h):
 
     nest.set(tics_per_ms=2**-min_exponent, resolution=2**h)
 
-    sg = nest.Create("spike_generator", {"start": 0, "spike_times": spiketrain, "precise_times": True})
+    sg = nest.Create("spike_generator", params={"start": 0, "spike_times": spiketrain, "precise_times": True})
 
     neuron = nest.Create("iaf_psc_alpha_ps", params=neuron_params)
     sr = nest.Create("spike_recorder")

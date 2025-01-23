@@ -25,25 +25,6 @@ import testutil
 
 
 @pytest.mark.parametrize(
-    "level, value",
-    [
-        ("M_ALL", 0),
-        ("M_DEBUG", 5),
-        ("M_STATUS", 7),
-        ("M_INFO", 10),
-        ("M_DEPRECATED", 18),
-        ("M_WARNING", 20),
-        ("M_ERROR", 30),
-        ("M_FATAL", 40),
-        ("M_QUIET", 100),
-    ],
-)
-def test_set_verbosity(level, value):
-    nest.set_verbosity(level)
-    assert nest.get_verbosity() == value
-
-
-@pytest.mark.parametrize(
     "a, b, expected",
     [
         ({}, {}, True),

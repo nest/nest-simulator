@@ -72,11 +72,8 @@ class TestSPBuilder(unittest.TestCase):
             {"rule": "fixed_total_number", "N": 1},
             {"rule": "pairwise_bernoulli", "p": 0.5},
         ]:
-            try:
+            with self.assertRaises(nest.NESTErrors.NotImplemented):
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
-            except nest.NESTError as e:
-                msg = "This connection rule is not implemented for structural plasticity"
-                self.assertRegex(str(e), msg)
 
 
 def suite():

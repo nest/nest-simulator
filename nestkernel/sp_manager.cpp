@@ -144,11 +144,11 @@ SPManager::set_status( const dictionary& d )
     syn_spec = boost::any_cast< dictionary >( kv_pair.second );
     if ( syn_spec.known( names::allow_autapses ) )
     {
-      conn_spec[ names::allow_autapses ] = d.get< bool >( names::allow_autapses );
+      conn_spec[ names::allow_autapses ] = syn_spec.get< bool >( names::allow_autapses );
     }
     if ( syn_spec.known( names::allow_multapses ) )
     {
-      conn_spec[ names::allow_multapses ] = d.get< bool >( names::allow_multapses );
+      conn_spec[ names::allow_multapses ] = syn_spec.get< bool >( names::allow_multapses );
     }
 
     // We use a ConnBuilder with dummy values to check the synapse parameters

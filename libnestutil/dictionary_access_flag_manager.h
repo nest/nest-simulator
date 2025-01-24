@@ -45,6 +45,12 @@
  * Manages access flags for dictionary keys and can check if all keys
  * in a dictionary has been accessed. Key access is not integrated into
  * the dictionary class to be able to keep the dictionary const.
+ *
+ * @note The access flag manager depends on the **address** of the dictionary to
+ * keep track of each single dictionary. It is therefore essential that a dictionary is
+ * **never copied**, since the new dict will have its accesses register separately.
+ * There is also a **memory bloat** here because entries are not removed when
+ * a dictionary is deleted.
  */
 class DictionaryAccessFlagManager
 {

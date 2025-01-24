@@ -270,7 +270,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string syn_model = syn_spec.get< std::string >( names::synapse_model );
+      const std::string syn_model = syn_spec.get< std::string >( names::synapse_model );
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name,
@@ -295,9 +295,16 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   assert( cb );
 
-  // at this point, all entries in conn_spec and syn_spec have been checked
+  // At this point, all entries in conn_spec and syn_spec have been checked
   conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );
-  syn_spec.all_entries_accessed( "Disconnect", "syn_spec" );
+
+  // PYNEST-NG:
+  // Do not perform access check here for two reasons:
+  // - the need to pass { syn_spec } above to get_conn_builder() means access flags will
+  //   be set for a copy of the dictionary we have available here for checking
+  // - the current semantics of Disconnect() is a mess, allowing parameters that are not
+  //   used at all, e.g., weight, which needs cleaning up
+  // syn_spec.all_entries_accessed( "Disconnect", "syn_spec" );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();

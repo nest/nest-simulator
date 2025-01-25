@@ -154,10 +154,11 @@ spike_train_injector::Parameters_::set( const dictionary& d,
   const Time& now,
   Node* node )
 {
-  bool precise_times_changed = update_value_param( d, names::precise_times, precise_times_, node );
-  bool shift_now_spikes_changed = update_value_param( d, names::shift_now_spikes, shift_now_spikes_, node );
-  bool allow_offgrid_times_changed = update_value_param( d, names::allow_offgrid_times, allow_offgrid_times_, node );
-  bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
+  const bool precise_times_changed = update_value_param( d, names::precise_times, precise_times_, node );
+  const bool shift_now_spikes_changed = update_value_param( d, names::shift_now_spikes, shift_now_spikes_, node );
+  const bool allow_offgrid_times_changed =
+    update_value_param( d, names::allow_offgrid_times, allow_offgrid_times_, node );
+  const bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
   if ( precise_times_ and ( allow_offgrid_times_ or shift_now_spikes_ ) )
   {
     throw BadProperty(

@@ -218,10 +218,16 @@ get_nc_status( NodeCollectionPTR nc )
 void
 set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 {
+  const auto rank_local_begin = nc->rank_local_begin();
+  if ( rank_local_begin == nc->end() )
+  {
+    return; // no local nodes, nothing to do --- more efficient and avoids params access check problems
+  }
+
   if ( params.size() == 1 )
   {
     params[ 0 ].init_access_flags();
-    for ( auto it = nc->begin(); it < nc->end(); ++it )
+    for ( auto it = rank_local_begin; it < nc->end(); ++it )
     {
       kernel().node_manager.set_status( ( *it ).node_id, params[ 0 ] );
     }

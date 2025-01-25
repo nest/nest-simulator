@@ -101,7 +101,7 @@ public:
   void disconnect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const dictionary& conn_spec,
-    const dictionary& syn_spec );
+    const std::vector< dictionary >& syn_spec );
 
   /**
    * Disconnect two nodes.

@@ -159,7 +159,7 @@ cdef extern from "nest.h" namespace "nest":
     void disconnect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
-                 const dictionary& synapse_params) except +custom_exception_handler
+                 const vector[dictionary]& synapse_params) except +custom_exception_handler
     void disconnect( const deque[ConnectionID]& conns ) except +custom_exception_handler
     string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc ) except +custom_exception_handler

@@ -120,10 +120,17 @@ void connect( NodeCollectionPTR sources,
   const dictionary& connectivity,
   const std::vector< dictionary >& synapse_params );
 
+/**
+ * Disconnect nodes.
+ *
+ * @param connectivity Must be one-to-one or all-to-all.
+ * @param synapse_params Can contain only a synapse model to limit disconnection to that model. Must be vector of length
+ * 1, but is still passed as vector for compatibility with ConnBuilder constructor.
+ */
 void disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& connectivity,
-  const dictionary& synapse_params );
+  const std::vector< dictionary >& synapse_params );
 
 /**
  * Create tripartite connections

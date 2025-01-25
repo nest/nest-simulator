@@ -499,9 +499,17 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
     if synapse_params is dict and "synapse_model" not in synapse_params:
         synapse_params["synapse_model"] = "static_synapse"
 
+    # Pass synapse specs as vector/collocated synapse for consistency with Connect().
+    # This simplifies the C++ level because ConnBuilder() constructors expect vectors of synapse specs.
+    cdef vector[dictionary] syn_param_vec
+    if isinstance(synapse_params, nest.CollocatedSynapses):
+        syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
+    elif synapse_params is not None:
+        syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
+
     disconnect(pre.thisptr, post.thisptr,
             pydict_to_dictionary(conn_params),
-            pydict_to_dictionary(synapse_params))
+            syn_param_vec)
 
 
 def llapi_disconnect_syncoll(object conns):

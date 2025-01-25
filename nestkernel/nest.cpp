@@ -437,7 +437,7 @@ void
 disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& connectivity,
-  const dictionary& synapse_params )
+  const std::vector< dictionary >& synapse_params )
 {
   kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 }

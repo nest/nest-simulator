@@ -165,10 +165,10 @@ void connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
-  std::vector< std::string >& p_keys,
+  const std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
-  std::string syn_model );
+  const std::string& syn_model );
 
 
 void connect_sonata( const dictionary& graph_specs, const long hyperslab_size );

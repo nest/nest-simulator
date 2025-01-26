@@ -364,7 +364,7 @@ class TestConnectArrays(unittest.TestCase):
         self.assertEqual(len(sources) * [0], nest.GetConnections().receptor)
 
     @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
-    def test_connect_arrays_differnt_alpha(self):
+    def test_connect_arrays_different_alpha(self):
         """Connecting NumPy arrays with different alpha values in a threaded environment"""
 
         nest.local_num_threads = 4

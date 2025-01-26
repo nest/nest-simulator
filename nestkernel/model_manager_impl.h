@@ -46,7 +46,8 @@ ModelManager::register_node_model( const std::string& name, std::string deprecat
 {
   if ( modeldict_.known( name ) )
   {
-    std::string msg = String::compose( "A model called '%1' already exists. Please choose a different name!", name );
+    const std::string msg =
+      String::compose( "A model called '%1' already exists. Please choose a different name!", name );
     throw NamingConflict( msg );
   }
 

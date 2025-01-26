@@ -343,7 +343,8 @@ nest::RecordingBackendASCII::DeviceData::set_status( const dictionary& d )
   d.update_value( names::label, label_ );
 
   bool time_in_steps = false;
-  if ( d.update_value( names::time_in_steps, time_in_steps ) )
+  if ( d.update_value( names::time_in_steps, time_in_steps )
+    and time_in_steps != time_in_steps_ ) // setting to the existing value is not an error
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {

@@ -601,10 +601,10 @@ nest::ConnectionManager::connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
-  std::vector< std::string >& p_keys,
+  const std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
-  std::string syn_model )
+  const std::string& syn_model )
 {
   // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
   sw_construction_connect.start();
@@ -615,9 +615,10 @@ nest::ConnectionManager::connect_arrays( long* sources,
   if ( p_keys.size() != 0 )
   {
     size_t i = 0;
-    for ( auto& key : p_keys )
+    for ( const auto& key : p_keys )
     {
-      const bool is_int = key == names::receptor_type or key == names::music_channel;
+      const bool is_int = ( key == names::receptor_type or key == names::music_channel or key == names::synapse_label );
+
       // Shifting the pointer to the first value of the parameter.
       param_pointers[ key ] = std::make_pair( p_values + i * n, is_int );
       ++i;
@@ -632,7 +633,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   param_dicts.reserve( kernel().vp_manager.get_num_threads() );
   for ( size_t i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
   {
-    param_dicts.emplace_back();
+    param_dicts.emplace_back(); // Adds empty dict for thread i, filled below
     for ( auto& param_key : p_keys )
     {
       // Check that the parameter exists for the synapse model.
@@ -643,7 +644,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       }
 
       // If the default value is an integer, the synapse parameter must also be an integer.
-      if ( is_type< long >( syn_model_default_it->second ) )
+      if ( is_type< long >( syn_model_default_it->second.item ) )
       {
         param_pointers[ param_key ].second = true;
         param_dicts[ i ][ param_key ] = 0;
@@ -742,12 +743,13 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        param_dicts[ tid ].init_access_flags(); // PYNEST-NG: Possible performance bottleneck
+        // PYNEST-NG: Possible performance bottleneck
+        param_dicts[ tid ].init_access_flags( /* thread_local_dict */ true );
 
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
-        param_dicts[ tid ].all_entries_accessed(
-          "connect_arrays", "params" ); // PYNEST-NG: Possible performance bottleneck
+        // PYNEST-NG: Possible performance bottleneck
+        param_dicts[ tid ].all_entries_accessed( "connect_arrays", "params", /* thread_local_dict */ true );
 
         increment_wd( w, d );
       }

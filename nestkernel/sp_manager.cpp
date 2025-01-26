@@ -139,9 +139,11 @@ SPManager::set_status( const dictionary& d )
   sp_conn_builders_.clear();
 
   d.update_value< dictionary >( names::structural_plasticity_synapses, syn_specs );
-  for ( auto& kv_pair : syn_specs )
+  for ( auto& [ key, entry ] : syn_specs )
   {
-    syn_spec = boost::any_cast< dictionary >( kv_pair.second );
+    // PYNEST-NG: We could get the dictionary here directly by boost::any_cast< dictionary >(entry.item),
+    // but using the proper get() methods seems cleaner.
+    const auto syn_spec = syn_specs.get< dictionary >( key );
     if ( syn_spec.known( names::allow_autapses ) )
     {
       conn_spec[ names::allow_autapses ] = syn_spec.get< bool >( names::allow_autapses );
@@ -153,7 +155,7 @@ SPManager::set_status( const dictionary& d )
 
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, /* third_out */ nullptr, conn_spec, { syn_spec } );
-    conn_builder->set_name( kv_pair.first );
+    conn_builder->set_name( key );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.

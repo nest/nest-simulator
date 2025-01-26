@@ -36,13 +36,13 @@ bool
 update_value_param( dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
   const auto it = d.find( key );
-  if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second ) )
+  if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second.item ) )
   {
     if ( not node )
     {
       throw BadParameter( "Cannot use Parameter with this model." );
     }
-    auto param = d.get< ParameterPTR >( key );
+    const auto param = d.get< ParameterPTR >( key );
     const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
     const auto tid = kernel().vp_manager.vp_to_thread( vp );
     const auto rng = get_vp_specific_rng( tid );

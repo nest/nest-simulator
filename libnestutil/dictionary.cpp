@@ -71,7 +71,7 @@ debug_dict_types( const dictionary& dict )
   for ( auto& kv : dict )
   {
     s += kv.first + ": ";
-    s += debug_type( kv.second ) + "\n";
+    s += debug_type( kv.second.item ) + "\n";
   }
   return s;
 }
@@ -90,81 +90,84 @@ operator<<( std::ostream& os, const dictionary& dict )
   {
     std::string type;
     std::stringstream value_stream;
-    if ( is_type< int >( kv.second ) )
+
+    const auto& item = kv.second.item;
+
+    if ( is_type< int >( item ) )
     {
       type = "int";
-      value_stream << boost::any_cast< int >( kv.second ) << '\n';
+      value_stream << boost::any_cast< int >( item ) << '\n';
     }
-    else if ( is_type< unsigned int >( kv.second ) )
+    else if ( is_type< unsigned int >( item ) )
     {
       type = "unsigned int";
-      value_stream << boost::any_cast< unsigned int >( kv.second ) << '\n';
+      value_stream << boost::any_cast< unsigned int >( item ) << '\n';
     }
-    else if ( is_type< long >( kv.second ) )
+    else if ( is_type< long >( item ) )
     {
       type = "long";
-      value_stream << boost::any_cast< long >( kv.second ) << '\n';
+      value_stream << boost::any_cast< long >( item ) << '\n';
     }
-    else if ( is_type< size_t >( kv.second ) )
+    else if ( is_type< size_t >( item ) )
     {
       type = "size_t";
-      value_stream << boost::any_cast< size_t >( kv.second ) << '\n';
+      value_stream << boost::any_cast< size_t >( item ) << '\n';
     }
-    else if ( is_type< double >( kv.second ) )
+    else if ( is_type< double >( item ) )
     {
       type = "double";
-      value_stream << boost::any_cast< double >( kv.second ) << '\n';
+      value_stream << boost::any_cast< double >( item ) << '\n';
     }
-    else if ( is_type< bool >( kv.second ) )
+    else if ( is_type< bool >( item ) )
     {
       type = "bool";
-      const auto value = boost::any_cast< bool >( kv.second );
+      const auto value = boost::any_cast< bool >( item );
       value_stream << ( value ? "true" : "false" ) << '\n';
     }
-    else if ( is_type< std::string >( kv.second ) )
+    else if ( is_type< std::string >( item ) )
     {
       type = "std::string";
-      value_stream << "\"" << boost::any_cast< std::string >( kv.second ) << "\"\n";
+      value_stream << "\"" << boost::any_cast< std::string >( item ) << "\"\n";
     }
-    else if ( is_type< std::vector< int > >( kv.second ) )
+    else if ( is_type< std::vector< int > >( item ) )
     {
       type = "std::vector<int>";
-      value_stream << boost::any_cast< std::vector< int > >( kv.second ) << '\n';
+      value_stream << boost::any_cast< std::vector< int > >( item ) << '\n';
     }
-    else if ( is_type< std::vector< double > >( kv.second ) )
+    else if ( is_type< std::vector< double > >( item ) )
     {
       type = "std::vector<double>";
-      value_stream << boost::any_cast< std::vector< double > >( kv.second ) << '\n';
+      value_stream << boost::any_cast< std::vector< double > >( item ) << '\n';
     }
-    else if ( is_type< std::vector< std::vector< double > > >( kv.second ) )
+    else if ( is_type< std::vector< std::vector< double > > >( item ) )
     {
       type = "vector<vector<double>>";
       value_stream << "vector<vector<double>>" << '\n';
     }
-    else if ( is_type< std::vector< std::string > >( kv.second ) )
+    else if ( is_type< std::vector< std::string > >( item ) )
     {
       type = "std::vector<std::string>";
-      value_stream << boost::any_cast< std::vector< std::string > >( kv.second ) << '\n';
+      value_stream << boost::any_cast< std::vector< std::string > >( item ) << '\n';
     }
-    else if ( is_type< std::vector< boost::any > >( kv.second ) )
+    else if ( is_type< std::vector< boost::any > >( item ) )
     {
       type = "vector<boost::any>";
       value_stream << "vector<any>" << '\n';
     }
-    else if ( is_type< dictionary >( kv.second ) )
+    else if ( is_type< dictionary >( item ) )
     {
       type = "dictionary";
       value_stream << "dictionary" << '\n';
     }
-    else if ( is_type< std::shared_ptr< nest::Parameter > >( kv.second ) )
+    else if ( is_type< std::shared_ptr< nest::Parameter > >( item ) )
     {
       type = "parameter";
       value_stream << "parameter" << '\n';
     }
-    else if ( is_type< std::shared_ptr< nest::NodeCollection > >( kv.second ) )
+    else if ( is_type< std::shared_ptr< nest::NodeCollection > >( item ) )
     {
       type = "NodeCollection";
-      const auto nc = boost::any_cast< std::shared_ptr< nest::NodeCollection > >( kv.second );
+      const auto nc = boost::any_cast< std::shared_ptr< nest::NodeCollection > >( item );
       nc->print_me( value_stream );
       value_stream << "\n";
     }
@@ -181,7 +184,7 @@ operator<<( std::ostream& os, const dictionary& dict )
 }
 
 bool
-value_equal( const boost::any first, const boost::any second )
+value_equal( const boost::any& first, const boost::any& second )
 {
   if ( is_type< int >( first ) )
   {
@@ -369,16 +372,17 @@ dictionary::operator==( const dictionary& other ) const
     return false;
   }
   // Iterate elements in the other dictionary
-  for ( auto& kv_pair : other )
+  for ( const auto& [ other_key, other_entry ] : other )
   {
     // Check if it exists in this dictionary
-    if ( not known( kv_pair.first ) )
+    if ( not known( other_key ) )
     {
       return false;
     }
+
     // Check for equality
-    const auto value = maptype_::at( kv_pair.first );
-    if ( not value_equal( value, kv_pair.second ) )
+    const auto& this_entry = maptype_::at( other_key );
+    if ( not value_equal( this_entry.item, other_entry.item ) )
     {
       return false;
     }
@@ -387,59 +391,119 @@ dictionary::operator==( const dictionary& other ) const
   return true;
 }
 
+void
+dictionary::register_access_( const DictEntry_& entry ) const
+{
+  if ( not entry.accessed )
+  {
+    // if() above avoids any unnecessary updates, atomic prevents any potential
+    // data races in case the compiler does behind-the-scences magic.
+#pragma omp atomic write
+    entry.accessed = true; // accessed is mutable
+  }
+}
 
 boost::any&
 dictionary::operator[]( const std::string& key )
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::operator[]( key );
+  auto& entry = maptype_::operator[]( key );
+  // op[] inserts entry if key was not known before, so we are sure entry exists
+  register_access_( entry );
+  return entry.item;
 }
 
 boost::any&
 dictionary::operator[]( std::string&& key )
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::operator[]( key );
+  auto& entry = maptype_::operator[]( key );
+  // op[] inserts entry if key was not known before, so we are sure entry exists
+  register_access_( entry );
+  return entry.item;
 }
 
 boost::any&
 dictionary::at( const std::string& key )
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::at( key );
+  auto& entry = maptype_::at( key );
+  // at() throws if key is not know, so we are sure entry exists
+  register_access_( entry );
+  return entry.item;
 }
 
 const boost::any&
 dictionary::at( const std::string& key ) const
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::at( key );
+  const auto& entry = maptype_::at( key );
+  // at() throws if key is not know, so we are sure entry exists
+  register_access_( entry );
+  return entry.item;
 }
 
 dictionary::iterator
 dictionary::find( const std::string& key )
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::find( key );
+  const auto it = maptype_::find( key );
+  if ( it != end() )
+  {
+    register_access_( it->second );
+  }
+  return it;
 }
 
 dictionary::const_iterator
 dictionary::find( const std::string& key ) const
 {
-  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
-  return maptype_::find( key );
+  const auto it = maptype_::find( key );
+  if ( it != end() )
+  {
+    register_access_( it->second );
+  }
+  return it;
 }
 
 void
-dictionary::init_access_flags() const
+dictionary::init_access_flags( const bool thread_local_dict ) const
 {
-  nest::kernel().get_dict_access_flag_manager().init_access_flags( *this );
+  if ( not thread_local_dict )
+  {
+    nest::kernel().vp_manager.assert_single_threaded();
+  }
+  for ( const auto& [ key, entry ] : *this )
+  {
+    entry.accessed = false;
+  }
 }
 
 void
-dictionary::all_entries_accessed( const std::string& where, const std::string& what ) const
+dictionary::all_entries_accessed( const std::string& where,
+  const std::string& what,
+  const bool thread_local_dict ) const
 {
-  nest::kernel().get_dict_access_flag_manager().all_accessed( *this, where, what );
+  if ( not thread_local_dict )
+  {
+    nest::kernel().vp_manager.assert_single_threaded();
+  }
+
+  // Vector of elements in the dictionary that are not accessed
+  std::vector< dictionary::key_type > not_accessed_keys;
+
+  for ( const auto& [ key, entry ] : *this )
+  {
+    if ( not entry.accessed )
+    {
+      not_accessed_keys.emplace_back( key );
+    }
+  }
+
+  if ( not_accessed_keys.size() > 0 )
+  {
+    const auto missed = std::accumulate( not_accessed_keys.begin(),
+      not_accessed_keys.end(),
+      dictionary::key_type(), // creates empty instance of key type (string)
+      []( const dictionary::key_type& a, const dictionary::key_type& b ) { return a + " " + b; } );
+
+    throw nest::UnaccessedDictionaryEntry( what, where, missed );
+  }
 }
 
 // TODO-PYNEST-NG: Convenience function for accessed()?

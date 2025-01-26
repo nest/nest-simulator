@@ -56,14 +56,32 @@ is_type( const boost::any& operand )
  * @param second The other value.
  * @return Whether the values are equal, both in type and value.
  */
-bool value_equal( const boost::any first, const boost::any second );
+bool value_equal( const boost::any& first, const boost::any& second );
 
 /**
  * @brief A Python-like dictionary, based on std::map.
  *
  * Values are stored as boost::any objects, with std::string keys.
  */
-class dictionary : public std::map< std::string, boost::any >
+struct DictEntry_
+{
+  //! Constructor without arguments needed by std::map::operator[]
+  DictEntry_()
+    : item( boost::any() )
+    , accessed( false )
+  {
+  }
+  DictEntry_( const boost::any& item )
+    : item( item )
+    , accessed( false )
+  {
+  }
+
+  boost::any item;       //!< actual item stored
+  mutable bool accessed; //!< initally false, set to true once entry is accessed
+};
+
+class dictionary : public std::map< std::string, DictEntry_ >
 {
   // TODO-PYNEST-NG: Meta-information about entries:
   //                   * Value type (enum?)
@@ -73,7 +91,7 @@ private:
   // TODO: PYNEST-NG: maybe change to unordered map, as that provides
   // automatic hashing of keys (currently strings) which might make
   // lookups more efficient
-  using maptype_ = std::map< std::string, boost::any >;
+  using maptype_ = std::map< std::string, DictEntry_ >;
   using maptype_::maptype_; // Inherit constructors
 
   /**
@@ -190,6 +208,8 @@ private:
     throw nest::TypeMismatch( msg );
   }
 
+  void register_access_( const DictEntry_& entry ) const;
+
 public:
   /**
    * @brief Get the value at key in the specified type.
@@ -234,7 +254,7 @@ public:
     auto it = find( key );
     if ( it != end() )
     {
-      value = cast_value_< T >( it->second, key );
+      value = cast_value_< T >( it->second.item, key );
       return true;
     }
     return false;
@@ -255,7 +275,7 @@ public:
     auto it = find( key );
     if ( it != end() )
     {
-      value = cast_to_integer_( it->second, key );
+      value = cast_to_integer_( it->second.item, key );
       return true;
     }
     return false;
@@ -266,12 +286,33 @@ public:
    *
    * @param key key where the value may be located in the dictionary.
    * @return true if there is a value with the specified key, false if not.
+   *
+   * @note This does **not** mark the entry, because we sometimes need to confirm
+   * that a certain key is not in a dictionary.
    */
   bool
   known( const std::string& key ) const
   {
     // Bypass find() function to not set access flag
     return maptype_::find( key ) != end();
+  }
+
+  /**
+   * @brief Mark entry with given key as accessed.
+   */
+  void
+  mark_as_accessed( const std::string& key ) const
+  {
+    register_access_( maptype_::at( key ) );
+  }
+
+  /**
+   * @brief Return true if entry has been marked as accessed.
+   */
+  bool
+  has_been_accessed( const std::string& key ) const
+  {
+    return maptype_::at( key ).accessed;
   }
 
   /**
@@ -300,17 +341,27 @@ public:
 
   /**
    * @brief Initializes or resets access flags for the current dictionary.
+   *
+   * @note The method assumes that the dictionary was defined in global scope, whence it should
+   * only be called from a serial context. If the dict is in thread-specific, pass `true` to
+   * allow call in parallel context.
    */
-  void init_access_flags() const;
+  void init_access_flags( const bool thread_local_dict = false ) const;
 
   /**
    * @brief Check that all elements in the dictionary have been accessed.
    *
    * @param where Which function the error occurs in.
    * @param what Which parameter triggers the error.
+   * @param thread_local_dict See note below.
    * @throws UnaccessedDictionaryEntry if there are unaccessed dictionary entries.
+   *
+   * @note The method assumes that the dictionary was defined in global scope, whence it should
+   * only be called from a serial context. If the dict is in thread-specific, pass `true` to
+   * allow call in parallel context.
    */
-  void all_entries_accessed( const std::string& where, const std::string& what ) const;
+  void
+  all_entries_accessed( const std::string& where, const std::string& what, const bool thread_local_dict = false ) const;
 
   // Wrappers for access flags
   boost::any& operator[]( const std::string& key );

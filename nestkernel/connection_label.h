@@ -98,7 +98,7 @@ void
 ConnectionLabel< ConnectionT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   long lbl;
-  if ( d.update_value( names::synapse_label, lbl ) )
+  if ( d.update_integer_value( names::synapse_label, lbl ) )
   {
     if ( lbl >= 0 )
     {

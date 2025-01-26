@@ -366,17 +366,17 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
     for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
       // Select those nodes fulfilling the key/value pairs of the dictionary
-      for ( auto node : get_local_nodes( tid ) )
+      for ( const auto& node : get_local_nodes( tid ) )
       {
         bool match = true;
-        size_t node_id = node.get_node_id();
+        const size_t node_id = node.get_node_id();
 
         dictionary node_status = get_status( node_id );
-        for ( auto& entry : params )
+        for ( const auto& [ key, entry ] : params )
         {
-          if ( node_status.known( entry.first ) )
+          if ( node_status.known( key ) )
           {
-            if ( not value_equal( node_status.at( entry.first ), entry.second ) )
+            if ( not value_equal( node_status.at( key ), entry.item ) )
             {
               match = false;
               break;

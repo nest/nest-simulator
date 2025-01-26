@@ -239,8 +239,7 @@ voltmeter::voltmeter()
   : multimeter()
 {
   dictionary vmdict;
-  std::vector< std::string > ad;
-  ad.push_back( names::V_m );
+  const std::vector< std::string > ad = { names::V_m };
   vmdict[ names::record_from ] = ad;
   set_status( vmdict );
 }

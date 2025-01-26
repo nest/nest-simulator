@@ -133,22 +133,22 @@ nest::StimulationDevice::set_status( const dictionary& d )
     dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
-    for ( auto& kv_pair : d )
+    for ( auto& [ key, entry ] : d )
     {
-      if ( not kernel().get_dict_access_flag_manager().accessed( d, kv_pair.first ) )
+      if ( not d.has_been_accessed( key ) )
       {
-        backend_params[ kv_pair.first ] = kv_pair.second;
+        backend_params[ key ] = entry.item;
       }
     }
 
     // cache all properties accessed by the backend in private member
     backend_params_.clear();
-    for ( auto& kv_pair : backend_params )
+    for ( auto& [ key, entry ] : backend_params )
     {
-      if ( kernel().get_dict_access_flag_manager().accessed( backend_params, kv_pair.first ) )
+      if ( backend_params.has_been_accessed( key ) )
       {
-        backend_params_[ kv_pair.first ] = kv_pair.second;
-        kernel().get_dict_access_flag_manager().register_access( d, kv_pair.first );
+        backend_params_[ key ] = entry.item;
+        d.mark_as_accessed( key );
       }
     }
   }

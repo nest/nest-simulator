@@ -196,7 +196,6 @@ private:
   ~KernelManager();
 
   unsigned long fingerprint_;
-  DictionaryAccessFlagManager dict_access_flag_manager_;
 
   static KernelManager* kernel_manager_instance_;
 
@@ -260,8 +259,6 @@ public:
   bool is_initialized() const;
 
   unsigned long get_fingerprint() const;
-
-  DictionaryAccessFlagManager& get_dict_access_flag_manager();
 
   /**
    * Write data to file per rank and thread. For use with FULL_LOGGING.
@@ -348,10 +345,5 @@ nest::KernelManager::get_fingerprint() const
   return fingerprint_;
 }
 
-inline DictionaryAccessFlagManager&
-nest::KernelManager::get_dict_access_flag_manager()
-{
-  return dict_access_flag_manager_;
-}
 
 #endif /* KERNEL_MANAGER_H */

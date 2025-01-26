@@ -192,10 +192,10 @@ cdef object dictionary_to_pydict(dictionary cdict):
     cdef dictionary.const_iterator it = cdict.begin()
     while it != cdict.end():
         key = string_to_pystr(deref(it).first)
-        tmp[key] = any_to_pyobj(deref(it).second)
+        tmp[key] = any_to_pyobj(deref(it).second.item)
         if tmp[key] is None:
             # If we end up here, the value in the dictionary is of a type that any_to_pyobj() cannot handle.
-            raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second)))
+            raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second.item)))
         inc(it)
     return tmp
 

@@ -200,14 +200,14 @@ get_nc_status( NodeCollectionPTR nc )
       if ( p != result.end() )
       {
         // key exists
-        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second );
-        v[ node_index ] = kv_pair.second;
+        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second.item );
+        v[ node_index ] = kv_pair.second.item;
       }
       else
       {
         // key does not exist yet
         auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
-        new_entry[ node_index ] = kv_pair.second;
+        new_entry[ node_index ] = kv_pair.second.item;
         result[ kv_pair.first ] = new_entry;
       }
     }
@@ -459,10 +459,10 @@ connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
-  std::vector< std::string >& p_keys,
+  const std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
-  std::string syn_model )
+  const std::string& syn_model )
 {
   kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }

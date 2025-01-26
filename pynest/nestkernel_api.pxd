@@ -44,13 +44,19 @@ cdef extern from "dictionary.h" namespace "boost":
         any& operator=[T](T&)
     T any_cast[T](any& operand)
 
+cdef extern from "dictionary.h":
+    cppclass DictEntry_:
+        DictEntry_()
+        DictEntry_(const any&)
+        any item
+        cbool accessed
 
 cdef extern from "dictionary.h":
     cppclass dictionary:
         dictionary()
         any& operator[](const string&)
         cppclass const_iterator:
-            pair[string, any]& operator*()
+            pair[string, DictEntry_]& operator*()
             const_iterator operator++()
             bint operator==(const const_iterator&)
             bint operator!=(const const_iterator&)
@@ -188,7 +194,7 @@ cdef extern from "nest.h" namespace "nest":
 
     vector[size_t] node_collection_to_array( NodeCollectionPTR node_collection, const string& selection ) except +custom_exception_handler
 
-    void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +custom_exception_handler
+    void connect_arrays( long* sources, long* targets, double* weights, double* delays, const vector[string]& p_keys, double* p_values, size_t n, const string& syn_model ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +custom_exception_handler
 

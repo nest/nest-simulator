@@ -53,9 +53,9 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
 
     conn_spec.update_value( "params_map", params_map_ );
 
-    for ( auto& kv : params_map_ )
+    for ( auto& [ key, value ] : params_map_ )
     {
-      nest::kernel().get_dict_access_flag_manager().register_access( params_map_, kv.first );
+      params_map_.mark_as_accessed( key );
     }
 
     if ( syn_specs[ 0 ].known( names::weight ) or syn_specs[ 0 ].known( names::delay ) )

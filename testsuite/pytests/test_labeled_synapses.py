@@ -57,11 +57,18 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 
-        self.eprop_synapses = ["eprop_synapse_bsshslm_2020", "eprop_synapse_bsshslm_2020_hpc"]
-        self.eprop_connections = [
+        self.eprop_synapses_bsshslm_2020 = ["eprop_synapse_bsshslm_2020", "eprop_synapse_bsshslm_2020_hpc"]
+        self.eprop_connections_bsshslm_2020 = [
             "eprop_learning_signal_connection_bsshslm_2020",
             "eprop_learning_signal_connection_bsshslm_2020_lbl",
             "eprop_learning_signal_connection_bsshslm_2020_hpc",
+        ]
+
+        self.eprop_synapses = ["eprop_synapse", "eprop_synapse_hpc"]
+        self.eprop_connections = [
+            "eprop_learning_signal_connection",
+            "eprop_learning_signal_connection_lbl",
+            "eprop_learning_signal_connection_hpc",
         ]
 
         # create neurons that accept all synapse connections (especially gap
@@ -88,11 +95,17 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
             r_type = syns["soma_exc"]
 
-        if syn_model in self.eprop_synapses:
+        if syn_model in self.eprop_synapses_bsshslm_2020:
             neurons = nest.Create("eprop_iaf_bsshslm_2020", 5)
 
-        if syn_model in self.eprop_connections:
+        if syn_model in self.eprop_connections_bsshslm_2020:
             neurons = nest.Create("eprop_readout_bsshslm_2020", 5) + nest.Create("eprop_iaf_bsshslm_2020", 5)
+
+        if syn_model in self.eprop_synapses:
+            neurons = nest.Create("eprop_iaf", 5)
+
+        if syn_model in self.eprop_connections:
+            neurons = nest.Create("eprop_readout", 5) + nest.Create("eprop_iaf", 5)
 
         return neurons, r_type
 
@@ -197,7 +210,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 nest.SetDefaults(syn, {"synapse_label": 123})
 
             # plain connection
-            if syn in self.eprop_connections or syn in self.eprop_synapses:
+            if (
+                syn
+                in self.eprop_connections_bsshslm_2020
+                + self.eprop_connections
+                + self.eprop_synapses_bsshslm_2020
+                + self.eprop_synapses
+            ):
                 # try set on connect
                 with self.assertRaises(nest.kernel.NESTError):
                     nest.Connect(

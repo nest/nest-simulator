@@ -19,9 +19,12 @@ from mpi4py import MPI
 if __name__ == "__main__":
     opt = docopt(__doc__)
 
+import logging
 import os
-import sys
 import time
+
+logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("NEST_SERVER_MPI_LOGGER_LEVEL", "INFO"))
 
 import nest
 import nest.server
@@ -35,17 +38,18 @@ rank = comm.Get_rank()
 
 def log(call_name, msg):
     msg = f"==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}"
-    print(msg, flush=True)
+    logger.debug(msg)
 
 
 if rank == 0:
-    print("==> Starting NEST Server Master on rank 0", flush=True)
+    logger.info("==> Starting NEST Server Master on rank 0")
     nest.server.set_mpi_comm(comm)
     nest.server.run_mpi_app(host=opt.get("--host", HOST), port=opt.get("--port", PORT))
 
 else:
-    print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)
+    logger.info(f"==> Starting NEST Server Worker on rank {rank}")
     nest.server.set_mpi_comm(comm)
+
     while True:
         log("spinwait", "waiting for call bcast")
         call_name = comm.bcast(None, root=0)
@@ -70,6 +74,7 @@ else:
             try:
                 response = call(*args, **kwargs)
             except Exception:
+                logger.error("Failed to execute call")
                 continue
 
         log(call_name, f"sending reponse gather, data={response}")

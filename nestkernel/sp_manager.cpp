@@ -651,22 +651,38 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 
   // shuffle res using the global random number generator
   unsigned int N = v.size();
-  std::vector< size_t > v2;
+  std::vector< size_t > v2; // it is better to reserve memory once after creation, to decrease overhead caused by systemcalls
   size_t tmp;
   unsigned int rnd;
   std::vector< size_t >::iterator rndi;
   for ( unsigned int i = 0; i < n; i++ )
   {
     N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N );
-    tmp = v[ rnd ];
+    rnd = get_rank_synced_rng()->ulrand( N ); // v.size can be directly used here for less memory
+    tmp = v[ rnd ]; // temp is unnecesery
     v2.push_back( tmp );
     rndi = v.begin();
-    v.erase( rndi + rnd );
+    v.erase( rndi + rnd ); // calling erease in each itteration would cause a lot of slow down, since it is O(n) in each itteration
   }
   v = v2;
 }
 
+/*
+This shuffle is in O(n) and use half of the memory used in the other function for n close to N
+
+void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
+    assert(n <= v.size());
+
+    // We select an element from [ith index, vector end-index(remaining range)]
+    for (size_t i = 0; i < n; ++i) {
+        size_t rnd = i + get_rank_synced_rng()->ulrand(v.size() - i); // Random index in range [i, v.size()-1]
+        std::swap(v[i], v[rnd]); // Swap selected element to the front
+    }
+
+    // Resize the vector to keep only the first 'n' elements
+    v.resize(n);
+}
+*/
 
 void
 nest::SPManager::enable_structural_plasticity()

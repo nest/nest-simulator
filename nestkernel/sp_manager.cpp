@@ -684,7 +684,6 @@ void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
 }
 */
 
-
 void
 nest::SPManager::enable_structural_plasticity()
 {

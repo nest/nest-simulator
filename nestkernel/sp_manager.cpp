@@ -651,18 +651,18 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 
   // shuffle res using the global random number generator
   unsigned int N = v.size();
-  std::vector< size_t > v2; // it is better to reserve memory once after creation, to decrease overhead caused by systemcalls
+  std::vector< size_t > v2;
   size_t tmp;
   unsigned int rnd;
   std::vector< size_t >::iterator rndi;
   for ( unsigned int i = 0; i < n; i++ )
   {
     N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N ); // v.size can be directly used here for less memory
-    tmp = v[ rnd ]; // temp is unnecesery
+    rnd = get_rank_synced_rng()->ulrand( N );
+    tmp = v[ rnd ];
     v2.push_back( tmp );
     rndi = v.begin();
-    v.erase( rndi + rnd ); // calling erease in each itteration would cause a lot of slow down, since it is O(n) in each itteration
+    v.erase( rndi + rnd );
   }
   v = v2;
 }
@@ -683,6 +683,7 @@ void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
     v.resize(n);
 }
 */
+
 
 void
 nest::SPManager::enable_structural_plasticity()

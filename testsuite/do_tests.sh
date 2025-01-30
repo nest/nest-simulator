@@ -157,8 +157,8 @@ if test "${HAVE_MPI}" = "true"; then
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
-echo "INFO_OS=${INFO_OS}"
-if test "${INFO_OS}" = "Darwin"; then
+echo "INFO_OS=${INFO_OS:-}"
+if test "${INFO_OS:-}" = "Darwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )" || true
     echo "TEST_CRSTATE=$TEST_CRSTATE"
     defaults write com.apple.CrashReporter DialogType server || echo "WARNING: Could not set CrashReporter DialogType!"
@@ -178,7 +178,7 @@ list_files() {
     # instead use list_files like
     #
     #   list_files <somedir> <some_pattern> | while read -r test_name; do ... done
-    if test "${INFO_OS}" = "Darwin"; then
+    if test "${INFO_OS:-}" = "Darwin"; then
         # ref https://stackoverflow.com/a/752893
         # Note that on GNU systems an additional '-r' would be needed for
         # xargs, which is not available here.
@@ -593,7 +593,7 @@ python3 "$(dirname "$0")/summarize_tests.py" "${REPORTDIR}"
 TESTSUITE_RESULT="$?"
 
 # Mac OS X: Restore old crash reporter state
-if test "${INFO_OS}" = "Darwin" ; then
+if test "${INFO_OS:-}" = "Darwin" ; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
 fi
 

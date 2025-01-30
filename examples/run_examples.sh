@@ -31,10 +31,15 @@ if ! python3 -c "import nest" >/dev/null 2>&1; then
     exit 1
 fi
 
-
 # set bash strict mode
 set -euo pipefail
+set -x
 IFS=$' \n\t'
+
+# current directory where all results are save is "basedir"
+basedir="$PWD"
+# source tree where all input scripts/data can be found is "sourcedir"
+sourcedir="$(realpath "$(dirname "$0")/..")"
 
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
@@ -43,11 +48,11 @@ if [ "${#}" -eq 0 ]; then
     # examples installation path.
     EXAMPLELIST="$(mktemp examplelist.XXXXXXXXXX)"
     if [ -d "nest/" ] ; then
-        grep -rl --include='*.sli' 'autorun=true' nest/ >>"$EXAMPLELIST"
+        grep -rl --include='*.sli' 'autorun=true' "${sourcedir}/nest/" >>"$EXAMPLELIST" || true
     else
-        grep -rl --include='*.sli' 'autorun=true' examples/ >>"$EXAMPLELIST"
+        grep -rl --include='*.sli' 'autorun=true' "${sourcedir}/examples/" >>"$EXAMPLELIST" || true
     fi
-    find pynest/examples -name '*.py' >>"$EXAMPLELIST"
+    find "${sourcedir}/pynest/examples" -name '*.py' >>"$EXAMPLELIST" || true
     readarray -t EXAMPLES <"$EXAMPLELIST"  # append each example found above
     rm "$EXAMPLELIST"
 else
@@ -64,10 +69,34 @@ done
 MPLCONFIGDIR="$(pwd)/matplotlib/"
 export MPLCONFIGDIR
 
-time_format="  time: {real: %E, user: %U, system: %S}\n\
-  memory: {total: %K, max_rss: %M}"
+INFO_OS="$(uname -s)"
 
-basedir=$PWD
+# find "time" command
+if test "${INFO_OS:-}" = "Darwin"; then
+    if test -x "/usr/local/bin/gtime"; then
+        # https://www.man7.org/linux/man-pages/man1/time.1.html
+        alias time="/usr/local/bin/gtime -f '  time: {real: %E, user: %U, system: %S}\n  memory: {total: %K, max_rss: %M}' --quiet"
+    else
+        if command -v gtime >/dev/null; then
+            alias time="\$(command -v gtime) -f '  time: {real: %E, user: %U, system: %S}\n  memory: {total: %K, max_rss: %M}' --quiet"
+        elif command -v time >/dev/null; then
+            # bash built-in time does not have memory information and uses TIMEFORMAT env variable
+            TIMEFORMAT="  time: {real: %E, user: %U, system: %S}"
+            export TIMEFORMAT
+        else
+            echo "'time' does not work on macOS. Try 'brew install gnu-time' or provide a compatible command by different means."
+            exit 1;
+        fi
+    fi
+else
+    # bash built-in time does not have memory information and uses TIMEFORMAT env variable
+    TIMEFORMAT="  time: {real: %E, user: %U, system: %S}"
+    export TIMEFORMAT
+    if ! command -v time >/dev/null; then
+        echo "could not determine a 'time' command. aborting"
+        exit 1;
+    fi
+fi
 
 FAILURES=0
 START="${SECONDS}"
@@ -101,11 +130,9 @@ for i in "${EXAMPLES[@]}"; do
 
     export NEST_DATA_PATH="$output_dir"
     touch .start_example
-    sleep 1
+    #sleep 1  # why was this needed?!
     set +e
-    # The following line will not work on macOS. There, `brew install gnu-time` and use the commented-out line below.
-    /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
-    # /usr/local/bin/gtime -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" | tee -a "$metafile" 2>&1
+    time sh -c "'$runner' '$example' >'$logfile' 2>&1" 2>&1 | tee -a "$metafile"
     ret=$?
     set -e
 
@@ -131,12 +158,12 @@ for i in "${EXAMPLES[@]}"; do
 
     unset NEST_DATA_PATH
     cd "$basedir"
-
+    exit 42
 done
 ELAPSED_TIME="$(( SECONDS - START ))"
 
 echo ">>> Longest running examples:"
-grep -Eo "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -rg | head -n 15
+grep -Eo "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -rg | head -n 15 || true
 
 echo ">>> RESULTS: ${FAILURES} failed /$(echo "${EXAMPLES[*]}" | wc -w) total"
 echo ">>> TOTAL TIME: $((ELAPSED_TIME/60)) min $((ELAPSED_TIME%60)) sec."

@@ -173,7 +173,6 @@ run_test ()
     if test "x${unexpected_exitcode:-}" != x ; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
-        ask_results
         exit 2
     fi
 

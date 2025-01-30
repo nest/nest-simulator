@@ -644,6 +644,7 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v )
   global_shuffle( v, v.size() );
 }
 
+/*
 void
 nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 {
@@ -666,9 +667,10 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
   }
   v = v2;
 }
+*/
 
-/*
-This shuffle is in O(n) and use half of the memory used in the other function for n close to N
+
+//This shuffle is in O(n) and use half of the memory used in the other function for n close to N
 
 void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
     assert(n <= v.size());
@@ -682,7 +684,7 @@ void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
     // Resize the vector to keep only the first 'n' elements
     v.resize(n);
 }
-*/
+
 
 void
 nest::SPManager::enable_structural_plasticity()

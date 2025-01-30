@@ -711,7 +711,7 @@ jobs:
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
@@ -733,9 +733,9 @@ jobs:
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && "{$HOME}/.cache/sionlib.install" || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && "${HOME}/.cache/libneurosim.install" || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && "${HOME}/.cache/music.install" || 'OFF' }} \
               ..
 
       - name: "Add GCC problem matcher"
@@ -760,7 +760,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
@@ -846,7 +846,7 @@ jobs:
 
       - name: "Configure NEST build"
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           cd "$NEST_VPATH"
           cmake \
@@ -890,7 +890,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"

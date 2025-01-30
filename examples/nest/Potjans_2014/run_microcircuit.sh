@@ -37,7 +37,7 @@ OUTPUT_PATH="$(cd "$OUTPUT_PATH" || exit 1; pwd)"
 NEST_PATH="$(grep '/nest_path' sim_params.sli | cut -d '(' -f2 | cut -d ')' -f1)"
 
 # Prepare output directory
-mkdir -p "$OUTPUT_PATH"
+mkdir -pv "$OUTPUT_PATH"
 cp 'sim_params.sli' "$OUTPUT_PATH"
 cp 'network_params.sli' "$OUTPUT_PATH"
 cp 'microcircuit.sli' "$OUTPUT_PATH"

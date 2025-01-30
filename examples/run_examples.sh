@@ -118,7 +118,7 @@ for i in "${EXAMPLES[@]}"; do
     output_dir="$basedir/example_logs/$example"
     logfile="$output_dir/output.log"
     metafile="$output_dir/meta.yaml"
-    mkdir -p "$output_dir"
+    mkdir -pv "$output_dir"
 
     echo ">>> RUNNING: $workdir/$example"
     echo "    LOGFILE: $logfile"

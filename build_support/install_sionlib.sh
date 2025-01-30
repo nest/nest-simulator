@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SIONLIBVERSION="1.7.4"
-SIONLIB_INSTALL_PATH="${1:-${HOME}/.cache/csa.install}"
+SIONLIB_INSTALL_PATH="${1:-${HOME}/.cache/sionlib.install}"
 
 # Install SIONlib
 wget --content-disposition "http://apps.fz-juelich.de/jsc/sionlib/download.php?version=${SIONLIBVERSION}"

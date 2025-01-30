@@ -138,7 +138,6 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
 #config-settings."cmake.define.LDFLAGS" = "-L/usr/local/lib"
 config-settings."cmake.define.OpenMP_ROOT" = "/usr/local/opt/libomp"
 # config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-Xclang -fopenmp"
-/usr/lib/libreadline.dylib
 config-settings."cmake.define.readline" = "/usr/lib/libreadline.dylib"
 config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "/usr/local/opt/libomp/include"
 config-settings."cmake.define.OpenMP_CXX_LIB_NAMES" = "libomp"

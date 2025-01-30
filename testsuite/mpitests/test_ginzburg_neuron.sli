@@ -49,8 +49,8 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /sg /spike_generator << /spike_times [1.0 1.0] >> Create def
-  /gens [ total_vps ] 
-  { 
+  /gens [ total_vps ]
+  {
     ;
     /ginzburg_neuron << /tau_m 1.0 >> Create
   } Table def
@@ -60,15 +60,11 @@ skip_if_not_threaded
   gens { sg exch Connect } forall
   [ gens pnet ] { Connect } ScanThread
   pnet { sr Connect } forall
-  
+
   20. Simulate
 
-  % get events, replace vectors with SLI arrays    
+  % get events, replace vectors with SLI arrays
   /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
-  ev 
+  ev
 } distributed_process_invariant_events_assert_or_die
-
-
-
-    

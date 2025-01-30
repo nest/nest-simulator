@@ -55,7 +55,7 @@ SeeAlso: multimeter, testsuite::test_spike_det_reset
   vm [ /n_events ] get                      10 eq res exch append /res Set
   vm [ /events /V_m ] get cva length 10 eq res exch append /res Set
   vm [ /events /times   ]    get cva length 10 eq res exch append /res Set
-  
+
   % reset
   vm << /n_events 0 >> SetStatus
   vm [ /n_events ] get                      0 eq res exch append /res Set
@@ -63,7 +63,7 @@ SeeAlso: multimeter, testsuite::test_spike_det_reset
   vm [ /events /times   ]    get cva length 0 eq res exch append /res Set
 
   % simulate more
-  5 Simulate % should record voltage at 11, ..., 15 
+  5 Simulate % should record voltage at 11, ..., 15
   vm [ /n_events ] get                      5 eq res exch append /res Set
   vm [ /events /V_m ] get cva length 5 eq res exch append /res Set
   vm [ /events /times   ] get cva length    5 eq res exch append /res Set

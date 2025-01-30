@@ -23,12 +23,12 @@
 
 /** @BeginDocumentation
     Name: testsuite::test_one_to_one - Test correct connection with many targets
-    Synopsis: (test_one_to_one) run -> - 
+    Synopsis: (test_one_to_one) run -> -
 
     Description:
     test_one_to_one.sli checks that all-to-all connections are created
     correctly if the number of targets exceeds the number of local nodes.
-    
+
     Author: Hans Ekkehard Plesser
     SeeAlso: testsuite::test_all_to_all, testsuite::test_fixed_indegree,
     testsuite::test_pairwise_bernoulli
@@ -39,12 +39,12 @@
 
 % With one MPI process, conventional looping is used. We use that as
 % reference case. For 4 processes, we will have fewer local nodes than
-% targets and inverse looping is used. 
+% targets and inverse looping is used.
 [1 4]
 {
   /nrns /iaf_psc_alpha 4 Create def
-  
+
   nrns nrns /one_to_one Connect
-  
+
   << >> GetConnections { cva 2 Take }  Map
 } distributed_process_invariant_collect_assert_or_die

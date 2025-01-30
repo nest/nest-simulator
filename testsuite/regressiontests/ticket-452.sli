@@ -33,7 +33,7 @@ into many small pieces.
 
 The problem was unrelated to the setting of kernel property  /off_grid_spiking
 and the spike_recorder property  /precise_times.
- 
+
 Author: Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
  */
 
@@ -53,9 +53,9 @@ M_ERROR setverbosity
  << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetKernelStatus
 
  model << /I_e 500.0  >> Create /n Set
- 
+
  /poisson_generator_ps << /rate 10000.0 /start 0.0  >> Create  /pg Set
-   
+
  pg n 1.0 1.0 Connect
 
  /spike_recorder Create /sr Set
@@ -64,21 +64,20 @@ M_ERROR setverbosity
 
  simcommand
 
- sr [/events /times] get cva 
+ sr [/events /times] get cva
 
-} def 
+} def
 
 
 [/iaf_psc_delta_ps /iaf_psc_alpha_ps ]
 {
  {Run} exch prepend
  [
-  {500.0 Simulate} 
-  {1 1 500  {; 1.0 Simulate} for}  
+  {500.0 Simulate}
+  {1 1 500  {; 1.0 Simulate} for}
  ]
- exch forall eq 
+ exch forall eq
 }
-forall 
+forall
 
 and assert_or_die
-

@@ -27,7 +27,7 @@ respect to whether 1 time step is an acceptable refractory time
 
 Synopsis: (ticket-673) run -> NEST exits if test fails
 
-Description: 
+Description:
 Test whether precise models can handle t_ref==simulation resolution
 
 Author: Susanne Kunkel, 2013-01-23
@@ -39,8 +39,8 @@ Author: Susanne Kunkel, 2013-01-23
 M_ERROR setverbosity
 
 % model t_ref run_sim -> time of 2nd spike
-/run_sim 
-{  
+/run_sim
+{
   /tref Set
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus

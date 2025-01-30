@@ -13,4 +13,3 @@ SLI documentation
    objects-and-data-types
    programming-in-sli
    using-files-and-keyboard-input
-

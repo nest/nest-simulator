@@ -29,7 +29,7 @@ PR['registerLangHandler'](
         [
          // Whitespace
          [PR['PR_PLAIN'],       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
-         // A double or single quoted string 
+         // A double or single quoted string
           // or a triple double-quoted multi-line string.
          [PR['PR_STRING'],
           /^(?:"(?:(?:""(?:""?(?!")|[^\\"]|\\.)*"{0,3})|(?:[^"\r\n\\]|\\.)*"?))/,

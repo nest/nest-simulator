@@ -138,6 +138,8 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
 #config-settings."cmake.define.LDFLAGS" = "-L/usr/local/lib"
 config-settings."cmake.define.OpenMP_ROOT" = "/usr/local/opt/libomp"
 # config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-Xclang -fopenmp"
+/usr/lib/libreadline.dylib
+config-settings."cmake.define.readline" = "/usr/lib/libreadline.dylib"
 config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "/usr/local/opt/libomp/include"
 config-settings."cmake.define.OpenMP_CXX_LIB_NAMES" = "libomp"
 config-settings."cmake.define.OpenMP_libomp_LIBRARY" = "/usr/local/opt/libomp/lib/libomp.dylib"
@@ -148,24 +150,6 @@ config-settings."cmake.define.OpenMP_C_FLAGS" = "-fopenmp"
 config-settings."cmake.define.OpenMP_C_LIB_NAMES" = "libomp"
 config-settings."cmake.define.READLINE_LIBRARY" = "/usr/lib/libreadline.dylib"
 config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/lib/libncurses.dylib"
-
-[tool.scikit-build.cmake.define.overrides]
-select = "*-macos*"
-with-optimize ="-O2"
-with-warning = "ON"
-with-python = "ON"
-# with-boost = "ON"
-# with-gsl = "ON"
-with-readline = "/usr/lib/libreadline.dylib"
-# with-ltdl = "ON"
-with-openmp = "OFF"
-with-userdoc ="OFF"
-with-mpi = "OFF"
-with-libneurosim = "OFF"
-with-sionlib = "OFF"
-with-music = "OFF"
-with-hdf5 = "OFF"
-
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"

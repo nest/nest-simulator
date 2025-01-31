@@ -10,7 +10,7 @@ jobs:
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         # ubuntu-24.04, macos-13, macos-14
-        os: [macos-13, macos14]
+        os: [macos14]
 
     steps:
       - uses: actions/checkout@v4

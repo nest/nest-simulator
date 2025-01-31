@@ -73,8 +73,8 @@ with-hdf5 = "OFF"
 
 [tool.cibuildwheel]
 build-frontend = "default"
-# build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
-build = ["cp312-*"]
+build = ["cp38-*", "cp39-*", "cp310-*", "cp311-*", "cp312-*"]
+# build = ["cp312-*"]
 skip = "*-win* *-manylinux_i686" # Skip
 test-skip = ""
 free-threaded-support = false
@@ -130,20 +130,9 @@ musllinux-s390x-image = "musllinux_1_2"
 [[tool.cibuildwheel.overrides]]
 select = "*-macos*"
 inherit.environment = "append"
-#environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
-#config-settings."cmake.define.OpenMP_ROOT" = "/usr/local/opt/libomp"
-# config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-Xclang -fopenmp"
-config-settings."cmake.define.with-readline" = "/usr/lib/libreadline.dylib"
-#config-settings."cmake.define.OpenMP_CXX_INCLUDE_DIR" = "/usr/local/opt/libomp/include"
-#config-settings."cmake.define.OpenMP_CXX_LIB_NAMES" = "libomp"
-#config-settings."cmake.define.OpenMP_libomp_LIBRARY" = "/usr/local/opt/libomp/lib/libomp.dylib"
-#config-settings."cmake.define.OpenMP_C_FOUND" = "TRUE"
-#config-settings."cmake.define.OpenMP_CXX_FOUND" = "TRUE"
-#config-settings."cmake.define.OpenMP_CXX_FLAGS" = "-fopenmp"
-#config-settings."cmake.define.OpenMP_C_FLAGS" = "-fopenmp"
-#config-settings."cmake.define.OpenMP_C_LIB_NAMES" = "libomp"
-#config-settings."cmake.define.READLINE_LIBRARY" = "/usr/lib/libreadline.dylib"
-#config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/lib/libncurses.dylib"
+# environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
+config-settings."cmake.define.READLINE_LIBRARY" = "/usr/lib/libreadline.dylib"
+config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/lib/libncurses.dylib"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"

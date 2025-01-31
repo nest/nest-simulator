@@ -119,66 +119,6 @@ private:
     }
   }
 
-  template <>
-  double
-  cast_value_< double >( const boost::any& value, const std::string& key ) const
-  {
-    try
-    {
-      if ( is_type< double >( value ) )
-      {
-        return boost::any_cast< double >( value );
-      }
-      if ( is_type< long >( value ) )
-      {
-        return static_cast< double >( boost::any_cast< long >( value ) );
-      }
-      if ( is_type< size_t >( value ) )
-      {
-        return static_cast< double >( boost::any_cast< size_t >( value ) );
-      }
-      if ( is_type< int >( value ) )
-      {
-        return static_cast< double >( boost::any_cast< int >( value ) );
-      }
-      throw boost::bad_any_cast(); // deflect to error handling below
-    }
-    catch ( const boost::bad_any_cast& )
-    {
-      const std::string msg =
-        std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type double.";
-      throw nest::TypeMismatch( msg );
-    }
-  }
-
-  template <>
-  std::vector< double >
-  cast_value_< std::vector< double > >( const boost::any& value, const std::string& key ) const
-  {
-    try
-    {
-      if ( is_type< std::vector< double > >( value ) )
-      {
-        return boost::any_cast< std::vector< double > >( value );
-      }
-      if ( is_type< std::vector< long > >( value ) )
-      {
-        const std::vector< long > vlong = boost::any_cast< std::vector< long > >( value );
-        std::vector< double > res;
-        std::copy( vlong.begin(), vlong.end(), std::back_inserter( res ) );
-        return res;
-      }
-      throw boost::bad_any_cast(); // deflect to error handling below
-    }
-    catch ( const boost::bad_any_cast& )
-    {
-      const std::string msg =
-        std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type std::vector<double>.";
-      throw nest::TypeMismatch( msg );
-    }
-  }
-
-
   /**
    * @brief Cast the specified value to an integer.
    *
@@ -373,5 +313,12 @@ public:
 };
 
 std::ostream& operator<<( std::ostream& os, const dictionary& dict );
+
+template <>
+double dictionary::cast_value_< double >( const boost::any& value, const std::string& key ) const;
+
+template <>
+std::vector< double > dictionary::cast_value_< std::vector< double > >( const boost::any& value,
+  const std::string& key ) const;
 
 #endif /* DICTIONARY_H_ */

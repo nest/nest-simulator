@@ -58,7 +58,7 @@ common_prop_models = {
         "neuron": "iaf_psc_alpha",
     },
     "stdp_facetshw_synapse_hom": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
-    "stdp_pl_synapse_hom": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
+    "stdp_pl_synapse_hom": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha_hom"},
     "stdp_synapse_hom": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
     "static_synapse_hom_w": {"parameter": "weight", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
     "tsodyks_synapse_hom": {"parameter": "tau_psc", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},

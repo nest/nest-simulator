@@ -131,8 +131,8 @@ musllinux-s390x-image = "musllinux_1_2"
 select = "*-macos*"
 inherit.environment = "append"
 # environment = { MACOSX_DEPLOYMENT_TARGET = "10.15" }
-config-settings."cmake.define.READLINE_LIBRARY" = "/usr/lib/libreadline.dylib"
-config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/lib/libncurses.dylib"
+config-settings."cmake.define.READLINE_LIBRARY" = "/opt/homebrew/lib/libreadline.dylib"
+config-settings."cmake.define.NCURSES_LIBRARY" = "/opt/homebrew/lib/libncurses.dylib"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"

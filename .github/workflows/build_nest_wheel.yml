@@ -20,7 +20,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
           CIBW_ARCHS_LINUX: "auto"
           # Skip trying to test arm64 builds on Intel Macs
           CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"

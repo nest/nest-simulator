@@ -61,40 +61,107 @@ extern "C" int iaf_cond_exp_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Simple conductance based leaky integrate-and-fire neuron model
+Leaky integrate-and-fire neuron model with exponentially-shaped synaptic conductances
+
 
 Description
 +++++++++++
 
-``iaf_cond_exp`` is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses. Incoming spike events induce a postsynaptic change
-of conductance modelled by an exponential function. The exponential function
-is normalized such that an event of weight 1.0 results in a peak conductance of
-1 nS.
+``iaf_cond_exp`` is a leaky integrate-and-fire neuron model with
 
-See also [1]_.
+* a hard threshold,
+* a fixed refractory period,
+* no adaptation mechanisms,
+* exponentially-shaped synaptic conductances according to [1]_, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
+
+Membrane potential evolution, spike emission, and refractoriness
+................................................................
+
+The membrane potential evolves according to
+
+.. math::
+
+   \frac{dV_\text{m}}{dt} = \frac{ -g_{\text{L}} (V_{\text{m}} - E_{\text{L}}) - I_{\text{syn}} + I_\text{e} } {C_{\text{m}}}
+
+where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+a constant input current set as a model parameter.
+
+A spike is emitted at time step :math:`t^*=t_{k+1}` if
+
+.. math::
+
+   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
+
+Subsequently,
+
+.. math::
+
+   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+
+that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+Synaptic input
+..............
+
+The synaptic input current has an excitatory and an inhibitory component
+
+.. math::
+
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)
+
+where
+
+.. math::
+
+   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j}  \sum_k g_{\text{j, X}}(t-t_j^k-d_j) \;,
+
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
+or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
+is the delay from neuron :math:`j`.
+
+The individual synaptic conductances are given by
+
+.. math::
+
+   g_{\text{j, X}}(t) = w_{\text{j}} \cdot e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
+
+where :math:`\Theta(x)` is the Heaviside step function. The conductances are normalized to unit maximum, that is,
+
+.. math::
+
+   g_{\text{j, X}}(t= 0) = w_{\text{j}} \;,
+
+where :math:`w` is a weight (excitatory if :math:`w > 0` or inhibitory if :math:`w < 0`).
 
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+=============== ================== =============================== ========================================================================
+**Parameter**   **Default**        **Math equivalent**             **Description**
+=============== ================== =============================== ========================================================================
+``E_L``         -70 mV             :math:`E_\text{L}`              Leak reversal potential
+``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
+``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
+``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
+``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
+``E_ex``        0 mV               :math:`E_\text{ex}`             Excitatory reversal potential
+``E_in``        -85 mV             :math:`E_\text{in}`             Inhibitory reversal potential
+``g_L``         -16.6667 nS        :math:`g_\text{L}`              Leak conductance
+``tau_syn_ex``  0.2 ms             :math:`\tau_{\text{syn, ex}}`   Exponential decay time constant of excitatory synaptic conductance kernel
+``tau_syn_in``  2.0 ms             :math:`\tau_{\text{syn, in}}`   Exponential decay time constant of inhibitory synaptic conductance kernel
+``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
+=============== ================== =============================== ========================================================================
 
-=========== ======  =======================================================
- V_m        mV      Membrane potential
- E_L        mV      Leak reversal potential
- C_m        pF      Capacity of the membrane
- t_ref      ms      Duration of refractory period
- V_th       mV      Spike threshold
- V_reset    mV      Reset potential of the membrane
- E_ex       mV      Excitatory reversal potential
- E_in       mV      Inhibitory reversal potential
- g_L        nS      Leak conductance
- tau_syn_ex ms      Exponential decay time constant of excitatory synaptic
-                    conductance kernel
- tau_syn_in ms      Exponential decay time constant of inhibitory synaptic
-                    conductance kernel
- I_e        pA      Constant input current
-=========== ======  =======================================================
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
+
+================== ================= ========================== =================================
+**State variable** **Initial value** **Math equivalent**        **Description**
+================== ================= ========================== =================================
+``V_m``            -70 mV            :math:`V_{\text{m}}`       Membrane potential
+``g_ex``           0 nS              :math:`g_{\text{ex}}`      Excitatory synaptic conductance
+``g_in``           0 nS              :math:`g_{\text{in}}`      Inhibitory synaptic conductance
+================== ================= ========================== =================================
 
 Sends
 +++++
@@ -118,7 +185,7 @@ References
 See also
 ++++++++
 
-iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
+iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_cond_alpha, iaf_cond_beta
 
 Examples using this model
 +++++++++++++++++++++++++

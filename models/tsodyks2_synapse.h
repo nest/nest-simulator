@@ -54,13 +54,6 @@ The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 See also [3]_.
 
 Under identical conditions, the tsodyks2_synapse produces slightly

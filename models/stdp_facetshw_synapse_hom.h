@@ -54,13 +54,6 @@ The modified spike pairing scheme requires the calculation of ``tau_minus_``
 within this synapse and not at the neuron site via ``Kplus_`` like in
 ``stdp_synapse_hom``.
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 The synapse IDs are assigned to each synapse in an ascending order (0,1,2,
 ...) according their first presynaptic activity and is used to group synapses
 that are updated at once. It is possible to avoid activity dependent synapse

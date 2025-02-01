@@ -29,6 +29,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "source_table.h"
+#include "stopwatch_impl.h"
 #include "vp_manager_impl.h"
 
 nest::SourceTable::SourceTable()
@@ -229,7 +230,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       }
     }
   }
+  kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {

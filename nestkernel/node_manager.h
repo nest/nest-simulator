@@ -356,7 +356,7 @@ private:
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
-  Stopwatch sw_construction_create_;
+  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > sw_construction_create_;
 };
 
 inline size_t

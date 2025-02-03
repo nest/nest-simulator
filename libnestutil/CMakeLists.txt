@@ -46,7 +46,7 @@ endif()
 
 set_target_properties(nestutil PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS})
+target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} OpenMP::OpenMP_CXX)
 
 target_include_directories(nestutil PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

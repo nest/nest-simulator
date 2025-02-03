@@ -109,11 +109,11 @@ public:
   }
 
   void
-  get_status( DictionaryDatum& ) override
+  get_status( dictionary& ) override
   {
   }
   void
-  set_status( const DictionaryDatum& ) override
+  set_status( const dictionary& ) override
   {
   }
 

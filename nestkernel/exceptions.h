@@ -1260,7 +1260,7 @@ public:
 class MUSICPortUnconnected : public KernelException
 {
 private:
-  std::string msg;
+  std::string msg_;
 
 public:
   /**
@@ -1291,6 +1291,7 @@ public:
     return "MUSICPortUnconnected";
   }
 };
+
 
 /**
  * Exception to be thrown if a music_event_out_proxy is generated, but the
@@ -1492,6 +1493,9 @@ public:
  */
 class MUSICChannelAlreadyMapped : public KernelException
 {
+private:
+  std::string msg_;
+
 public:
   /**
    * @note model should be passed from get_name() to ensure that
@@ -1502,9 +1506,6 @@ public:
    */
   MUSICChannelAlreadyMapped( const std::string& model, const std::string& portname, int channel )
     : KernelException( "MUSICChannelAlreadyMapped" )
-    , portname_( portname )
-    , channel_( channel )
-    , model_( model )
   {
     msg_ = String::compose(
       "The channel %1 of port %2 has already be mapped "
@@ -1589,7 +1590,7 @@ class MPIErrorCode : public KernelException
 private:
   std::string msg_;
   std::string error_;
-  char errmsg_[ 256 ];
+  char errmsg_[ 2 * MPI_MAX_ERROR_STRING ]; // Multiply by two for extra safety
   int len_;
 
 public:

@@ -253,30 +253,6 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_READLINE )
-  # Find readline
-  set( HAVE_READLINE OFF PARENT_SCOPE )
-  if ( with-readline )
-    if ( NOT ${with-readline} STREQUAL "ON" )
-      # a path is set
-      set( Readline_ROOT "${with-readline}" )
-    endif ()
-
-    find_package( Readline )
-    if ( READLINE_FOUND )
-      set( HAVE_READLINE ON PARENT_SCOPE )
-      # export found variables to parent scope
-      set( READLINE_FOUND "${READLINE_FOUND}" PARENT_SCOPE )
-      set( READLINE_LIBRARIES "${READLINE_LIBRARIES}" PARENT_SCOPE )
-      set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIRS}" PARENT_SCOPE )
-      set( READLINE_VERSION "${READLINE_VERSION}" PARENT_SCOPE )
-
-      include_directories( ${READLINE_INCLUDE_DIRS} )
-      # is linked in sli/CMakeLists.txt
-    endif ()
-  endif ()
-endfunction()
-
 function( NEST_PROCESS_WITH_GSL )
   # Find GSL
   set( HAVE_GSL OFF PARENT_SCOPE )
@@ -398,6 +374,13 @@ function( NEST_PROCESS_WITH_OPENMP )
       printError( "CMake can not find OpenMP." )
     endif ()
   endif ()
+
+  # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
+  # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
+  if ( NOT TARGET OpenMP::OpenMP_CXX )
+    add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
+  endif()
+
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )

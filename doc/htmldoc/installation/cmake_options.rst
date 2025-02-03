@@ -56,7 +56,6 @@ To configure NEST for compilation without external packages, use the following  
     cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dwith-gsl=OFF \
-          -Dwith-readline=OFF \
           -Dwith-ltdl=OFF \
           -Dwith-openmp=OFF \
           </path/to/nest/source>

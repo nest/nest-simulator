@@ -565,7 +565,7 @@ jobs:
           sudo apt-get update
           # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
           sudo apt-get install ccache
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
+          sudo apt-get install libltdl-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
           sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
           # Install MPI dependencies regardless of whether we compile NEST with or without MPI, so the installation of MPI4Py works
           sudo apt-get install openmpi-bin libopenmpi-dev
@@ -674,7 +674,6 @@ jobs:
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
-              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
@@ -804,7 +803,6 @@ jobs:
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
-              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \

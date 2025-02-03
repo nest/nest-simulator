@@ -146,9 +146,13 @@ Hard threshold
 
             .. dropdown:: Hard threshold
 
-                  * iaf_*
-                  * glif_*
-                  * amat_ / mat
+               {% for items in tag_dict %}
+               {% if items.tag == "hard threshold" %}
+               {% for item in items.models | sort %}
+               * :doc:`/models/{{ item | replace(".html", "") }}`
+               {% endfor %}
+               {% endif %}
+               {% endfor %}
 
         .. tab-item:: Technical details
 
@@ -181,14 +185,14 @@ Soft threshold
 
             .. dropdown:: Soft threshold
 
-               * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
-               * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
-               * hh_psc_alpha – Hodgkin-Huxley neuron model
-               * hh_psc_alpha_clopath – Hodgkin-Huxley neuron model with support for Clopath plasticity
-               * hh_psc_alpha_gap – Hodgkin-Huxley neuron model with gap-junction support
-               * Hill and Tononi?
-               * Izhikevich
-               * Adaptive exponential integrate-and-fire (AEIF)
+               {% for items in tag_dict %}
+               {% if items.tag == "soft threshold" %}
+               {% for item in items.models | sort %}
+               * :doc:`/models/{{ item | replace(".html", "") }}`
+               {% endfor %}
+               {% endif %}
+               {% endfor %}
+
 
           .. tab-item:: Technical details
 
@@ -217,9 +221,14 @@ Stochastic
 
       .. dropdown::  Stochastic
 
-        * gif_*
-        * pp_cond_exp_mc_urbanczik – Two-compartment point process neuron with conductance-based synapses
-        * pp_psc_delta – Point process neuron with leaky integration of delta-shaped PSCs
+         {% for items in tag_dict %}
+         {% if items.tag == "stochastic" %}
+         {% for item in items.models | sort %}
+         * :doc:`/models/{{ item | replace(".html", "") }}`
+         {% endfor %}
+         {% endif %}
+         {% endfor %}
+
 
 Input mechanism
 ~~~~~~~~~~~~~~~
@@ -486,9 +495,38 @@ Rate neurons
    .. grid-item::
 
      Rate neurons can approximate biologically realistic neurons but they are also used in artificial neuranl networks
-     (aka recurrent neural networks RNNs)
+     (also known as recurrent neural networks RNNs).
 
      Most rate neurons in NEST are implemented as templates based on the non-linearity and noise type.
+
+Type of non-linearity
+~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify the type of non-linearity, which in NEST are provided as C++ templates.
+
+The following non-linearity types are available:
+
+
+ .. dropdown:: Templates with non-linearity
+
+  *  :doc:`/models/gauss_rate`
+  *  :doc:`/models/lin_rate`
+  *  :doc:`/models/sigmoid_rate`
+  *  :doc:`/models/sigmoid_rate_gg_1998`
+  *  :doc:`/models/tanh_rate`
+  *  :doc:`/models/threshold_lin_rate`
+
+Where is Non-linearity applied? ``linear_summation``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+The boolean parameter ``linear_summation`` determines whether the
+input from different presynaptic neurons is first summed linearly and
+then transformed by a nonlinearity (``True``), or if the input from
+individual presynaptic neurons is first nonlinearly transformed and
+then summed up (``False``). Default is ``True``.
+
+You can set this parameter in the parameter dictionary of the rate neuron.
 
 
 
@@ -527,54 +565,19 @@ Noise application
        :doc:`/models/rate_neuron_opn`
 
 
-Where is Non-linearity applied? ``linear_summation``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-The boolean parameter ``linear_summation`` determines whether the
-input from different presynaptic neurons is first summed linearly and
-then transformed by a nonlinearity (``True``), or if the input from
-individual presynaptic neurons is first nonlinearly transformed and
-then summed up (``False``). Default is ``True``.
-
-You can set this parameter in the parameter dictionary of the rate neuron.
-
-
-Rate transformer
-~~~~~~~~~~~~~~~~
-
-You can use the :doc:`rate_transformer_node </models/rate_transformer_node>` (applies a non-linearity
-to a sum of incoming rates, transforming them before passing on to other nodes.)
-
-
-
-Type of non-linearity
-~~~~~~~~~~~~~~~~~~~~~~~
-
-You can specify the type of non-linearity, which in NEST are provided as C++ templates.
-
-The following non-linearity types are available:
-
-
- .. dropdown:: Rate models with non-linearity
-
-  *  :doc:`/models/gauss_rate`
-  *  :doc:`/models/lin_rate`
-  *  :doc:`/models/sigmoid_rate`
-  *  :doc:`/models/sigmoid_rate_gg_1998`
-  *  :doc:`/models/tanh_rate`
-  *  :doc:`/models/threshold_lin_rate`
 
 Use rate neurons in your simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The rate models are instantiated from the templates.
 To use a rate neuron, the naming convention is ``<non-linearity>_rate_<noise_type>``
 
 For example::
 
    nest.Create("gauss_rate_opn")
 
-If using the  ``rate_transformer_node``, you can use the following syntax ``rate_transformer_<non-linearity>``
+If using the  ``rate_transformer_node`` (see :ref:`below <rate_transformer>`), you can use the following syntax ``rate_transformer_<non-linearity>``
 
 Example::
 
@@ -609,19 +612,17 @@ Mean field theory
 
         * :doc:`/model_details/siegert_neuron_integration`
 
+.. _rate_transformer:
 
-.. dropdown:: Rate neurons
+Rate transformer
+~~~~~~~~~~~~~~~~
 
-   *    rate_neuron_ipn – Base class for rate model with input noise
-   *    rate_neuron_opn – Base class for rate model with output noise
-   *    rate_transformer_node – Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
-   *    siegert_neuron – model for mean-field analysis of spiking networks
-   *    sigmoid_rate – Rate neuron model with sigmoidal gain function
-   *    sigmoid_rate_gg_1998 – rate model with sigmoidal gain function
-   *    tanh_rate – rate model with hyperbolic tangent non-linearity
-   *    threshold_lin_rate – Rate model with threshold-linear gain function
-   *    gauss_rate – Rate neuron model with Gaussian gain function
-   *    lin_rate – Linear rate model
+If you want to transform rates in a non-linear manner, but do not want any neuronal dynamics processing these rates, then you can use the rate transformer node.
+
+The :doc:`rate_transformer_node </models/rate_transformer_node>` applies a non-linearity
+to a sum of incoming rates, transforming them before passing on to other nodes.
+
+
 
 |
 

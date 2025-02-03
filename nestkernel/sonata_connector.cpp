@@ -107,7 +107,6 @@ SonataConnector::connect()
   {
     cur_fname_ = boost::any_cast< std::string >( edge_dict.at( "edges_file" ) );
 
-
     const auto file = open_file_( cur_fname_ );
     const auto edges_top_level_grp = open_group_( file, "edges" );
 
@@ -551,7 +550,8 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
   for ( auto& syn_kv_pair : edge_params )
   {
     const auto type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
-    auto d = boost::any_cast< dictionary >( syn_kv_pair.second );
+    auto d = boost::any_cast< dictionary >( syn_kv_pair.second.item );
+
     const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model

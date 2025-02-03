@@ -31,7 +31,6 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "nest_datums.h"
 #include "nest_impl.h"
 
 // Includes from libnestutil:

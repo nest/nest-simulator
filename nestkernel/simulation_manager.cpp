@@ -1108,12 +1108,11 @@ nest::SimulationManager::update_()
               sw_gather_secondary_data_.start();
 #endif
               kernel().event_delivery_manager.gather_secondary_events( true );
-            }
 #ifdef TIMER_DETAILED
-            sw_gather_secondary_data_.stop();
+              sw_gather_secondary_data_.stop();
 #endif
+            }
           }
-
 
           advance_time_();
 

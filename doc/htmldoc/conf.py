@@ -80,6 +80,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
+    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile|.*\.txt",
 }
 
 # General information about the project.
@@ -258,14 +259,6 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
-
-def copy_example_file(src):
-    copyfile(os.path.join(pynest_dir, src), Path("examples") / Path(src).parts[-1])
-
-
-# -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/hpc_benchmark_connectivity.svg")
 
 
 def patch_documentation(patch_url):

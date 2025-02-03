@@ -39,7 +39,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
 which encode the x and y coordinates of an infinite-loop.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_infinite-loop.png
+.. image:: eprop_supervised_regression_schematic_infinite-loop.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center

@@ -3,14 +3,6 @@
 Types of neurons
 ================
 
-.. {% for items in tag_dict %}
-   {% if items.tag == "integrate-and-fire" %}
-   {% for item in items.models | sort %}
-   * :doc:`/models/{{ item | replace(".html", "") }}`
-   {% endfor %}
-   {% endif %}
-   {% endfor %}
-
 
 .. grid::
    :gutter: 1
@@ -104,9 +96,15 @@ Geometry
 
       .. dropdown:: Multi-compartment neurons
 
-         * iaf_cond_alpha_mc – Multi-compartment conductance-based leaky integrate-and-fire neuron model
-         * pp_cond_exp_mc_urbanczik – Two-compartment point process neuron with conductance-based synapses
-         * cm_default – A neuron model with user-defined dendrite structure. Currently, AMPA, GABA or AMPA+NMDA receptors.
+         {% for items in tag_dict %}
+         {% if items.tag == "compartmental model" %}
+         {% for item in items.models | sort %}
+         * :doc:`/models/{{ item | replace(".html", "") }}`
+         {% endfor %}
+         {% endif %}
+         {% endfor %}
+
+
 
 
 
@@ -181,7 +179,7 @@ Soft threshold
             the whole whole spike wave form
 
 
-           .. dropdown:: Soft threshold
+            .. dropdown:: Soft threshold
 
                * hh_cond_beta_gap_traub – Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
                * hh_cond_exp_traub – Hodgkin-Huxley model for Brette et al (2007) review
@@ -267,6 +265,16 @@ or conductances.
 
      For more details see :ref:`synapse_dynamics`.
 
+     .. dropdown:: Current-based neuron models
+
+         {% for items in tag_dict %}
+         {% if items.tag == "current-based" %}
+         {% for item in items.models | sort %}
+         * :doc:`/models/{{ item | replace(".html", "") }}`
+         {% endfor %}
+         {% endif %}
+         {% endfor %}
+
 - Conductance-based models
 
 
@@ -290,6 +298,17 @@ or conductances.
 
 
      For more details see :ref:`synapse_dynamics`.
+
+     .. dropdown:: Conductance-based neuron models
+
+         {% for items in tag_dict %}
+         {% if items.tag == "conductance-based" %}
+         {% for item in items.models | sort %}
+         * :doc:`/models/{{ item | replace(".html", "") }}`
+         {% endfor %}
+         {% endif %}
+         {% endfor %}
+
 
 
 Post-synaptic input responses
@@ -364,20 +383,15 @@ Adaptation mechanism
             such as spike-frequency adaptation, where a neuron's responsiveness decreases with sustained
             high-frequency input.
 
-            .. dropdown:: Adaptation
+            .. dropdown:: Models with adaptation
 
-                  * aeif_cond_alpha – Conductance based exponential integrate-and-fire neuron model
-                  * aeif_cond_alpha_astro – Conductance based exponential integrate-and-fire neuron model with support for neuron-astrocyte interactions
-                  * aeif_cond_alpha_multisynapse – Conductance based adaptive exponential integrate-and-fire neuron model
-                  * aeif_cond_beta_multisynapse – Conductance based adaptive exponential integrate-and-fire neuron model
-                  * aeif_cond_exp – Conductance based exponential integrate-and-fire neuron model
-                  * aeif_psc_alpha – Current-based exponential integrate-and-fire neuron model
-                  * aeif_psc_delta – Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
-                  * aeif_psc_delta_clopath – Adaptive exponential integrate-and-fire neuron
-                  * aeif_psc_exp – Current-based exponential integrate-and-fire neuron model
-                  * amat2_psc_exp – Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
-                  * mat2_psc_exp – Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
-                  * ht_neuron – Neuron model after Hill & Tononi (2005)
+              {% for items in tag_dict %}
+              {% if items.tag == "adaptation" %}
+              {% for item in items.models | sort %}
+              * :doc:`/models/{{ item | replace(".html", "") }}`
+              {% endfor %}
+              {% endif %}
+              {% endfor %}
 
 
         .. tab-item:: Technical details
@@ -388,8 +402,6 @@ Adaptation mechanism
 
 Auxilliary neurons
 ~~~~~~~~~~~~~~~~~~
-
-
 
 .. grid:: 1 2 2 2
 
@@ -441,16 +453,17 @@ Precise spike timing
 
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.
 
-      .. dropdown:: Precise spike timing
 
-         * iaf_psc_alpha_ps – Current-based leaky integrate-and-fire neuron with alpha-shaped postsynaptic currents using regula falsi method for approximation of threshold crossing
-         * iaf_psc_exp_ps – Current-based leaky integrate-and-fire neuron with exponential-shaped postsynaptic currents using regula falsi method for approximation of threshold crossing
+      .. dropdown:: Models with precise spike times
 
-         * iaf_psc_exp_ps_lossless – Current-based leaky integrate-and-fire neuron with exponential-shaped postsynaptic currents predicting the exact number of spikes using a state space analysis
-         * iaf_psc_delta_ps – Current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents - precise spike timing version
+        {% for items in tag_dict %}
+        {% if items.tag == "precise" %}
+        {% for item in items.models | sort %}
+        * :doc:`/models/{{ item | replace(".html", "") }}`
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
 
-
-|
 
 ----
 
@@ -542,12 +555,15 @@ You can specify the type of non-linearity, which in NEST are provided as C++ tem
 
 The following non-linearity types are available:
 
-*    gauss_rate – Rate neuron model with Gaussian gain function
-*    lin_rate – Linear rate model
-*    sigmoid_rate – Rate neuron model with sigmoidal gain function
-*    sigmoid_rate_gg_1998 – rate model with sigmoidal gain function
-*    tanh_rate – rate model with hyperbolic tangent non-linearity
-*    threshold_lin_rate – Rate model with threshold-linear gain function
+
+ .. dropdown:: Rate models with non-linearity
+
+  *  :doc:`/models/gauss_rate`
+  *  :doc:`/models/lin_rate`
+  *  :doc:`/models/sigmoid_rate`
+  *  :doc:`/models/sigmoid_rate_gg_1998`
+  *  :doc:`/models/tanh_rate`
+  *  :doc:`/models/threshold_lin_rate`
 
 Use rate neurons in your simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -587,7 +603,7 @@ Mean field theory
 
         Mean-field theory
 
-        * siegert neuron
+        * :doc:`/models/siegert_neuron`
 
       .. tab-item:: Technical details
 
@@ -633,9 +649,14 @@ Multi-state neurons
 
 .. dropdown:: Multi-state neurons
 
-  *   mcculloch_pitts_neuron – Binary deterministic neuron with Heaviside activation function
-  *   erfc_neuron – Binary stochastic neuron with complementary error function as activation function
-  *   ginzburg_neuron – Binary stochastic neuron with sigmoidal activation function
+    {% for items in tag_dict %}
+    {% if items.tag == "binary" %}
+    {% for item in items.models | sort %}
+    * :doc:`/models/{{ item | replace(".html", "") }}`
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+
 
 |
 
@@ -667,9 +688,14 @@ Astrocytes
 
          .. dropdown:: Astrocyte models
 
-             * aeif_cond_alpha_astro – Conductance based exponential integrate-and-fire neuron model with support for neuron-astrocyte interactions
-             * astrocyte_lr_1994 – An astrocyte model based on Li & Rinzel (1994)
-             * sic_connection – Synapse type for astrocyte-neuron connections
+            {% for items in tag_dict %}
+            {% if items.tag == "astrocyte" %}
+            {% for item in items.models | sort %}
+            * :doc:`/models/{{ item | replace(".html", "") }}`
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+
 
       .. tab-item:: Technical details
 

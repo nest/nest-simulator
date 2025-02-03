@@ -357,7 +357,7 @@ def template_renderer(app, docname, source):
         and used to inject the rendered content.
     """
     env = app.builder.env
-    template_files = ["models/index", "neurons/index", "synapses/index", "devices/index"]
+    template_files = ["models/index", "neurons/index", "synapses/index", "devices/index", "neurons/neuron_types"]
 
     # Render the document if it matches one of the specified templates
     if any(docname == template_file for template_file in template_files):

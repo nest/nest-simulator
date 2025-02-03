@@ -36,7 +36,6 @@ import RestrictedPython
 from flask import Flask, jsonify, request
 from flask.logging import default_handler
 from flask_cors import CORS
-from nest.lib.hl_api_exceptions import NESTError
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.
@@ -438,7 +437,7 @@ def get_or_error(func):
         try:
             return func(call, *args, **kwargs)
 
-        except NESTError as err:
+        except nest.NESTError as err:
             error_class = err.errorname + " (NESTError)"
             detail = err.errormessage
             lineno = get_lineno(err, 1)

@@ -201,7 +201,7 @@ class NodeCollection:
             6 in new_nc
     """
 
-    _datum = None
+    _datum = None  # PYNEST-NG: Why defined at class level?
 
     def __init__(self, data=None):
         if data is None:

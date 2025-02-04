@@ -57,9 +57,9 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
   # get arguments for sionconfig --cflags and --libs
   set( CONF_FLAGS "--cxx" ) # we use cxx
   # find parallelization
-  if ( OpenMP_FOUND AND MPI_CXX_FOUND )
+  if ( OPENMP_FOUND AND MPI_CXX_FOUND )
     set( CONF_FLAGS ${CONF_FLAGS} "--ompi" )
-  elseif ( OpenMP_FOUND )
+  elseif ( OPENMP_FOUND )
     set( CONF_FLAGS ${CONF_FLAGS} "--omp" )
   elseif ( MPI_CXX_FOUND )
     set( CONF_FLAGS ${CONF_FLAGS} "--mpi" )

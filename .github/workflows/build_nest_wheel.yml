@@ -12,7 +12,7 @@ jobs:
         # ubuntu-24.04, macos-13, macos-14
         # macos-13-xlarge arm64-needs payment
         # macos-15
-        os: [ubuntu-22.04, macOS-10.15]
+        os: [ubuntu-22.04, macos-14]
 
     steps:
       - uses: actions/checkout@v4

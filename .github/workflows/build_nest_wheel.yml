@@ -11,8 +11,8 @@ jobs:
         # macos-13 is an intel runner, macos-14 is apple silicon
         # ubuntu-24.04, macos-13, macos-14
         # macos-13-xlarge arm64-needs payment
-        # macos-15
-        os: [ubuntu-22.04, macos-14]
+        # macos-15 will be available from February, 17 2025. ARM
+        os: [ubuntu-22.04, macos-13]
 
     steps:
       - uses: actions/checkout@v4

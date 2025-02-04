@@ -92,6 +92,8 @@ if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
 fi
 
+PYTEST="$( dirname $PYTHON )/pytest"
+
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
@@ -130,7 +132,6 @@ get_build_info ()
   ${PYTHON} -c "import nest; print(nest.build_info['$1'])" --quiet
 }
 
-NEST="nest_serial"
 HAVE_MPI="$(get_build_info have_mpi)"
 HAVE_OPENMP="$(get_build_info have_threads)"
 
@@ -209,7 +210,8 @@ if test "${PYTHON}"; then
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
-    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+    ${MPI_LAUNCHER_CMDLINE} 1 "${PYTHON}" -m pytest ${PYTEST_ARGS}) 2>&1 | tee -a "${TEST_LOGFILE}"
+ "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
     set -e
 
@@ -237,7 +239,7 @@ if test "${PYTHON}"; then
 
 		set +e
 		echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS}"
-                $(${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS}) 2>&1 | tee -a "${TEST_LOGFILE}"
+                $(${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTEST}" ${PYTEST_ARGS}) 2>&1 | tee -a "${TEST_LOGFILE}"
 
 		set -e
             done

@@ -61,7 +61,7 @@ with-warning = "ON"
 with-python = "ON"
 # with-boost = "ON"
 # with-gsl = "ON"
-# with-readline = "ON"
+with-readline = "/usr/local/opt/readline/lib/libreadline.dylib"
 # with-ltdl = "ON"
 with-openmp = "OFF"
 with-userdoc ="OFF"
@@ -135,8 +135,8 @@ musllinux-s390x-image = "musllinux_1_2"
 select = "*-macos*"
 inherit.environment = "append"
 environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
-config-settings."cmake.define.READLINE_LIBRARY" = "/usr/local/opt/readline/lib"
-config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/local/opt/ncurses/lib"
+# config-settings."cmake.define.READLINE_LIBRARY" = "/usr/local/opt/readline/lib"
+# config-settings."cmake.define.NCURSES_LIBRARY" = "/usr/local/opt/ncurses/lib"
 
 
 [tool.cibuildwheel.linux]

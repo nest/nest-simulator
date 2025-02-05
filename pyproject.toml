@@ -96,8 +96,8 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
-    brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses==6.5
-    brew reinstall readline==8.2.13
+    brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses@6.5
+    brew reinstall readline@8.2.13
     brew link readline --force    # create the links in /usr/local/opt/readline/lib
     brew link ncurses --force
   else

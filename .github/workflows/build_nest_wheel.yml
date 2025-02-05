@@ -19,7 +19,7 @@ jobs:
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
-        env:
+        #env:
           # CIBW_ARCHS_MACOS: auto universal2
           # CIBW_TEST_SKIP: "*universal2:arm64"
         with:

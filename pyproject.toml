@@ -98,10 +98,8 @@ before-all =  """
     echo $OSTYPE
     brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses
     brew reinstall readline
-    brew link readline --force    # create the links in /usr/local/opt/readline/lib
+    brew link readline --force 
     brew link ncurses --force
-    echo "LIST BREW LIBS"
-    ls -al /opt/homebrew/lib
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
     tar --bzip2 -xf boost_1_73_0.tar.bz2

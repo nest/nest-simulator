@@ -98,8 +98,13 @@ before-all =  """
     echo $OSTYPE
     brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses
     brew reinstall gcc cmake readline 
+    brew unlink gcc cmake 
     brew link --force gcc cmake readline ncurses
     echo "SHOW GCC INFO"
+    ls -al /opt/homebrew
+    ls -al /opt/homebrew/bin
+    ls -al /opt/homebrew/lib  
+
     which gcc
     gcc --version
   else

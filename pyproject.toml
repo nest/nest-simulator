@@ -48,7 +48,7 @@ nestml = [
   "nestml"
 ]
 mpi = [
-  "openmpi"
+  "mpi4py"
 ]
 
 [project.urls]

@@ -104,9 +104,17 @@ before-all =  """
     ls -al /opt/homebrew
     ls -al /opt/homebrew/bin
     ls -al /opt/homebrew/lib  
-
-    which gcc
-    gcc --version
+    if [[ $(arch) == 'arm64' ]]; then
+      echo "ARCH ARM"
+      export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"  # for Apple Silicon
+    else
+      echo "ARCH x86_64"
+      export PATH="/usr/local/bin:/usr/local/sbin:$PATH"        # for Intel
+    fi
+    hash -r
+    echo "GCC INFO"
+    which gcc #/usr/bin/gcc
+    gcc --version    
   else
     wget https://archives.boost.io/release/1.73.0/source/boost_1_73_0.tar.bz2
     tar --bzip2 -xf boost_1_73_0.tar.bz2

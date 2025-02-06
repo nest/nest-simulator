@@ -289,20 +289,20 @@ public:
   /**@}*/
 
   //! Get the stopwatch to measure the time each thread is idle during network construction.
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded >&
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
   get_omp_synchronization_construction_stopwatch()
   {
     return sw_omp_synchronization_construction_;
   }
 
   //! Get the stopwatch to measure the time each thread is idle during simulation.
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded >&
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
   get_omp_synchronization_simulation_stopwatch()
   {
     return sw_omp_synchronization_simulation_;
   }
 
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly >&
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
   get_mpi_synchronization_stopwatch()
   {
     return sw_mpi_synchronization_;
@@ -315,9 +315,9 @@ private:
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
 
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded > sw_omp_synchronization_construction_;
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::Threaded > sw_omp_synchronization_simulation_;
-  Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly > sw_mpi_synchronization_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
 };
 
 KernelManager& kernel();

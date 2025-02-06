@@ -190,10 +190,10 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   ( *dict )[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
 
-  sw_collocate_spike_data_.output_timer( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
-  sw_communicate_spike_data_.output_timer(
+  sw_collocate_spike_data_.get_status( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
+  sw_communicate_spike_data_.get_status(
     dict, names::time_communicate_spike_data, names::time_communicate_spike_data_cpu );
-  sw_communicate_target_data_.output_timer(
+  sw_communicate_target_data_.get_status(
     dict, names::time_communicate_target_data, names::time_communicate_target_data_cpu );
 }
 
@@ -420,6 +420,9 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     sw_collocate_spike_data_.stop();
     sw_communicate_spike_data_.start();
 #ifdef MPI_SYNC_TIMER
+    // We introduce an explicit barrier at this point to measure how long each process idles until all other processes
+    // reached this point as well. This barrier is directly followed by another implicit barrier due to global
+    // communication.
     kernel().get_mpi_synchronization_stopwatch().start();
     kernel().mpi_manager.synchronize();
     kernel().get_mpi_synchronization_stopwatch().stop();

@@ -21,7 +21,6 @@
  */
 
 #include "kernel_manager.h"
-
 #include "stopwatch_impl.h"
 
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
@@ -204,11 +203,11 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
     manager->get_status( dict );
   }
 
-  sw_omp_synchronization_construction_.output_timer(
+  sw_omp_synchronization_construction_.get_status(
     dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
-  sw_omp_synchronization_simulation_.output_timer(
+  sw_omp_synchronization_simulation_.get_status(
     dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
-  sw_mpi_synchronization_.output_timer( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
+  sw_mpi_synchronization_.get_status( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void

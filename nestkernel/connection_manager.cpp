@@ -227,7 +227,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
-  sw_construction_connect.output_timer( dict, names::time_construction_connect, names::time_construction_connect_cpu );
+  sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
   ArrayDatum connection_rules;
   for ( auto const& element : *connruledict_ )

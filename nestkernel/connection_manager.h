@@ -461,7 +461,7 @@ public:
 
   // public stop watch for benchmarking purposes
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
-  Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > sw_construction_connect;
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
 

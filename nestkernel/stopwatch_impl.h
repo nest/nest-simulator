@@ -26,12 +26,12 @@
 namespace nest
 {
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 void
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::start()
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::start()
 {
   kernel().vp_manager.assert_thread_parallel();
 
@@ -39,12 +39,12 @@ Stopwatch< detailed_timer,
   cputime_timers_[ kernel().vp_manager.get_thread_id() ].start();
 }
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 void
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::stop()
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::stop()
 {
   kernel().vp_manager.assert_thread_parallel();
 
@@ -52,24 +52,24 @@ Stopwatch< detailed_timer,
   cputime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
 }
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 bool
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::isRunning() const
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::is_running_() const
 {
   kernel().vp_manager.assert_thread_parallel();
 
-  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].isRunning();
+  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].is_running_();
 }
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 double
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::elapsed( timers::timeunit_t
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::elapsed( timers::timeunit_t
     timeunit ) const
 {
   kernel().vp_manager.assert_thread_parallel();
@@ -77,12 +77,12 @@ Stopwatch< detailed_timer,
   return walltime_timers_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
 }
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 void
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::print( const char* msg,
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::print( const std::string& msg,
   timers::timeunit_t timeunit,
   std::ostream& os ) const
 {
@@ -91,12 +91,12 @@ Stopwatch< detailed_timer,
   walltime_timers_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
 }
 
-template < StopwatchVerbosity detailed_timer >
+template < StopwatchGranularity detailed_timer >
 void
 Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >::reset()
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::reset()
 {
   kernel().vp_manager.assert_single_threaded();
 

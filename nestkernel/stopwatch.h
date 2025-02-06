@@ -36,10 +36,12 @@
 #include <iostream>
 #include <vector>
 
+// Includes from nestkernel:
+#include "exceptions.h"
+
 namespace nest
 {
 
-// TODO JV: Set this variable via cmake instead
 #ifdef TIMER_DETAILED
 constexpr bool use_detailed_timers = true;
 #else
@@ -51,13 +53,25 @@ constexpr bool use_threaded_timers = true;
 constexpr bool use_threaded_timers = false;
 #endif
 
+enum StopwatchGranularity
+{
+  Normal,  //<! Always measure stopwatch
+  Detailed //<! Only measure if detailed stopwatches are activated
+};
+
+enum StopwatchParallelism
+{
+  MasterOnly, //<! Only the master thread owns a stopwatch
+  Threaded    //<! Every thread measures an individual stopwatch
+};
+
 /********************************************************************************
  * Stopwatch                                                                    *
  *   Accumulates time between start and stop, and provides the elapsed time     *
  *   with different time units. Either runs multi-threaded or only on master.   *
  *                                                                              *
  *   Usage example:                                                             *
- *     Stopwatch< StopwatchVerbosity::Normal, StopwatchType::MasterOnly > x;    *
+ *     Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > x;    *
  *     x.start();                                                               *
  *     // ... do computations for 15.34 sec                                     *
  *     x.stop(); // only pauses stopwatch                                       *
@@ -73,7 +87,7 @@ constexpr bool use_threaded_timers = false;
  *     // ^ intermediate timing without stopping the stopwatch                  *
  *     // ... more computations 1.7643 min                                      *
  *     x.stop();                                                                *
- *     x.print("Time needed ", StopwatchBase< clock_type >::MINUTES, std::cerr);              *
+ *     x.print("Time needed ", timeunit_t::MINUTES, std::cerr);              *
  *     // > Time needed 1,8593 min. (on cerr)                                   *
  *     // other units and output streams possible                               *
  ********************************************************************************/
@@ -90,34 +104,30 @@ enum timeunit_t : size_t
   DAYS = HOURS * 24
 };
 
+/**
+ *
+ * @tparam clock_type
+ */
 template < clockid_t clock_type >
-class StopwatchBase
+class StopwatchTimer
 {
+  template < StopwatchGranularity, StopwatchParallelism, typename >
+  friend class Stopwatch;
+
 public:
   typedef size_t timestamp_t;
 
-  /**
-   * Creates a stopwatch that is not running.
-   */
-  StopwatchBase()
+  //! Creates a stopwatch that is not running.
+  StopwatchTimer()
   {
     reset();
   }
 
-  /**
-   * Starts or resumes the stopwatch, if it is not running already.
-   */
+  //! Starts or resumes the stopwatch, if it is not running already.
   void start();
 
-  /**
-   * Stops the stopwatch, if it is not stopped already.
-   */
+  //! Stops the stopwatch, if it is not stopped already.
   void stop();
-
-  /**
-   * Returns, whether the stopwatch is running.
-   */
-  bool isRunning() const;
 
   /**
    * Returns the time elapsed between the start and stop of the stopwatch in the given unit. If it is running, it
@@ -127,41 +137,32 @@ public:
    */
   double elapsed( timeunit_t timeunit = SECONDS ) const;
 
-  /**
-   * Resets the stopwatch.
-   */
+  //! Resets the stopwatch.
   void reset();
 
-  /**
-   * This method prints out the currently elapsed time.
-   */
-  void print( const char* msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
-
-  /**
-   * Convenient method for writing time in seconds
-   * to some ostream.
-   */
-  // friend std::ostream& operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch );
+  //! This method prints out the currently elapsed time.
+  void print( const std::string& msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
 
 private:
+  //! Returns, whether the stopwatch is running.
+  bool is_running_() const;
+
 #ifndef DISABLE_TIMING
   timestamp_t _beg, _end;
   size_t _prev_elapsed;
   bool _running;
 #endif
 
-  /**
-   * Returns current time in microseconds since EPOCH.
-   */
+  //! Returns current time in microseconds since EPOCH.
   static size_t get_current_time();
 };
 
 template < clockid_t clock_type >
 inline void
-StopwatchBase< clock_type >::start()
+StopwatchTimer< clock_type >::start()
 {
 #ifndef DISABLE_TIMING
-  if ( not isRunning() )
+  if ( not is_running_() )
   {
     _prev_elapsed += _end - _beg;     // store prev. time, if we resume
     _end = _beg = get_current_time(); // invariant: _end >= _beg
@@ -172,10 +173,10 @@ StopwatchBase< clock_type >::start()
 
 template < clockid_t clock_type >
 inline void
-StopwatchBase< clock_type >::stop()
+StopwatchTimer< clock_type >::stop()
 {
 #ifndef DISABLE_TIMING
-  if ( isRunning() )
+  if ( is_running_() )
   {
     _end = get_current_time(); // invariant: _end >= _beg
     _running = false;          // we stopped running
@@ -185,7 +186,7 @@ StopwatchBase< clock_type >::stop()
 
 template < clockid_t clock_type >
 inline bool
-StopwatchBase< clock_type >::isRunning() const
+StopwatchTimer< clock_type >::is_running_() const
 {
 #ifndef DISABLE_TIMING
   return _running;
@@ -196,11 +197,11 @@ StopwatchBase< clock_type >::isRunning() const
 
 template < clockid_t clock_type >
 inline double
-StopwatchBase< clock_type >::elapsed( timeunit_t timeunit ) const
+StopwatchTimer< clock_type >::elapsed( timeunit_t timeunit ) const
 {
 #ifndef DISABLE_TIMING
   size_t time_elapsed;
-  if ( isRunning() )
+  if ( is_running_() )
   {
     // get intermediate elapsed time; do not change _end, to be const
     time_elapsed = get_current_time() - _beg + _prev_elapsed;
@@ -218,7 +219,7 @@ StopwatchBase< clock_type >::elapsed( timeunit_t timeunit ) const
 
 template < clockid_t clock_type >
 inline void
-StopwatchBase< clock_type >::reset()
+StopwatchTimer< clock_type >::reset()
 {
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
@@ -230,13 +231,15 @@ StopwatchBase< clock_type >::reset()
 
 template < clockid_t clock_type >
 inline void
-StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+StopwatchTimer< clock_type >::print( const std::string& msg, timeunit_t timeunit, std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   double e = elapsed( timeunit );
   os << msg << e;
   switch ( timeunit )
   {
+  case NANOSEC:
+    os << " nanosec.";
   case MICROSEC:
     os << " microsec.";
     break;
@@ -255,6 +258,8 @@ StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::o
   case DAYS:
     os << " days.";
     break;
+  default:
+    throw BadParameter( "Invalid timeunit provided to stopwatch." );
   }
 #ifdef DEBUG
   os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg << ", end: " << _end
@@ -266,9 +271,8 @@ StopwatchBase< clock_type >::print( const char* msg, timeunit_t timeunit, std::o
 
 template < clockid_t clock_type >
 inline size_t
-StopwatchBase< clock_type >::get_current_time()
+StopwatchTimer< clock_type >::get_current_time()
 {
-  // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
   timespec now;
   clock_gettime( clock_type, &now );
   return now.tv_nsec + now.tv_sec * timeunit_t::SECONDS;
@@ -276,7 +280,7 @@ StopwatchBase< clock_type >::get_current_time()
 
 template < clockid_t clock_type >
 inline std::ostream&
-operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch )
+operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
 {
   stopwatch.print( "", timeunit_t::SECONDS, os );
   return os;
@@ -284,25 +288,24 @@ operator<<( std::ostream& os, const StopwatchBase< clock_type >& stopwatch )
 
 }
 
-enum StopwatchVerbosity
-{
-  Normal,  //<! Always measure stopwatch
-  Detailed //<! Only measure if detailed stopwatches are activated
-};
-
-enum StopwatchType
-{
-  MasterOnly, //<! Only the master thread owns a stopwatch
-  Threaded    //<! Every thread measures an individual stopwatch
-};
-
 
 /** This is the base template for all Stopwatch specializations.
+ *
+ * This template will be specialized in case detailed timers are deactivated or the timer is supposed to be run by
+ * multiple threads. If the timer should be deactivated, because detailed timers are disabled, the template
+ * specialization will be empty and optimized away by the compiler.
+ * This base template only measures a single timer, owned by the master thread, which applies for both detailed and
+ * regular timers. Detailed, master-only timers that are deactivated when detailed timers are turned off are handled
+ * by one of the template specializations below.
+ *
+ * The template has three template arguments of which two act as actual parameters that need to be specified for each
+ * stopwatch instance. The first one "detailed_timer" controls the granularity of the stopwatch, i.e., if the timer is
+ * considered a normal or detailed timer. The second one "threaded_timer" defines if the timer is supposed to be
+ * measured by each thread individually. In case a timer is specified as threaded, but threaded timers are turned off
+ * globally, the stopwatch will run in master-only mode instead. The third template argument is used to enable or
+ * disable certain template specializations based on compiler flags (i.e., detailed timers and threaded timers).
  */
-/** Base timer class, which only measures a single timer, owned by the master thread. Might only actually measure time
- * if detailed timers are enabled.
- */
-template < StopwatchVerbosity detailed_timer, StopwatchType threaded_timer, typename = void >
+template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer, typename = void >
 class Stopwatch
 {
 public:
@@ -324,17 +327,6 @@ public:
       walltime_timer_.stop();
       cputime_timer_.stop();
     }
-  }
-
-  bool
-  isRunning() const
-  {
-    bool isRunning = false;
-#pragma omp master
-    {
-      isRunning = walltime_timer_.isRunning();
-    };
-    return isRunning;
   }
 
   double
@@ -359,7 +351,7 @@ public:
   }
 
   void
-  print( const char* msg = "",
+  print( const std::string& msg = "",
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const
   {
@@ -368,22 +360,34 @@ public:
   }
 
   void
-  output_timer( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name )
+  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
   {
     def< double >( d, walltime_name, walltime_timer_.elapsed() );
     def< double >( d, cputime_name, cputime_timer_.elapsed() );
   }
 
 private:
-  timers::StopwatchBase< CLOCK_MONOTONIC > walltime_timer_;
-  timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
+  bool
+  is_running_() const
+  {
+    bool is_running_ = false;
+#pragma omp master
+    {
+      is_running_ = walltime_timer_.is_running_();
+    };
+    return is_running_;
+  }
+
+  // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
+  timers::StopwatchTimer< CLOCK_MONOTONIC > walltime_timer_;
+  timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
-/** If the user deactivated detailed timers, Stopwatch instance with the detailed flag will become an empty Stopwatch,
- * which will be safely ignored by the compiler, as if the instance was not declared (e.g. as a member).
- */
+//! Stopwatch template specialization for detailed, master-only timer instances if detailed timers are deactivated.
 template <>
-class Stopwatch< StopwatchVerbosity::Detailed, StopwatchType::MasterOnly, std::enable_if< not use_detailed_timers > >
+class Stopwatch< StopwatchGranularity::Detailed,
+  StopwatchParallelism::MasterOnly,
+  std::enable_if< not use_detailed_timers > >
 {
 public:
   void
@@ -393,11 +397,6 @@ public:
   void
   stop()
   {
-  }
-  bool
-  isRunning() const
-  {
-    return false;
   }
   double
   elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
@@ -409,23 +408,28 @@ public:
   {
   }
   void
-  print( const char* = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
+  print( const std::string& = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
   {
   }
   void
-  output_timer( DictionaryDatum&, const Name&, const Name& )
+  get_status( DictionaryDatum&, const Name&, const Name& ) const
   {
+  }
+
+private:
+  bool
+  is_running_() const
+  {
+    return false;
   }
 };
 
-/** Only provide these template specializations if threaded timers are activated and always fall back to the base
- * template specialization if not. Deactivate threaded detailed timers if all detailed timers are deactivated.
- */
-template < StopwatchVerbosity detailed_timer >
+//! Stopwatch template specialization for detailed, threaded timer instances if detailed timers are deactivated.
+template < StopwatchGranularity detailed_timer >
 class Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
+  StopwatchParallelism::Threaded,
   std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchVerbosity::Detailed and not use_detailed_timers ) > >
+    and ( detailed_timer == StopwatchGranularity::Detailed and not use_detailed_timers ) > >
 {
 public:
   void
@@ -435,11 +439,6 @@ public:
   void
   stop()
   {
-  }
-  bool
-  isRunning() const
-  {
-    return false;
   }
   double
   elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
@@ -451,54 +450,69 @@ public:
   {
   }
   void
-  print( const char* = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
+  print( const std::string& = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
   {
   }
   void
-  output_timer( DictionaryDatum&, const Name&, const Name& )
+  get_status( DictionaryDatum&, const Name&, const Name& ) const
   {
   }
+
+private:
+  bool
+  is_running_() const
+  {
+    return false;
+  }
 };
-template < StopwatchVerbosity detailed_timer >
+
+/** Stopwatch template specialization for threaded timer instances if the timer is a detailed one and detailed timers
+ * are activated or the timer is not a detailed one in the first place.
+ */
+* @tparam detailed_timer
+ */
+template < StopwatchGranularity detailed_timer >
 class Stopwatch< detailed_timer,
-  StopwatchType::Threaded,
-  std::enable_if_t< use_threaded_timers and ( detailed_timer == StopwatchVerbosity::Normal or use_detailed_timers ) > >
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >
 {
 public:
   void start();
 
   void stop();
 
-  bool isRunning() const;
-
   double elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const;
 
   void reset();
 
-  void print( const char* msg = "",
+  void print( const std::string& msg = "",
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const;
 
   void
-  output_timer( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name )
+  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
   {
     std::vector< double > wall_times( walltime_timers_.size() );
     std::transform( walltime_timers_.begin(),
       walltime_timers_.end(),
       wall_times.begin(),
-      []( const timers::StopwatchBase< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
+      []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
     def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
+
     std::vector< double > cpu_times( cputime_timers_.size() );
     std::transform( cputime_timers_.begin(),
       cputime_timers_.end(),
       cpu_times.begin(),
-      []( const timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
+      []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
     def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
   }
 
 private:
-  std::vector< timers::StopwatchBase< CLOCK_MONOTONIC > > walltime_timers_;
-  std::vector< timers::StopwatchBase< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
+  bool is_running_() const;
+
+  // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
+  std::vector< timers::StopwatchTimer< CLOCK_MONOTONIC > > walltime_timers_;
+  std::vector< timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
 };
 
 } /* namespace timer */

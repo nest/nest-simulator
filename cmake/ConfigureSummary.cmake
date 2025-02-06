@@ -158,7 +158,7 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   endif ()
 
   message( "" )
-  if ( THREADED_TIMERS )
+  if ( MPI_SYNC_TIMER )
     message( "MPI sync timer      : Yes" )
   else ()
     message( "MPI sync timer      : No" )

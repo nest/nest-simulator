@@ -53,17 +53,25 @@ constexpr bool use_threaded_timers = true;
 constexpr bool use_threaded_timers = false;
 #endif
 
-enum StopwatchGranularity
+enum class StopwatchGranularity
 {
   Normal,  //<! Always measure stopwatch
   Detailed //<! Only measure if detailed stopwatches are activated
 };
 
-enum StopwatchParallelism
+enum class StopwatchParallelism
 {
   MasterOnly, //<! Only the master thread owns a stopwatch
   Threaded    //<! Every thread measures an individual stopwatch
 };
+
+// Forward class declaration required here because friend declaration
+// in timers::StopwatchTimer must refer to nest::Stopwatch to be correct,
+// and that requires the name to be known from before. See
+// https://stackoverflow.com/questions/30418270/clang-bug-namespaced-template-class-friend
+// for details.
+template < StopwatchGranularity, StopwatchParallelism, typename >
+class Stopwatch;
 
 /********************************************************************************
  * Stopwatch                                                                    *
@@ -93,7 +101,7 @@ enum StopwatchParallelism
  ********************************************************************************/
 namespace timers
 {
-enum timeunit_t : size_t
+enum class timeunit_t : size_t
 {
   NANOSEC = 1,
   MICROSEC = NANOSEC * 1000,
@@ -111,7 +119,7 @@ template < clockid_t clock_type >
 class StopwatchTimer
 {
   template < StopwatchGranularity, StopwatchParallelism, typename >
-  friend class Stopwatch;
+  friend class nest::Stopwatch;
 
 public:
   typedef size_t timestamp_t;
@@ -134,13 +142,14 @@ public:
    * want only the last measurement, you have to reset the timer, before stating the measurement.
    * Does not change the running state.
    */
-  double elapsed( timeunit_t timeunit = SECONDS ) const;
+  double elapsed( timeunit_t timeunit = timeunit_t::SECONDS ) const;
 
   //! Resets the stopwatch.
   void reset();
 
   //! This method prints out the currently elapsed time.
-  void print( const std::string& msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
+  void
+  print( const std::string& msg = "", timeunit_t timeunit = timeunit_t::SECONDS, std::ostream& os = std::cout ) const;
 
 private:
   //! Returns, whether the stopwatch is running.
@@ -210,7 +219,7 @@ StopwatchTimer< clock_type >::elapsed( timeunit_t timeunit ) const
     // stopped before, get time of current measurement + last measurements
     time_elapsed = _end - _beg + _prev_elapsed;
   }
-  return static_cast< double >( time_elapsed ) / timeunit;
+  return static_cast< double >( time_elapsed ) / static_cast< double >( timeunit );
 #else
   return 0.;
 #endif
@@ -237,24 +246,24 @@ StopwatchTimer< clock_type >::print( const std::string& msg, timeunit_t timeunit
   os << msg << e;
   switch ( timeunit )
   {
-  case NANOSEC:
+  case timeunit_t::NANOSEC:
     os << " nanosec.";
-  case MICROSEC:
+  case timeunit_t::MICROSEC:
     os << " microsec.";
     break;
-  case MILLISEC:
+  case timeunit_t::MILLISEC:
     os << " millisec.";
     break;
-  case SECONDS:
+  case timeunit_t::SECONDS:
     os << " sec.";
     break;
-  case MINUTES:
+  case timeunit_t::MINUTES:
     os << " min.";
     break;
-  case HOURS:
+  case timeunit_t::HOURS:
     os << " h.";
     break;
-  case DAYS:
+  case timeunit_t::DAYS:
     os << " days.";
     break;
   default:
@@ -274,7 +283,7 @@ StopwatchTimer< clock_type >::get_current_time()
 {
   timespec now;
   clock_gettime( clock_type, &now );
-  return now.tv_nsec + now.tv_sec * timeunit_t::SECONDS;
+  return now.tv_nsec + now.tv_sec * static_cast< long >( timeunit_t::SECONDS );
 }
 
 template < clockid_t clock_type >
@@ -285,7 +294,7 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
   return os;
 }
 
-}
+} // namespace timers
 
 
 /** This is the base template for all Stopwatch specializations.
@@ -515,5 +524,5 @@ private:
   std::vector< timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
 };
 
-} /* namespace timer */
+} /* namespace nest */
 #endif /* STOPWATCH_H */

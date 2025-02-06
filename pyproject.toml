@@ -15,7 +15,7 @@ authors = [
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
 ]
-requires-python = ">=3.8, <4.0"
+requires-python = ">=3.9, <4.0"
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",

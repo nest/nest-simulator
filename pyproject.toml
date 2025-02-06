@@ -95,25 +95,27 @@ before-all =  """
   then
     echo "Build OS"
     echo $OSTYPE
+    # brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses
+    #brew reinstall gcc cmake readline 
+    #brew unlink gcc cmake 
+    #brew link --force gcc cmake readline ncurses
+
     brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses
-    brew reinstall gcc cmake readline 
-    brew unlink gcc cmake 
-    brew link --force gcc cmake readline ncurses
-    echo "SHOW GCC INFO"
-    ls -al /opt/homebrew
-    ls -al /opt/homebrew/bin
-    ls -al /opt/homebrew/lib  
+    brew reinstall readline 
+    brew link --force readline ncurses
+
+    
     echo "arch: $(arch)"
     if [[ $(arch) == 'arm64' ]]; then
       # Apple Silicon
-      ln -sf /opt/homebrew/bin/gcc-14 /opt/homebrew/bin/gcc
-      export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+      # ln -sf /opt/homebrew/bin/gcc-14 /opt/homebrew/bin/gcc
+      # export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
       LDFLAGS="-L/opt/homebrew/lib"
       CPPFLAGS="-I/opt/homebrew/include"
     else
       # Intel
-      ln -sf /usr/local/bin/gcc-14 /usr/local/bin/gcc
-      export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+      # ln -sf /usr/local/bin/gcc-14 /usr/local/bin/gcc
+      # export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
       LDFLAGS="-L/usr/local/lib"
       CPPFLAGS="-I/usr/local/include"
     fi

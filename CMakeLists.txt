@@ -26,6 +26,7 @@ project( nest CXX C )
 
 set( CMAKE_CXX_STANDARD 17 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
+set( CMAKE_CXX_EXTENSIONS OFF )          # -std=c++17 instead of gnu++17
 
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 

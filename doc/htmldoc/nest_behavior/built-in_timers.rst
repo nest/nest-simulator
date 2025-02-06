@@ -115,8 +115,7 @@ adds an additional MPI barrier right before the start of communication, which mi
 
 Multi-threaded timers
 ---------------------
-In previous NEST versions, only the master thread measured timers. Since NEST 3.9, all timers that are recorded in a
-parallel (multi-threaded) environment are recorded by each thread individually.
+In previous NEST versions, only the master thread measured timers. Since NEST 3.9, timers which measure time spent exclusively in multi-threaded environments are recorded by each thread individually.
 
 The legacy timer behavior can be restored via the ``-Dwith-threaded-timers=OFF`` CMake flag.
 

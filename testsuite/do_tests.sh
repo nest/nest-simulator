@@ -92,8 +92,6 @@ if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
 fi
 
-PYTEST="$( dirname $PYTHON )/pytest"
-
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
@@ -210,8 +208,14 @@ if test "${PYTHON}"; then
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
-    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+    if test "${HAVE_MPI}" = "True"; then
+	${MPI_LAUNCHER_CMDLINE} 1 ${PYTHON} -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
+				--ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+    else
+	${PYTHON} -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
+				--ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+    fi
+
     set -e
 
     # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
@@ -232,16 +236,15 @@ if test "${PYTHON}"; then
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
 
-
 		set +e
 		# Some doubling up of code here because trying to add the -m 'not requires...' to PYTEST_ARGS
 		# loses the essential quotes.
 		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
-		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
-                    ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTEST}" ${PYTEST_ARGS} -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
+		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
+                    ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
 		else
-		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTHON}" -m pytest ${PYTEST_ARGS}"
-                    ${MPI_LAUNCHER_CMDLINE} ${numproc} "${PYTEST}" ${PYTEST_ARGS} 2>&1 | tee -a "${TEST_LOGFILE}"
+		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS}"
+                    ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} 2>&1 | tee -a "${TEST_LOGFILE}"
 		fi
 		set -e
             done

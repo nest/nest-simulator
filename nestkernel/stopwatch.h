@@ -104,9 +104,8 @@ enum timeunit_t : size_t
   DAYS = HOURS * 24
 };
 
-/**
- *
- * @tparam clock_type
+/** This class represents a single timer which measures the execution time of a single thread for a given clock type.
+ * Typical clocks are monotonic wall-time clocks or clocks just measuring cpu time.
  */
 template < clockid_t clock_type >
 class StopwatchTimer
@@ -304,6 +303,8 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
  * measured by each thread individually. In case a timer is specified as threaded, but threaded timers are turned off
  * globally, the stopwatch will run in master-only mode instead. The third template argument is used to enable or
  * disable certain template specializations based on compiler flags (i.e., detailed timers and threaded timers).
+ *
+ * In all cases, both the (monotonic) wall-time and cpu time are measured.
  */
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer, typename = void >
 class Stopwatch
@@ -469,12 +470,11 @@ private:
 /** Stopwatch template specialization for threaded timer instances if the timer is a detailed one and detailed timers
  * are activated or the timer is not a detailed one in the first place.
  */
-* @tparam detailed_timer
- */
 template < StopwatchGranularity detailed_timer >
 class Stopwatch< detailed_timer,
   StopwatchParallelism::Threaded,
-  std::enable_if_t< use_threaded_timers and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >
 {
 public:
   void start();

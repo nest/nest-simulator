@@ -287,12 +287,37 @@ public:
   MUSICManager music_manager;
   NodeManager node_manager;
   /**@}*/
+
+  //! Get the stopwatch to measure the time each thread is idle during network construction.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_construction_stopwatch()
+  {
+    return sw_omp_synchronization_construction_;
+  }
+
+  //! Get the stopwatch to measure the time each thread is idle during simulation.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_simulation_stopwatch()
+  {
+    return sw_omp_synchronization_simulation_;
+  }
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
+  get_mpi_synchronization_stopwatch()
+  {
+    return sw_mpi_synchronization_;
+  }
+
 private:
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
 };
 
 KernelManager& kernel();

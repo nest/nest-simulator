@@ -51,7 +51,7 @@ slight modifications.
       .. math::
 
         \begin{flalign}
-        \frac{dV}{dt} &=\frac{-V}{\tau}+\frac{I}{C} \\ \\
+        \frac{dV(t)}{dt} &=\frac{-V(t)}{\tau}+\frac{I(t)}{C} \\ \\
         I(t) &=\sum_{i\in\mathbb{N}, t_i\le t }\sum_{k\in S_{t_i}}\hat{\iota}_k \iota(t-t_i)+I_{\text{ext}} \\ \\
         \iota (t) &= \frac{e}{\tau_{syn}}t e^{-t/\tau_{\text{syn}}}.
         \end{flalign}
@@ -84,9 +84,9 @@ slight modifications.
       .. math::
 
         \begin{flalign}
-         y1 &=  \frac{d\iota}{dt} + \frac{\iota}{\tau_{syn}} \\
-         y2 &= \iota \\
-         y3 &= V
+         y(t)_1 &=  \frac{d\iota}{dt} + \frac{\iota}{\tau_{syn}} \\
+         y(t)_2 &= \iota \\
+         y(t)_3 &= V
         \end{flalign}
 
 

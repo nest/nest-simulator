@@ -43,6 +43,14 @@ dependencies = [
   "h5py",
 ]
 
+[project.optional-dependencies]
+nestml = [
+  "nestml"
+]
+mpi = [
+  "openmpi"
+]
+
 [project.urls]
 Homepage = "https://nest-simulator.org/"
 Documentation = "https://nest-simulator.readthedocs.io/en/stable/"

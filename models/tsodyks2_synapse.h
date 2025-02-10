@@ -54,6 +54,10 @@ The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
+Please note that the initial value of ``u`` should be equal to the value of
+``U``. Thus, when setting a new value for ``U`` before the start of the
+simulation, make sure to set ``u`` to the same value.
+
 .. warning::
 
    This synaptic plasticity rule does not take

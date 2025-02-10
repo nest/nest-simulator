@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-13, macos-14, ubuntu-24.04]        
+        os: [macos-13, macos-14, macos-15, ubuntu-24.04]        
     steps:
       - uses: actions/checkout@v4
 
@@ -18,10 +18,7 @@ jobs:
           package-dir: .
           output-dir: wheelhouse
           config-file: "{package}/pyproject.toml"
-        # env:
-          # CIBW_ENVIRONMENT_MACOS: 
-            # LDFLAGS="-L/usr/local/opt/readline/lib -L/usr/local/opt/ncurses/lib"
-            # CPPFLAGS="-I/usr/local/opt/readline/include -I/usr/local/opt/ncurses/include"
+    
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}

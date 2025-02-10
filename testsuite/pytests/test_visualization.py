@@ -39,8 +39,9 @@ except ImportError:
     PLOTTING_POSSIBLE = False
 
 try:
-    import pydot  # noqa: F401
     import shutil
+
+    import pydot  # noqa: F401
 
     HAVE_PYDOT = shutil.which("dot") is not None
 except ImportError:

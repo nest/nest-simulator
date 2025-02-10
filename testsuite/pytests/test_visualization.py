@@ -93,8 +93,7 @@ class TestVisualization:
         for ref_vm, line in zip((vm[::2], vm[1::2]), ax.lines):
             x_data, y_data = line.get_data()
             # Check that times are correct
-            assert list(x_data) == list(
-                np.unique(device.get("events", "times")))
+            assert list(x_data) == list(np.unique(device.get("events", "times")))
             # Check that voltmeter data corresponds to the lines in the plot
             assert all(np.isclose(ref_vm, y_data))
         plt.close(ax.get_figure())
@@ -195,8 +194,7 @@ class TestVisualization:
 
         # Test extract_events
         all_extracted = nest.raster_plot.extract_events(data)
-        times_30_to_40_extracted = nest.raster_plot.extract_events(
-            data, time=[30.0, 40.0], sel=[3])
+        times_30_to_40_extracted = nest.raster_plot.extract_events(data, time=[30.0, 40.0], sel=[3])
         source_2_extracted = nest.raster_plot.extract_events(data, sel=[2])
         assert np.array_equal(all_extracted, data)
         assert np.all(times_30_to_40_extracted[:, 1] >= 30.0)

@@ -151,9 +151,6 @@ def init(argv):
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
         nest_argv.remove("--debug")
-    if "--sli-debug" in nest_argv:
-        nest_argv.remove("--sli-debug")
-        nest_argv.append("--debug")
 
     if "PYNEST_DEBUG" in os.environ and "--debug" not in nest_argv:
         nest_argv.append("--debug")

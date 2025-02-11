@@ -208,13 +208,8 @@ if test "${PYTHON}"; then
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
-    if test "${HAVE_MPI}" = "True"; then
-	${MPI_LAUNCHER_CMDLINE} 1 ${PYTHON} -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
-				--ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
-    else
-	${PYTHON} -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
-				--ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
-    fi
+    ${PYTHON} -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
+	                --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
 
     set -e
 

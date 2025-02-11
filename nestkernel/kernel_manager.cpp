@@ -328,7 +328,8 @@ nest::KernelManager::write_to_dump( const std::string& msg )
 
 #ifdef __linux__
 
-#include <ifstream>
+#include <fstream>
+#include <sstream>
 size_t
 nest::KernelManager::get_memsize_linux_() const
 {

@@ -27,7 +27,7 @@ Name: testsuite::test_pp_psc_delta - test of pp_psc_delta neuron functionality
 Synopsis: (test_pp_psc_delta) run -> compare spike train statistics with expectations
 
 Description:
- 
+
  This simulation tests the basic functionality of the pp_psc_delta neuron model.
  Specifically, it checks whether:
 
@@ -40,7 +40,7 @@ Description:
 
  - the threshold adaptation works by looking for negative serial correlation of
    the inter-spike intervals
-   
+
  - that threshold adaptation with time constant of the membrane is equivalent
    to an inhibitory self-connection with the same strength
 
@@ -53,9 +53,9 @@ Description:
  Increasing T inside the test functions can also help to get more reliable
  statistics and a reduced probability of false alarms.
 
- The values are chosen to have a reasonable execution time. False alarms were 
+ The values are chosen to have a reasonable execution time. False alarms were
  never observed yet. Since random numbers are preserved through repetitions of
- the simulations, the test should work for sure as long as the random number 
+ the simulations, the test should work for sure as long as the random number
  generation procedure of NEST is not changed. If it is changed, failure of the
  test is still very unlikely.
 
@@ -64,17 +64,17 @@ Description:
 
 Remarks:
 
-  This test script is based on the Python version 
-  
+  This test script is based on the Python version
+
       test_pp_psc_delta.py
-      
+
   and was adapted to SLI using
-  
+
       test_iaf_dc_aligned.sli
-      
+
   as a guideline. The commented code is the original Python test code.
-  
-  Test 5) was added later (2014), when support for several adaptation time 
+
+  Test 5) was added later (2014), when support for several adaptation time
   constants was added to pp_psc_delta.
 
 
@@ -95,7 +95,7 @@ SeeAlso: pp_psc_delta
 
 /check_rate_and_fixed_dead_time
 {
-    
+
 
     % test parameters
     25.0 /d Set
@@ -108,44 +108,44 @@ SeeAlso: pp_psc_delta
     <<
       /tau_m  10.0
       /C_m   250.0
-      /dead_time d 
+      /dead_time d
       /dead_time_random  false
       /dead_time_shape  1
       /with_reset false
       /tau_sfa 34.0
       /q_sfa 0.0
       /c_1  0.0
-      /c_2 lam 
+      /c_2 lam
       /c_3   0.25
       /I_e   0.0
       /t_ref_remaining   0.0
     >> /params Set
-    
+
     nrn params SetStatus
-    
+
     /spike_recorder Create /sr Set
 
     nrn sr Connect
     T Simulate
-    
+
     sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
 
     % rate_ana = 1./(1./lam + d*1e-3)
-    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 lam div d 1e-3 mul add /mu_ana Set
     1.0 mu_ana div /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
-    
+
     % This could fail due to bad luck. However, if it passes once, then it should
     % always do so, since the random numbers are reproducible in NEST.
     1.0 err sub ratio lt
     ratio 1.0 err add lt
     and assert_or_die
-    
+
     %isi = []
     %for i in xrange(1,len(spikes)):
     %    isi.append(spikes[i]-spikes[i-1])
@@ -153,7 +153,7 @@ SeeAlso: pp_psc_delta
     0.0 /t Set
     spikes cva { dup t sub exch /t Set  } Map /l Set
     l Rest Min d geq assert_or_die
-    
+
 } def
 
 
@@ -174,14 +174,14 @@ SeeAlso: pp_psc_delta
     <<
       /tau_m  10.0
       /C_m   250.0
-      /dead_time d 
+      /dead_time d
       /dead_time_random  true
       /dead_time_shape  10
       /with_reset false
       /tau_sfa [34.0]
       /q_sfa [0.0]
       /c_1  0.0
-      /c_2 lam 
+      /c_2 lam
       /c_3   0.25
       /I_e   0.0
       /t_ref_remaining   0.0
@@ -203,13 +203,13 @@ SeeAlso: pp_psc_delta
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
 
     % rate_ana = 1./(1./lam + d*1e-3)
-    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 lam div d 1e-3 mul add /mu_ana Set
     1.0 mu_ana div /rate_ana Set
     %1.0 1.0 lam div d 1e-3 mul add div /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
-    
+
     % This could fail due to bad luck. However, if it passes once, then it should
     % always do so, since the random numbers are reproducible in NEST.
     1.0 err sub ratio lt
@@ -221,9 +221,9 @@ SeeAlso: pp_psc_delta
     %    isi.append(spikes[i]-spikes[i-1])
     0.0 /t Set
     spikes cva { dup t sub exch /t Set  } Map Rest /isi Set
-    
+
     %# compute moments of ISI to get mean and variance
-    %isi_m1 = 0. 
+    %isi_m1 = 0.
     %isi_m2 = 0.
     %for t in isi:
     %    isi_m1 += t
@@ -231,17 +231,17 @@ SeeAlso: pp_psc_delta
     0. /isi_m1 Set
     0. /isi_m2 Set
     isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
-    
+
     %isi_mean = isi_m1 / len(isi)
     %isi_var = isi_m2/ len(isi) - isi_mean**2
     %ratio_mean = isi_mean / d
     isi_m1 isi size exch pop div /isi_mean Set
     isi_m2 isi size exch pop div isi_mean dup mul sub /isi_var Set
-    isi_mean d div /ratio_mean Set 
+    isi_mean d div /ratio_mean Set
     1.0 err sub ratio_mean leq
     ratio_mean 1.0 err add leq
     and assert_or_die
-    
+
     %isi_var_th = n / (n/d)**2
     %ratio_var = isi_var / isi_var_th
     %assert( 1.0<=ratio_var<=1.5 )
@@ -250,7 +250,7 @@ SeeAlso: pp_psc_delta
     1.0 err sub ratio_var leq
     ratio_var 1.0 err add leq
     and assert_or_die
-    
+
 } def
 
 
@@ -258,7 +258,7 @@ SeeAlso: pp_psc_delta
 
 /check_adapting_threshold
 {
-    
+
     %# test parameters
     1e-8 /d Set
     30.0 /lam Set
@@ -272,23 +272,23 @@ SeeAlso: pp_psc_delta
     <<
       /tau_m  10.0
       /C_m   250.0
-      /dead_time d 
+      /dead_time d
       /dead_time_random  false
       /dead_time_shape  1
       /with_reset false
       /tau_sfa [34.0]
       /q_sfa [7.0]
       /c_1  0.0
-      /c_2 lam 
+      /c_2 lam
       /c_3   0.25
       /I_e   0.0
       /t_ref_remaining   0.0
     >> /params Set
-    
+
     nrn params SetStatus
-    
+
     /spike_recorder Create /sr Set
-    
+
     nrn sr Connect
     T Simulate
 
@@ -298,13 +298,13 @@ SeeAlso: pp_psc_delta
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
 
     % rate_ana = 1./(1./lam + d*1e-3)
-    1.0 lam div d 1e-3 mul add /mu_ana Set 
+    1.0 lam div d 1e-3 mul add /mu_ana Set
     1.0 mu_ana div /rate_ana Set
     %1.0 1.0 lam div d 1e-3 mul add div /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
-    
+
 
     %# Adaptive threshold changes rate, thus not asserted here
     %0.5 ratio lt
@@ -316,7 +316,7 @@ SeeAlso: pp_psc_delta
     %    isi.append(spikes[i]-spikes[i-1])
     0.0 /t Set
     spikes cva { dup t sub exch /t Set  } Map Rest /isi Set
-    
+
     %    # compute moments of ISI to get mean and variance
     %    isi_m1 = isi[-1]
     %    isi_m2 = isi[-1]**2
@@ -334,8 +334,8 @@ SeeAlso: pp_psc_delta
     0. /isi_12 Set
     [] isi_size 1 sub append /dummylist Set
     dummylist Range {dup isi exch get exch 1 sub isi exch get mul isi_12 add /isi_12 Set} forall
- 
-    %    
+
+    %
     %    isi_mean = isi_m1 / len(isi)
     %    isi_var = (isi_m2 - isi_m1)**2 / len(isi)
     %    isi_corr = (isi_12 / (len(isi)-1) - isi_mean**2) / isi_var
@@ -347,7 +347,7 @@ SeeAlso: pp_psc_delta
     % always do so, since the random numbers are reproducible in NEST.
     %    assert( -1.0<isi_corr<0.0 )
     -1.0 isi_corr lt
-    isi_corr 0. lt 
+    isi_corr 0. lt
     and assert_or_die
 } def
 
@@ -368,7 +368,7 @@ SeeAlso: pp_psc_delta
 
     ResetKernel
 
-    % create a neuron where adaptation does the reset, and one where a 
+    % create a neuron where adaptation does the reset, and one where a
     % synapse does.
     /pp_psc_delta Create /nrn1 Set
     /pp_psc_delta Create /nrn2 Set
@@ -376,14 +376,14 @@ SeeAlso: pp_psc_delta
     <<
       /tau_m  tau_m
       /C_m   250.0
-      /dead_time d 
+      /dead_time d
       /dead_time_random  false
       /dead_time_shape  1
       /with_reset false
       /tau_sfa [300.0 tau_m]
       /q_sfa [J_adapt J_self]
       /c_1  0.0
-      /c_2 lam 
+      /c_2 lam
       /c_3   1.0
       /I_e   0.0
       /t_ref_remaining   0.0
@@ -392,14 +392,14 @@ SeeAlso: pp_psc_delta
     <<
       /tau_m  tau_m
       /C_m   250.0
-      /dead_time d 
+      /dead_time d
       /dead_time_random  false
       /dead_time_shape  1
       /with_reset false
       /tau_sfa 300.0
       /q_sfa J_adapt
       /c_1  0.0
-      /c_2 lam 
+      /c_2 lam
       /c_3   1.0
       /I_e   0.0
       /t_ref_remaining   0.0
@@ -418,10 +418,10 @@ SeeAlso: pp_psc_delta
       /weight  -1 J_self mul
       /delay   1.0
     >> /synparams Set
-    
+
     /static_synapse synparams SetDefaults
     nrn2 nrn2 Connect
-    
+
     T Simulate
 
     sr1 /n_events get /n1 Set
@@ -433,12 +433,11 @@ SeeAlso: pp_psc_delta
     % for debugging of the test, print the observed spike numbers, ratio, and lam*T
     % cerr [n1 n2 ratio T lam mul 1000 div] pprint endl ;
     and assert_or_die
-    
+
 } def
 
 
-check_rate_and_fixed_dead_time 
+check_rate_and_fixed_dead_time
 check_random_dead_time
 check_adapting_threshold
 compare_adaptation_and_self_inhibition
-

@@ -594,4 +594,3 @@ The following functions have been removed:
 |                      | level, it was only a SLI     |
 |                      | function)                    |
 +----------------------+------------------------------+
-

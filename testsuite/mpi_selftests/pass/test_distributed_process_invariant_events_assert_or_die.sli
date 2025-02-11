@@ -42,37 +42,37 @@ SeeAlso: unittest::distributed_process_invariant_events_assert_or_die, testsuite
 /unittest using
 
 
-% take array of dict, with all entries arrays; return single dict with all 
+% take array of dict, with all entries arrays; return single dict with all
 % data with same key merge to single array; all dicts must have same keys
 /merge_dict_entries
 {
-  dup { keys } Map 
+  dup { keys } Map
   dup First /keylits Set
-  keylits { cvs } Map Sort /keystrings Set % only strings can be sorted  
+  keylits { cvs } Map Sort /keystrings Set % only strings can be sorted
   true exch { { cvs } Map Sort keystrings eq and } Fold assert_or_die % all have same keys
-  
+
   % build new dict with merged arrays
   dup First /newdict Set
   Rest
   {
      keylits { /key Set dup key get newdict key get join newdict key rolld put } forall
      pop
-  } forall  
+  } forall
 
   newdict   % leave on stack
 }
-def 
+def
 
 [1 2 4]
 {
   % per vp dictionaries, four VPs
-  /vp_events 
+  /vp_events
   [
     << /times [ 23 45 67 ] /senders [ 12 12 16 ] /offsets [ 0.035 0.01 0.02 ] >>
     << /times [ 11 99    ] /senders [ 13 17    ] /offsets [ 0.07  0.03      ] >>
     << /times [ 12 23 34 ] /senders [ 14 18 22 ] /offsets [ 0.05  0.04 0.08 ] >>
     << /times [ 24       ] /senders [ 15       ] /offsets [ 0.06            ] >>
-  ] def 
+  ] def
 
   mark
     NumProcesses 1 eq { vp_events merge_dict_entries exit } case

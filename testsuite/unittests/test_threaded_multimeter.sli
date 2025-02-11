@@ -23,12 +23,12 @@
 
 /* BeginDocumentation
    Name: testsuite::test_threaded_multimeter - test support for multimeter
-    
+
    Synopsis: (test_threaded_multimeter.sli) run -> dies if assertion fails
-    
+
    Description:
    Tests that multimeter works when we use threads.
-    
+
    Author: Stine B. Vennemo
    FirstVersion: June 2017
    SeeAlso: test_treaded_spike_recorder.sli
@@ -47,24 +47,24 @@ M_ERROR setverbosity
     /n_threads Set
 
     /N 10 def  % should not be divisible by thread number
-  
+
     ResetKernel
     GetKernelStatus /num_processes get 1 eq assert % distributed setting not covered
     << /local_num_threads n_threads >> SetKernelStatus
 
     % actual neurons
     /nrns /iaf_psc_alpha N << /I_e 40. >> Create def
-    nrns { dup /global_id get 1 sub 30. N div mul -90. add 
+    nrns { dup /global_id get 1 sub 30. N div mul -90. add
                /foo << >> def foo exch /V_m exch put foo SetStatus } forall
 
     % multimeter
     /ac /multimeter << /record_from [ /V_m ] /interval 1.0 >> Create def
-                       
+
     ac nrns Connect
 
     5. Simulate
 
-    % obtain data 
+    % obtain data
     ac /events get dup /V_m get cva exch /senders get cva
   end
 }
@@ -77,7 +77,7 @@ def
 
  r1V Sort r3V Sort eq
  r1s Sort r3s Sort eq
- 
+
   end
 } assert_or_die
 

@@ -38,7 +38,7 @@ See also: unittest:::parse_message_line
 /unittest using
 
 
-{ 
+{
   clear
   (:passed:5::) :parse_message_line
   exch
@@ -51,43 +51,43 @@ See also: unittest:::parse_message_line
   (:error:10::) :parse_message_line
   exch
   [/error 10 []] eq
-  and 
+  and
 } assert_or_die
 
 {
   clear
   (:error:-7::) :parse_message_line
-  not  
-  count 1 eq 
+  not
+  count 1 eq
   and
 } assert_or_die
 
 {
   clear
   (:error:y::) :parse_message_line
-  not  
-  count 1 eq 
+  not
+  count 1 eq
   and
 } assert_or_die
 
 {
   clear
   (:foo:0::) :parse_message_line
-  not  
-  count 1 eq 
+  not
+  count 1 eq
   and
 } assert_or_die
 
 {
-  clear  
+  clear
   (:result:0::) :parse_message_line
-  exch  
+  exch
   [/result 0 []] eq
   and
 } assert_or_die
 
 {
-  clear  
+  clear
   (:result:0:[4 [5 6]]:) :parse_message_line
   exch
   [/result 0 [4 [5 6]]] eq
@@ -102,7 +102,7 @@ See also: unittest:::parse_message_line
   and
 } assert_or_die
 
-{ 
+{
   clear
   (:result:0:[/:serialized:dict [/a 1 /b 2 /c [1 2]]]:) :parse_message_line
   exch

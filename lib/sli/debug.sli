@@ -22,20 +22,20 @@
 
 % Debuggin support for SLI
 /** @BeginDocumentation
-   
-   Name: debug.sli - Debugging support for sli 
-   
-   Synopsis: 
+
+   Name: debug.sli - Debugging support for sli
+
+   Synopsis:
      (debug) run
 
-   Description: 
+   Description:
      Defines operators which support debugging. All auxiliary operators
      are defined in the dictionary debugdict.
 
-   Author: 
+   Author:
     Marc-Oliver Gewaltig, Honda R&D
 
-   FirstVersion: 
+   FirstVersion:
     July 9 1999
 
    SeeAlso: inspect
@@ -47,12 +47,12 @@ systemdict begin
 
 %% Resume operation after a system signal
 /** @BeginDocumentation
-   
+
    Name: resume - Resume interrupted SLI program after a system signal.
-   
+
    Synopsis: resume
 
-   Description: 
+   Description:
      resume tries to restore the state of the interpreter stacks to
      their state immediately before the signal.
 
@@ -61,10 +61,10 @@ systemdict begin
      2. dictionary stack from errordict /ostack
      3. execution stack from errordict  /estack
 
-   Author: 
+   Author:
     Marc-Oliver Gewaltig, Honda R&D
 
-   FirstVersion: 
+   FirstVersion:
     Sept. 10 1999
 
    SeeAlso: raiseerror
@@ -75,7 +75,7 @@ systemdict begin
 {
   errordict dup /errorname known
   {
-    /errorname get 
+    /errorname get
     /SystemSignal eq
     {
       errordict /errorname undef %% clear error state
@@ -86,33 +86,33 @@ systemdict begin
       errordict /estack get      %% Restore execution stack
       restoreestack              %% Note that this operation does not return!
     }
-    { 
+    {
       errordict /dstack get      %% Restore dictionary stack
-      restoredstack      
+      restoredstack
       %(Resume only possible after /SignalError) 100 message
     } ifelse
-  } 
-  { 
+  }
+  {
     pop
     (Resume only possible after /SignalError) 100 message
   } ifelse
 } def
 
- /debugdict 
+ /debugdict
  <<
    /SingleStepMode false
  >> def
 
 /** @BeginDocumentation
-   
+
    Name: inspect - inspect an object
-   
+
    Synopsis: any inspect -> -
              any  ?      -> -
 
-   Description: 
+   Description:
      inspect (or ?) displays the contents of an object in a formatted form.
-     SLI procedures are displayed with indentation according to their 
+     SLI procedures are displayed with indentation according to their
      nesting level. The amount of indentation is controlled by the
      value of :INDENTATION, which is defined in debugdir.
 
@@ -131,7 +131,7 @@ systemdict begin
 
     /stack inspect
 
-    /stack : proceduretype := 
+    /stack : proceduretype :=
     {
       0i
       1i
@@ -151,22 +151,22 @@ systemdict begin
     SLI ] [1. 10.] Range inspect
     [ 1d 2d 3d 4d 5d   ...  ]
 
-    
-   Bugs: 
+
+   Bugs:
      The displays of TypeTrees and Procedures could be more elaborated.
      Maybe the next version will show the individual parameter-lists of
      a TypeTree.
 
-   Author: 
+   Author:
      Marc-Oliver Gewaltig, Honda R&D
 
-   FirstVersion: 
+   FirstVersion:
      July 9 1999
 
-   Remarks: 
+   Remarks:
     ? can be used as shortcut to inspect
 
-   SeeAlso: 
+   SeeAlso:
 
 */
 
@@ -195,7 +195,7 @@ debugdict begin
 {
   :INDENTCOUNT
   {
-    :FILLCHAR <- 
+    :FILLCHAR <-
   } repeat
 } bdef
 
@@ -237,7 +237,7 @@ debugdict begin
   exec :pr_p
 } def
 
-% ostream array 
+% ostream array
 /:pr_a
 {
   size 0 eq
@@ -256,7 +256,7 @@ debugdict begin
     (]) <-
   } ifelse
 } bdef
- 
+
 /:pr_d
 {
   exch showpoint exch <- noshowpoint
@@ -296,20 +296,20 @@ def
 def
 
 /inspect_any
-{ 
+{
  debugdict begin
   cout exch pr endl ;
  end
 } def
 
 /inspect_l
-{ 
+{
  debugdict begin
   dup  cout exch % /lit ostream /lit
   <-- ( : ) <- 1 index lookup
   {
     type <- ( := ) <- lf
-    exch load 
+    exch load
     pr endl ;
   }
   {
@@ -337,7 +337,7 @@ SeeAlso: continue
 
 /debugprompt
 {
-  (break mode ) 
+  (break mode )
   count 1 gt_ii      % counter has to be corrected for operative
   {                  % objects on the stack
     ([) join_s
@@ -347,7 +347,7 @@ SeeAlso: continue
 } bind def
 
 /break
-{		
+{
  {
   {
     debugprompt GNUreadline
@@ -364,4 +364,3 @@ SeeAlso: break
 */
 
 /continue /exit load def
-

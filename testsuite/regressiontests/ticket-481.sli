@@ -34,7 +34,7 @@ Peiran Gao reported to nest_bugs that poisson_generator_ps.
 First analysis indicates that spikes are lost if poisson_generator_ps is connected
 to target neurons using different synapse models, even if those are just copies of
 the same underlying class.
- 
+
 Author: Hans Ekkehard Plesser, 2010-11-03; based on original reproducer by Peiran Gao
  */
 
@@ -60,7 +60,7 @@ M_ERROR setverbosity
  /syn2 Set
  /syn1 Set
  /model Set
-  
+
  debugging {
    model cvs ( ) join syn1 cvs join ( ) join syn2 cvs join ( : ) join =only
  } if
@@ -69,20 +69,20 @@ M_ERROR setverbosity
 
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n1 Set
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n2 Set
- 
+
  /poisson_generator_ps << /rate 10000.0 /start 0.0  >> Create  /pg Set
  /voltmeter << /interval dt >>                         Create /vm1 Set
  /voltmeter << /interval dt >>                         Create /vm2 Set
 
  pg n1 << >> syn1 Connect
  pg n2 << >> syn2 Connect
-   
+
  vm1 n1 Connect
- vm2 n2 Connect  
+ vm2 n2 Connect
 
  1000 Simulate
- vm1 [/events /V_m] get cva Max Vref gt  
- vm2 [/events /V_m] get cva Max Vref gt  
+ vm1 [/events /V_m] get cva Max Vref gt
+ vm2 [/events /V_m] get cva Max Vref gt
 
 } def
 

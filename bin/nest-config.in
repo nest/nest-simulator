@@ -29,31 +29,32 @@ Known values for OPTION are:
 
 EOF
 
-    exit $1
+    exit "${1}"
 }
 
 if test $# -eq 0; then
     usage 1
 fi
 
-cflags=false
-libs=false
-
 while test $# -gt 0; do
     case "$1" in
-    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
-    *) optarg= ;;
+    -*=*)
+        optarg="$(echo "$1" | sed 's/[-_a-zA-Z0-9]*=//')"
+        ;;
+    *)
+        optarg=
+        ;;
     esac
 
     case "$1" in
     --prefix=*)
-        prefix=$optarg
+        prefix="${optarg}"
         ;;
     --prefix)
-        echo $prefix
+        echo "${prefix}"
         ;;
     --exec-prefix)
-        echo $exec_prefix
+        echo "${exec_prefix}"
         ;;
     --version)
         echo "@NEST_VERSION@"
@@ -68,7 +69,7 @@ while test $# -gt 0; do
         echo "@ALL_CXXFLAGS@"
         ;;
     --libs)
-        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@/nest @MODULE_LINK_LIBS@"
+        echo "-L${prefix}/@CMAKE_INSTALL_LIBDIR@/nest @MODULE_LINK_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"
@@ -99,8 +100,7 @@ while test $# -gt 0; do
         echo "@CMAKE_INSTALL_LIBDIR@"
         ;;
     *)
-        usage
-        exit 1
+        usage 1
         ;;
     esac
     shift

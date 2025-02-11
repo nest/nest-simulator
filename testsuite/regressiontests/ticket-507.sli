@@ -29,7 +29,7 @@ Synopsis: (ticket-507) run -> NEST exits if test fails
 Description:
 Ensure that spike_generator throws exception on SetStatus if off-grid times are set,
 unless precise_times is set.
- 
+
 Author: Hans Ekkehard Plesser, 2011-03-18
  */
 
@@ -47,7 +47,7 @@ M_ERROR setverbosity
 }
 pass_or_die
 
-% this should fail 
+% this should fail
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -56,7 +56,7 @@ pass_or_die
 }
 fail_or_die
 
-% this should fail 
+% this should fail
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -65,7 +65,7 @@ fail_or_die
 }
 fail_or_die
 
-% this should pass as precise_times is true 
+% this should pass as precise_times is true
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus

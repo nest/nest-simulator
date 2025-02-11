@@ -85,4 +85,3 @@ ResetKernel
  } def
 
  {OutputRate r_ex sub} lower upper prec FindRoot
-

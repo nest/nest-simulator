@@ -26,10 +26,10 @@ Name: testsuite::ticket-689 - GetConnections throws Segmentation Fault if hpc_sy
 
 Synopsis: (ticket-689) run -> NEST exits if test fails
 
-Description: 
-Ensure that GetConnections works with hpc synapses. Script creates 2 neurons, connects them 
+Description:
+Ensure that GetConnections works with hpc synapses. Script creates 2 neurons, connects them
 with an hpc synapse and tests whether GetConnections retrieves 1 connection without crashing.
- 
+
 Author: Susanne Kunkel, Maximilian Schmidt, 2012-02-19
  */
 

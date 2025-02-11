@@ -20,7 +20,7 @@
  *
  */
 
-/* 
+/*
     A library of SLI-routines operating on arrays
 
     Authors:
@@ -136,7 +136,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::SDev, arraylib::Var
   Flatten size exch
   arrayload 1 sub {add} repeat
   cvd
-  exch div  
+  exch div
 } bind def
 
 
@@ -174,7 +174,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::Mean, arraylib::SDev
 {
   Flatten
   size exch
-  
+
   dup Mean sub
   {sqr} Map Sum
 
@@ -196,7 +196,7 @@ Parameters:
 [array]: array of numbers
 
 Examples:
-[1 2 3 4] SDev -> 
+[1 2 3 4] SDev ->
 
 Author: R Kupper
 
@@ -265,26 +265,26 @@ SeeAlso: Dimensions, TensorRank, Flatten
 /Reform [/arraytype /arraytype]
 {
   %stack:  [array] [dim1 dim2 ... dimn]
-  
+
   % first do consistency check:
   dup Times
-  %stack:  [array]  [dim1 dim2 ... dimn] product 
+  %stack:  [array]  [dim1 dim2 ... dimn] product
   2 pick Flatten size
   %stack:  [array]  [dim1 dim2 ... dimn] product [flatarray] size
   rolld neq
   {
-    %stack:  [array]  [dim1 dim2 ... dimn] [flatarray]    
+    %stack:  [array]  [dim1 dim2 ... dimn] [flatarray]
     M_ERROR (Reform) (New dimensions must not change the number of elements in the array.) message
     pop
     %stack:  [array]  [dim1 dim2 ... dimn]
     /Reform /RangeCheck raiseerror
   } if
   %stack:  [array]  [dim1 dim2 ... dimn] [flatarray]
-  rolld pop exch  
+  rolld pop exch
   %stack:  [flatarray] [dim1 dim2 ... dimn]
   % having passed this check, we can discard the first (redundant) dimension:
-  Rest  
-  %stack:  [flatarray]  [dim2 ... dimn]  
+  Rest
+  %stack:  [flatarray]  [dim2 ... dimn]
   reverse {Partition} Fold
 } bind def
 
@@ -407,28 +407,28 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeClip, area2
   2 arraystore
   %stack:    [2d-indices] [height width]
 
-  % we store array dimensions before operation and restore it afterwards:  
+  % we store array dimensions before operation and restore it afterwards:
   exch dup Dimensions rollu
-  
-  %stack: [Dimensions] [height width] [2d-indices] 
+
+  %stack: [Dimensions] [height width] [2d-indices]
 
   Flatten 2 Partition
   %stack: [Dimensions] [height width] [[y1 x1] [y2 x2] ... [yn xn]]
 
 
-  { 
-    %entry stack: [height width] [yi xi] 
+  {
+    %entry stack: [height width] [yi xi]
     1 pick  2 arraystore
     %stack: [height width] [ [yi xi] [height width] ]
 
     {
       %entry stack: index maxvalue
       1 pick rollu
-      %stack: index index maxvalue 
+      %stack: index index maxvalue
       geq_ii
       {
         pop
-        false        
+        false
       }
       {
         %stack: index
@@ -438,14 +438,14 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeClip, area2
           false
         } if
       } ifelse
-      %exit stack:  truncated_index      
+      %exit stack:  truncated_index
     } MapThread
 
     %exit stack :  [height width] [yi_truncated xi_truncated]
   } Map
-    
+
   %stack: [Dimensions] [height width] [[y1_truncated x1_truncated] [y2_truncated x2_truncated] ... [yn_truncated xn_truncated]]
-  rolld Reform 
+  rolld Reform
   %stack: [height width] [truncated-2d-indices-in-right-dimensions]
   exch pop
 } bind def
@@ -458,7 +458,7 @@ Name: arraylib::EdgeClip - Clip 2-d array indices at array edges
 
 Synopsis: [2d-indices] height width EdgeClip -> [clipped-2d-indices]
 
-Description: 
+Description:
 This function iterates through the given array indices and checks if
 they lie inside the specified range [0,height) and [0,width),
 respectively.
@@ -503,20 +503,20 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeTruncate, area2
   %stack:    [2d-indices] height width
   2 arraystore
   %stack:    [2d-indices] [height width]
-  {1 sub_ii} Map  
+  {1 sub_ii} Map
   %stack:    [2d-indices] [height-1 width-1]
 
-  % we store array dimensions before operation and restore it afterwards:  
+  % we store array dimensions before operation and restore it afterwards:
   exch dup Dimensions rollu
-  
-  %stack: [Dimensions] [height-1 width-1] [2d-indices] 
+
+  %stack: [Dimensions] [height-1 width-1] [2d-indices]
 
   Flatten 2 Partition
   %stack: [Dimensions] [height-1 width-1] [[y1 x1] [y2 x2] ... [yn xn]]
 
 
-  { 
-    %entry stack: [height-1 width-1] [yi xi] 
+  {
+    %entry stack: [height-1 width-1] [yi xi]
     1 pick  2 arraystore
     %stack: [height-1 width-1] [ [yi xi] [height-1 width-1] ]
 
@@ -524,14 +524,14 @@ SeeAlso: arraylib::EdgeWrap, arraylib::EdgeTruncate, area2
       %entry stack: index maxvalue
       min_i_i
       0 max_i_i
-      %exit stack:  clipped_index      
+      %exit stack:  clipped_index
     } MapThread
 
     %exit stack :  [height-1 width-1] [yi_clipped xi_clipped]
   } Map
-    
+
   %stack: [Dimensions] [height-1 width-1] [[y1_clipped x1_clipped] [y2_clipped x2_clipped] ... [yn_clipped xn_clipped]]
-  rolld Reform 
+  rolld Reform
   %stack: [height-1 width-1] [clipped-2d-indices-in-right-dimensions]
   exch pop
 } bind def
@@ -544,7 +544,7 @@ Name: arraylib::EdgeWrap - Wrap 2-d array indices around edges (toriodal)
 
 Synopsis: [2d-indices] height width EdgeWrap -> [wrapped-2d-indices]
 
-Description: 
+Description:
 This function iterates through the given array indices and checks if
 they lie inside the specified range [0,height) and [0,width),
 respectively.
@@ -591,32 +591,32 @@ SeeAlso: arraylib::IndexWrap, arraylib::EdgeTruncate, arraylib::EdgeClip, area2
   %stack:    [2d-indices] height width
   2 arraystore
   %stack:    [2d-indices] [height width]
-    
-  % we store array dimensions before operation and restore it afterwards:  
+
+  % we store array dimensions before operation and restore it afterwards:
   exch dup Dimensions rollu
-  
-  %stack: [Dimensions] [height width] [2d-indices] 
+
+  %stack: [Dimensions] [height width] [2d-indices]
 
   Flatten 2 Partition
   %stack: [Dimensions] [height width] [[y1 x1] [y2 x2] ... [yn xn]]
 
 
-  { 
-    %entry stack: [height width] [yi xi] 
+  {
+    %entry stack: [height width] [yi xi]
     1 pick  2 arraystore
     %stack: [height width] [ [yi xi] [height width] ]
 
     {
       %entry stack: index maxvalue
       IndexWrap_i_i
-      %exit stack:  wrapped_index      
+      %exit stack:  wrapped_index
     } MapThread
 
     %exit stack :  [height width] [yi_wrapped xi_wrapped]
   } Map
-    
+
   %stack: [Dimensions] [height width] [[y1_wrapped x1_wrapped] [y2_wrapped x2_wrapped] ... [yn_wrapped xn_wrapped]]
-  rolld Reform 
+  rolld Reform
   %stack: [height width] [wrapped-2d-indices-in-right-dimensions]
   exch pop
 } bind def
@@ -629,10 +629,10 @@ Name: arraylib::IndexWrap - project a cyclic index value onto interval [0,N).
 
 Synopsis:  index N CyclicValue -> normindex
 
-Description: 
+Description:
   "IndexWrap" projects a cyclic integer index in the range (-oo,oo),
   of periodicy N, onto its norm interval [0,N).
-    
+
   This function can be used to "wrap around" array indices in order to
   index an array
 
@@ -640,7 +640,7 @@ Description:
   synopsis are the same, except that no warnings or error messages are
   thrown.
 
-Parameters: 
+Parameters:
   In : index: integer value in (-oo,oo).
 
        N: Peroidicity of the cyclic index.
@@ -655,19 +655,19 @@ Diagnostics:
   efficiency, and will break or yield invalid results in this case.
 
 Examples:
-  -6 3 IndexWrap   -> 0        
-  -5 3 IndexWrap   -> 1         
-  -4 3 IndexWrap   -> 2        
-  -3 3 IndexWrap   -> 0         
-  -2 3 IndexWrap   -> 1         
-  -1 3 IndexWrap   -> 2         
-   0 3 IndexWrap   -> 0         
-   1 3 IndexWrap   -> 1        
-   2 3 IndexWrap   -> 2         
-   3 3 IndexWrap   -> 0         
-   4 3 IndexWrap   -> 1         
-   5 3 IndexWrap   -> 2         
-   6 3 IndexWrap   -> 0         
+  -6 3 IndexWrap   -> 0
+  -5 3 IndexWrap   -> 1
+  -4 3 IndexWrap   -> 2
+  -3 3 IndexWrap   -> 0
+  -2 3 IndexWrap   -> 1
+  -1 3 IndexWrap   -> 2
+   0 3 IndexWrap   -> 0
+   1 3 IndexWrap   -> 1
+   2 3 IndexWrap   -> 2
+   3 3 IndexWrap   -> 0
+   4 3 IndexWrap   -> 1
+   5 3 IndexWrap   -> 2
+   6 3 IndexWrap   -> 0
 
 Availability:
 "Namespace"-dictionary "arraylib".
@@ -676,7 +676,7 @@ Author: Ruediger Kupper
 
 FirstVersion: 14.2.2003 (Einstein's birthday)
 
-Remarks: 
+Remarks:
   This function behaves like Mathematica's Mod function (which is
   different from the mathematical definition of MOD).
 
@@ -687,7 +687,7 @@ SeeAlso: arraylib::EdgeWrap, mod, CyclicValue
 {
   %stack:  index N
   % index might be negative, so we add a suitable multiple of N:
-  % posindex = index + (abs(index)/N + 1)*N  with integer div.  
+  % posindex = index + (abs(index)/N + 1)*N  with integer div.
 
   exch 1 pick 1 pick abs_i 1 pick
   %stack:  N index N abs(index) N
@@ -696,10 +696,10 @@ SeeAlso: arraylib::EdgeWrap, mod, CyclicValue
   % now that we know everything is positive, we can use mod:
   exch_ mod
 } bind def
-            
+
 /IndexWrap [/integertype /integertype]
 {
-  dup_ 0 gt_ii 
+  dup_ 0 gt_ii
   {
     IndexWrap_i_i
   }
@@ -707,14 +707,14 @@ SeeAlso: arraylib::EdgeWrap, mod, CyclicValue
     M_ERROR (IndexWrap) (Period N must be positive (and different from 0).) message
     /IndexWrap /RangeCheck raiseerror
   }ifelse
-} bind def  
+} bind def
 
 
 /** @BeginDocumentation
 Name: arraylib::GaborPatch - Return a two-dimensional array with Gabor function.
 Synopsis:
 nrows ncols GaborPatch -> [[] .. []]
-Parameters: 
+Parameters:
 nrows: number of rows of the result matrix.
 ncols: number of columns of the result matrix.
 
@@ -727,11 +727,11 @@ An orientation of 0 RAD results in a vertically oriented Gabor.
 An orientation of Pi/2 results in an horizontally oriented Gabor.
 Angles are measured counter clockwise from the positive x-axis.
 
-The implementation follows the description given by 
+The implementation follows the description given by
 N. Petkov and R. Kruizinga Biol.Cybern. 76, 83-97 (1997).
 
 Note that GaborPatch automatically performs a coordinate transformation
-from the mathematical x-y plane to the matrix row-column system. 
+from the mathematical x-y plane to the matrix row-column system.
 
 Options:
 Options which determine the argument range of the Gabor patch.
@@ -743,7 +743,7 @@ y_max     doubletype  - largest  y coordinate value. [ 2Pi]
 
 Options which determine the Gabor function:
 
-lambda      doubletype  - Wavelength of the Gabor in RAD. [ 2Pi]  
+lambda      doubletype  - Wavelength of the Gabor in RAD. [ 2Pi]
 phase       doubletype  - Phase of the Gabor in RAD.      [ 0.0]
 orientation doubletype  - Rotation of the Gabor in RAD    [ 0.0]
 sigma       doubletype  - Width of the Gaussian envelope. [ Pi]
@@ -763,10 +763,10 @@ SeeAlso: gabor_
   /arraylib::GaborPatch GetOptions
   begin
    x_min x_max
-   y_min y_max 
+   y_min y_max
    lambda orientation phase sigma gamma
   end
-  gabor_ 
+  gabor_
 } def
 
 
@@ -789,22 +789,22 @@ SeeAlso: gabor_
 Name: arraylib::GaussPatch - Return a two-dimensional array with Gauss function.
 Synopsis:
 nrows ncols GaussPatch -> [[] .. []]
-Parameters: 
+Parameters:
 nrows: number of rows of the result matrix.
 ncols: number of columns of the result matrix.
 
 Description:
 This function returns a matrix of nrows by ncols, with the amplitudes
-of a two dimensional Gauss function, computed over the range of 
+of a two dimensional Gauss function, computed over the range of
 [x_min,x_max] by [y_min,y_max].
 These and other parameters can be set by changing the function's options.
 
-If the aspect ratio gamma < 1, an orientation of 0 RAD results in 
+If the aspect ratio gamma < 1, an orientation of 0 RAD results in
 a vertically oriented eliptic Gauss .
 Angles are measured counter clockwise from the positive x-axis.
 
 Note that GaussPatch automatically performs a coordinate transformation
-from the mathematical x-y plane to the matrix row-column system. 
+from the mathematical x-y plane to the matrix row-column system.
 
 Options:
 Options which determine the argument range of the Gauss patch.
@@ -839,7 +839,7 @@ SeeAlso: gauss2d_
   /arraylib::GaussPatch GetOptions
   begin
    x_min x_max
-   y_min y_max 
+   y_min y_max
    orientation sigma gamma
 
    gauss2d_
@@ -848,14 +848,14 @@ SeeAlso: gauss2d_
     {%normalize the integral by a factor (sigma_x*sqrt(2Pi))*(sigma_y*sqrt(2Pi))
       % = sigma_x*sigma_y*2Pi
       % where sigma_x=sigma, sigma_y=sigma/gamma
-      2 Pi mul  sigma mul  sigma gamma div mul  div  
+      2 Pi mul  sigma mul  sigma gamma div mul  div
     } if
    NormalizeSum
     {%normalize to total sum of array elements
-     dup Flatten Plus div    
+     dup Flatten Plus div
     } if
 
-   end   
+   end
 } def
 
 

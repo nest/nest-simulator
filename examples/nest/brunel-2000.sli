@@ -51,7 +51,7 @@
       - define own functions
       - set parameters in a simple way
       - communicate with the user in a simple way
-      
+
    This brunel-2000.sli version uses old-style connection commands
    that are obsolete in NEST 2.4 and later. It is kept for reference.
    Please see brunel-2000_newconnect.sli for a version adapted to
@@ -197,7 +197,7 @@ statusdict/userargs :: size 1 geq
 } ifelse
 
 % set resolution and total/local number of threads
-<< 
+<<
     /resolution  dt
     /local_num_threads local_num_threads
     /overwrite_files true
@@ -222,7 +222,7 @@ statusdict/userargs :: size 1 geq
         >> SetDefaults
 
       (Creating the network.) =  % show message
-      
+
       /E_neurons /iaf_psc_alpha NE Create def
       /I_neurons /iaf_psc_alpha NI Create def
 
@@ -314,4 +314,3 @@ statusdict/userargs :: size 1 geq
   (Inhibitory rate   : ) =only insr ComputeRate =only ( Hz) =
   (Building time     : ) =only BuildCPUTime =only ( s) =
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
-

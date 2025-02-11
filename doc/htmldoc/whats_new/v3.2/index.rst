@@ -20,5 +20,3 @@ ConnPlotter
 ~~~~~~~~~~~
 All files related to ConnPlotter have been removed from NEST 3.2 and
 moved to a separate repository `connplotter <https://github.com/nest/connplotter>`_.
-
-

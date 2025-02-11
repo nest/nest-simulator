@@ -20,15 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # This script scans for forbidden types and fails if any are used.
+set -euo pipefail
 
 forbidden_types="double_t"
 used_forbidden_types=""
+NEST_SOURCE="${NEST_SOURCE:-.}"
 
 for t in $forbidden_types; do
-    scan_result=`grep $t -r -o --include=*.{h,cc,cpp} $NEST_SOURCE | sed 's/:/: /'`
+    scan_result="$(grep "$t" -rHn -o --include=*.{h,cc,cpp} "$NEST_SOURCE" || true)"
     if [ -n "$scan_result" ]; then
-        used_forbidden_types=$used_forbidden_types$'\n'$scan_result
+        used_forbidden_types="$used_forbidden_types$'\n'$scan_result"
     fi
 done
 
-echo "$used_forbidden_types"
+test -z "$used_forbidden_types" || { # return success if no forbidden types where used or print the corresponding list and error out
+    echo "$used_forbidden_types"
+    exit 1
+}

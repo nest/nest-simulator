@@ -53,7 +53,8 @@ def init(args):
     global NESTErrors
     cdef int argc = len(args)
 
-    cdef char** c_argv = <char**>malloc(sizeof(char*) * (argc+ 1 ))
+    # OpenMPI depends on last entry of argv being null
+    cdef char** c_argv = <char**>malloc(sizeof(char*) * (argc + 1))
     if c_argv is NULL:
         raise NESTErrors.PyNESTError("NESTKernel::init : couldn't allocate c_argv")
 
@@ -68,10 +69,6 @@ def init(args):
     finally:
         free(c_argv)
 
-#
-#    cdef vector[char*] argv = pylist_to_stringvec(pyargs)
-##    cdef const char* argv = argv_sv[0].c_str()
-#    init_nest(&argc, &argv)
 
 cdef class NodeCollectionObject:
 

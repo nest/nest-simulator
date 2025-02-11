@@ -53,7 +53,12 @@ def init(args):
     global NESTErrors
     cdef int argc = len(args)
 
-    cdef char** c_argv = <char**>malloc(sizeof(char*) * argc)
+    cdef char** c_argv = <char**>malloc(sizeof(char*) * (argc+ 1 ))
+    if c_argv is NULL:
+        raise NESTErrors.PyNESTError("NESTKernel::init : couldn't allocate c_argv")
+
+    c_argv[argc] = NULL
+
     try:
         for idx, s in enumerate([pystr_to_string(x) for x in args]):
             c_argv[idx] = s
@@ -326,7 +331,8 @@ def llapi_init_nest(argv):
 
 
     # Create c-style argv arguments from sys.argv
-    cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
+    cdef int size = argc + 1
+    cdef char** argv_chars = <char**> malloc((size) * sizeof(char*))
     if argv_chars is NULL:
         raise NotImplementedError
     try:

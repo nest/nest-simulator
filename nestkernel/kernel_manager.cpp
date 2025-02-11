@@ -301,6 +301,19 @@ nest::KernelManager::get_status( dictionary& dict )
   }
 
   dict[ "build_info" ] = get_build_info_();
+  if ( NEST_HOSTOS == std::string( "linux" ) )
+  {
+    dict[ "memory_size" ] = get_memsize_linux_();
+  }
+  else if ( NEST_HOSTOS == std::string( "darwin" ) )
+  {
+    dict[ "memory_size" ] = get_memsize_darwin_();
+  }
+  else
+  {
+    // Not available for this OS.
+    dict[ "memory_size" ] = -1;
+  }
 }
 
 void
@@ -312,3 +325,79 @@ nest::KernelManager::write_to_dump( const std::string& msg )
     dump_ << msg << std::endl << std::flush;
   }
 }
+
+#ifdef __linux__
+
+#include <ifstream>
+size_t
+nest::KernelManager::get_memsize_linux_() const
+{
+  // code based on mistral.ai
+  std::ifstream file( "/proc/self/status" );
+  if ( not file.is_open() )
+  {
+    throw std::runtime_error( "Could not open /proc/self/status" );
+  }
+
+  std::string line;
+  while ( std::getline( file, line ) )
+  {
+    if ( line.rfind( "VmSize:", 0 ) == 0 )
+    {
+      std::istringstream stream( line );
+      std::string key;
+      size_t value;
+      std::string unit;
+      stream >> key >> value >> unit;
+      file.close();
+      if ( unit != "kB" )
+      {
+        throw std::runtime_error( "VmSize not reported in kB" );
+      }
+      return value;
+    }
+  }
+
+  file.close();
+  throw std::runtime_error( "VmSize not found in /proc/self/status" );
+}
+
+#else
+
+size_t
+nest::KernelManager::get_memsize_linux_() const
+{
+  assert( false || "Only implemented on Linux systems." );
+  return 0;
+}
+
+#endif
+
+
+#if defined __APPLE__
+
+#include <mach/mach.h>
+size_t
+nest::KernelManager::get_memsize_darwin_() const
+{
+  struct task_basic_info t_info;
+  mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
+
+  kern_return_t result = task_info( mach_task_self(), TASK_BASIC_INFO, ( task_info_t ) &t_info, &t_info_count );
+  assert( result == KERN_SUCCESS || "Problem occurred during getting of task_info." );
+
+  // For macOS, vmsize is not informative, it is an extremly large address range, usually O(2^40).
+  // resident_size gives the most reasonable information. Information is in bytes, thus divide.
+  return t_info.resident_size / 1024;
+}
+
+#else
+
+size_t
+nest::KernelManager::get_memsize_darwin_() const
+{
+  assert( false || "Only implemented on macOS." );
+  return 0;
+}
+
+#endif

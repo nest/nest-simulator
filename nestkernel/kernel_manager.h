@@ -169,7 +169,8 @@
 
  Miscellaneous
  dict_miss_is_error                    booltype    - Whether missed dictionary entries are treated as errors.
-
+ build_info                   dicttype - Various information about the NEST build
+ memory_size         integertype - Memory occupied by NEST process in kB (-1 if not available for OS)
  SeeAlso: Simulate, Node
 */
 
@@ -286,7 +287,11 @@ public:
   MUSICManager music_manager;
   NodeManager node_manager;
   /**@}*/
+
 private:
+  size_t get_memsize_linux_() const;  //!< return VmSize in kB
+  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 

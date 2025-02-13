@@ -613,8 +613,9 @@ NodeManager::set_status_single_node_( Node& target, const dictionary& d, bool cl
     }
     target.set_status_base( d );
 
-    // TODO: Not sure this check should be at single neuron level; advantage is
-    // it stops after first failure.
+    // PYNEST-NG TODO: We need to check at the single-neuron level because otherwise we
+    // trigger a false error if an NC has no member on a given rank.
+    // Also has the advantage of triggering an error on the first node.
     d.all_entries_accessed( "NodeManager::set_status", "params" );
   }
 }

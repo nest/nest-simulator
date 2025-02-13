@@ -368,7 +368,7 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
 
       if ( P_.precise_times_ )
       {
-        se.set_offset( P_.spike_offsets_[ S_.position_ ] );
+        se.get_stamp().set_offset( P_.spike_offsets_[ S_.position_ ] );
       }
 
       if ( not P_.spike_multiplicities_.empty() )

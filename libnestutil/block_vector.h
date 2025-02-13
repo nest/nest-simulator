@@ -334,7 +334,7 @@ BlockVector< value_type_ >::BlockVector( size_t n )
     std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
   , finish_( begin() )
 {
-  size_t num_blocks_needed = std::ceil( static_cast< double >( n / max_block_size ) );
+  size_t num_blocks_needed = std::ceil( static_cast< double >( n ) / max_block_size );
   for ( size_t i = 0; i < num_blocks_needed - 1; ++i )
   {
     blockmap_.emplace_back( max_block_size );

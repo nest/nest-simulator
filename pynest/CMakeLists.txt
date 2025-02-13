@@ -69,5 +69,9 @@ if ( HAVE_PYTHON )
     PATTERN "versionchecker.py.in" EXCLUDE
   )
 
+  install( DIRECTORY examples/
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
+  )
+
   install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
 endif ()

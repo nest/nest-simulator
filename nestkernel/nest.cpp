@@ -218,18 +218,26 @@ get_nc_status( NodeCollectionPTR nc )
 void
 set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 {
+  /*
+   PYNEST-NG TODO:
+
+   The following does NOT work because the rank_local does not "see" the siblings of devices
+
   const auto rank_local_begin = nc->rank_local_begin();
   if ( rank_local_begin == nc->end() )
   {
     return; // no local nodes, nothing to do --- more efficient and avoids params access check problems
   }
+  */
 
   if ( params.size() == 1 )
   {
     params[ 0 ].init_access_flags();
-    for ( auto it = rank_local_begin; it < nc->end(); ++it )
+    // We must iterate over all nodes here because we otherwise miss "siblings" of devices
+    // May consider ways to fix this.
+    for ( auto const& node : *nc )
     {
-      kernel().node_manager.set_status( ( *it ).node_id, params[ 0 ] );
+      kernel().node_manager.set_status( node.node_id, params[ 0 ] );
     }
     params[ 0 ].all_entries_accessed( "NodeCollection.set()", "params" );
   }

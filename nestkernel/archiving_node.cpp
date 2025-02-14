@@ -304,12 +304,12 @@ void
 ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   const double t_last_pre_spike,
   const double weight_revert,
-  const double time_until_uncritical )
+  const double time_while_critical )
 {
   assert( correction_entries_stdp_ax_delay_.size()
     == static_cast< size_t >(
       kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
-  const long idx = kernel().event_delivery_manager.get_modulo( time_until_uncritical - 1 );
+  const long idx = kernel().event_delivery_manager.get_modulo( time_while_critical - 1 );
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
   const SpikeData& spike_data = spike_event.get_sender_spike_data();
@@ -352,15 +352,13 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
       const long idx = kernel().event_delivery_manager.get_modulo( lag );
       assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-      for ( auto it_corr_entry = correction_entries_stdp_ax_delay_[ idx ].begin();
-            it_corr_entry < correction_entries_stdp_ax_delay_[ idx ].end();
-            ++it_corr_entry )
+      for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
       {
         kernel().connection_manager.correct_synapse_stdp_ax_delay( get_thread(),
-          it_corr_entry->syn_id_,
-          it_corr_entry->lcid_,
-          it_corr_entry->t_last_pre_spike_,
-          &it_corr_entry->weight_revert_,
+          it_corr_entry.syn_id_,
+          it_corr_entry.lcid_,
+          it_corr_entry.t_last_pre_spike_,
+          it_corr_entry.weight_revert_,
           t_spike.get_ms() );
       }
       // indicate that the new spike was processed by these STDP synapses

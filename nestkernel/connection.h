@@ -38,13 +38,13 @@
 #include "nest_types.h"
 #include "node.h"
 #include "spikecounter.h"
+#include "target_identifier.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "target_identifier.h"
 
 namespace nest
 {
@@ -179,7 +179,7 @@ public:
    */
   void correct_synapse_stdp_ax_delay( const size_t tid,
     const double t_last_pre_spike,
-    double* weight_revert,
+    double& weight_revert,
     const double t_post_spike,
     const CommonSynapseProperties& );
 
@@ -456,7 +456,7 @@ template < typename targetidentifierT, typename DelayTypeT >
 inline void
 Connection< targetidentifierT, DelayTypeT >::correct_synapse_stdp_ax_delay( const size_t,
   const double,
-  double*,
+  double&,
   const double,
   const CommonSynapseProperties& )
 {

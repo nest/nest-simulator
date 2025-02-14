@@ -262,9 +262,6 @@ protected:
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
-  //! indicate that weight and delay should not be set per synapse
-  // std::vector< bool > default_weight_and_delay_;
-
   //! indicate that weight should not be set per synapse
   std::vector< bool > default_weight_;
 

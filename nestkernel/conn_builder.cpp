@@ -156,7 +156,6 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
   default_axonal_delay_.resize( syn_specs.size() );
-  // default_weight_and_delay_.resize( syn_specs.size() );
   weights_.resize( syn_specs.size() );
   delays_.resize( syn_specs.size() );
   axonal_delays_.resize( syn_specs.size() );
@@ -534,11 +533,8 @@ nest::BipartiteConnBuilder::set_default_weight_or_delays_( DictionaryDatum syn_p
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
   default_axonal_delay_[ synapse_indx ] = not syn_params->known( names::axonal_delay );
 
-  // If neither weight nor delay are given in the dict, we handle this separately. Important for
-  // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
-  // _all_ types of synapses.
-  // default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
-
+  // If neither weight nor delay are given in the dict, we handle this separately. Important for hom_w synapses, on
+  // which weight cannot be set. However, we use default weight and delay for _all_ types of synapses.
   if ( not( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] ) )
   {
     weights_[ synapse_indx ] = syn_params->known( names::weight )

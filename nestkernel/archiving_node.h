@@ -107,12 +107,12 @@ public:
    * @param t_last_pre_spike The time of the last pre-synaptic spike that was processed before the current one.
    * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
    * correction.
-   * @param time_until_uncritical The number of time steps until the spike no longer needs to be corrected.
+   * @param time_while_critical The number of time steps until the spike no longer needs to be corrected.
    */
   void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
     const double t_last_pre_spike,
     const double weight_revert,
-    const double time_until_uncritical );
+    const double time_while_critical );
 
 protected:
   void pre_run_hook_();
@@ -207,7 +207,7 @@ protected:
    * Framework for STDP with predominantly axonal delays:
    * Triggered when this neuron spikes, to correct all relevant incoming STDP synapses with predominantly axonal delays
    * and corresponding received spikes. */
-  virtual void correct_synapses_stdp_ax_delay_( const Time& t_spike );
+  void correct_synapses_stdp_ax_delay_( const Time& t_spike );
 };
 
 inline double

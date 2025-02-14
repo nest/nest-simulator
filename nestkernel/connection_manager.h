@@ -145,7 +145,8 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    * \param params Parameter dictionary to configure the synapse.
-   * \param delay Delay of the connection (in ms).
+   * \param delay Dendritic or total delay of the connection (in ms).
+   * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight Weight of the connection.
    */
   void connect( const size_t snode_id,
@@ -153,9 +154,9 @@ public:
     size_t target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay,
-    const double axonal_delay,
-    const double weight );
+    const double delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * Connect two nodes.
@@ -309,11 +310,24 @@ public:
     const std::vector< ConnectorModel* >& cm,
     Event& e );
 
+  /**
+   * On occurrence of a post-synaptic spike, correct the weight update of a previous pre-synaptic spike which was
+   * processed before the current post-synaptic spike, but had to be processed after it, if it was known at this point
+   * in time.
+   *
+   * @param tid The thread storing the synapse.
+   * @param syn_id Synapse type.
+   * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
+   * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
+   * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
+   * correction.
+   * @param t_post_spike Time of the current post-synaptic spike.
+   */
   void correct_synapse_stdp_ax_delay( const size_t tid,
     const synindex syn_id,
     const size_t lcid,
     const double t_last_pre_spike,
-    double* weight_revert,
+    double& weight_revert,
     const double t_post_spike );
 
   /**
@@ -533,7 +547,8 @@ private:
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
-   * \param delay The delay of the connection (optional).
+   * \param delay Dendritic or total delay of the connection (in ms).
+   * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight The weight of the connection (optional).
    */
   void connect_( Node& source,
@@ -570,17 +585,17 @@ private:
     const size_t tid,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay = NAN,
-    const double weight = NAN );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
    * receiving node if the sender does not have proxies.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value in C++, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are valid.
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
@@ -596,8 +611,8 @@ private:
     const size_t tid,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double delay = NAN,
-    const double weight = NAN );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * Increases the connection count.
@@ -922,7 +937,7 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const double t_last_pre_spike,
-  double* weight_revert,
+  double& weight_revert,
   const double t_post_spike )
 {
   ++num_corrections_;

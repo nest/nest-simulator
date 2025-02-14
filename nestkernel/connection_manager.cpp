@@ -944,7 +944,7 @@ nest::ConnectionManager::connect_( Node& source,
 
   increase_connection_count( tid, syn_id );
 
-  have_nonzero_axonal_delays_[ tid ] = have_nonzero_axonal_delays_[ tid ] | ( axonal_delay > 0. );
+  have_nonzero_axonal_delays_[ tid ] = have_nonzero_axonal_delays_[ tid ] or ( axonal_delay > 0. );
 
   // We do not check has_primary_connections_ and secondary_connections_exist_
   // directly as this led to worse performance on the supercomputer Piz Daint.

@@ -46,18 +46,6 @@
 namespace nest
 {
 
-// standard implementation to obtain the default delay, assuming that it
-// is located in GenericConnectorModel::default_connection
-// synapse types with homogeneous delays must provide a specialization
-// that returns the default delay from CommonProperties (or from else where)
-// template<typename ConnectionT>
-// double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
-// {
-//   //std::cout << "standard implementation of get_default_delay" << std::endl;
-//   return cm.get_default_connection().get_delay_ms();
-// }
-
-
 template < typename ConnectionT >
 ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
@@ -230,12 +218,13 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   if ( not numerics::is_nan( delay ) and ( p->known( names::delay ) or p->known( names::dendritic_delay ) ) )
   {
-    throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
+    throw BadParameter(
+      "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
   }
 
   if ( not numerics::is_nan( axonal_delay ) and p->known( names::axonal_delay ) )
   {
-    throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
+    throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
   }
 
   if ( has_property( ConnectionModelProperties::HAS_DELAY ) )

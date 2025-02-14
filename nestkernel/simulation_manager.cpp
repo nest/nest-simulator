@@ -538,9 +538,8 @@ nest::SimulationManager::prepare()
   }
   prepared_ = true;
 
-  // check whether waveform relaxation is used on any MPI process;
-  // needs to be called before update_connection_infrastructure_since
-  // it resizes coefficient arrays for secondary events
+  // check whether waveform relaxation is used on any MPI process; needs to be called before
+  // update_connection_infrastructure() since it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
   // If we simulated already and we use axonal delays, we have to make sure connectivity didn't change, as this would

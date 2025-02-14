@@ -98,9 +98,9 @@ public:
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const DictionaryDatum& d,
-    const double delay = NAN,
-    const double axonal_delay = NAN,
-    const double weight = NAN ) = 0;
+    const double delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
+    const double weight = numerics::nan ) = 0;
 
   virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
 

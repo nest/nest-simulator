@@ -67,7 +67,7 @@ Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const double t_last_pre_spike,
-  double* weight_revert,
+  double& weight_revert,
   const double t_post_spike )
 {
   typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >(

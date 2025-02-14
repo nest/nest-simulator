@@ -30,6 +30,11 @@
 namespace nest
 {
 
+
+/**
+ * Container for a single delay value which is interpreted as total transmission delay or purely dendritic delay by some
+ * models. Implies an axonal delay of 0.
+ */
 struct TotalDelay
 {
   unsigned int delay_;
@@ -188,6 +193,9 @@ struct TotalDelay
 //! check legal size
 using success_total_transmission_delay_data_size = StaticAssert< sizeof( TotalDelay ) == 4 >::success;
 
+/**
+ * Container for explicit dendritic and axonal delay values.
+ */
 struct AxonalDendriticDelay
 {
   unsigned int dendritic_delay_ : NUM_BITS_DENDRITIC_DELAY;
@@ -338,15 +346,14 @@ struct AxonalDendriticDelay
     // Case 1: User sets both delay and dendritic or axonal delay
     if ( d->known( names::delay ) and ( d->known( names::dendritic_delay ) or d->known( names::axonal_delay ) ) )
     {
-      // TODO: Replace by std::format when using C++20
-      throw BadProperty( "It is not allowed to provide both the total transmission delay '" + names::delay.toString()
-        + "' and '" + names::dendritic_delay.toString() + "' or '" + names::axonal_delay.toString() + "'." );
+      throw BadProperty( "'" + names::delay.toString() + "' cannot be specified together with '"
+        + names::dendritic_delay.toString() + "' or '" + names::axonal_delay.toString() + "' due to ambiguity." );
     }
     // Case 2: User sets delay, but axonal delay has been set before
     if ( d->known( names::delay ) and get_axonal_delay_steps() != 0 )
     {
-      throw BadProperty( "Trying to set the total transmission delay via '" + names::delay.toString() + "', but '"
-        + names::axonal_delay.toString() + "' has been set before, which is ambiguous." );
+      throw BadProperty(
+        "The total transmission delay cannot be set after '" + names::axonal_delay.toString() + "' has been set." );
     }
     // Case 3: User sets axonal delay, but dendritic delay has been set before
     if ( d->known( names::axonal_delay ) and not d->known( names::dendritic_delay )

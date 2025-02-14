@@ -35,7 +35,9 @@ class TestChangingTicBase(unittest.TestCase):
     # change in tic-base.  However, because the value in the defaults
     # is converted to ms, it will differ from the reference value.
     # The model is therefore ignored.
-    ignored_models = ["iaf_psc_exp_ps_lossless"]
+    # iaf_psc_alpha_hom currently has a different archiving node base class
+    # to support size_t histentries and is therefore not compatible.
+    ignored_models = ["iaf_psc_exp_ps_lossless", "iaf_psc_alpha_hom"]
 
     def setUp(self):
         nest.ResetKernel()

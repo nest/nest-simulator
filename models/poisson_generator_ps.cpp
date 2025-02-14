@@ -54,7 +54,7 @@ namespace nest
  * ---------------------------------------------------------------- */
 
 poisson_generator_ps::Parameters_::Parameters_()
-  : rate_( 0.0 )      // Hz
+  : rate_( 0.0 )      // spks/s
   , dead_time_( 0.0 ) // ms
   , num_targets_( 0 )
 {

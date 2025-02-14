@@ -104,7 +104,7 @@ protected:
  *                          rate that the neuron should achieve.  For example, an
  *                          eps = 0.05 [Ca2+] with tau_Ca = 10000.0 and beta_Ca =
  *                          0.001 for a synaptic element means a desired firing
- *                          rate of 5Hz.
+ *                          rate of 5 spks/s.
  *
  *  References:
  *   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
@@ -184,7 +184,7 @@ private:
  *                          firing rate that the neuron should achieve.  For
  *                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
  *                          and beta_Ca = 0.001 for a synaptic element means a
- *                          desired firing rate of 5Hz.
+ *                          desired firing rate of 5 spks/s.
  *
  *   nu           double -  Growth rate in elements/ms. The growth rate nu is
  *                          defined in the SynapticElement class. Can be negative.
@@ -227,8 +227,12 @@ public:
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
 private:
+  void compute_local_();
+
   double eta_;
   double eps_;
+  double inv_zeta_;
+  double xi_;
 };
 
 /** @BeginDocumentation
@@ -261,7 +265,7 @@ private:
  *                          firing rate that the neuron should achieve.  For
  *                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
  *                          and beta_Ca = 0.001 for a synaptic element means a
- *                          desired firing rate of 5Hz.
+ *                          desired firing rate of 5 spks/s.
  *
  *   nu           double -  Growth rate in elements/ms. The growth rate nu is
  *                          defined in the SynapticElement class. Can be negative.

@@ -85,7 +85,7 @@ poisson_rate_neuro = 1500.0
 # neuron parameters
 params_neuro = {"tau_syn_ex": 2.0}
 # astrocyte parameters
-params_astro = {"IP3_0": 0.16}
+params_astro = {"delta_IP3": 0.2}
 # weights of connections
 w_pre2astro = 1.0
 w_pre2post = 1.0
@@ -134,7 +134,7 @@ axes[0].plot(data_pre["times"], data_pre["V_m"])
 axes[1].plot(data_astro["times"], data_astro["IP3"])
 axes[2].plot(data_post["times"], data_post["I_SIC"])
 axes[3].plot(data_astro["times"], data_astro["Ca_astro"])
-axes[0].set_title(f"Presynaptic neuron\n(Poisson rate = {poisson_rate_neuro} Hz)")
+axes[0].set_title(f"Presynaptic neuron\n(Poisson rate = {poisson_rate_neuro} spks/s)")
 axes[0].set_ylabel("Membrane potential (mV)")
 axes[2].set_title("Postsynaptic neuron")
 axes[2].set_ylabel("Slow inward current (pA)")

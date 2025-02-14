@@ -27,4 +27,4 @@ Here you can discover the new features NEST 3.0 has to offer!
    random_number_generators
    recording_simulations
    stimulation_backends
-   ../../../connect_nest/nest_server
+   ../../../interface_nest/nest_server

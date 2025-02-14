@@ -31,7 +31,9 @@ See examples using astrocyte models:
 
 See model docs:
 
-* :doc:`../../../models/index_astrocyte`
+* :doc:`/models/astrocyte_lr_1994`
+* :doc:`/models/aeif_cond_alpha_astro`
+* :doc:`/models/sic_connection`
 
 New model: glif_psc_double_alpha
 --------------------------------

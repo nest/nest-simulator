@@ -51,7 +51,7 @@ register_poisson_generator( const std::string& name )
  * ---------------------------------------------------------------- */
 
 poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // Hz
+  : rate_( 0.0 ) // spks/s
 {
 }
 
@@ -115,7 +115,7 @@ poisson_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 
-  // rate_ is in Hz, dt in ms, so we have to convert from s to ms
+  // rate_ is in spks/s, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
   V_.poisson_dist_.param( param );
 }

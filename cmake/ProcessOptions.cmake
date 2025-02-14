@@ -294,11 +294,9 @@ function( NEST_PROCESS_WITH_GSL )
       set( GSL_ROOT "${with-gsl}" )
     endif ()
 
-    find_package( GSL )
+    find_package( GSL 1.11 )
 
-    # only allow GSL 1.11 and later
-    if ( GSL_FOUND AND ( "${GSL_VERSION}" VERSION_GREATER "1.11"
-        OR "${GSL_VERSION}" VERSION_EQUAL "1.11" ))
+    if ( GSL_FOUND )
       set( HAVE_GSL ON PARENT_SCOPE )
 
       # export found variables to parent scope
@@ -464,6 +462,20 @@ function( NEST_PROCESS_WITH_DETAILED_TIMERS )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_THREADED_TIMERS )
+  set( THREADED_TIMERS OFF PARENT_SCOPE )
+  if ( ${with-threaded-timers} STREQUAL "ON" )
+    set( THREADED_TIMERS ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_MPI_SYNC_TIMER )
+  set( MPI_SYNC_TIMER OFF PARENT_SCOPE )
+  if ( ${with-mpi-sync-timer} STREQUAL "ON" )
+    set( MPI_SYNC_TIMER ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_LIBNEUROSIM )
   # Find libneurosim
   set( HAVE_LIBNEUROSIM OFF PARENT_SCOPE )
@@ -550,7 +562,8 @@ function( NEST_PROCESS_WITH_BOOST )
     set(Boost_USE_RELEASE_LIBS ON) # only find release libs
     # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
     # Require Boost version >=1.69.0 due to change in Boost sort
-    find_package( Boost 1.69.0 )
+    # Require Boost version >=1.70.0 due to change in package finding
+    find_package( Boost 1.70 CONFIG )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )

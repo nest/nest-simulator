@@ -309,7 +309,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
 
 @check_stack
-def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
+def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_specs=None):
     """
     Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
 
@@ -330,7 +330,9 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     third : NodeCollection
         Third population to include in connection
     conn_spec : dict
-        Specifies connection rule, which must support tripartite connections, see below
+        Specifies connection rule for primary connection
+    third_factor_conn_spec: dict
+        Specifies third-factor connection rule
     syn_spec : dict, optional
         Specifies synapse models to be used, see below
 
@@ -422,8 +424,9 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     sps(post)
     sps(third)
     sps(conn_spec)
+    sps(third_factor_conn_spec)
     sps(syn_specs)
-    sr("ConnectTripartite_g_g_g_D_D")
+    sr("ConnectTripartite_g_g_g_D_D_D")
 
 
 @check_stack

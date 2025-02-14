@@ -121,7 +121,7 @@ public:
   }
 
   void
-  install( const std::string& name )
+  install( const std::string& )
   {
     throw KernelException( "Dynamic modules not supported without libltdl." );
   }

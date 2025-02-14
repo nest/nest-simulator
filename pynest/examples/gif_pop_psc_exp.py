@@ -226,12 +226,12 @@ for i, nest_i in enumerate(nest_pops):
 plt.figure(1)
 plt.clf()
 plt.subplot(2, 1, 1)
-plt.plot(t, A_N * 1000)  # plot population activities (in Hz)
-plt.ylabel(r"$A_N$ [Hz]")
+plt.plot(t, A_N * 1000)  # plot population activities (in spks/s)
+plt.ylabel(r"$A_N$ [spks/s]")
 plt.title("Population activities (mesoscopic sim.)")
 plt.subplot(2, 1, 2)
 plt.plot(t, Abar * 1000)  # plot instantaneous population rates (in Hz)
-plt.ylabel(r"$\bar A$ [Hz]")
+plt.ylabel(r"$\bar A$ [spks/s]")
 plt.xlabel("time [ms]")
 
 ###############################################################################
@@ -334,19 +334,19 @@ nest.Simulate(t_end + dt)
 
 ###############################################################################
 # Let's retrieve the data of the spike recorder and plot the activity of the
-# excitatory population (in Hz):
+# excitatory population (in spks/s):
 
 for i in range(len(nest_pops)):
     data_sr = nest_sr[i].get("events", "times") * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))
     A = np.histogram(data_sr, bins=bins)[0] / float(N[i]) / dt_rec
-    A_N[:, i] = A * 1000  # in Hz
+    A_N[:, i] = A * 1000  # in spks/s
 
 t = np.arange(dt, t_end + dt, dt_rec)
 plt.figure(2)
 plt.plot(t, A_N[:, 0])
 plt.xlabel("time [ms]")
-plt.ylabel("population activity [Hz]")
+plt.ylabel("population activity [spks/s]")
 plt.title("Population activities (microscopic sim.)")
 
 ###############################################################################

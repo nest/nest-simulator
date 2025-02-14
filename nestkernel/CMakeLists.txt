@@ -117,6 +117,7 @@ set ( nestkernel_sources
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
+      stopwatch.h stopwatch_impl.h
       )
 
 
@@ -136,7 +137,7 @@ if ( HAVE_MPI )
 endif ()
 
 
-# Prevent problems with Conda path substitution (see #2348)
+# Prevent problems with Mamba path substitution (see #2348)
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 

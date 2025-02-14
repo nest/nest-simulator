@@ -46,22 +46,6 @@
 namespace nest
 {
 
-// standard implementation to obtain the default delay
-// synapse types with homogeneous delays must provide a specialization
-// that returns the default delay from CommonProperties (or from else where)
-// template<typename ConnectionT>
-// double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
-// {
-//   //std::cout << "standard implementation of get_default_delay" << std::endl;
-//   return cm.get_default_connection().get_delay();
-// }
-
-// template<typename ConnectionT>
-// SynIdDelay & syn_id_delay(const GenericConnectorModel<ConnectionT> &cm)
-// {
-//   return cm.get_default_connection().get_syn_id_delay();
-// }
-
 template < typename ConnectionT >
 ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
@@ -129,12 +113,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   kernel().connection_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
+
   default_connection_.set_status( d, *this );
 
   kernel().connection_manager.get_delay_checker().enable_delay_update();
 
-  // we've possibly just got a new default delay. So enforce checking next time
-  // it is used
+  // we've possibly just got a new default delay. So enforce checking next time it is used
   default_delay_needs_check_ = true;
 }
 
@@ -175,7 +159,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
-        const double d = default_connection_.get_delay();
+        const double d = default_connection_.get_delay_ms();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
       }
       // Let connections without delay contribute to the delay extrema with
@@ -192,9 +176,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     }
     catch ( BadDelay& e )
     {
-      throw BadDelay( default_connection_.get_delay(),
-        String::compose( "Default delay of '%1' must be between min_delay %2 "
-                         "and max_delay %3.",
+      throw BadDelay( default_connection_.get_delay_ms(),
+        String::compose( "Default delay of '%1' must be between min_delay %2 and max_delay %3.",
           get_name(),
           Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
           Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
@@ -207,14 +190,14 @@ template < typename ConnectionT >
 size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const
 {
-  return default_connection_.get_syn_id();
+  return syn_id_;
 }
 
 template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {
-  default_connection_.set_syn_id( syn_id );
+  syn_id_ = syn_id;
 }
 
 template < typename ConnectionT >
@@ -225,58 +208,74 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double delay,
+  const double axonal_delay,
   const double weight )
 {
-  if ( not numerics::is_nan( delay ) )
-  {
-    if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
-    {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-    }
-
-    if ( p->known( names::delay ) )
-    {
-      throw BadParameter(
-        "Parameter dictionary must not contain delay if delay is given "
-        "explicitly." );
-    }
-  }
-  else
-  {
-    // check delay
-    double delay = 0.0;
-
-    if ( updateValue< double >( p, names::delay, delay ) )
-    {
-      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
-      {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-      }
-    }
-    else
-    {
-      used_default_delay();
-    }
-  }
-
   // create a new instance of the default connection
   ConnectionT connection = ConnectionT( default_connection_ );
+
+  bool default_delay_used = true;
+
+  if ( not numerics::is_nan( delay ) and ( p->known( names::delay ) or p->known( names::dendritic_delay ) ) )
+  {
+    throw BadParameter(
+      "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
+  }
+
+  if ( not numerics::is_nan( axonal_delay ) and p->known( names::axonal_delay ) )
+  {
+    throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
+  }
+
+  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    if ( not numerics::is_nan( axonal_delay ) or p->known( names::axonal_delay ) )
+    {
+      double actual_axonal_delay = axonal_delay;
+      updateValue< double >( p, names::axonal_delay, actual_axonal_delay );
+      connection.set_axonal_delay_ms( axonal_delay );
+
+      if ( not numerics::is_nan( delay ) or p->known( names::dendritic_delay ) )
+      {
+        double actual_dendritic_delay = delay;
+        updateValue< double >( p, names::dendritic_delay, actual_dendritic_delay );
+        connection.set_dendritic_delay_ms( actual_dendritic_delay );
+        default_delay_used = false;
+      }
+    }
+
+    double actual_delay = delay;
+    if ( updateValue< double >( p, names::delay, actual_delay ) or not numerics::is_nan( delay ) )
+    {
+      connection.set_delay_ms( actual_delay );
+      default_delay_used = false;
+    }
+  }
+  else if ( p->known( names::delay ) or p->known( names::dendritic_delay ) or p->known( names::axonal_delay )
+    or not numerics::is_nan( delay ) or not numerics::is_nan( axonal_delay ) )
+  {
+    throw BadProperty( "Delay specified for a connection type which doesn't use delays." );
+  }
 
   if ( not numerics::is_nan( weight ) )
   {
     connection.set_weight( weight );
   }
 
-  if ( not numerics::is_nan( delay ) )
-  {
-    connection.set_delay( delay );
-  }
-
   if ( not p->empty() )
   {
-    // Reference to connector model needed here to check delay (maybe this could
-    // be done one level above?).
+    // Reference to connector model needed here to check delay (maybe this could be done one level above?).
     connection.set_status( p, *this );
+  }
+
+  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( connection.get_delay_ms() );
+  }
+
+  if ( default_delay_used )
+  {
+    used_default_delay();
   }
 
   // We must use a local variable here to hold the actual value of the
@@ -288,20 +287,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   updateValue< long >( p, names::music_channel, actual_receptor_type );
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
-
-  add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
-}
-
-
-template < typename ConnectionT >
-void
-GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
-  Node& tgt,
-  std::vector< ConnectorBase* >& thread_local_connectors,
-  const synindex syn_id,
-  ConnectionT& connection,
-  const size_t receptor_type )
-{
   assert( syn_id != invalid_synindex );
 
   if ( not thread_local_connectors[ syn_id ] )
@@ -313,7 +298,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 
   ConnectorBase* connector = thread_local_connectors[ syn_id ];
   // The following line will throw an exception, if it does not work.
-  connection.check_connection( src, tgt, receptor_type, get_common_properties() );
+  connection.check_connection( src, tgt, actual_receptor_type, syn_id, get_common_properties() );
 
   assert( connector );
 

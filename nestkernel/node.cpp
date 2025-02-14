@@ -208,7 +208,7 @@ size_t
 Node::send_test_event( Node&, size_t, synindex, bool )
 {
   throw IllegalConnection(
-    "Source node does not send output.\n"
+    "Source node does not send output."
     "  Note that recorders must be connected as Connect(neuron, recorder)." );
 }
 
@@ -267,7 +267,7 @@ size_t
 Node::handles_test_event( SpikeEvent&, size_t )
 {
   throw IllegalConnection(
-    "The target node or synapse model does not support spike input.\n"
+    "The target node or synapse model does not support spike input."
     "  Note that volt/multimeters must be connected as Connect(meter, neuron)." );
 }
 
@@ -275,7 +275,7 @@ size_t
 Node::handles_test_event( CorrectionSpikeEvent&, size_t )
 {
   throw IllegalConnection(
-    "The target node or synapse model does not support spike input with axonal delays.\n"
+    "The target node or synapse model does not support spike input with axonal delays."
     "  Note that volt/multimeters must be connected as Connect(meter, neuron)." );
 }
 

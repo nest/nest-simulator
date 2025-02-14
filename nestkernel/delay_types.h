@@ -339,22 +339,23 @@ struct AxonalDendriticDelay
     if ( d->known( names::delay ) and ( d->known( names::dendritic_delay ) or d->known( names::axonal_delay ) ) )
     {
       // TODO: Replace by std::format when using C++20
-      throw BadProperty( "It is not allowed to provide both " + names::delay.toString() + " and "
-        + names::dendritic_delay.toString() + " or " + names::axonal_delay.toString() + "." );
+      throw BadProperty( "It is not allowed to provide both the total transmission delay '" + names::delay.toString()
+        + "' and '" + names::dendritic_delay.toString() + "' or '" + names::axonal_delay.toString() + "'." );
     }
     // Case 2: User sets delay, but axonal delay has been set before
     if ( d->known( names::delay ) and get_axonal_delay_steps() != 0 )
     {
-      throw BadProperty( "Trying to set the total transmission delay via " + names::delay.toString() + ", but axonal "
-        "delay has been set before, which is ambiguous." );
+      throw BadProperty( "Trying to set the total transmission delay via '" + names::delay.toString() + "', but '"
+        + names::axonal_delay.toString() + "' has been set before, which is ambiguous." );
     }
     // Case 3: User sets axonal delay, but dendritic delay has been set before
     if ( d->known( names::axonal_delay ) and not d->known( names::dendritic_delay )
       and get_dendritic_delay_steps() != 0 )
     {
-      throw BadProperty( "When setting " + names::axonal_delay.toString() + " and dendritic delay has been set before, "
-        + names::dendritic_delay.toString() + " has to be set as well to make it unambiguous whether the dendritic "
-        "delay should be interpreted as total transmission delay or just dendritic delay." );
+      throw BadProperty( "When setting '" + names::axonal_delay.toString() +
+        "' and dendritic delay has been set before, '" + names::dendritic_delay.toString() +
+        "' has to be set as well to make it unambiguous whether the dendritic delay should be interpreted as total "
+        "transmission delay or just dendritic delay." );
     }
 
     // Update delay values

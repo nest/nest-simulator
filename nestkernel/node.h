@@ -950,10 +950,20 @@ public:
   virtual size_t get_local_device_id() const;
 
   /**
-   * Framework for STDP with predominantly axonal delays:
-   * Buffer a correction entry for a short time window.
+   * Framework for STDP with predominantly axonal delays: Buffer a correction entry for a short time window.
+   *
+   * @param spike_event Incoming pre-synaptic spike which could potentially need a correction after the next
+   * post-synaptic spike.
+   * @param t_last_pre_spike The time of the last pre-synaptic spike that was processed before the current one.
+   * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
+   * correction.
+   * @param time_until_uncritical The number of time steps until the spike no longer needs to be corrected.
    */
-  virtual void add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double );
+  void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
+    const double t_last_pre_spike,
+    const double weight_revert,
+    const double time_until_uncritical );
+
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
    * deprecated.

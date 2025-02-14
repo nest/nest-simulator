@@ -237,11 +237,11 @@ template < typename targetidentifierT >
 inline bool
 clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
-  double t_spike = e.get_stamp().get_ms();
+  const double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
   Node* target = get_target( t );
-  double dendritic_delay = get_delay_ms();
+  const double dendritic_delay = get_delay_ms();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry_extended >::iterator start;

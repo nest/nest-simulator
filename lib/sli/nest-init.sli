@@ -1529,8 +1529,3 @@ def
 /SelectNodesByMask [/nodecollectiontype /arraytype /masktype]
   /SelectNodesByMask_g_a_M load
 def
-
-
-% Install modules in environment variable NEST_MODULES. Modules have
-% to be separated by colon.
-(NEST_MODULES) getenv { (:) breakup { Install } forall } if

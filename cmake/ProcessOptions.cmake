@@ -385,7 +385,7 @@ endfunction()
 function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
   if ( NOT "${with-openmp}" STREQUAL "OFF" )
-    if ( NOT ${with-openmp} STREQUAL "ON" )
+    if ( NOT "${with-openmp}" STREQUAL "ON" )
       # if set, use this prefix
       set( OpenMP_ROOT "${with-openmp}" )
     endif ()

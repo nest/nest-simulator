@@ -29,6 +29,9 @@
 #include "recording_backend_mpi.h"
 #include "recording_device.h"
 
+namespace nest
+{
+
 nest::RecordingBackendMPI::RecordingBackendMPI()
   : enrolled_( false )
   , prepared_( false )
@@ -423,3 +426,5 @@ nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[],
   // Receive the data ( for the moment only spike time )
   MPI_Send( data, shape, MPI_DOUBLE, 0, 0, *comm );
 }
+
+} // namespace nest

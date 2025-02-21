@@ -1261,7 +1261,7 @@ def serialize_data(data):
     """
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
-        return data.tolist()
+        return serialize_data(data.tolist())
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serialize_data(data.get())
@@ -1274,7 +1274,7 @@ def serialize_data(data):
     if isinstance(data, (list, tuple)):
         return [serialize_data(d) for d in data]
     if isinstance(data, dict):
-        return dict([(key, serialize_data(value)) for key, value in data.items()])
+        return dict([(serialize_data(key), serialize_data(value)) for key, value in data.items()])
     return data
 
 

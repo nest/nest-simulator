@@ -1,7 +1,7 @@
 Strategy for testing models using thread-specific RNGs
 ------------------------------------------------------
 
-Key requirement: 
+Key requirement:
 Identical results for fixed VP number, independent of number of MPI processes.
 
 Affected devices and models:
@@ -46,7 +46,7 @@ Note: in MPI tests, we test only 4., not 3.
 A. Proxy
 -- We cannot query from the SLI level whether a node has proxies or not
 
-A.1 Nodes without proxies: 
+A.1 Nodes without proxies:
 -- separate instance on each thread/vp
 -- different RNG on each thread
 -- RNG for each thread must be the same for given VP, independent of process/thread split

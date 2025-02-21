@@ -35,20 +35,20 @@ PR['registerLangHandler'](
          // Single line double-quoted strings.
          [PR['PR_STRING'],      /^\"(?:[^\"\\\n\x0C\r]|\\[\s\S])*(?:\"|$)/,
           null, '"'],
-         
+
          // Handle atoms
          [PR['PR_LITERAL'],      /^[a-z][a-zA-Z0-9_]*/],
          // Handle single quoted atoms
          [PR['PR_LITERAL'],      /^\'(?:[^\'\\\n\x0C\r]|\\[^&])+\'?/,
           null, "'"],
-         
+
          // Handle macros. Just to be extra clear on this one, it detects the ?
          // then uses the regexp to end it so be very careful about matching
          // all the terminal elements
          [PR['PR_LITERAL'],      /^\?[^ \t\n({]+/, null, "?"],
 
-          
-         
+
+
          // decimal      ->    digit{digit}
          // octal        ->    octit{octit}
          // hexadecimal  ->    hexit{hexit}
@@ -78,7 +78,7 @@ PR['registerLangHandler'](
           * 'case' 'of' 'end' 'when' 'fun' 'try' 'catch' 'receive' 'after'
           */
          [PR['PR_KEYWORD'], /^(?:module|attributes|do|let|in|letrec|apply|call|primop|case|of|end|when|fun|try|catch|receive|after|char|integer|float,atom,string,var)\b/],
-         
+
          /**
           * Catch definitions (usually defined at the top of the file)
           * Anything that starts -something

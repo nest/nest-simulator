@@ -5,7 +5,7 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-abspath="$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")"
+abspath="$(cd "${0%/*}" || exit 1; echo "${PWD}/${0##*/}")"
 path="$(dirname "${abspath}")"
 
 binary="$("${path}/sli" -c "($1) nest_indirect =")"

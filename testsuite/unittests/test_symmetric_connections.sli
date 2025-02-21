@@ -27,9 +27,9 @@ symmetric connections works properly.
 
 Synopsis: (test_symmetric_connections) run -> NEST exits if test fails
 
-Description: 
+Description:
 This test ensures that the functionality to create symmetric connections
-via flag "make_symmetric" works properly. It also ensures that the 
+via flag "make_symmetric" works properly. It also ensures that the
 built-in property "requires_symmetric" for synapse models works properly.
 
 In more detail the test ensures that
@@ -50,7 +50,7 @@ M_ERROR setverbosity
 /setup
 {
   ResetKernel
-  
+
   /set1 /iaf_psc_alpha 5 Create def
   /set2 /iaf_psc_alpha 5 Create def
 } def
@@ -87,8 +87,8 @@ fail_or_die
 
   << /source set1 >> GetConnections /fwd Set
   << /source set2 >> GetConnections /bck Set
-  
-  [ fwd bck ] 
+
+  [ fwd bck ]
   {
     /b Set /f Set
     f /source get b /target get eq
@@ -102,22 +102,22 @@ fail_or_die
 % Check that make_symmetric flag cannot be used with random parameters
 {
   setup
-  set1 set2 
-  << /rule /one_to_one 
-     /make_symmetric true >> 
+  set1 set2
+  << /rule /one_to_one
+     /make_symmetric true >>
   << /synapse_model /stdp_synapse
-     /weight << /distribution  /uniform >> >> 
+     /weight << /distribution  /uniform >> >>
   Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 
-  << /rule /one_to_one 
-     /make_symmetric true >> 
+  set1 set2
+  << /rule /one_to_one
+     /make_symmetric true >>
   << /synapse_model /stdp_synapse
-     /alpha << /distribution  /uniform >> >> 
+     /alpha << /distribution  /uniform >> >>
   Connect
 }
 fail_or_die
@@ -126,19 +126,19 @@ fail_or_die
 % containing array-parameters
 {
   setup
-  set1 set2 
-  << /rule /one_to_one 
-     /make_symmetric true >> 
+  set1 set2
+  << /rule /one_to_one
+     /make_symmetric true >>
   << /synapse_model /stdp_synapse
      /weight <. 1.0 2.0 3.0 4.0 5.0 .>
      /delay <. 1.5 2.5 3.5 4.5 5.5 .>
-     /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >> 
+     /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >>
   Connect
 
   << /source set1 >> GetConnections /fwd Set
   << /source set2 >> GetConnections /bck Set
-  
-  [ fwd bck ] 
+
+  [ fwd bck ]
   {
     /b Set /f Set
     f /source get b /target get eq
@@ -160,7 +160,7 @@ skip_if_without_gsl
 /setup2
 {
   ResetKernel
-  
+
   /set1 /hh_psc_alpha_gap 2 Create def
   /set2 /hh_psc_alpha_gap 2 Create def
 } def
@@ -200,8 +200,8 @@ fail_or_die
 
 {
   setup2
-  set1 set1 
-  << /rule /all_to_all /make_symmetric false >> 
+  set1 set1
+  << /rule /all_to_all /make_symmetric false >>
   << /synapse_model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >>
   Connect
 }
@@ -209,8 +209,8 @@ fail_or_die
 
 {
   setup2
-  set1 set1 
-  << /rule /all_to_all /make_symmetric false >> 
+  set1 set1
+  << /rule /all_to_all /make_symmetric false >>
   << /synapse_model /gap_junction /weight << /distribution  /uniform >> >>
   Connect
 }
@@ -224,8 +224,8 @@ pass_or_die
 
 {
   setup2
-  set1 set1 
-  << /rule /all_to_all /make_symmetric false >> 
+  set1 set1
+  << /rule /all_to_all /make_symmetric false >>
   << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 }

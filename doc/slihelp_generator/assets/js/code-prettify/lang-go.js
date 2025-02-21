@@ -19,7 +19,7 @@
  * @fileoverview
  * Registers a language handler for the Go language..
  * <p>
- * Based on the lexical grammar at 
+ * Based on the lexical grammar at
  * http://golang.org/doc/go_spec.html#Lexical_elements
  * <p>
  * Go uses a minimal style for highlighting so the below does not distinguish

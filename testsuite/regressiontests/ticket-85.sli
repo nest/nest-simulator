@@ -38,14 +38,14 @@ Author: Hans Ekkehard Plesser, 2015-11-23
 
 M_ERROR setverbosity
 
-/precise_models 
+/precise_models
   [ /iaf_psc_alpha_ps
     /iaf_psc_delta_ps
     /iaf_psc_exp_ps
     /parrot_neuron_ps
   ]
 def
-         
+
 % first test: can we create connections at all?
 precise_models
 {
@@ -78,12 +78,12 @@ precise_models
     /sg /spike_generator << /spike_times [ 10. ] >> Create def
     /n model Create def
     /sr /spike_recorder Create def
-    
+
     sg n 10000. 1. Connect
     n sr Connect
-    
+
     20 Simulate
-    
+
     sr /events get /times get dup length 1 sub get
     n /t_spike get
     eq
@@ -93,25 +93,23 @@ precise_models
 % fourth test: is there any plastic effect? Needs only one neuron type
   /parrot_neuron_ps /model Set
   model ==
-  { 
+  {
     ResetKernel
     /pg
       /poisson_generator_ps << /rate 100 >> Create
     def
-    
+
     /n1 model Create def
     /n2 model Create def
-    
+
     /ini_weight 1000. def
     pg n1 Connect
     n1 n2 ini_weight 1.0 /stdp_synapse Connect
-    
+
     100. Simulate
-    
-    << /source n1 >> GetConnections 
-    0 get 
+
+    << /source n1 >> GetConnections
+    0 get
     /weight get dup ==
     ini_weight dup == neq
   } assert_or_die
-
-     

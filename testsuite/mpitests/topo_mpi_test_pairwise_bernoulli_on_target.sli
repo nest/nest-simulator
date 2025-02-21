@@ -98,4 +98,3 @@ skip_if_not_threaded
   invariant  % true if all runs produce the same elements
 
 } distributed_collect_assert_or_die
-

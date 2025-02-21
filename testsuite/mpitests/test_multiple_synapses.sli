@@ -22,15 +22,15 @@
 
 
 /** @BeginDocumentation
-    Name: testsuite::test_multiple_synapses - Test that Connect with list of synapse dictionaries use the 
+    Name: testsuite::test_multiple_synapses - Test that Connect with list of synapse dictionaries use the
                                               correct values when connecting
 
-    Synopsis: (test_multiple_synapses) run -> - 
+    Synopsis: (test_multiple_synapses) run -> -
 
     Description:
     test_multiple_synapses.sli checks that when Connect is given a list of synapse dictionaries, the given
     values are used when we have more than one process.
-    
+
     Author: Stine Brekke Vennemo
     FirstVersion: June 2020
 */
@@ -59,35 +59,35 @@ def
 {
   /src /iaf_psc_alpha num_src Create def
   /trgt /iaf_psc_alpha num_trgt Create def
-  
+
   src trgt
     << /rule /one_to_one >>
     collocated_synapse_params
     Connect
-  
+
   /weight_delay_syn [] def
   << >> GetConnections /conns Set
   conns GetStatus
   {
     dup
     dup
-    
+
     /weight get /w Set
     /delay get /d Set
     /synapse_model get /sm Set
-    
+
     weight_delay_syn
       w append
       d append
       sm append /weight_delay_syn Set
   } forall
-  
+
   weight_delay_syn :compact_form
 }
-{  
+{
   /results Set
   /cumulative_res_list [] def
-  
+
   % Create a reference list with the values we expect (values taken from syn_spec list above).
   /reference_list [] def
   [num_conns] Range
@@ -105,7 +105,7 @@ def
       /synapse_model get /sm_2 Set
     reference_list [w_1 d_1 sm_1 w_2 d_2 sm_2] join /reference_list Set
   } forall
-  
+
   collocated_synapse_params [3] Take dup dup
     /weight get /w_3 Set
     /delay get /d_3 Set
@@ -116,13 +116,13 @@ def
   results 0 get
   {
     /mpi_res Set
-    
+
     mpi_res
     {
       cumulative_res_list exch append /cumulative_res_list Set
     } forall
   } forall
-  
+
   % Check that the cumulative result list contains all variables we expect.
   cumulative_res_list reference_list :compact_form eq
 }

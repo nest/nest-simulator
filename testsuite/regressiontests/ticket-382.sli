@@ -24,7 +24,7 @@
  * Regression test for Ticket #382
  *
  * voltmeter fails assertion/seg faults when connected after simulation.
- * 
+ *
  * This test asserts that one can connect voltmeter and multimeter after having
  * simulated for some time first.
  *

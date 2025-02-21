@@ -42,7 +42,7 @@ SeeAlso: unittest::distributed_invariant_assert_or_die, testsuite::crash_distrib
 
 [1 2 4]
 {
-  % only rank zero leaves true on stack  
-  0 Rank eq { [20.5 (foo) 45] } if  
+  % only rank zero leaves true on stack
+  0 Rank eq { [20.5 (foo) 45] } if
 }
 distributed_invariant_assert_or_die

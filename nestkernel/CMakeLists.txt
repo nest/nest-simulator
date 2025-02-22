@@ -21,6 +21,7 @@ set ( nestkernel_sources
       universal_data_logger_impl.h universal_data_logger.h
       recordables_map.h
       archiving_node.h archiving_node.cpp
+      archiving_node_hom.h archiving_node_hom.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
       eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp

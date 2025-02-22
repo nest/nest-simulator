@@ -30,6 +30,14 @@ nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size
 {
 }
 
+nest::histentry_step::histentry_step( size_t t, double Kminus, double Kminus_triplet, size_t access_counter )
+  : t_( t )
+  , Kminus_( Kminus )
+  , Kminus_triplet_( Kminus_triplet )
+  , access_counter_( access_counter )
+{
+}
+
 nest::histentry_extended::histentry_extended( double t, double dw, size_t access_counter )
   : t_( t )
   , dw_( dw )

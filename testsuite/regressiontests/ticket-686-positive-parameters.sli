@@ -53,6 +53,7 @@ M_ERROR setverbosity
     /correlomatrix_detector
     /correlospinmatrix_detector
     /iaf_tum_2000   % tau_fac == 0 is permitted
+    /iaf_psc_alpha_hom % tau_minus is set on common syn properties, read-only on neuron
     /siegert_neuron ]
 def
 

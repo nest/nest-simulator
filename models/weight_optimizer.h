@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: e-prop plasticity
+/* BeginUserDocs: e-prop plasticity, synapse
 
 Short description
 +++++++++++++++++
@@ -49,55 +49,69 @@ Currently two weight optimizers are implemented: gradient descent and the Adam o
 In gradient descent [1]_ the weights are optimized via:
 
 .. math::
-  W_t = W_{t-1} - \eta \, g_t \,,
+  W_t = W_{t-1} - \eta g_t \,, \\
 
-whereby :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
+where :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
 
 In the Adam scheme [2]_ the weights are optimized via:
 
 .. math::
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
-  m_t &= \beta_1 \, m_{t-1} + \left(1-\beta_1\right) \, g_t \,, \\
-  v_t &= \beta_2 \, v_{t-1} + \left(1-\beta_2\right) \, g_t^2 \,, \\
-  \hat{m}_t &= \frac{m_t}{1-\beta_1^t} \,, \\
-  \hat{v}_t &= \frac{v_t}{1-\beta_2^t} \,, \\
-  W_t &= W_{t-1} - \eta\frac{\hat{m_t}}{\sqrt{\hat{v}_t} + \epsilon} \,.
+  m_t &= \beta_1 m_{t-1} + \left( 1- \beta_1 \right) g_t \,, \\
+  v_t &= \beta_2 v_{t-1} + \left( 1 - \beta_2 \right) g_t^2 \,, \\
+  \alpha_t &= \eta \frac{ \sqrt{ 1- \beta_2^t } }{ 1 - \beta_1^t } \,, \\
+  W_t &= W_{t-1} - \alpha_t \frac{ m_t }{ \sqrt{v_t} + \hat{\epsilon} } \,. \\
+
+Note that the implementation follows the implementation in TensorFlow [3]_ for comparability.
+The TensorFlow implementation deviates from [1]_ in that it assumes
+:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas [1]_
+assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
+
+When `optimize_each_step` is set to `True`, the weights are optimized at every
+time step. If set to `False`, optimization occurs once per spike, resulting in a
+significant speed-up. For gradient descent, both settings yield the same
+results under exact arithmetic; however, small numerical differences may be
+observed due to floating point precision. For the Adam optimizer, only setting
+`optimize_each_step` to `True` precisely implements the algorithm as described
+in [2]_. The impact of this setting on learning performance may vary depending
+on the task.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-========== ==== ========================= ======= =================================
+====================== ==== ========================= ========= =================================
 **Common optimizer parameters**
------------------------------------------------------------------------------------
-Parameter  Unit  Math equivalent          Default Description
-========== ==== ========================= ======= =================================
-batch_size                                      1 Size of batch
-eta             :math:`\eta`                 1e-4 Learning rate
-Wmax         pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
-Wmin         pA :math:`W_{ji}^\text{min}`  -100.0 Minimal value for synaptic weight
-========== ==== ========================= ======= =================================
+-------------------------------------------------------------------------------------------------
+Parameter              Unit Math equivalent           Default   Description
+====================== ==== ========================= ========= =================================
+``batch_size``                                              1   Size of batch
+``eta``                     :math:`\eta`                 1e-4   Learning rate
+``optimize_each_step``                                 ``True``
+``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
+``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
+====================== ==== ========================= ========= =================================
 
-========= ==== =============== ================ ==============
+========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
---------------------------------------------------------------
-Parameter Unit Math equivalent Default          Description
-========= ==== =============== ================ ==============
-type                           gradient_descent Optimizer type
-========= ==== =============== ================ ==============
+----------------------------------------------------------------
+Parameter Unit Math equivalent Default            Description
+========= ==== =============== ================== ==============
+``type``                       "gradient_descent" Optimizer type
+========= ==== =============== ================== ==============
 
-========= ==== ================ ======= =================================================
+=========== ==== ================ ======= =================================================
 **Adam optimizer parameters**
------------------------------------------------------------------------------------------
-Parameter Unit Math equivalent  Default Description
-========= ==== ================ ======= =================================================
-type                               adam Optimizer type
-beta_1         :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
-beta_2         :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
-epsilon        :math:`\epsilon`    1e-8 Small constant for numerical stability
-========= ==== ================ ======= =================================================
+-------------------------------------------------------------------------------------------
+Parameter   Unit Math equivalent  Default Description
+=========== ==== ================ ======= =================================================
+``type``                           "adam" Optimizer type
+``beta_1``       :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
+``beta_2``       :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
+``epsilon``      :math:`\epsilon`    1e-7 Small constant for numerical stability
+=========== ==== ================ ======= =================================================
 
 The following state variables evolve during simulation.
 
@@ -106,24 +120,29 @@ The following state variables evolve during simulation.
 ----------------------------------------------------------------------------
 State variable Unit Math equivalent Initial value Description
 ============== ==== =============== ============= ==========================
-m                   :math:`m`                 0.0 First moment estimate
-v                   :math:`v`                 0.0 Second moment raw estimate
+``m``               :math:`m`                 0.0 First moment estimate
+``v``               :math:`v`                 0.0 Second moment raw estimate
 ============== ==== =============== ============= ==========================
 
 
 References
 ++++++++++
-.. [1] Huh, D. & Sejnowski, T. J. Gradient descent for spiking neural networks. 32nd
-       Conference on Neural Information Processing Systems (2018).
+
+.. [1] Huh D, Sejnowski TJ (2018). Gradient descent for spiking neural networks.
+       Advances in Neural Information Processing Systems, 31:1433-1443.
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/185e65bc40581880c4f2c82958de8cfe-Abstract.html
+
 .. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
-       Proceedings of International Conference on Learning Representations (ICLR).
+       Proceedings of 3rd International Conference for Learning Representations (ICLR).
        https://doi.org/10.48550/arXiv.1412.6980
+
+.. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
 
 See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_synapse_bsshslm_2020
 
@@ -188,14 +207,23 @@ public:
   //! Size of an optimization batch.
   size_t batch_size_;
 
-  //! Learning rate.
+  //! Learning rate common to all synapses.
   double eta_;
+
+  //! First learning rate that differs from the default.
+  double eta_first_;
+
+  //! Number of changes to the learning rate.
+  long n_eta_change_;
 
   //! Minimal value for synaptic weight.
   double Wmin_;
 
   //! Maximal value for synaptic weight.
   double Wmax_;
+
+  //! If true, optimize each step, else once per spike.
+  bool optimize_each_step_;
 };
 
 /**
@@ -244,6 +272,12 @@ protected:
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
+
+  //! Learning rate private to the synapse.
+  double eta_;
+
+  //! Number of optimizations.
+  long n_optimize_;
 };
 
 /**
@@ -314,6 +348,12 @@ private:
 
   //! Second moment estimate variable.
   double v_;
+
+  //! Power of beta_1 factor.
+  double beta_1_power_;
+
+  //! Power of beta_2 factor.
+  double beta_2_power_;
 };
 
 /**

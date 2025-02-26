@@ -73,9 +73,14 @@ INFO_OS="$(uname -s)"
 
 # find "time" command
 if test "${INFO_OS:-}" = "Darwin"; then
-    if test -x "/usr/local/bin/gtime"; then
+    if which gtime >/dev/null; then
         # https://www.man7.org/linux/man-pages/man1/time.1.html
-        alias time="/usr/local/bin/gtime -f '  time: {real: %E, user: %U, system: %S}\n  memory: {total: %K, max_rss: %M}' --quiet"
+        #
+        # Silence the warning, as we explicitly do the aliassing to have a
+        # defined time-binary to call. No need to re-lookup each call.
+        # SC2139 (warning): This expands when defined, not when used. Consider escaping.
+        # shellcheck disable=SC2139
+        alias time="$(which gtime) -f '  time: {real: %E, user: %U, system: %S}\n  memory: {total: %K, max_rss: %M}' --quiet"
     else
         if command -v gtime >/dev/null; then
             alias time="\$(command -v gtime) -f '  time: {real: %E, user: %U, system: %S}\n  memory: {total: %K, max_rss: %M}' --quiet"
@@ -158,7 +163,6 @@ for i in "${EXAMPLES[@]}"; do
 
     unset NEST_DATA_PATH
     cd "$basedir"
-    exit 42
 done
 ELAPSED_TIME="$(( SECONDS - START ))"
 

@@ -197,8 +197,14 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
 +-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-threaded-timers=[OFF|ON]``           | Build with one internal timer per thread [default=ON].         |
+|                                               | Multi-threaded timers can affect the performance.              |
++-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |
++----------------------------------------------------------------------------------------------------------------+
+| ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|
+|                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtarget-bits-split=['standard'|'hpc']``    | Split of the 64-bit target neuron identifier type              |
 |                                               | [default='standard']. 'standard' is recommended for most users.|

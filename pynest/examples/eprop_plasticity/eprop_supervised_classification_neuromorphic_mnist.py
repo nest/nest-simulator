@@ -65,7 +65,7 @@ References
        spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
 
 """  # pylint: disable=line-too-long # noqa: E501

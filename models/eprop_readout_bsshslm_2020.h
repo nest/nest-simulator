@@ -218,7 +218,7 @@ References
        https://doi.org/10.1038/s41467-020-17236-y
 
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ*, Diesmann M*. Event-based
+       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
        implementation of eligibility propagation (in preparation)
 
 Sends

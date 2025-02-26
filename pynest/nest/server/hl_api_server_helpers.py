@@ -113,11 +113,11 @@ def do_exec(kwargs):
 
 
 def get_or_error(func):
-    """Wrapper to get data and status."""
+    """Wrapper to exec function."""
 
-    def func_wrapper(call, *args, **kwargs):
+    def func_wrapper(*args, **kwargs):
         try:
-            return func(call, *args, **kwargs)
+            return func(*args, **kwargs)
 
         # TODO: This Error will be removed in next generation.
         except NESTError as err:

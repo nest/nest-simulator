@@ -268,7 +268,7 @@ def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0, graysca
 
         plt.bar(t_bins, heights, width=hist_binwidth, color=color_bar, edgecolor=color_edge)
         plt.yticks([int(x) for x in numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)])
-        plt.ylabel("Rate (Hz)")
+        plt.ylabel("Rate (spks/s)")
         plt.xlabel(xlabel)
         plt.xlim(xlim)
         plt.axes(ax1)

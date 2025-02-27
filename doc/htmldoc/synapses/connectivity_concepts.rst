@@ -69,6 +69,7 @@ Projections are created in NEST with the :py:func:`.Connect` function:
     nest.Connect(pre, post)
     nest.Connect(pre, post, conn_spec)
     nest.Connect(pre, post, conn_spec, syn_spec)
+    nest.Connect(pre, post, conn_spec, syn_spec, return_synapsecollection=True)
 
 In the simplest case, the function just takes the ``NodeCollections`` ``pre`` and ``post``, defining the nodes of
 origin (`sources`) and termination (`targets`) for the connections to be established with the default rule ``all-to-all`` and the synapse model :ref:`static_synapse`.
@@ -499,18 +500,25 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 .. _tripartite_connectivity:
 
-Tripartite Bernoulli with pool
-------------------------------
+Third-factor Bernoulli with pool
+--------------------------------
 
 For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
 and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is
-created with probability ``p_primary``, and these connections are
-called 'primary' connections. For each primary connection, a
+created according to the ``conn_spec`` parameter passed to
+``TripariteConnect``; any one-directional connection specification can
+be used. The connections created between ``S`` and ``T`` are the
+*primary* connections.
+
+For each primary connection, a
 third-party connection pair involving a node from a third ``NodeCollection``
-(e.g., an astrocyte population ``A``) is created with the conditional probability
-``p_third_if_primary``. This connection pair includes a connection
+(e.g., an astrocyte population ``A``) is created according to the
+``third_factor_conn_spec`` provided. This connection pair includes a connection
 from the ``S`` node to the ``A`` node, and a connection from the ``A`` node to the
-``T`` node. The ``A`` node to connect to is chosen
+``T`` node.
+
+At present, ``third_factor_bernoulli_with_pool`` is the only connection rule
+available for third-factor connectivity. It chooses the ``A`` node to connect
 at random from a pool, a subset of the nodes in ``A``. By default,
 this pool is all of ``A``.
 
@@ -547,13 +555,14 @@ up to two randomly selected nodes in ``A`` (given ``pool_size == 2``).
     S = nest.Create('aeif_cond_alpha_astro', N_S)
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
+    conn_spec = {'rule': 'pairwise_bernoulli',
+                 'p': p_primary}
+    third_factor_conn_spec = {'rule': 'third_factor_bernoulli_with_pool',
+		              'p': p_third_if_primary,
+                              'pool_type': pool_type,
+		              'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+    nest.TripartiteConnect(S, T, A, conn_spec, third_factor_conn_spec, syn_specs)
 
 (B) In
 the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
@@ -561,20 +570,12 @@ then each node in ``T`` can be connected with one node in ``A``
 (``pool_size == 1`` is required because ``N_A < N_T``), and each node in
 ``A`` can be connected with up to two nodes in ``T``.
 
+The code for this example is identical to the code for example (A),
+except for the choice of pool type and size:
+
 .. code-block:: python
 
-    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
     pool_type, pool_size = 'block', 1
-    S = nest.Create('aeif_cond_alpha_astro', N_S)
-    T = nest.Create('aeif_cond_alpha_astro', N_T)
-    A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                 'p_primary': p_primary,
-                 'p_third_if_primary': p_third_if_primary,
-                 'pool_type': pool_type,
-                 'pool_size': pool_size}
-    syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
 
 (C) In the second example
 of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
@@ -582,20 +583,13 @@ of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
 required because ``N_A/N_T`` = 2), and each node in ``A`` can be
 connected to one node in ``T``.
 
+In this example, we have different values for ``N_T`` and ``N_A`` than
+in examples (A) and (B), and a different pool size than in example (B):
+
 .. code-block:: python
 
     N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 3, 6, 0.2, 1.0
     pool_type, pool_size = 'block', 2
-    S = nest.Create('aeif_cond_alpha_astro', N_S)
-    T = nest.Create('aeif_cond_alpha_astro', N_T)
-    A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                 'p_primary': p_primary,
-                 'p_third_if_primary': p_third_if_primary,
-                 'pool_type': pool_type,
-                 'pool_size': pool_size}
-    syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
 
 
 References

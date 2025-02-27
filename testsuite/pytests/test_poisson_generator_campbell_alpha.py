@@ -46,7 +46,7 @@ def test_poisson_generator_alpha():
     tolerance = 0.05
     V_m_target = 20.0
     J = 0.01
-    # solve for rate, convert to Hz, drop C_m as it is 1.
+    # solve for rate, convert to spks/s, drop C_m as it is 1.
     rate = 1000.0 * V_m_target / (J * neuron_params["tau_m"] * np.exp(1) * neuron_params["tau_syn_ex"])
 
     poisson = nest.Create("poisson_generator")

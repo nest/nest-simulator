@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_brunel.py
+# astrocyte_brunel_fixed_indegree.py
 #
 # This file is part of NEST.
 #
@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Random balanced network with astrocytes
----------------------------------------
+Random balanced network with astrocytes with fixed-indegree connectivity
+------------------------------------------------------------------------
 
 This script simulates a random balanced network with excitatory and inhibitory
 neurons and astrocytes. The astrocytes are modeled with ``astrocyte_lr_1994``,
@@ -30,9 +30,12 @@ implemented according to [1]_, [2]_, and [3]_. The neurons are modeled with
 supporting neuron-astrocyte interactions.
 
 The simulation results show how astrocytes affect neuronal excitability. The
-astrocytic dynamics, the slow inward current in the neurons induced by the
-astrocytes, and the raster plot of neuronal firings are shown in the created
-figures.
+figures displayed at the end of the simulation show the astrocytic dynamics,
+the slow inward current induced by the astrocytes in the postsynaptic neurons,
+and a raster plot of neuronal firings, respectively.
+
+In this version of the model, primary connections between populations are
+created with the fixed-indegree rule.
 
 References
 ~~~~~~~~~~
@@ -55,7 +58,7 @@ References
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_small_network`
+:doc:`astrocyte_small_network`, :doc:`astrocyte_brunel_bernoulli`
 
 """
 
@@ -73,11 +76,10 @@ import numpy as np
 
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
-    "pre_sim_time": 100.0,  # pre-simulation time in ms (data not recorded)
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of neurons to record from with spike recorder
     "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
-    "n_threads": 4,  # number of threads for NEST
+    "n_vp": 4,  # number of virtual processes for NEST
     "seed": 100,  # seed for the random module
 }
 
@@ -88,7 +90,8 @@ network_params = {
     "N_ex": 8000,  # number of excitatory neurons
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 10000,  # number of astrocytes
-    "p_primary": 0.1,  # connection probability between neurons
+    "CE": 800,  # number of incoming excitatory connections per neuron
+    "CI": 200,  # number of incoming inhbitory connections per neuron
     "p_third_if_primary": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
     "pool_size": 10,  # astrocyte pool size for each target neuron
     "pool_type": "random",  # astrocyte pool will be chosen randomly for each target neuron
@@ -96,7 +99,7 @@ network_params = {
 }
 
 syn_params = {
-    "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
+    "w_a2n": 0.05,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
     "d_e": 2.0,  # delay of excitatory connection in ms
@@ -109,8 +112,6 @@ syn_params = {
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     "IP3": 0.4,  # IP3 initial value in µM
-    "delta_IP3": 0.5,  # Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-    "tau_IP3": 2.0,  # Time constant of the exponential decay of astrocytic IP3
 }
 
 ###############################################################################
@@ -142,7 +143,7 @@ def create_astro_network(scale=1.0):
     """Create nodes for a neuron-astrocyte network.
 
     Nodes in a neuron-astrocyte network are created according to the give scale
-    of the model. The nodes created include excitatory and inhibitory neruons,
+    of the model. The nodes created include excitatory and inhibitory neurons,
     astrocytes, and a Poisson generator.
 
     Parameters
@@ -164,13 +165,13 @@ def create_astro_network(scale=1.0):
     return nodes_ex, nodes_in, nodes_astro, nodes_noise
 
 
-def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.0):
+def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
     """Connect the nodes in a neuron-astrocyte network.
 
-    Nodes in a neuron-astrocyte network are connected. The connection
-    probability between neurons is divided by a the given scale to preserve
-    the expected number of connections for each node. The astrocytes are paired
-    with excitatory connections only.
+    Nodes in a neuron-astrocyte network are connected. The indegree of neurons
+    is not changed with network scale to preserve the expected number of connections
+    for each node (consistent with the corresponding bernoulli example).
+    The astrocytes are paired with excitatory connections only.
 
     Parameters
     ---------
@@ -182,22 +183,17 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         Nodes of astrocytes.
     node_noise
         Poisson generator.
-    scale
-        Scale of the model.
 
     """
     print("Connecting Poisson generator ...")
-    assert scale >= 1.0, "scale must be >= 1.0"
     nest.Connect(nodes_noise, nodes_ex + nodes_in, syn_spec={"weight": syn_params["w_e"]})
     print("Connecting neurons and astrocytes ...")
     # excitatory connections are paired with astrocytes
     # conn_spec and syn_spec according to the "tripartite_bernoulli_with_pool" rule
-    conn_params_e = {
-        "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": network_params["p_primary"] / scale,
-        "p_third_if_primary": network_params[
-            "p_third_if_primary"
-        ],  # "p_third_if_primary" is scaled along with "p_primary", so no further scaling is required
+    conn_params_e = {"rule": "fixed_indegree", "indegree": network_params["CE"]}
+    conn_params_astro = {
+        "rule": "third_factor_bernoulli_with_pool",
+        "p": network_params["p_third_if_primary"],
         "pool_size": network_params["pool_size"],
         "pool_type": network_params["pool_type"],
     }
@@ -216,9 +212,17 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         },
         "third_out": {"synapse_model": "sic_connection", "weight": syn_params["w_a2n"]},
     }
-    nest.TripartiteConnect(nodes_ex, nodes_ex + nodes_in, nodes_astro, conn_spec=conn_params_e, syn_specs=syn_params_e)
+    nest.TripartiteConnect(
+        nodes_ex,
+        nodes_ex + nodes_in,
+        nodes_astro,
+        conn_spec=conn_params_e,
+        third_factor_conn_spec=conn_params_astro,
+        syn_specs=syn_params_e,
+    )
+
     # inhibitory connections are not paired with astrocytes
-    conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p_primary"] / scale}
+    conn_params_i = {"rule": "fixed_indegree", "indegree": network_params["CI"]}
     syn_params_i = {
         "synapse_model": "tsodyks_synapse",
         "weight": syn_params["w_i"],
@@ -239,8 +243,8 @@ def plot_dynamics(astro_data, neuron_data, start):
     """Plot the dynamics in neurons and astrocytes.
 
     The dynamics in the given neuron and astrocyte nodes are plotted. The
-    dynamics in clude IP3 and calcium in the astrocytes, and the SIC input to
-    the neurons.
+    dynamics include IP3 and calcium in the astrocytes, and the SIC input to
+    the postsynaptic neurons.
 
     Parameters
     ---------
@@ -319,7 +323,6 @@ def run_simulation():
     random.seed(sim_params["seed"])
 
     # simulation settings
-    pre_sim_time = sim_params["pre_sim_time"]
     sim_time = sim_params["sim_time"]
 
     # create and connect nodes
@@ -345,16 +348,11 @@ def run_simulation():
     nest.Connect(mm_neuron, neuron_list_for_mm)
     nest.Connect(mm_astro, astro_list_for_mm)
 
-    # run pre-simulation
-    print("Running pre-simulation ...")
-    nest.Simulate(pre_sim_time)
-
     # run simulation
     print("Running simulation ...")
     nest.Simulate(sim_time)
 
     # read out recordings
-    neuron_spikes = sr_neuron.events
     neuron_data = mm_neuron.events
     astro_data = mm_astro.events
 

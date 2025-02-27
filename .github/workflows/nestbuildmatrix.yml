@@ -583,12 +583,6 @@ jobs:
         if: "${{ contains(matrix.use, 'ltdl') }}"
         run: "sudo apt-get install libltdl-dev"
 
-      - name: "Uninstall Boost development libraries"
-        if: "${{ ! contains(matrix.use, 'boost') }}"
-        run: |
-          apt list --installed 'libboost*'
-          sudo apt-get remove --autoremove 'libboost*-dev'
-
       - name: "Install Boost dependencies"
         if: "${{ contains(matrix.use, 'boost') }}"
         run: "sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev"
@@ -643,18 +637,18 @@ jobs:
           python -c "import setuptools; print('package location:', setuptools.__file__)"
           pip list
 
-      - name: "Install Python test dependencies" 
+      - name: "Install Python test dependencies"
         # These could go to a separate venv…
         run: |
-          python -m pip install 'junitparser>=2' pytest pytest-timeout pytest-xdist terminaltables 
+          python -m pip install 'junitparser>=2' pytest pytest-timeout pytest-xdist terminaltables
           python -m pip install numpy scipy pandas matplotlib
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
 
       - name: "Install Python doc dependencies"
         run: "python -m pip install pandoc"
-        
-      - name: "Install Python mpi dependencies" 
+
+      - name: "Install Python mpi dependencies"
         if: "${{ contains(matrix.use, 'mpi') }}"
         run: "python -m pip install --force-reinstall --upgrade mpi4py"
 
@@ -681,6 +675,12 @@ jobs:
           chmod +x build_support/install_csa-libneurosim.sh
           PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
           ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
+
+      - name: "Uninstall Boost development libraries"
+        if: "${{ ! contains(matrix.use, 'boost') }}"
+        run: |
+          apt list --installed 'libboost*'
+          sudo apt-get remove --autoremove 'libboost*-dev'
 
       - name: "List available packages"
         run: |

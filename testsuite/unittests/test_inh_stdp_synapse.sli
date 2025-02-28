@@ -238,6 +238,6 @@ def
     ifelse
   }
   loop
-  
+
   w w_max mul 13 ToUnitTestPrecision final_weight 13 ToUnitTestPrecision eq
 } assert_or_die

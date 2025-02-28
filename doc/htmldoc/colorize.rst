@@ -22,4 +22,3 @@
 
 
 .. Based on: (c) Lilian Besson, 2011-2016, https://bitbucket.org/lbesson/web-sphinx/
-

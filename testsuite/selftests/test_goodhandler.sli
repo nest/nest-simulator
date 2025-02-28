@@ -23,7 +23,7 @@
 /** @BeginDocumentation
 Name: testsuite::test_goodhandler - test if SLI returns exit code 0 when an error is handled by a correct user error handler.
 
-Synopsis: (test_goodhandler) run -> 
+Synopsis: (test_goodhandler) run ->
 
 Description:
 This script establishes a user error handler and then provokes an

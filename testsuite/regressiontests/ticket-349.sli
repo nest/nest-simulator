@@ -26,7 +26,7 @@
  * Ensure that multimeter connects with entries in record_from list that do not match target node
  * do not leave any trace in target node, so that attempt with corrected list succeed.
  *
- * Ensure that simulation does not crash when multimeter has empty record_from list. 
+ * Ensure that simulation does not crash when multimeter has empty record_from list.
  *
  * Hans Ekkehard Plesser, 2009-07-02
  *
@@ -83,7 +83,7 @@ skip_if_without_gsl
 
     % clear stack
     counttomark npop pop % need to pop mark separately
-  } 
+  }
   {
     % we should have gotten an error, we didn't, so we raise one
     /ticket-349-test-2 /ExpectedErrorNotRaised raiseerror
@@ -107,7 +107,7 @@ skip_if_without_gsl
   10 Simulate
 
   % see if we can get an events dictionary, must contain empty times and senders arrays
-  mm /events get 
+  mm /events get
   dup /senders get cva length 0 eq
   exch /times get cva length 0 eq
   and

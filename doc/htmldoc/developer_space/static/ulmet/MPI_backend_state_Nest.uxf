@@ -53,7 +53,7 @@
       <w>144</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Initialise connection 
+    <panel_attributes>Initialise connection
 between neuron population</panel_attributes>
     <additional_attributes/>
   </element>
@@ -264,7 +264,7 @@ valign=top
 --
 Input backend :
 
-pre_run  : Ask update data for 
+pre_run  : Ask update data for
                all the input devices
 post_run : Send the end of the run
 -.
@@ -288,7 +288,7 @@ valign=top
     </coordinates>
     <panel_attributes>Nest Clean
 --
-1) Send end of simulation 
+1) Send end of simulation
 2) Disconnect
 valign=top
 </panel_attributes>
@@ -348,7 +348,7 @@ of mpi recording devices</panel_attributes>
       <w>144</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Wait for description of 
+    <panel_attributes>Wait for description of
 MPI port files</panel_attributes>
     <additional_attributes/>
   </element>

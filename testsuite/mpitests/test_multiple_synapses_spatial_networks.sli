@@ -22,15 +22,15 @@
 
 
 /** @BeginDocumentation
-    Name: testsuite::test_multiple_synapses_spatial_networks - Test that ConnectLayer with list of synapse dictionaries 
+    Name: testsuite::test_multiple_synapses_spatial_networks - Test that ConnectLayer with list of synapse dictionaries
                                                                use the correct values when connecting
 
-    Synopsis: (test_multiple_synapses_spatial_networks) run -> - 
+    Synopsis: (test_multiple_synapses_spatial_networks) run -> -
 
     Description:
     test_multiple_synapses_spatial_networks.sli checks that when ConnectLayer is given a list of synapse dictionaries,
     the given values are used when we have more than one process.
-    
+
     Author: Stine Brekke Vennemo
     FirstVersion: June 2020
 */
@@ -71,7 +71,7 @@ def
 def
 
 [1 2 4]
-{  
+{
   /layer_spec
   << /positions pos
     /extent [1.25 1.25]
@@ -87,11 +87,11 @@ def
     /synapse_parameters collocated_synapse_params
   >>
   ConnectLayers
-  
+
   /weight_delay_syn [] def
   << >> GetConnections /conns Set
   conns GetStatus
-  {     
+  {
     [[/weight /delay /synapse_model]] get /wdsm Set
 
     weight_delay_syn wdsm append Flatten /weight_delay_syn Set
@@ -102,7 +102,7 @@ def
 {
   /results Set
   /cumulative_res_list [] def
-  
+
   % Create a reference list with the values we expect (values taken from syn_spec list above).
   /reference_list [] def
   [num_conns num_trgt mul] Range
@@ -120,7 +120,7 @@ def
       /synapse_model get /sm_2 Set
     reference_list [w_1 d_1 sm_1 w_2 d_2 sm_2] join /reference_list Set
   } forall
-  
+
   collocated_synapse_params [3] Take dup dup
     /weight get /w_3 Set
     /delay get /d_3 Set
@@ -131,7 +131,7 @@ def
   results 0 get
   {
     /mpi_res Set
-  
+
     mpi_res
     {
       cumulative_res_list exch append /cumulative_res_list Set
@@ -142,4 +142,3 @@ def
   cumulative_res_list reference_list :compact_form eq
 }
 distributed_collect_assert_or_die
-

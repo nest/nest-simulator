@@ -28,7 +28,7 @@
     Description:
     issue-2119.sli checks that randomized parameters depending on the thread of
     the randomized node perform correctly under MPI and OpenMP.
-    
+
     Author: Håkon Mørk / Hans Ekkehard Plesser
 */
 
@@ -49,16 +49,16 @@ skip_if_not_threaded
 [1 2 4]
 {
   << /total_num_virtual_procs 4 >> SetKernelStatus
-  
+
   % Create several neurons, randomize membrane potential, check for identical results
   % independent of proc-thread split. Repeat for all random params.
-  
+
   random_params
   {
     CreateParameter /param Set
     /nrns /iaf_psc_alpha 4 Create def
     nrns << /V_m param >> SetStatus
-  
+
     nrns LocalOnly /V_m get
   }
   Map Flatten

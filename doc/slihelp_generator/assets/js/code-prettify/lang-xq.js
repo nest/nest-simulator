@@ -53,7 +53,7 @@ PR['registerLangHandler'](
          // Tokenizing /{}:=;*,[]() as plain
          [PR['PR_PLAIN'], /^[\/\{\};,\[\]\(\)]$/],
          // Matching a double or single quoted, possibly multi-line, string.
-         // with the special condition that a { in a string changes to xquery context 
+         // with the special condition that a { in a string changes to xquery context
          [PR['PR_STRING'], /^(?:\"(?:[^\"\\\{]|\\[\s\S])*(?:\"|$)|\'(?:[^\'\\\{]|\\[\s\S])*(?:\'|$))/, null, '"\''],
          // Matching standard xquery keywords
          [PR['PR_KEYWORD'], /^(?:xquery|where|version|variable|union|typeswitch|treat|to|then|text|stable|sortby|some|self|schema|satisfies|returns|return|ref|processing-instruction|preceding-sibling|preceding|precedes|parent|only|of|node|namespace|module|let|item|intersect|instance|in|import|if|function|for|follows|following-sibling|following|external|except|every|else|element|descending|descendant-or-self|descendant|define|default|declare|comment|child|cast|case|before|attribute|assert|ascending|as|ancestor-or-self|ancestor|after|eq|order|by|or|and|schema-element|document-node|node|at)\b/],

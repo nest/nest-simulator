@@ -366,7 +366,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Run isort..."
-        uses: isort/isort-action@f14e57e1d457956c45a19c05a89cccdf087846e5  # 1.1.0
+        uses: isort/isort-action@24d8a7a51d33ca7f36c3f23598dafa33f7071326  # 1.1.1
         with:
           configuration: --profile=black --thirdparty="nest" --check-only --diff
 

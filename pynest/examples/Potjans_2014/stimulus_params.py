@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST Microcircuit: Stimulus Parameters
+"""
+PyNEST Microcircuit: Stimulus Parameters
 ----------------------------------------
 
 A dictionary with parameters for an optional external transient stimulation.

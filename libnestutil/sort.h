@@ -32,10 +32,8 @@
 
 #include "block_vector.h"
 
-#ifdef HAVE_BOOST
 #include "iterator_pair.h"
 #include <boost/sort/spreadsort/spreadsort.hpp>
-#endif
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 

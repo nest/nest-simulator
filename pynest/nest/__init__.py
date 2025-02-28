@@ -58,13 +58,15 @@ _original_module_attrs = globals().copy()
 
 import builtins  # noqa
 import importlib  # noqa
+import json  # noqa
 import sys  # noqa
 import types  # noqa
-import json  # noqa
+
 import numpy as np
 
+from .config import config, setup, status  # noqa
 from .ll_api_kernel_attributes import KernelAttribute  # noqa
-from .config import status, config, setup  # noqa
+
 
 class NestModule(types.ModuleType):
     """
@@ -120,6 +122,7 @@ class NestModule(types.ModuleType):
 
     def __del__(self):
         "Report last kernelstatus when closing the nest module."
+
         class NumpyEncoder(json.JSONEncoder):
             def default(self, obj):
                 if isinstance(obj, np.ndarray):

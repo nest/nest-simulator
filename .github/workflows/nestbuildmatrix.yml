@@ -479,7 +479,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Conda
-        uses: conda-incubator/setup-miniconda@a4260408e20b96e80095f42ff7f1a15b27dd94ca   # v3.0.4
+        uses: conda-incubator/setup-miniconda@505e6394dae86d6a5c7fbb6e3fb8938e3e863830   # v3.1.1
         with:
           auto-update-conda: true
           python-version: "3.10"

@@ -31,8 +31,6 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager.h"
-#include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -788,7 +786,7 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::network_size, size() );
-  def< double >( d, names::time_construction_create, sw_construction_create_.elapsed() );
+  sw_construction_create_.get_status( d, names::time_construction_create, names::time_construction_create_cpu );
 }
 
 void

@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -98,7 +98,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -130,7 +130,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -157,7 +157,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -225,7 +225,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -252,7 +252,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -291,7 +291,7 @@ jobs:
   #         name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+  #       uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
   #       with:
   #         python-version: "3.10"
 
@@ -318,7 +318,7 @@ jobs:
   #         fetch-depth: 0
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+  #       uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
   #       with:
   #         python-version: "3.10"
 
@@ -345,7 +345,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -404,7 +404,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -433,7 +433,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
@@ -542,7 +542,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.10"
 
@@ -757,7 +757,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: 3.12
 

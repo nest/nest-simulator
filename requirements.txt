@@ -5,15 +5,15 @@
 # If you just want to execute NEST, you should install NEST
 # directly as described in https://www.nest-simulator.org/installation.
 #
-# Note that this file only specifies the required Python packages and 
+# Note that this file only specifies the required Python packages and
 # not the entire software stack needed to build and work with NEST Simulator.
-# To create a conda environment with the entire software stack for NEST
+# To create a mamba environment with the entire software stack for NEST
 # Simulator, use the the environment yaml file.
 #
 # The requirements from this file can be installed by
 #
 #     pip install -r requirements.txt
- 
+
 
 # To build and work with PyNEST
 -r requirements_pynest.txt

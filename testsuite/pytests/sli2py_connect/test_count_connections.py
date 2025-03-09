@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # test_count_connections.py
 #
 # This file is part of NEST.

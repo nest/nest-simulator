@@ -143,11 +143,11 @@ times = events["times"]
 spikes = events["senders"]
 n_spikes = sr.n_events
 
-hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
+spike_rate = (1000.0 * n_spikes / simtime) / n_neuron
 
 plt.figure(1)
 plt.plot(times, spikes, "o")
-plt.title(f"Average spike rate (Hz): {hz_rate:.2f}")
+plt.title(f"Average spike rate: {spike_rate:.2f} spks/s")
 plt.xlabel("time (ms)")
 plt.ylabel("neuron no")
 plt.show()

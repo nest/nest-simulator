@@ -226,7 +226,7 @@ More topics
    Simulation behavior <nest_behavior/running_simulations>
    Randomness in NEST <nest_behavior/random_numbers>
    Built-in timers <nest_behavior/built-in_timers>
-   Connect NEST with other tools <connect_nest/index>
+   Connect NEST with other tools <interface_nest/index>
    From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
 
 .. toctree::

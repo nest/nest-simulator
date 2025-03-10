@@ -57,6 +57,7 @@
 #include "nest_names.h"
 #include "node.h"
 #include "sonata_connector.h"
+#include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
@@ -228,7 +229,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
-  def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
+  sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
   ArrayDatum connection_rules;
   for ( auto const& element : *connruledict_ )
@@ -1804,7 +1805,9 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
     } // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );

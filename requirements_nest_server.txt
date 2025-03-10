@@ -1,14 +1,15 @@
 # Required Python packages to run NEST Server.
 #
 # This file specifies the required Python packages to run NEST Server.
-# It is meant for those who would like to compile NEST or build NEST 
-# documentation themselves. If you just want to execute NEST, you should 
-# install NEST directly as described in 
+# It is meant for those who would like to compile NEST or build NEST
+# documentation themselves. If you just want to execute NEST, you should
+# install NEST directly as described in
 # https://www.nest-simulator.org/installation.
 #
-# The listed requirements are used to build the conda environment defined 
-# in the environment yaml file. If you want to build an environment
-# yourself, e.g., independent of conda, the requirements from this file
+# The listed requirements are used to build the mamba environment defined
+# in the environment yaml file. If you want to run nest-server with mpi, please
+# uncomment to install required packages. If you want to build an environment
+# yourself, e.g., independent of mamba, the requirements from this file
 # can be installed by
 #
 #     pip install -r requirements_nest_server.txt
@@ -18,3 +19,7 @@ flask-cors
 gunicorn
 requests
 RestrictedPython
+
+# Uncomment next lines of packages for mpi:
+# docopt
+# mpi4py

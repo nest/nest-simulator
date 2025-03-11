@@ -111,7 +111,6 @@ public:
    *
    * Retrieves the size of the eprop history buffer.
    */
-
   double get_eprop_history_duration() const;
 
 protected:

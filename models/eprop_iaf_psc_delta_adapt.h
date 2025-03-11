@@ -476,7 +476,6 @@ private:
     //! Time constant of the threshold adaptation (ms).
     double adapt_tau_;
 
-
     //! Coefficient of firing rate regularization.
     double c_reg_;
 

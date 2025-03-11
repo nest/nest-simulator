@@ -204,7 +204,7 @@ void register_eprop_synapse( const std::string& name );
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
  * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
- * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
+ * @note Each synapse has an optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
  * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
  * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchanging the
@@ -422,10 +422,11 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , epsilon_( es.epsilon_ )
   , optimizer_( es.optimizer_ )
 {
+  // Move operator, therefore we must null the optimizer pointer in the source of the move.    
   es.optimizer_ = nullptr;
 }
 
-// This assignment operator is used to write a connection into the connection array.
+// This is the move assignment operator.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
@@ -447,6 +448,8 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   z_previous_buffer_ = es.z_previous_buffer_;
 
   optimizer_ = es.optimizer_;
+  
+  // Move assignment, therefore we must null the optimizer pointer in the source of the move.
   es.optimizer_ = nullptr;
 
   return *this;

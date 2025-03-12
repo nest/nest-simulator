@@ -487,6 +487,18 @@ private:
   static RecordablesMap< eprop_iaf_bsshslm_2020 > recordablesMap_;
 };
 
+inline long
+eprop_iaf_bsshslm_2020::get_shift() const
+{
+  return offset_gen_ + delay_in_rec_;
+}
+
+inline bool
+eprop_iaf_bsshslm_2020::is_eprop_recurrent_node() const
+{
+  return true;
+}
+
 inline size_t
 eprop_iaf_bsshslm_2020::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {

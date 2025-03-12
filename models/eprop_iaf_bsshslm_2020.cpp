@@ -254,17 +254,6 @@ eprop_iaf_bsshslm_2020::pre_run_hook()
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
 }
 
-long
-eprop_iaf_bsshslm_2020::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
-bool
-eprop_iaf_bsshslm_2020::is_eprop_recurrent_node() const
-{
-  return true;
-}
 
 /* ----------------------------------------------------------------
  * Update function

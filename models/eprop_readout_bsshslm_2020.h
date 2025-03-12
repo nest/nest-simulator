@@ -489,6 +489,18 @@ private:
   static RecordablesMap< eprop_readout_bsshslm_2020 > recordablesMap_;
 };
 
+inline long
+eprop_readout_bsshslm_2020::get_shift() const
+{
+  return offset_gen_ + delay_in_rec_ + delay_rec_out_;
+}
+
+inline bool
+eprop_readout_bsshslm_2020::is_eprop_recurrent_node() const
+{
+  return false;
+}
+
 inline size_t
 eprop_readout_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
 {

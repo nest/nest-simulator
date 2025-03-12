@@ -209,17 +209,6 @@ eprop_readout::pre_run_hook()
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
 }
 
-long
-eprop_readout::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
-bool
-eprop_readout::is_eprop_recurrent_node() const
-{
-  return false;
-}
 
 /* ----------------------------------------------------------------
  * Update function

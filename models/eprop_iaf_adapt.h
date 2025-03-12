@@ -577,6 +577,18 @@ private:
 };
 
 inline long
+eprop_iaf_adapt::get_shift() const
+{
+  return offset_gen_ + delay_in_rec_;
+}
+
+inline bool
+eprop_iaf_adapt::is_eprop_recurrent_node() const
+{
+  return true;
+}
+
+inline long
 eprop_iaf_adapt::get_eprop_isi_trace_cutoff() const
 {
   return V_.eprop_isi_trace_cutoff_steps_;

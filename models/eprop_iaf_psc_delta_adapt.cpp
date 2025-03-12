@@ -326,17 +326,6 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
-long
-eprop_iaf_psc_delta_adapt::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
-bool
-eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
-{
-  return true;
-}
 
 /* ----------------------------------------------------------------
  * Update function

@@ -422,7 +422,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , epsilon_( es.epsilon_ )
   , optimizer_( es.optimizer_ )
 {
-  // Move operator, therefore we must null the optimizer pointer in the source of the move.    
+  // Move operator, therefore we must null the optimizer pointer in the source of the move.
   es.optimizer_ = nullptr;
 }
 
@@ -448,7 +448,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   z_previous_buffer_ = es.z_previous_buffer_;
 
   optimizer_ = es.optimizer_;
-  
+
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
   es.optimizer_ = nullptr;
 

@@ -382,20 +382,17 @@ endfunction()
 
 function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
-  if ( with-openmp )
+  if ( NOT "${with-openmp}" STREQUAL "OFF" )
     if ( NOT "${with-openmp}" STREQUAL "ON" )
-      printInfo( "Set OpenMP argument: ${with-openmp}")
-      # set variables in this scope
-      set( OPENMP_FOUND ON )
-      set( OpenMP_C_FLAGS "${with-openmp}" )
-      set( OpenMP_CXX_FLAGS "${with-openmp}" )
-      set( OpenMP_CXX_LIBRARIES "${with-openmp}" )
-    else ()
-      find_package( OpenMP )
+      # if set, use this prefix
+      set( OpenMP_ROOT "${with-openmp}" )
     endif ()
-    if ( OPENMP_FOUND )
+
+    find_package( OpenMP REQUIRED )
+
+    if ( OpenMP_FOUND )
       # export found variables to parent scope
-      set( OPENMP_FOUND "${OPENMP_FOUND}" PARENT_SCOPE )
+      set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
       set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
@@ -405,7 +402,7 @@ function( NEST_PROCESS_WITH_OPENMP )
     else()
       printError( "CMake can not find OpenMP." )
     endif ()
-  endif ()
+  endif ()  # if NOT OFF
 
   # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
   # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
@@ -459,6 +456,20 @@ function( NEST_PROCESS_WITH_DETAILED_TIMERS )
   set( TIMER_DETAILED OFF PARENT_SCOPE )
   if ( ${with-detailed-timers} STREQUAL "ON" )
     set( TIMER_DETAILED ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_THREADED_TIMERS )
+  set( THREADED_TIMERS OFF PARENT_SCOPE )
+  if ( ${with-threaded-timers} STREQUAL "ON" )
+    set( THREADED_TIMERS ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_MPI_SYNC_TIMER )
+  set( MPI_SYNC_TIMER OFF PARENT_SCOPE )
+  if ( ${with-mpi-sync-timer} STREQUAL "ON" )
+    set( MPI_SYNC_TIMER ON PARENT_SCOPE )
   endif ()
 endfunction()
 

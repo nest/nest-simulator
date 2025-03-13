@@ -51,8 +51,8 @@ slight modifications.
       .. math::
 
         \begin{flalign}
-        \frac{dV(t)}{dt} &=\frac{-V(t)}{\tau}+\frac{I(t)}{C} \\ \\
-        I(t) &=\sum_{i\in\mathbb{N}, t_i\le t }\sum_{k\in S_{t_i}}\hat{\iota}_k \iota(t-t_i)+I_{\text{ext}} \\ \\
+        \frac{dV(t)}{dt} &=\frac{-V(t)}{\tau}+\frac{I(t) + I_{ext}(t)}{C} \\ \\
+        I(t) &=\sum_{i\in\mathbb{N}, t_i\le t }\sum_{k\in S_{t_i}}\hat{\iota}_k \iota(t-t_i) \\ \\
         \iota (t) &= \frac{e}{\tau_{syn}}t e^{-t/\tau_{\text{syn}}}.
         \end{flalign}
 
@@ -68,8 +68,8 @@ slight modifications.
            - membrane capacitance
          * - :math:`\iota_k`
            - synaptic weight of presynaptic neuron k
-         * - :math:`I_{ext}`
-           - external constant current
+         * - :math:`I_{ext}(t)`
+           - external current
          * - :math:`\tau_{syn}`
            - synaptic time constant
 
@@ -84,25 +84,45 @@ slight modifications.
       .. math::
 
         \begin{flalign}
-         y(t)_1 &=  \frac{d\iota}{dt} + \frac{\iota}{\tau_{syn}} \\
-         y(t)_2 &= \iota \\
-         y(t)_3 &= V
+         * V
+         * I  \\
+         * \frac{dI}{dt} \\
         \end{flalign}
 
 
    .. grid-item:: **Solution via exponential integration with propagators**
       :columns: 7
 
+      p_**  are resulting from exact integration scheme -- see page --
+
       .. math::
 
         \begin{flalign}
-         P_{y1,1}(t)	&=\exp\left(-\frac{t}{\tau_{m}}\right) \\
-         P_{y1,2}(t)	&=1-\exp\left(-\frac{t}{\tau_{m}}\right) \\
-         P_{y2,1}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{y2,2}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{y3,1}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{y3,2}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right)
+         P_{11}(t)	&=\exp\left(-\frac{t}{\tau_{m}}\right) \\
+         P_{21}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
+         P_{22}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right) \\
+         P_{30}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
+         P_{31}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
+         P_{32}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right)
         \end{flalign}
+
+
+----
+
+integrate V box
+V(t+ \deltat) =  V(t)
++ p_33 * V(t)
++ p_32 * \iota(t)
++ p_31 * d\iota(t) / dt
+-\tau / C * (p33-1) * I_{ext}(t)
+
+
+integrate I and dI/dt
+
+I(t + \deltat ) = p_22 * I(t)
++ p_21 * dI(t)/dt
+
+dI(t + \deltat) / dt  = p_11 * dI(t)/dt
 
 
 Update dynamics in :math:`\Delta t`

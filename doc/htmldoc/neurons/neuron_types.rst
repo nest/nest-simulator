@@ -325,6 +325,8 @@ Post-synaptic input responses
 
 Synaptic inputs can be modeled using different kernels to represent
 how the `current or conductance` changes over time after a synaptic event.
+The type of post-synaptic input (`exp`, `delta`, `alpha`, `beta`) are indicated at
+the end of the neuron model name (e.g., ``iaf_psc_delta``)
 
 
 .. seealso::

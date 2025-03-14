@@ -155,7 +155,15 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
+
+  if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
+  {
+    eprop_iaf* nrn = dynamic_cast< eprop_iaf* >( node );
+    assert( nrn );
+    auto compute_surrogate_gradient = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
+    nrn->compute_surrogate_gradient_ = compute_surrogate_gradient;
+  }
+
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
@@ -264,8 +272,6 @@ eprop_iaf::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
-
-  compute_surrogate_gradient_ = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 

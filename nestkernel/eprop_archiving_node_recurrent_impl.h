@@ -63,7 +63,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::EpropArchivingNodeRecurrent(
 
 template < bool hist_shift_required >
 typename EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_function
-EpropArchivingNodeRecurrent< hist_shift_required >::select_surrogate_gradient(
+EpropArchivingNodeRecurrent< hist_shift_required >::find_surrogate_gradient(
   const std::string& surrogate_gradient_function_name )
 {
   const auto found_entry_it = surrogate_gradient_funcs_.find( surrogate_gradient_function_name );
@@ -83,7 +83,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::select_surrogate_gradient(
 
   throw BadProperty( error_message );
 }
-
 
 template < bool hist_shift_required >
 double

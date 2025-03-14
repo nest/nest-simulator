@@ -67,12 +67,12 @@ public:
     EpropArchivingNodeRecurrent::*surrogate_gradient_function )( double, double, double, double, double );
 
   /**
-   * Selects a surrogate gradient function based on the specified name.
+   * Validates and finds surrogate gradient function based on the specified name.
    *
    * @param surrogate_gradient_function_name The name of the surrogate gradient function.
    * @return The selected surrogate gradient function.
    */
-  surrogate_gradient_function select_surrogate_gradient( const std::string& surrogate_gradient_function_name );
+  surrogate_gradient_function find_surrogate_gradient( const std::string& surrogate_gradient_function_name );
 
   /**
    * @brief Computes the surrogate gradient with a piecewise linear function around the spike time.
@@ -250,7 +250,8 @@ protected:
   bool history_shift_required_() const override;
 
   //! Pointer to member function selected for computing the surrogate gradient.
-  surrogate_gradient_function compute_surrogate_gradient_;  
+  surrogate_gradient_function compute_surrogate_gradient_ =
+    &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient;
 
 private:
   //! Count of the emitted spikes for the firing rate regularization.

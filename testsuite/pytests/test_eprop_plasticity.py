@@ -434,9 +434,8 @@ def test_unsupported_surrogate_gradient():
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
     }
 
-    with pytest.raises(nest.kernel.NESTError):
-        nrn = nest.Create("eprop_iaf", 1, params_nrn_rec)
-        nest.Simulate(1.0)
+    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+        nest.SetDefaults("eprop_iaf", params_nrn_rec)
 
 
 @pytest.mark.parametrize(

@@ -249,6 +249,9 @@ protected:
   long model_dependent_history_shift_() const override;
   bool history_shift_required_() const override;
 
+  //! Pointer to member function selected for computing the surrogate gradient.
+  surrogate_gradient_function compute_surrogate_gradient_;  
+
 private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;

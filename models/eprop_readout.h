@@ -1,5 +1,5 @@
 /*
- *  eprop_readout_bsshslm_2020.h
+ *  eprop_readout.h
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef EPROP_READOUT_BSSHSLM_2020_H
-#define EPROP_READOUT_BSSHSLM_2020_H
+#ifndef EPROP_READOUT_H
+#define EPROP_READOUT_H
 
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_readout.h"
+#include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -40,25 +41,21 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based leaky integrate readout neuron model with delta-shaped or exponentially filtered
+Current-based leaky integrate readout neuron model with delta-shaped
 postsynaptic currents for e-prop plasticity
 
 Description
 +++++++++++
 
-``eprop_readout_bsshslm_2020`` is an implementation of an integrate-and-fire neuron model
+``eprop_readout`` is an implementation of an integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-  v_j^t &= \kappa v_j^{t-1} + \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
+  v_j^t &= \kappa v_j^{t-1}+ \zeta \sum_{i \neq j} W_{ji}^\text{out} z_i^{t-1} \,, \\
   \kappa &= e^{ -\frac{ \Delta t }{ \tau_\text{m} } } \,, \\
   \zeta &=
     \begin{cases}
@@ -82,63 +79,74 @@ represents a piecewise constant external current.
 See the documentation on the :doc:`iaf_psc_delta<../models/iaf_psc_delta/>` neuron model
 for more information on the integration of the subthreshold dynamics.
 
-The change of the synaptic weight is calculated from the gradient :math:`g` of
-the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
-:math:`\frac{ \text{d}E }{ \text{d} W_{ij} }`
+The change of the synaptic weight is calculated from the gradient :math:`g^t` of
+the loss :math:`E^t` with respect to the synaptic weight :math:`W_{ji}`:
+:math:`\frac{ \text{d} E^t }{ \text{d} W_{ij} }`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
+In the interval between two presynaptic spikes, the gradient is calculated
+at each time step until the cutoff time point. This computation occurs over
+the time range:
+
+:math:`t \in \left[ t_\text{spk,prev}, \min \left( t_\text{spk,prev} + \Delta t_\text{c}, t_\text{spk,curr} \right)
+\right]`.
+
+Here, :math:`t_\text{spk,prev}` represents the time of the previous spike that
+passed the synapse, while :math:`t_\text{spk,curr}` is the time of the
+current spike, which triggers the application of the learning rule and the
+subsequent synaptic weight update. The cutoff :math:`\Delta t_\text{c}`
+defines the maximum allowable interval for integration between spikes.
+The expression for the gradient is given by:
+
 .. math::
-  \frac{ \text{d} E }{ \text{d} W_{ji} } = \sum_t L_j^t \bar{z}_i^{t-1} \,. \\
+  \frac{ \text{d} E^t }{ \text{d} W_{ji} } = L_j^t \bar{z}_i^{t-1} \,. \\
 
 The presynaptic spike trains are low-pass filtered with the following exponential kernel:
 
 .. math::
-  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t) \,, \\
-  \mathcal{F}_\kappa(z_i^t) &= \kappa \mathcal{F}_\kappa \left( z_i^{t-1} \right) + z_i^t \,, \\
-  \mathcal{F}_\kappa(z_i^0) &= z_i^0 \,. \\
+  \bar{z}_i^t = \mathcal{F}_\kappa \left( z_{i}^t \right)
+    = \kappa \bar{z}_i^{t-1} + \zeta z_i^t \,. \\
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
 pseudo-derivative and a firing regularization term.
 
+As a last step for every round in the loop over the time steps :math:`t`, the new weight is retrieved by feeding the
+current gradient :math:`g^t` to the optimizer (see :doc:`weight_optimizer<../models/weight_optimizer/>`
+for more information on the available optimizers):
+
+.. math::
+  w^t = \text{optimizer} \left( t, g^t, w^{t-1} \right) \,. \\
+
+After the loop has terminated, the filtered dynamic variables of e-prop are propagated from the end of the cutoff until
+the next spike:
+
+.. math::
+  p &= \text{max} \left( 0, t_\text{s}^{t} - \left( t_\text{s}^{t-1} + {\Delta t}_\text{c} \right) \right) \,, \\
+  \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,. \\
+
 The learning signal :math:`L_j^t` is given by the non-plastic feedback weight
 matrix :math:`B_{jk}` and the continuous error signal :math:`e_k^t` emitted by
-readout neuron :math:`k`:
+readout neuron :math:`k` and :math:`e_k^t` defined via a mean-squared error
+loss:
 
 .. math::
-  L_j^t = B_{jk} e_k^t \,. \\
-
-The error signal depends on the selected loss function.
-If a mean squared error loss is selected, then:
-
-.. math::
-  e_k^t = y_k^t - y_k^{*,t} \,, \\
+  L_j^t = B_{jk} e_k^t = B_{jk} \left( y_k^t - y_k^{*,t} \right) \,. \\
 
 where the readout signal :math:`y_k^t` corresponds to the membrane voltage of
 readout neuron :math:`k` and :math:`y_k^{*,t}` is the real-valued target signal.
 
-If a cross-entropy loss is selected, then:
-
-.. math::
-  e^k_t &= \pi_k^t - \pi_k^{*,t} \,, \\
-  \pi_k^t &= \text{softmax}_k \left( y_1^t, ..., y_K^t \right) =
-    \frac{ \exp \left( y_k^t\right) }{ \sum_{k'} \exp \left( y_{k'}^t \right) } \,, \\
-
-where the readout signal :math:`\pi_k^t` corresponds to the softmax of the
-membrane voltage of readout neuron :math:`k` and :math:`\pi_k^{*,t}` is the
-one-hot encoded target signal.
-
-Furthermore, the readout and target signal are zero before the onset of the
-learning window in each update interval.
+Furthermore, the readout and target signal are multiplied by a learning window
+signal, which has a value of 1.0 within the learning window and 0.0 outside.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
- * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
- * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+ * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
+ * :doc:`eprop_synapse<../models/eprop_synapse/>`
+ * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -155,10 +163,6 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``C_m``                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 ``E_L``                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
 ``I_e``                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
-``regular_spike_arrival`` Boolean                                 ``True`` If ``True``, the input spikes arrive
-                                                                           at the end of the time step, if
-                                                                           ``False`` at the beginning
-                                                                           (determines PSC scale)
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
@@ -167,14 +171,16 @@ Parameter                 Unit    Math equivalent       Default            Descr
                                                         C++
 ========================= ======= ===================== ================== =====================================
 
-========== ======= ===================== ==================== =========================================
+=========================== ======= =========================== ================ ===============================
 **E-prop parameters**
--------------------------------------------------------------------------------------------------------
-Parameter  Unit    Math equivalent       Default              Description
-========== ======= ===================== ==================== =========================================
-``loss``           :math:`E`             "mean_squared_error" Loss function
-                                                              ["mean_squared_error", "cross_entropy"]
-========== ======= ===================== ==================== =========================================
+----------------------------------------------------------------------------------------------------------------
+Parameter                   Unit    Math equivalent             Default          Description
+=========================== ======= =========================== ================ ===============================
+``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
+                                                                representable    e-prop update between two
+                                                                by a ``long``    spikes
+                                                                type in C++
+=========================== ======= =========================== ================ ===============================
 
 Recordables
 +++++++++++
@@ -189,16 +195,15 @@ State variable  Unit Math equivalent Initial value Description
 ``V_m``         mV   :math:`v_j`               0.0 Membrane voltage
 =============== ==== =============== ============= ================
 
-========================= ==== =============== ============= ===============================
+========================= ==== =============== ============= ==============
 **E-prop state variables and recordables**
---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------
 State variable            Unit Math equivalent Initial value Description
-========================= ==== =============== ============= ===============================
+========================= ==== =============== ============= ==============
 ``error_signal``          mV   :math:`L_j`               0.0 Error signal
 ``readout_signal``        mV   :math:`y_j`               0.0 Readout signal
-``readout_signal_unnorm`` mV                             0.0 Unnormalized readout signal
 ``target_signal``         mV   :math:`y^*_j`             0.0 Target signal
-========================= ==== =============== ============= ===============================
+========================= ==== =============== ============= ==============
 
 Usage
 +++++
@@ -237,27 +242,28 @@ See also
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_readout_bsshslm_2020
+.. listexamples:: eprop_readout
 
 EndUserDocs */
 
-void register_eprop_readout_bsshslm_2020( const std::string& name );
+void register_eprop_readout( const std::string& name );
 
 /**
- * @brief Class implementing a readout neuron model for e-prop plasticity.
+ * @brief Class implementing a readout neuron model for e-prop plasticity with additional biological features.
  *
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
- * e-prop plasticity according to Bellec et al. (2020).
+ * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+ * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
  */
-class eprop_readout_bsshslm_2020 : public EpropArchivingNodeReadout< true >
+class eprop_readout : public EpropArchivingNodeReadout< false >
 {
 
 public:
   //! Default constructor.
-  eprop_readout_bsshslm_2020();
+  eprop_readout();
 
   //! Copy constructor.
-  eprop_readout_bsshslm_2020( const eprop_readout_bsshslm_2020& );
+  eprop_readout( const eprop_readout& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -293,29 +299,26 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  double compute_gradient( std::vector< long >& presyn_isis,
-    const long t_previous_update,
-    const long t_previous_trigger_spike,
-    const double kappa,
-    const bool average_gradient ) override;
+  void compute_gradient( const long,
+    const long,
+    double&,
+    double&,
+    double&,
+    double&,
+    double&,
+    double&,
+    const CommonSynapseProperties&,
+    WeightOptimizer* ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-
-  //! Compute the error signal based on the mean-squared error loss.
-  void compute_error_signal_mean_squared_error( const long lag );
-
-  //! Compute the error signal based on the cross-entropy loss.
-  void compute_error_signal_cross_entropy( const long lag );
-
-  //! Compute the error signal based on a loss function.
-  void ( eprop_readout_bsshslm_2020::*compute_error_signal )( const long lag );
+  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_readout_bsshslm_2020 >;
+  friend class RecordablesMap< eprop_readout >;
 
   //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
-  friend class UniversalDataLogger< eprop_readout_bsshslm_2020 >;
+  friend class UniversalDataLogger< eprop_readout >;
 
   //! Structure of parameters.
   struct Parameters_
@@ -329,17 +332,14 @@ private:
     //! Constant external input current (pA).
     double I_e_;
 
-    //! Loss function ["mean_squared_error", "cross_entropy"].
-    std::string loss_;
-
-    //! If True, the input spikes arrive at the beginning of the time step, if False at the end (determines PSC scale).
-    bool regular_spike_arrival_;
-
     //! Time constant of the membrane (ms).
     double tau_m_;
 
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
+
+    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
+    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -360,11 +360,11 @@ private:
     //! Readout signal. Leaky integrated spikes emitted by the recurrent network.
     double readout_signal_;
 
-    //! Unnormalized readout signal. Readout signal not yet divided by the readout signals of other readout neurons.
-    double readout_signal_unnorm_;
-
     //! Target / teacher signal that the network is supposed to learn.
     double target_signal_;
+
+    //! Signal indicating whether the readout neurons are in a learning phase.
+    double learning_window_signal_;
 
     //! Input current (pA).
     double i_in_;
@@ -389,13 +389,10 @@ private:
   struct Buffers_
   {
     //! Default constructor.
-    Buffers_( eprop_readout_bsshslm_2020& );
+    Buffers_( eprop_readout& );
 
     //! Copy constructor.
-    Buffers_( const Buffers_&, eprop_readout_bsshslm_2020& );
-
-    //! Normalization rate of the readout signal. Sum of the readout signals of all readout neurons.
-    double normalization_rate_;
+    Buffers_( const Buffers_&, eprop_readout& );
 
     //! Buffer for incoming spikes.
     RingBuffer spikes_;
@@ -404,7 +401,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for universal data.
-    UniversalDataLogger< eprop_readout_bsshslm_2020 > logger_;
+    UniversalDataLogger< eprop_readout > logger_;
   };
 
   //! Structure of internal variables.
@@ -413,15 +410,11 @@ private:
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "kappa" in user documentation).
     double P_v_m_;
 
-    //! Propagator matrix entry for evolving the incoming spike state variables (mathematical symbol "zeta" in user
-    //! documentation).
-    double P_z_in_;
-
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
 
-    //! If the loss requires communication between the readout neurons and thus a buffer for the exchanged signals.
-    bool signal_to_other_readouts_;
+    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
+    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -431,7 +424,7 @@ private:
   //! Enumeration of spike receptor types.
   enum RateSynapseTypes
   {
-    READOUT_SIG = MIN_RATE_RECEPTOR,
+    LEARNING_WINDOW_SIG = MIN_RATE_RECEPTOR,
     TARGET_SIG,
     SUP_RATE_RECEPTOR
   };
@@ -448,13 +441,6 @@ private:
   get_readout_signal_() const
   {
     return S_.readout_signal_;
-  }
-
-  //! Get the current value of the unnormalized readout signal.
-  double
-  get_readout_signal_unnorm_() const
-  {
-    return S_.readout_signal_unnorm_;
   }
 
   //! Get the current value of the target signal.
@@ -486,23 +472,29 @@ private:
   Buffers_ B_;
 
   //! Map storing a static set of recordables.
-  static RecordablesMap< eprop_readout_bsshslm_2020 > recordablesMap_;
+  static RecordablesMap< eprop_readout > recordablesMap_;
 };
 
 inline long
-eprop_readout_bsshslm_2020::get_shift() const
+eprop_readout::get_shift() const
 {
-  return offset_gen_ + delay_in_rec_ + delay_rec_out_;
+  return offset_gen_ + delay_in_rec_;
 }
 
 inline bool
-eprop_readout_bsshslm_2020::is_eprop_recurrent_node() const
+eprop_readout::is_eprop_recurrent_node() const
 {
   return false;
 }
 
+inline long
+eprop_readout::get_eprop_isi_trace_cutoff() const
+{
+  return V_.eprop_isi_trace_cutoff_steps_;
+}
+
 inline size_t
-eprop_readout_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -513,7 +505,7 @@ eprop_readout_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_typ
 }
 
 inline size_t
-eprop_readout_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_readout::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -524,16 +516,16 @@ eprop_readout_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_t
 }
 
 inline size_t
-eprop_readout_bsshslm_2020::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
+eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
 {
   size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
-  if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
+  if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG and receptor_type != LEARNING_WINDOW_SIG )
   {
     throw IllegalConnection(
-      "eprop_readout_bsshslm_2020 neurons expect a connection with a step_rate_generator node through receptor_type "
-      "2." );
+      "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type "
+      "1 or 2." );
   }
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )
@@ -545,7 +537,7 @@ eprop_readout_bsshslm_2020::handles_test_event( DelayedRateConnectionEvent& e, s
 }
 
 inline size_t
-eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -556,21 +548,21 @@ eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t 
 }
 
 inline void
-eprop_readout_bsshslm_2020::get_status( DictionaryDatum& d ) const
+eprop_readout::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::readout_signal ] = READOUT_SIG;
+  ( *receptor_dict_ )[ names::eprop_learning_window ] = LEARNING_WINDOW_SIG;
   ( *receptor_dict_ )[ names::target_signal ] = TARGET_SIG;
 
   ( *d )[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void
-eprop_readout_bsshslm_2020::set_status( const DictionaryDatum& d )
+eprop_readout::set_status( const DictionaryDatum& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
@@ -586,4 +578,4 @@ eprop_readout_bsshslm_2020::set_status( const DictionaryDatum& d )
 
 } // namespace nest
 
-#endif // EPROP_READOUT_BSSHSLM_2020_H
+#endif // EPROP_READOUT_H

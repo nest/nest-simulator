@@ -45,7 +45,7 @@ which encode the x and y coordinates of a lemniscate.
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
 This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
-consists of a recurrent network that receives frozen noise input from Poisson generators and projects onto two
+consists of a recurrent network that receives frozen noise input from spike generators and projects onto two
 readout neurons. Each individual readout signal denoted as :math:`y_k` is compared with a corresponding target
 signal represented as :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error
 loss.

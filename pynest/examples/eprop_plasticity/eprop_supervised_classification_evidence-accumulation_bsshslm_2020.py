@@ -47,7 +47,7 @@ presented.
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
 This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
-consists of a recurrent network that receives input from Poisson generators and projects onto two readout
+consists of a recurrent network that receives input from spike generators and projects onto two readout
 neurons - one for the left and one for the right turn at the end. The input neuron population consists of four
 groups: one group providing background noise of a specific rate for some base activity throughout the
 experiment, one group providing the input spikes of the left cues and one group providing them for the right

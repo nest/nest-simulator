@@ -97,7 +97,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::compute_piecewise_linear_sur
     return 0.0;
   }
 
-  return gamma * std::max( 0.0, 1.0 - beta * std::abs( ( v_m - v_th ) ) );
+  return gamma * std::max( 0.0, 1.0 - beta * std::abs( v_m - v_th ) );
 }
 
 template < bool hist_shift_required >

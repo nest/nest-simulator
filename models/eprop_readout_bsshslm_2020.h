@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based leaky integrate readout neuron model with delta-shaped
+Current-based leaky integrate readout neuron model with delta-shaped or exponentially filtered
 postsynaptic currents for e-prop plasticity
 
 Description

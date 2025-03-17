@@ -281,7 +281,7 @@ cdef class NESTEngine:
             exceptionCls = getattr(NESTErrors, str(e))
             raise exceptionCls('take_array_index', '') from None
 
-    def connect_arrays(self, sources, targets, weights, delays, axonal_delays, synapse_model, syn_param_keys, syn_param_values):
+    def connect_arrays(self, sources, targets, weights, delays, dendritic_delays, axonal_delays, synapse_model, syn_param_keys, syn_param_values):
         """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
         if self.pEngine is NULL:
             raise NESTErrors.PyNESTError("engine uninitialized")
@@ -335,6 +335,12 @@ cdef class NESTEngine:
             delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
             delays_ptr = &delays_mv[0]
 
+        cdef double[::1] dendritic_delays_mv
+        cdef double* dendritic_delays_ptr = NULL
+        if dendritic_delays is not None:
+            dendritic_delays_mv = numpy.ascontiguousarray(dendritic_delays, dtype=numpy.double)
+            dendritic_delays_ptr = &dendritic_delays_mv[0]
+
         cdef double[::1] axonal_delays_mv
         cdef double* axonal_delays_ptr = NULL
         if axonal_delays is not None:
@@ -356,7 +362,7 @@ cdef class NESTEngine:
         cdef string syn_model_string = synapse_model.encode('UTF-8')
 
         try:
-            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, axonal_delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, dendritic_delays_ptr, axonal_delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
         except RuntimeError as e:
             exceptionCls = getattr(NESTErrors, str(e))
             raise exceptionCls('connect_arrays', '') from None

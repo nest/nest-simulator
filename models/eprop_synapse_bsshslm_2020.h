@@ -220,7 +220,7 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
  * and default values could be set on it.
  */
 template < typename targetidentifierT >
-class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT >
+class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
@@ -228,7 +228,7 @@ public:
   typedef EpropSynapseBSSHSLM2020CommonProperties CommonPropertiesType;
 
   //! Type of the connection base.
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   /**
    * Properties of the connection model.
@@ -601,8 +601,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
     kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
-  const auto& gcm =
-    dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020 >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {

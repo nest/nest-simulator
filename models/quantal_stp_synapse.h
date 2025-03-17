@@ -109,11 +109,11 @@ EndUserDocs */
 void register_quantal_stp_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class quantal_stp_synapse : public Connection< targetidentifierT >
+class quantal_stp_synapse : public Connection< targetidentifierT, TotalDelay >
 {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

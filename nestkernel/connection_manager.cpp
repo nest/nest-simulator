@@ -568,6 +568,7 @@ ConnectionManager::connect( const size_t snode_id,
   const synindex syn_id,
   const DictionaryDatum& params,
   const double delay,
+  const double dendritic_delay,
   const double axonal_delay,
   const double weight )
 {
@@ -580,7 +581,7 @@ ConnectionManager::connect( const size_t snode_id,
   switch ( connection_type )
   {
   case CONNECT:
-    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, axonal_delay, weight );
+    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, dendritic_delay, axonal_delay, weight );
     break;
   case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
@@ -640,6 +641,7 @@ ConnectionManager::connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
+  double* dendritic_delays,
   double* axonal_delays,
   std::vector< std::string >& p_keys,
   double* p_values,
@@ -696,8 +698,10 @@ ConnectionManager::connect_arrays( long* sources,
   }
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [ weights, delays, axonal_delays ](
-                        decltype( weights ) & w, decltype( delays ) & d, decltype( axonal_delays ) & a )
+  auto increment_wd = [ weights, delays, dendritic_delays, axonal_delays ]( decltype( weights ) & w,
+                        decltype( delays ) & d,
+                        decltype( dendritic_delays ) & dend,
+                        decltype( axonal_delays ) & axonal )
   {
     if ( weights )
     {
@@ -707,9 +711,13 @@ ConnectionManager::connect_arrays( long* sources,
     {
       ++d;
     }
+    if ( dendritic_delays )
+    {
+      ++dend;
+    }
     if ( axonal_delays )
     {
-      ++a;
+      ++axonal;
     }
   };
 
@@ -728,9 +736,11 @@ ConnectionManager::connect_arrays( long* sources,
       auto t = targets;
       auto w = weights;
       auto d = delays;
-      auto a = axonal_delays;
+      auto dend = dendritic_delays;
+      auto axonal = axonal_delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
+      double dendritic_delay_buffer = numerics::nan;
       double axonal_delay_buffer = numerics::nan;
       int index_counter = 0; // Index of the current connection, for connection parameters
 
@@ -747,7 +757,7 @@ ConnectionManager::connect_arrays( long* sources,
         auto target_node = kernel().node_manager.get_node_or_proxy( *t, tid );
         if ( target_node->is_proxy() )
         {
-          increment_wd( w, d, a );
+          increment_wd( w, d, dend, axonal );
           continue;
         }
 
@@ -761,9 +771,13 @@ ConnectionManager::connect_arrays( long* sources,
         {
           delay_buffer = *d;
         }
+        if ( dendritic_delays )
+        {
+          dendritic_delay_buffer = *dend;
+        }
         if ( axonal_delays )
         {
-          axonal_delay_buffer = *a;
+          axonal_delay_buffer = *axonal;
         }
 
         // Store the key-value pair of each parameter in the Dictionary.
@@ -803,12 +817,13 @@ ConnectionManager::connect_arrays( long* sources,
           synapse_model_id,
           param_dicts[ tid ],
           delay_buffer,
+          dendritic_delay_buffer,
           axonal_delay_buffer,
           weight_buffer );
 
         ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
 
-        increment_wd( w, d, a );
+        increment_wd( w, d, dend, axonal );
       }
     }
     catch ( std::exception& err )
@@ -913,6 +928,7 @@ nest::ConnectionManager::connect_( Node& source,
   const synindex syn_id,
   const DictionaryDatum& params,
   const double delay,
+  const double dendritic_delay,
   const double axonal_delay,
   const double weight )
 {
@@ -939,7 +955,8 @@ nest::ConnectionManager::connect_( Node& source,
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
-  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, axonal_delay, weight );
+  conn_model.add_connection(
+    source, target, connections_[ tid ], syn_id, params, delay, dendritic_delay, axonal_delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );

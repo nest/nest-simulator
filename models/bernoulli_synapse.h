@@ -96,12 +96,12 @@ EndUserDocs */
 void register_bernoulli_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class bernoulli_synapse : public Connection< targetidentifierT >
+class bernoulli_synapse : public Connection< targetidentifierT, TotalDelay >
 {
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

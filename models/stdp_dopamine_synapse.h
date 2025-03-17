@@ -193,12 +193,12 @@ STDPDopaCommonProperties::get_vt_node_id() const
 void register_stdp_dopamine_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class stdp_dopamine_synapse : public Connection< targetidentifierT >
+class stdp_dopamine_synapse : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef STDPDopaCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

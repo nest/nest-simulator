@@ -28,11 +28,14 @@
 // Includes from nestkernel:
 #include "conn_builder_impl.h"
 #include "conn_parameter.h"
+#include "connection.h"
 #include "connection_manager.h"
+#include "delay_types.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
 #include "node.h"
+#include "target_identifier.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
@@ -147,6 +150,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = { names::weight,
     names::delay,
+    names::dendritic_delay,
     names::axonal_delay,
     names::min_delay,
     names::max_delay,
@@ -155,9 +159,11 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
+  default_dendritic_delay_.resize( syn_specs.size() );
   default_axonal_delay_.resize( syn_specs.size() );
   weights_.resize( syn_specs.size() );
   delays_.resize( syn_specs.size() );
+  dendritic_delays_.resize( syn_specs.size() );
   axonal_delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
@@ -190,6 +196,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   {
     reset_weights_();
     reset_delays_();
+    reset_dendritic_delays_();
     reset_axonal_delays_();
 
     for ( auto params : synapse_params_ )
@@ -215,6 +222,11 @@ nest::BipartiteConnBuilder::~BipartiteConnBuilder()
   }
 
   for ( auto delay : delays_ )
+  {
+    delete delay;
+  }
+
+  for ( auto delay : dendritic_delays_ )
   {
     delete delay;
   }
@@ -321,6 +333,7 @@ nest::BipartiteConnBuilder::connect()
       // call reset on all parameters
       reset_weights_();
       reset_delays_();
+      reset_dendritic_delays_();
       reset_axonal_delays_();
 
       for ( auto params : synapse_params_ )
@@ -409,12 +422,17 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
     update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
 
     double delay = numerics::nan;
+    double dendritic_delay = numerics::nan;
     double axonal_delay = numerics::nan;
     double weight = numerics::nan;
 
     if ( not default_delay_[ synapse_indx ] )
     {
       delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+    }
+    if ( not default_dendritic_delay_[ synapse_indx ] )
+    {
+      dendritic_delay = dendritic_delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
     if ( not default_axonal_delay_[ synapse_indx ] )
     {
@@ -431,6 +449,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
       synapse_model_id_[ synapse_indx ],
       param_dicts_[ synapse_indx ][ target_thread ],
       delay,
+      dendritic_delay,
       axonal_delay,
       weight );
   }
@@ -470,6 +489,14 @@ nest::BipartiteConnBuilder::all_parameters_scalar_() const
   }
 
   for ( auto delay : delays_ )
+  {
+    if ( delay )
+    {
+      all_scalar = all_scalar and delay->is_scalar();
+    }
+  }
+
+  for ( auto delay : dendritic_delays_ )
   {
     if ( delay )
     {
@@ -530,7 +557,11 @@ nest::BipartiteConnBuilder::set_default_weight_or_delays_( DictionaryDatum syn_p
   // homogeneous weights, hence it should be possible to set the delay without the weight.
   default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
 
+  // Based on the synapse type, it must not be allowed to specify either the total delay or axonal or dendritic delay.
+  kernel().model_manager.check_valid_default_delay_parameters( synapse_model_id_[ synapse_indx ], syn_params );
+
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
+  default_dendritic_delay_[ synapse_indx ] = not syn_params->known( names::dendritic_delay );
   default_axonal_delay_[ synapse_indx ] = not syn_params->known( names::axonal_delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for hom_w synapses, on
@@ -553,6 +584,14 @@ nest::BipartiteConnBuilder::set_default_weight_or_delays_( DictionaryDatum syn_p
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
+
+  if ( not default_dendritic_delay_[ synapse_indx ] )
+  {
+    dendritic_delays_[ synapse_indx ] = syn_params->known( names::dendritic_delay )
+      ? ConnParameter::create( ( *syn_params )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() );
+    register_parameters_requiring_skipping_( *dendritic_delays_[ synapse_indx ] );
+  }
 
   if ( not default_axonal_delay_[ synapse_indx ] )
   {
@@ -653,6 +692,18 @@ void
 nest::BipartiteConnBuilder::reset_delays_()
 {
   for ( auto delay : delays_ )
+  {
+    if ( delay )
+    {
+      delay->reset();
+    }
+  }
+}
+
+void
+nest::BipartiteConnBuilder::reset_dendritic_delays_()
+{
+  for ( auto delay : dendritic_delays_ )
   {
     if ( delay )
     {

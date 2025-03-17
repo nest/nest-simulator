@@ -159,6 +159,7 @@ public:
   // they are not automatically found in the base class.
   using ConnectionBase::get_axonal_delay_ms;
   using ConnectionBase::get_axonal_delay_steps;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_dendritic_delay_ms;
   using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
@@ -319,7 +320,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  e.set_delay_steps( get_dendritic_delay_steps() + get_axonal_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
   // TODO: Move dynamic array pointer (per timestep) into handle-ringbuffer
@@ -417,7 +418,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   e.set_receiver( *target );
   e.set_weight( wrong_weight );
   e.set_new_weight( weight_ );
-  e.set_delay_steps( get_dendritic_delay_steps() + get_axonal_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e.set_stamp( Time::ms_stamp( t_spike ) );
   e();

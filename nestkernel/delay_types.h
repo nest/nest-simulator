@@ -24,6 +24,7 @@
 #define DELAY_TYPES_H
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_types.h"
 
@@ -37,7 +38,7 @@ namespace nest
  */
 struct TotalDelay
 {
-  unsigned int delay_;
+  uint32_t delay_;
 
   explicit TotalDelay( double d )
   {
@@ -176,7 +177,7 @@ struct TotalDelay
     // Check for allowed combinations. See PR #2989 for more details.
     if ( d->known( names::dendritic_delay ) or d->known( names::axonal_delay ) )
     {
-      throw BadProperty( "Synapse type does not support explicitly setting axonal and dendritic delays." );
+      throw BadParameter( "Synapse type does not support explicitly setting axonal and dendritic delays." );
     }
 
     // Update delay values
@@ -198,8 +199,8 @@ using success_total_transmission_delay_data_size = StaticAssert< sizeof( TotalDe
  */
 struct AxonalDendriticDelay
 {
-  unsigned int dendritic_delay_ : NUM_BITS_DENDRITIC_DELAY;
-  unsigned int axonal_delay_ : NUM_BITS_AXONAL_DELAY;
+  uint32_t dendritic_delay_ : NUM_BITS_DENDRITIC_DELAY;
+  uint32_t axonal_delay_ : NUM_BITS_AXONAL_DELAY;
 
   explicit AxonalDendriticDelay( double d )
     : axonal_delay_( 0 )
@@ -342,40 +343,22 @@ struct AxonalDendriticDelay
   void
   set_status( const DictionaryDatum& d, ConnectorModel& )
   {
-    // Check for allowed combinations. See PR #2989 for more details.
-    // Case 1: User sets both delay and dendritic or axonal delay
-    if ( d->known( names::delay ) and ( d->known( names::dendritic_delay ) or d->known( names::axonal_delay ) ) )
+    if ( d->known( names::delay ) )
     {
-      throw BadProperty( "'" + names::delay.toString() + "' cannot be specified together with '"
-        + names::dendritic_delay.toString() + "' or '" + names::axonal_delay.toString() + "' due to ambiguity." );
-    }
-    // Case 2: User sets delay, but axonal delay has been set before
-    if ( d->known( names::delay ) and get_axonal_delay_steps() != 0 )
-    {
-      throw BadProperty(
-        "The total transmission delay cannot be set after '" + names::axonal_delay.toString() + "' has been set." );
-    }
-    // Case 3: User sets axonal delay, but dendritic delay has been set before
-    if ( d->known( names::axonal_delay ) and not d->known( names::dendritic_delay )
-      and get_dendritic_delay_steps() != 0 )
-    {
-      throw BadProperty( "When setting '" + names::axonal_delay.toString() +
-        "' and dendritic delay has been set before, '" + names::dendritic_delay.toString() +
-        "' has to be set as well to make it unambiguous whether the dendritic delay should be interpreted as total "
-        "transmission delay or just dendritic delay." );
+      throw BadParameter( "Setting the total transmission delay via the parameter '" + names::delay.toString()
+        + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
     }
 
     // Update delay values
     double dendritic_delay = get_dendritic_delay_ms();
-    if ( updateValue< double >( d, names::delay, dendritic_delay )
-      or updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
+    if ( updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
     {
       set_dendritic_delay_ms( dendritic_delay );
     }
     double axonal_delay = get_axonal_delay_ms();
     if ( updateValue< double >( d, names::axonal_delay, axonal_delay ) )
     {
-      set_axonal_delay_ms( dendritic_delay );
+      set_axonal_delay_ms( axonal_delay );
     }
 
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( get_delay_ms() );

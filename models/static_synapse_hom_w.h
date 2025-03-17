@@ -69,13 +69,13 @@ EndUserDocs */
 void register_static_synapse_hom_w( const std::string& name );
 
 template < typename targetidentifierT >
-class static_synapse_hom_w : public Connection< targetidentifierT >
+class static_synapse_hom_w : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonPropertiesHomW CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

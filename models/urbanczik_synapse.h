@@ -111,12 +111,12 @@ EndUserDocs */
 void register_urbanczik_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class urbanczik_synapse : public Connection< targetidentifierT >
+class urbanczik_synapse : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING

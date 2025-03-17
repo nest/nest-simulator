@@ -99,6 +99,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
     const double axonal_delay = numerics::nan,
     const double weight = numerics::nan ) = 0;
 
@@ -119,6 +120,8 @@ public:
    * Connection::check_synapse_params().
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
+
+  virtual void check_valid_default_delay_parameters( DictionaryDatum syn_params ) const = 0;
 
   virtual SecondaryEvent* get_secondary_event() = 0;
 
@@ -183,6 +186,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
+    const double dendritic_delay,
     const double axonal_delay,
     const double weight ) override;
 
@@ -203,6 +207,8 @@ public:
   void set_syn_id( synindex syn_id ) override;
 
   void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
+
+  void check_valid_default_delay_parameters( DictionaryDatum syn_params ) const override;
 
   SecondaryEvent*
   get_secondary_event() override

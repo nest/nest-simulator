@@ -235,12 +235,12 @@ private:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class stdp_facetshw_synapse_hom : public Connection< targetidentifierT >
+class stdp_facetshw_synapse_hom : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

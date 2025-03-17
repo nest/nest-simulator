@@ -125,12 +125,12 @@ EndUserDocs */
 void register_stdp_nn_restr_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class stdp_nn_restr_synapse : public Connection< targetidentifierT >
+class stdp_nn_restr_synapse : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

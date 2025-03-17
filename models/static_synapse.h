@@ -63,14 +63,14 @@ EndUserDocs */
 void register_static_synapse( const std::string& name );
 
 template < typename targetidentifierT >
-class static_synapse : public Connection< targetidentifierT >
+class static_synapse : public Connection< targetidentifierT, TotalDelay >
 {
   double weight_;
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

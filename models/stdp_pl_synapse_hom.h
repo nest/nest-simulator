@@ -131,12 +131,12 @@ public:
 void register_stdp_pl_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
-class stdp_pl_synapse_hom : public Connection< targetidentifierT >
+class stdp_pl_synapse_hom : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef STDPPLHomCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC

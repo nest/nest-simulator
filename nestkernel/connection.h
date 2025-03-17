@@ -112,7 +112,7 @@ class ConnTestDummyNodeBase : public Node
  * or if needs to be changed, everything has to be reset after sending
  * (i.e. after Event::operator() has been called).
  */
-template < typename targetidentifierT, typename DelayTypeT = TotalDelay >
+template < typename targetidentifierT, typename DelayTypeT >
 class Connection
 {
 
@@ -389,8 +389,13 @@ protected:
 };
 
 using success_connection_target_ptr_size =
-  StaticAssert< sizeof( Connection< TargetIdentifierPtrRport > ) == 24 >::success;
-using success_connection_target_idx_size = StaticAssert< sizeof( Connection< TargetIdentifierIndex > ) == 8 >::success;
+  StaticAssert< sizeof( Connection< TargetIdentifierPtrRport, TotalDelay > ) == 24 >::success;
+using success_connection_target_idx_size =
+  StaticAssert< sizeof( Connection< TargetIdentifierIndex, TotalDelay > ) == 8 >::success;
+using success_connection_target_ptr_size =
+  StaticAssert< sizeof( Connection< TargetIdentifierPtrRport, AxonalDendriticDelay > ) == 24 >::success;
+using success_connection_target_idx_size =
+  StaticAssert< sizeof( Connection< TargetIdentifierIndex, AxonalDendriticDelay > ) == 8 >::success;
 
 template < typename targetidentifierT, typename DelayTypeT >
 constexpr ConnectionModelProperties Connection< targetidentifierT, DelayTypeT >::properties;

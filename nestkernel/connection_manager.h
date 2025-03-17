@@ -145,7 +145,8 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    * \param params Parameter dictionary to configure the synapse.
-   * \param delay Dendritic or total delay of the connection (in ms).
+   * \param delay Total delay of the connection (in ms).
+   * \param dendritic_delay Dendritic delay of the connection (in ms).
    * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight Weight of the connection.
    */
@@ -155,6 +156,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& params,
     const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
     const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -176,6 +178,7 @@ public:
     long* targets,
     double* weights,
     double* delays,
+    double* dendritic_delays,
     double* axonal_delays,
     std::vector< std::string >& p_keys,
     double* p_values,
@@ -340,11 +343,6 @@ public:
    * Send event e to all targets of source device ldid (local device id)
    */
   void send_from_device( const size_t tid, const size_t ldid, Event& e );
-
-  /**
-   * Send event e to all targets of node source on thread t
-   */
-  void send_local( size_t t, Node& source, Event& e );
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -547,7 +545,8 @@ private:
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
-   * \param delay Dendritic or total delay of the connection (in ms).
+   * \param delay Total delay of the connection (in ms).
+   * \param dendritic_delay Dendritic delay of the connection (in ms).
    * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight The weight of the connection (optional).
    */
@@ -558,6 +557,7 @@ private:
     const synindex syn_id,
     const DictionaryDatum& params,
     const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
     const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 

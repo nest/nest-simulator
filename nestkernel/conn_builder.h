@@ -114,6 +114,16 @@ public:
   }
 
   bool
+  get_default_dendritic_delay() const
+  {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve default dendritic delay when one synapse per connection is used." );
+    }
+    return default_dendritic_delay_[ 0 ];
+  }
+
+  bool
   get_default_axonal_delay() const
   {
     if ( synapse_model_id_.size() > 1 )
@@ -265,8 +275,11 @@ private:
   //! indicate that weight should not be set per synapse
   std::vector< bool > default_weight_;
 
-  //! indicate that dendritic delay should not be set per synapse
+  //! indicate that total delay should not be set per synapse
   std::vector< bool > default_delay_;
+
+  //! indicate that dendritic delay should not be set per synapse
+  std::vector< bool > default_dendritic_delay_;
 
   //! indicate that axonal delay should not be set per synapse
   std::vector< bool > default_axonal_delay_;
@@ -274,6 +287,7 @@ private:
   // null-pointer indicates that default be used
   std::vector< ConnParameter* > weights_;
   std::vector< ConnParameter* > delays_;
+  std::vector< ConnParameter* > dendritic_delays_;
   std::vector< ConnParameter* > axonal_delays_;
 
   //! all other parameters, mapping name to value representation
@@ -320,6 +334,7 @@ private:
    */
   void reset_weights_();
   void reset_delays_();
+  void reset_dendritic_delays_();
   void reset_axonal_delays_();
 };
 

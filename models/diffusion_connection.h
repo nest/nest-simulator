@@ -92,12 +92,12 @@ EndUserDocs */
 void register_diffusion_connection( const std::string& name );
 
 template < typename targetidentifierT >
-class diffusion_connection : public Connection< targetidentifierT >
+class diffusion_connection : public Connection< targetidentifierT, TotalDelay >
 {
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_WFR;
 
@@ -131,8 +131,8 @@ public:
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
-    Connection< targetidentifierT >::target_.set_target( &t );
+    Connection< targetidentifierT, TotalDelay >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT, TotalDelay >::target_.set_target( &t );
   }
 
   /**

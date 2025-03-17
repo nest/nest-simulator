@@ -207,14 +207,21 @@ public:
   //! Size of an optimization batch.
   size_t batch_size_;
 
-  //! Learning rate common to all synapses.
+  //! Common learning rate for all synapses.
   double eta_;
 
-  //! First learning rate that differs from the default.
-  double eta_first_;
+  /**
+   * @brief First non-default learning rate.
+   *
+   * Stores the first non-default learning rate, ensuring correct handling when the global learning rate (`eta`) is
+   * modified before the first optimization step. Once optimization begins, `eta_current` aligns with `eta`.  Along with
+   * `eta_change_count` and `eta_current`, this enables simulations with distinct phases, such as training (nonzero
+   * learning rate) and validation, testing, or early stopping (zero learning rate).
+   */
+  double eta_first_change_;
 
-  //! Number of changes to the learning rate.
-  long n_eta_change_;
+  //! Count of learning rate changes so far in the simulation to identify the first change.
+  long eta_change_count_;
 
   //! Minimal value for synaptic weight.
   double Wmin_;
@@ -273,8 +280,13 @@ protected:
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
 
-  //! Learning rate private to the synapse.
-  double eta_;
+  /**
+   * @brief Synapse-specific learning rate when the history for its upcoming weight update was archived.
+   *
+   * Ensures the correct learning rate during the next optimization, even if the global learning rate changes before
+   * activation of the synapse.
+   */
+  double eta_current_;
 
   //! Number of optimizations.
   long n_optimize_;

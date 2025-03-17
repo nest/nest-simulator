@@ -167,8 +167,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   {
     eprop_iaf_adapt_bsshslm_2020* nrn = dynamic_cast< eprop_iaf_adapt_bsshslm_2020* >( node );
     assert( nrn );
-    auto compute_surrogate_gradient = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
-    nrn->compute_surrogate_gradient_ = compute_surrogate_gradient;
+    nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
 
   updateValueParam< double >( d, names::t_ref, t_ref_, node );

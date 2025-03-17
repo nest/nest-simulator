@@ -425,7 +425,8 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     assert np.allclose(loss, loss_nest_reference, rtol=1e-8)
 
 
-def test_unsupported_surrogate_gradient():
+@pytest.mark.parametrize("source_model", supported_source_models)
+def test_unsupported_surrogate_gradient(source_model):
     """
     Confirm that selecting an unsupported surrogate gradient raises an error.
     """
@@ -435,7 +436,7 @@ def test_unsupported_surrogate_gradient():
     }
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty):
-        nest.SetDefaults("eprop_iaf", params_nrn_rec)
+        nest.SetDefaults(source_model, params_nrn_rec)
 
 
 @pytest.mark.parametrize(

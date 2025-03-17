@@ -73,12 +73,7 @@ class TestDisconnectSingle(unittest.TestCase):
 
                 syn_dict = {"synapse_model": syn_model}
 
-                if "eprop_synapse_bsshslm_2020" in syn_model:
-                    neurons = nest.Create("eprop_iaf_bsshslm_2020", 4)
-                    syn_dict["delay"] = nest.resolution
-                elif "eprop_learning_signal_connection_bsshslm_2020" in syn_model:
-                    neurons = nest.Create("eprop_readout_bsshslm_2020", 2) + nest.Create("eprop_iaf_bsshslm_2020", 2)
-                elif "eprop_synapse" in syn_model:
+                if "eprop_synapse" in syn_model:
                     neurons = nest.Create("eprop_iaf", 4)
                     syn_dict["delay"] = nest.resolution
                 elif "eprop_learning_signal_connection" in syn_model:

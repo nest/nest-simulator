@@ -1000,7 +1000,7 @@
        id="tspan5255-4-9-4"
        x="121.03685"
        y="137.2178"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_iaf_adapt_bsshslm_2020</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_iaf_adapt</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
@@ -1026,7 +1026,7 @@
        id="tspan5255-4-3-10"
        x="130.66185"
        y="154.32587"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_readout_bsshslm_2020</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_readout</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
@@ -1052,7 +1052,7 @@
        id="tspan5255-4-1-4"
        x="130.66185"
        y="171.4339"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_synapse_bsshlsm_2020</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_synapse</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
@@ -1078,7 +1078,7 @@
        id="tspan5255-4-2-97"
        x="39.224354"
        y="188.54193"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_learning_signal_connection_bsshslm_2020</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_learning_signal_connection</tspan></text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;line-height:1.25;font-family:'Courier New';-inkscape-font-specification:'Courier New';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb"
@@ -1210,7 +1210,7 @@
        id="tspan5255-4-28"
        x="149.91187"
        y="97.868774"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_iaf_bsshslm_2020</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';fill:#099268;fill-opacity:1">eprop_iaf</tspan></text>
   <path
      style="fill:none;stroke:#000000;stroke-width:0.80000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 34.56132,185.75184 H 14.561299 V 69.768629"

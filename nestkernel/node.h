@@ -488,6 +488,7 @@ public:
    *
    * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
    * models and to the negative transmission delay from the recurrent to the output layer otherwise.
+   *  ETODO: Explain in more abstract terms
    *
    * @throws IllegalConnection
    */

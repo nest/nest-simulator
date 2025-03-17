@@ -89,7 +89,7 @@ public:
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
   /**
-   * @brief Erases the used eprop history for `bsshslm_2020` models.
+   * @brief Erases the used eprop history for `bsshslm_2020` models. ETODO: Explain in more abstract terms
    *
    * Erases e-prop history entries for update intervals during which no spikes were sent to the target neuron,
    * and any entries older than the earliest time stamp required by the first update in the history.
@@ -114,7 +114,8 @@ public:
   double get_eprop_history_duration() const;
 
 protected:
-  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model. ETODO: Explain in
+  //! more abstract terms
   virtual long model_dependent_history_shift_() const = 0;
 
   /**

@@ -447,7 +447,7 @@ Node::handles_test_event( LearningSignalConnectionEvent&, size_t )
 {
   throw IllegalConnection(
     "The target node cannot handle learning signal events or"
-    " synapse is not of type eprop_learning_signal_connection_bsshslm_2020." );
+    " synapse is not of type eprop_learning_signal_connection." );
   return invalid_port;
 }
 

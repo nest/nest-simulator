@@ -88,37 +88,52 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-================ ======= =============== ======= ======================================================
-**Common synapse parameters**
--------------------------------------------------------------------------------------------------------
-Parameter        Unit    Math equivalent Default Description
-================ ======= =============== ======= ======================================================
-average_gradient Boolean                   False If True, average the gradient over the learning window
-optimizer                                     {} Dictionary of optimizer parameters
-================ ======= =============== ======= ======================================================
+==================== ======= =============== ========= ======================================================
+**Common e-prop synapse parameters**
+-------------------------------------------------------------------------------------------------------------
+Parameter            Unit    Math equivalent Default   Description
+==================== ======= =============== ========= ======================================================
+``average_gradient`` Boolean                 ``False`` If ``True``, average the gradient over the learning
+                                                       window
+``optimizer``                                     {}   Dictionary of optimizer parameters
+==================== ======= =============== ========= ======================================================
 
-============= ==== ========================= ======= =========================================================
+============= ==== ========================= ======= ================================
 **Individual synapse parameters**
---------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 Parameter     Unit Math equivalent           Default Description
-============= ==== ========================= ======= =========================================================
-delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
-weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
-============= ==== ========================= ======= =========================================================
+============= ==== ========================= ======= ================================
+``delay``     ms   :math:`d_{ji}`                1.0 Dendritic delay
+``weight``    pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+============= ==== ========================= ======= ================================
+
+================= ==== ========================= ======= ==============================
+**Individual e-prop synapse parameters**
+---------------------------------------------------------------------------------------
+Parameter         Unit Math equivalent           Default Description
+================= ==== ========================= ======= ==============================
+``tau_m_readout`` ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass
+                                                         filtering of eligibility trace
+================= ==== ========================= ======= ==============================
 
 Recordables
 +++++++++++
 
 The following variables can be recorded.
 
-  - synaptic weight ``weight``
+================== ==== =============== ============= ===============
+**Synapse recordables**
+---------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ===============
+``weight``         pA   :math:`B_{jk}`            1.0 Synaptic weight
+================== ==== =============== ============= ===============
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+This model can only be used in combination with the other e-prop models
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -136,22 +151,24 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
-       eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
+       implementation of eligibility propagation (in preparation)
 
 See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_synapse_bsshslm_2020
 
 EndUserDocs */
 
 /**
- * Base class implementing common properties for the e-prop synapse model.
+ * @brief Base class implementing common properties for e-prop synapses.
+ *
+ * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020).
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -197,9 +214,12 @@ public:
 void register_eprop_synapse_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a synapse model for e-prop plasticity.
+ *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
- * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al.
+ * (2020).
  *
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
@@ -313,7 +333,7 @@ private:
   double weight_;
 
   //! The time step when the previous spike arrived.
-  long t_previous_spike_;
+  long t_spike_previous_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -365,7 +385,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -387,7 +407,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -398,7 +418,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
 {
 }
 
-// This assignment operator is used to write a connection into the connection array.
+// This copy assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_bsshslm_2020& es )
@@ -411,7 +431,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -427,7 +447,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , t_previous_spike_( 0 )
+  , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -439,7 +459,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( epr
   es.optimizer_ = nullptr;
 }
 
-// This assignment operator is used to write a connection into the connection array.
+// This move assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshslm_2020&& es )
@@ -452,7 +472,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = es.t_previous_spike_;
+  t_spike_previous_ = es.t_spike_previous_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -521,10 +541,10 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     t_previous_trigger_spike_ = t_spike;
   }
 
-  if ( t_previous_spike_ > 0 )
+  if ( t_spike_previous_ > 0 )
   {
     const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_previous_spike_ );
+    presyn_isis_.push_back( t - t_spike_previous_ );
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -545,7 +565,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     t_previous_trigger_spike_ = t_spike;
   }
 
-  t_previous_spike_ = t_spike;
+  t_spike_previous_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -580,14 +600,9 @@ void
 eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer ) )
+  if ( d->known( names::optimizer ) and optimizer_ )
   {
-    // We must pass here if called by SetDefaults. In that case, the user will get and error
-    // message because the parameters for the synapse-specific optimizer have not been accessed.
-    if ( optimizer_ )
-    {
-      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
-    }
+    optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
   }
 
   updateValue< double >( d, names::weight, weight_ );

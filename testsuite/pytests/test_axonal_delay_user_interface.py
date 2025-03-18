@@ -172,7 +172,8 @@ def test_total_delay_user_interface_set_defaults_failure():
 
 def test_split_delay_user_interface_connect_failure():
     """
-    Make sure that setting the total transmission delay via the "delay" parameter name in Connect fails because of ambiguity.
+    Make sure that setting the total transmission delay via the "delay" parameter name in Connect fails because of
+    ambiguity.
     """
     nest.ResetKernel()
 
@@ -184,7 +185,8 @@ def test_split_delay_user_interface_connect_failure():
 
 def test_split_delay_user_interface_set_status_failure():
     """
-    Make sure that setting the total transmission delay via the "delay" parameter name in SetStatus fails because of ambiguity.
+    Make sure that setting the total transmission delay via the "delay" parameter name in SetStatus fails because of
+    ambiguity.
     """
     nest.ResetKernel()
 
@@ -199,7 +201,8 @@ def test_split_delay_user_interface_set_status_failure():
 
 def test_split_delay_user_interface_set_defaults_failure():
     """
-    Make sure that setting the total transmission delay via the "delay" parameter name in SetDefaults fails because of ambiguity.
+    Make sure that setting the total transmission delay via the "delay" parameter name in SetDefaults fails because of
+    ambiguity.
     """
     nest.ResetKernel()
 

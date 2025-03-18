@@ -421,7 +421,6 @@ const Name rate_values( "rate_values" );
 const Name ratio_ER_cyt( "ratio_ER_cyt" );
 const Name readout_cycle_duration( "readout_cycle_duration" );
 const Name readout_signal( "readout_signal" );
-const Name readout_signal_unnorm( "readout_signal_unnorm" );
 const Name receptor_idx( "receptor_idx" );
 const Name receptor_type( "receptor_type" );
 const Name receptor_types( "receptor_types" );

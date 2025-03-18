@@ -315,8 +315,11 @@ public:
    *
    * @note This sets the optimizer_ member.
    */
-  void
-  check_connection( Node& s, Node& t, size_t receptor_type, const synindex syn_id, const CommonPropertiesType& cp );
+  void check_connection( Node& s,
+    Node& t,
+    const size_t receptor_type,
+    const synindex syn_id,
+    const CommonPropertiesType& cp );
 
   //! Set the synaptic weight to the provided value.
   void

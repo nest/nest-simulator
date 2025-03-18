@@ -3,42 +3,84 @@
 Neuron update algorithms
 =========================
 
-.. seealso::
 
-   Description of neuron types available in NEST
 
-   * :ref:`types_neurons`
+.. _sec_gen_steps:
 
-Generic flowchart for steps in the neuron update
-------------------------------------------------
+General steps for the neuron update
+-----------------------------------
 
+
+.. note::
+
+    The exact order depends on the neuron model, and in NEST, we optimize the steps to minimize computational costs.
 
 .. grid::
    :gutter: 1
 
    .. grid-item::
-    :columns: 6
+    :columns: 5
     :class: sd-text-center
 
-    .. image:: ../static/img/generic_neuron_update.svg
+    .. image:: ../static/img/autonomous_dynamics.svg
       :width: 50%
 
    .. grid-item::
-    :columns: 6
+    :columns: 7
 
-    **Autonomous dynamics:**  describes the neuron behaviour in the absence of stimulation or
-    in the presence of constant inputs
-    and excludes all interaction events such as spikes from other neurons or devices
+    Describe the neuron behavior in the absence of stimulation or in the presence of constant inputs,
+    and exclude all interaction events such as spikes from other neurons or devices.
+    We choose an appropriate numerical solver in the case of linear differential equations,
+    we use exact integration.
 
-    **Event** - mimic time dependent inputs such as spikes, changing currents etc.
+   .. grid-item::
+    :columns: 5
+    :class: sd-text-center
+
+    .. image:: ../static/img/incoming_events.svg
+      :width: 50%
+
+   .. grid-item::
+    :columns: 7
+
+    Events mimic time dependent inputs
+    such as spikes, changing currents etc.
+
+   .. grid-item::
+    :columns: 5
+    :class: sd-text-center
+
+    .. image:: ../static/img/handle_exceptions.svg
+      :width: 50%
+
+   .. grid-item::
+    :columns: 7
+
+    Inspect the state to check if conditions
+    have changed (e.g., is refractoriness 0 or has the threshold been crossed?).
+
+   .. grid-item::
+    :columns: 5
+    :class: sd-text-center
+
+    .. image:: ../static/img/outgoing_events.svg
+      :width: 50%
+
+   .. grid-item::
+    :columns: 7
+
+    Describe events such as post spike dynamics, (e.g., resetting membrane potential,
+    adaptation mechanisms) and sending spikes to the network.
 
 Example of flowchart and algorithm for ``iaf_psc_alpha``
 --------------------------------------------------------
 
+Here we expand the general steps described above to the explain the update steps in the
+model ``iaf_psc_alpha``.
+
 
 This flowchart and associated algorithms can be applied to other models as well, with only
-slight modifications.
-
+slight modifications. You can find descriptions of all the neuron types available in NEST here: :ref:`types_neurons`.
 
 
 .. grid::
@@ -46,127 +88,91 @@ slight modifications.
    :class-container: sd-text-center
 
    .. grid-item:: **Model Equations**
-      :columns: 6
+      :columns: 5
 
       .. math::
 
         \begin{flalign}
-        \frac{dV(t)}{dt} &=\frac{-V(t)}{\tau}+\frac{I(t) + I_{ext}(t)}{C} \\ \\
+        \dot{V}(t) &=\frac{-V(t)}{\tau}+\frac{I(t) + I_{\text{ext}}(t)}{C} \\ \\
         I(t) &=\sum_{i\in\mathbb{N}, t_i\le t }\sum_{k\in S_{t_i}}\hat{\iota}_k \iota(t-t_i) \\ \\
-        \iota (t) &= \frac{e}{\tau_{syn}}t e^{-t/\tau_{\text{syn}}}.
+        \iota (t) &= \frac{e}{\tau_{\text{syn}}}t e^{-t/\tau_{\text{syn}}}.
         \end{flalign}
 
+      Spike emission at time :math:`t_{i}` if :math:`V(t_{i})\geq\theta`
+
+      For :math:`t\in(t_{i},t_{i}+\tau_{\text{ref}}]`: :math:`V(t)=V_{\text{reset}}`
 
    .. grid-item:: **Model Parameters**
-      :columns: 6
+      :columns: 4
 
       .. list-table::
 
-         * - :math:`\tau`
+         * - :math:`\tau_{\text{m}}`
            - membrane time constant
          * - :math:`C`
            - membrane capacitance
-         * - :math:`\iota_k`
+         * - :math:`\iota_{\text{k}}`
            - synaptic weight of presynaptic neuron k
-         * - :math:`I_{ext}(t)`
+         * - :math:`I_{\text{ext}}(t)`
            - external current
-         * - :math:`\tau_{syn}`
+         * - :math:`\tau_{\text{syn}}`
            - synaptic time constant
-
-
-.. grid::
-   :gutter: 1
-   :class-container: sd-text-center
+         * - :math:`V_{\text{reset}}`
+           - reset potential
+         * - :math:`\tau_{\text{r}}`
+           - refractoriness duration
+         * - :math:`t`
+           - time
+         * - :math:`\Delta t`
+           - time resolution
+         * - :math:`\theta`
+           - spike generation threshold
 
    .. grid-item:: **State variables**
-      :columns: 4
+      :columns: 3
 
-      .. math::
+      .. list-table::
 
-        \begin{flalign}
-         * V
-         * I  \\
-         * \frac{dI}{dt} \\
-        \end{flalign}
-
-
-   .. grid-item:: **Solution via exponential integration with propagators**
-      :columns: 7
-
-      p_**  are resulting from exact integration scheme -- see page --
-
-      .. math::
-
-        \begin{flalign}
-         P_{11}(t)	&=\exp\left(-\frac{t}{\tau_{m}}\right) \\
-         P_{21}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{22}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{30}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{31}(t)	&=\exp\left(-\frac{t}{\tau_{syn}}\right) \\
-         P_{32}(t)	&=1-\exp\left(-\frac{t}{\tau_{syn}}\right)
-        \end{flalign}
+         * - :math:`V`
+           - membrane potential
+         * - :math:`I`
+           - Synaptic input currents
+         * - :math:`\dot{I}`
+           - temporal derivative of current
+         * - :math:`r`
+           - refractoriness timer
 
 
-----
-
-integrate V box
-V(t+ \deltat) =  V(t)
-+ p_33 * V(t)
-+ p_32 * \iota(t)
-+ p_31 * d\iota(t) / dt
--\tau / C * (p33-1) * I_{ext}(t)
-
-
-integrate I and dI/dt
-
-I(t + \deltat ) = p_22 * I(t)
-+ p_21 * dI(t)/dt
-
-dI(t + \deltat) / dt  = p_11 * dI(t)/dt
 
 
 Update dynamics in :math:`\Delta t`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The colors indicated on the flowchart match with the basic steps :ref:`described above <sec_gen_steps>`.
+
+
 .. grid::
    :gutter: 1
 
    .. grid-item::
-    :columns: 7
-    :class: sd-text-center
+     :columns: 6
 
-    .. image:: ../static/img/mixedfont-flowchart.png
-      :width: 90%
+     .. image:: ../static/img/mixedfont-flowchart0325.png
+       :width: 90%
 
+   .. grid-item:: **Propagators for solution with exact integration**
+     :columns: 6
 
-   .. grid-item::
-    :columns: 5
+     Propagators (`P_`)  result from the exact integration scheme explained here: :doc:`/neurons/exact-integration`.
 
-    .. list-table::
+     .. math::
 
-     * - :math:`I_{syn}`
-       - synaptic input current(s)
-     * - :math:`V`
-       - membrane potential
-     * - :math:`r`
-       - refractoriness timer
-     * - :math:`\Theta`
-       - spike generation threshold
-     * - :math:`V_{reset}`
-       - reset potential
-     * - :math:`\tau_r`
-       - refractoriness duration
-     * - :math:`t`
-       - time
-     * - :math:`\Delta t`
-       - time resolution
-
-..      old ones
-
-      .. math::
-
-         \frac{dV(t)}{dt}=-\frac{V(t)-E_{L}}{\tau_{m}}+\frac{I_{syn}+I_{e}}{C_{m}}
-
-      .. math::
-
-         \tau_{syn}\frac{dI_{syn}(t)}{dt}=-I_{syn}(t)+\tau_{syn}\sum_{j}w_{j}\sum_{k}\delta(t-t_{j}^{k}-d_{j})
+        \begin{flalign}
+        P_{11} & =e^{-\Delta t/\tau_{\text{syn}}}\\
+        P_{21} & =\Delta t\,e^{-\Delta t/\tau_{\text{syn}}}\\
+        P_{22} & =e^{-\Delta t/\tau_{\text{syn}}}\\
+        P_{31} & =\frac{1}{C}\tau_{\text{eff}}e^{-\Delta t/\tau_{\text{eff}}}\left(\tau_{\text{eff}}\left[e^{-\Delta t/\tau_{\text{eff}}}-1\right]-\Delta t\right)\\
+        P_{32} & =\frac{1}{C}\tau_{\text{eff}}e^{-\Delta t/\tau_{\text{syn}}}\left[e^{-\Delta t/\tau_{\text{eff}}}-1\right]\\
+        P_{33} & =e^{-\Delta t/\tau_{\text{m}}}\\
+        \tau_{\text{eff}} & =\tau_{\text{syn}}\tau_{\text{m}}/\left(\tau_{\text{m}}-\tau_{\text{syn}}\right)
+        \end{flalign}

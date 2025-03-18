@@ -354,13 +354,6 @@ Layer< D >::dump_connections( std::ostream& out,
 
     // Print source, target, weight, delay, rports
     out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay << ' ';
-
-    if ( result_dict->known( names::axonal_delay ) )
-    {
-      double axonal_delay = getValue< double >( result_dict, names::axonal_delay );
-      out << ' ' << axonal_delay;
-    }
-
     tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
     out << '\n';
   }

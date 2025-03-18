@@ -36,6 +36,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , synapse_model_()
   , weight_()
   , delay_()
+  , dendritic_delay_()
   , axonal_delay_()
 {
   Name connection_type;
@@ -123,6 +124,17 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) };
     }
   }
+  if ( dendritic_delay_.empty() )
+  {
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
+    {
+      dendritic_delay_ = { NestModule::create_parameter( numerics::nan ) };
+    }
+    else
+    {
+      dendritic_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
+    }
+  }
   if ( axonal_delay_.empty() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
@@ -205,6 +217,23 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
     else
     {
       delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) );
+    }
+  }
+  if ( dict_datum->known( names::dendritic_delay ) )
+  {
+    dendritic_delay_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::dendritic_delay ] ) );
+  }
+  else
+  {
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
+    {
+      dendritic_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+    }
+    else
+    {
+      double dendritic_delay = numerics::nan;
+      updateValue< double >( syn_defaults, names::dendritic_delay, dendritic_delay );
+      dendritic_delay_.push_back( NestModule::create_parameter( dendritic_delay ) );
     }
   }
   if ( dict_datum->known( names::axonal_delay ) )

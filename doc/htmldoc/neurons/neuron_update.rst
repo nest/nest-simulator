@@ -13,34 +13,35 @@ General steps for the neuron update
 
 .. note::
 
-    The exact order depends on the neuron model, and in NEST, we optimize the steps to minimize computational costs.
+    The exact order of the steps for the neuron update represented here depends on the neuron model,
+    and in NEST, we optimize the steps to minimize computational costs.
 
 .. grid::
    :gutter: 1
 
    .. grid-item::
     :columns: 5
-    :class: sd-text-center
+    :class: sd-text-right
 
     .. image:: ../static/img/autonomous_dynamics.svg
       :width: 50%
 
-   .. grid-item::
+   .. grid-item-card::
     :columns: 7
 
     Describe the neuron behavior in the absence of stimulation or in the presence of constant inputs,
     and exclude all interaction events such as spikes from other neurons or devices.
-    We choose an appropriate numerical solver in the case of linear differential equations,
+    We choose an appropriate numerical solver for the dynamics, and in the case of linear differential equations,
     we use exact integration.
 
    .. grid-item::
     :columns: 5
-    :class: sd-text-center
+    :class: sd-text-right
 
     .. image:: ../static/img/incoming_events.svg
       :width: 50%
 
-   .. grid-item::
+   .. grid-item-card::
     :columns: 7
 
     Events mimic time dependent inputs
@@ -48,12 +49,12 @@ General steps for the neuron update
 
    .. grid-item::
     :columns: 5
-    :class: sd-text-center
+    :class: sd-text-right
 
     .. image:: ../static/img/handle_exceptions.svg
       :width: 50%
 
-   .. grid-item::
+   .. grid-item-card::
     :columns: 7
 
     Inspect the state to check if conditions
@@ -61,12 +62,12 @@ General steps for the neuron update
 
    .. grid-item::
     :columns: 5
-    :class: sd-text-center
+    :class: sd-text-right
 
     .. image:: ../static/img/outgoing_events.svg
       :width: 50%
 
-   .. grid-item::
+   .. grid-item-card::
     :columns: 7
 
     Describe events such as post spike dynamics, (e.g., resetting membrane potential,
@@ -75,8 +76,8 @@ General steps for the neuron update
 Example of flowchart and algorithm for ``iaf_psc_alpha``
 --------------------------------------------------------
 
-Here we expand the general steps described above to the explain the update steps in the
-model ``iaf_psc_alpha``.
+Here we expand the general steps described above to explain the update steps in the
+neuron model ``iaf_psc_alpha``.
 
 
 This flowchart and associated algorithms can be applied to other models as well, with only

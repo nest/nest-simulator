@@ -113,6 +113,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   {
     weight_ = { NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) };
   }
+  // TODO: How to handle axonal and dendritic delays here?
   if ( delay_.empty() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )

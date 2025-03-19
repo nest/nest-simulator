@@ -217,6 +217,10 @@ PyNEST examples
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
+    .. grid-item-card:: Axonal delays
+           :img-top: ../static/img/pynest/tsodyks_dep.png
+
+           * :doc:`/auto_examples/axonal_delays`
 
 .. grid:: 1 1 2 3
 
@@ -373,3 +377,4 @@ PyNEST examples
    ../auto_examples/pong/run_simulations
    ../auto_examples/pong/pong
    ../auto_examples/pong/generate_gif
+   ../auto_examples/axonal_delays

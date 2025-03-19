@@ -159,6 +159,7 @@ More topics
 
        * :ref:`sim_gap_junctions`
        * :ref:`weight_normalization`
+       * :ref:`delays`
 
 
 

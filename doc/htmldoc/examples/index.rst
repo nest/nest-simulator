@@ -218,7 +218,7 @@ PyNEST examples
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
     .. grid-item-card:: Axonal delays
-           :img-top: ../static/img/pynest/tsodyks_dep.png
+           :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`/auto_examples/axonal_delays`
 

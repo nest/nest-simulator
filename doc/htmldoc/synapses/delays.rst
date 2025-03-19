@@ -1,28 +1,75 @@
-Right now, transmission delays can be specified in three ways and can be set heterogeneously per connection (synapse):
-```cpp
-neuron = nest.Create("iaf_psc_alpha")
-```
-1.
-```cpp
-nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom", "delay": 1.0})
-```
-2.
-```cpp
-conn = nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom"})
-nest.SetStatus(conn, {"delay": 1.0})
-```
-3.
-```cpp
-nest.SetDefaults("stdp_pl_synapse_hom", {"delay": 1.0})
-```
+.. _delays:
 
-- Delays are considered fully dendritic by all built-in models, however, the interpretation of the "delay" value is per-se model-specific.
+Delays
+======
 
-Now it is also possible to specify both heterogeneous axonal and dendritic delays with different parameter names
-- It is not allowed anymore to use "delay" as parameter name for these models because of ambiguity
-- The parameter names "dendritic_delay" and "axonal_delay" have to be used. If not provided, a dendritic delay of 1ms and 0ms axonal delay are assumed.
+
+Previously, transmission delays could only be specified with the ``delay`` parameter.
+
+In NEST, delays are considered fully dendritic by all built-in models and therefore,
+the ``delay`` parameter is still used by most models.
+
+With the release of NEST 3.9, we now can specify delays as being axonal or dendritic with the following neuron and
+synapse model.
+
+
+Currently, only ``iaf_psc_alpha`` supports STDP with the ``axonal_delay`` and ``dendtritic_delay`` parameters,
+and only ``stdp_pl_synapse_hom_ax_delay`` implements STDP with axonal delays.
+
+When using ``stdp_pl_synapse_hom_ax_delay``:
+
+- The parameter ``delay`` is no longer valid. This is to prevent ambiguity between the two types of delays.
+- The parameter names ``dendritic_delay`` and ``axonal_delay`` have to be used to specify delay.
+- If these parameters are not explicitly provided, then the default values are used:
+
+  ``dendritic_delay: 1.0``  and ``axonal_delay: 0.0``.
 - If only axonal delay is provided and no dendritic delay, the dendritic delay is assumed to be 0 and vice-versa.
 
-- Existing models need to be adapted, see developer documentation axonal_delays.rst
-- Neuron models must support STDP with axonal delays, if no STDP is used, any neuron model works
-- Currently, only iaf_psc_alpha supports STDP with axonal delays and only stdp_pl_synapse_hom_ax_delay implements STDP with axonal delays
+
+Use of ``axonal_delay`` and ``dendritic_delay`` is the same as ``delay``:
+
+
+**Using syn_spec**
+
+.. code-block:: python
+
+   nest.Create("iaf_psc_alpha")
+   nest.Connect(neuron, neuron, syn_spec=
+               {"synapse_model": "stdp_pl_synapse_hom", "delay": 1.0})
+
+.. code-block:: python
+
+   nest.Create("iaf_psc_alpha")
+   nest.Connect(neuron, neuron, syn_spec=
+               {"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": 1.0})
+
+**Using SetStatus**
+
+.. code-block:: python
+
+   conn = nest.Connect(neuron, neuron, syn_spec=
+                      {"synapse_model": "stdp_pl_synapse_hom"})
+   nest.SetStatus(conn, {"delay": 1.0})
+
+.. code-block:: python
+
+      conn = nest.Connect(neuron, neuron, syn_spec=
+                         {"synapse_model": "stdp_pl_synapse_hom_ax_delay"})
+      nest.SetStatus(conn, {"axonal_delay": 1.0, "dendritic_delay": 1.0})
+
+**Using SetDefaults**
+
+.. code-block:: python
+
+   nest.SetDefaults("stdp_pl_synapse_hom", {"delay": 1.0})
+
+.. code-block:: python
+
+   nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", {"axonal_delay": 1.0})
+
+
+.. seealso::
+
+   :doc:`Example using axonal delays </auto_examples/axonal_delays>`
+
+   For details on further developments see :ref:`axonal_delays_dev`.

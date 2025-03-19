@@ -238,8 +238,11 @@ public:
       get_dendritic_delay_ms(),
       get_axonal_delay_ms() );
 
-    CorrectionSpikeEvent e;
-    t.handles_test_event( e, receptor_type );
+    if ( get_axonal_delay_ms() >= get_dendritic_delay_ms() )
+    {
+      CorrectionSpikeEvent e;
+      t.handles_test_event( e, receptor_type );
+    }
   }
 
   void
@@ -323,7 +326,6 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
-  // TODO: Move dynamic array pointer (per timestep) into handle-ringbuffer
 
   // axonal_delay-dendritic_delay = total_delay-2*dendritic_delay
   const long time_while_critical =

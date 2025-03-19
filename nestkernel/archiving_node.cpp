@@ -44,7 +44,7 @@ ArchivingNode::ArchivingNode()
   , max_delay_( 0 )
   , trace_( 0.0 )
   , last_spike_( -1.0 )
-  , has_stdp_ax_delay_( false )
+  , has_predominant_stdp_ax_delay_( false )
 {
   const size_t num_time_slots =
     kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
@@ -63,7 +63,7 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
   , max_delay_( n.max_delay_ )
   , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
-  , has_stdp_ax_delay_( false )
+  , has_predominant_stdp_ax_delay_( false )
 {
   const size_t num_time_slots =
     kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
@@ -73,7 +73,7 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
 void
 ArchivingNode::pre_run_hook_()
 {
-  if ( has_stdp_ax_delay_ )
+  if ( has_predominant_stdp_ax_delay_ )
   {
     const size_t num_time_slots =
       kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
@@ -94,9 +94,9 @@ ArchivingNode::register_stdp_connection( const double t_first_read,
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
 
-  if ( axonal_delay > 0 )
+  if ( axonal_delay >= dendritic_delay )
   {
-    has_stdp_ax_delay_ = true;
+    has_predominant_stdp_ax_delay_ = true;
   }
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
@@ -320,7 +320,7 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
 void
 ArchivingNode::reset_correction_entries_stdp_ax_delay_()
 {
-  if ( has_stdp_ax_delay_ )
+  if ( has_predominant_stdp_ax_delay_ )
   {
     const long mindelay_steps = kernel().connection_manager.get_min_delay();
     assert( correction_entries_stdp_ax_delay_.size()
@@ -339,7 +339,7 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_()
 void
 ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
 {
-  if ( has_stdp_ax_delay_ )
+  if ( has_predominant_stdp_ax_delay_ )
   {
     const Time& ori = kernel().simulation_manager.get_slice_origin();
     const Time& t_spike_rel = t_spike - ori;

@@ -200,8 +200,8 @@ protected:
    * (i.e., the actual arrival time at this neuron).
    */
   std::vector< std::vector< CorrectionEntrySTDPAxDelay > > correction_entries_stdp_ax_delay_;
-  bool has_stdp_ax_delay_; //!< false by default and set to true after the first entry was added to
-                           //!< correction_entries_stdp_ax_delay_
+  //! false by default and set to true if any incoming connection has predominant axonal delays
+  bool has_predominant_stdp_ax_delay_;
 
   /**
    * Framework for STDP with predominantly axonal delays:

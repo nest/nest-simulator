@@ -146,3 +146,5 @@ How NEST works --- The Big Picture
    NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
    NESTML <https://nestml.readthedocs.io/en/latest/>
    NESTGPU <https://nest-gpu.readthedocs.io/en/latest/>
+   NEST NEAT <https://nest-neat.readthedocs.io/en/latest/>
+   NEST extension module <https://nest-extension-module.readthedocs.io/en/latest/>

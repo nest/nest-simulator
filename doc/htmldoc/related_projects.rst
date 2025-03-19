@@ -46,6 +46,14 @@ C++ and in C.
 
 * :doc:`Get started with NEST GPU <gpu:index>`
 
+NEST NEAT
+---------
+
+:doc:`NEAT <neat:index>` is a python library for the study, simulation and simplification of morphological neuron models.
+
+* :doc:`Get started with NEST NEAT <neat:tutorial>`
+
+
 PyNN
 ----
 

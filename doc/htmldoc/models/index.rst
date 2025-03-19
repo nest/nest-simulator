@@ -5,7 +5,31 @@ Model directory
 ===============
 
 
+What type of model?
+-------------------
+
 NEST has over 100 models, choose an option for finding the one you need!
+
+.. grid::
+
+   .. grid-item-card::
+      :columns: 4
+      :link: network_models
+      :link-type: ref
+
+      **Network Models**
+
+
+
+   .. grid-item-card::
+      :columns: 4
+      :link: model_selector
+      :link-type: ref
+
+      **Neurons, synapses, and devices**
+
+
+
 
 .. _model_selector:
 
@@ -153,3 +177,8 @@ References
     {% for keys in model_dict %}
     {{ keys | replace(".html", "") }}
     {% endfor %}
+
+.. toctree::
+   :hidden:
+
+   ../networks/index

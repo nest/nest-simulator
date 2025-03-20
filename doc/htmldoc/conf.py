@@ -213,6 +213,7 @@ intersphinx_mapping = {
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
 
+suppress_warnings = ["config.cache"]
 
 nitpick_ignore = [
     ("py:class", "None"),

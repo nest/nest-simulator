@@ -37,18 +37,24 @@ def set_volume_transmitter():
 
 
 def set_default_delay_resolution():
-    nest.resolution = nest.GetDefaults("eprop_synapse_bsshslm_2020")["delay"]
+    nest.resolution = nest.GetDefaults("eprop_synapse")["delay"]
+
+
+def filter_matching_keys(d, target):
+    """Return a copy of d that contains only the keys in target."""
+
+    return {k: v for k, v in d.items() if k in target}
 
 
 # This list shall contain all synapse models extending the CommonSynapseProperties class.
 # For each model, specify which parameter to test with and which test value to use. A
 # setup function can be provided if preparations are required. Provide also supported neuron model.
 common_prop_models = {
-    "eprop_synapse_bsshslm_2020": {
-        "parameter": "average_gradient",
-        "value": not nest.GetDefaults("eprop_synapse_bsshslm_2020")["average_gradient"],
+    "eprop_synapse": {
+        "parameter": "optimizer",
+        "value": {"type": "adam"},
         "setup": set_default_delay_resolution,
-        "neuron": "eprop_iaf_bsshslm_2020",
+        "neuron": "eprop_iaf",
     },
     "jonke_synapse": {"parameter": "tau_plus", "value": 10, "setup": None, "neuron": "iaf_psc_alpha"},
     "stdp_dopamine_synapse": {
@@ -85,6 +91,8 @@ def test_set_common_properties(syn_model, specs):
 
     nest.SetDefaults(syn_model, {specs["parameter"]: specs["value"]})
     new_val = nest.GetDefaults(syn_model)[specs["parameter"]]
+    if isinstance(specs["value"], dict):
+        new_val = filter_matching_keys(new_val, specs["value"])
     assert new_val == specs["value"]
 
 
@@ -102,11 +110,16 @@ def test_copy_common_properties(syn_model, specs):
     new_model = syn_model + "_copy"
     nest.CopyModel(syn_model, new_model)
     new_val = nest.GetDefaults(new_model)[specs["parameter"]]
+    if isinstance(specs["value"], dict):
+        new_val = filter_matching_keys(new_val, specs["value"])
     assert new_val == specs["value"]
 
     # Set parameter back on copied model, original must not be changed
     nest.SetDefaults(new_model, {specs["parameter"]: old_val})
-    assert nest.GetDefaults(syn_model)[specs["parameter"]] == specs["value"]
+    check_val = nest.GetDefaults(syn_model)[specs["parameter"]]
+    if isinstance(specs["value"], dict):
+        check_val = filter_matching_keys(check_val, specs["value"])
+    assert check_val == specs["value"]
 
 
 @pytest.mark.parametrize("syn_model, specs", available_cp_models.items())

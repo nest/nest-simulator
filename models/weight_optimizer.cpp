@@ -56,7 +56,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
 void
 WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
 {
-  def< std::string >( d, names::optimizer, get_name() );
+  def< std::string >( d, names::type, get_name() );
   def< long >( d, names::batch_size, batch_size_ );
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );

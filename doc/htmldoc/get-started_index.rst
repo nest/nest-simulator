@@ -147,6 +147,8 @@ More topics
        |neuron| More about neurons
        ^^^
 
+       * :ref:`types_neurons`
+       * :ref:`neuron_update`
        * :ref:`sim_precise_spike_times`
        * :ref:`exact_integration`
 
@@ -159,6 +161,7 @@ More topics
 
        * :ref:`sim_gap_junctions`
        * :ref:`weight_normalization`
+       * :ref:`synapse_dynamics`
 
 
 

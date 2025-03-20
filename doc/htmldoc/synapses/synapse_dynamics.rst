@@ -16,6 +16,8 @@ Postsynaptic response to a single presynaptic spike
 Voltage dependence
 ~~~~~~~~~~~~~~~~~~
 
+.. _current_based:
+
 Current-based synapses
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -30,6 +32,7 @@ The effect of the synaptic input therefore is not depending on the state
 capacitance, and the function :math:`f(V(t))` summarizes internal
 membrane properties, such as leak potentials.
 
+.. _conductance_based:
 
 Conductance-based synapses
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -318,80 +321,67 @@ Beta-function kernel
 
 
 
-Synaptic plasticity
--------------------
+.. Synaptic plasticity
 
-Static synapse
-~~~~~~~~~~~~~~
+.. Static synapse
 
-Short term plasticity
-~~~~~~~~~~~~~~~~~~~~~
+.. Short term plasticity
 
-?? Long-term potentiation (LTP) and depression (LTD)
-(Do we really have any models of LTP/LTD that do not belong to the category of STDP?)
+  ?? Long-term potentiation (LTP) and depression (LTD)
+  (Do we really have any models of LTP/LTD that do not belong to the category of STDP?)
 
-Spike-timing dependent plasticity (STDP)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. Spike-timing dependent plasticity (STDP)
 
-Three-factor plasticity
-~~~~~~~~~~~~~~~~~~~~~~~
+.. Three-factor plasticity
 
-(e.g., clopath*, urbanczik*, eprop*, jonke*, *dopamine*, ...)
+.. (e.g., clopath*, urbanczik*, eprop*, jonke*, *dopamine*, ...)
 
-Structural plasticity
-~~~~~~~~~~~~~~~~~~~~~
-(We can regard structural plasticity as an extreme case of synaptic-weight dynamics, where weights switch between a finite value and zero.)
+.. Structural plasticity
+   (We can regard structural plasticity as an extreme case of synaptic-weight dynamics, where weights switch between a finite value and zero.)
 
 
-Synaptic stochasticity
------------------------
+.. Synaptic stochasticity
 
-(e.g., bernoulli_synapse, quantal_stp_synapse)
+  (e.g., bernoulli_synapse, quantal_stp_synapse)
 
-~~~~~~~
+  Models for synaptic dynamics are distinguished by two different
+  features:
 
-Models for synaptic dynamics are distinguished by two different
-features:
+  #. whether they describe a current (psc) or conductance (cond)
 
-#. whether they describe a current (psc) or conductance (cond)
-
-#. the temporal response to an incoming spike.
+  #. the temporal response to an incoming spike.
 
 
 
 
----
 
----
+..  Weight dynamics
+  ===============
 
+  Above we discussed the postsynaptic dynamics that is elicited after an
+  incoming spike with weight :math:`w_{j}`. Next, we study different
+  models for how the weight of the connection can change over time.
 
-Weight dynamics
-===============
+  Static connections
+  ------------------
 
-Above we discussed the postsynaptic dynamics that is elicited after an
-incoming spike with weight :math:`w_{j}`. Next, we study different
-models for how the weight of the connection can change over time.
+  Here the weight stays constant over time.
 
-Static connections
-------------------
+  Synaptic plasticity
+  -------------------
 
-Here the weight stays constant over time.
+  LTP and LTD
+  ~~~~~~~~~~~
 
-Synaptic plasticity
--------------------
+  STDP
+  ~~~~
 
-LTP and LTD
-~~~~~~~~~~~
+  Voltage-based plasticity
+  ~~~~~~~~~~~~~~~~~~~~~~~~
 
-STDP
-~~~~
+  Structural plasticity
+  ---------------------
 
-Voltage-based plasticity
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Structural plasticity
----------------------
-
-Here the weight of existing connections not only change, but also new
-connections are being formed over time and existing connections are
-being removed.
+  Here the weight of existing connections not only change, but also new
+  connections are being formed over time and existing connections are
+  being removed.

@@ -10,11 +10,8 @@ Neuron update algorithms
 General steps for the neuron update
 -----------------------------------
 
+Updating the state of a neuron from time `t` to some later time :math:`t+\Delta{t}` generally involves a number of distinct steps.
 
-.. note::
-
-    The exact order of the steps for the neuron update represented here depends on the neuron model,
-    and in NEST, we optimize the steps to minimize computational costs.
 
 .. grid::
    :gutter: 1
@@ -29,10 +26,10 @@ General steps for the neuron update
    .. grid-item-card::
     :columns: 7
 
-    Describe the neuron behavior in the absence of stimulation or in the presence of constant inputs,
+    The autonomous dynamics describes the neuron behavior in the absence of stimulation or in the presence of constant inputs,
     and exclude all interaction events such as spikes from other neurons or devices.
     We choose an appropriate numerical solver for the dynamics, and in the case of linear differential equations,
-    we use exact integration.
+    we use :ref:`exact integration <exact_integration>`.
 
    .. grid-item::
     :columns: 5
@@ -58,7 +55,7 @@ General steps for the neuron update
     :columns: 7
 
     Inspect the state to check if conditions
-    have changed (e.g., is refractoriness 0 or has the threshold been crossed?).
+    have changed (e.g., is the neuron still refractory  or has the threshold been crossed?).
 
    .. grid-item::
     :columns: 5
@@ -70,8 +67,14 @@ General steps for the neuron update
    .. grid-item-card::
     :columns: 7
 
-    Describe events such as post spike dynamics, (e.g., resetting membrane potential,
-    adaptation mechanisms) and sending spikes to the network.
+    Increment state variables associated with the post-spike dynamics
+    (such as refractoriness timers or adaptation variables), and send spike.
+
+.. note::
+
+    The exact order of the steps for the neuron update represented here depends on the neuron model,
+    and in NEST, we optimize the steps to minimize computational costs.
+
 
 Example of flowchart and algorithm for ``iaf_psc_alpha``
 --------------------------------------------------------
@@ -79,9 +82,6 @@ Example of flowchart and algorithm for ``iaf_psc_alpha``
 Here we expand the general steps described above to explain the update steps in the
 neuron model ``iaf_psc_alpha``.
 
-
-This flowchart and associated algorithms can be applied to other models as well, with only
-slight modifications. You can find descriptions of all the neuron types available in NEST here: :ref:`types_neurons`.
 
 
 .. grid::
@@ -94,14 +94,14 @@ slight modifications. You can find descriptions of all the neuron types availabl
       .. math::
 
         \begin{flalign}
-        \dot{V}(t) &=\frac{-V(t)}{\tau}+\frac{I(t) + I_{\text{ext}}(t)}{C} \\ \\
+        \dot{V}(t) &=\frac{-V(t)}{\tau_{\text{m}}}+\frac{I(t) + I_{\text{ext}}(t)}{C} \\ \\
         I(t) &=\sum_{i\in\mathbb{N}, t_i\le t }\sum_{k\in S_{t_i}}\hat{\iota}_k \iota(t-t_i) \\ \\
-        \iota (t) &= \frac{e}{\tau_{\text{syn}}}t e^{-t/\tau_{\text{syn}}}.
+        \iota (t) &= \frac{e}{\tau_{\text{syn}}}t e^{-t/\tau_{\text{syn}}}
         \end{flalign}
 
       Spike emission at time :math:`t_{i}` if :math:`V(t_{i})\geq\theta`
 
-      For :math:`t\in(t_{i},t_{i}+\tau_{\text{ref}}]`: :math:`V(t)=V_{\text{reset}}`
+      For :math:`t\in(t_{i},t_{i}+\tau_{\text{r}}]`: :math:`V(t)=V_{\text{reset}}`
 
    .. grid-item:: **Model Parameters**
       :columns: 4
@@ -112,7 +112,7 @@ slight modifications. You can find descriptions of all the neuron types availabl
            - membrane time constant
          * - :math:`C`
            - membrane capacitance
-         * - :math:`\iota_{\text{k}}`
+         * - :math:`\hat{\iota}_{\text{k}}`
            - synaptic weight of presynaptic neuron k
          * - :math:`I_{\text{ext}}(t)`
            - external current
@@ -146,8 +146,7 @@ slight modifications. You can find descriptions of all the neuron types availabl
 
 
 
-Update dynamics in :math:`\Delta t`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Flowchart**
 
 The colors indicated on the flowchart match with the basic steps :ref:`described above <sec_gen_steps>`.
 
@@ -177,3 +176,6 @@ The colors indicated on the flowchart match with the basic steps :ref:`described
         P_{33} & =e^{-\Delta t/\tau_{\text{m}}}\\
         \tau_{\text{eff}} & =\tau_{\text{syn}}\tau_{\text{m}}/\left(\tau_{\text{m}}-\tau_{\text{syn}}\right)
         \end{flalign}
+
+This flowchart and associated algorithms can be applied to other models as well, with only
+slight modifications. You can find descriptions of all the neuron types available in NEST here: :ref:`types_neurons`.

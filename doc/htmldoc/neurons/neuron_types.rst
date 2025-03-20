@@ -92,7 +92,8 @@ Geometry
       like soma, basal and apical dendrites. Inputs can be received in all compartments and are mediated across
       compartments via electric coupling.
 
-      .. NEAT
+      For more information see our project :doc:`NEST-NEAT <neat:index>`, a Python library for the study, simulation and
+      simplification of morphological neuron models.
 
       .. dropdown:: Multi-compartment neurons
 
@@ -103,9 +104,6 @@ Geometry
          {% endfor %}
          {% endif %}
          {% endfor %}
-
-
-
 
 
 
@@ -249,11 +247,8 @@ Chemical synapses couple neurons in a delayed fashion, because of the conversion
 signals at the synapse. This process is captured by two major classes of models in NEST that either model input currents
 or conductances.
 
-.. seealso::
 
-   :doc:`../synapses/synapse_dynamics`
-
-- Current-based models:
+**Current-based models**
 
 
 .. grid:: 1 2 2 2
@@ -272,7 +267,7 @@ or conductances.
      Model post-synaptic responses to incoming spikes as changes in current.
      The response of the post-synaptic neuron is independent of the neuronal state.
 
-     For more details see :ref:`synapse_dynamics`.
+     For more details see :ref:`current_based`
 
      .. dropdown:: Current-based neuron models
 
@@ -284,7 +279,7 @@ or conductances.
          {% endif %}
          {% endfor %}
 
-- Conductance-based models
+**Conductance-based models**
 
 
 .. grid:: 1 2 2 2
@@ -306,7 +301,7 @@ or conductances.
      synaptic inputs depending on the membrane potential, which can change over time.
 
 
-     For more details see :ref:`synapse_dynamics`.
+     For more details see :ref:`conductance_based`.
 
      .. dropdown:: Conductance-based neuron models
 
@@ -442,7 +437,6 @@ Auxilliary neurons
 Precise spike timing
 ~~~~~~~~~~~~~~~~~~~~
 
-
 .. grid::
 
   .. grid-item::
@@ -463,7 +457,6 @@ Precise spike timing
       the overall network dynamics.
 
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.
-
 
       .. dropdown:: Models with precise spike times
 
@@ -496,7 +489,7 @@ Rate neurons
 
    .. grid-item::
 
-     Rate neurons can approximate biologically realistic neurons but they are also used in artificial neuranl networks
+     Rate neurons can approximate biologically realistic neurons but they are also used in artificial neuronal networks
      (also known as recurrent neural networks RNNs).
 
      Most rate neurons in NEST are implemented as templates based on the non-linearity and noise type.
@@ -703,36 +696,3 @@ Astrocytes
       .. tab-item:: Technical details
 
          * :doc:`/model_details/astrocyte_model_implementation`
-
-
-
-
-.. .. dropdown:: integrate-and-fire (no adaptive threshold, no precise neurons)
-
-     * eprop_iaf_adapt_bsshslm_2020 – Current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and threshold adaptation for e-prop plasticity
-     * eprop_iaf_bsshslm_2020 – Current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for e-prop plasticity
-     * eprop_readout_bsshslm_2020 – Current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for e-prop plasticity
-     * gif_cond_exp – Conductance-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
-     * gif_cond_exp_multisynapse – Conductance-based generalized integrate-and-fire neuron (GIF) with multiple synaptic time constants (from the Gerstner lab)
-     * gif_pop_psc_exp – Population of generalized integrate-and-fire neurons (GIF) with exponential postsynaptic currents and adaptation (from the Gerstner lab)
-     * gif_psc_exp – Current-based generalized integrate-and-fire neuron (GIF) model (from the Gerstner lab)
-     * gif_psc_exp_multisynapse – Current-based generalized integrate-and-fire neuron (GIF) model with multiple synaptic time constants (from the Gerstner lab)
-     * glif_cond – Conductance-based generalized leaky integrate and fire (GLIF) model (from the Allen Institute)
-     * glif_psc – Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
-     * glif_psc_double_alpha – Current-based generalized leaky integrate-and-fire (GLIF) models with double alpha-function (from the Allen Institute)
-     * ht_neuron – Neuron model after Hill & Tononi (2005)
-     * iaf_chs_2007 – Spike-response model used in Carandini et al. 2007
-     * iaf_chxk_2008 – Conductance-based leaky integrate-and-fire neuron model supporting precise spike times used in Casti et al. 2008
-     * iaf_cond_alpha – Simple conductance based leaky integrate-and-fire neuron model
-     * iaf_cond_beta – Simple conductance based leaky integrate-and-fire neuron model
-     * iaf_cond_exp – Simple conductance based leaky integrate-and-fire neuron model
-     * iaf_cond_exp_sfa_rr – Conductance based leaky integrate-and-fire model with spike-frequency adaptation and relative refractory mechanisms
-     * iaf_psc_alpha – Leaky integrate-and-fire model with alpha-shaped input currents
-     * iaf_psc_alpha_multisynapse – Leaky integrate-and-fire neuron model with multiple ports
-     * iaf_psc_delta – Leaky integrate-and-fire model with delta-shaped input currents
-     * iaf_psc_exp – Leaky integrate-and-fire neuron model with exponential PSCs
-     * iaf_psc_exp_htum – Leaky integrate-and-fire model with separate relative and absolute refractory period
-     * iaf_psc_exp_multisynapse – Leaky integrate-and-fire neuron model with multiple ports
-     * iaf_tum_2000 – Leaky integrate-and-fire neuron model with exponential PSCs and integrated short-term plasticity synapse
-     * ignore_and_fire – Ignore-and-fire neuron model for generating spikes at fixed intervals irrespective of inputs
-     * izhikevich – Izhikevich neuron model

@@ -3,12 +3,6 @@
 All about neurons in NEST
 =========================
 
-.. dendtirets representd as delays / ignore axonal delay matters stdp
- all incoming conenctions to neuron on same thread
-   spike lifetime
-   update - neuron (spike emitted --> spike buffer) then communicated at fisec intervals to send buffer / receive buffer deliver to sy napse, ring buffer crated incoming sp9ike for time step
-   yellow bar presynapetic node geen par topost synapstic node, lifetime, availabe to synapses on post synaptic side
-   zero axonal delay spike imimediatley receiv by synapse, delay can be split into aonal and dendritic portion
 
 .. grid:: 1 1 3 3
    :gutter: 1
@@ -20,13 +14,10 @@ All about neurons in NEST
        |neuron|  Neuron types in NEST
        ^^^
 
-       * :ref:`types_neurons`
 
-       This page highlights the numerous types of neuron models and their various mechanisms available in NEST, along with guides to specific
-       implementations
+       * :ref:`types_neurons`: Find out about the various neuron models and their mechanisms that are available in NEST
 
-
-       * :ref:`neuron_update`
+       * :ref:`neuron_update`: Learn how NEST handles the steps to update the dynamics of neurons during simulation.
 
 
    .. grid-item-card::
@@ -39,7 +30,6 @@ All about neurons in NEST
        * :ref:`Manipulating nodes (neurons and devices) <node_handles>`: understand basic functionality of nodes
        * :ref:`param_ex`: explore how to use parameter objects in NEST
 
-       How to handle neurons as Python objects in NEST scripts.
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white

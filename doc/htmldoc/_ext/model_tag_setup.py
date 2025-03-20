@@ -27,9 +27,8 @@ import re
 from pathlib import Path
 from pprint import pformat
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-
+log.setLevel(level=logging.WARNING)
 # The following function is used in two other functions, in two separate Sphinx events
 
 

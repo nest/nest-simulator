@@ -131,7 +131,8 @@ References
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_brunel`
+:doc:`astrocyte_brunel_bernoulli`
+
 
 """
 

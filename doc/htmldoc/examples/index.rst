@@ -82,6 +82,7 @@ PyNEST examples
            * :doc:`../auto_examples/Potjans_2014/index` (Potjans and Diesmann 2014)
            * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
            * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
+           * `The HuMAM model <https://github.com/INM-6/human-multi-area-model>`_: Multi-Scale Spiking Network Model of Human Cerebral Cortex
 
 
     .. grid-item-card:: EI clustered network (Rostami et al)

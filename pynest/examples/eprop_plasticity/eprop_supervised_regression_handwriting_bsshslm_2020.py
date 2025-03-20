@@ -593,7 +593,7 @@ fig.tight_layout()
 
 # %% ###########################################################################################################
 # Plot learning performance
-# ...................
+# .........................
 # We begin with a plot visualizing the learning performance of the network: the loss plotted against the
 # iterations.
 

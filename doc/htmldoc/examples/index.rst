@@ -313,8 +313,6 @@ PyNEST examples
    ../auto_examples/urbanczik_synapse_example
    ../auto_examples/iaf_tum_2000_short_term_depression
    ../auto_examples/iaf_tum_2000_short_term_facilitation
-   ../auto_examples/compartmental_model/receptors_and_current
-   ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network
    ../auto_examples/rate_neuron_dm
    ../auto_examples/brunel_alpha_nest
@@ -323,20 +321,6 @@ PyNEST examples
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
    ../auto_examples/sonata_example/index
-   ../auto_examples/sonata_example/sonata_network
-   ../auto_examples/spatial/conncomp
-   ../auto_examples/spatial/conncon_sources
-   ../auto_examples/spatial/conncon_targets
-   ../auto_examples/spatial/connex
-   ../auto_examples/spatial/connex_ew
-   ../auto_examples/spatial/ctx_2n
-   ../auto_examples/spatial/gaussex
-   ../auto_examples/spatial/grid_iaf
-   ../auto_examples/spatial/grid_iaf_irr
-   ../auto_examples/spatial/grid_iaf_oc
-   ../auto_examples/spatial/test_3d
-   ../auto_examples/spatial/test_3d_exp
-   ../auto_examples/spatial/test_3d_gauss
    ../auto_examples/testiaf
    ../auto_examples/repeated_stimulation
    ../auto_examples/multimeter_file
@@ -354,24 +338,6 @@ PyNEST examples
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
    ../auto_examples/astrocytes/index
-   ../auto_examples/astrocytes/astrocyte_single
-   ../auto_examples/astrocytes/astrocyte_interaction
-   ../auto_examples/astrocytes/astrocyte_small_network
-   ../auto_examples/astrocytes/astrocyte_brunel
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index
    ../auto_examples/wang_decision_making
-
-.. toctree::
-   :hidden:
-
-   ../auto_examples/sudoku/sudoku_net
-   ../auto_examples/sudoku/sudoku_solver
-   ../auto_examples/sudoku/plot_progress
-
-.. toctree::
-   :hidden:
-
-   ../auto_examples/pong/run_simulations
-   ../auto_examples/pong/pong
-   ../auto_examples/pong/generate_gif

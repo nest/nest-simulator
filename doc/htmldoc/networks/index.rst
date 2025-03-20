@@ -38,3 +38,10 @@ You can see how to build other networks for various neuron, synapse and device t
        :link: https://inm-6.github.io/multi-area-model/
 
        A network model of the visual cortex of the macaque monkey
+
+
+   .. grid-item-card:: HuMAM model
+       :columns: 4
+       :link: https://github.com/INM-6/human-multi-area-model
+
+       Multi-Scale Spiking Network Model of Human Cerebral Cortex

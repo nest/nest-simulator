@@ -113,44 +113,48 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   {
     weight_ = { NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) };
   }
+
+  // In case the synapse type uses split axonal and dendritic delays, the synapse default dict will contain values for
+  // the dendritic delay, the axonal delay, and also the total delay. But we only want to use the delay value if we are
+  // not explicitly using axonal and dendritic delays, so we only set the delay here if those are not provided.
+  bool axonal_or_dendritic_delay_set = false;
+  if ( dendritic_delay_.empty() )
+  {
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
+      or not syn_defaults->known( names::dendritic_delay ) )
+    {
+      dendritic_delay_ = { NestModule::create_parameter( numerics::nan ) };
+    }
+    else
+    {
+      dendritic_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
+      axonal_or_dendritic_delay_set = true;
+    }
+  }
+  else
+  {
+    axonal_or_dendritic_delay_set = true;
+  }
+  if ( axonal_delay_.empty() )
+  {
+    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
+      or not syn_defaults->known( names::axonal_delay ) )
+    {
+      axonal_delay_ = { NestModule::create_parameter( numerics::nan ) };
+    }
+    else
+    {
+      axonal_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) };
+      axonal_or_dendritic_delay_set = true;
+    }
+  }
+  else
+  {
+    axonal_or_dendritic_delay_set = true;
+  }
+
   if ( delay_.empty() )
   {
-    bool axonal_or_dendritic_delay_set = false;
-    if ( dendritic_delay_.empty() )
-    {
-      if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-        or not syn_defaults->known( names::dendritic_delay ) )
-      {
-        dendritic_delay_ = { NestModule::create_parameter( numerics::nan ) };
-      }
-      else
-      {
-        dendritic_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
-        axonal_or_dendritic_delay_set = true;
-      }
-    }
-    else
-    {
-      axonal_or_dendritic_delay_set = true;
-    }
-    if ( axonal_delay_.empty() )
-    {
-      if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-        or not syn_defaults->known( names::axonal_delay ) )
-      {
-        axonal_delay_ = { NestModule::create_parameter( numerics::nan ) };
-      }
-      else
-      {
-        axonal_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) };
-        axonal_or_dendritic_delay_set = true;
-      }
-    }
-    else
-    {
-      axonal_or_dendritic_delay_set = true;
-    }
-
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) or not syn_defaults->known( names::delay )
       or axonal_or_dendritic_delay_set )
     {
@@ -222,9 +226,14 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   if ( dict_datum->known( names::delay ) )
   {
     delay_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::delay ] ) );
+    dendritic_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+    axonal_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
   }
   else
   {
+    // In case the synapse type uses split axonal and dendritic delays, the synapse default dict will contain values for
+    // the dendritic delay, the axonal delay, and also the total delay. But we only want to use the delay value if we
+    // are not explicitly using axonal and dendritic delays, so we only set the delay here if those are not provided.
     bool axonal_or_dendritic_delay_set = false;
     if ( dict_datum->known( names::dendritic_delay ) )
     {

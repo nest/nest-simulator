@@ -31,4 +31,4 @@ the new versions.
    v3.3/*
    v3.2/*
    v3.1/*
-   v3.0/*
+   v3.0/index

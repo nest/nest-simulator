@@ -46,6 +46,14 @@ C++ and in C.
 
 * :doc:`Get started with NEST GPU <gpu:index>`
 
+NEST NEAT
+---------
+
+:doc:`NEAT <neat:index>` is a python library for the study, simulation and simplification of morphological neuron models.
+
+* :doc:`Get started with NEST NEAT <neat:tutorial>`
+
+
 PyNN
 ----
 
@@ -90,7 +98,7 @@ real-time operation.
 TheVirtualBrain (TVB)
 ---------------------
 
-:ref:`TVB <tvb:index>` is a framework for the simulation of the dynamics of large-scale brain networks with
+:doc:`TVB <tvb:index>` is a framework for the simulation of the dynamics of large-scale brain networks with
 biologically realistic connectivity.
 
 * :ref:`Get started with TVB <tvb:tutorial_0_GettingStarted>`

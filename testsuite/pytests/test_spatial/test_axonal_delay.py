@@ -77,7 +77,7 @@ def test_layer_connections_dump_success(tmp_path, expected_conn_dump):
     synapse_model = "stdp_pl_synapse_hom_ax_delay"
     src_layer, tgt_layer = build_network(synapse_model)
 
-    fname = tmp_path / f"layer_conns.txt"
+    fname = tmp_path / "layer_conns.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer, synapse_model, fname)
 
     # We need to sort results to be invariant against implementation-dependent output order

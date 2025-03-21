@@ -25,7 +25,7 @@ import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-# Parametrization over the number of nodes here only so show hat it works
+# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.parametrize("N", [4, 7])
 @MPITestAssertEqual([1, 4], debug=False)
 def test_all_to_all(N):
@@ -42,4 +42,4 @@ def test_all_to_all(N):
     nest.Connect(nrns, nrns, "all_to_all")
 
     conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes) + f"-{nest.Rank()}.dat", index=False)  # noqa: F821
+    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821

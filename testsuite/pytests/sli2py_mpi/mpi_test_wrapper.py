@@ -275,3 +275,14 @@ class MPITestAssertEqual(MPITestWrapper):
 
             for r in res[1:]:
                 pd.testing.assert_frame_equal(res[0], r)
+
+
+class MPITestAssertCompletes(MPITestWrapper):
+    """
+    Test class that just confirms that the test code completes.
+
+    Therefore, no testing to be done on any results.
+    """
+
+    def assert_correct_results(self, tmpdirpath):
+        pass

@@ -487,7 +487,6 @@ astrocyte_lr_1994::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  // Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

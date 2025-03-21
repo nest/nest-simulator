@@ -48,7 +48,6 @@ def test_issue_2119(kind, specs):
     nest.total_num_virtual_procs = 4
 
     nrn = nest.Create("iaf_psc_alpha", n=4, params={"V_m": nest.CreateParameter(kind, specs)})
-    vm = nrn.get("V_m")
 
     pd.DataFrame.from_dict(nrn.get(["global_id", "V_m"])).dropna().to_csv(
         OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False

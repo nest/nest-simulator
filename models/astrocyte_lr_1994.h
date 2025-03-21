@@ -471,7 +471,6 @@ astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  // Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

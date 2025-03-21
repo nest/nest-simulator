@@ -4,6 +4,7 @@ PyNEST examples
 ===============
 
 .. grid:: 1 1 2 3
+    :gutter: 1
 
     .. grid-item-card:: Simple networks
            :img-top: ../static/img/pynest/mc_neuron.png

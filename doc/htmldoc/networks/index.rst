@@ -8,7 +8,7 @@ You can see how to build other networks for various neuron, synapse and device t
 :doc:`examples gallery </examples/index>`.
 
 
-.. grid::
+.. grid:: 1 2 3 4
    :gutter: 1
 
    .. grid-item-card:: Brunel Network

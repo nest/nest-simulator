@@ -23,7 +23,7 @@
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-@MPITestAssertEqual([1, 2, 4], debug=True)
+@MPITestAssertEqual([1, 2, 4], debug=False)
 def test_issue_600():
     """
     Confirm that waveform relaxation works with MPI.

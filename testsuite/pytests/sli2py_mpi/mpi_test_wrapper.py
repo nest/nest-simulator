@@ -28,7 +28,7 @@ processes and then compare results. Often, the number of virtual processes will
 be fixed while the number of MPI processes is varied, but this is not required.
 
 - The process is managed by subclasses of the `MPITestWrapper` base class
-- Each test file must contain exactly one test function
+- Each test file must contain **exactly one** test function
     - The test function must be decorated with a subclass of `MPITestWrapper`
     - The wrapper will write a modified version of the test file as `runner.py`
       to a temporary directory and mpirun it from there; results are collected
@@ -99,9 +99,14 @@ class MPITestWrapper:
     """
 
     RUNNER = "runner.py"
+
+    # Formats for output file names to be written by NEST and by the evaluation function.
+    # The first placeholder will be filled with the number of processes used.
+    # SPIKE and MULTI labels are passed to spike recorder/multimeter, which add "-{Rank}.dat" automatically.
+    # For OTHER, the test function needs to provide the Rank explicitly.
     SPIKE_LABEL = "spike-{}"
     MULTI_LABEL = "multi-{}"
-    OTHER_LABEL = "other-{}"
+    OTHER_LABEL = "other-{}-{}.dat"
 
     RUNNER_TEMPLATE = textwrap.dedent(
         """\
@@ -195,13 +200,18 @@ class MPITestWrapper:
         return wrapper
 
     def _collect_result_by_label(self, tmpdirpath, label):
+        # Build complete patterns here including the rank part and ending
+        if not label.endswith("-{}-{}.dat"):
+            assert label.endswith("-{}")
+            label += "-{}.dat"
+
         try:
-            next(tmpdirpath.glob(f"{label.format('*')}.dat"))
+            next(tmpdirpath.glob(label.format("*", "*")))
         except StopIteration:
             return None  # no data for this label
 
         return {
-            n_procs: [pd.read_csv(f, sep="\t", comment="#") for f in tmpdirpath.glob(f"{label.format(n_procs)}-*.dat")]
+            n_procs: [pd.read_csv(f, sep="\t", comment="#") for f in tmpdirpath.glob(label.format(n_procs, "*"))]
             for n_procs in self._procs_lst
         }
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue_2119.py
+# test_issue_281.py
 #
 # This file is part of NEST.
 #
@@ -20,8 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import pandas as pd
-import pytest
 from mpi_test_wrapper import MPITestAssertCompletes
 
 
@@ -34,10 +32,10 @@ def test_issue_281():
     import nest
     import pandas as pd
 
-    l = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[3, 3]))
+    layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[3, 3]))
     nest.Connect(
-        l,
-        l,
+        layer,
+        layer,
         {"rule": "fixed_indegree", "indegree": 8, "allow_multapses": False, "allow_autapses": False},
         # weights are randomized to check that global RNGs stay in sync
         {"weight": nest.random.uniform(min=1, max=2)},

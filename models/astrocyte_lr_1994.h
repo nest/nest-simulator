@@ -248,7 +248,7 @@ EndUserDocs */
 
 void register_astrocyte_lr_1994( const std::string& name );
 
-class astrocyte_lr_1994 : public StructuralPlasticityNode
+class astrocyte_lr_1994 : public Node
 {
 
 public:
@@ -471,7 +471,7 @@ astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StructuralPlasticityNode::get_status( d );
+  // Node::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -488,7 +488,7 @@ astrocyte_lr_1994::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  StructuralPlasticityNode::set_status( d );
+  // Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -57,7 +57,11 @@ def test_issue_600():
 
     sr = nest.Create(
         "spike_recorder",
-        params={"record_to": "ascii", "time_in_steps": True, "label": SPIKE_LABEL.format(nest.num_processes)},
+        params={
+            "record_to": "ascii",
+            "time_in_steps": True,
+            "label": SPIKE_LABEL.format(nest.num_processes),  # noqa: F821
+        },
     )
 
     # Use weights as required or sufficient to trigger spikes in n3, n2, n4

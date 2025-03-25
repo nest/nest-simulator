@@ -31,9 +31,9 @@ file that contains all possible packages needed for NEST development.
 
 .. grid:: 2
 
-   .. grid-item-card:: Install NEST with conda
+   .. grid-item-card:: Install NEST with mamba
 
-         See our instructions for installing NEST from source in a :ref:`conda environment <condaenv>`
+         See our instructions for installing NEST from source in a :ref:`mamba environment <condaenv>`
 
    .. grid-item-card:: Install NEST without environment
 
@@ -60,5 +60,3 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 
 If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you
 have to add the installation directory to your search paths.
-
-

@@ -33,7 +33,7 @@ namespace nest
 {
 
 inline void
-ConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
+BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
 {
   // index tnode_id = target.get_node_id();
   // This is the most simple case in which only the synapse_model_ has been

@@ -1,5 +1,5 @@
 /*
- *  ticket-566.sli
+ *  eprop_learning_signal_connection.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,13 @@
  *
  */
 
-/** @BeginDocumentation
+#include "eprop_learning_signal_connection.h"
 
-Name: testsuite::ticket-566 - Regression test for setting a fake number of processes.
+// nestkernel
+#include "nest_impl.h"
 
-Synopsis: (ticket-566) run -> NEST exits if test fails
-
-Description: 
-Ensure that kernel set status of num_procs does no longer work and
-check that SetFakeNumProcesses sets num_processes in the kernel.
-
-Author: Susanne Kunkel, 2012-12-04
- */
-
-(unittest) run
-/unittest using
-
-M_ERROR setverbosity
-
-{ 
-  << /num_procs 777 >> SetKernelStatus
-}
-fail_or_die
-
+void
+nest::register_eprop_learning_signal_connection( const std::string& name )
 {
-  777 SetFakeNumProcesses
-  GetKernelStatus /num_processes get 777 eq
+  register_connection_model< eprop_learning_signal_connection >( name );
 }
-assert_or_die
-
-endusing

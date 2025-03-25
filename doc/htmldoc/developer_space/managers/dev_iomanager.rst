@@ -11,7 +11,7 @@ role, with many of them interacting closely to facilitate complex neural network
 ::
 
            +---------------------+
-           |    KernelManager     |
+           |    KernelManager    |
            +---------+-----------+
                      |
     +----------------+--------------------------+
@@ -27,11 +27,11 @@ role, with many of them interacting closely to facilitate complex neural network
     +--------+---------------------+           |
              |                     |           |
  +-----------v------+       +-------v----------v---+
- |  ModuleManager   |       | EventDeliveryManager  |
+ |  ModuleManager   |       | EventDeliveryManager |
  +------------------+       +-----------+----------+
                                       |
                                       |
-               +------------------+   +-----------------+
+               +------------------+   +------------------+
                | MusicManager     |   | SimulationManager|
                +--------+---------+   +---------+--------+
                         |                     |
@@ -73,12 +73,12 @@ role, with many of them interacting closely to facilitate complex neural network
 
 {{ item }}
 
-.. doxygenclass:: {{item}}
-   :members:
-
 
 {% endif %}
 {% endfor %}
+
+.. .. doxygenclass:: {{item}}
+   :members:
 
 
 1. io_manager & io_manager_impl

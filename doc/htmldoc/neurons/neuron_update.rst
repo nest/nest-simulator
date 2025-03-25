@@ -83,7 +83,6 @@ Here we expand the general steps described above to explain the update steps in 
 neuron model ``iaf_psc_alpha``.
 
 
-
 .. grid::
    :gutter: 1
    :class-container: sd-text-center
@@ -145,17 +144,13 @@ neuron model ``iaf_psc_alpha``.
 
 
 
-
-**Flowchart**
-
-The colors indicated on the flowchart match with the basic steps :ref:`described above <sec_gen_steps>`.
-
-
 .. grid::
    :gutter: 1
 
-   .. grid-item::
+   .. grid-item:: **Flowchart**
      :columns: 6
+
+     The colors indicated on the flowchart match with the basic steps :ref:`described above <sec_gen_steps>`.
 
      .. image:: ../static/img/mixedfont-flowchart0325.png
        :width: 90%

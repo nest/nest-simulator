@@ -11,7 +11,7 @@ The dynamics of synaptic interactions between neurons can be characterized in te
 
 
 Postsynaptic response to a single presynaptic spike
---------------------------------------------------
+---------------------------------------------------
 
 Voltage dependence
 ~~~~~~~~~~~~~~~~~~

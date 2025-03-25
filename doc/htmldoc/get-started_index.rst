@@ -214,6 +214,8 @@ More topics
 
    tutorials/index
    tutorials/pynest_tutorial/index
+   neurons/neuron_update
+   neurons/neuron_types
 
 .. toctree::
    :maxdepth: 1

@@ -328,7 +328,7 @@ the end of the neuron model name (e.g., ``iaf_psc_delta``)
 
    For more details see :ref:`time_dependence`
 
-..note:: graphs - add y axis peak 1 picoampere
+.. ..note:: graphs - add y axis peak 1 picoampere
 
 .. grid:: 1 2 2 2
 
@@ -680,7 +680,8 @@ Astrocytes
       .. tab-item:: General info
          :selected:
 
-         Astrocytes
+         NEST offers an astrocyte model for interactions with neurons, including
+         ``TripartiteConnect`` to support the creation of a pre-synaptic, a post-synaptic and a third-factor population.
 
          .. dropdown:: Astrocyte models
 

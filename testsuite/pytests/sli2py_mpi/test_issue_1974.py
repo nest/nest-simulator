@@ -36,8 +36,6 @@ def test_issue_1974():
     if not nest.ll_api.sli_func("statusdict/have_music ::"):
         return
 
-    nest.total_num_virtual_procs = 4
-
     nrns = nest.Create("parrot_neuron", 2)
 
     music_in = nest.Create("music_event_in_proxy", 1, {"port_name": "in_spikes"})

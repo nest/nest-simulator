@@ -27,8 +27,6 @@ import pytest
 Tests that get_connections works if called when also using multithreading.
 
 This test would only fail before fixing #3442 if NEST was built with `-Dwith-detailed-timers=ON`.
-
-This test would only fail before fixing #3442 if NEST was built with `-Dwith-detailed-timers=ON`.
 """
 
 

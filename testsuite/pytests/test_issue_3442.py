@@ -30,6 +30,7 @@ This test would only fail before fixing #3442 if NEST was built with `-Dwith-det
 """
 
 
+@pytest.mark.skipif_missing_threads
 @pytest.mark.parametrize("n_threads", [1, 2, 4])
 def test_threaded_get_connections(n_threads):
     nest.ResetKernel()

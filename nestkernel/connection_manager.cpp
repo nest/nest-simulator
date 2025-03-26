@@ -1219,14 +1219,12 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const size_t tid,
 
 void
 nest::ConnectionManager::get_connections_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
-  NodeCollectionPTR source,
-  NodeCollectionPTR target,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
+  NodeCollectionPTR,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   ConnectorBase* connections = connections_[ tid ][ syn_id ];
   if ( connections )
   {
@@ -1240,26 +1238,16 @@ nest::ConnectionManager::get_connections_( const size_t tid,
   }
 
   target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
 nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
-  NodeCollectionPTR source,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
   NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   // Split targets into neuron- and device-vectors.
   std::vector< size_t > target_neuron_node_ids;
   std::vector< size_t > target_device_node_ids;
@@ -1289,26 +1277,16 @@ nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
   {
     target_table_devices_.get_connections_to_devices_( 0, t_device_id, tid, syn_id, synapse_label, conns_in_thread );
   }
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
 nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
+  std::deque< ConnectionID >& conns_in_thread,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   // Split targets into neuron- and device-vectors.
   std::vector< size_t > target_neuron_node_ids;
   std::vector< size_t > target_device_node_ids;
@@ -1370,14 +1348,6 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
       }
     }
   }
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
@@ -1401,17 +1371,27 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
     size_t tid = kernel().vp_manager.get_thread_id();
 
+    std::deque< ConnectionID > conns_in_thread;
+
     if ( not source.get() and not target.get() )
     {
-      get_connections_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_( tid, conns_in_thread, source, target, syn_id, synapse_label );
     }
     else if ( not source.get() and target.get() )
     {
-      get_connections_to_targets_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_to_targets_( tid, conns_in_thread, source, target, syn_id, synapse_label );
     }
     else if ( source.get() )
     {
-      get_connections_from_sources_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_from_sources_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+    }
+
+    if ( conns_in_thread.size() > 0 )
+    {
+#pragma omp critical( get_connections )
+      {
+        extend_connectome( connectome, conns_in_thread );
+      }
     }
   }
 }

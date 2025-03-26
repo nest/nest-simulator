@@ -25,6 +25,8 @@ import pytest
 
 """
 Tests that get_connections works if called when also using multithreading.
+
+This test would only fail before fixing #3442 if NEST was built with `-Dwith-detailed-timers=ON`.
 """
 
 
@@ -38,6 +40,3 @@ def test_threaded_get_connections(n_threads):
     nest.Connect(neuron, neuron)
 
     nest.GetConnections()
-
-
-test_threaded_get_connections(1)

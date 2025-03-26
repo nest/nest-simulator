@@ -28,6 +28,7 @@ Tests that get_connections works if called when also using multithreading.
 """
 
 
+@pytest.mark.skipif_missing_threads
 @pytest.mark.parametrize("n_threads", [1, 2, 4])
 def test_threaded_get_connections(n_threads):
     nest.ResetKernel()

@@ -183,12 +183,29 @@ class MPITestWrapper:
 
             res = {}
             for procs in self._procs_lst:
-                res[procs] = subprocess.run(
-                    ["mpirun", "-np", str(procs), "--oversubscribe", "python", self.RUNNER],
-                    check=True,
-                    cwd=tmpdirpath,
-                    capture_output=self._debug,
-                )
+                try:
+                    command = ["mpirun", "-np", str(procs), "--oversubscribe", "python", self.RUNNER]
+                    res[procs] = subprocess.run(
+                        command,
+                        check=True,
+                        cwd=tmpdirpath,
+                        capture_output=True,  # always capture, in case an error is thrown
+                    )
+                except subprocess.CalledProcessError as err:
+                    print("\n")
+                    print("-" * 50)
+                    print(f"Running failed for: {command}")
+                    print(f"tmpdir            : {tmpdir.name}")
+                    print("-" * 50)
+                    print("STDOUT")
+                    print("-" * 50)
+                    print(err.stdout.decode("UTF-8"))
+                    print("-" * 50)
+                    print("STDERR")
+                    print("-" * 50)
+                    print(err.stderr.decode("UTF-8"))
+                    print("-" * 50)
+                    raise err
 
             if self._debug:
                 print("\n\n")

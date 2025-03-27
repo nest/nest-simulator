@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_self_get_conns_with_empty_ranks.py
 #
 # This file is part of NEST.
 #

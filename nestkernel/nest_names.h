@@ -345,6 +345,7 @@ extern const Name max_buffer_size_target_data;
 extern const Name max_delay;
 extern const Name max_num_syn_models;
 extern const Name max_update_time;
+extern const Name max_V_m_rate;
 extern const Name mean;
 extern const Name memory;
 extern const Name message_times;

@@ -114,8 +114,7 @@ The term `models` in the context of NEST (and the field of computational neurosc
 2. **Network models**. These models are created from individual neuron
    and synapse models using the different commands provided by the
    :ref:`PyNEST API <pynest_api>`. Examples for such network models
-    can be found in our :ref:`network models page <network_models>`.
-    You can also explore :doc:`all our example networks </examples/index>`.
+    can be found :doc:`here </examples/index>`.
 
 .. seealso::
 

@@ -95,4 +95,4 @@ def test_different_connections():
 
     synapses = nest.GetConnections(source=pn1, target=pn2).get("synapse_model")
     expected_synapses = ["static_synapse", "static_synapse", "static_synapse_hom_w"]
-    assert np.all(np.in1d(expected_synapses, synapses))
+    assert np.all(np.isin(expected_synapses, synapses))

@@ -63,5 +63,5 @@ def test_simulation_completes():
 
     spike_recs = spike_recorder.get("events", ["senders", "times"])
 
-    assert np.all(np.in1d(np.array([1, 2]), spike_recs["senders"].T[:2]))
+    assert np.all(np.isin(np.array([1, 2]), spike_recs["senders"].T[:2]))
     assert np.all(spike_recs["times"].T[:2] == pytest.approx(4.1))

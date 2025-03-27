@@ -267,8 +267,6 @@ or conductances.
      Model post-synaptic responses to incoming spikes as changes in current.
      The response of the post-synaptic neuron is independent of the neuronal state.
 
-     For more details see :ref:`current_based`
-
      .. dropdown:: Current-based neuron models
 
          {% for items in tag_dict %}
@@ -301,8 +299,6 @@ or conductances.
      synaptic inputs depending on the membrane potential, which can change over time.
 
 
-     For more details see :ref:`conductance_based`.
-
      .. dropdown:: Conductance-based neuron models
 
          {% for items in tag_dict %}
@@ -324,40 +320,26 @@ The type of post-synaptic input (`exp`, `delta`, `alpha`, `beta`) are indicated 
 the end of the neuron model name (e.g., ``iaf_psc_delta``)
 
 
-.. seealso::
-
-   For more details see :ref:`time_dependence`
-
-.. ..note:: graphs - add y axis peak 1 picoampere
-
 .. grid:: 1 2 2 2
 
    .. grid-item-card:: Delta
       :columns: 3
-      :link: delta_synapse
-      :link-type: ref
 
       .. image:: /static/img/delta_nn.svg
 
    .. grid-item-card:: Exp
       :columns: 3
-      :link: exp_synapse
-      :link-type: ref
 
       .. image:: /static/img/exp_nn.svg
 
    .. grid-item-card:: Alpha
       :columns: 3
-      :link: alpha_synapse
-      :link-type: ref
 
       .. image:: /static/img/alpha2.svg
 
 
    .. grid-item-card:: Beta
       :columns: 3
-      :link: beta_synapse
-      :link-type: ref
 
       .. image:: /static/img/beta2.svg
 

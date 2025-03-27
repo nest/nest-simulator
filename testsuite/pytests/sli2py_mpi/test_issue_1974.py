@@ -23,7 +23,7 @@
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-@MPITestAssertEqual([1, 2, 4], debug=True)
+@MPITestAssertEqual([1, 2, 4])
 def test_issue_1974():
     """
     For each of the two parrot neurons, exactly one connection from/to the in/out MUSIC proxy must be created,
@@ -44,5 +44,5 @@ def test_issue_1974():
     nest.Connect(music_in, nrns)
     nest.Connect(nrns, music_out)
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["port"], axis=1)
+    conns = nest.GetConnections().get(output="pandas").drop(labels=["port"], axis=1, errors="ignore")
     conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821

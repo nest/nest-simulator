@@ -76,6 +76,9 @@ mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # Setup the breathe extension
 breathe_projects = {"NEST Simulator": "./_doxygen/xml"}
 breathe_default_project = "NEST Simulator"
+breathe_domain_by_extension = {
+    "h": "cpp",
+}
 
 # Setup the exhale extension
 # exhale_args = {
@@ -262,23 +265,23 @@ html_show_copyright = False
 #        source[0] = rendered
 
 
-def tags_devdocs(app, docname, source):
-    developer_pages = ["dev_iomanager", "exhale-toc"]
+# def tags_devdocs(app, docname, source):
+#    developer_pages = ["developer_space/managers/dev_managers"]
+#
+#    if any(docname == developer_page for developer_page in developer_pages):
+#        cpp_class = json.load(open("cpp_output.json"))
+#        html_context = {"cpp_class_list": cpp_class}
+#        special_source = source[0]
+#        rendered = app.builder.templates.render_string(special_source, html_context)
+#        source[0] = rendered
 
-    if any(docname == developer_page for developer_page in developer_pages):
-        cpp_class = json.load(open("cpp_output.json"))
-        html_context = {"cpp_class_list": cpp_class}
-        special_source = source[0]
-        rendered = app.builder.templates.render_string(special_source, html_context)
-        source[0] = rendered
 
+# def setup(app):
+#    app.connect("source-read", cpp_customizer)
+# app.connect("source-read", tags_devdocs)
 
-def setup(app):
-    #    app.connect("source-read", cpp_customizer)
-    app.connect("source-read", tags_devdocs)
-
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+# for events see
+# https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
 
 
 github_doc_root = ""

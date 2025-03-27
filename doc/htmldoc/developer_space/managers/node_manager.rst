@@ -44,11 +44,11 @@ states, while storing exceptions from parallel operations for error resolution.
 
 Key Components Explained:
 
-* local_nodes_: A thread-local array of nodes, enabling parallel execution.
-* wfr_nodes_vec_: Stores nodes using waveform relaxation for specific solvers.
-* add_nodes(): Creates nodes of a given model, distributing them across threads.
-* have_nodes_changed_: Flags if nodes were added/removed since the last simulation step.
-* exceptions_raised_: Captures exceptions from parallel node operations for later handling.
+* ``local_nodes_``: A thread-local array of nodes, enabling parallel execution.
+* ``wfr_nodes_vec_``: Stores nodes using waveform relaxation for specific solvers.
+* ``add_nodes()``: Creates nodes of a given model, distributing them across threads.
+* ``have_nodes_changed_``: Flags if nodes were added/removed since the last simulation step.
+* ``exceptions_raised_``: Captures exceptions from parallel node operations for later handling.
 
 .. doxygenclass:: nest::NodeManager
    :members:

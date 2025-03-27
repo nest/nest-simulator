@@ -306,8 +306,8 @@ Sequence Diagram
     SPManager->>ConnectionManager: check use_compressed_spikes
     SPManager->>SPManager: structural_plasticity_enabled_ = true
 
-API
-~~~
+Functions
+~~~~~~~~~
 
 .. doxygenclass:: nest::SPManager
    :members:

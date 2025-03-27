@@ -39,10 +39,10 @@ across multiple runs.
     KernelManager --|> ManagerInterface: extends
 
 Singleton Pattern: Managed via create_kernel_manager(), destroy_kernel_manager(), and get_kernel_manager().
-managers_ Vector: Contains pointers to all managers in initialization/finalization order (e.g., LoggingManager, MPIManager, NodeManager).
+managers\_ Vector: Contains pointers to all managers in initialization/finalization order (e.g., LoggingManager, MPIManager, NodeManager).
 Lifecycle Methods: initialize(), finalize(), prepare(), and cleanup() orchestrate the simulation workflow.
-Fingerprint Tracking: fingerprint_ increments on initialization or changes to detect configuration updates.
-Logging: dump_ handles full logging output, and write_to_dump() ensures thread-safe writes.
+Fingerprint Tracking: fingerprint\_ increments on initialization or changes to detect configuration updates.
+Logging: dump\_ handles full logging output, and write_to_dump() ensures thread-safe writes.
 
 .. doxygenclass:: nest::KernelManager
    :members:

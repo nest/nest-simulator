@@ -272,7 +272,7 @@ Documentation for Managers
 - :ref:`nest::ManagerInterface <manager_interface>`
 - :ref:`nest::EventDeliveryManager<event_delivery_manager>`
 - :ref:`nest::IOManager <io_manager>`
-- :ref:`nest::ModelRangeManager <modelrange>`
+- :ref:`nest::ModelRangeManager <modelrange_manager>`
 - :ref:`nest::KernelManager <kernel_manager>`
 - :ref:`nest::VPManager <vp_manager>`
 - :ref:`nest::MUSICManager <music_manager>`

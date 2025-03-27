@@ -1,3 +1,5 @@
+.. _model_manager:
+
 Model Manager
 =============
 

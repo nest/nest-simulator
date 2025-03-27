@@ -34,13 +34,13 @@ values and seeder constants for consistent yet independent streams across proces
 
 Explanation of Key Components:
 
-    register_rng_type: A template method to register new RNG implementations (e.g., Mersenne Twister, Philox).
-    rng_types_: A map storing registered RNG factories by name.
-    rank_synced_rng_: A single RNG synchronized across all MPI ranks.
-    vp_synced_rngs_: RNGs synchronized across threads (VPs) but consistent across ranks.
-    vp_specific_rngs_: Independent RNGs for each thread (VP) and rank.
+    ``register_rng_type``: A template method to register new RNG implementations (e.g., Mersenne Twister, Philox).
+    ``rng_types_``: A map storing registered RNG factories by name.
+    ``rank_synced_rng_``: A single RNG synchronized across all MPI ranks.
+    ``vp_synced_rngs_``: RNGs synchronized across threads (VPs) but consistent across ranks.
+    ``vp_specific_rngs_``: Independent RNGs for each thread (VP) and rank.
     Seeder Constants: Static values used to derive unique seeds for different RNG types.
-    check_rng_synchrony: Ensures all RNGs are in sync (throws an error if not).
+    ``check_rng_synchrony``: Ensures all RNGs are in sync (throws an error if not).
 
 This structure ensures reproducible parallel simulations with thread-safe, synchronized random number generation.
 

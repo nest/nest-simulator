@@ -57,13 +57,13 @@ integrity.
 
 Key Components Explained:
 
-* source_table_: Tracks outgoing connections from source nodes.
-* target_table_devices_: Manages connections involving devices (e.g., spike generators).
-* connections_: A 2D array of ConnectorBase pointers, storing connections per target and synapse type.
-* num_connections_: Tracks the number of connections per target and synapse type.
-* connect(): Creates connections using a ConnBuilder based on connection specifications.
-* remove_disabled_connections(): Cleans up connections to inactive nodes.
-* stdp_eps_: Parameter for Spike-Timing-Dependent Plasticity (STDP) calculations.
+* ``source_table_``: Tracks outgoing connections from source nodes.
+* ``target_table_devices_``: Manages connections involving devices (e.g., spike generators).
+* ``connections_``: A 2D array of ConnectorBase pointers, storing connections per target and synapse type.
+* ``num_connections_``: Tracks the number of connections per target and synapse type.
+* ``connect()``: Creates connections using a ConnBuilder based on connection specifications.
+* ``remove_disabled_connections()``: Cleans up connections to inactive nodes.
+* ``stdp_eps_``: Parameter for Spike-Timing-Dependent Plasticity (STDP) calculations.
 
 .. doxygenclass:: nest::ConnectionManager
    :members:

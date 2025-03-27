@@ -227,10 +227,17 @@ class MPITestWrapper:
         except StopIteration:
             return None  # no data for this label
 
-        return {
-            n_procs: [pd.read_csv(f, sep="\t", comment="#") for f in tmpdirpath.glob(label.format(n_procs, "*"))]
-            for n_procs in self._procs_lst
-        }
+        res = {}
+        for n_procs in self._procs_lst:
+            data = []
+            for f in tmpdirpath.glob(label.format(n_procs, "*")):
+                try:
+                    data.append(pd.read_csv(f, sep="\t", comment="#"))
+                except pd.errors.EmptyDataError:
+                    pass
+            res[n_procs] = data
+
+        return res
 
     def collect_results(self, tmpdirpath):
         """

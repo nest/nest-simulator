@@ -1383,7 +1383,7 @@ Cvd_sFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* obj = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
   assert( obj );
-  Token t( new DoubleDatum( std::strtod( obj->c_str(), nullptr ) ) );  
+  Token t( new DoubleDatum( std::strtod( obj->c_str(), nullptr ) ) );
   i->OStack.top().swap( t );
   i->EStack.pop();
 }

@@ -100,4 +100,4 @@ def test_mini_brunel_ps():
     nest.Simulate(400)
 
     # Uncomment next line to provoke test failure
-    # nest.Simulate(200 if -nest.num_processes == 1 else 400)
+    # nest.Simulate(200 if nest.num_processes == 1 else 400)

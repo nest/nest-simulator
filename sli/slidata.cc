@@ -1440,19 +1440,18 @@ Search_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and s2 );
 
-  size_t p = s1->find( *s2 );
+  const size_t p = s1->find( *s2 );
 
-
-  if ( p == ULONG_MAX ) // what we realy want is MAX of size_type
-  {                     // as soon as C++ limits are supported
-    i->OStack.pop();    // (see Stroustrup 3rd ed. p. 586)
+  if ( p == s1->npos )
+  {
+    i->OStack.pop();
     i->OStack.push( i->baselookup( i->false_name ) );
   }
   else
   {
     StringDatum* s3 = new StringDatum();
 
-    size_t n = p; // number of pre elements
+    const size_t n = p; // number of pre elements
     s3->assign( *s1, ( size_t ) 0, n );
     s1->erase( 0, n + s2->size() );
 

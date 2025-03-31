@@ -21,10 +21,6 @@ Here you can discover the new features NEST 3.0 has to offer!
    :maxdepth: 1
    :hidden:
 
-   ../../../neurons/node_handles
-   ../../../synapses/handling_connections
-   ../../../neurons/parametrization
    random_number_generators
    recording_simulations
    stimulation_backends
-   ../../../interface_nest/nest_server

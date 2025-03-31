@@ -49,6 +49,8 @@
 #include "connector_model.h"
 #include "delay_checker.h"
 #include "eprop_archiving_node.h"
+#include "eprop_archiving_node_readout.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -907,8 +909,10 @@ nest::ConnectionManager::connect_( Node& source,
 
   const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
   if ( eprop_archiving
-    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
-      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+    and not( dynamic_cast< EpropArchivingNodeRecurrent< false >* >( &target )
+      or dynamic_cast< EpropArchivingNodeRecurrent< true >* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout< false >* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout< true >* >( &target ) ) )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }

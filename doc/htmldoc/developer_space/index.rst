@@ -6,9 +6,9 @@ Developer space
 Here is all documentation pertaining to the development of NEST.
 It is documentation for anyone needing to touch the code or documentation.
 
-.. grid:: 3 
+.. grid:: 3
 
-  .. grid-item-card:: 
+  .. grid-item-card::
        :link-type: ref
        :link: dev_install
        :class-card: sd-bg-success sd-text-white
@@ -112,11 +112,11 @@ Developer guides
 
 .. toctree::
    :maxdepth: 1
-   :hidden: 
+   :hidden:
    :glob:
 
    workflows/*
-   workflows/documentation_workflow/*
+   workflows/documentation_workflow/index
    guidelines/*
    guidelines/styleguide/styleguide
    guidelines/styleguide/vim_support_sli

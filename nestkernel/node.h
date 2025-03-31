@@ -286,19 +286,17 @@ public:
   /**
    * Advance the state of the node in time through the given interval.
    *
-   * This method advances the state of the node through the interval 
+   * This method advances the state of the node through the interval
    * ``(origin+from, origin+to]``, which is at most ``min_delay`` long.
    *
    * - Precondition: State of the node corresponds to the time ``origin+from``.
    * - Postcondition: State of the node corresponds to the time ``origin+to``.
    *
-   * This method is called every ``min_delay`` interval, with each step
-   * between ``from`` and ``to`` corresponding to one simulation resolution
-   * (``nest.resolution``) timestep.
+   * Each step between ``from`` and ``to`` corresponding to one simulation
+   * resolution (``nest.resolution``) timestep.
    *
-   * ``update(T, from, to)`` performs the update steps in the interval
-   * ``T+from .. T+to-1``. If events are emitted, they have time stamps in
-   * the interval ``T+from+1 .. T+to``.
+   * If events are emitted, they have time stamps in the interval
+   * ``T+from+1 .. T+to``.
    *
    * @param origin network time at beginning of time slice
    * @param from initial step inside time slice

@@ -282,10 +282,13 @@ public:
   }
 
   /**
-   * Advance the state of the node forward in time by one ``min_delay``
-   * interval. Precondition: state of the node corresponds to the time
-   * ``origin``. Postcondition: state of the node corresponds to the time
-   * ``origin + min_delay``.
+   * Advance the state of the node in time through the given interval.
+   *
+   * This method advances the state of the node through the interval 
+   * ``(origin+from, origin+to]``, which is at most ``min_delay`` long.
+   *
+   * - Precondition: State of the node corresponds to the time ``origin+from``.
+   * - Postcondition: State of the node corresponds to the time ``origin+to``.
    *
    * This method is called every ``min_delay`` interval, with each step
    * between ``from`` and ``to`` corresponding to one simulation resolution

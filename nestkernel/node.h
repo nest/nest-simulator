@@ -306,12 +306,8 @@ public:
   virtual void update( Time const&, const long, const long ) = 0;
 
   /**
-   * Advance the state of the node forward in time by one ``min_delay``
-   * interval (see ``update()``); send SecondaryEvents (e.g. GapJunctionEvent)
-   * and then reset state variables to values at ``origin``.
-   *
-   * ``wfr_update(T, from, to)`` performs the update steps in the interval
-   * ``T+from .. T+to-1``.
+   * Advance the state of the node in time through the given interval (see
+   * Node::update() for more details).
    *
    * Does not emit spikes, does not log state variables.
    *

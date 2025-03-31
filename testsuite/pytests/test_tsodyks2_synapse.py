@@ -19,26 +19,29 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
+import math
 
 import nest
 import numpy as np
+import pytest
 
 
 @nest.ll_api.check_stack
-class Tsodyks2SynapseTest(unittest.TestCase):
+class TestTsodyks2Synapse:
     """
     Functional test for the "tsodyks2" synapse: compare NEST implementation to
     a reference generated in the method reproduce_weight_drift(), for a
     sequence of spike times coming from a Poisson generator.
     """
 
+    @pytest.fixture(autouse=True)
     def setUp(self):
         self.resolution = 0.1  # [ms]
         self.presynaptic_firing_rate = 20.0  # [spks/s]
         self.simulation_duration = 1e3  # [ms]
         self.hardcoded_trains_length = 15.0  # [ms]
         self.synapse_parameters = {
+            "synapse_model": "tsodyks2_synapse_rec",
             "receptor_type": 1,
             "delay": self.resolution,
             "U": 1.0,
@@ -49,9 +52,9 @@ class Tsodyks2SynapseTest(unittest.TestCase):
             "weight": 1.0,  # maximal possible response (absolute synaptic efficacy)
         }
 
-    def test_tsodyk2_synapse(self):
-        synapse_model = "tsodyks2_synapse_rec"
-        self.synapse_parameters["synapse_model"] = synapse_model
+    @pytest.mark.parametrize("tau_fac", [0.0, 10.0])
+    def test_tsodyk2_synapse(self, tau_fac: float):
+        self.synapse_parameters["tau_fac"] = tau_fac
 
         pre_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
@@ -133,11 +136,11 @@ class Tsodyks2SynapseTest(unittest.TestCase):
                 if t_lastspike >= 0.0:
                     # Evaluating the depression rule.
                     h = t_spike - t_lastspike
-                    R_decay = np.exp(-h / self.synapse_parameters["tau_rec"])
-                    if self.synapse_parameters["tau_fac"] < 1e-10:
+                    R_decay = math.exp(-h / self.synapse_parameters["tau_rec"])
+                    if self.synapse_parameters["tau_fac"] == 0:  # tau_fac == 0 disables facilitation
                         u_decay = 0.0
                     else:
-                        u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
+                        u_decay = math.exp(-h / self.synapse_parameters["tau_fac"])
 
                     R_ = 1.0 + (R_ - R_ * u_ - 1.0) * R_decay
                     u_ = self.synapse_parameters["U"] + u_ * (1.0 - self.synapse_parameters["U"]) * u_decay
@@ -148,19 +151,3 @@ class Tsodyks2SynapseTest(unittest.TestCase):
                 t_lastspike = t_spike
 
         return w_log
-
-
-def suite():
-    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
-    # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(Tsodyks2SynapseTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

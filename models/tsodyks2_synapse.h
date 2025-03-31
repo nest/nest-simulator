@@ -54,6 +54,8 @@ The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
+Setting the parameter ``tau_fac`` to zero disables facilitation.
+
 Please note that the initial value of ``u`` should be equal to the value of
 ``U``. Thus, when setting a new value for ``U`` before the start of the
 simulation, make sure to set ``u`` to the same value.
@@ -238,7 +240,7 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
 
     const double h = t_spike - t_lastspike_;
     double x_decay = std::exp( -h / tau_rec_ );
-    double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ ); // tau_fac == 0 disables facilitation
 
     // now we compute spike number n+1
     x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_

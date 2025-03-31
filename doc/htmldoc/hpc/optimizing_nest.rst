@@ -3,14 +3,6 @@
 Optimize performance of HPC Systems
 ===================================
 
-.. toctree::
-  :hidden:
-
-  overview_hardware
-  slurm_script
-  threading
-  mpi_processes
-
 
 If you are new to running NEST on HPC systems or trying to improve the performance or debug issues,
 we have provided a few guides to help you out. There are a few things to consider about the

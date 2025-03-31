@@ -31,6 +31,7 @@
 #include "numerics.h"
 
 // nestkernel
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
@@ -58,6 +59,7 @@ template <>
 void
 RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >::create()
 {
+  insert_( names::eprop_history_duration, &eprop_iaf_adapt_bsshslm_2020::get_eprop_history_duration );
   insert_( names::adaptation, &eprop_iaf_adapt_bsshslm_2020::get_adaptation_ );
   insert_( names::V_th_adapt, &eprop_iaf_adapt_bsshslm_2020::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_adapt_bsshslm_2020::get_learning_signal_ );
@@ -76,6 +78,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , c_reg_( 0.0 )
   , E_L_( -70.0 )
   , f_target_( 0.01 )
+  , beta_( 1.0 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
   , regular_spike_arrival_( true )
@@ -123,6 +126,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::c_reg, c_reg_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::f_target, f_target_ );
+  def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
   def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
@@ -154,10 +158,18 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
   }
 
+  updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
-  updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
+
+  if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
+  {
+    eprop_iaf_adapt_bsshslm_2020* nrn = dynamic_cast< eprop_iaf_adapt_bsshslm_2020* >( node );
+    assert( nrn );
+    nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
+  }
+
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
@@ -178,24 +190,12 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization prefactor c_reg ≥ 0 required." );
+    throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )
   {
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
-  }
-
-  if ( gamma_ < 0.0 or 1.0 <= gamma_ )
-  {
-    throw BadProperty( "Surrogate gradient / pseudo-derivative scaling gamma from interval [0,1) required." );
-  }
-
-  if ( surrogate_gradient_function_ != "piecewise_linear" )
-  {
-    throw BadProperty(
-      "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [\"piecewise_linear\"] "
-      "required." );
   }
 
   if ( tau_m_ <= 0 )
@@ -206,12 +206,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time t_ref ≥ 0 required." );
-  }
-
-  if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
-  {
-    throw BadProperty(
-      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
   }
 
   if ( V_th_ < V_min_ )
@@ -290,32 +284,16 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  if ( P_.surrogate_gradient_function_ == "piecewise_linear" )
-  {
-    compute_surrogate_gradient = &eprop_iaf_adapt_bsshslm_2020::compute_piecewise_linear_derivative;
-  }
-
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
   const double dt = Time::get_resolution().get_ms();
 
-  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ ); // called alpha in reference [1]_
+  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
-long
-eprop_iaf_adapt_bsshslm_2020::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
-bool
-eprop_iaf_adapt_bsshslm_2020::is_eprop_recurrent_node() const
-{
-  return true;
-}
 
 /* ----------------------------------------------------------------
  * Update function
@@ -336,7 +314,6 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     if ( interval_step == 0 )
     {
       erase_used_firing_rate_reg_history();
-      erase_used_update_history();
       erase_used_eprop_history();
 
       if ( with_reset )
@@ -346,6 +323,11 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
         S_.r_ = 0;
         S_.z_ = 0.0;
       }
+    }
+
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
     }
 
     S_.z_in_ = B_.spikes_.get_value( lag );
@@ -359,9 +341,8 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
 
     S_.z_ = 0.0;
 
-    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient )();
-
-    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
+    S_.surrogate_gradient_ =
+      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
     if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
@@ -371,12 +352,11 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       kernel().event_delivery_manager.send( *this, se, lag );
 
       S_.z_ = 1.0;
-
-      if ( V_.RefractoryCounts_ > 0 )
-      {
-        S_.r_ = V_.RefractoryCounts_;
-      }
+      S_.r_ = V_.RefractoryCounts_;
     }
+
+    append_new_eprop_history_entry( t );
+    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
     if ( interval_step == update_interval - 1 )
     {
@@ -386,30 +366,10 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
 
-    if ( S_.r_ > 0 )
-    {
-      --S_.r_;
-    }
-
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
     B_.logger_.record_data( t );
   }
-}
-
-/* ----------------------------------------------------------------
- * Surrogate gradient functions
- * ---------------------------------------------------------------- */
-
-double
-eprop_iaf_adapt_bsshslm_2020::compute_piecewise_linear_derivative()
-{
-  if ( S_.r_ > 0 )
-  {
-    return 0.0;
-  }
-
-  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.v_m_ - S_.v_th_adapt_ ) / P_.V_th_ ) ) / P_.V_th_;
 }
 
 /* ----------------------------------------------------------------
@@ -486,7 +446,7 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
+      epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;
@@ -497,15 +457,16 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
   }
   presyn_isis.clear();
 
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const auto firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+
+  grad += firing_rate_reg * sum_e;
+
   if ( average_gradient )
   {
     grad /= learning_window;
   }
-
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
-  grad += it_reg_hist->firing_rate_reg_ * sum_e;
 
   return grad;
 }

@@ -207,12 +207,14 @@ intersphinx_mapping = {
     "elephant": ("https://elephant.readthedocs.io/en/latest/", None),
     "desktop": ("https://nest-desktop.readthedocs.io/en/latest/", None),
     "gpu": ("https://nest-gpu.readthedocs.io/en/latest/", None),
+    "neat": ("https://nest-neat.readthedocs.io/en/latest/", None),
     "neuromorph": ("https://electronicvisions.github.io/hbp-sp9-guidebook/", None),
     "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
     "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
 
+suppress_warnings = ["config.cache"]
 
 nitpick_ignore = [
     ("py:class", "None"),

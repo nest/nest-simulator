@@ -1,5 +1,5 @@
 /*
- *  stopwatch.cpp
+ *  eprop_learning_signal_connection.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,13 @@
  *
  */
 
-#include "stopwatch.h"
+#include "eprop_learning_signal_connection.h"
 
-namespace nest
+// nestkernel
+#include "nest_impl.h"
+
+void
+nest::register_eprop_learning_signal_connection( const std::string& name )
 {
-std::ostream&
-operator<<( std::ostream& os, const Stopwatch& stopwatch )
-{
-  stopwatch.print( "", Stopwatch::SECONDS, os );
-  return os;
-}
+  register_connection_model< eprop_learning_signal_connection >( name );
 }

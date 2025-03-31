@@ -42,7 +42,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation
+/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation, hard threshold
 
 Short description
 +++++++++++++++++

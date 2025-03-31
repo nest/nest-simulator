@@ -38,6 +38,7 @@ The simulation loop. Light gray boxes denote thread parallel parts, dark
 gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
 
+
 .. _simulation_resolution:
 
 Simulation resolution and update interval

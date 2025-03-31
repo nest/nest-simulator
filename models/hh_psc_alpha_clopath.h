@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, Clopath plasticity
+/* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, Clopath plasticity, soft threshold
 
 Short description
 +++++++++++++++++

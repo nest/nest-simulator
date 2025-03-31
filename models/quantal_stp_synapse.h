@@ -209,11 +209,28 @@ inline bool
 quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
-  const double h = t_spike - t_lastspike_;
 
-  // Compute the decay factors, based on the time since the last spike.
-  const double p_decay = std::exp( -h / tau_rec_ );
-  const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  if ( t_lastspike_ >= 0.0 )
+  {
+    // only update a and u if this is not the first spike to pass through the synapse
+
+    // Compute the decay factors, based on the time since the last spike.
+    const double h = t_spike - t_lastspike_;
+    const double p_decay = std::exp( -h / tau_rec_ );
+    const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+
+    // Compute release probability
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
+
+    // Compute number of sites that recovered during the interval.
+    for ( int depleted = n_ - a_; depleted > 0; --depleted )
+    {
+      if ( get_vp_specific_rng( t )->drand() < ( 1.0 - p_decay ) )
+      {
+        ++a_;
+      }
+    }
+  }
 
   // Compute number of released sites
   int n_release = 0;
@@ -235,18 +252,6 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
     e.set_rport( get_rport() );
     e();
     a_ -= n_release;
-  }
-
-  // Compute release probability
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
-
-  // Compute number of sites that recovered during the interval.
-  for ( int depleted = n_ - a_; depleted > 0; --depleted )
-  {
-    if ( get_vp_specific_rng( t )->drand() < ( 1.0 - p_decay ) )
-    {
-      ++a_;
-    }
   }
 
   t_lastspike_ = t_spike;

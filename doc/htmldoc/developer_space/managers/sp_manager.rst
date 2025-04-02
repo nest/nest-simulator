@@ -24,10 +24,6 @@ Structural Plasticity Updates:
     The ``update_structural_plasticity`` method updates the structural plasticity by creating and deleting synapses based on the current state of the network.
     The ``create_synapses`` and ``delete_synapses_from_pre``/``delete_synapses_from_post`` methods handle the actual creation and deletion of synapses.
 
-Helper Functions:
-    Various helper functions like ``serialize_id``, ``global_shuffle``, ``enable_structural_plasticity``, and ``disable_structural_plasticity``
-    support the main functionality of the SPManager.
-
 
 Key functions and their Purposes:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -246,65 +242,6 @@ Class Diagram
     KernelManager --> "1" VPManager: manages
     KernelManager --> "1" NodeManager: manages
 
-Sequence Diagram
-~~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-   sequenceDiagram
-    participant SPManager
-    participant SPBuilder
-    participant ConnectionManager
-    participant Node
-    participant MPIManager
-    participant KernelManager
-
-    title Structural Plasticity Workflow
-
-    SPManager->>SPManager: set_status(d)
-    SPManager->>SPManager: updateValue< double >(d, "interval", ...)
-    SPManager->>SPManager: clear sp_conn_builders_
-    SPManager->>SPManager: process synapse specs
-    SPManager->>SPBuilder: new SPBuilder(...)
-    SPBuilder->>SPBuilder: set_name(...)
-    SPBuilder->>SPBuilder: validate delays
-    SPManager->>SPManager: store SPBuilder in sp_conn_builders_
-
-    SPManager->>SPManager: update_structural_plasticity()
-    SPManager->>SPManager: loop over SPBuilder instances
-    SPManager->>SPManager: update_structural_plasticity(SPBuilder)
-    SPManager->>Node: get_synaptic_elements(pre_name, ...)
-    SPManager->>Node: get_synaptic_elements(post_name, ...)
-    SPManager->>MPIManager: communicate(pre_deleted_id, ...)
-    SPManager->>MPIManager: communicate(post_deleted_id, ...)
-    SPManager->>SPManager: delete_synapses_from_pre(...)
-    SPManager->>SPManager: delete_synapses_from_post(...)
-    SPManager->>SPManager: create_synapses(...)
-    SPManager->>ConnectionManager: set_connections_have_changed()
-
-    SPManager->>SPManager: create_synapses(pre_id, ...)
-    SPManager->>SPManager: serialize_id(pre_id, ...)
-    SPManager->>SPManager: global_shuffle(...)
-    SPManager->>SPBuilder: sp_connect(pre_id_rnd, post_id_rnd)
-
-    SPManager->>SPManager: delete_synapses_from_pre(...)
-    SPManager->>ConnectionManager: get_targets(pre_deleted_id, ...)
-    SPManager->>MPIManager: communicate(connectivity, ...)
-    SPManager->>SPManager: global_shuffle(global_targets, ...)
-    SPManager->>SPManager: delete_synapse(snode_id, tnode_id, ...)
-
-    SPManager->>SPManager: delete_synapse(snode_id, ...)
-    SPManager->>Node: is_local_node_id(snode_id)
-    SPManager->>Node: get_node_or_proxy(snode_id)
-    Node->>Node: connect_synaptic_element(se_pre_name, -1)
-    SPManager->>ConnectionManager: disconnect(tid, syn_id, ...)
-    Node->>Node: connect_synaptic_element(se_post_name, -1)
-
-    SPManager->>SPManager: enable_structural_plasticity()
-    SPManager->>KernelManager: check thread count
-    SPManager->>ConnectionManager: check keep_source_table
-    SPManager->>ConnectionManager: check use_compressed_spikes
-    SPManager->>SPManager: structural_plasticity_enabled_ = true
 
 Functions
 ~~~~~~~~~

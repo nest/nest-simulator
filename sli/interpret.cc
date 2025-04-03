@@ -895,7 +895,8 @@ SLIInterpreter::message( std::ostream& out,
         // space available (as long as the word is shorter than the
         // total width of the printout).
         if ( i != 0 and text_str.at( i - 1 ) == ' '
-          and static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
+          and static_cast< int >( space ) - static_cast< int >( i )
+            > static_cast< int >( width ) - static_cast< int >( pos ) )
         {
           out << std::endl << std::string( indent, ' ' );
           pos = 0;

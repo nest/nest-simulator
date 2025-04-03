@@ -300,6 +300,20 @@ class NestModule(types.ModuleType):
         ),
         default=10000,
     )
+    structural_plasticity_gaussian_kernel_sigma = KernelAttribute(
+        "double",
+        (
+            "Defines the sensetivity of distance dependence in structural plasticity"
+        ),
+        default=-1,
+    )
+    structural_plasticity_cache_probabilities = KernelAttribute(
+        "bool",
+        (
+            "Controls caching of distance dependent probabiltiies in structural plasticity"
+        ),
+        default=False,
+    )
     growth_curves = KernelAttribute(
         "list[str]",
         "The list of the available structural plasticity growth curves",

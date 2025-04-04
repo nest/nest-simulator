@@ -904,7 +904,7 @@ SLIInterpreter::message( std::ostream& out,
 
         // Only print character if we're not at the end of the
         // line and the last character is a space.
-        if ( not( width - pos == 0 and text_str.at( i ) == ' ' ) )
+        if ( not( static_cast< int >( width ) - static_cast< int >( pos ) == 0 and text_str.at( i ) == ' ' ) )
         {
           // Print the actual character.
           out << text_str.at( i );

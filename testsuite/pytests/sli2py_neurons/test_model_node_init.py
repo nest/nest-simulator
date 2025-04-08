@@ -21,12 +21,12 @@
 
 
 """
-   Makeshift test to see if setting model params and then creating a neuron
-   and creating a neuron and then setting node params lead to the same
-   results.
+Makeshift test to see if setting model params and then creating a neuron
+and creating a neuron and then setting node params lead to the same
+results.
 
-   Works by connecting device to iaf_psc_alpha, measuring voltage trace over 1s
-   and comparing traces.
+Works by connecting device to iaf_psc_alpha, measuring voltage trace over 1s
+and comparing traces.
 """
 
 import nest

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# stimulus_params_EI.py
+# test_issue_281.py
 #
 # This file is part of NEST.
 #
@@ -19,20 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-PyNEST EI-clustered network: Stimulus Parameters
-------------------------------------------------
 
-A dictionary with parameters for an optinal stimulation of clusters.
-"""
+from mpi_test_wrapper import MPITestAssertCompletes
 
-stim_dict = {
-    # list of clusters to be stimulated (None: no stimulation, 0-n_clusters-1)
-    "stim_clusters": [2, 3, 4],
-    # stimulus amplitude (in pA)
-    "stim_amp": 0.15,
-    # stimulus start times in ms: list (warmup time is added automatically)
-    "stim_starts": [2000, 6000],
-    # list of stimulus end times in ms (warmup time is added automatically)
-    "stim_ends": [3500, 7500],
-}
+
+@MPITestAssertCompletes([1, 2, 4])
+def test_issue_281():
+    """
+    Confirm that ConnectLayers works MPI-parallel for fixed fan-out.
+    """
+
+    import nest
+    import pandas as pd
+
+    layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[3, 3]))
+    nest.Connect(
+        layer,
+        layer,
+        {"rule": "fixed_indegree", "indegree": 8, "allow_multapses": False, "allow_autapses": False},
+        # weights are randomized to check that global RNGs stay in sync
+        {"weight": nest.random.uniform(min=1, max=2)},
+    )
+
+    # Ensure by simulation that global RNGs are still in sync
+    nest.Simulate(10)

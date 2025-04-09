@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# stimulus_params_EI.py
+# stimulus_params.py
 #
 # This file is part of NEST.
 #

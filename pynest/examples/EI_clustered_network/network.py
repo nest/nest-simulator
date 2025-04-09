@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# network_EI.py
+# network.py
 #
 # This file is part of NEST.
 #

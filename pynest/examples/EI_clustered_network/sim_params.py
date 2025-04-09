@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# stimulus_params_EI.py
+# sim_params.py
 #
 # This file is part of NEST.
 #
@@ -19,20 +19,23 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-PyNEST EI-clustered network: Stimulus Parameters
-------------------------------------------------
+"""PyNEST EI-clustered network: Simulation Parameters
+-----------------------------------------------------
 
-A dictionary with parameters for an optinal stimulation of clusters.
+A dictionary with parameters defining the simulation.
+
 """
 
-stim_dict = {
-    # list of clusters to be stimulated (None: no stimulation, 0-n_clusters-1)
-    "stim_clusters": [2, 3, 4],
-    # stimulus amplitude (in pA)
-    "stim_amp": 0.15,
-    # stimulus start times in ms: list (warmup time is added automatically)
-    "stim_starts": [2000, 6000],
-    # list of stimulus end times in ms (warmup time is added automatically)
-    "stim_ends": [3500, 7500],
+sim_dict = {
+    # The full simulation time is the sum of a presimulation time and the main
+    # simulation time.
+    # presimulation time (in ms)
+    "warmup": 1000.0,
+    # simulation time (in ms)
+    "simtime": 10000.0,
+    # resolution of the simulation (in ms)
+    "dt": 0.1,
+    "randseed": 55,
+    # Number of virtual processes
+    "n_vp": 4,
 }

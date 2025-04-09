@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# run_simulation_EI.py
+# run_simulation.py
 #
 # This file is part of NEST.
 #

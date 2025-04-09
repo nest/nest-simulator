@@ -158,7 +158,7 @@ public:
   }
 
   void
-  roll( size_t n, long k )
+  roll( long n, long k )
   {
     if ( n < 2 or k == 0 )
     {
@@ -180,6 +180,7 @@ public:
   {
     return TokenArrayObj::capacity();
   }
+
   Index
   load() const
   {

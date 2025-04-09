@@ -96,10 +96,10 @@
 /* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
 
-/* Define to 1 if you have u_int46_t type. */
+/* Define to 1 if you have u_int64_t type. */
 #cmakedefine HAVE_U_INT64_T 1
 
-/* Define to 1 if you have uint46_t type. */
+/* Define to 1 if you have uint64_t type. */
 #cmakedefine HAVE_UINT64_T 1
 
 /* Define to 1 if you have the <mach/mach.h> header file. */

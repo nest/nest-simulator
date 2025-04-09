@@ -558,7 +558,7 @@ Scanner::operator()( Token& t )
     // so we cannot use unsigned char c as argument.  The
     // get() is not picky.  --- HEP 2001-08-09
     //     in->get(c);
-    c = in->get();
+    c = static_cast< unsigned char >( in->get() );
     if ( col++ == 0 )
     {
       ++line;

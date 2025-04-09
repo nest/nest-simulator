@@ -51,7 +51,6 @@ class TestSTDPSynapse:
     """
 
     def init_params(self):
-        self.resolution = RESOLUTION  # [ms]
         self.simulation_duration = 1000  # [ms]
         self.synapse_model = "stdp_synapse"
         self.presynaptic_firing_rate = 100.0  # [ms^-1]
@@ -71,9 +70,7 @@ class TestSTDPSynapse:
             "Wmax": 15.0,
             "weight": self.init_weight,
         }
-        self.neuron_parameters = {
-            "tau_minus": self.tau_post,
-        }
+        self.neuron_parameters = {"tau_minus": self.tau_post}
 
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred.
@@ -154,7 +151,7 @@ class TestSTDPSynapse:
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
-                "resolution": self.resolution,
+                "resolution": RESOLUTION,
                 "min_delay": min(self.min_delay, self.dendritic_delay),
                 "max_delay": max(self.max_delay, self.dendritic_delay),
             }
@@ -399,7 +396,7 @@ class TestSTDPSynapse:
             _ax.set_xlim(0.0, self.simulation_duration)
 
         fig.suptitle(title_snip)
-        fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
+        fig.savefig("./tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
         plt.close(fig)
 
     @pytest.mark.parametrize("dend_delay", [RESOLUTION, 1.0])
@@ -409,12 +406,11 @@ class TestSTDPSynapse:
     @pytest.mark.parametrize("t_ref", (RESOLUTION, 0.5, 1.0, 1.1, 2.5))
     def test_stdp_synapse(self, dend_delay, model, min_delay, max_delay, t_ref):
         self.init_params()
-        self.dendritic_delay = dend_delay
+        self.synapse_parameters["delay"] = self.dendritic_delay = dend_delay
         self.nest_neuron_model = model
-        self.min_delay = min(min_delay, max_delay)
-        self.max_delay = max(min_delay, max_delay)
+        self.min_delay = min(min_delay, max_delay, self.dendritic_delay)
+        self.max_delay = max(min_delay, max_delay, self.dendritic_delay)
         self.neuron_parameters["t_ref"] = t_ref
-        self.synapse_parameters["delay"] = self.dendritic_delay
 
         fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
         fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"

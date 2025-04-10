@@ -1,5 +1,7 @@
-Managers
-========
+.. _managers_dev:
+
+Managers in NEST
+================
 
 At the heart of NEST are various
 managers, each responsible for specific aspects of the simulation process.

@@ -209,33 +209,6 @@ htmlhelp_basename = "NESTsimulatordoc"
 html_show_sphinx = False
 html_show_copyright = False
 
-# This way works for ReadTheDocs
-# With this local 'make html' is broken!
-# def cpp_customizer(app, docname, source):
-#    if docname == "exhale-toc":
-#        cpp_class = json.load(open("cpp_output.json"))
-#        html_context = {"cpp_class_list": cpp_class}
-#        cpp_source = source[0]
-#        rendered = app.builder.templates.render_string(cpp_source, html_context)
-#        source[0] = rendered
-
-
-# def tags_devdocs(app, docname, source):
-#    developer_pages = ["developer_space/managers/dev_managers"]
-#
-#    if any(docname == developer_page for developer_page in developer_pages):
-#        cpp_class = json.load(open("cpp_output.json"))
-#        html_context = {"cpp_class_list": cpp_class}
-#        special_source = source[0]
-#        rendered = app.builder.templates.render_string(special_source, html_context)
-#        source[0] = rendered
-
-
-# def setup(app):
-#    app.connect("source-read", cpp_customizer)
-# app.connect("source-read", tags_devdocs)
-
-# for events see
 # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
 
 

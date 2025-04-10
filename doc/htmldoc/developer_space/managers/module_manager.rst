@@ -1,7 +1,7 @@
 .. _module_manager:
 
 Module Manager
-=============
+==============
 
 The ModuleManager is responsible for managing dynamic modules. Its primary functions include initializing and finalizing
 modules, loading and unloading them dynamically, and handling their status. The class ensures that modules can be

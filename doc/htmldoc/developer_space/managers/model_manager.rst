@@ -4,8 +4,7 @@ Model Manager
 =============
 
 
-The provided C++ code defines a ModelManager class within the nest namespace, which is part of a larger simulation
-framework. The ModelManager is responsible for managing node and connection models,
+The ModelManager is responsible for managing node and connection models,
 including their registration, copying, and configuration. It handles the initialization
 and finalization of models, sets default parameters, and manages memory for node models.
 The class also provides functionality for calibrating models and retrieving their status.

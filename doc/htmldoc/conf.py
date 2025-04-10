@@ -41,7 +41,7 @@ sys.path.append(pynest_dir)
 read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
 
 if read_the_docs_build:
-    subprocess.call("cd ../doxygen; doxygen", shell=True)
+    subprocess.call("doxygen Doxyfile", shell=True)
 
 source_suffix = ".rst"
 master_doc = "index"
@@ -79,51 +79,6 @@ breathe_default_project = "NEST Simulator"
 breathe_domain_by_extension = {
     "h": "cpp",
 }
-
-# Setup the exhale extension
-# exhale_args = {
-##    # These arguments are required
-#    "containmentFolder":     "./api",
-#    "rootFileName":          "library_root.rst",
-#    "doxygenStripFromPath":  "..",
-##    # Heavily encouraged optional argument (see docs)
-#    "rootFileTitle":         "Library API",
-##    # Suggested optional arguments
-#    "createTreeView":        True,
-##    # TIP: if using the sphinx-bootstrap-theme, you need
-#    "treeViewIsBootstrap": False,
-#    "exhaleExecutesDoxygen": True,
-##    #"exhaleUseDoxyfile": True,
-#    "exhaleDoxygenStdin":
-#        """
-#        INPUT = /home/mitchell/Work/repo/nest-simulator/nest \
-#    		/home/mitchell/Work/repo/nest-simulator/nestkernel
-#
-#        # So that only Doxygen does not trim paths, which affects the File hierarchy
-#        FULL_PATH_NAMES        = YES
-#        # Nested folders will be ignored without this.  You may not need it.
-##        RECURSIVE              = YES
-#        # Set to YES if you are debugging or want to compare.
-#        GENERATE_HTML          = NO
-#        # Unless you want it...
-#        GENERATE_LATEX         = NO
-#        # Both breathe and exhale need the xml.
-#        GENERATE_XML           = YES
-##        # Set to NO if you do not want the Doxygen program listing included.
-#        XML_PROGRAMLISTING     = NO
-##        # Allow for rst directives and advanced functions e.g. grid tables
-##        #ALIASES                = 'rst=\verbatim embed:rst:leading-asterisk'
-##        #ALIASES               += 'endrst=\endverbatim'
-##        # Enable preprocessing and related preprocessor necessities
-#        ENABLE_PREPROCESSING   = YES
-#        MACRO_EXPANSION        = YES
-#        EXPAND_ONLY_PREDEF     = NO
-#        SKIP_FUNCTION_MACROS   = YES
-##        # extra defs for to help with building the _right_ version of the docs
-#        FILE_PATTERNS         = *.cpp \
-#                                *.h
-#        """
-#           }
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]

@@ -3,49 +3,62 @@
 SP Manager
 ==========
 
-The SPManager in NEST manages structural plasticity by dynamically creating and deleting synapses during simulations
-Here's a summary of what the code does:
+The SPManager in NEST manages structural plasticity by dynamically creating and deleting synapses during simulations.
+
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item::
+      :columns: 7
+
+
+   .. grid-item::
+      :columns: 5
+
+Overview of steps
+-----------------
 
 Initialization and Finalization:
-    The SPManager constructor initializes the structural plasticity update interval and other parameters.
-    The initialize and finalize methods manage the setup and cleanup of synapse builders and growth curve factories.
+
+   The SPManager constructor initializes the structural plasticity update interval and other parameters.
+   The initialize and finalize methods manage the setup and cleanup of synapse builders and growth curve factories.
 
 Status Management:
-    The ``get_status`` method retrieves the current status of structural plasticity and synapse configurations.
-    The ``set_status`` method updates the structural plasticity parameters and synapse configurations based on a dictionary of settings.
+
+   * :cpp:func:`get_status <nest::SPManager::get_status>`: retrieves the current status of structural plasticity and synapse configurations.
+   * :cpp:func:`set_status <nest::SPManager::set_status>`: updates the structural plasticity parameters and synapse
+     configurations based on a dictionary of settings.
 
 Delay Management:
-    The ``builder_min_delay`` and ``builder_max_delay`` methods return the minimum and maximum delays for synapse builders, respectively.
+
+   * The :cpp:func:`builder_min_delay <nest::SPManager::builder_min_delay>` and :cpp:func:`builder_max_delay <nest::SPManager::builder_max_delay>`:
+     return the minimum and maximum delays for synapse builders, respectively.
 
 Disconnection:
-    The disconnect method handles the disconnection of synapses between nodes, considering both local and global connections.
+
+   * :cpp:func:`disconnect <nest::SPManager::disconnect>`: handles the disconnection of synapses between nodes, considering both local and global
+     connections. This is essential for removing specific synapses based on given rules, which can be part of the
+     structural plasticity process or other simulation dynamics.
 
 Structural Plasticity Updates:
-    The ``update_structural_plasticity`` method updates the structural plasticity by creating and deleting synapses based on the current state of the network.
-    The ``create_synapses`` and ``delete_synapses_from_pre``/``delete_synapses_from_post`` methods handle the actual creation and deletion of synapses.
+
+    * :cpp:func:`update_structural_plasticity <nest::SPManager::update_structural_plasticity>`:
+      Iterates over all SPBuilder instances and calls update_structural_plasticity on each.
+      Manages the creation and deletion of synapses based on the current state of the network.     updates the structural plasticity by creating and deleting synapses based on the current state of the network.
+    * :cpp:func:`create_synapses <nest::SPManager::create_synapses>`:
+      Creates synapses between pre-synaptic and post-synaptic elements.
+      Uses helper functions like serialize_id and global_shuffle to manage the distribution of synapses.
+    * :cpp:func:`delete_synapses_from_pre <nest::SPManager::delete_synapses_from_pre>` and :cpp:func:`delete_synapses_from_post <nest::SPManager::delete_synapses_from_post>`:
+      Deletes synapses due to the loss of pre-synaptic or post-synaptic elements.
+      Communicates the changes to other nodes in a distributed environment.
+    * :cpp:func:`enable_structural_plasticity <nest::SPManager::enable_structural_plasticity>` and :cpp:func:`disable_structural_plasticity <nest::SPManager::disable_structural_plasticity>`:
+      Enable or disable structural plasticity, with checks to ensure it's compatible with the current simulation settings.
 
 
-Key functions and their Purposes:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    :cpp:func:`set_status <nest::SPManager::set_status>`:
-        Updates the structural plasticity update interval.
-        Processes synapse specifications to create and validate SPBuilder instances.
-        Ensures that necessary delay parameters are set if non-default delays are used.
-    :cpp:func:`update_structural_plasticity <nest::SPManager::update_structural_plasticity>`:
-        Iterates over all SPBuilder instances and calls update_structural_plasticity on each.
-        Manages the creation and deletion of synapses based on the current state of the network.
-    :cpp:func:`create_synapses <nest::SPManager::create_synapses>`:
-        Creates synapses between pre-synaptic and post-synaptic elements.
-        Uses helper functions like serialize_id and global_shuffle to manage the distribution of synapses.
-    :cpp:func:`delete_synapses_from_pre <nest::SPManager::delete_synapses_from_pre>` and :cpp:func:`delete_synapses_from_post <nest::SPManager::delete_synapses_from_post>`:
-        Deletes synapses due to the loss of pre-synaptic or post-synaptic elements.
-        Communicates the changes to other nodes in a distributed environment.
-    :cpp:func:`enable_structural_plasticity <nest::SPManager::enable_structural_plasticity>` and :cpp:func:`disable_structural_plasticity <nest::SPManager::disable_structural_plasticity>`:
-        Enable or disable structural plasticity, with checks to ensure it's compatible with the current simulation settings.
 
 Relationships with other managers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 .. list-table::
    :header-rows: 1
@@ -69,8 +82,71 @@ Relationships with other managers
      - Provides randomness for distributing new synapses
      - Random shuffling during ``create_synapses()``
 
-Detailed Operation Sequence
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Class Diagram
+~~~~~~~~~~~~~
+
+
+.. mermaid::
+
+   classDiagram
+    class SPManager {
+        +growthcurvedict: DictionaryDatum
+        +sp_conn_builders: SPBuilder[]
+        +growthcurve_factories: GrowthCurveFactory[]
+    }
+
+    class SPBuilder {
+        +synapse_model: string
+        +pre_element: string
+        +post_element: string
+    }
+
+    class ConnectionManager {
+        +disconnect(...)
+        +get_user_set_delay_extrema()
+    }
+
+    class Node {
+        +synaptic_elements: DictionaryDatum
+    }
+
+    class KernelManager {
+        +vp_manager: VPManager
+        +node_manager: NodeManager
+    }
+
+    class GrowthCurveFactory {
+        +create(): GrowthCurve
+    }
+
+    class GrowthCurve {
+        +compute_growth(...)
+    }
+
+    class DictionaryDatum {
+        +parameters: map<string, any>
+    }
+
+    class MPIManager {
+        +communicate(...)
+    }
+
+    SPManager "1" --> "N" SPBuilder: manages
+    SPManager "1" --> "1" ConnectionManager: uses
+    SPManager "1" --> "1" KernelManager: depends on
+    SPManager "1" --> "N" GrowthCurveFactory: configures
+    SPManager "1" --> "1" DictionaryDatum: configures
+    SPManager "1" --> "1" MPIManager: communicates via
+
+    SPBuilder --> "1" GrowthCurve: uses
+    SPBuilder --> "1" Node: connects to
+
+    KernelManager --> "1" VPManager: manages
+    KernelManager --> "1" NodeManager: manages
+
+
+Detailed operation sequence
+---------------------------
 
 Here's a breakdown of the operations, especially focusing on the ``update_structural_plasticity`` and related methods,
 which are central to the structural plasticity mechanism:
@@ -157,94 +233,9 @@ which are central to the structural plasticity mechanism:
 
   * This function disconnects existing synapses based on a given rule.
 
-Class Diagram
-~~~~~~~~~~~~~
-
-.. mermaid::
-
-   classDiagram
-    class ManagerInterface
-
-    class SPManager {
-        +SPManager()
-        +~SPManager()
-        +initialize(adjust_number_of_threads_or_rng_only: bool): void
-        +finalize(adjust_number_of_threads_or_rng_only: bool): void
-        +serialize_id(id: vector<size_t>&, n: vector<int>&, res: vector<size_t>&): void
-        +global_shuffle(v: vector<size_t>&): void
-        +global_shuffle(v: vector<size_t>&, n: size_t): void
-        +new_growth_curve(name: Name): GrowthCurve*
-        +is_structural_plasticity_enabled(): bool
-        -structural_plasticity_update_interval_: double
-        -structural_plasticity_enabled_: bool
-        -sp_conn_builders_: vector<SPBuilder*>
-        -growthcurve_factories_: vector<GenericGrowthCurveFactory*>
-        -growthcurvedict_: DictionaryDatum
-    }
-
-    SPManager --|> ManagerInterface: extends
-
-.. mermaid::
-
-   classDiagram
-    class SPManager {
-        +growthcurvedict: DictionaryDatum
-        +sp_conn_builders: SPBuilder[]
-        +growthcurve_factories: GrowthCurveFactory[]
-    }
-
-    class SPBuilder {
-        +synapse_model: string
-        +pre_element: string
-        +post_element: string
-    }
-
-    class ConnectionManager {
-        +disconnect(...)
-        +get_user_set_delay_extrema()
-    }
-
-    class Node {
-        +synaptic_elements: DictionaryDatum
-    }
-
-    class KernelManager {
-        +vp_manager: VPManager
-        +node_manager: NodeManager
-    }
-
-    class GrowthCurveFactory {
-        +create(): GrowthCurve
-    }
-
-    class GrowthCurve {
-        +compute_growth(...)
-    }
-
-    class DictionaryDatum {
-        +parameters: map<string, any>
-    }
-
-    class MPIManager {
-        +communicate(...)
-    }
-
-    SPManager "1" --> "N" SPBuilder: manages
-    SPManager "1" --> "1" ConnectionManager: uses
-    SPManager "1" --> "1" KernelManager: depends on
-    SPManager "1" --> "N" GrowthCurveFactory: configures
-    SPManager "1" --> "1" DictionaryDatum: configures
-    SPManager "1" --> "1" MPIManager: communicates via
-
-    SPBuilder --> "1" GrowthCurve: uses
-    SPBuilder --> "1" Node: connects to
-
-    KernelManager --> "1" VPManager: manages
-    KernelManager --> "1" NodeManager: manages
-
 
 Functions
-~~~~~~~~~
+---------
 
 .. doxygenclass:: nest::SPManager
    :members:

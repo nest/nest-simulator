@@ -123,4 +123,4 @@ Developer guides
    templates/*
    sli_docs/index
    cppcomments
-   managers/*
+   managers/index

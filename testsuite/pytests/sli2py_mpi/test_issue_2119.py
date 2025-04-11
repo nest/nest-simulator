@@ -32,6 +32,7 @@ random_params = [
 ]
 
 
+@pytest.mark.skipif_incompatible_mpi
 @pytest.mark.parametrize(["kind", "specs"], random_params)
 @MPITestAssertEqual([1, 2, 4])
 def test_issue_2119(kind, specs):

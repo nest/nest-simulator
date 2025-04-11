@@ -19,13 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
-import pandas
 import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
 # Parametrization over the number of nodes here only to show hat it works
+@pytest.mark.skipif_incompatible_mpi
 @MPITestAssertEqual([1, 2, 4], debug=False)
 def test_self_get_conns_with_empty_ranks():
     """

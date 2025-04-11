@@ -26,6 +26,7 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 
 # Parametrization over the number of nodes here only to show hat it works
+@pytest.mark.skipif_incompatible_mpi
 @pytest.mark.parametrize("N", [4, 7])
 @MPITestAssertEqual([1, 4], debug=False)
 def test_all_to_all(N):

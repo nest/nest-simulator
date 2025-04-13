@@ -28,6 +28,8 @@ from mpi_test_wrapper import MPITestAssertEqual
 def test_issue_1957():
     """
     Confirm that GetConnections works in parallel without hanging if not all ranks have connections.
+
+    The test is performed on connection data written to OTHER_LABEL.
     """
 
     import nest

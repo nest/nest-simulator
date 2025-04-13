@@ -38,6 +38,8 @@ random_params = [
 def test_issue_2119(kind, specs):
     """
     Confirm that randomized node parameters work correctly under MPI and OpenMP.
+
+    The test is performed on GID-V_m data written to OTHER_LABEL.
     """
 
     import nest

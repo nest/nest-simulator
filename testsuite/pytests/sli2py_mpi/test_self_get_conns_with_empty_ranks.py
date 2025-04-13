@@ -26,9 +26,11 @@ from mpi_test_wrapper import MPITestAssertEqual
 # Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
 @MPITestAssertEqual([1, 2, 4], debug=False)
-def test_self_get_conns_with_empty_ranks():
+def test_get_conns_with_empty_ranks():
     """
-    Selftest: Confirm that connections can be gathered correctly even if some ranks have no neurons.
+    Confirm that connections can be gathered correctly even if some ranks have no neurons.
+
+    The test compares connection data written to OTHER_LABEL.
     """
 
     import nest

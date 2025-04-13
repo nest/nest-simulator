@@ -32,14 +32,11 @@ def test_gap_junctions_mpi():
 
     This is an overall test of the hh_psc_alpha_gap model connected by gap_junction.
     The test checks if the gap junction functionality works in parallel.
+
+    The test is performed on the spike data recorded to SPIKE_LABEL during the simulation.
     """
 
     import nest
-    import pandas as pd
-
-    # We can only test here if GSL is available
-    if not nest.ll_api.sli_func("statusdict/have_gsl ::"):
-        return
 
     total_vps = 4
     h = 0.1

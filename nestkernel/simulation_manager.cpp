@@ -483,9 +483,10 @@ nest::SimulationManager::get_status( dictionary& d )
   sw_deliver_spike_data_.get_status( d, names::time_deliver_spike_data, names::time_deliver_spike_data_cpu );
   sw_deliver_secondary_data_.get_status(
     d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
-  def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
-  def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
-  def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
+
+  d[ names::eprop_update_interval ] = eprop_update_interval_;
+  d[ names::eprop_learning_window ] = eprop_learning_window_;
+  d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
 }
 
 void

@@ -52,26 +52,26 @@ EpropSynapseCommonProperties::~EpropSynapseCommonProperties()
 }
 
 void
-EpropSynapseCommonProperties::get_status( DictionaryDatum& d ) const
+EpropSynapseCommonProperties::get_status( dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
-  DictionaryDatum optimizer_dict = new Dictionary;
+  d[ names::optimizer ] = optimizer_cp_->get_name();
+  dictionary optimizer_dict;
   optimizer_cp_->get_status( optimizer_dict );
-  ( *d )[ names::optimizer ] = optimizer_dict;
+  d[ names::optimizer ] = optimizer_dict;
 }
 
 void
-EpropSynapseCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+EpropSynapseCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  if ( d->known( names::optimizer ) )
+  if ( d.known( names::optimizer ) )
   {
-    DictionaryDatum optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
+    dictionary optimizer_dict = d.get< dictionary >( names::optimizer );
 
     std::string new_optimizer;
-    const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
+    const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
       if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )

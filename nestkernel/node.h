@@ -40,7 +40,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
-#include "weight_optimizer.h"
 
 
 /** @file node.h
@@ -52,7 +51,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class WeightOptimizer;
 
 /**
  * @defgroup user_interface Model developer interface.

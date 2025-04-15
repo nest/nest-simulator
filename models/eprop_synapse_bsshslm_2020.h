@@ -598,39 +598,37 @@ void
 eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d.known( names::optimizer ) )
+  if ( d.known( names::optimizer ) and optimizer_ )
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
-    if ( optimizer_ )
-    {
-      optimizer_->set_status( d.get< dictionary >( names::optimizer ) );
-    }
-
-    d.update_value( names::weight, weight_ );
-
-    if ( d.update_value( names::tau_m_readout, tau_m_readout_ ) )
-    {
-      if ( tau_m_readout_ <= 0 )
-      {
-        throw BadProperty( "Membrane time constant of readout neuron tau_m_readout > 0 required." );
-      }
-      kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
-    }
-
-    const auto& gcm =
-      dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
-    const CommonPropertiesType& epcp = gcm.get_common_properties();
-    if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
-    {
-      throw BadProperty( "Minimal weight Wmin ≤ weight required." );
-    }
-
-    if ( weight_ > epcp.optimizer_cp_->get_Wmax() )
-    {
-      throw BadProperty( "weight ≤ maximal weight Wmax required." );
-    }
+    optimizer_->set_status( d.get< dictionary >( names::optimizer ) );
   }
+
+  d.update_value( names::weight, weight_ );
+
+  if ( d.update_value( names::tau_m_readout, tau_m_readout_ ) )
+  {
+    if ( tau_m_readout_ <= 0 )
+    {
+      throw BadProperty( "Membrane time constant of readout neuron tau_m_readout > 0 required." );
+    }
+    kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
+  }
+
+  const auto& gcm =
+    dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
+  const CommonPropertiesType& epcp = gcm.get_common_properties();
+  if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
+  {
+    throw BadProperty( "Minimal weight Wmin ≤ weight required." );
+  }
+
+  if ( weight_ > epcp.optimizer_cp_->get_Wmax() )
+  {
+    throw BadProperty( "weight ≤ maximal weight Wmax required." );
+  }
+}
 
 } // namespace nest
 

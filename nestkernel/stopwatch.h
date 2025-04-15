@@ -27,14 +27,14 @@
 #include <sys/time.h>
 
 // C++ includes:
-#include "arraydatum.h"
-#include "dictdatum.h"
-#include "dictutils.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <iostream>
 #include <vector>
+
+// Includes from libnestutil:
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -370,10 +370,10 @@ public:
   }
 
   void
-  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
+  get_status( dictionary& d, const std::string& walltime_name, const std::string& cputime_name ) const
   {
-    def< double >( d, walltime_name, walltime_timer_.elapsed() );
-    def< double >( d, cputime_name, cputime_timer_.elapsed() );
+    d[ walltime_name ] = walltime_timer_.elapsed();
+    d[ cputime_name ] = cputime_timer_.elapsed();
   }
 
 private:
@@ -422,7 +422,7 @@ public:
   {
   }
   void
-  get_status( DictionaryDatum&, const Name&, const Name& ) const
+  get_status( dictionary&, const std::string&, const std::string& ) const
   {
   }
 
@@ -464,7 +464,7 @@ public:
   {
   }
   void
-  get_status( DictionaryDatum&, const Name&, const Name& ) const
+  get_status( dictionary&, const std::string&, const std::string& ) const
   {
   }
 
@@ -499,21 +499,28 @@ public:
     std::ostream& os = std::cout ) const;
 
   void
-  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
+  get_status( dictionary& d, const std::string& walltime_name, const std::string& cputime_name ) const
   {
-    std::vector< double > wall_times( walltime_timers_.size() );
+    /*
+    auto init_doublevector = [ &d ]( const std::string& key, const size_t num_timers ) -> std::vector< double >&
+    {
+      assert( not d.known( key ) );
+      d[ key ] = std::vector< double >( num_timers );
+      return boost::any_cast< std::vector< double >& >( d[ key ] );
+    };
+
+    auto& wall_times = init_doublevector( walltime_name, walltime_timers_.size() );
     std::transform( walltime_timers_.begin(),
       walltime_timers_.end(),
       wall_times.begin(),
       []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
-    def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
 
-    std::vector< double > cpu_times( cputime_timers_.size() );
+    auto& cpu_times = init_doublevector( cputime_name, cputime_timers_.size() );
     std::transform( cputime_timers_.begin(),
       cputime_timers_.end(),
       cpu_times.begin(),
       []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
-    def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
+     */
   }
 
 private:

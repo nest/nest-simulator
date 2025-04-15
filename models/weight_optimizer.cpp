@@ -72,9 +72,9 @@ WeightOptimizerCommonProperties::set_status( const dictionary& d )
   }
   batch_size_ = new_batch_size;
 
-  double new_eta = eta_;
-  d.update_value( names::eta, new_eta );
-  if ( new_eta < 0 )
+  double eta_new = eta_;
+  d.update_value( names::eta, eta_new );
+  if ( eta_new < 0 )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
   }
@@ -100,7 +100,7 @@ WeightOptimizerCommonProperties::set_status( const dictionary& d )
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
 
-  updateValue< bool >( d, names::optimize_each_step, optimize_each_step_ );
+  d.update_value( names::optimize_each_step, optimize_each_step_ );
 }
 
 WeightOptimizer::WeightOptimizer()

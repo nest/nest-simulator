@@ -261,7 +261,7 @@ RollFunction::execute( SLIInterpreter* i ) const
     throw ArgumentType( 0 );
   }
 
-  long& n = idn->get();
+  const long n = idn->get();
   if ( n < 0 )
   {
     i->raiseerror( i->RangeCheckError );
@@ -273,10 +273,12 @@ RollFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
+  const long k = idk->get();
+
   i->EStack.pop();
   i->OStack.pop( 2 );
 
-  i->OStack.roll( n, idk->get() );
+  i->OStack.roll( n, k );
 }
 
 /** @BeginDocumentation

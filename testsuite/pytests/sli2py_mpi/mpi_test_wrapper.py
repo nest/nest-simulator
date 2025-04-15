@@ -29,6 +29,9 @@ be fixed while the number of MPI processes is varied, but this is not required.
 
 - The process is managed by subclasses of the `MPITestWrapper` base class
 - Each test file must contain **exactly one** test function
+    - The test function must be protected with the `@pytest.mark.skipif_incompatible_mpi`
+      marker to protect against buggy OpenMPI versions (at least up to 4.1.6; 5.0.7 and
+      later are definitely good).
     - The test function must be decorated with a subclass of `MPITestWrapper`
     - The wrapper will write a modified version of the test file as `runner.py`
       to a temporary directory and mpirun it from there; results are collected
@@ -36,7 +39,10 @@ be fixed while the number of MPI processes is varied, but this is not required.
     - The test function can be decorated with other pytest decorators. These
       are evaluated in the wrapping process
     - No decorators are written to the `runner.py` file.
-    - Test files **must not import nest** outside the test function
+    - Test files must import all required modules (especially `nest`) inside the
+      test function.
+    - The docstring for the test function shall in its last line specify what data
+      the test function outputs for comparison by the test.
     - In `runner.py`, the following constants are defined:
          - `SPIKE_LABEL`
          - `MULTI_LABEL`
@@ -44,14 +50,12 @@ be fixed while the number of MPI processes is varied, but this is not required.
       They must be used as `label` for spike recorders and multimeters, respectively,
       or for other files for output data (CSV files). They are format strings expecting
       the number of processes with which NEST is run as argument.
-- `conftest.py` must not be loaded, otherwise mpirun will return a non-zero exit code;
-  use `pytest --noconftest`
 - Set `debug=True` on the decorator to see debug output and keep the
   temporary directory that has been created (latter works only in
   Python 3.12 and later)
 - Evaluation criteria are determined by the `MPITestWrapper` subclass
 
-This is still work in progress.
+
 """
 
 import ast

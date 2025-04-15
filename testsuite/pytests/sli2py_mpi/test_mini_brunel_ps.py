@@ -19,19 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
+@pytest.mark.skipif_incompatible_mpi
 @MPITestAssertEqual([1, 2, 4])
 def test_mini_brunel_ps():
     """
     Confirm that downscaled Brunel net with precise neurons is invariant under number of MPI ranks.
+
+    The test compares data written by spike_recorder to SPIKE_LABEL.
     """
 
     import nest
-
-    nest.ResetKernel()
 
     nest.set(total_num_virtual_procs=4, overwrite_files=True)
 

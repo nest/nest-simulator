@@ -555,8 +555,8 @@ eprop_readout::get_status( dictionary& d ) const
   d[ names::recordables ] = recordablesMap_.get_list();
 
   dictionary receptor_dict;
-  receptor_dict[ names::eprop_learning_window ] = LEARNING_WINDOW_SIG;
-  receptor_dict[ names::target_signal ] = TARGET_SIG;
+  receptor_dict[ names::eprop_learning_window ] = static_cast< long >( LEARNING_WINDOW_SIG );
+  receptor_dict[ names::target_signal ] = static_cast< long >( TARGET_SIG );
 
   d[ names::receptor_types ] = receptor_dict;
 }

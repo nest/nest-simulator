@@ -820,7 +820,7 @@ def test_unsupported_surrogate_gradient(source_model):
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
     }
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults(source_model, params_nrn_rec)
 
 
@@ -871,7 +871,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
         "record_from": ["eprop_history_duration"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
 
     # Create connections
 
@@ -905,7 +905,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
 
     params_gen_spk_in = [{"spike_times": spike_times} for spike_times in input_spike_times]
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+    gen_spk_in.set(params_gen_spk_in)
 
     # Simulate
 

@@ -208,7 +208,7 @@ class TestAeifCondBetaMultisynapse:
 
         nest.Simulate(10.0)
 
-        stime = sr.events["times"][0] - 1  # minus one because of 1-based indexing
+        stime = sr.events["times"] - 1  # minus one because of 1-based indexing
 
         # test that V_m == V_reset at spike time
         np.testing.assert_almost_equal(vm.events["V_m"][stime], V_reset)
@@ -259,7 +259,7 @@ class TestAeifCondBetaMultisynapse:
 
         nest.Simulate(50.0)
 
-        stime = sr.events["times"][0] - 1  # minus one because of 1-based indexing
+        stime = sr.events["times"] - 1  # minus one because of 1-based indexing
 
         # time, voltage, w at spike
         w0 = vm.events["w"][stime]

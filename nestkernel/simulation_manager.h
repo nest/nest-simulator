@@ -226,17 +226,15 @@ private:
   double max_update_time_;         //!< longest update time seen so far (seconds)
 
   // private stop watches for benchmarking purposes
-  Stopwatch sw_simulate_;
-  Stopwatch sw_communicate_prepare_;
-#ifdef TIMER_DETAILED
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_simulate_;
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::Threaded > sw_communicate_prepare_;
   // intended for internal core developers, not for use in the public API
-  Stopwatch sw_gather_spike_data_;
-  Stopwatch sw_gather_secondary_data_;
-  Stopwatch sw_update_;
-  Stopwatch sw_gather_target_data_;
-  Stopwatch sw_deliver_spike_data_;
-  Stopwatch sw_deliver_secondary_data_;
-#endif
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_gather_spike_data_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_gather_secondary_data_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_update_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_gather_target_data_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_spike_data_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_secondary_data_;
 
   double eprop_update_interval_;
   double eprop_learning_window_;

@@ -50,12 +50,15 @@
 #include "connector_model.h"
 #include "delay_checker.h"
 #include "eprop_archiving_node.h"
+#include "eprop_archiving_node_readout.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
 #include "sonata_connector.h"
+#include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
@@ -221,7 +224,7 @@ nest::ConnectionManager::get_status( dictionary& dict )
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
 
-  dict[ names::time_construction_connect ] = sw_construction_connect.elapsed();
+  sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
   std::vector< std::string > connection_rules;
   for ( auto const& element : connruledict_ )
@@ -875,8 +878,10 @@ nest::ConnectionManager::connect_( Node& source,
 
   const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
   if ( eprop_archiving
-    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
-      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+    and not( dynamic_cast< EpropArchivingNodeRecurrent< false >* >( &target )
+      or dynamic_cast< EpropArchivingNodeRecurrent< true >* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout< false >* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout< true >* >( &target ) ) )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
@@ -1756,7 +1761,9 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
     } // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );

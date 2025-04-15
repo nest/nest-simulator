@@ -31,16 +31,22 @@ namespace nest
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
   : batch_size_( 1 )
   , eta_( 1e-4 )
+  , eta_first_change_( 1e-4 )
+  , eta_change_count_( 0 )
   , Wmin_( -100.0 )
   , Wmax_( 100.0 )
+  , optimize_each_step_( true )
 {
 }
 
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOptimizerCommonProperties& cp )
   : batch_size_( cp.batch_size_ )
   , eta_( cp.eta_ )
+  , eta_first_change_( cp.eta_first_change_ )
+  , eta_change_count_( cp.eta_change_count_ )
   , Wmin_( cp.Wmin_ )
   , Wmax_( cp.Wmax_ )
+  , optimize_each_step_( cp.optimize_each_step_ )
 {
 }
 
@@ -52,6 +58,7 @@ WeightOptimizerCommonProperties::get_status( dictionary& d ) const
   d[ names::eta ] = eta_;
   d[ names::Wmin ] = Wmin_;
   d[ names::Wmax ] = Wmax_;
+  d[ names::optimize_each_step ] = optimize_each_step_;
 }
 
 void
@@ -71,7 +78,16 @@ WeightOptimizerCommonProperties::set_status( const dictionary& d )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
   }
-  eta_ = new_eta;
+
+  if ( eta_new != eta_ )
+  {
+    if ( eta_change_count_ == 0 )
+    {
+      eta_first_change_ = eta_new;
+    }
+    eta_change_count_ += 1;
+    eta_ = eta_new;
+  }
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;
@@ -83,11 +99,15 @@ WeightOptimizerCommonProperties::set_status( const dictionary& d )
   }
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
+
+  updateValue< bool >( d, names::optimize_each_step, optimize_each_step_ );
 }
 
 WeightOptimizer::WeightOptimizer()
   : sum_gradients_( 0.0 )
   , optimization_step_( 1 )
+  , eta_current_( 1e-4 )
+  , n_optimize_( 0 )
 {
 }
 
@@ -107,13 +127,24 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const double gradient,
   double weight )
 {
+  if ( cp.eta_change_count_ != 0 and n_optimize_ == 0 )
+  {
+    eta_current_ = cp.eta_first_change_;
+  }
   sum_gradients_ += gradient;
+
+  if ( optimization_step_ == 0 )
+  {
+    optimization_step_ = idx_current_update;
+  }
 
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )
   {
     sum_gradients_ /= cp.batch_size_;
     weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
+    eta_current_ = cp.eta_;
+    n_optimize_ += 1;
     optimization_step_ = current_optimization_step;
   }
   return weight;
@@ -139,8 +170,8 @@ WeightOptimizerGradientDescent::WeightOptimizerGradientDescent()
 double
 WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
-  weight -= cp.eta_ * sum_gradients_;
-  sum_gradients_ = 0;
+  weight -= eta_current_ * sum_gradients_;
+  sum_gradients_ = 0.0;
   return weight;
 }
 
@@ -148,7 +179,7 @@ WeightOptimizerCommonPropertiesAdam::WeightOptimizerCommonPropertiesAdam()
   : WeightOptimizerCommonProperties()
   , beta_1_( 0.9 )
   , beta_2_( 0.999 )
-  , epsilon_( 1e-8 )
+  , epsilon_( 1e-7 )
 {
 }
 
@@ -204,6 +235,8 @@ WeightOptimizerAdam::WeightOptimizerAdam()
   : WeightOptimizer()
   , m_( 0.0 )
   , v_( 0.0 )
+  , beta_1_power_( 1.0 )
+  , beta_2_power_( 1.0 )
 {
 }
 
@@ -233,10 +266,10 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
-    const double beta_1_factor = 1.0 - std::pow( acp.beta_1_, optimization_step_ );
-    const double beta_2_factor = 1.0 - std::pow( acp.beta_2_, optimization_step_ );
+    beta_1_power_ *= acp.beta_1_;
+    beta_2_power_ *= acp.beta_2_;
 
-    const double alpha = cp.eta_ * std::sqrt( beta_2_factor ) / beta_1_factor;
+    const double alpha = eta_current_ * std::sqrt( 1.0 - beta_2_power_ ) / ( 1.0 - beta_1_power_ );
 
     m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
     v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;

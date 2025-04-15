@@ -353,7 +353,7 @@ private:
   std::vector< std::exception_ptr > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
-  Stopwatch sw_construction_create_;
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;
 };
 
 inline size_t

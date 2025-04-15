@@ -51,13 +51,13 @@ EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
   ++eprop_indegree_;
 
-  const long shift = get_shift();
+  const long t_first_entry = model_dependent_history_shift_();
 
-  const auto it_hist = get_update_history( shift );
+  const auto it_hist = get_update_history( t_first_entry );
 
-  if ( it_hist == update_history_.end() or it_hist->t_ != shift )
+  if ( it_hist == update_history_.end() or it_hist->t_ != t_first_entry )
   {
-    update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
+    update_history_.insert( it_hist, HistEntryEpropUpdate( t_first_entry, 1 ) );
   }
   else
   {
@@ -67,14 +67,16 @@ EpropArchivingNode< HistEntryT >::register_eprop_connection()
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update, const long t_current_update )
+EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
+  const long t_current_update,
+  const long eprop_isi_trace_cutoff )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = get_shift();
+  const long shift = model_dependent_history_shift_();
 
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
@@ -85,6 +87,11 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   else
   {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+
+    if ( not history_shift_required_() )
+    {
+      erase_used_eprop_history( eprop_isi_trace_cutoff );
+    }
   }
 
   const auto it_hist_prev = get_update_history( t_previous_update + shift );
@@ -93,6 +100,10 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   {
     // If an entry exists for the previous update time, decrement its access counter
     --it_hist_prev->access_counter_;
+    if ( it_hist_prev->access_counter_ == 0 )
+    {
+      update_history_.erase( it_hist_prev );
+    }
   }
 }
 
@@ -135,33 +146,44 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
     else
     {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+      // erase no longer needed entries for update intervals with no spikes sent to the target neuron
+      eprop_history_.erase( get_eprop_history( t ), get_eprop_history( t + update_interval ) );
     }
   }
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+  // erase no longer needed entries before the earliest current update
+  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_used_update_history()
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
 {
-  auto it_hist = update_history_.begin();
-  while ( it_hist != update_history_.end() )
+  if ( eprop_history_.empty()     // nothing to remove
+    or update_history_.size() < 2 // no time markers to check
+  )
   {
-    if ( it_hist->access_counter_ == 0 )
-    {
-      // erase() invalidates the iterator, but returns a new, valid iterator
-      it_hist = update_history_.erase( it_hist );
-    }
-    else
-    {
-      ++it_hist;
-    }
+    return;
   }
+
+  const long t_prev = ( update_history_.end() - 2 )->t_;
+  const long t_curr = ( update_history_.end() - 1 )->t_;
+
+  if ( t_prev + eprop_isi_trace_cutoff < t_curr )
+  {
+    // erase no longer needed entries to be ignored by trace cutoff
+    eprop_history_.erase( get_eprop_history( t_prev + eprop_isi_trace_cutoff ), get_eprop_history( t_curr ) );
+  }
+
+  // erase no longer needed entries before the earliest current update
+  eprop_history_.erase(
+    get_eprop_history( std::numeric_limits< long >::min() ), get_eprop_history( update_history_.begin()->t_ - 1 ) );
+}
+
+template < typename HistEntryT >
+inline double
+EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
+{
+  return Time::get_resolution().get_ms() * eprop_history_.size();
 }
 
 } // namespace nest

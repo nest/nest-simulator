@@ -33,7 +33,7 @@ file that contains all possible packages needed for NEST development.
 
    .. grid-item-card:: Install NEST with mamba
 
-         See our instructions for installing NEST from source in a :ref:`mamba environment <mambenva>`
+         See our instructions for installing NEST from source in a :ref:`mamba environment <condaenv>`
 
    .. grid-item-card:: Install NEST without environment
 

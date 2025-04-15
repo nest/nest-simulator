@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_regression_infinite-loop.py
+# eprop_supervised_regression_sine-waves_bsshslm_2020.py
 #
 # This file is part of NEST.
 #
@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to generate an infinite loop with e-prop
--------------------------------------------------------------
+Tutorial on learning to generate sine waves with e-prop after Bellec et al. (2020)
+----------------------------------------------------------------------------------
 
-Training a regression model using supervised e-prop plasticity to generate an infinite loop
+Training a regression model using supervised e-prop plasticity to generate sine waves
 
 Description
 ~~~~~~~~~~~
@@ -32,30 +32,26 @@ This script demonstrates supervised learning of a regression task with a recurre
 is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
 
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
-TensorFlow script given in [2]_ and changed the task as well as the parameters slightly.
+TensorFlow script given in [2]_.
 
+In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the
+network learns to reproduce with its overall spiking activity a one-dimensional, one-second-long target signal
+which is a superposition of four sine waves of different amplitudes, phases, and periods.
 
-In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the network
-learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
-which encode the x and y coordinates of an infinite-loop.
-
-.. image:: eprop_supervised_regression_schematic_infinite-loop.png
+.. image:: eprop_supervised_regression_sine-waves_bsshslm_2020.png
    :width: 70 %
-   :alt: See Figure 1 below.
+   :alt: Schematic of network architecture. Same as Figure 1 in the code.
    :align: center
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
 This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
-consists of a recurrent network that receives frozen noise input from Poisson generators and projects onto two
-readout neurons. Each individual readout signal denoted as :math:`y_k` is compared with a corresponding target
-signal represented as :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error
-loss.
+consists of a recurrent network that receives frozen noise input from spike generators and projects onto one
+readout neuron. The readout neuron compares the network signal :math:`y` with the teacher target signal
+:math:`y*`, which it receives from a rate generator. In scenarios with multiple readout neurons, each individual
+readout signal denoted as :math:`y_k` is compared with a corresponding target signal represented as
+:math:`y_k^*`. The network's training error is assessed by employing a mean-squared error loss.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
-
-The development of this task and the hyper-parameter optimization were conducted by Agnes Korcsak-Gorzo and
-Charl Linssen, inspired by activities and feedback received at the CapoCaccia Workshop toward Neuromorphic
-Intelligence 2023.
 
 References
 ~~~~~~~~~~
@@ -66,8 +62,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
-       Event-based implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
+       implementation of eligibility propagation (in preparation)
+
 """  # pylint: disable=line-too-long # noqa: E501
 
 # %% ###########################################################################################################
@@ -90,7 +88,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_schematic_infinite-loop.png")
+    Image(filename="./eprop_supervised_regression_sine-waves_bsshslm_2020.png")
 except Exception:
     pass
 
@@ -111,16 +109,17 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
+# Increasing the number of iterations enhances learning performance.
 
-n_batch = 1  # batch size
-n_iter = 5  # number of iterations, 5000 for good convergence
+batch_size = 1  # batch size, 1 in reference [2]
+n_iter = 200  # number of iterations, 2000 in reference [2]
 
 steps = {
-    "sequence": 1258,  # time steps of one full sequence
+    "sequence": 1000,  # time steps of one full sequence
 }
 
 steps["learning_window"] = steps["sequence"]  # time steps of window with non-zero learning signals
-steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
+steps["task"] = n_iter * batch_size * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -155,7 +154,6 @@ params_setup = {
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
-    "rng_seed": rng_seed,  # seed for NEST random generator
 }
 
 ####################
@@ -171,40 +169,38 @@ nest.set(**params_setup)
 # configure later.
 
 n_in = 100  # number of input neurons
-n_rec = 200  # number of recurrent neurons
-n_out = 2  # number of readout neurons
+n_rec = 100  # number of recurrent neurons
+n_out = 1  # number of readout neurons
 
-tau_m_mean = 30.0  # ms, mean of membrane time constant distribution
+params_nrn_out = {
+    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "I_e": 0.0,  # pA, external current input
+    "loss": "mean_squared_error",  # loss function
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "tau_m": 30.0,  # ms, membrane time constant
+    "V_m": 0.0,  # mV, initial value of the membrane voltage
+}
 
 params_nrn_rec = {
-    "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
-    "C_m": 250.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "c_reg": 150.0,  # firing rate regularization scaling
-    "E_L": 0.0,  # mV, leak / resting membrane potential
-    "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # scaling of the pseudo derivative
-    "I_e": 0.0,  # pA, external current input
-    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "beta": 1.0,  # width scaling of the pseudo-derivative
+    "C_m": 1.0,
+    "c_reg": 300.0,  # coefficient of firing rate regularization
+    "E_L": 0.0,
+    "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "gamma": 0.3,  # height scaling of the pseudo-derivative
+    "I_e": 0.0,
+    "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
-    "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),  # ms, membrane time constant
-    "V_m": 0.0,  # mV, initial value of the membrane voltage
+    "tau_m": 30.0,
+    "V_m": 0.0,
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
-params_nrn_rec["adapt_beta"] = (
-    1.7 * (1.0 - np.exp(-1 / params_nrn_rec["adapt_tau"])) / (1.0 - np.exp(-1.0 / tau_m_mean))
-)  # prefactor of adaptive threshold
-
-params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
-    "I_e": 0.0,
-    "loss": "mean_squared_error",  # loss function
-    "regular_spike_arrival": False,
-    "tau_m": 50.0,
-    "V_m": 0.0,
-}
+# factors from the original pseudo-derivative definition are incorporated into the parameters
+params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
+params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
 
 ####################
 
@@ -217,7 +213,7 @@ nrns_in = nest.Create("parrot_neuron", n_in)
 # The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
 # that introduced it by the first letter of the authors' last names and the publication year.
 
-nrns_rec = nest.Create("eprop_iaf_adapt_bsshslm_2020", n_rec, params_nrn_rec)
+nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 
@@ -232,22 +228,17 @@ gen_rate_target = nest.Create("step_rate_generator", n_out)
 # default, recordings are stored in memory but can also be written to file.
 
 n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
-n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+n_record_w = 5  # number of senders and targets to record weights from - this script requires n_record_w >=1
 
 if n_record == 0 or n_record_w == 0:
     raise ValueError("n_record and n_record_w >= 1 required")
 
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
-    "record_from": [
-        "V_m",
-        "surrogate_gradient",
-        "learning_signal",
-        "V_th_adapt",
-        "adaptation",
-    ],  # dynamic variables to record
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
+    "label": "multimeter_rec",
 }
 
 params_mm_out = {
@@ -255,6 +246,7 @@ params_mm_out = {
     "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "multimeter_out",
 }
 
 params_wr = {
@@ -262,18 +254,27 @@ params_wr = {
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "weight_recorder",
 }
 
-params_sr = {
-    "start": duration["total_offset"],
+params_sr_in = {
+    "start": duration["offset_gen"],
     "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_in",
+}
+
+params_sr_rec = {
+    "start": duration["offset_gen"],
+    "stop": duration["total_offset"] + duration["task"],
+    "label": "spike_recorder_rec",
 }
 
 ####################
 
 mm_rec = nest.Create("multimeter", params_mm_rec)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder", params_sr)
+sr_in = nest.Create("spike_recorder", params_sr_in)
+sr_rec = nest.Create("spike_recorder", params_sr_rec)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_rec_record = nrns_rec[:n_record]
@@ -297,12 +298,9 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype
 
 params_common_syn_eprop = {
     "optimizer": {
-        "type": "adam",  # algorithm to optimize the weights
-        "batch_size": n_batch,
-        "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
-        "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
-        "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
-        "eta": 5e-3,  # learning rate
+        "type": "gradient_descent",  # algorithm to optimize the weights
+        "batch_size": batch_size,
+        "eta": 1e-4,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
@@ -325,7 +323,6 @@ params_syn_rec["weight"] = weights_rec_rec
 params_syn_out = params_syn_base.copy()
 params_syn_out["weight"] = weights_rec_out
 
-
 params_syn_feedback = {
     "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
     "delay": duration["step"],
@@ -343,13 +340,6 @@ params_syn_static = {
     "delay": duration["step"],
 }
 
-params_init_optimizer = {
-    "optimizer": {
-        "m": 0.0,  # initial 1st moment estimate m of Adam optimizer
-        "v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
-    }
-}
-
 ####################
 
 nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
@@ -361,15 +351,11 @@ nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # conn
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 
-nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_in, sr_in, params_conn_all_to_all, params_syn_static)
+nest.Connect(nrns_rec, sr_rec, params_conn_all_to_all, params_syn_static)
 
 nest.Connect(mm_rec, nrns_rec_record, params_conn_all_to_all, params_syn_static)
 nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
-
-# After creating the connections, we can individually initialize the optimizer's
-# dynamic variables for single synapses (here exemplarily for two connections).
-
-nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
 # %% ###########################################################################################################
 # Create input
@@ -398,24 +384,34 @@ nest.SetStatus(gen_spk_in, params_gen_spk_in)
 # %% ###########################################################################################################
 # Create output
 # ~~~~~~~~~~~~~
-# Then, we load the x and y values of an image of the word "chaos" written by hand and construct a roughly
-# one-second long target signal from it. This signal, like the input, is repeated for all iterations and fed
-# into the rate generator that was previously created.
+# Then, as a superposition of four sine waves with various durations, amplitudes, and phases, we construct a
+# one-second target signal. This signal, like the input, is repeated for all iterations and fed into the rate
+# generator that was previously created.
 
-target_signal_list = [
-    np.sin(np.linspace(0.0, 2.0 * np.pi, steps["sequence"])),
-    np.sin(np.linspace(0.0, 4.0 * np.pi, steps["sequence"])),
-]
 
-params_gen_rate_target = []
+def generate_superimposed_sines(steps_sequence, periods):
+    n_sines = len(periods)
 
-for target_signal in target_signal_list:
-    params_gen_rate_target.append(
-        {
-            "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
-            "amplitude_values": np.tile(target_signal, n_iter * n_batch),
-        }
-    )
+    amplitudes = np.random.uniform(low=0.5, high=2.0, size=n_sines)
+    phases = np.random.uniform(low=0.0, high=2.0 * np.pi, size=n_sines)
+
+    sines = [
+        A * np.sin(np.linspace(phi, phi + 2.0 * np.pi * (steps_sequence // T), steps_sequence))
+        for A, phi, T in zip(amplitudes, phases, periods)
+    ]
+
+    superposition = sum(sines)
+    superposition -= superposition[0]
+    superposition /= max(np.abs(superposition).max(), 1e-6)
+    return superposition
+
+
+target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 200])  # periods in steps
+
+params_gen_rate_target = {
+    "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
+    "amplitude_values": np.tile(target_signal, n_iter * batch_size),
+}
 
 ####################
 
@@ -483,7 +479,8 @@ weights_post_train = {
 
 events_mm_rec = mm_rec.get("events")
 events_mm_out = mm_out.get("events")
-events_sr = sr.get("events")
+events_sr_in = sr_in.get("events")
+events_sr_rec = sr_rec.get("events")
 events_wr = wr.get("events")
 
 # %% ###########################################################################################################
@@ -496,14 +493,13 @@ readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
 senders = events_mm_out["senders"]
 
-loss_list = []
-for sender in set(senders):
-    idc = senders == sender
-    error = (readout_signal[idc] - target_signal[idc]) ** 2
-    loss_list.append(0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"])))
+readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-loss = np.sum(loss_list, axis=0)
+readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
+target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
 
+loss = 0.5 * np.mean(np.sum((readout_signal - target_signal) ** 2, axis=3), axis=(0, 2))
 
 # %% ###########################################################################################################
 # Plot results
@@ -523,7 +519,6 @@ colors = {
 
 plt.rcParams.update(
     {
-        "font.sans-serif": "Arial",
         "axes.spines.right": False,
         "axes.spines.top": False,
         "axes.prop_cycle": cycler(color=[colors["blue"], colors["red"]]),
@@ -531,49 +526,20 @@ plt.rcParams.update(
 )
 
 # %% ###########################################################################################################
-# Plot pattern
-# ............
-# First, we visualize the created pattern and plot the target for comparison. The outputs of the two readout
-# neurons encode the horizontal and vertical coordinate of the pattern respectively.
+# Plot learning performance
+# .........................
+# We begin with a plot visualizing the learning performance of the network: the loss plotted against the
+# iterations.
 
 fig, ax = plt.subplots()
+fig.suptitle("Learning performance")
 
-ax.plot(
-    readout_signal[senders == list(set(senders))[0]][-steps["sequence"] :],
-    -readout_signal[senders == list(set(senders))[1]][-steps["sequence"] :],
-    c=colors["red"],
-    label="readout",
-)
-
-ax.plot(
-    target_signal[senders == list(set(senders))[0]][-steps["sequence"] :],
-    -target_signal[senders == list(set(senders))[1]][-steps["sequence"] :],
-    c=colors["blue"],
-    label="target",
-)
-
-ax.set_xlabel(r"$y_0$ and $y^*_0$")
-ax.set_ylabel(r"$y_1$ and $y^*_1$")
-
-ax.axis("equal")
-
-fig.tight_layout()
-
-# %% ###########################################################################################################
-# Plot training error
-# ...................
-# We begin with a plot visualizing the training error of the network: the loss plotted against the iterations.
-
-fig, ax = plt.subplots()
-
-ax.plot(range(1, n_iter + 1), loss_list[0], label=r"$E_0$", alpha=0.8, c=colors["blue"], ls="--")
-ax.plot(range(1, n_iter + 1), loss_list[1], label=r"$E_1$", alpha=0.8, c=colors["blue"], ls="dotted")
-ax.plot(range(1, n_iter + 1), loss, label=r"$E$", c=colors["blue"])
-ax.set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
-ax.set_xlabel("training iteration")
+ax.plot(range(1, n_iter + 1), loss)
+ax.set_ylabel(r"$\mathcal{L} = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
+ax.set_xlabel("iteration")
 ax.set_xlim(1, n_iter)
 ax.xaxis.get_major_locator().set_params(integer=True)
-ax.legend(bbox_to_anchor=(1.01, 0.5), loc="center left")
+
 fig.tight_layout()
 
 # %% ###########################################################################################################
@@ -593,11 +559,10 @@ def plot_recordable(ax, events, recordable, ylabel, xlims):
     ax.set_ylim(np.min(events[recordable]) - margin, np.max(events[recordable]) + margin)
 
 
-def plot_spikes(ax, events, nrns, ylabel, xlims):
+def plot_spikes(ax, events, ylabel, xlims):
     idc_times = (events["times"] > xlims[0]) & (events["times"] < xlims[1])
-    idc_sender = np.isin(events["senders"][idc_times], nrns.tolist())
-    senders_subset = events["senders"][idc_times][idc_sender]
-    times_subset = events["times"][idc_times][idc_sender]
+    senders_subset = events["senders"][idc_times]
+    times_subset = events["times"][idc_times]
 
     ax.scatter(times_subset, senders_subset, s=0.1)
     ax.set_ylabel(ylabel)
@@ -605,23 +570,24 @@ def plot_spikes(ax, events, nrns, ylabel, xlims):
     ax.set_ylim(np.min(senders_subset) - margin, np.max(senders_subset) + margin)
 
 
-for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])]:
-    fig, axs = plt.subplots(12, 1, sharex=True, figsize=(8, 12), gridspec_kw={"hspace": 0.4, "left": 0.2})
+for title, xlims in zip(
+    ["Dynamic variables before training", "Dynamic variables after training"],
+    [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps["task"])],
+):
+    fig, axs = plt.subplots(9, 1, sharex=True, figsize=(6, 8), gridspec_kw={"hspace": 0.4, "left": 0.2})
+    fig.suptitle(title)
 
-    plot_spikes(axs[0], events_sr, nrns_in, r"$z_i$" + "\n", xlims)
-    plot_spikes(axs[1], events_sr, nrns_rec, r"$z_j$" + "\n", xlims)
+    plot_spikes(axs[0], events_sr_in, r"$z_i$" + "\n", xlims)
+    plot_spikes(axs[1], events_sr_rec, r"$z_j$" + "\n", xlims)
 
-    plot_spikes(axs[3], events_sr, nrns_rec, r"$z_j$" + "\n", xlims)
+    plot_recordable(axs[2], events_mm_rec, "V_m", r"$v_j$" + "\n(mV)", xlims)
+    plot_recordable(axs[3], events_mm_rec, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
+    plot_recordable(axs[4], events_mm_rec, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
-    plot_recordable(axs[4], events_mm_rec, "V_m", r"$v_j$" + "\n(mV)", xlims)
-    plot_recordable(axs[5], events_mm_rec, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
-    plot_recordable(axs[6], events_mm_rec, "V_th_adapt", r"$A_j$" + "\n(mV)", xlims)
-    plot_recordable(axs[7], events_mm_rec, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
-
-    plot_recordable(axs[8], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)
-    plot_recordable(axs[9], events_mm_out, "target_signal", r"$y^*_k$" + "\n", xlims)
-    plot_recordable(axs[10], events_mm_out, "readout_signal", r"$y_k$" + "\n", xlims)
-    plot_recordable(axs[11], events_mm_out, "error_signal", r"$y_k-y^*_k$" + "\n", xlims)
+    plot_recordable(axs[5], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)
+    plot_recordable(axs[6], events_mm_out, "target_signal", r"$y^*_k$" + "\n", xlims)
+    plot_recordable(axs[7], events_mm_out, "readout_signal", r"$y_k$" + "\n", xlims)
+    plot_recordable(axs[8], events_mm_out, "error_signal", r"$y_k-y^*_k$" + "\n", xlims)
 
     axs[-1].set_xlabel(r"$t$ (ms)")
     axs[-1].set_xlim(*xlims)
@@ -637,32 +603,44 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 # the first time step and we add the initial weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
-    for sender in nrns_senders.tolist():
-        for target in nrns_targets.tolist():
-            idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                weights_pre_train[label]["target"] == target
-            )
+def plot_weight_time_course(ax, events, nrns, label, ylabel):
+    sender_label, target_label = label.split("_")
+    nrns_senders = nrns[sender_label]
+    nrns_targets = nrns[target_label]
 
-            times = [0.0] + events["times"][idc_syn].tolist()
-            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+    for sender in set(events_wr["senders"]):
+        for target in set(events_wr["targets"]):
+            if sender in nrns_senders and target in nrns_targets:
+                idc_syn = (events["senders"] == sender) & (events["targets"] == target)
+                if np.any(idc_syn):
+                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                        weights_pre_train[label]["target"] == target
+                    )
+                    times = np.concatenate([[0.0], events["times"][idc_syn]])
 
-            ax.step(times, weights, c=colors["blue"])
+                    weights = np.concatenate(
+                        [np.array(weights_pre_train[label]["weight"])[idc_syn_pre], events["weights"][idc_syn]]
+                    )
+                    ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
+fig.suptitle("Weight time courses")
 
-plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
-plot_weight_time_course(
-    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
-)
-plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
+nrns = {
+    "in": nrns_in.tolist(),
+    "rec": nrns_rec.tolist(),
+    "out": nrns_out.tolist(),
+}
+
+plot_weight_time_course(axs[0], events_wr, nrns, "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(axs[1], events_wr, nrns, "rec_rec", r"$W_\text{rec}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
-axs[-1].set_xlim(0, steps["task"])
+axs[-1].set_xlim(0, duration["task"])
 
 fig.align_ylabels()
 fig.tight_layout()
@@ -679,6 +657,7 @@ cmap = mpl.colors.LinearSegmentedColormap.from_list(
 )
 
 fig, axs = plt.subplots(3, 2, sharex="col", sharey="row")
+fig.suptitle("Weight matrices")
 
 all_w_extrema = []
 
@@ -701,8 +680,8 @@ axs[1, 0].set_ylabel("recurrent\nneurons")
 axs[2, 0].set_ylabel("readout\nneurons")
 fig.align_ylabels(axs[:, 0])
 
-axs[0, 0].text(0.5, 1.1, "pre-training", transform=axs[0, 0].transAxes, ha="center")
-axs[0, 1].text(0.5, 1.1, "post-training", transform=axs[0, 1].transAxes, ha="center")
+axs[0, 0].text(0.5, 1.1, "before training", transform=axs[0, 0].transAxes, ha="center")
+axs[0, 1].text(0.5, 1.1, "after training", transform=axs[0, 1].transAxes, ha="center")
 
 axs[2, 0].yaxis.get_major_locator().set_params(integer=True)
 

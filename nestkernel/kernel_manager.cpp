@@ -21,6 +21,7 @@
  */
 
 #include "kernel_manager.h"
+#include "stopwatch_impl.h"
 
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 
@@ -206,6 +207,10 @@ nest::KernelManager::initialize()
     manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
 
+  sw_omp_synchronization_construction_.reset();
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
+
   ++fingerprint_;
   initialized_ = true;
   FULL_LOGGING_ONLY( dump_.open(
@@ -219,6 +224,9 @@ nest::KernelManager::prepare()
   {
     manager->prepare();
   }
+
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
 }
 
 void
@@ -277,6 +285,16 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // is in place again, we can tell modules to re-register the components
   // they provide.
   module_manager.reinitialize_dynamic_modules();
+
+  // Prepare timers and set the number of threads for multi-threaded timers
+  kernel().simulation_manager.reset_timers_for_preparation();
+  kernel().simulation_manager.reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_preparation();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
+
+  sw_omp_synchronization_construction_.reset();
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
 }
 
 void
@@ -314,6 +332,12 @@ nest::KernelManager::get_status( dictionary& dict )
     // Not available for this OS.
     dict[ "memory_size" ] = -1;
   }
+
+  sw_omp_synchronization_construction_.get_status(
+    dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
+  sw_omp_synchronization_simulation_.get_status(
+    dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
+  sw_mpi_synchronization_.get_status( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void

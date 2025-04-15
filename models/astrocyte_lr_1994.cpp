@@ -325,7 +325,7 @@ nest::astrocyte_lr_1994::Buffers_::Buffers_( const Buffers_&, astrocyte_lr_1994&
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994()
-  : StructuralPlasticityNode()
+  : Node()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -334,7 +334,7 @@ nest::astrocyte_lr_1994::astrocyte_lr_1994()
 }
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
-  : StructuralPlasticityNode( n )
+  : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

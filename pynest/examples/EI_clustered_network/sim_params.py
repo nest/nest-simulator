@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# sim_params_EI.py
+# sim_params.py
 #
 # This file is part of NEST.
 #

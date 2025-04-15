@@ -33,7 +33,6 @@ set(nestutil_sources
     numerics.h numerics.cpp
     regula_falsi.h
     sort.h
-    stopwatch.h stopwatch.cpp
     string_utils.h
     vector_util.h
 )

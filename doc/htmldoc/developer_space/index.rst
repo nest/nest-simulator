@@ -107,7 +107,7 @@ Developer guides
    :glob:
 
    workflows/*
-   workflows/documentation_workflow/*
+   workflows/documentation_workflow/index
    guidelines/*
    guidelines/styleguide/styleguide
    templates/*

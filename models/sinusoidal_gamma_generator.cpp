@@ -47,13 +47,15 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 
-namespace nest
-{
+
 void
-register_sinusoidal_gamma_generator( const std::string& name )
+nest::register_sinusoidal_gamma_generator( const std::string& name )
 {
   register_node_model< sinusoidal_gamma_generator >( name );
 }
+
+namespace nest
+{
 
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
@@ -63,10 +65,8 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 {
   insert_( names::rate, &sinusoidal_gamma_generator::get_rate_ );
 }
-}
 
-
-nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
+sinusoidal_gamma_generator::Parameters_::Parameters_()
   : om_( 0.0 )  // radian/ms
   , phi_( 0.0 ) // radian
   , order_( 1.0 )
@@ -77,7 +77,7 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p )
+sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
   , order_( p.order_ )
@@ -88,8 +88,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_&
-nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
+sinusoidal_gamma_generator::Parameters_&
+sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -107,13 +107,13 @@ nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::sinusoidal_gamma_generator::State_::State_()
+sinusoidal_gamma_generator::State_::State_()
   : rate_( 0 )
 {
 }
 
 
-nest::sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
+sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_()
   , // will be set in init_buffers_
@@ -123,7 +123,7 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator
 {
 }
 
-nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoidal_gamma_generator& n )
+sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_( b.t0_ms_ )
   , Lambda_t0_( b.Lambda_t0_ )
@@ -136,7 +136,7 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoi
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
+sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::rate ] = rate_ * 1000.0;
   ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
@@ -147,7 +147,7 @@ nest::sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
+sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_gamma_generator& n,
   Node* node )
 {
@@ -217,7 +217,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
+sinusoidal_gamma_generator::sinusoidal_gamma_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -226,7 +226,7 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
   recordablesMap_.create();
 }
 
-nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
+sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -239,13 +239,13 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_g
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::init_state_()
+sinusoidal_gamma_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::sinusoidal_gamma_generator::init_buffers_()
+sinusoidal_gamma_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
@@ -258,7 +258,7 @@ nest::sinusoidal_gamma_generator::init_buffers_()
 // ----------------------------------------------------
 
 inline double
-nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a, double t_b ) const
+sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a, double t_b ) const
 {
   if ( t_a == t_b )
   {
@@ -277,7 +277,7 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a
 // ----------------------------------------------------
 
 void
-nest::sinusoidal_gamma_generator::pre_run_hook()
+sinusoidal_gamma_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -304,7 +304,7 @@ nest::sinusoidal_gamma_generator::pre_run_hook()
 }
 
 double
-nest::sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
+sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
@@ -314,7 +314,7 @@ nest::sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
 }
 
 void
-nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
+sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -348,7 +348,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, c
 }
 
 void
-nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
+sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number --- see #737
   const size_t tgt_idx = e.get_port();
@@ -363,7 +363,7 @@ nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 }
 
 void
-nest::sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
+sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -373,7 +373,7 @@ nest::sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -399,4 +399,7 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest
+
 #endif // HAVE_GSL

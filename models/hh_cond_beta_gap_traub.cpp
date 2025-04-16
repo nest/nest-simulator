@@ -454,6 +454,8 @@ nest::hh_cond_beta_gap_traub::get_normalisation_factor( double tau_rise, double 
 void
 nest::hh_cond_beta_gap_traub::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 

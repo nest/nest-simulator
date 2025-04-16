@@ -57,13 +57,6 @@ Notes:
   without changing the postsynaptic archiving-node (clip the traces to a
   maximum of 1).
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 Parameters
 ++++++++++
 

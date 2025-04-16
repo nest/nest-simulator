@@ -199,11 +199,11 @@ nest::RecordingBackendScreen::DeviceData::write( const Event& event,
 
     if ( time_in_steps_ )
     {
-      std::cout << event.get_stamp().get_steps() << "\t" << event.get_offset();
+      std::cout << event.get_stamp().get_steps() << "\t" << event.get_stamp().get_offset();
     }
     else
     {
-      std::cout << event.get_stamp().get_ms() - event.get_offset();
+      std::cout << event.get_stamp().get_ms();
     }
 
     for ( auto& val : double_values )

@@ -1,0 +1,1133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="39.010086mm"
+   height="30.119904mm"
+   viewBox="0 0 39.010086 30.119904"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   inkscape:export-filename="astrocyte.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="diagrams_models_david.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="1.8052698"
+     inkscape:cx="1282.3568"
+     inkscape:cy="769.41408"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false"><sodipodi:guide
+       position="-867.46902,199.2598"
+       orientation="0,-1"
+       id="guide44"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-623.14126,314.06018"
+       orientation="0,-1"
+       id="guide46"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-582.46754,317.42691"
+       orientation="0,-1"
+       id="guide47"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-252.33514,302.07156"
+       orientation="0,-1"
+       id="guide48"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-646.80074,259.85846"
+       orientation="0,-1"
+       id="guide49"
+       inkscape:locked="false" /><sodipodi:guide
+       position="25.205936,83.364502"
+       orientation="0,-1"
+       id="guide53"
+       inkscape:locked="false" /><sodipodi:guide
+       position="67.483276,160.58991"
+       orientation="0,-1"
+       id="guide57"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-161.17544,-14.96655"
+       orientation="0,-1"
+       id="guide58"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-421.27296,276.57399"
+       orientation="1,0"
+       id="guide43"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-232.3155,239.78588"
+       orientation="1,0"
+       id="guide50"
+       inkscape:locked="false" /><inkscape:grid
+       id="grid52"
+       units="px"
+       originx="-932.8802"
+       originy="-45.085907"
+       spacingx="0.26458333"
+       spacingy="0.26458334"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14902"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="false" /><sodipodi:guide
+       position="-459.28181,206.67524"
+       orientation="1,0"
+       id="guide66"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-491.81736,184.53327"
+       orientation="1,0"
+       id="guide68"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-842.35321,77.52723"
+       orientation="0,-1"
+       id="guide79"
+       inkscape:locked="false" /><inkscape:page
+       x="-4.3604004e-07"
+       y="1.9377042e-07"
+       width="39.010086"
+       height="30.119904"
+       id="page3"
+       margin="0"
+       bleed="0" /></sodipodi:namedview><defs
+     id="defs1"><style
+       class="style-fonts"
+       id="style1" /><style
+       class="style-fonts"
+       id="style1-3">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-6">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-9">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-2">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-26">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-7">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-90">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-0">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-1">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-21">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-13">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-07">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-8">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-37">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-05">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-67">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-93">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-675">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-06">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-15">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-33">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-5">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><font
+       horiz-adv-x="1000"
+       id="font3076"
+       inkscape:label="font 1"
+       horiz-origin-x="0"
+       horiz-origin-y="0"
+       vert-origin-x="512"
+       vert-origin-y="768"
+       vert-adv-y="1024"><font-face
+         units-per-em="1000"
+         ascent="750"
+         cap-height="600"
+         x-height="400"
+         descent="200"
+         id="font-face3076"
+         font-family="SVGFont 1" /><missing-glyph
+         d="M0,0h1000v1000h-1000z"
+         id="missing-glyph3076" /></font><style
+       class="style-fonts"
+       id="style1-87">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-4">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-150">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-908">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-216">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-6753">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-75">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-30">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-68">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-20">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-378">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-53">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-99">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-04">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-79">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style></defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-932.88022,-45.085906)"><!-- svg-source:excalidraw --><mask
+       id="mask4" /><mask
+       id="mask6" /><mask
+       id="mask8" /><mask
+       id="mask10" /><mask
+       id="mask12" /><mask
+       id="mask14" /><mask
+       id="mask17" /><!-- svg-source:excalidraw --><mask
+       id="mask4-9" /><mask
+       id="mask6-8" /><mask
+       id="mask8-7" /><mask
+       id="mask10-2" /><mask
+       id="mask12-8" /><mask
+       id="mask16" /><!-- svg-source:excalidraw --><mask
+       id="mask4-2" /><mask
+       id="mask8-9" /><mask
+       id="mask10-5" /><mask
+       id="mask12-4" /><mask
+       id="mask14-2" /><mask
+       id="mask16-0" /><mask
+       id="mask18" /><mask
+       id="mask20" /><mask
+       id="mask22" /><mask
+       id="mask24" /><!-- svg-source:excalidraw --><mask
+       id="mask2" /><mask
+       id="mask4-1" /><mask
+       id="mask6-4" /><mask
+       id="mask10-50" /><mask
+       id="mask14-7" /><!-- svg-source:excalidraw --><mask
+       id="mask2-8" /><mask
+       id="mask6-83" /><mask
+       id="mask8-4" /><mask
+       id="mask10-0" /><mask
+       id="mask14-3" /><!-- svg-source:excalidraw --><mask
+       id="mask2-0" /><mask
+       id="mask6-9" /><mask
+       id="mask8-3" /><mask
+       id="mask10-9" /><mask
+       id="mask12-2" /><mask
+       id="mask14-9" /><mask
+       id="mask16-3" /><mask
+       id="mask18-8" /><mask
+       id="mask20-7" /><mask
+       id="mask22-3" /><mask
+       id="mask24-2" /><mask
+       id="mask26" /><mask
+       id="mask28" /><mask
+       id="mask32" /><!-- svg-source:excalidraw --><mask
+       id="mask4-8" /><mask
+       id="mask6-0" /><mask
+       id="mask8-2" /><mask
+       id="mask10-07" /><mask
+       id="mask12-3" /><mask
+       id="mask14-4" /><mask
+       id="mask16-2" /><mask
+       id="mask18-9" /><mask
+       id="mask20-0" /><mask
+       id="mask22-8" /><mask
+       id="mask24-6" /><mask
+       id="mask26-7" /><mask
+       id="mask30" /><mask
+       id="mask32-9" /><mask
+       id="mask34" /><mask
+       id="mask36" /><mask
+       id="mask38" /><mask
+       id="mask40" /><mask
+       id="mask42" /><mask
+       id="mask44" /><mask
+       id="mask46" /><mask
+       id="mask48" /><mask
+       id="mask50" /><mask
+       id="mask52" /><mask
+       id="mask54" /><mask
+       id="mask56" /><mask
+       id="mask58" /><mask
+       id="mask60" /><mask
+       id="mask62" /><mask
+       id="mask64" /><!-- svg-source:excalidraw --><mask
+       id="mask4-7" /><mask
+       id="mask6-43" /><!-- svg-source:excalidraw --><mask
+       id="mask4-71" /><mask
+       id="mask6-40" /><mask
+       id="mask8-6" /><!-- svg-source:excalidraw --><mask
+       id="mask4-6" /><mask
+       id="mask6-49" /><mask
+       id="mask8-0" /><mask
+       id="mask10-1" /><mask
+       id="mask12-5" /><mask
+       id="mask14-38" /><mask
+       id="mask16-03" /><!-- svg-source:excalidraw --><mask
+       id="mask4-0" /><mask
+       id="mask6-1" /><mask
+       id="mask8-41" /><mask
+       id="mask12-9" /><!-- svg-source:excalidraw --><mask
+       id="mask4-91" /><mask
+       id="mask6-03" /><mask
+       id="mask10-7" /><!-- svg-source:excalidraw --><mask
+       id="mask6-5" /><mask
+       id="mask10-93" /><mask
+       id="mask14-1" /><mask
+       id="mask18-0" /><!-- svg-source:excalidraw --><mask
+       id="mask10-3" /><mask
+       id="mask14-21" /><mask
+       id="mask18-89" /><mask
+       id="mask22-82" /><!-- svg-source:excalidraw --><mask
+       id="mask8-03" /><mask
+       id="mask12-7" /><mask
+       id="mask16-8" /><!-- svg-source:excalidraw --><mask
+       id="mask4-3" /><mask
+       id="mask8-75" /><mask
+       id="mask10-8" /><!-- svg-source:excalidraw --><mask
+       id="mask4-62" /><mask
+       id="mask8-8" /><mask
+       id="mask10-24" /><mask
+       id="mask12-21" /><mask
+       id="mask12-1" /><!-- svg-source:excalidraw --><mask
+       id="mask2-03" /><mask
+       id="mask6-6" /><mask
+       id="mask10-74" /><mask
+       id="mask12-6" /><!-- svg-source:excalidraw --><mask
+       id="mask-usAb6USveUPUEAwlPIBJt"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1711.9503"
+         height="621.24451"
+         id="rect17" /><rect
+         x="1330.1437"
+         y="472.48776"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect18" /></mask><mask
+       id="mask-48NT3KkRuZYvAlyzlmfn9"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="2683.6455"
+         height="333.90344"
+         id="rect24" /><rect
+         x="2136.5432"
+         y="200.01263"
+         fill="#000000"
+         width="107.36523"
+         height="64.400002"
+         opacity="1"
+         id="rect25" /></mask><mask
+       id="mask-RAsrBMn-Ux8upF21-Sgrx"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1019.9377"
+         height="838.51709"
+         id="rect30" /><rect
+         x="792.75769"
+         y="633.47052"
+         fill="#000000"
+         width="252.95703"
+         height="32.200001"
+         opacity="1"
+         id="rect31" /></mask><mask
+       id="mask-ra-xoXCpKcxtOTRvVpZKf"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1854.0552"
+         height="832.28046"
+         id="rect37" /><rect
+         x="1618.1378"
+         y="331.60699"
+         fill="#000000"
+         width="270.74414"
+         height="96.599998"
+         opacity="1"
+         id="rect38" /></mask><mask
+       id="mask-aYc6c7S_giOqhHZvKzBND"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1862.1145"
+         height="845.59082"
+         id="rect44" /><rect
+         x="1632.4562"
+         y="637.77448"
+         fill="#000000"
+         width="252.95703"
+         height="32.200001"
+         opacity="1"
+         id="rect45" /></mask><mask
+       id="mask-RLh_7sqDvKkhdQIvWQiRM"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1705.3574"
+         height="895.79462"
+         id="rect49" /><rect
+         x="1326.2188"
+         y="747.21497"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect50" /></mask><mask
+       id="mask-aQYzC_jEexyN_K8Esby0q"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1713.2278"
+         height="1040.2041"
+         id="rect63" /><rect
+         x="1330.8972"
+         y="887.21545"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect64" /></mask><mask
+       id="mask72" /><mask
+       id="mask74" /><mask
+       id="mask76" /><mask
+       id="mask84" /><mask
+       id="mask-Opjn_nAqVx-0vYVokcgFM"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1711.4454"
+         height="1179.0013"
+         id="rect88" /><rect
+         x="1334.8489"
+         y="1029.1156"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect89" /></mask><mask
+       id="mask-0LcETKpT9Yob1w4B1-8jD"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1709.3024"
+         height="1354.9363"
+         id="rect95" /><rect
+         x="1327.8109"
+         y="1198.2921"
+         fill="#000000"
+         width="154.91602"
+         height="96.599998"
+         opacity="1"
+         id="rect96" /></mask><mask
+       id="mask101" /><mask
+       id="mask103" /><!-- svg-source:excalidraw --><mask
+       id="mask2-1" /><mask
+       id="mask4-03" /><mask
+       id="mask6-3" /><mask
+       id="mask8-40" /><mask
+       id="mask10-56" /><!-- svg-source:excalidraw --><!-- svg-source:excalidraw --><mask
+       id="mask4-73" /><mask
+       id="mask6-87" /><!-- svg-source:excalidraw --><mask
+       id="mask30-1" /><mask
+       id="mask34-1" /><mask
+       id="mask38-8" /><mask
+       id="mask42-6" /><mask
+       id="mask46-9" /><mask
+       id="mask50-3" /><mask
+       id="mask54-5" /><mask
+       id="mask58-2" /><mask
+       id="mask62-6" /><mask
+       id="mask66" /><mask
+       id="mask70" /><mask
+       id="mask74-5" /><mask
+       id="mask77" /><mask
+       id="mask84-0" /><mask
+       id="mask88" /><!-- svg-source:excalidraw --><mask
+       id="mask30-6" /><mask
+       id="mask34-9" /><mask
+       id="mask38-6" /><mask
+       id="mask42-4" /><mask
+       id="mask46-96" /><mask
+       id="mask50-9" /><mask
+       id="mask54-3" /><mask
+       id="mask58-1" /><mask
+       id="mask62-9" /><mask
+       id="mask66-2" /><mask
+       id="mask70-6" /><mask
+       id="mask74-2" /><mask
+       id="mask77-0" /><mask
+       id="mask84-2" /><mask
+       id="mask88-1" /><!-- svg-source:excalidraw --><mask
+       id="mask2-3" /><mask
+       id="mask6-7" /><mask
+       id="mask10-20" /><mask
+       id="mask12-44" /><!-- svg-source:excalidraw --><mask
+       id="mask4-84" /><mask
+       id="mask6-63" /><mask
+       id="mask10-37" /><mask
+       id="mask12-74" /><!-- svg-source:excalidraw --><mask
+       id="mask4-4" /><mask
+       id="mask6-17" /><mask
+       id="mask10-91" /><mask
+       id="mask12-77" /><mask
+       id="mask14-6" /><!-- svg-source:excalidraw --><mask
+       id="mask6-10" /><mask
+       id="mask10-28" /><mask
+       id="mask14-74" /><mask
+       id="mask19" /><mask
+       id="mask21-6" /><!-- svg-source:excalidraw --><mask
+       id="mask10-01" /><mask
+       id="mask14-29" /><mask
+       id="mask18-04" /><mask
+       id="mask22-5" /><!-- svg-source:excalidraw --><mask
+       id="mask6-79" /><mask
+       id="mask10-17" /><mask
+       id="mask14-16" /><mask
+       id="mask19-7" /><mask
+       id="mask21-60" /><!-- svg-source:excalidraw --><mask
+       id="mask6-46" /><mask
+       id="mask10-02" /><mask
+       id="mask14-8" /><mask
+       id="mask19-1" /><!-- svg-source:excalidraw --><mask
+       id="mask10-34" /><mask
+       id="mask14-86" /><mask
+       id="mask18-2" /><mask
+       id="mask22-33" /><!-- svg-source:excalidraw --><mask
+       id="mask6-67" /><mask
+       id="mask10-374" /><mask
+       id="mask14-72" /><mask
+       id="mask19-16" /><!-- svg-source:excalidraw --><g
+       stroke-linecap="round"
+       transform="matrix(0.0654505,0,0,0.0654505,959.98208,45.156884)"
+       id="g2-27"><path
+         d="m 10.81,42.52 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 M 3.73,62.86 C 13.45,51.57 21.72,40.63 47.68,12.3 M 3.73,62.86 C 17.95,47.83 31.95,30.85 47.68,12.3 M 1.24,77.92 C 22.7,54.88 42.12,32.61 64.87,4.72 M 1.24,77.92 C 26.16,48.49 49.65,21.91 64.87,4.72 M 3.34,87.7 C 33.77,54.74 62.13,21.71 77.47,2.42 M 3.34,87.7 C 23.96,66.11 43.11,43.27 77.47,2.42 M 4.78,98.23 C 33.29,65.76 62.49,32.28 88.1,2.38 M 4.78,98.23 C 26.85,73.31 49.08,47.76 88.1,2.38 M 6.88,108.01 C 30.25,81.89 53.16,55.01 99.39,1.6 M 6.88,108.01 C 38.48,71.81 70.24,34.81 99.39,1.6 M 10.95,115.52 C 37.35,85.99 60.78,59.38 109.36,2.32 M 10.95,115.52 C 38.9,83.66 65.8,53.19 109.36,2.32 M 15.68,122.28 C 37.96,97.92 61.9,68.46 117.37,5.3 M 15.68,122.28 C 39.15,96.7 59.73,70.63 117.37,5.3 M 20.4,129.04 C 58.09,85.83 100.1,39.95 125.37,8.28 M 20.4,129.04 C 44.97,102.86 68.73,75.67 125.37,8.28 M 25.13,135.8 C 61.09,97.23 95.09,57.44 132.72,12.02 M 25.13,135.8 C 52.07,106.31 76.42,76.36 132.72,12.02 M 32.48,139.53 C 69.78,97.65 103.22,59.13 140.73,15.01 M 32.48,139.53 C 73.93,89.15 116.33,41.15 140.73,15.01 M 39.17,144.03 C 61.38,117.25 80.96,93.81 146.77,20.26 M 39.17,144.03 C 63.25,118.7 86.65,90.45 146.77,20.26 M 46.52,147.77 C 76.9,114.71 105.58,76.82 152.8,25.5 M 46.52,147.77 C 84.16,106.48 121.25,64.51 152.8,25.5 M 53.22,152.26 C 86.4,113.17 120.64,72.24 158.84,30.75 M 53.22,152.26 C 82.04,119.81 109.11,87.84 158.84,30.75 M 61.88,154.49 C 94.62,113.73 128.15,74.35 164.88,36 m -103,118.49 C 92.69,118.69 123.26,80.95 164.88,36 M 70.54,156.72 C 94.59,133.78 115.18,106.19 168.95,43.51 M 70.54,156.72 C 105,117.26 137.93,79.31 168.95,43.51 M 79.86,158.2 c 24.24,-29.43 50.31,-55.31 92.5,-106.42 M 79.86,158.2 c 34.38,-41.75 69.98,-81.11 92.5,-106.42 M 89.18,159.67 c 30.84,-34.89 64.2,-72.14 86.6,-99.62 m -86.6,99.62 c 24.27,-27.67 48.67,-57.04 86.6,-99.62 m -75.32,98.83 c 19.05,-24.3 36.3,-42.97 78.73,-90.56 m -78.73,90.56 c 28.36,-32.33 56.67,-64.25 78.73,-90.56 m -65.47,87.51 C 136.6,128.05 160,101.36 179.98,79.6 m -66.26,76.23 c 15.42,-18.06 31.94,-35.22 66.26,-76.23 m -53.67,73.93 c 15.73,-17.91 33.61,-38.45 51.83,-59.62 m -51.83,59.62 c 15.89,-17.6 30,-35.2 51.83,-59.62 m -27.42,43.74 c 3.17,-4.19 7.75,-10.99 14.44,-16.61 m -14.44,16.61 c 5.77,-5.75 10.08,-12.2 14.44,-16.61 M 23.45,134.59 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 m 32.42,17.58 C 38.36,137.38 24.84,126.7 7.57,110.18 m 48.3,41.99 C 40.44,139.84 25.45,125.29 7.57,110.18 m 64.11,45.14 C 48.6,134.43 27.22,115.4 4.52,96.93 m 67.16,58.39 C 55.49,141.09 38.05,126.73 4.52,96.93 M 87.5,158.47 C 65.29,137.2 42.77,120.91 2.97,84.99 M 87.5,158.47 C 55.45,129.91 23.2,103.57 2.97,84.99 m 96.57,73.34 C 59.43,123.46 23.97,91.96 0.67,72.39 m 98.87,85.94 C 67.59,130.21 33.29,101.47 0.67,72.39 m 108.65,83.84 C 86.09,136.17 62.54,118.17 3.66,64.38 m 105.66,91.85 C 85.44,133.16 60.81,112.65 3.66,64.38 m 115.43,89.75 C 92.64,131.4 68.4,110.9 6.64,56.38 m 112.45,97.75 C 76.9,115.65 34.84,80.04 6.64,56.38 m 122.23,95.65 C 103.36,130.88 81.94,109.48 9.63,48.37 M 128.87,152.03 C 99.47,125.28 68.07,100.52 9.63,48.37 m 126,98.93 C 111.03,126.36 83.72,104.52 12.61,40.37 M 135.63,147.3 C 108.54,124.47 79.82,99.84 12.61,40.37 M 142.39,142.58 C 102.73,110.85 64.06,77.79 18.61,34.98 m 123.78,107.6 C 101.89,105.53 59.9,68.85 18.61,34.98 M 149.14,137.85 C 104.54,100.7 63.36,63.85 23.86,28.95 m 125.28,108.9 C 121.24,112.54 91.59,87.5 23.86,28.95 M 155.9,133.13 C 122.4,102.45 87.9,73.13 29.11,22.91 M 155.9,133.13 C 116.35,99.1 77.66,64.66 29.11,22.91 M 161.15,127.09 C 119.71,91.53 79.04,52.92 35.11,17.53 M 161.15,127.09 C 126.94,96.02 92.41,66.83 35.11,17.53 M 164.89,119.74 C 123.87,81.6 81.03,47.43 42.63,13.46 M 164.89,119.74 C 125.97,87.5 87.79,53.67 42.63,13.46 m 126.75,99.59 C 129.17,81.09 89.38,44.93 50.89,10.04 M 169.38,113.05 C 123.89,73.52 79.44,35.94 50.89,10.04 m 122.99,96.31 C 146.4,83.43 121.61,64.8 59.16,6.63 m 114.72,99.72 C 146.22,82.78 120.84,61.99 59.16,6.63 m 117.7,91.72 C 152.07,79.63 133.44,62.53 67.43,3.22 M 176.86,98.35 C 146.18,72.24 115.45,45.66 67.43,3.22 M 178.34,89.03 C 150.97,60.96 119.19,39.1 77.96,1.77 M 178.34,89.03 C 153.42,68.8 128.16,46.22 77.96,1.77 m 101.1,77.28 C 156.32,59.97 134.32,40.63 89.25,0.98 m 89.81,78.07 C 157.1,60.91 137.53,43.17 89.25,0.98 m 91.28,68.76 C 163.33,56.26 149.03,39.58 101.29,0.85 m 79.24,68.89 C 155.24,48.55 132.2,27.42 101.29,0.85 M 173.7,53.2 C 156.47,37.44 141.76,24.8 119.37,5.97 M 173.7,53.2 C 160.98,43.52 149.33,32.04 119.37,5.97"
+         stroke="#ffd8a8"
+         stroke-width="1"
+         fill="none"
+         id="path1-158" /><path
+         d="m 107.34,0.86 c 11.55,0.99 24.44,8.2 34.28,14.41 9.85,6.2 18.38,13.64 24.81,22.84 6.43,9.21 12.05,21.66 13.77,32.38 1.72,10.71 0.4,21.62 -3.44,31.91 -3.84,10.29 -11.65,21.53 -19.59,29.84 -7.93,8.31 -17.16,15.41 -28.01,20.02 -10.85,4.62 -24.81,7.54 -37.09,7.68 -12.29,0.15 -25.2,-2.61 -36.62,-6.83 C 44.02,148.89 31.83,142.36 23.5,134.64 15.17,126.92 9.36,117.04 5.47,106.79 1.59,96.54 -0.74,83.9 0.2,73.14 1.13,62.38 5.21,51.57 11.08,42.21 16.94,32.86 25.55,23.62 35.39,17.01 45.24,10.4 56.74,4.77 70.15,2.56 c 13.4,-2.21 36.56,0.18 45.67,1.18 9.11,1 9.21,3.49 8.96,4.85 M 88.28,0.83 c 11.37,-1.19 26.42,2.53 37.79,6.85 11.36,4.33 22.36,11.39 30.39,19.09 8.04,7.7 14.09,16.94 17.81,27.13 3.72,10.19 5.37,23.2 4.5,33.99 -0.87,10.79 -4.07,21.17 -9.72,30.77 -5.64,9.6 -14.34,20.07 -24.15,26.83 -9.81,6.75 -22.71,11.75 -34.7,13.68 -12,1.93 -25.4,0.14 -37.28,-2.1 -11.88,-2.24 -23.76,-5.02 -34,-11.33 C 28.67,139.43 17.94,128.85 11.47,119.19 5,109.53 1.09,98.35 0.09,87.75 -0.91,77.15 1.67,65.55 5.46,55.59 9.26,45.63 15.11,36.15 22.86,28 30.61,19.85 40.92,11.33 51.99,6.68 63.07,2.03 82.98,0.86 89.32,0.12 c 6.33,-0.75 0.74,0.86 0.7,2.09"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path2-84" /></g><g
+       stroke-linecap="round"
+       id="g6-565"
+       transform="matrix(0.0654505,0,0,0.0654505,932.35948,44.50238)"><g
+         transform="translate(150.18456,199.5666)"
+         id="g3-68"><path
+           d="M 0,0 C 29.16,36.88 55.92,77.44 80.59,111.08 M 0,0 c 19.93,27.22 38.55,53.01 80.59,111.08"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path3-488" /></g><g
+         transform="translate(150.18456,199.5666)"
+         id="g4-38"><path
+           d="m 59.89,97.06 c 8.12,3.75 14.67,11.54 20.7,14.02 M 59.89,97.06 c 5.58,3.86 9.45,5.74 20.7,14.02"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path4-75" /></g><g
+         transform="translate(150.18456,199.5666)"
+         id="g5-24"><path
+           d="m 73.74,87.03 c 3.53,7.05 5.4,18.23 6.85,24.05 M 73.74,87.03 c 2.13,6.46 2.58,10.81 6.85,24.05"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path5-505" /></g></g><mask
+       id="mask6-73" /><g
+       stroke-linecap="round"
+       id="g10-272"
+       transform="matrix(0.0654505,0,0,0.0654505,932.35948,44.50238)"><g
+         transform="translate(207.35472,99.370458)"
+         id="g7-13"><path
+           d="M -0.67,0.34 C 30.01,0.42 152.96,0.65 183.35,1.06 M 1.18,-0.52 C 31.87,-0.35 153.1,2 183.02,2.26"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path6-49" /></g><g
+         transform="translate(207.35472,99.370458)"
+         id="g8-41"><path
+           d="m 159.4,10.46 c 6.17,0.12 10.17,-4.63 23.62,-8.2 m -23.62,8.2 c 8.51,-4.33 18.44,-5.75 23.62,-8.2"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path7-95" /></g><g
+         transform="translate(207.35472,99.370458)"
+         id="g9-74"><path
+           d="m 159.65,-6.64 c 6.2,4.2 10.14,3.54 23.37,8.9 m -23.37,-8.9 c 8.5,2.37 18.34,7.64 23.37,8.9"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path8-12" /></g></g><mask
+       id="mask10-21" /><g
+       stroke-linecap="round"
+       transform="matrix(0.0654505,0,0,0.0654505,933.01399,45.811391)"
+       id="g11-62"><path
+         d="m 24.39,26.5 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 M 4.18,61.94 C 18.1,46.43 29.09,32.73 50.11,9.11 M 4.18,61.94 C 14.57,48.94 25.52,36.57 50.11,9.11 M 3,75.49 C 29.51,49.13 52.64,20.37 64.67,4.54 M 3,75.49 C 22.31,54.29 41.06,32.44 64.67,4.54 M 1.82,89.04 C 19.52,67.24 35.86,48.67 76.61,3 M 1.82,89.04 C 18.65,71.25 34.39,52.18 76.61,3 M 4.58,98.06 C 36.2,63.08 70,24.42 88.56,1.46 M 4.58,98.06 C 32.34,66.85 60.13,34.48 88.56,1.46 M 7.34,107.08 C 38.86,71.89 72.12,31.7 98.53,2.18 M 7.34,107.08 C 41.02,69.94 75.32,31.04 98.53,2.18 M 10.1,116.1 C 34.87,90.18 54.64,67.13 107.85,3.65 M 10.1,116.1 C 34.51,89.13 59.14,61.64 107.85,3.65 M 14.82,122.86 C 45.49,88.46 79.86,48.96 117.17,5.13 M 14.82,122.86 C 52.6,78.23 90.55,36.67 117.17,5.13 M 20.2,128.86 C 56.5,83.01 93.83,42.32 125.83,7.36 M 20.2,128.86 C 42.53,100.69 65.16,76.05 125.83,7.36 M 26.24,134.11 C 53.72,100 83.47,67.39 133.18,11.09 M 26.24,134.11 C 50.91,102.72 77.27,74.59 133.18,11.09 M 31.62,140.11 C 62.69,107.12 93.54,70.41 139.87,15.59 M 31.62,140.11 C 65.25,102.59 98.47,63.82 139.87,15.59 M 37.66,145.36 C 68.15,106.39 99.15,70.23 147.22,19.33 M 37.66,145.36 C 73.88,105.37 108.51,64.03 147.22,19.33 M 45.67,148.35 c 42.59,-48.03 84.62,-99 108.25,-124.53 M 45.67,148.35 C 79.72,109.48 114.89,68.03 153.92,23.82 M 53.67,151.33 C 81.74,117.78 111.05,85.91 159.95,29.07 M 53.67,151.33 C 81.64,117.87 110.73,83.97 159.95,29.07 M 61.68,154.32 C 96.25,112.82 129.74,76.47 164.02,36.58 M 61.68,154.32 C 99.42,111.11 137.27,67.27 164.02,36.58 M 69.68,157.3 C 94.06,129.44 115.9,104.44 168.75,43.34 M 69.68,157.3 C 96.48,126.23 122.73,94.77 168.75,43.34 M 79,158.78 C 104.53,132.15 127.38,107.15 173.47,50.1 M 79,158.78 C 109.03,122.9 141.71,87.65 173.47,50.1 M 89.63,158.74 c 20.92,-20.59 41.52,-45.19 87.26,-100.38 M 89.63,158.74 c 21.22,-24.16 41.81,-49.31 87.26,-100.38 m -76.63,100.35 c 25.31,-29.63 52.83,-58.48 78.07,-89.81 m -78.07,89.81 c 25.67,-30.18 52.26,-61.05 78.07,-89.81 m -66.13,88.26 c 11.98,-16.52 28.36,-29.15 66.92,-76.98 m -66.92,76.98 c 14.19,-16.24 27.41,-32.83 66.92,-76.98 m -51.04,70.91 c 14.28,-17.68 30.24,-33.78 51.17,-58.87 m -51.17,58.87 c 16.75,-20.06 32.19,-39.19 51.17,-58.87 m -26.76,42.99 c 5.35,-6.75 13.39,-14.98 17.06,-19.63 m -17.06,19.63 c 5.2,-5.81 10.83,-13.04 17.06,-19.63 M 36.88,145.06 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 m 21.1,7.74 C 46.62,143.24 33.22,132.53 8.92,110.15 M 57.98,152.8 C 47.61,143.49 36.61,134.59 8.92,110.15 m 67.13,47.76 C 58.58,144.95 46.69,129.73 4.36,95.59 m 71.69,62.32 C 49.06,134.2 22.95,112.5 4.36,95.59 m 84.49,62.85 C 63.89,139.55 39,117.91 1.3,82.33 m 87.55,76.11 C 66.66,137.91 44.17,118.58 1.3,82.33 m 99.59,75.97 C 80.14,140.09 55.06,120.01 2.78,73.02 m 98.11,85.28 C 79.41,139.72 58.64,120.81 2.78,73.02 m 108.64,83.84 C 82.35,131.41 50.45,106.66 3.5,63.04 m 107.92,93.82 C 77.34,126.15 43.11,96.92 3.5,63.04 m 116.19,90.4 C 87.41,125.41 57.44,99.89 4.97,53.72 m 114.72,99.72 C 92.87,130.56 65.83,107.63 4.97,53.72 m 122.99,96.31 C 83.04,109.83 38.71,71.61 9.47,47.03 m 118.49,103 C 83.15,108.57 35.42,67.48 9.47,47.03 M 136.98,147.27 C 94.23,113.47 53.29,77.25 13.96,40.34 M 136.98,147.27 C 94.5,109.61 52.33,73.54 13.96,40.34 M 144.49,143.2 C 112.04,112.04 78.07,82.89 19.21,34.3 M 144.49,143.2 C 106.88,108.88 69.04,75.86 19.21,34.3 M 149.74,137.17 C 101.64,96.21 58.58,59.44 23.7,27.6 M 149.74,137.17 C 110.12,102.27 70.58,68.39 23.7,27.6 M 155.74,131.79 C 114.06,96.72 73.26,58.85 29.71,22.22 M 155.74,131.79 C 107.84,90.67 59.63,50.28 29.71,22.22 M 160.99,125.75 C 133.6,101.36 106.46,74.55 37.22,18.15 m 123.77,107.6 C 132.77,103.29 107.68,81.05 37.22,18.15 M 167,120.37 C 130.55,89.03 94.42,58.49 43.98,13.43 M 167,120.37 C 141.09,97.63 114.06,74.98 43.98,13.43 m 126,98.93 C 133.6,83.97 98.47,51.6 50.74,8.7 M 169.98,112.36 C 126.22,74.9 81.93,35.01 50.74,8.7 m 122.98,96.31 C 147.29,82 124.04,57.91 59,5.29 m 114.72,99.72 C 144.1,78.39 111.9,51.59 59,5.29 M 176.7,97 C 147.63,70.62 117.16,42.37 69.53,3.84 M 176.7,97 C 135.56,60.66 91.64,23.66 69.53,3.84 M 179.69,89 C 152.3,63.88 125.81,41.08 80.07,2.4 M 179.69,89 C 148.08,61.76 117.63,35.12 80.07,2.4 m 99.58,75.97 C 156.97,57.84 136.66,42.55 90.6,0.95 m 89.05,77.42 C 145.87,49.24 114.19,20.8 90.6,0.95 m 87.51,65.48 C 153.52,44.97 127.11,21.11 104.9,2.79 m 73.21,63.64 C 153.63,45.14 129.69,24.14 104.9,2.79 m 72.42,52.35 C 159.23,37.54 142.97,23.39 120.72,5.94 m 56.6,49.2 C 163.38,42.98 147.8,29.77 120.72,5.94 m 40.72,24.79 c -1.9,-1.69 -7.47,-4.92 -11.32,-9.84 m 11.32,9.84 c -3.31,-3.12 -5.65,-4.83 -11.32,-9.84"
+         stroke="#ffd8a8"
+         stroke-width="1"
+         fill="none"
+         id="path10-02" /><path
+         d="m 127.61,7.23 c 11.01,3.2 21.97,11.02 30.09,19.06 8.13,8.05 14.92,18.74 18.66,29.19 3.75,10.45 5.38,22.69 3.8,33.51 -1.57,10.82 -6.93,22.05 -13.25,31.41 -6.31,9.36 -14.8,18.31 -24.64,24.73 -9.84,6.41 -22.53,11.62 -34.39,13.75 -11.86,2.13 -24.87,1.35 -36.75,-0.99 C 59.25,155.55 46.54,151.1 36.6,144.82 26.66,138.55 17.42,129.76 11.49,120.24 5.56,110.72 2.23,98.66 1.03,87.72 -0.16,76.78 0.42,64.79 4.31,54.58 8.21,44.38 15.96,34.6 24.41,26.47 32.86,18.35 43.83,10.15 55.01,5.83 66.2,1.52 78.6,-0.07 91.51,0.59 c 12.91,0.65 33.27,6.84 40.97,9.17 7.69,2.33 5.7,3.53 5.2,4.8 M 109.14,1.89 c 11.47,0.75 23.23,6.02 32.92,12.24 9.69,6.23 19.03,15.76 25.24,25.12 6.21,9.36 10.6,20.39 12,31.03 1.4,10.64 0.13,22.52 -3.6,32.8 -3.74,10.29 -10.9,20.83 -18.81,28.91 -7.91,8.08 -17.45,14.7 -28.65,19.57 -11.19,4.87 -26.36,9.16 -38.52,9.66 -12.15,0.5 -23.48,-2.34 -34.43,-6.65 C 44.34,150.26 32.36,143.44 24.04,135.35 15.72,127.26 9.49,116.76 5.35,106.02 1.22,95.27 -2.04,82.05 -0.76,70.89 0.52,59.72 6.83,48.34 13.04,39.04 19.25,29.75 26.77,21.27 36.5,15.1 46.24,8.92 59.58,4.34 71.44,1.98 83.3,-0.38 101.79,0.75 107.65,0.96 c 5.86,0.21 -1.06,0.7 -1.06,2.26"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path11-29" /></g><g
+       stroke-linecap="round"
+       id="g15-74"
+       transform="matrix(0.0654505,0,0,0.0654505,932.35948,44.50238)"><g
+         transform="translate(362.14426,309.82143)"
+         id="g12-35"><path
+           d="M 0,0 C 34.99,-45.44 67.39,-93.26 91.77,-127.58 M 0,0 c 19.34,-26.6 39.5,-56.44 91.77,-127.58"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path12-61" /></g><g
+         transform="translate(362.14426,309.82143)"
+         id="g13-403"><path
+           d="m 84.86,-103.56 c 3.99,-7.76 5.95,-18.42 6.91,-24.02 m -6.91,24.02 c 1.06,-4.3 2.44,-11.22 6.91,-24.02"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path13-1" /></g><g
+         transform="translate(362.14426,309.82143)"
+         id="g14-27"><path
+           d="m 71.04,-113.62 c 8.89,-4.24 15.81,-11.29 20.73,-13.96 m -20.73,13.96 c 4.17,-1.98 8.6,-6.67 20.73,-13.96"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path14-79" /></g></g><mask
+       id="mask15" /><g
+       stroke-linecap="round"
+       transform="matrix(0.0654505,0,0,0.0654505,945.02146,62.296259)"
+       id="g16-8"><path
+         d="m 17.25,85.22 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 M 8.2,107.83 C 35.82,74.62 62.82,44.22 82.33,22.54 M 8.2,107.83 C 33.89,79.22 56.73,50.74 82.33,22.54 M 13.58,113.83 C 46.16,75.78 76.8,39.36 106.08,7.42 M 13.58,113.83 C 35.4,88.15 57.37,65 106.08,7.42 M 18.96,119.83 C 50.63,82.86 85.97,46.52 113.43,11.15 M 18.96,119.83 C 42,93.2 63.72,68.64 113.43,11.15 M 24.34,125.84 C 46.91,101.19 65.43,80.52 119.47,16.4 M 24.34,125.84 C 47.93,97.13 73.75,67.95 119.47,16.4 M 30.38,131.08 C 53.82,104.33 77.56,76.33 125.51,21.65 M 30.38,131.08 C 63.1,93.76 93.76,59.64 125.51,21.65 M 35.76,137.09 C 73.79,95.61 111.19,49.32 131.55,26.9 M 35.76,137.09 C 66.42,100.16 98.98,65.01 131.55,26.9 M 41.8,142.34 C 74.24,105.53 107.74,65.95 136.93,32.9 M 41.8,142.34 C 75.14,106.02 105.46,69.38 136.93,32.9 M 47.84,147.58 C 78.01,110.85 109.81,77.54 142.97,38.15 M 47.84,147.58 C 66.93,124.32 87.19,102.41 142.97,38.15 M 53.22,153.59 C 91.53,110.49 128.89,66.31 148.35,44.16 M 53.22,153.59 C 79.38,122.34 107.28,90.44 148.35,44.16 M 59.26,158.84 c 23.3,-26.67 49.4,-56.96 95.12,-109.44 M 59.26,158.84 C 97.73,114.22 134.37,69.8 154.38,49.4 M 65.29,164.08 C 101.57,119.64 139.25,79.21 159.77,55.41 M 65.29,164.08 C 97.34,126.73 129.51,89.81 159.77,55.41 M 70.68,170.09 C 104.54,130.39 140.32,91.47 165.8,60.66 M 70.68,170.09 C 100.06,136.62 132.38,99.63 165.8,60.66 M 76.71,175.34 c 25.08,-24.31 46.91,-50.59 94.48,-108.68 M 76.71,175.34 C 114.98,133.2 151.32,89.85 171.19,66.66 m -89.1,114.68 c 26.19,-30.32 52.8,-62.03 95.13,-109.43 M 82.09,181.34 C 112.85,144 144.94,108.57 177.22,71.91 M 88.13,186.59 C 117.55,150.75 150.81,116.36 182.6,77.91 M 88.13,186.59 C 110.2,160.03 134.24,133.91 182.6,77.91 M 94.83,191.08 c 27.3,-31.91 55.49,-66.5 93.81,-107.92 M 94.83,191.08 c 27.85,-31.83 55.05,-62.96 93.81,-107.92 m -87.12,112.42 c 26.02,-26.62 48.68,-56.95 92.5,-106.42 m -92.5,106.42 c 22.83,-24.31 45,-51.14 92.5,-106.42 M 117.4,189.5 c 18.47,-21.64 37.17,-44.01 81.35,-93.58 M 117.4,189.5 c 16.25,-18.58 33.74,-38.22 81.35,-93.58 m -20.21,35.44 c 7.41,-10.95 17.88,-22.05 22.97,-26.42 m -22.97,26.42 c 4.94,-6.63 10.93,-13.09 22.97,-26.42 M 90.4,188.66 c 0,0 0,0 0,0 m 0,0 c 0,0 0,0 0,0 m 18.83,5.78 C 68.7,161.12 30.55,124.83 8.1,106.52 m 101.13,87.92 C 75.52,164.38 43.11,136.2 8.1,106.52 m 107.89,83.19 C 91.38,169.91 64.89,146.83 8.82,96.55 m 107.17,93.16 C 74.82,154.16 32.78,117.82 8.82,96.55 m 113.17,87.78 C 87.73,151.41 49.03,120.33 13.31,89.86 m 108.68,94.47 C 84.98,152.03 48.26,120.31 13.31,89.86 M 128,178.95 C 94.65,149.02 63.4,123.69 18.56,83.82 M 128,178.95 C 88.18,145.93 49.55,110.09 18.56,83.82 M 134,173.57 C 98.09,143.34 62.61,111.85 24.57,78.44 M 134,173.57 C 102.28,148.43 72.99,121.07 24.57,78.44 m 114.68,89.09 C 104.27,137.61 71.46,109.56 29.81,72.4 m 109.44,95.13 C 100.13,135.37 61.56,101.06 29.81,72.4 m 115.44,89.75 C 120.98,140.22 97.82,119.67 35.82,67.02 m 109.43,95.13 C 102.02,124.62 58.82,85.83 35.82,67.02 m 115.43,89.74 C 105.54,117.1 64.91,79.56 41.82,61.64 m 109.43,95.12 C 112.72,121.14 73.51,87.54 41.82,61.64 m 115.44,89.74 C 116.58,116.68 72.94,79.41 47.82,56.25 m 109.44,95.13 C 129.9,128.88 103.38,105.54 47.82,56.25 m 114.69,89.1 C 119.96,108.8 78.4,71.3 53.07,50.22 m 109.44,95.13 C 131.96,120.05 100.67,93.17 53.07,50.22 m 115.44,89.74 C 134.88,112.05 100.05,78.83 59.08,44.84 m 109.43,95.12 C 140.65,117.01 113.82,93.68 59.08,44.84 m 115.43,89.74 C 149.45,112.2 121.33,88.74 65.08,39.45 m 109.43,95.13 C 146.26,110.01 118.6,84.5 65.08,39.45 m 114.68,89.09 C 155.26,108.34 129.29,83.38 70.33,33.42 m 109.43,95.12 C 148.99,102.68 116.73,75.56 70.33,33.42 m 115.43,89.74 C 161.54,101.54 133.16,75.59 76.33,28.03 m 109.43,95.13 C 150.97,92.52 115.47,61.56 76.33,28.03 m 115.44,89.75 C 158.51,90.19 124.41,60.3 82.33,22.65 m 109.44,95.13 C 155.29,85.43 118.15,53.19 82.33,22.65 m 114.69,89.09 C 175.55,89.44 149.26,71.34 88.34,17.27 m 108.68,94.47 C 175.56,90.93 153.31,73.29 88.34,17.27 m 112.41,87.12 C 162.13,71.25 120.82,32.74 93.59,11.23 m 107.16,93.16 C 171.83,81.19 144.28,57.39 93.59,11.23 M 193.93,87.86 C 168.19,66.26 142.83,41.7 101.1,7.16 m 92.83,80.7 C 170.01,66.51 144.51,45.64 101.1,7.16"
+         stroke="#b2f2bb"
+         stroke-width="1"
+         fill="none"
+         id="path15-1" /><path
+         d="m 130,25.5 c 11.52,8.91 24.02,22.69 51.69,51 M 130,25.5 c 12.89,11.72 27.1,25.6 51.69,51 m 0,0 c 24.77,23.51 25.54,24.34 0,51 m 0,-51 c 26.07,27.29 25.65,26.76 0,51 m 0,0 C 167.47,143.57 152,156.3 130,176.86 m 51.69,-49.36 c -11.86,13.26 -25.4,24.75 -51.69,49.36 m 0,0 c -26.8,27.15 -25.63,24.5 -52,0 m 52,0 c -26.04,23.61 -28.22,27.13 -52,0 m 0,0 C 56.3,159.19 34.56,136.78 26,127.5 m 52,49.36 C 65.77,164.59 53.74,152.42 26,127.5 m 0,0 c -26.69,-23.91 -27.25,-24.94 0,-51 m 0,51 C -2.1,103.4 1.6,103.21 26,76.5 m 0,0 C 43.52,60.97 58.82,45.33 78,25.5 m -52,51 C 44.23,58.38 62.2,39.86 78,25.5 m 0,0 c 24.28,-25.17 24.78,-24.98 52,0 m -52,0 c 26.87,-24.72 24.53,-26.55 52,0"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path16-07" /></g></g></svg>

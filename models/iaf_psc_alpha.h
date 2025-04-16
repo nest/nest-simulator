@@ -36,7 +36,7 @@ namespace nest
 {
 // Disable clang-formatting for documentation due to over-wide table.
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
 Short description
 +++++++++++++++++

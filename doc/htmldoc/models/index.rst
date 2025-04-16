@@ -93,7 +93,6 @@ Learn more about . . .
       * :ref:`Model terminology <model_meaning>`
 
 
-
 ----
 
 .. _model_meaning:
@@ -115,10 +114,7 @@ The term `models` in the context of NEST (and the field of computational neurosc
 2. **Network models**. These models are created from individual neuron
    and synapse models using the different commands provided by the
    :ref:`PyNEST API <pynest_api>`. Examples for such network models
-   are the :doc:`microcircuit model
-   <../auto_examples/Potjans_2014/index>` or the `multi-area model
-   <https://inm-6.github.io/multi-area-model/>`_).
-   You can also explore :doc:`all our example networks </examples/index>`.
+    can be found :doc:`here </examples/index>`.
 
 .. seealso::
 

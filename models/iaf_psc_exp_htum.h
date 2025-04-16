@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire, hard threshold
 
 Short description
 +++++++++++++++++

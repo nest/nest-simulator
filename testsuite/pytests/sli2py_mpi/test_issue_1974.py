@@ -20,9 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
+@pytest.mark.skipif_missing_music
 @MPITestAssertEqual([1, 2, 4])
 def test_issue_1974():
     """

@@ -493,6 +493,8 @@ const Name stimulus_source( "stimulus_source" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
 const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
+const Name structural_plasticity_gaussian_kernel_sigma( "structural_plasticity_gaussian_kernel_sigma" );
+const Name structural_plasticity_cache_probabilities( "structural_plasticity_cache_probabilities" );
 const Name surrogate_gradient( "surrogate_gradient" );
 const Name surrogate_gradient_function( "surrogate_gradient_function" );
 const Name synapse_id( "synapse_id" );

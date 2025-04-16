@@ -114,7 +114,7 @@ Visual Studio Code
 ------------------
 
 The following section will guide you through setting up Visual Studio Code (VS Code) for editing, building,
-running, and debugging NEST. Tested with Ubuntu 20.04. Steps for macOS should be equivalent, but with ``⌘``
+running, and debugging NEST. Tested with Ubuntu 22.04. Steps for macOS should be equivalent, but with ``⌘``
 instead of ``ctrl`` in keyboard shortcuts.
 
 Requirements and limitations

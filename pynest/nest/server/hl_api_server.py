@@ -217,7 +217,7 @@ def do_exec(args, kwargs):
         else:
             data = locals_.get(kwargs["return"], None)
 
-            response["data"] = get_or_error(nest.serialize_data)(data)
+        response["data"] = get_or_error(nest.serialize_data)(data)
     return response
 
 

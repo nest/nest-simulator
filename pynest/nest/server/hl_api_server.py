@@ -211,11 +211,10 @@ def do_exec(args, kwargs):
 
     if "return" in kwargs:
         if isinstance(kwargs["return"], list):
-            data = dict()
-            for variable in kwargs["return"]:
-                data[variable] = locals_.get(variable, None)
+            data = dict([(keyword, locals_.get(keyword, None)) for keyword in kwargs["return"]])
         else:
             data = locals_.get(kwargs["return"], None)
+
         response["data"] = get_or_error(nest.serialize_data)(data)
     return response
 

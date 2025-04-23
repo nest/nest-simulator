@@ -59,9 +59,12 @@ In the context of NEST performance monitoring, other useful kernel attributes ar
 Detailed timers
 ---------------
 
-Detailed built-in timers can be activated (and again deactivated) prior to compilation through the CMake flag
-``-Dwith-detailed-timers=ON``. They provide further insights into the time NEST spends in different phases of the
-simulation cycle so can be useful for :ref:`benchmarking performance <benchmark>`, but they can impact the runtime.
+Detailed built-in timers can be activated (and again deactivated) prior to compilation through the CMake flag:
+
+``-Dwith-detailed-timers=ON``.
+
+They provide further insights into the time NEST spends in different phases of the
+simulation cycle so they can be useful for :ref:`benchmarking performance <benchmark>`, but they can impact the runtime.
 Therefore, detailed timers are by default inactive.
 
 .. grid::

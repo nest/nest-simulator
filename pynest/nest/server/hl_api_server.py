@@ -211,7 +211,7 @@ def do_exec(args, kwargs):
 
     if "return" in kwargs:
         if isinstance(kwargs["return"], list):
-            data = dict([(keyword, locals_.get(keyword, None)) for keyword in kwargs["return"]])
+            data = dict([(variable, locals_.get(variable, None)) for variable in kwargs["return"]])
         else:
             data = locals_.get(kwargs["return"], None)
 

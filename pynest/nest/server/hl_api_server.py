@@ -210,7 +210,7 @@ def do_exec(args, kwargs):
             response["stdout"] = "".join(locals_["_print"].txt)
 
     if "return" in kwargs:
-        if isinstance(kwargs["return"], list):
+        if isinstance(kwargs["return"], (list, tuple)):
             data = dict([(variable, locals_.get(variable, None)) for variable in kwargs["return"]])
         else:
             data = locals_.get(kwargs["return"], None)

@@ -131,6 +131,11 @@ def have_hdf5():
     return nest.ll_api.sli_func("statusdict/have_hdf5 ::")
 
 
+@pytest.fixture(scope="session")
+def have_music():
+    return nest.ll_api.sli_func("statusdict/have_music ::")
+
+
 @pytest.fixture(autouse=True)
 def skipif_missing_hdf5(request, have_hdf5):
     """
@@ -139,6 +144,16 @@ def skipif_missing_hdf5(request, have_hdf5):
     """
     if not have_hdf5 and request.node.get_closest_marker("skipif_missing_hdf5"):
         pytest.skip("skipped because missing HDF5 support.")
+
+
+@pytest.fixture(autouse=True)
+def skipif_missing_music(request, have_music):
+    """
+    Globally applied fixture that skips tests marked to be skipped when HDF5 is
+    missing.
+    """
+    if not have_music and request.node.get_closest_marker("skipif_missing_music"):
+        pytest.skip("skipped because missing MUSIC support.")
 
 
 @pytest.fixture(scope="session")

@@ -110,6 +110,10 @@ Developer guides
 
        * :ref:`vim_sli`
 
+    .. grid-item-card:: Managers in NEST
+
+       * :ref:`Understand how managers work <managers_dev>`
+
 .. toctree::
    :maxdepth: 1
    :hidden:
@@ -123,3 +127,4 @@ Developer guides
    templates/*
    sli_docs/index
    cppcomments
+   managers/index

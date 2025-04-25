@@ -229,7 +229,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         if len(spike_times_soma) > 0:
             t = np.around(t, 4)
             spike_times_soma = np.around(spike_times_soma + 0.2, 4)
-            idx = np.nonzero(np.in1d(t, spike_times_soma))[0]
+            idx = np.nonzero(np.isin(t, spike_times_soma))[0]
             rate[idx] -= 1.0 / resolution
 
         w_change_raw = -15.0 * C_m_prox * rate * h * alpha_response
@@ -247,7 +247,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         comparison between Nest and python implementation
         """
         # extract the weight computed in python at the times of the presynaptic spikes
-        idx = np.nonzero(np.in1d(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
+        idx = np.nonzero(np.isin(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
         syn_w_comp_at_spike_times = syn_weight_comp[idx]
         realtive_error = (weights[-1] - syn_w_comp_at_spike_times[-1]) / (weights[-1] - init_w)
 

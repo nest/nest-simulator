@@ -663,7 +663,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
-          se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -684,7 +683,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
-        se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
@@ -721,15 +719,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           if ( lcid_batch[ j ] != invalid_lcid )
           {
-            // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-            // only if needed, as this is computationally costly
-            se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
-          }
-        }
-        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
-        {
-          if ( lcid_batch[ j ] != invalid_lcid )
-          {
             kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
           }
         }
@@ -753,15 +742,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         const std::vector< SpikeData >& compressed_spike_data =
           kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
         lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
-      }
-      for ( size_t j = 0; j < num_remaining_entries; ++j )
-      {
-        if ( lcid_batch[ j ] != invalid_lcid )
-        {
-          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-          // only if needed, as this is computationally costly
-          se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
-        }
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {

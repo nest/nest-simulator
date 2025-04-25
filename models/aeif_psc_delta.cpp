@@ -392,6 +392,8 @@ nest::aeif_psc_delta::init_buffers_()
 void
 nest::aeif_psc_delta::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 

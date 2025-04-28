@@ -1286,7 +1286,7 @@ def serialize_data(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
-    if np.issubdtype(d, np.integer):
+    if isinstance(data, (numpy.integer)):
         return int(data)
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection

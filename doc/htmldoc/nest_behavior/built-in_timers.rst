@@ -164,7 +164,7 @@ If detailed timers are active, the following time measurements are available as 
      - ``time_gather_spike_data``
    * - ``time_mpi_synchronization``
      - Time spent waiting for other processes
-     - ``time_simulate``
+     -
    * - ``time_omp_synchronization_construction``
      - Synchronization time of threads during network construction.
      - ``time_construction_create``, ``time_construction_connect``, ``time_communicate_prepare``

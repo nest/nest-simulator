@@ -20,17 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import pytest
 from mpi_test_wrapper import MPITestAssertCompletes
 
 
+@pytest.mark.skipif_incompatible_mpi
 @MPITestAssertCompletes([1, 2, 4])
 def test_issue_281():
     """
     Confirm that ConnectLayers works MPI-parallel for fixed fan-out.
+
+    This test only confirms completion, no data is tested.
     """
 
     import nest
-    import pandas as pd
 
     layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[3, 3]))
     nest.Connect(

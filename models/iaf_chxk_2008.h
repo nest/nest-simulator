@@ -45,7 +45,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, precise
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, precise, hard threshold
 
 Short description
 +++++++++++++++++

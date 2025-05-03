@@ -105,7 +105,7 @@ public:
   double tau_syn_in[ NCOMP ]; //!< Rise time of inhibitory synaptic conductance in ms
 };
 
-/* BeginUserDocs: neuron, point process, conductance-based
+/* BeginUserDocs: neuron, point process, conductance-based, stochastic
 
 Short description
 +++++++++++++++++

@@ -122,14 +122,14 @@ public:
   virtual void operator()() = 0;
 
   /**
-   * Change pointer to receiving Node.
-   */
-  void set_receiver( Node& );
-
-  /**
    * Return reference to receiving Node.
    */
   Node& get_receiver() const;
+
+  /**
+   * Change pointer to receiving Node.
+   */
+  void set_receiver( Node& );
 
   /**
    * Return node ID of receiving Node.
@@ -172,33 +172,21 @@ public:
   void set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid );
 
   /**
-   * Return time stamp of the event.
-   *
-   * The stamp denotes the time when the event was created.
-   * The resolution of Stamp is limited by the time base of the
-   * simulation kernel (@see class nest::Time).
-   * If this resolution is not fine enough, the creation time
-   * can be corrected by using the time attribute.
-   */
-  Time const& get_stamp() const;
-
-  /**
-   * Set the transmission delay of the event.
-   *
-   * The delay refers to the time until the event is
-   * expected to arrive at the receiver.
-   * @param t delay.
-   */
-
-  void set_delay_steps( long );
-
-  /**
    * Return transmission delay of the event.
    *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
   long get_delay_steps() const;
+
+  /**
+   * Set the transmission delay of the event.
+   *
+   * The delay refers to the time until the event is
+   * expected to arrive at the receiver.
+   * @param d delay
+   */
+  void set_delay_steps( long d );
 
   /**
    * Relative spike delivery time in steps.
@@ -242,13 +230,14 @@ public:
    * object.
    * @param p Port number of the connection, or -1 if unknown.
    */
+
   void set_port( size_t p );
 
   /**
    * Set the receiver port number (r-port).
    *
    * When a connection is established, the receiving Node may issue
-   * a port number (r-port) to distinguish the incomin
+   * a port number (r-port) to distinguish the incoming
    * connection. By the default, the r-port is not used and its port
    * number defaults to zero.
    * @param p Receiver port number of the connection, or 0 if unused.
@@ -256,27 +245,8 @@ public:
   void set_rport( size_t p );
 
   /**
-   * Return the creation time offset of the Event.
    *
-   * Each Event carries the exact time of creation. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   */
-  double get_offset() const;
-
-  /**
-   * Set the creation time of the Event.
    *
-   * Each Event carries the exact time of creation in realtime. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   * @param t Creation time in realtime. t has to be in [0, h).
-   */
-  void set_offset( double t );
-
-  /**
    * Return the weight.
    */
   double get_weight() const;
@@ -313,6 +283,20 @@ public:
    * and receiver pointers are correctly set.
    */
   bool is_valid() const;
+
+  /**
+   * Return time stamp of the event.
+   *
+   * The stamp denotes the time when the event was created.
+   */
+  Time const& get_stamp() const;
+
+  /**
+   * Return time stamp of the event.
+   *
+   * The stamp denotes the time when the event was created.
+   */
+  Time& get_stamp();
 
   /**
    * Set the time stamp of the event.
@@ -384,16 +368,7 @@ protected:
   mutable long stamp_steps_;
 
   /**
-   * Offset for precise spike times.
    *
-   * offset_ specifies a correction to the creation time.
-   * If the resolution of stamp is not sufficiently precise,
-   * this attribute can be used to correct the creation time.
-   * offset_ has to be in [0, h).
-   */
-  double offset_;
-
-  /**
    * Weight of the connection.
    */
   double w_;
@@ -966,6 +941,12 @@ Event::get_stamp() const
   return stamp_;
 }
 
+inline Time&
+Event::get_stamp()
+{
+  return stamp_;
+}
+
 inline void
 Event::set_stamp( Time const& s )
 {
@@ -996,18 +977,6 @@ inline void
 Event::set_delay_steps( long d )
 {
   d_ = d;
-}
-
-inline double
-Event::get_offset() const
-{
-  return offset_;
-}
-
-inline void
-Event::set_offset( double t )
-{
-  offset_ = t;
 }
 
 inline size_t

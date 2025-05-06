@@ -59,7 +59,7 @@ def api_client(call_name, args, kwargs):
     else:
         response = call
 
-    return nest.serialize_data(response)
+    return response
 
 
 def combine(call_name, response):
@@ -172,7 +172,7 @@ def do_call(call_name, args=[], kwargs={}):
         response = mpi_comm.gather(response[0], root=0)
         log(call_name, f"received response gather, data={response}")
 
-    return nest.serialize_data(combine(call_name, response))
+    return combine(call_name, response)
 
 
 def log(call_name, msg):

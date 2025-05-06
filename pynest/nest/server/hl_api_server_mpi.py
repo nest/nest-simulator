@@ -128,6 +128,7 @@ def combine(call_name, response):
     raise Exception(msg)  # pylint: disable=W0719
 
 
+@get_or_error
 def do_call(call_name, args=[], kwargs={}):
     """Call a PYNEST function or execute a script within the server.
 
@@ -171,7 +172,7 @@ def do_call(call_name, args=[], kwargs={}):
         response = mpi_comm.gather(response[0], root=0)
         log(call_name, f"received response gather, data={response}")
 
-    return combine(call_name, response)
+    return nest.serialize_data(combine(call_name, response))
 
 
 def log(call_name, msg):

@@ -169,10 +169,7 @@ def route_exec():
         response = do_call("exec", args, kwargs)
         return jsonify(response)
     else:
-        abort(
-            403,
-            "The route `/exec` has been disabled. Please contact the server administrator.",
-        )
+        abort(403, "The route `/exec` has been disabled. Please contact the server administrator.")
 
 
 def run_mpi_app(host="127.0.0.1", port=52425):

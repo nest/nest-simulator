@@ -221,7 +221,8 @@ SPManager::gather_global_positions_and_ids()
 
   if ( num_neurons == 0 )
   {
-    throw std::runtime_error( "No neurons found. Please provide positions, or disable distance dependency" );
+    throw std::runtime_error(
+      "No neurons with valid positions found. Please provide valid positions, or disable distance dependency." );
   }
   if ( total_positions == 0 )
   {

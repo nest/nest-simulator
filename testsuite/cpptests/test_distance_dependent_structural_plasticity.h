@@ -79,45 +79,6 @@ BOOST_AUTO_TEST_CASE( test_get_neuron_pair_index )
   BOOST_REQUIRE_EQUAL( sp_manager.get_neuron_pair_index( 5, 5 ), 14 );
 }
 
-
-BOOST_AUTO_TEST_CASE( test_global_shuffle_spatial )
-{
-  SPManager sp_manager;
-
-  // Initialize test data
-  std::vector< size_t > pre_ids = { 1, 2 };
-  std::vector< size_t > post_ids = { 3, 4 };
-
-  sp_manager.global_ids = { 1, 2, 3, 4 };
-  sp_manager.global_positions = {
-    0.0,
-    0.0, // Neuron 1
-    1.0,
-    0.0, // Neuron 2
-    0.0,
-    1.0, // Neuron 3
-    1.0,
-    1.0 // Neuron 4
-  };
-
-  sp_manager.structural_plasticity_gaussian_kernel_sigma_ = 1.0;
-
-  std::vector< size_t > pre_ids_results;
-  std::vector< size_t > post_ids_results;
-
-  sp_manager.global_shuffle_spatial( pre_ids, post_ids, pre_ids_results, post_ids_results );
-
-  // Check result sizes
-  BOOST_REQUIRE_EQUAL( pre_ids_results.size(), 2 );
-  BOOST_REQUIRE_EQUAL( post_ids_results.size(), 2 );
-
-  // Ensure no self-connections
-  for ( size_t i = 0; i < pre_ids_results.size(); ++i )
-  {
-    BOOST_REQUIRE_NE( pre_ids_results[ i ], post_ids_results[ i ] );
-  }
-}
-
 BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace nest

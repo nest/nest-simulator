@@ -521,6 +521,8 @@ extern const Name stimulus_source;
 extern const Name stop;
 extern const Name structural_plasticity_synapses;
 extern const Name structural_plasticity_update_interval;
+extern const Name structural_plasticity_gaussian_kernel_sigma;
+extern const Name structural_plasticity_cache_probabilities;
 extern const Name surrogate_gradient;
 extern const Name surrogate_gradient_function;
 extern const Name synapse_id;

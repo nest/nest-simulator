@@ -43,7 +43,8 @@ SPManager::SPManager()
   : ManagerInterface()
   , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
-  , structural_plasticity_gaussian_kernel_sigma_( -1 )
+  , structural_plasticity_use_gaussian_kernel_( false )
+  , structural_plasticity_gaussian_kernel_sigma_( 1. )
   , structural_plasticity_cache_probabilities_( false )
   , sp_conn_builders_()
   , growthcurve_factories_()
@@ -68,7 +69,8 @@ SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
-  structural_plasticity_gaussian_kernel_sigma_ = -1;
+  structural_plasticity_use_gaussian_kernel_ = false;
+  structural_plasticity_gaussian_kernel_sigma_ = 1.;
   structural_plasticity_cache_probabilities_ = false;
 }
 
@@ -112,9 +114,6 @@ SPManager::get_status( DictionaryDatum& d )
   }
 
   def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  def< double >( d, names::structural_plasticity_gaussian_kernel_sigma, structural_plasticity_gaussian_kernel_sigma_ );
-  def< bool >( d, names::structural_plasticity_cache_probabilities, structural_plasticity_cache_probabilities_ );
-
 
   ArrayDatum growth_curves;
   for ( auto const& element : *growthcurvedict_ )
@@ -128,10 +127,6 @@ void
 SPManager::set_status( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  updateValue< double >(
-    d, names::structural_plasticity_gaussian_kernel_sigma, structural_plasticity_gaussian_kernel_sigma_ );
-  updateValue< bool >(
-    d, names::structural_plasticity_cache_probabilities, structural_plasticity_cache_probabilities_ );
 
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
@@ -630,7 +625,7 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   std::vector< size_t > pre_ids_results;
   std::vector< size_t > post_ids_results;
 
-  if ( structural_plasticity_gaussian_kernel_sigma_ <= 0 )
+  if ( !structural_plasticity_use_gaussian_kernel_ )
   {
     // Shuffle only the largest vector
     if ( pre_id_rnd.size() > post_id_rnd.size() )
@@ -978,7 +973,9 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
 
 
 void
-nest::SPManager::enable_structural_plasticity()
+nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
+  double gaussian_kernel_sigma,
+  bool cache_probabilities )
 {
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
@@ -996,11 +993,15 @@ nest::SPManager::enable_structural_plasticity()
       "Structural plasticity can not be enabled if use_compressed_spikes "
       "has been set to false." );
   }
+  structural_plasticity_use_gaussian_kernel_ = use_gaussian_kernel;
+  structural_plasticity_gaussian_kernel_sigma_ = gaussian_kernel_sigma;
+  structural_plasticity_cache_probabilities_ = cache_probabilities;
   structural_plasticity_enabled_ = true;
-  if ( structural_plasticity_gaussian_kernel_sigma_ > 0 )
+
+  if ( use_gaussian_kernel )
   {
     gather_global_positions_and_ids();
-    if ( structural_plasticity_cache_probabilities_ )
+    if ( cache_probabilities )
     {
       build_probability_list();
     }

@@ -332,14 +332,20 @@ def Install(module_name):
 
 
 @check_stack
-def EnableStructuralPlasticity():
+def EnableStructuralPlasticity(
+    use_gaussian_kernel=False, gaussian_kernel_sigma=0.0, cache_probabilites=False
+):
     """Enable structural plasticity for the network simulation
 
     See Also
     --------
     DisableStructuralPlasticity
 
+
     """
+    sps(bool(use_gaussian_kernel))
+    sps(float(gaussian_kernel_sigma))
+    sps(bool(cache_probabilites))
 
     sr("EnableStructuralPlasticity")
 

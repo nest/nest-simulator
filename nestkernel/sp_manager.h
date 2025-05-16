@@ -127,7 +127,7 @@ public:
   /**
    * Enable structural plasticity
    */
-  void enable_structural_plasticity();
+  void enable_structural_plasticity( bool use_gaussian_kernel, double gaussian_kernel_sigma, bool cache_probabilities );
 
   /**
    * Disable structural plasticity
@@ -271,6 +271,12 @@ private:
    * synapses).
    */
   double structural_plasticity_update_interval_;
+
+  /**
+   * Flag indicating whether a Gaussian spatial kernel is used for connection
+   * probability computation.
+   */
+  bool structural_plasticity_use_gaussian_kernel_;
 
   /**
    * Dimentionality of the neuron positions

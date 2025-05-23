@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_issue_2119.py
 #
 # This file is part of NEST.
 #
@@ -22,22 +22,34 @@
 import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
+# use default parameters for double-valued params
+random_params = [
+    ["'exponential'", {}],
+    ["'normal'", {}],
+    ["'lognormal'", {}],
+    ["'uniform'", {}],
+    ["'uniform_int'", {"max": 10}],
+]
 
-# Parametrization over the number of nodes here only to show hat it works
+
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize("N", [4, 7])
-@MPITestAssertEqual([1, 4], debug=False)
-def test_all_to_all(N):
+@pytest.mark.parametrize(["kind", "specs"], random_params)
+@MPITestAssertEqual([1, 2, 4])
+def test_issue_2119(kind, specs):
     """
-    Confirm that all-to-all connections created correctly for more targets than local nodes.
+    Confirm that randomized node parameters work correctly under MPI and OpenMP.
 
-    The test is performed on connection data written to OTHER_LABEL.
+    The test is performed on GID-V_m data written to OTHER_LABEL.
     """
 
     import nest
+    import pandas as pd
 
-    nrns = nest.Create("parrot_neuron", n=N)
-    nest.Connect(nrns, nrns, "all_to_all")
+    nest.ResetKernel()
+    nest.total_num_virtual_procs = 4
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    nrn = nest.Create("iaf_psc_alpha", n=4, params={"V_m": nest.CreateParameter(kind, specs)})
+
+    pd.DataFrame.from_dict(nrn.get(["global_id", "V_m"])).dropna().to_csv(
+        OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False  # noqa: F821
+    )

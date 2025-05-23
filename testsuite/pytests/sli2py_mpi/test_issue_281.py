@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_issue_281.py
 #
 # This file is part of NEST.
 #
@@ -19,25 +19,30 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import pytest
-from mpi_test_wrapper import MPITestAssertEqual
+from mpi_test_wrapper import MPITestAssertCompletes
 
 
-# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize("N", [4, 7])
-@MPITestAssertEqual([1, 4], debug=False)
-def test_all_to_all(N):
+@MPITestAssertCompletes([1, 2, 4])
+def test_issue_281():
     """
-    Confirm that all-to-all connections created correctly for more targets than local nodes.
+    Confirm that ConnectLayers works MPI-parallel for fixed fan-out.
 
-    The test is performed on connection data written to OTHER_LABEL.
+    This test only confirms completion, no data is tested.
     """
 
     import nest
 
-    nrns = nest.Create("parrot_neuron", n=N)
-    nest.Connect(nrns, nrns, "all_to_all")
+    layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[3, 3]))
+    nest.Connect(
+        layer,
+        layer,
+        {"rule": "fixed_indegree", "indegree": 8, "allow_multapses": False, "allow_autapses": False},
+        # weights are randomized to check that global RNGs stay in sync
+        {"weight": nest.random.uniform(min=1, max=2)},
+    )
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    # Ensure by simulation that global RNGs are still in sync
+    nest.Simulate(10)

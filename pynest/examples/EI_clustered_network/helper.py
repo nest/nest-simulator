@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# helper_EI.py
+# helper.py
 #
 # This file is part of NEST.
 #

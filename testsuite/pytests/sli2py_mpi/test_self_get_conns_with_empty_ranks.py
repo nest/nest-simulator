@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_self_get_conns_with_empty_ranks.py
 #
 # This file is part of NEST.
 #
@@ -25,19 +25,19 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 # Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize("N", [4, 7])
-@MPITestAssertEqual([1, 4], debug=False)
-def test_all_to_all(N):
+@MPITestAssertEqual([1, 2, 4], debug=False)
+def test_get_conns_with_empty_ranks():
     """
-    Confirm that all-to-all connections created correctly for more targets than local nodes.
+    Confirm that connections can be gathered correctly even if some ranks have no neurons.
 
-    The test is performed on connection data written to OTHER_LABEL.
+    The test compares connection data written to OTHER_LABEL.
     """
 
     import nest
+    import pandas as pd
 
-    nrns = nest.Create("parrot_neuron", n=N)
-    nest.Connect(nrns, nrns, "all_to_all")
+    nrns = nest.Create("parrot_neuron", n=2)
+    nest.Connect(nrns, nrns)
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
+    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1, errors="ignore")
     conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821

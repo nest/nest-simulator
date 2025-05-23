@@ -136,9 +136,9 @@ Hard threshold
           :selected:
 
           When the membrane potential reaches a certain threshold,
-          the neuron deterministically  "fires" an action potential
-          Neuron models iwth hard threshold do not contain intrinsic dynamics that produce the upswing of a spike. The downswing is realized
-          is by an artificial reset mechanism
+          the neuron deterministically  "fires" an action potential.
+          Neuron models with hard threshold do not contain intrinsic dynamics that produce the upswing of a spike. The downswing is realized
+          is by an artificial reset mechanism.
 
 
 
@@ -178,7 +178,7 @@ Soft threshold
 
             Neurons with a soft threshold model aspects of the voltage dependent conductances that underlie the
             biophysics of spike generation. Models either produce dynamics, which mimic the upswing of a spike or
-            the whole whole spike wave form
+            the whole spike wave form.
 
 
             .. dropdown:: Soft threshold
@@ -232,12 +232,12 @@ Input mechanism
 ~~~~~~~~~~~~~~~
 
 NEST supports various input mechanisms to neuron models. The majority of mechanisms are related to chemical synapses
-that couple neurons witha delay, but there are also electrical synapses, which couple neurons instantaneously.
+that couple neurons with a delay, but there are also electrical synapses, which couple neurons instantaneously.
 
 Electrical
 ^^^^^^^^^^
 
-- Gap junctions are direct electrical connections between neurons. The respective membrane potentials are instantaneously
+Gap junctions are direct electrical connections between neurons. The respective membrane potentials are instantaneously
   coupled to each other.
 
 Chemical
@@ -369,7 +369,7 @@ Adaptation mechanism
             Unlike a fixed threshold, an adaptive threshold increases temporarily following each spike and
             gradually returns to its baseline value over time. This mechanism models phenomena
             such as spike-frequency adaptation, where a neuron's responsiveness decreases with sustained
-            high-frequency input.
+            high-frequency input. A different mechanism to implement similar adaptation behavior is via a spike-triggered hyperpolarizing adaptation current.
 
             .. dropdown:: Models with adaptation
 
@@ -408,7 +408,7 @@ Auxilliary neurons
 
       .. dropdown:: Auxillary neurons
 
-        ignore-and-fire - used for benchmarking . . .
+        ignore-and-fire – Used for benchmarking
 
         parrot_neuron – Neuron that repeats incoming spikes
 
@@ -581,7 +581,7 @@ Mean field theory
       .. tab-item:: General info
         :selected:
 
-        Mean-field theory
+        Rate models can also be used as mean-field descriptions for the population-rate dynamics of spiking networks. 
 
         * :doc:`/models/siegert_neuron`
 
@@ -622,8 +622,8 @@ Multi-state neurons
 
    .. grid-item::
 
-     Neurons with two or three states. Simplest neuron models with threshold activation. Binary neurons have
-     On / Off behavior   used in theoretical and disease theory.
+     Neurons with two or three discrete states. These are the simplest neuron models with threshold activation. Binary neurons have
+     On / Off behavior used in theoretical neuroscience and disease theory.
 
 .. dropdown:: Multi-state neurons
 

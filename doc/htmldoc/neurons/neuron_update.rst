@@ -26,7 +26,7 @@ Updating the state of a neuron from time `t` to some later time :math:`t+\Delta{
    .. grid-item-card::
     :columns: 7
 
-    The autonomous dynamics describes the neuron behavior in the absence of stimulation or in the presence of constant inputs,
+    The autonomous dynamics describe the neuron behavior in the absence of stimulation or in the presence of constant inputs,
     and exclude all interaction events such as spikes from other neurons or devices.
     We choose an appropriate numerical solver for the dynamics, and in the case of linear differential equations,
     we use :ref:`exact integration <exact_integration>`.
@@ -68,7 +68,7 @@ Updating the state of a neuron from time `t` to some later time :math:`t+\Delta{
     :columns: 7
 
     Increment state variables associated with the post-spike dynamics
-    (such as refractoriness timers or adaptation variables), and send spike.
+    (such as refractoriness timers or adaptation variables), and send events (e.g. spike).
 
 .. note::
 

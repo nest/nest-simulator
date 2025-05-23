@@ -238,7 +238,7 @@ Electrical
 ^^^^^^^^^^
 
 Gap junctions are direct electrical connections between neurons. The respective membrane potentials are instantaneously
-  coupled to each other.
+coupled to each other.
 
 Chemical
 ^^^^^^^^
@@ -248,66 +248,66 @@ signals at the synapse. This process is captured by two major classes of models 
 or conductances.
 
 
-**Current-based models**
+   **Current-based models**
 
 
-.. grid:: 1 2 2 2
+   .. grid:: 1 2 2 2
 
-   .. grid-item::
-     :columns: 2
-     :class: sd-d-flex-row sd-align-major-center
+      .. grid-item::
+        :columns: 2
+        :class: sd-d-flex-row sd-align-major-center
 
-     .. image::  /static/img/current_based_nn.svg
+        .. image::  /static/img/current_based_nn.svg
 
-   .. grid-item::
-     :columns: 10
+      .. grid-item::
+        :columns: 10
 
-     NEST convention: ``psc`` (aka CUBA)
+        NEST convention: ``psc`` (aka CUBA)
 
-     Model post-synaptic responses to incoming spikes as changes in current.
-     The response of the post-synaptic neuron is independent of the neuronal state.
+        Model post-synaptic responses to incoming spikes as changes in current.
+        The response of the post-synaptic neuron is independent of the neuronal state.
 
-     .. dropdown:: Current-based neuron models
+        .. dropdown:: Current-based neuron models
 
-         {% for items in tag_dict %}
-         {% if items.tag == "current-based" %}
-         {% for item in items.models | sort %}
-         * :doc:`/models/{{ item | replace(".html", "") }}`
-         {% endfor %}
-         {% endif %}
-         {% endfor %}
+            {% for items in tag_dict %}
+            {% if items.tag == "current-based" %}
+            {% for item in items.models | sort %}
+            * :doc:`/models/{{ item | replace(".html", "") }}`
+            {% endfor %}
+            {% endif %}
+          {% endfor %}
 
-**Conductance-based models**
-
-
-.. grid:: 1 2 2 2
-
-   .. grid-item::
-     :columns: 2
-     :class: sd-d-flex-row sd-align-major-center
-
-     .. image::  /static/img/conductance_based_nn.svg
-
-   .. grid-item::
-     :columns: 10
-
-     NEST convention: ``cond`` (aka COBA)
-
-     Model post-synaptic responses to incoming spikes as changes in conductances.
-     The response of the post-synaptic neuron depends on the neuronal state.
-     These models capture more realistic synaptic behavior, as they account for the varying impact of
-     synaptic inputs depending on the membrane potential, which can change over time.
+   **Conductance-based models**
 
 
-     .. dropdown:: Conductance-based neuron models
+   .. grid:: 1 2 2 2
 
-         {% for items in tag_dict %}
-         {% if items.tag == "conductance-based" %}
-         {% for item in items.models | sort %}
-         * :doc:`/models/{{ item | replace(".html", "") }}`
-         {% endfor %}
-         {% endif %}
-         {% endfor %}
+      .. grid-item::
+        :columns: 2
+        :class: sd-d-flex-row sd-align-major-center
+
+        .. image::  /static/img/conductance_based_nn.svg
+
+      .. grid-item::
+        :columns: 10
+
+        NEST convention: ``cond`` (aka COBA)
+
+        Model post-synaptic responses to incoming spikes as changes in conductances.
+        The response of the post-synaptic neuron depends on the neuronal state.
+        These models capture more realistic synaptic behavior, as they account for the varying impact of
+        synaptic inputs depending on the membrane potential, which can change over time.
+
+
+        .. dropdown:: Conductance-based neuron models
+
+            {% for items in tag_dict %}
+            {% if items.tag == "conductance-based" %}
+            {% for item in items.models | sort %}
+            * :doc:`/models/{{ item | replace(".html", "") }}`
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
 
 
 
@@ -581,7 +581,7 @@ Mean field theory
       .. tab-item:: General info
         :selected:
 
-        Rate models can also be used as mean-field descriptions for the population-rate dynamics of spiking networks. 
+        Rate models can also be used as mean-field descriptions for the population-rate dynamics of spiking networks.
 
         * :doc:`/models/siegert_neuron`
 

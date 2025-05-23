@@ -152,7 +152,7 @@ neuron model ``iaf_psc_alpha``.
 
      The colors indicated on the flowchart match with the basic steps :ref:`described above <sec_gen_steps>`.
 
-     .. image:: ../static/img/mixedfont-flowchart0325.png
+     .. image:: ../static/img/mixedfont-flowchart0425.svg
        :width: 90%
 
    .. grid-item:: **Propagators for solution with exact integration**

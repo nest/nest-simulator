@@ -361,7 +361,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
 
     if isinstance(obj, bool):
         ret = <Datum*> new BoolDatum(obj)
-    elif isinstance(obj, int):  # removed 'long'
+    elif isinstance(obj, int):
         ret = <Datum*> new IntegerDatum(obj)
     elif isinstance(obj, float):
         ret = <Datum*> new DoubleDatum(obj)

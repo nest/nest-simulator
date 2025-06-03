@@ -53,7 +53,8 @@ Types of neurons
    .. grid-item::
      :columns: 12
 
-     For details on neuron update algorthims see: :ref:`neuron_update`
+     In the followin section, we introduce the different types of neuron models implemented in NEST, describe their dynamics
+     and technical details. A generic description of the numerical update algorithm can be found here: :ref:`neuron_update`.
 
 .. _spiking_neurons:
 
@@ -137,8 +138,9 @@ Hard threshold
 
           When the membrane potential reaches a certain threshold,
           the neuron deterministically  "fires" an action potential.
-          Neuron models with hard threshold do not contain intrinsic dynamics that produce the upswing of a spike. The downswing is realized
-          is by an artificial reset mechanism.
+          Neuron models with hard threshold do not contain intrinsic dynamics that produce the upswing of a spike.
+          Some of the neurons in this class do not reset the membrane potential after a spike.
+          Note that the threshold itself can be dynamic (see `Adaption` section below).
 
 
 
@@ -179,7 +181,9 @@ Soft threshold
             Neurons with a soft threshold model aspects of the voltage dependent conductances that underlie the
             biophysics of spike generation. Models either produce dynamics, which mimic the upswing of a spike or
             the whole spike wave form.
-
+            Some models in this class contain a hard threshold that triggers an instantaneous reset of the membrane potential.
+            This threshold is needed to finish the action potential and to avoid an unbounded growth of the membrane potential.
+            The action-potential initiation is not affected by this and governed by continuous dynamics.
 
             .. dropdown:: Soft threshold
 
@@ -237,18 +241,19 @@ that couple neurons with a delay, but there are also electrical synapses, which 
 Electrical
 ^^^^^^^^^^
 
-Gap junctions are direct electrical connections between neurons. The respective membrane potentials are instantaneously
+:ref:`Gap junctions <sim_gap_junctions>` are direct electrical connections between neurons. The respective membrane potentials are instantaneously
 coupled to each other.
 
 Chemical
 ^^^^^^^^
 
 Chemical synapses couple neurons in a delayed fashion, because of the conversion of electrical and chemical
-signals at the synapse. This process is captured by two major classes of models in NEST that either model input currents
-or conductances.
+signals at the synapse. This process is captured by two major classes of models in NEST that either model synaptic
+inputs as currents or conductances.
 
 
-   **Current-based models**
+
+   **Current-based (CUBA) models**
 
 
    .. grid:: 1 2 2 2
@@ -262,10 +267,10 @@ or conductances.
       .. grid-item::
         :columns: 10
 
-        NEST convention: ``psc`` (aka CUBA)
 
         Model post-synaptic responses to incoming spikes as changes in current.
         The response of the post-synaptic neuron is independent of the neuronal state.
+        In NEST, current-based neuron models are labeled by ``psc`` (post-synaptic currents).
 
         .. dropdown:: Current-based neuron models
 
@@ -277,7 +282,7 @@ or conductances.
             {% endif %}
           {% endfor %}
 
-   **Conductance-based models**
+   **Conductance-based (COBA) models**
 
 
    .. grid:: 1 2 2 2
@@ -291,12 +296,11 @@ or conductances.
       .. grid-item::
         :columns: 10
 
-        NEST convention: ``cond`` (aka COBA)
-
         Model post-synaptic responses to incoming spikes as changes in conductances.
         The response of the post-synaptic neuron depends on the neuronal state.
         These models capture more realistic synaptic behavior, as they account for the varying impact of
         synaptic inputs depending on the membrane potential, which can change over time.
+        "In NEST, conductance-based neuron models are labeled by ``cond``.
 
 
         .. dropdown:: Conductance-based neuron models
@@ -429,14 +433,13 @@ Precise spike timing
 
   .. grid-item::
 
-      NEST convention: ``ps``
-
       By default, the dynamics of neuronal models are evaluated on a fixed time grid that can be specified before simulation.
 
       Precise neuron models instead calculate precise rather than grid-constrained spike times. These models are more
       computationally heavy,  but provide better resolution to spike times than a grid-constrained model.
       Spiking neuron networks are often chaotic systems such that an infinitesimal shift in spike time might lead to changes in
       the overall network dynamics.
+      In NEST, we label models with precise spike times with  ``ps``.
 
       See :ref:`our guide on precise spike timing <sim_precise_spike_times>`.
 

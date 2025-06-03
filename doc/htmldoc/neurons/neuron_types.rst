@@ -140,7 +140,7 @@ Hard threshold
           the neuron deterministically  "fires" an action potential.
           Neuron models with hard threshold do not contain intrinsic dynamics that produce the upswing of a spike.
           Some of the neurons in this class do not reset the membrane potential after a spike.
-          Note that the threshold itself can be dynamic (see `Adaption` section below).
+          Note that the threshold itself can be dynamic (see `Adaptation` section below).
 
 
 

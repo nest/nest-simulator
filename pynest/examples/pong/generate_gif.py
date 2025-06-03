@@ -243,7 +243,7 @@ if __name__ == "__main__":
         title.text(0.5, 0.75, "VS", ha="center", fontsize=17)
         title.text(0.6, 0.75, name_right, ha="left", fontsize=15, c=right_color_hex)
 
-        l_score, r_score = score[i]
+        l_score:int, r_score:int = score[i]
 
         l_info.text(0, 0.9, "run:", fontsize=14)
         l_info.text(0, 0.75, str(i), fontsize=14)

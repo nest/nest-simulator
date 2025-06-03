@@ -53,7 +53,7 @@ Types of neurons
    .. grid-item::
      :columns: 12
 
-     In the followin section, we introduce the different types of neuron models implemented in NEST, describe their dynamics
+     In the following section, we introduce the different types of neuron models implemented in NEST, describe their dynamics
      and technical details. A generic description of the numerical update algorithm can be found here: :ref:`neuron_update`.
 
 .. _spiking_neurons:
@@ -496,7 +496,7 @@ The following non-linearity types are available:
   *  :doc:`/models/tanh_rate`
   *  :doc:`/models/threshold_lin_rate`
 
-Where is Non-linearity applied? ``linear_summation``
+Where is Non-linearity applied? 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

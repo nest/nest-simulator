@@ -7,6 +7,7 @@ NEST performance benchmarks
 NEST performance is continuously monitored and improved across various network sizes.
 Here we show benchmarking results for NEST version 3.8 on Jureca-DC [1]_.
 The benchmarking framework and the structure of the graphs is described in [2]_.
+For details on `State Propagation` (i.e., `Simulation Run`), see the guides :ref:`built_in_timers` and :ref:`run_simulations`
 
 Strong scaling experiment of the Microcircuit model [3]_
 ---------------------------------------------------------
@@ -45,11 +46,11 @@ Strong scaling experiment of the Multi-area-model [5]_
        :columns: 10
 
        Dynamical regime: Ground state
-       
+
        .. image:: /static/img/mam_ground-state_benchmark.png
 
        Dynamical regime: Metastable state
-       
+
        .. image:: /static/img/mam_metastable-state_benchmark.png
 
 
@@ -95,6 +96,8 @@ Weak scaling experiment of the HPC benchmark model [6]_
 
 
 .. seealso::
+
+   * Guide to :ref:`Built-in timers <built_in_timers>` and :ref:`run_simulations`.
 
    Example networks:
 

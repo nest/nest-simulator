@@ -101,6 +101,7 @@ extern const Name asc_init;
 extern const Name asc_r;
 extern const Name available;
 extern const Name average_gradient;
+extern const Name axonal_delay;
 extern const Name azimuth_angle;
 
 extern const Name b;
@@ -161,6 +162,7 @@ extern const Name delta_IP3;
 extern const Name delta_P;
 extern const Name delta_tau;
 extern const Name dendritic_curr;
+extern const Name dendritic_delay;
 extern const Name dendritic_exc;
 extern const Name dendritic_inh;
 extern const Name dg;
@@ -384,6 +386,7 @@ extern const Name node_uses_wfr;
 extern const Name noise;
 extern const Name noisy_rate;
 extern const Name num_connections;
+extern const Name num_corrections;
 extern const Name num_processes;
 extern const Name number_of_connections;
 

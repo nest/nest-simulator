@@ -264,6 +264,8 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 void
 nest::iaf_psc_alpha_ps::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   B_.logger_.init();
 
   V_.h_ms_ = Time::get_resolution().get_ms();

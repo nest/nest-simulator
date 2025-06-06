@@ -133,7 +133,7 @@ void register_eprop_learning_signal_connection_bsshslm_2020( const std::string& 
  * according to Bellec et al. (2020).
  */
 template < typename targetidentifierT >
-class eprop_learning_signal_connection_bsshslm_2020 : public Connection< targetidentifierT >
+class eprop_learning_signal_connection_bsshslm_2020 : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
@@ -141,7 +141,7 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
 
   //! Type of the connection base.
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   //! Properties of the connection model.
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY;
@@ -162,14 +162,14 @@ public:
 
   //! Check if the target accepts the event and receptor type requested by the sender.
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex, const CommonPropertiesType& )
   {
     LearningSignalConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
-    Connection< targetidentifierT >::target_.set_target( &t );
+    Connection< targetidentifierT, TotalDelay >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT, TotalDelay >::target_.set_target( &t );
   }
 
   //! Send the learning signal event.

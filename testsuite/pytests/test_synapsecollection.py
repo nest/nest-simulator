@@ -117,7 +117,11 @@ class TestSynapseCollection(unittest.TestCase):
         expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         target_ref = [1, 2, 1, 2]
-        dpw_ref = {"delay": [1.0, 1.0, 1.0, 1.0], "port": [0, 1, 2, 3], "weight": [1.0, 1.0, 1.0, 1.0]}
+        dpw_ref = {
+            "delay": [1.0, 1.0, 1.0, 1.0],
+            "port": [0, 1, 2, 3],
+            "weight": [1.0, 1.0, 1.0, 1.0],
+        }
         all_ref = {
             "delay": [1.0, 1.0, 1.0, 1.0],
             "port": [0, 1, 2, 3],

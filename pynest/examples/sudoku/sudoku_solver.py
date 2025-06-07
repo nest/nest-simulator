@@ -78,7 +78,7 @@ max_iterations = max_sim_time // sim_time
 puzzle = get_puzzle(puzzle_index)
 network = sudoku_net.SudokuNet(pop_size=5, input=puzzle, noise_rate=noise_rate)
 
-solution_states = np.zeros((max_iterations, 9, 9), dtype=int)
+solution_states = np.zeros((max_iterations, 9, 9), dtype=np.int_)
 
 run = 0
 valid = False

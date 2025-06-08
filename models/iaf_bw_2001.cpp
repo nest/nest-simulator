@@ -474,7 +474,7 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
       S_.s_NMDA_pre += s_NMDA_delta;
 
       SpikeEvent se;
-      se.set_offset( s_NMDA_delta );
+      se.get_stamp().set_offset( s_NMDA_delta );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -509,7 +509,7 @@ nest::iaf_bw_2001::handle( SpikeEvent& e )
   }
   else
   {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_offset() );
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_stamp().get_offset() );
   }
 }
 

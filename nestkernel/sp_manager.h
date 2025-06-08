@@ -24,6 +24,7 @@
 #define SP_MANAGER_H
 
 // C++ includes:
+#include <random>
 #include <vector>
 
 // Includes from libnestutil:
@@ -126,7 +127,7 @@ public:
   /**
    * Enable structural plasticity
    */
-  void enable_structural_plasticity();
+  void enable_structural_plasticity( bool use_gaussian_kernel, double gaussian_kernel_sigma, bool cache_probabilities );
 
   /**
    * Disable structural plasticity
@@ -136,6 +137,8 @@ public:
   bool is_structural_plasticity_enabled() const;
 
   double get_structural_plasticity_update_interval() const;
+
+  double get_structural_plasticity_gaussian_kernel_sigma() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -187,6 +190,80 @@ public:
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
+  /**
+   * Calculate a unique index for a pair of neuron IDs for efficient lookup.
+   * The index is calculated independent of the order
+   *
+   * @param id1 First neuron ID.
+   * @param id2 Second neuron ID.
+   * @return Unique index corresponding to the neuron pair.
+   */
+  int get_neuron_pair_index( int id1, int id2 );
+
+  /**
+   * Compute the Gaussian kernel value between two positions.
+   *
+   * @param pos1 Position of the first neuron.
+   * @param pos2 Position of the second neuron.
+   * @param sigma Standard deviation for the Gaussian kernel.
+   * @return Gaussian kernel value.
+   */
+  double gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
+
+  /**
+   * Perform global shuffling of pre- and post-synaptic neurons based on spatial probabilities.
+   *
+   * @param pre_ids Vector of pre-synaptic neuron IDs.
+   * @param post_ids Vector of post-synaptic neuron IDs.
+   * @param pre_ids_results Vector to store shuffled pre-synaptic IDs.
+   * @param post_ids_results Vector to store shuffled post-synaptic IDs.
+   */
+  void global_shuffle_spatial( std::vector< size_t >& pre_ids,
+    std::vector< size_t >& post_ids,
+    std::vector< size_t >& pre_ids_results,
+    std::vector< size_t >& post_ids_results );
+
+  /**
+   * Build a probability list for neuron connections based on spatial properties.
+   */
+  void build_probability_list();
+
+  /**
+   * Gather global neuron positions and IDs from all nodes.
+   */
+  void gather_global_positions_and_ids();
+
+  /**
+   * Perform roulette wheel selection to randomly select an index based on probabilities.
+   *
+   * @param probabilities Vector of probabilities for selection.
+   * @param rnd Random number.
+   * @return Selected index.
+   */
+  int roulette_wheel_selection( const std::vector< double >& probabilities, double rnd );
+
+  void
+  set_structural_plasticity_gaussian_kernel_sigma( double sigma )
+  {
+    structural_plasticity_gaussian_kernel_sigma_ = sigma;
+  }
+  /**
+   * Global list of neuron IDs used for structural plasticity computations.
+   */
+  std::vector< int > global_ids;
+
+  /**
+   * Global list of neuron positions used for spatial computations in
+   * structural plasticity.
+   */
+  std::vector< double > global_positions;
+
+  /**
+   * Standard deviation parameter for the Gaussian kernel used in
+   * spatial probability calculations.
+   */
+  double structural_plasticity_gaussian_kernel_sigma_;
+
 
 private:
   /**
@@ -196,11 +273,35 @@ private:
   double structural_plasticity_update_interval_;
 
   /**
+   * Flag indicating whether a Gaussian spatial kernel is used for connection
+   * probability computation.
+   */
+  bool structural_plasticity_use_gaussian_kernel_;
+
+  /**
+   * Dimentionality of the neuron positions
+   */
+  int pos_dim;
+
+  /**
+   * List of precomputed probabilities for neuron connections, indexed
+   * by neuron pair indices for efficient lookup.
+   */
+  std::vector< double > probability_list;
+
+  /**
+   * Flag indicating whether connection probabilities should be cached
+   * for performance optimization.
+   */
+  bool structural_plasticity_cache_probabilities_;
+
+  /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
    * Off (False).
    */
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
+
 
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
@@ -227,6 +328,11 @@ inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
+}
+inline double
+SPManager::get_structural_plasticity_gaussian_kernel_sigma() const
+{
+  return structural_plasticity_gaussian_kernel_sigma_;
 }
 
 } // namespace nest

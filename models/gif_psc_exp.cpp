@@ -354,7 +354,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
-      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_
+      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ * 1000.0 ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_
         + S_.I_syn_ex_ * V_.P21ex_ + S_.I_syn_in_ * V_.P21in_;
 
       const double lambda = P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );

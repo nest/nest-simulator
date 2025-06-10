@@ -300,7 +300,7 @@ inputs as currents or conductances.
         The response of the post-synaptic neuron depends on the neuronal state.
         These models capture more realistic synaptic behavior, as they account for the varying impact of
         synaptic inputs depending on the membrane potential, which can change over time.
-        "In NEST, conductance-based neuron models are labeled by ``cond``.
+        In NEST, conductance-based neuron models are labeled by ``cond``.
 
 
         .. dropdown:: Conductance-based neuron models

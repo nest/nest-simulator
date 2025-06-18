@@ -30,13 +30,21 @@ import webbrowser
 import nest
 
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import broadcast, is_iterable, load_help, show_help_with_pager
+from .hl_api_helper import (
+    broadcast,
+    deprecated,
+    is_iterable,
+    load_help,
+    show_help_with_pager,
+)
 from .hl_api_types import to_json
 
 __all__ = [
+    "GetStatus",
     "get_verbosity",
     "help",
     "helpdesk",
+    "SetStatus",
     "set_verbosity",
     "verbosity",
 ]
@@ -154,3 +162,16 @@ def set_verbosity(level):
         raise TypeError('"level" must be a value of the nest.verbosity enum.')
 
     nestkernel.llapi_set_verbosity(level)
+
+
+@deprecated("get", "Instead of GetStatus(nrns|conns, args), use nrns|conns.get(args).")
+def GetStatus(nodes_or_conns, keys=None, output=""):
+    if keys:
+        return nodes_or_conns.get(keys, output=output)
+    else:
+        return nodes_or_conns.get(output=output)
+
+
+@deprecated("set", "Instead of SetStatus(nrns|conns, args), use nrns|conns.set(args).")
+def SetStatus(nodes_or_conns, params, val=None):
+    nodes_or_conns.set(params if val is None else {params: val})

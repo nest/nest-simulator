@@ -37,43 +37,38 @@ def test_ticket_156():
     """
 
     ps_params = {"origin": 0.0, "start": 1.0, "stop": 2.0, "rate": 12345.0}  # Expect ~ 12.3 spikes
-
     resolutions = [0.01, 0.1, 0.2, 0.5, 1.0]
     simtime = ps_params["stop"] + 2.0
 
-    def check_limits(spks):
-        """Check if all spikes are within the specified limits."""
-        ori = ps_params["origin"]
-        return np.min(spks) > ps_params["start"] + ori and np.max(spks) <= ps_params["stop"] + ori
-
     def single_trial(h):
-        """Run a single trial with a given resolution."""
+        """
+        Returns concatenated spike times recorded by the two spike recorders.
+
+        Asserts that single spike trains fulfill requirements.
+        """
+
         nest.ResetKernel()
-        nest.SetKernelStatus({"resolution": h})
+        nest.resolution = h
 
         pg = nest.Create("poisson_generator_ps", params=ps_params)
-        srs = [nest.Create("spike_recorder") for _ in range(2)]
-
-        for sr in srs:
-            nest.Connect(pg, sr, syn_spec={"delay": 1.0, "weight": 1.0})
+        srs = nest.Create("spike_recorder", n=2)
+        nest.Connect(pg, srs, syn_spec={"delay": 1.0, "weight": 1.0})
 
         nest.Simulate(simtime)
-        return [nest.GetStatus(sr, "events")[0]["times"] for sr in srs]
 
-    # Run trials for each resolution
+        spike_times = srs.get("events", "times")
+
+        # Test that the two recorders recorded different times
+        assert not np.array_equal(*spike_times)
+
+        # Test that all spike times are in (start, stop]
+        all_spike_times = np.concatenate(spike_times)
+        assert all(all_spike_times > ps_params["origin"] + ps_params["start"])
+        assert all(all_spike_times <= ps_params["origin"] + ps_params["stop"])
+
+        return all_spike_times
+
+    # Run trials for each resolution and check all resolutions yield identical spike trains
     results = [single_trial(h) for h in resolutions]
-
-    # First test: Check limits
-    assert all(check_limits(np.concatenate(trial)) for trial in results), "Spike times out of bounds"
-
-    # Second test: Different results between targets
-    assert all(not np.array_equal(trial[0], trial[1]) for trial in results), "Spike recorders have identical results"
-
-    # Third test: Equality among runs
-    # Compare spike times across resolutions for each recorder separately
-    for i in range(2):
-        spike_times_across_resolutions = [trial[i] for trial in results]
-        reference_times = spike_times_across_resolutions[0]
-        assert all(
-            np.allclose(reference_times, times, atol=1e-15) for times in spike_times_across_resolutions[1:]
-        ), "Spike times not consistent across resolutions"
+    for train in results[1:]:
+        assert np.allclose(train, results[0], atol=1e-15)

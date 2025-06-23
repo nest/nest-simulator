@@ -388,6 +388,7 @@ protected:
   // be reduced even more as well.
 };
 
+// Make sure the Connection template instances are as compact as possible
 using success_connection_target_ptr_size =
   StaticAssert< sizeof( Connection< TargetIdentifierPtrRport, TotalDelay > ) == 24 >::success;
 using success_connection_target_idx_size =

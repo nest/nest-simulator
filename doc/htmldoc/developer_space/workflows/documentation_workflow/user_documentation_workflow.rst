@@ -200,7 +200,7 @@ you will need to build the documentation locally with Sphinx.
       sphinx-build . ../_build/html -b html
 
 .. note::
-   The ``build`` folder should not be put inside of the ``source`` folder and
+   The ``build`` folder should not be put inside of the ``doc/htmldoc`` folder and
    the Sphinx command should be run from the ``doc/htmldoc`` folder.
    Deviating from this format may cause the build process to fail in unexpected ways.
 

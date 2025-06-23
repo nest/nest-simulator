@@ -18,22 +18,21 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-"""
-Regression test for Issue #735 (GitHub).
-
-This test ensures that NEST raises an error if the user tries to set stdp parameters
-that cannot be set on stdp_dopamine_synapse.
-"""
 
 import nest
 import pytest
 
 
-def check_param(param_on_connect, copy_model, pname):
+@pytest.mark.parametrize("use_param_on_connect", [True, False])
+@pytest.mark.parametrize("copy_model", [True, False])
+@pytest.mark.parametrize("param_name", ["A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"])
+def test_issue_735(use_param_on_connect, copy_model, param_name):
     """
-    Helper function to check parameter settings.
+    Regression test for Issue #735 (GitHub).
+
+    This test ensures that NEST raises an error if the user tries to set stdp parameters
+    in ways that are not supported for stdp_dopamine_synapse.
     """
-    expected_params = f"{pname}copy_model{param_on_connect}"
 
     nest.ResetKernel()
 
@@ -47,20 +46,16 @@ def check_param(param_on_connect, copy_model, pname):
         nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
         syn_model = "stdp_dopamine_synapse"
 
-    if param_on_connect:
-        nest.Connect(
-            n, n, conn_spec={"rule": "one_to_one"}, syn_spec={"synapse_model": syn_model, "weight": 2.0, pname: 1.0}
-        )
+    if use_param_on_connect:
+        with pytest.raises(nest.kernel.NESTErrors.NotImplemented):
+            nest.Connect(
+                n,
+                n,
+                conn_spec={"rule": "one_to_one"},
+                syn_spec={"synapse_model": syn_model, "weight": 2.0, param_name: 1.0},
+            )
     else:
         nest.Connect(n, n, syn_spec={"synapse_model": syn_model, "weight": 2.0})
         conns = nest.GetConnections()
-        nest.SetStatus(conns, {pname: 1.0, "weight": 2.0})
-
-    assert expected_params == f"{pname}{copy_model}{param_on_connect}"
-
-
-def test_stdp_parameters():
-    """
-    Test that setting stdp parameters on stdp_dopamine_synapse raises an error.
-    """
-    params_to_test = ["A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"]
+        with pytest.raises(nest.kernel.NESTErrors.DictError):
+            conns.set({param_name: 1.0, "weight": 2.0})

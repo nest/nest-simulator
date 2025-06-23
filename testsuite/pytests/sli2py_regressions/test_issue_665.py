@@ -33,7 +33,7 @@ See also
 import nest
 import pytest
 
-pytestmark = pytest.mark.skipif_not_threaded()
+pytestmark = pytest.mark.skipif_missing_threads
 
 
 @pytest.fixture(autouse=True)

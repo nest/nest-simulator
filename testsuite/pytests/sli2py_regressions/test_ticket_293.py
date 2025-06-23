@@ -23,6 +23,7 @@ import nest
 import pytest
 
 
+@pytest.mark.skipif_missing_threads
 def test_ticket_293():
     """
     Regression test for Ticket #293.

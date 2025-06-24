@@ -84,7 +84,7 @@ Therefore, detailed timers are by default inactive.
      spike data, involving steps like collocating data, managing MPI buffers, and advancing the simulation time. `OMP
      barriers` are used to ensure thread synchronization at key points (for more details please see `Jordan et al. 2018
      <https://doi.org/10.3389/fninf.2018.00002>`_).
-     The timers are indicated in dark blue.
+     The timers are indicated in white or light grey.
 
      For source code see: `SimulationManager::update_ <https://github.com/nest/nest-simulator/blob/5fd75c080608149b926be683d8601f28b6c32d07/nestkernel/simulation_manager.cpp#L827>`_
      and `EventDeliveryManager::gather_spike_data <https://github.com/nest/nest-simulator/blob/5fd75c080608149b926be683d8601f28b6c32d07/nestkernel/event_delivery_manager.cpp#L356>`_

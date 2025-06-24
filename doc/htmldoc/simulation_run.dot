@@ -63,13 +63,10 @@
                              subgraph cluster_if_buffers_can_shrink {
                                label="If buffers can shrink"
                                style=filled
-                               fillcolor="#4b210c"
+                               fillcolor="#072f42"
                                "shrink MPI buffer size"
 
                              }
-                          }
-
-                        }
 
 
             subgraph cluster_collocate_spike_data_timer {
@@ -87,12 +84,13 @@
                 subgraph cluster_mpi_sync_timer {
                     label= "time_mpi_synchronization"
                     style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
-                    fillcolor="white"
+                    fillcolor="#f1f1f1"
                     "MPI barrier"
 
                 }
+                }
                }
-
+              }
             }
           }
        }

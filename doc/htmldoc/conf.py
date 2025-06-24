@@ -58,7 +58,6 @@ extensions = [
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
-    "make_diagram",
     "model_tag_setup",
     "nbsphinx",
     "extract_api_functions",

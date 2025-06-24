@@ -23,7 +23,8 @@ import nest
 import pytest
 
 
-def test_ticket_382():
+@pytest.mark.parametrize("model, params", [["voltmeter", None], ["multimeter", {"record_from": ["V_m"]}]])
+def test_ticket_382(model, params):
     """
     Regression test for Ticket #382.
 
@@ -35,19 +36,10 @@ def test_ticket_382():
 
     # Test for connecting voltmeter after simulation
     nest.ResetKernel()
-    vm = nest.Create("voltmeter")
+    meter = nest.Create(model, params=params)
     n = nest.Create("iaf_psc_alpha")
     nest.Simulate(10.0)
-    nest.Connect(vm, n, syn_spec={"delay": 0.1})  # Corrected delay value
+    nest.Connect(meter, n, syn_spec={"delay": 0.1})  # Corrected delay value
     nest.Simulate(10.0)
 
-    # Test for connecting multimeter after simulation
-    nest.ResetKernel()
-    mm = nest.Create("multimeter", params={"record_from": ["V_m"]})
-    n = nest.Create("iaf_psc_alpha")
-    nest.Simulate(10.0)
-    nest.Connect(mm, n, syn_spec={"delay": 0.1})  # Corrected delay value
-    nest.Simulate(10.0)
-
-    # Assert that the test completes without exceptions
-    assert True
+    # No assertion needed, we just want to be sure that the test completes.

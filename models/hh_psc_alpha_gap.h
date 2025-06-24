@@ -58,7 +58,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, gap junction
+/* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, gap junction, soft threshold
 
 Short description
 +++++++++++++++++

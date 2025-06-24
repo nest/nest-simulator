@@ -209,14 +209,12 @@ def do_exec(args, kwargs):
             response["stdout"] = "".join(locals_["_print"].txt)
 
     if "return" in kwargs:
-        if isinstance(kwargs["return"], list):
-            data = dict()
-            for variable in kwargs["return"]:
-                data[variable] = locals_.get(variable, None)
+        if isinstance(kwargs["return"], (list, tuple)):
+            data = dict([(variable, locals_.get(variable, None)) for variable in kwargs["return"]])
         else:
             data = locals_.get(kwargs["return"], None)
 
-            response["data"] = get_or_error(nest.serialize_data)(data)
+        response["data"] = get_or_error(nest.serialize_data)(data)
     return response
 
 

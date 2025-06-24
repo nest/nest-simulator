@@ -58,7 +58,7 @@ namespace nest
 extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, hard threshold
 
 Short description
 +++++++++++++++++

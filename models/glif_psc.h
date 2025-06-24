@@ -30,7 +30,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard thershold
 
 Short description
 +++++++++++++++++

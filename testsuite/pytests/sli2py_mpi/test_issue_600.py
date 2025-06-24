@@ -20,21 +20,21 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
+@pytest.mark.skipif_incompatible_mpi
+@pytest.mark.skipif_missing_gsl
 @MPITestAssertEqual([1, 2, 4], debug=False)
 def test_issue_600():
     """
     Confirm that waveform relaxation works with MPI.
+
+    The test compares data written by spike recorder to SPIKE_LABEL.
     """
 
     import nest
-    import pandas as pd
-
-    # We can only test here if GSL is available
-    if not nest.ll_api.sli_func("statusdict/have_gsl ::"):
-        return
 
     total_vps = 4
     h = 0.1

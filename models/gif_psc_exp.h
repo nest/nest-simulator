@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, stochastic
 
 Short description
 +++++++++++++++++

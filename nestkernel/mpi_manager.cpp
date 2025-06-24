@@ -323,7 +323,12 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
   num_nodes_per_rank[ get_rank() ] = local_nodes.size();
   communicate( num_nodes_per_rank );
 
-  size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  const size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  if ( num_globals == 0 )
+  {
+    return; // must return here to avoid passing address to empty global_nodes below
+  }
+
   global_nodes.resize( num_globals, 0L );
 
   // Set up displacements vector. Entry i specifies the displacement (relative
@@ -334,7 +339,9 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
     displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
   }
 
-  MPI_Allgatherv( &( *local_nodes.begin() ),
+  // avoid dereferencing empty vector
+  const auto send_ptr = local_nodes.empty() ? nullptr : &local_nodes[ 0 ];
+  MPI_Allgatherv( send_ptr,
     local_nodes.size(),
     MPI_Type< size_t >::type,
     &global_nodes[ 0 ],

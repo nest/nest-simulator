@@ -32,11 +32,14 @@ random_params = [
 ]
 
 
+@pytest.mark.skipif_incompatible_mpi
 @pytest.mark.parametrize(["kind", "specs"], random_params)
 @MPITestAssertEqual([1, 2, 4])
 def test_issue_2119(kind, specs):
     """
     Confirm that randomized node parameters work correctly under MPI and OpenMP.
+
+    The test is performed on GID-V_m data written to OTHER_LABEL.
     """
 
     import nest

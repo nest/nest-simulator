@@ -65,6 +65,16 @@ class GetNodesTestCase(unittest.TestCase):
 
         self.assertEqual(nodes_exp_ref, nodes_exp)
 
+    def test_GetNodes_no_match(self):
+        """
+        Ensure we get an empty result if nothing matches.
+
+        This would lead to crashes in MPI-parallel code before #3460.
+        """
+
+        nodes = nest.GetNodes({"V_m": 100.0})
+        self.assertEqual(len(nodes), 0)
+
 
 def suite():
     suite = unittest.makeSuite(GetNodesTestCase, "test")

@@ -40,7 +40,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation
+/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation, hard threshold
 
 Short description
 +++++++++++++++++

@@ -22,58 +22,44 @@
 import nest
 import pytest
 
+"""
+Regression test for Ticket #349.
 
-@pytest.mark.skipif(not nest.ll_api.sli_func("statusdict/have_gsl ::"), reason="Requires GSL")
-def test_ticket_349():
-    """
-    Regression test for Ticket #349.
+Ensure that a multimeter handles illegal entries in the record_from list gracefully
+and that an empty record_from list does not cause the simulation to crash.
 
-    Ensure that a multimeter handles illegal entries in the record_from list gracefully
-    and that an empty record_from list does not cause the simulation to crash.
+Author: Hans Ekkehard Plesser, 2009-07-02
+"""
 
-    Author: Hans Ekkehard Plesser, 2009-07-02
-    """
 
-    # First test: Connect with illegal entry
+def test_exception_on_bad_recordables():
     nest.ResetKernel()
+
+    good_recordables = nest.GetDefaults("iaf_psc_alpha")["recordables"]
+    not_recordables = [f"{item}_foo" for item in good_recordables]
+
     mm = nest.Create("multimeter")
-    n = nest.Create("iaf_cond_alpha")
+    nrn = nest.Create("iaf_psc_alpha")
 
-    r = nest.GetDefaults("iaf_cond_alpha")["recordables"]
-    rfail = [f"{item}_foo" for item in r]
+    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+        mm.record_from = not_recordables
+        nest.Connect(mm, nrn)
 
-    mm.set(record_from=rfail)
+    # If we get here, error was raised properly above, so we can test
+    # if trying again with good values will succeed.
+    mm.record_from = good_recordables
+    nest.Connect(mm, nrn)
 
-    with pytest.raises(Exception):
-        nest.Connect(mm, n)
+    # No assert require, we just check that Connect() succeeds
 
-    # Second test: Connect with illegal entry first, then retry with legal list
+
+def test_empty_recordables():
     nest.ResetKernel()
-    mm = nest.Create("multimeter")
-    n = nest.Create("iaf_cond_alpha")
-
-    r = nest.GetDefaults("iaf_cond_alpha")["recordables"]
-    rfail = [f"{item}_foo" for item in r]
-
-    mm.set(record_from=rfail)
-
-    try:
-        nest.Connect(mm, n)
-    except Exception:
-        pass
-
-    mm.set(record_from=r)
-    nest.Connect(mm, n)
-
-    # Third test: Connect multimeter with empty list, then simulate
-    nest.ResetKernel()
-    mm = nest.Create("multimeter")
-    n = nest.Create("iaf_cond_alpha")
-    mm.set(record_from=[])
-    nest.Connect(mm, n)
+    mm = nest.Create("multimeter", params={"record_from": []})
+    nrn = nest.Create("iaf_psc_alpha")
+    nest.Connect(mm, nrn)
 
     nest.Simulate(10.0)
 
-    events = mm.get("events")
-    assert len(events["senders"]) == 0
-    assert len(events["times"]) == 0
+    assert len(mm.events["senders"]) == 0
+    assert len(mm.events["times"]) == 0

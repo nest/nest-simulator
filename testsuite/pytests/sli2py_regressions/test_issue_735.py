@@ -47,7 +47,7 @@ def test_issue_735(use_param_on_connect, copy_model, param_name):
         syn_model = "stdp_dopamine_synapse"
 
     if use_param_on_connect:
-        with pytest.raises(nest.kernel.NESTErrors.NotImplemented):
+        with pytest.raises(nest.NESTErrors.NotImplemented):
             nest.Connect(
                 n,
                 n,
@@ -57,5 +57,5 @@ def test_issue_735(use_param_on_connect, copy_model, param_name):
     else:
         nest.Connect(n, n, syn_spec={"synapse_model": syn_model, "weight": 2.0})
         conns = nest.GetConnections()
-        with pytest.raises(nest.kernel.NESTErrors.DictError):
+        with pytest.raises(nest.NESTErrors.UnaccessedDictionaryEntry):
             conns.set({param_name: 1.0, "weight": 2.0})

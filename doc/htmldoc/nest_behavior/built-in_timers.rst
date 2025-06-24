@@ -79,14 +79,14 @@ Therefore, detailed timers are by default inactive.
         :caption: Simplified sequence of operations in the simulation run, organized in a top-down manner.
 
      Within the `simulate timer` section, parallel processes
-     (`OMP Parallel`) manage time-driven loops, handling tasks such as delivering spike data, updating timers, and
-     synchronizing threads using OMP barriers. The `OMP Master` section is responsible for gathering and communicating
+     (`OMP Parallel`) manage time-driven loops, handling tasks such as delivering spike data, and updating timers.
+     The `OMP Master` section is responsible for gathering and communicating
      spike data, involving steps like collocating data, managing MPI buffers, and advancing the simulation time. `OMP
      barriers` are used to ensure thread synchronization at key points (for more details please see `Jordan et al. 2018
      <https://doi.org/10.3389/fninf.2018.00002>`_).
      The timers are indicated in dark blue.
 
-     For source code see: `SimulationManager::update <https://github.com/nest/nest-simulator/blob/5fd75c080608149b926be683d8601f28b6c32d07/nestkernel/simulation_manager.cpp#L827>`_
+     For source code see: `SimulationManager::update_ <https://github.com/nest/nest-simulator/blob/5fd75c080608149b926be683d8601f28b6c32d07/nestkernel/simulation_manager.cpp#L827>`_
      and `EventDeliveryManager::gather_spike_data <https://github.com/nest/nest-simulator/blob/5fd75c080608149b926be683d8601f28b6c32d07/nestkernel/event_delivery_manager.cpp#L356>`_
 
 
@@ -164,7 +164,7 @@ If detailed timers are active, the following time measurements are available as 
      - ``time_gather_spike_data``
    * - ``time_mpi_synchronization``
      - Time spent waiting for other processes
-     -
+     - ``time_communicate_spike_data``
    * - ``time_omp_synchronization_construction``
      - Synchronization time of threads during network construction.
      - ``time_construction_create``, ``time_construction_connect``, ``time_communicate_prepare``

@@ -1,0 +1,101 @@
+ digraph G {
+  node [fontname="Helvetica,Arial,sans-serif", shape="box", fontcolor="white", style="filled", fillcolor="#0E6A93"]
+  rankdir="LR"
+  bgcolor="#ff6633"
+  label="Simulation Run"
+  labelloc="t"
+  fontcolor="white"
+  fontname="Helvetica,Arial,sans-serif"
+
+	subgraph cluster_simulate_timer {
+			label="time_simulate"
+			style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+			fillcolor="white"
+      subgraph cluster_OMP_Parallel {
+        label="OMP Parallel"
+        style=filled
+        fillcolor="#0E6A93" fontcolor="white" fontname="Helvetica,Arial,sans-serif"
+        subgraph cluster_time_driven_loop {
+          label="Time driven loop"
+          style=filled
+          fillcolor="#072f42"
+          subgraph cluster_deliver_spike_data_timer {
+            label="time_deliver_spike_data"
+            style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+            fillcolor="white"
+            subgraph cluster_deliver_events {
+              label="Deliver events"
+              style=filled fontcolor="white" fontname="Helvetica,Arial,sans-serif"
+              fillcolor="#072f42"
+              "plasticity update"
+            }
+          }
+          subgraph cluster_update_timer {
+            label="time_update"
+            style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+            fillcolor="white"
+            "node update"
+          }
+            subgraph cluster_omp_synchronization_timer {
+            label="time_omp_synchronization_simulation"
+            style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+            fillcolor="white"
+            "OMP barrier"
+            }
+          subgraph cluster_omp_master {
+              label="OMP master"
+            style=filled fontcolor="white"
+            fillcolor="#0E6A93"
+            "advance time"
+
+          subgraph cluster_gather_spike_data_timer{
+                      label= "time_gather_spike_data"
+                      style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+                      fillcolor="white"
+                      subgraph cluster_gather_spike_Data{
+                         label="Gather spike data"
+                         style=filled fontcolor="white" fontname="Helvetica, Arial, sans-serif"
+                         fillcolor="#072f42"
+                         subgraph cluster_repeat_once {
+                             label="Repeat once if buffer too small"
+                             style=filled#4b210c
+                             fillcolor="#0E6A93"
+                             subgraph cluster_if_buffers_can_shrink {
+                               label="If buffers can shrink"
+                               style=filled
+                               fillcolor="#4b210c"
+                               "shrink MPI buffer size"
+
+                             }
+                          }
+
+                        }
+
+
+            subgraph cluster_collocate_spike_data_timer {
+                  label="time_collocate_spike_data"
+                  style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+                  fillcolor="white"
+                  "collocate spike data"
+              }
+
+            subgraph cluster_communicate_spike_data_timer {
+                label= "time_communicate_spike_data"
+                style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+                fillcolor="white"
+                "communicate spike data"
+                subgraph cluster_mpi_sync_timer {
+                    label= "time_mpi_synchronization"
+                    style=filled fontcolor="black" fontname="Courier New, Courier, monospace"
+                    fillcolor="white"
+                    "MPI barrier"
+
+                }
+               }
+
+            }
+          }
+       }
+   	}
+  }
+ }

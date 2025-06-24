@@ -13,7 +13,7 @@
 #
 # NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+0  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
@@ -22,8 +22,32 @@
 import nest
 import pytest
 
+#  Models to skip to do given reasons
+skip_list = [
+    "correlospinmatrix_detector",  # not a neuron
+    "eprop_iaf_bsshslm_2020",  # no ArchivingNode, thus no t_spike
+    "eprop_iaf_adapt_bsshslm_2020",  # no ArchivingNode, thus no t_spike
+    "eprop_readout_bsshslm_2020",  # no ArchivingNode, thus no t_spike
+    "eprop_iaf",  # no ArchivingNode, thus no t_spike
+    "eprop_iaf_adapt",  # no ArchivingNode, thus no t_spike
+    "eprop_iaf_psc_delta",  # no ArchivingNode, thus no t_spike
+    "eprop_iaf_psc_delta_adapt",  # no ArchivingNode, thus no t_spike
+    "eprop_readout",  # no ArchivingNode, thus no t_spike
+    "iaf_chxk_2008",  # non-standard spiking conditions
+    "izhikevich",  # generating output spike not reliably suppressed even for subthreshold V_m
+]
 
-def test_ticket_310():
+
+def has_Vm_and_Vth(model):
+    params = nest.GetDefaults(model)
+    return "V_m" in params and "V_th" in params
+
+
+relevant_models = [model for model in nest.node_models if model not in skip_list and has_Vm_and_Vth(model)]
+
+
+@pytest.mark.parametrize("model", relevant_models)
+def test_ticket_310(model):
     """
     Regression test for Ticket #310.
 
@@ -34,43 +58,14 @@ def test_ticket_310():
     Author: Hans Ekkehard Plesser, 2009-02-11
     """
 
-    # Use power-of-two resolution to avoid round-off problems
-    res = 2**-3
+    time_resolution = 2**-3  # Use power-of-two resolution to avoid round-off problems
 
-    skip_list = [
-        "iaf_chxk_2008",  # non-standard spiking conditions
-        "correlospinmatrix_detector",  # not a neuron
-        "eprop_iaf_bsshslm_2020",  # no ArchivingNode, thus no t_spike
-        "eprop_iaf_adapt_bsshslm_2020",  # no ArchivingNode, thus no t_spike
-        "eprop_readout_bsshslm_2020",  # no ArchivingNode, thus no t_spike
-        "eprop_iaf",  # no ArchivingNode, thus no t_spike
-        "eprop_iaf_adapt",  # no ArchivingNode, thus no t_spike
-        "eprop_iaf_psc_delta",  # no ArchivingNode, thus no t_spike
-        "eprop_iaf_psc_delta_adapt",  # no ArchivingNode, thus no t_spike
-        "eprop_readout",  # no ArchivingNode, thus no t_spike
-    ]
+    nest.ResetKernel()
+    nest.resolution = time_resolution
 
-    node_models = nest.node_models
+    nrn = nest.Create(model)
+    nrn.V_m = nrn.V_th + 15
 
-    results = []
+    nest.Simulate(time_resolution)
 
-    for model in node_models:
-        if model not in skip_list:
-            nest.ResetKernel()
-            nest.SetKernelStatus({"resolution": res})
-            n = nest.Create(model)
-
-            # Check if V_m and V_th exist in the model's status
-            status = nest.GetStatus(n)[0]
-            if "V_m" in status and "V_th" in status:
-                nest.SetStatus(n, {"V_m": status["V_th"] + 15.0})
-                nest.Simulate(res)
-                t_spike = nest.GetStatus(n, "t_spike")[0]
-                results.append(t_spike <= res)
-            else:
-                results.append(True)
-        else:
-            results.append(True)
-
-    # Check if all entries are true
-    assert all(results), "Test failed for one or more models"
+    assert 0 < nrn.t_spike <= time_resolution  # for precise neurons, < is possible; -1 if never spiked

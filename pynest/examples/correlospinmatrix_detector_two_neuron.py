@@ -62,13 +62,13 @@ nest.Simulate(T)
 
 count_covariance = csd.count_covariance
 
-mean_activities = np.zeros(2, dtype=float)
+mean_activities = np.zeros(2, dtype=np.float)
 for i in range(2):
     mean_activities[i] = count_covariance[i][i][int(tau_max / h)] * (h / T)
 
 print("mean activities =", mean_activities)
 
-covariance_matrix = np.zeros((2, 2, int(2 * tau_max / h) + 1), dtype=float)
+covariance_matrix = np.zeros((2, 2, int(2 * tau_max / h) + 1), dtype=np.float)
 for i in range(2):
     for j in range(2):
         covariance_matrix[i, j] = count_covariance[i][j] * (h / T) - mean_activities[i] * mean_activities[j]

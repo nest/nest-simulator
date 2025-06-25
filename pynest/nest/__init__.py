@@ -416,6 +416,18 @@ class NestModule(types.ModuleType):
         ("If True, reset dynamic variables of e-prop neurons upon e-prop update."),
         default=True,
     )
+    verbosity = KernelAttribute(
+        "verbosity_level",
+        (
+            "Controls NEST's verbosity. The following levels are available,"
+            + " from most to least chatty: M_ALL, M_DEBUG, M_STATUS, M_INFO,"
+            + " M_PROGRESS, M_DEPRECATED, M_WARNING, M_ERROR, M_FATAL, M_QUIET."
+            + " Default verbosity is M_INFO. To start NEST with a different verbosity"
+            + " and supress the startup message, set the environment variable PYNEST_QUIET=1"
+        ),
+        default=ll_api.nestkernel.severity_t.M_INFO,
+    )
+
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(

@@ -186,7 +186,8 @@ cdef object any_to_pyobj(any operand):
         obj = NodeCollectionObject()
         obj._set_nc(any_cast[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
-
+    if is_type[severity_t](operand):
+        return any_cast[severity_t](operand)
 
 cdef object dictionary_to_pydict(dictionary cdict):
     cdef tmp = {}
@@ -364,14 +365,6 @@ def llapi_init_nest(argv):
 
 def llapi_reset_kernel():
     reset_kernel()
-
-
-def llapi_get_verbosity():
-    return severity_t(get_verbosity())
-
-
-def llapi_set_verbosity(severity_t s):
-    set_verbosity(s)
 
 
 def llapi_enable_structural_plasticity():

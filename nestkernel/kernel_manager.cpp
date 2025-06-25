@@ -157,7 +157,7 @@ nest::KernelManager::create_kernel_manager()
 void
 nest::KernelManager::destroy_kernel_manager()
 {
-  kernel_manager_instance_->logging_manager.set_logging_level( M_QUIET );
+  assert( false ); // Just to check if this ever gets called
   delete kernel_manager_instance_;
 }
 

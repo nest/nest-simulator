@@ -134,9 +134,6 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
 
-    severity_t get_verbosity()
-    void set_verbosity( severity_t )
-
     void enable_structural_plasticity() except +custom_exception_handler
     void disable_structural_plasticity() except +custom_exception_handler
 

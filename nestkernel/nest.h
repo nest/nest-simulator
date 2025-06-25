@@ -56,9 +56,6 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-severity_t get_verbosity();
-void set_verbosity( severity_t s );
-
 void enable_structural_plasticity();
 void disable_structural_plasticity();
 

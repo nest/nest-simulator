@@ -61,19 +61,6 @@ public:
   void register_logging_client( const deliver_logging_event_ptr callback );
 
   /**
-   * Set the logging level.
-   *
-   * All logging messages with a lower severity will not be
-   * forwarded to the logging clients.
-   */
-  void set_logging_level( const severity_t level );
-
-  /**
-   * Get the current logging level.
-   */
-  severity_t get_logging_level() const;
-
-  /**
    * Create a LoggingEvent.
    *
    * This function creates a LoggingEvent that will be delivered to

@@ -691,6 +691,7 @@ const std::string V_th_alpha_2( "V_th_alpha_2" );
 const std::string V_th_max( "V_th_max" );
 const std::string V_th_rest( "V_th_rest" );
 const std::string V_th_v( "V_th_v" );
+const std::string verbosity( "verbosity" );
 const std::string voltage_clamp( "voltage_clamp" );
 const std::string voltage_reset_add( "voltage_reset_add" );
 const std::string voltage_reset_fraction( "voltage_reset_fraction" );

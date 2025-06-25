@@ -76,13 +76,6 @@ For more information on the optimizers, see the documentation of the weight opti
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 Parameters
 ++++++++++
 

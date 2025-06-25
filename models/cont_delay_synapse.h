@@ -222,7 +222,7 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonS
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );
   e.set_rport( get_rport() );
-  double orig_event_offset = e.get_offset();
+  double orig_event_offset = e.get_stamp().get_offset();
   double total_offset = orig_event_offset + delay_offset_;
   // As far as i have seen, offsets are outside of tics regime provided
   // by the Time-class to allow more precise spike-times, hence comparing
@@ -231,16 +231,16 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonS
   if ( total_offset < Time::get_resolution().get_ms() )
   {
     e.set_delay_steps( get_delay_steps() );
-    e.set_offset( total_offset );
+    e.get_stamp().set_offset( total_offset );
   }
   else
   {
     e.set_delay_steps( get_delay_steps() - 1 );
-    e.set_offset( total_offset - Time::get_resolution().get_ms() );
+    e.get_stamp().set_offset( total_offset - Time::get_resolution().get_ms() );
   }
   e();
   // reset offset to original value
-  e.set_offset( orig_event_offset );
+  e.get_stamp().set_offset( orig_event_offset );
 
   return true;
 }

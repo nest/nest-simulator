@@ -23,6 +23,7 @@ import nest
 import pytest
 import math
 
+
 @pytest.mark.parametrize(
     "model",
     [
@@ -37,12 +38,12 @@ import math
     "params",
     [
         {
-            "E_L": 0.0,      # resting potential in mV
-            "V_m": 0.0,      # initial membrane potential in mV
+            "E_L": 0.0,  # resting potential in mV
+            "V_m": 0.0,  # initial membrane potential in mV
             "V_th": 2000.0,  # spike threshold in mV
-            "I_e": 1000.0,   # DC current in pA
-            "tau_m": 10.0,   # membrane time constant in ms
-            "C_m": 250.0,    # membrane capacity in pF
+            "I_e": 1000.0,  # DC current in pA
+            "tau_m": 10.0,  # membrane time constant in ms
+            "C_m": 250.0,  # membrane capacity in pF
         }
     ],
 )
@@ -75,10 +76,7 @@ def test_iaf_ps_dc_accuracy(model, resolution, params, duration, tolerance):
     nest.Simulate(duration)
 
     V_m = nest.GetStatus(neuron, "V_m")[0]
-    expected_V_m = (
-            params["I_e"] * params["tau_m"] / params["C_m"]
-            * (1.0 - math.exp(-duration / params["tau_m"]))
-    )
+    expected_V_m = params["I_e"] * params["tau_m"] / params["C_m"] * (1.0 - math.exp(-duration / params["tau_m"]))
 
     assert math.fabs(V_m - expected_V_m) < tolerance
 
@@ -97,12 +95,12 @@ def test_iaf_ps_dc_accuracy(model, resolution, params, duration, tolerance):
     "params",
     [
         {
-            "E_L": 0.0,      # resting potential in mV
-            "V_m": 0.0,      # initial membrane potential in mV
-            "V_th": 15.0,    # spike threshold in mV
-            "I_e": 1000.0,   # DC current in pA
-            "tau_m": 10.0,   # membrane time constant in ms
-            "C_m": 250.0,    # membrane capacity in pF
+            "E_L": 0.0,  # resting potential in mV
+            "V_m": 0.0,  # initial membrane potential in mV
+            "V_th": 15.0,  # spike threshold in mV
+            "I_e": 1000.0,  # DC current in pA
+            "tau_m": 10.0,  # membrane time constant in ms
+            "C_m": 250.0,  # membrane capacity in pF
         }
     ],
 )
@@ -137,8 +135,6 @@ def test_iaf_ps_dc_t_accuracy(model, resolution, params, duration, tolerance):
     assert len(spike_times) == 1, "Neuron did not spike exactly once."
 
     t_spike = spike_times[0]
-    expected_t = -params["tau_m"] * math.log(
-        1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"])
-    )
+    expected_t = -params["tau_m"] * math.log(1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"]))
 
     assert math.fabs(t_spike - expected_t) < tolerance

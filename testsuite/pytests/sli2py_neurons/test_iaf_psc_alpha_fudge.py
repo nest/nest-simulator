@@ -25,6 +25,8 @@ import nest
 import pytest
 import testutil
 from scipy.special import lambertw
+
+
 def test_iaf_psc_alpha_fudge():
     """
     The peak time of the postsynaptic potential (PSP) is calculated using
@@ -66,12 +68,7 @@ def test_iaf_psc_alpha_fudge():
     C_m = 250.0
 
     # Set neuron parameters
-    nest.SetStatus(neuron, {
-        "tau_m": tau_m,
-        "tau_syn_ex": tau_syn,
-        "tau_syn_in": tau_syn,
-        "C_m": C_m
-    })
+    nest.SetStatus(neuron, {"tau_m": tau_m, "tau_syn_ex": tau_syn, "tau_syn_in": tau_syn, "C_m": C_m})
 
     # Compute fudge factors
     a = tau_m / tau_syn
@@ -79,22 +76,22 @@ def test_iaf_psc_alpha_fudge():
     t_max = (1.0 / b) * (-lambertw(-math.exp(-1.0 / a) / a, k=-1) - 1.0 / a).real
 
     V_max = (
-            math.exp(1)
-            / (tau_syn * C_m * b)
-            * ((math.exp(-t_max / tau_m) - math.exp(-t_max / tau_syn)) / b - t_max * math.exp(-t_max / tau_syn))
+        math.exp(1)
+        / (tau_syn * C_m * b)
+        * ((math.exp(-t_max / tau_m) - math.exp(-t_max / tau_syn)) / b - t_max * math.exp(-t_max / tau_syn))
     )
 
     # Create spike generator to fire once at resolution
-    spike_gen = nest.Create("spike_generator", params={
-        "precise_times": False,
-        "spike_times": [resolution],
-    })
+    spike_gen = nest.Create(
+        "spike_generator",
+        params={
+            "precise_times": False,
+            "spike_times": [resolution],
+        },
+    )
 
     # Connect spike generator to neuron
-    nest.Connect(spike_gen, neuron, syn_spec={
-        "weight": float(1.0 / V_max),
-        "delay": delay
-    })
+    nest.Connect(spike_gen, neuron, syn_spec={"weight": float(1.0 / V_max), "delay": delay})
 
     # Simulate
     nest.Simulate(duration)

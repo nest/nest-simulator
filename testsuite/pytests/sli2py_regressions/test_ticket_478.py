@@ -114,7 +114,8 @@ def test_generators_static_and_plastic_synapses():
 
 def test_multimeter_static_and_plastic_synapses():
     """
-    Test that multimeter can only be connected to neurons using static (non-HPC) synapses, and fails for plastic and _hpc static synapses.
+    Test that multimeter can only be connected to neurons using static (non-HPC) synapses,
+    and fails for plastic and _hpc static synapses.
     """
     # Identify static and plastic synapse models as above
     static_defaults = _synapse_param_keys("static_synapse")

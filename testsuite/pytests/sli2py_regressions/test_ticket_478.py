@@ -98,7 +98,7 @@ def test_generators_static_and_plastic_synapses():
             except nest.NESTError as e:
                 # Only skip if it's an IllegalConnection, otherwise re-raise
                 if "IllegalConnection" in str(type(e)):
-                    # print(f"SKIP: {gen} -> iaf_psc_alpha with {syn}: {e}")
+                    print(f"SKIP: {gen} -> iaf_psc_alpha with {syn}: {e}")
                     continue
                 raise
 
@@ -147,7 +147,7 @@ def test_multimeter_static_and_plastic_synapses():
             nest.Connect(src, tgt, syn_spec={"synapse_model": syn})
         except nest.NESTError as e:
             if "IllegalConnection" in str(type(e)):
-                # print(f"SKIP: multimeter -> iaf_psc_alpha with {syn}: {e}")
+                print(f"SKIP: multimeter -> iaf_psc_alpha with {syn}: {e}")
                 continue
             raise
 

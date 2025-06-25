@@ -33,7 +33,8 @@
 
 namespace nest
 {
-
+// Disable clang-formatting for documentation due to over-wide table.
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, adaptation, soft threshold
 
 Short description

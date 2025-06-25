@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Izhikevich Neuron Model
+Izhikevich neuron model
 
 Description
 ++++++++++++

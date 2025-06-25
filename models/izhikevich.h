@@ -140,6 +140,7 @@ Examples using this model
 .. listexamples:: izhikevich
 
 EndUserDocs */
+// clang-format on
 
 void register_izhikevich( const std::string& name );
 

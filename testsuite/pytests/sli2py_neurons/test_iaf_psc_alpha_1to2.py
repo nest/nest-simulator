@@ -21,9 +21,9 @@
 
 
 import nest
+import numpy as np
 import pytest
 import testutil
-import numpy as np
 
 
 @pytest.mark.parametrize("resolution", [0.1, 0.2, 0.5, 1.0])

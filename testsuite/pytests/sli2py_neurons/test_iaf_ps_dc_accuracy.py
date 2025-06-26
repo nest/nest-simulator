@@ -34,22 +34,9 @@ import pytest
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
-@pytest.mark.parametrize(
-    "params",
-    [
-        {
-            "E_L": 0.0,  # resting potential in mV
-            "V_m": 0.0,  # initial membrane potential in mV
-            "V_th": 2000.0,  # spike threshold in mV
-            "I_e": 1000.0,  # DC current in pA
-            "tau_m": 10.0,  # membrane time constant in ms
-            "C_m": 250.0,  # membrane capacity in pF
-        }
-    ],
-)
+@pytest.mark.parametrize("resolution", [2 ** i for i in range(0, -14, -1)])
 @pytest.mark.parametrize("duration, tolerance", [(5.0, 1e-13), (500.0, 1e-9)])
-def test_iaf_ps_dc_accuracy(model, resolution, params, duration, tolerance):
+def test_iaf_ps_dc_accuracy(model, resolution, duration, tolerance):
     """
     A DC current is injected for a finite duration. The membrane potential at
     the end of the simulated interval is compared to the theoretical value for
@@ -71,15 +58,23 @@ def test_iaf_ps_dc_accuracy(model, resolution, params, duration, tolerance):
     to function print_details.
     """
     nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 2**14, "resolution": resolution})
+    nest.set(tics_per_ms=2 ** 14, resolution=resolution)
+
+    params = {
+        "E_L": 0.0,  # resting potential in mV
+        "V_m": 0.0,  # initial membrane potential in mV
+        "V_th": 2000.0,  # spike threshold in mV
+        "I_e": 1000.0,  # DC current in pA
+        "tau_m": 10.0,  # membrane time constant in ms
+        "C_m": 250.0,  # membrane capacity in pF
+    }
 
     neuron = nest.Create(model, params=params)
     nest.Simulate(duration)
 
-    V_m = nest.GetStatus(neuron, "V_m")[0]
-    expected_V_m = params["I_e"] * params["tau_m"] / params["C_m"] * (1.0 - math.exp(-duration / params["tau_m"]))
+    expected_vm = params["I_e"] * params["tau_m"] / params["C_m"] * (1.0 - math.exp(-duration / params["tau_m"]))
 
-    assert math.fabs(V_m - expected_V_m) < tolerance
+    assert neuron.V_m - pytest.approx(expected_vm, abs=tolerance)
 
 
 @pytest.mark.parametrize(
@@ -91,22 +86,9 @@ def test_iaf_ps_dc_accuracy(model, resolution, params, duration, tolerance):
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
-@pytest.mark.parametrize(
-    "params",
-    [
-        {
-            "E_L": 0.0,  # resting potential in mV
-            "V_m": 0.0,  # initial membrane potential in mV
-            "V_th": 15.0,  # spike threshold in mV
-            "I_e": 1000.0,  # DC current in pA
-            "tau_m": 10.0,  # membrane time constant in ms
-            "C_m": 250.0,  # membrane capacity in pF
-        }
-    ],
-)
+@pytest.mark.parametrize("resolution", [2 ** i for i in range(0, -14, -1)])
 @pytest.mark.parametrize("duration, tolerance", [(5.0, 1e-13)])
-def test_iaf_ps_dc_t_accuracy(model, resolution, params, duration, tolerance):
+def test_iaf_ps_dc_t_accuracy(model, resolution, duration, tolerance):
     """
     A DC current is injected for a finite duration. The time of the first
     spike is compared to the theoretical value for different computation
@@ -124,7 +106,16 @@ def test_iaf_ps_dc_t_accuracy(model, resolution, params, duration, tolerance):
     call to function print_details.
     """
     nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 2**14, "resolution": resolution})
+    nest.set(tics_per_ms=2 ** 14, resolution=resolution)
+
+    params = {
+        "E_L": 0.0,  # resting potential in mV
+        "V_m": 0.0,  # initial membrane potential in mV
+        "V_th": 15.0,  # spike threshold in mV
+        "I_e": 1000.0,  # DC current in pA
+        "tau_m": 10.0,  # membrane time constant in ms
+        "C_m": 250.0,  # membrane capacity in pF
+    }
 
     neuron = nest.Create(model, params=params)
     spike_recorder = nest.Create("spike_recorder")
@@ -132,10 +123,10 @@ def test_iaf_ps_dc_t_accuracy(model, resolution, params, duration, tolerance):
 
     nest.Simulate(duration)
 
-    spike_times = nest.GetStatus(spike_recorder, "events")[0]["times"]
+    spike_times = spike_recorder.get("events", "times")
     assert len(spike_times) == 1, "Neuron did not spike exactly once."
 
     t_spike = spike_times[0]
     expected_t = -params["tau_m"] * math.log(1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"]))
 
-    assert math.fabs(t_spike - expected_t) < tolerance
+    assert t_spike == pytest.approx(expected_t, abs=tolerance)

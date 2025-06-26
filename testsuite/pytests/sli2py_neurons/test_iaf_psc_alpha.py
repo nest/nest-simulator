@@ -235,7 +235,7 @@ def test_iaf_psc_alpha_i0_refractory(resolution):
     duration = 8.0
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": resolution})
+    nest.resolution = resolution
 
     neuron = nest.Create("iaf_psc_alpha", params={"I_e": 1450.0})
     voltmeter = nest.Create("voltmeter", params={"interval": resolution})
@@ -246,9 +246,8 @@ def test_iaf_psc_alpha_i0_refractory(resolution):
 
     nest.Simulate(duration)
 
-    events = voltmeter.events
-    times = events["times"]
-    V_m = events["V_m"]
+    times = voltmeter.events["times"]
+    V_m = voltmeter.events["V_m"]
     results = np.column_stack((times, V_m))
 
     actual, expected = testutil.get_comparable_timesamples(

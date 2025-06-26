@@ -69,14 +69,17 @@ def test_iaf_psc_alpha_fudge():
     C_m = 250.0
 
     # Set neuron parameters
-    nest.SetStatus(neuron, {"tau_m": tau_m, "tau_syn_ex": tau_syn, "tau_syn_in": tau_syn, "C_m": C_m})
+    neuron.tau_m = tau_m
+    neuron.tau_syn_ex = tau_syn
+    neuron.tau_syn_in = tau_syn
+    neuron.C_m = C_m
 
     # Compute fudge factors
     a = tau_m / tau_syn
     b = 1.0 / tau_syn - 1.0 / tau_m
     t_max = (1.0 / b) * (-lambertw(-math.exp(-1.0 / a) / a, k=-1) - 1.0 / a).real
 
-    V_max = (
+    v_max = (
         math.exp(1)
         / (tau_syn * C_m * b)
         * ((math.exp(-t_max / tau_m) - math.exp(-t_max / tau_syn)) / b - t_max * math.exp(-t_max / tau_syn))
@@ -92,7 +95,7 @@ def test_iaf_psc_alpha_fudge():
     )
 
     # Connect spike generator to neuron
-    nest.Connect(spike_gen, neuron, syn_spec={"weight": float(1.0 / V_max), "delay": delay})
+    nest.Connect(spike_gen, neuron, syn_spec={"weight": float(1.0 / v_max), "delay": delay})
 
     # Simulate
     nest.Simulate(duration)
@@ -100,8 +103,8 @@ def test_iaf_psc_alpha_fudge():
     # Extract membrane potential trace
     volt_data = voltmeter.events
     times = volt_data["times"]
-    V_m = volt_data["V_m"]
-    results = np.column_stack((times, V_m))
+    v_m = volt_data["V_m"]
+    results = np.column_stack((times, v_m))
 
     # Find time of peak voltage
     actual_t_max = results[np.argmax(results[:, 1]), 0]

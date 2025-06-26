@@ -76,12 +76,12 @@ Therefore, detailed timers are by default inactive.
 
      .. graphviz:: /simulation_run.dot
         :name: Simulation run (State propagation)
-        :caption: Simplified sequence of operations in the simulation run, organized in a top-down manner.
+        :caption: Simplified sequence of operations in the simulation run, organized in a top-down manner with a focus on timers.
 
      Within the `simulate timer` section, parallel processes
      (`OMP Parallel`) manage time-driven loops, handling tasks such as delivering spike data, and updating timers.
      The `OMP Master` section is responsible for gathering and communicating
-     spike data, involving steps like collocating data, managing MPI buffers, and advancing the simulation time. `OMP
+     spike data, involving steps like collocating data and advancing the simulation time. `OMP
      barriers` are used to ensure thread synchronization at key points (for more details please see `Jordan et al. 2018
      <https://doi.org/10.3389/fninf.2018.00002>`_).
      The timers are indicated in white or light grey.

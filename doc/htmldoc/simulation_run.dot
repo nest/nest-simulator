@@ -43,7 +43,7 @@
             "OMP barrier"
             }
           subgraph cluster_omp_master {
-              label="OMP master"
+              label="OMP Master"
             style=filled fontcolor="white"
             fillcolor="#0E6A93"
             "advance time"
@@ -57,16 +57,9 @@
                          style=filled fontcolor="white" fontname="Helvetica, Arial, sans-serif"
                          fillcolor="#072f42"
                          subgraph cluster_repeat_once {
-                             label="Repeat once if buffer too small"
-                             style=filled#4b210c
+                             label="Repeat once if not all spikes transmitted"
+                             style=filled fontcolor="white"
                              fillcolor="#0E6A93"
-                             subgraph cluster_if_buffers_can_shrink {
-                               label="If buffers can shrink"
-                               style=filled
-                               fillcolor="#072f42"
-                               "shrink MPI buffer size"
-
-                             }
 
 
             subgraph cluster_collocate_spike_data_timer {

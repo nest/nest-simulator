@@ -57,7 +57,7 @@
                          style=filled fontcolor="white" fontname="Helvetica, Arial, sans-serif"
                          fillcolor="#072f42"
                          subgraph cluster_repeat_once {
-                             label="Repeat once if not all spikes transmitted"
+                             label="Repeat once if spike buffer too small"
                              style=filled fontcolor="white"
                              fillcolor="#0E6A93"
 

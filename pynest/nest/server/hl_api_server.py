@@ -588,7 +588,9 @@ def combine(call_name, response):
         return None
 
     # return the master response if all responses are known to be the same
-    if call_name in ("exec", "Create", "GetDefaults", "GetKernelStatus", "SetKernelStatus", "SetStatus"):
+    if call_name == "exec":
+        return merge_response(response)[0]
+    elif call_name in ("Create", "GetDefaults", "GetKernelStatus", "SetKernelStatus", "SetStatus"):
         return response[0]
 
     # return a single response if there is only one which is not None
@@ -672,6 +674,24 @@ def merge_dicts(response):
             result.append(device_dicts[0])
 
     return result
+
+
+def merge_response(response: list):
+    if "events" in response[0]["data"]:
+        events = [res["data"]["events"] for res in response]
+        merged = [_merge_event([e[idx] for e in events]) for idx in range(len(events[0]))]
+        return [{"data": {"events": merged}}]
+    else:
+        return response
+
+
+def _flatten(xss):
+    return [x for xs in xss for x in xs]
+
+
+def _merge_event(event: list):
+    eventKeys = list(set(_flatten([e for e in event])))
+    return dict([(eKey, _flatten([e[eKey] for e in event])) for eKey in eventKeys])
 
 
 if __name__ == "__main__":

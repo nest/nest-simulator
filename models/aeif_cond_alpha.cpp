@@ -107,11 +107,15 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
   const double I_spike =
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
+  const double I_soma =
+    -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w + node.P_.I_e + node.B_.I_stim_;
+
   // dv/dt
-  f[ S::V_M ] = is_refractory
-    ? 0.
-    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w + node.P_.I_e + node.B_.I_stim_ )
-      / node.P_.C_m;
+  f[ S::V_M ] = is_refractory ? 0. : I_soma / node.P_.C_m;
+
+  // limiting rate of change due to exponential term -- prevent numerical instability in the integrator
+  f[ S::V_M ] = std::min( I_soma, node.P_.max_V_m_rate );
+  f[ S::V_M ] = std::max( I_soma, -node.P_.max_V_m_rate );
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)
@@ -133,22 +137,23 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV
-  , tau_syn_ex( 0.2 ) // ms
-  , tau_syn_in( 2.0 ) // ms
-  , I_e( 0.0 )        // pA
+  : V_peak_( 0.0 )                                            // mV
+  , V_reset_( -60.0 )                                         // mV
+  , t_ref_( 0.0 )                                             // ms
+  , g_L( 30.0 )                                               // nS
+  , C_m( 281.0 )                                              // pF
+  , E_ex( 0.0 )                                               // mV
+  , E_in( -85.0 )                                             // mV
+  , E_L( -70.6 )                                              // mV
+  , Delta_T( 2.0 )                                            // mV
+  , tau_w( 144.0 )                                            // ms
+  , a( 4.0 )                                                  // nS
+  , b( 80.5 )                                                 // pA
+  , V_th( -50.4 )                                             // mV
+  , tau_syn_ex( 0.2 )                                         // ms
+  , tau_syn_in( 2.0 )                                         // ms
+  , max_V_m_rate( std::numeric_limits< double >::infinity() ) // V/s
+  , I_e( 0.0 )                                                // pA
   , gsl_error_tol( 1e-6 )
 {
 }
@@ -206,6 +211,7 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_w, tau_w );
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
+  def< double >( d, names::max_V_m_rate, max_V_m_rate );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
 }
 
@@ -219,9 +225,9 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::V_reset, V_reset_, node );
   updateValueParam< double >( d, names::E_ex, E_ex, node );
   updateValueParam< double >( d, names::E_in, E_in, node );
-
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
+  updateValueParam< double >( d, names::max_V_m_rate, max_V_m_rate, node );
 
   updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex, node );
   updateValueParam< double >( d, names::tau_syn_in, tau_syn_in, node );
@@ -277,6 +283,11 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( tau_syn_ex <= 0 or tau_syn_in <= 0 or tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
+
+  if ( max_V_m_rate < 0 )
+  {
+    throw BadProperty( "Maximum V_m rate of change cannot be negative." );
   }
 
   if ( gsl_error_tol <= 0. )

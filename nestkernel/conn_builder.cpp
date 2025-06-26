@@ -446,6 +446,72 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
 }
 
 void
+nest::BipartiteConnBuilder::clustered_single_connect_( size_t snode_id,
+  Node& target,
+  size_t target_thread,
+  RngPtr rng,
+  const bool is_intra )
+{
+  // TODO Almost verbatim copy of single_connect_, just if instead of loop.
+  if ( this->requires_proxies() and not target.has_proxies() )
+  {
+    throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
+  }
+
+  assert( synapse_model_id_.size() == 2 );
+
+  const size_t synapse_indx = is_intra ? 0 : 1;
+
+  update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
+
+  if ( default_weight_and_delay_[ synapse_indx ] )
+  {
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ] );
+  }
+  else if ( default_weight_[ synapse_indx ] )
+  {
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ],
+      delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+  }
+  else if ( default_delay_[ synapse_indx ] )
+  {
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ],
+      numerics::nan,
+      weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+  }
+  else
+  {
+    const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+    const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ],
+      delay,
+      weight );
+  }
+
+  // We connect third-party only once per source-target pair, not per collocated synapse type
+  if ( third_out_ )
+  {
+    third_out_->third_connect( snode_id, target );
+  }
+}
+
+void
 nest::BipartiteConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
   if ( pre_name.empty() or post_name.empty() )
@@ -1862,6 +1928,206 @@ nest::FixedTotalNumberBuilder::connect_()
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
+
+
+nest::ClusteredFixedTotalNumberBuilder::ClusteredFixedTotalNumberBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+  , N_( ( *conn_spec )[ names::N ] )
+  , num_clusters_( ( *conn_spec )[ "num_clusters" ] )
+{
+  // check for potential errors
+
+  // verify that total number of connections is not larger than
+  // N_sources*N_targets
+  if ( not allow_multapses_ )
+  {
+    if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
+    {
+      throw BadProperty( "Total number of connections cannot exceed product of source and target population sizes." );
+    }
+  }
+
+  if ( N_ < 0 )
+  {
+    throw BadProperty( "Total number of connections cannot be negative." );
+  }
+
+  if ( num_clusters_ < 1 )
+  {
+    throw BadProperty( "There must be at least one cluster." );
+  }
+
+  if ( synapse_model_id_.size() != 2 )
+  {
+    throw BadProperty( "For clustered connectivity, syn_specs must be CollocatedSynapse with two elements." );
+  }
+
+  // for now multapses cannot be forbidden
+  // TODO: Implement option for multapses_ = False, where already existing
+  // connections are stored in
+  // a bitmap
+  if ( not allow_multapses_ )
+  {
+    throw NotImplemented( "Connect doesn't support the suppression of multapses in the FixedTotalNumber connector." );
+  }
+}
+
+void
+nest::ClusteredFixedTotalNumberBuilder::connect_()
+{
+  const size_t M = kernel().vp_manager.get_num_virtual_processes();
+  const long total_size_sources = sources_->size();
+  const long total_size_targets = targets_->size();
+  const double conn_prob = static_cast< double >( N_ ) / ( total_size_sources * total_size_targets );
+
+  for ( size_t sc = 0; sc < num_clusters_; ++sc )
+  {
+    const auto src_nrns = sources_->slice( sc, total_size_sources, num_clusters_ );
+    const long size_sources = src_nrns->size();
+
+    for ( size_t tc = 0; tc < num_clusters_; ++tc )
+    {
+      const auto tgt_nrns = targets_->slice( tc, total_size_targets, num_clusters_ );
+      const long size_targets = tgt_nrns->size();
+
+      const long num_conns = conn_prob * size_sources * size_targets;
+
+      // drawing connection ids
+
+      // Compute the distribution of targets over processes using the modulo
+      // function
+      std::vector< size_t > number_of_targets_on_vp( M, 0 );
+      std::vector< size_t > local_targets;
+      local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+      for ( size_t t = 0; t < tgt_nrns->size(); t++ )
+      {
+        int vp = kernel().vp_manager.node_id_to_vp( ( *tgt_nrns )[ t ] );
+        ++number_of_targets_on_vp[ vp ];
+        if ( kernel().vp_manager.is_local_vp( vp ) )
+        {
+          local_targets.push_back( ( *tgt_nrns )[ t ] );
+        }
+      }
+
+      // We use the multinomial distribution to determine the number of
+      // connections that will be made on one virtual process, i.e. we
+      // partition the set of edges into n_vps subsets. The number of
+      // edges on one virtual process is binomially distributed with
+      // the boundary condition that the sum of all edges over virtual
+      // processes is the total number of edges.
+      // To obtain the num_conns_on_vp we adapt the gsl
+      // implementation of the multinomial distribution.
+
+      // K from gsl is equivalent to M = n_vps
+      // N is already taken from stack
+      // p[] is targets_on_vp
+      std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+
+      // calculate exact multinomial distribution
+      // get global rng that is tested for synchronization for all threads
+      RngPtr grng = get_rank_synced_rng();
+
+      // begin code adapted from gsl 1.8 //
+      double sum_dist = 0.0; // corresponds to sum_p
+      // norm is equivalent to size_targets
+      unsigned int sum_partitions = 0; // corresponds to sum_n
+
+      binomial_distribution bino_dist;
+      for ( int k = 0; k < M; k++ )
+      {
+        // If we have distributed all connections on the previous processes we exit the loop. It is important to
+        // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
+        if ( num_conns == sum_partitions )
+        {
+          break;
+        }
+        if ( number_of_targets_on_vp[ k ] > 0 )
+        {
+          double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
+          double p_local = num_local_targets / ( size_targets - sum_dist );
+
+          binomial_distribution::param_type param( num_conns - sum_partitions, p_local );
+          num_conns_on_vp[ k ] = bino_dist( grng, param );
+        }
+
+        sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
+        sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
+      }
+
+      // end code adapted from gsl 1.8
+
+#pragma omp parallel
+      {
+        // get thread id
+        const size_t tid = kernel().vp_manager.get_thread_id();
+
+        try
+        {
+          const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
+
+          if ( kernel().vp_manager.is_local_vp( vp_id ) )
+          {
+            RngPtr rng = get_vp_specific_rng( tid );
+
+            // gather local target node IDs
+            std::vector< size_t > thread_local_targets;
+            thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
+
+            std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
+            for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
+            {
+              if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
+              {
+                thread_local_targets.push_back( *tnode_id_it );
+              }
+            }
+
+            assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+
+            while ( num_conns_on_vp[ vp_id ] > 0 )
+            {
+
+              // draw random numbers for source node from all source neurons
+              const long s_index = rng->ulrand( size_sources );
+              // draw random numbers for target node from
+              // targets_on_vp on this virtual process
+              const long t_index = rng->ulrand( thread_local_targets.size() );
+              // map random number of source node to node ID corresponding to
+              // the source_adr vector
+              const long snode_id = ( *src_nrns )[ s_index ];
+              // map random number of target node to node ID using the
+              // targets_on_vp vector
+              const long tnode_id = thread_local_targets[ t_index ];
+
+              Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+              const size_t target_thread = target->get_thread();
+
+              if ( allow_autapses_ or snode_id != tnode_id )
+              {
+                clustered_single_connect_( snode_id,
+                  *target,
+                  target_thread,
+                  rng,
+                  /* is_intra */ sc == tc );
+                num_conns_on_vp[ vp_id ]--;
+              }
+            }
+          }
+        }
+        catch ( std::exception& err )
+        {
+          // We must create a new exception here, err's lifetime ends at
+          // the end of the catch block.
+          exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+        }
+      } // omp parallel
+    }   // for target
+  }     // for source
 }
 
 

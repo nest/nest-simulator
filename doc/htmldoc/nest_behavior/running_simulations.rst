@@ -328,3 +328,4 @@ threads or processes):
     ``{"print_time": False}`` to avoid the overhead of the print calls.
     In these cases, the real-time factor can be computed by measuring the
     wall-clock time manually and dividing by the set model time.
+    For details on timers in NEST see :ref:`built_in_timers`.

@@ -1985,34 +1985,41 @@ nest::ClusteredFixedTotalNumberBuilder::connect_()
   const long total_size_targets = targets_->size();
   const double conn_prob = static_cast< double >( N_ ) / ( total_size_sources * total_size_targets );
 
-  for ( size_t sc = 0; sc < num_clusters_; ++sc )
-  {
-    const auto src_nrns = sources_->slice( sc, total_size_sources, num_clusters_ );
-    const long size_sources = src_nrns->size();
+  // get global rng that is tested for synchronization for all threads
+  RngPtr grng = get_rank_synced_rng();
+  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[] in GSL 1.8 binomial algo
+  binomial_distribution bino_dist;
 
-    for ( size_t tc = 0; tc < num_clusters_; ++tc )
+  for ( size_t tc = 0; tc < num_clusters_; ++tc )
+  {
+    const auto tgt_nrns = targets_->slice( tc, total_size_targets, num_clusters_ );
+    const long size_targets = tgt_nrns->size();
+
+    // Compute the distribution of targets over processes using the modulo
+    // function
+    std::vector< size_t > number_of_targets_on_vp( M, 0 );
+    std::vector< size_t > local_targets;
+    local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+    for ( size_t t = 0; t < tgt_nrns->size(); t++ )
     {
-      const auto tgt_nrns = targets_->slice( tc, total_size_targets, num_clusters_ );
-      const long size_targets = tgt_nrns->size();
+      size_t vp = kernel().vp_manager.node_id_to_vp( ( *tgt_nrns )[ t ] );
+      ++number_of_targets_on_vp[ vp ];
+      if ( kernel().vp_manager.is_local_vp( vp ) )
+      {
+        local_targets.push_back( ( *tgt_nrns )[ t ] );
+      }
+    }
+
+    for ( size_t sc = 0; sc < num_clusters_; ++sc )
+    {
+      const auto src_nrns = sources_->slice( sc, total_size_sources, num_clusters_ );
+      const long size_sources = src_nrns->size();
+
 
       const long num_conns = conn_prob * size_sources * size_targets;
 
       // drawing connection ids
 
-      // Compute the distribution of targets over processes using the modulo
-      // function
-      std::vector< size_t > number_of_targets_on_vp( M, 0 );
-      std::vector< size_t > local_targets;
-      local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
-      for ( size_t t = 0; t < tgt_nrns->size(); t++ )
-      {
-        int vp = kernel().vp_manager.node_id_to_vp( ( *tgt_nrns )[ t ] );
-        ++number_of_targets_on_vp[ vp ];
-        if ( kernel().vp_manager.is_local_vp( vp ) )
-        {
-          local_targets.push_back( ( *tgt_nrns )[ t ] );
-        }
-      }
 
       // We use the multinomial distribution to determine the number of
       // connections that will be made on one virtual process, i.e. we
@@ -2026,18 +2033,15 @@ nest::ClusteredFixedTotalNumberBuilder::connect_()
       // K from gsl is equivalent to M = n_vps
       // N is already taken from stack
       // p[] is targets_on_vp
-      std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+      std::fill( num_conns_on_vp.begin(), num_conns_on_vp.end(), 0 ); // corresponds to n[], reset to 0 for each use
 
       // calculate exact multinomial distribution
-      // get global rng that is tested for synchronization for all threads
-      RngPtr grng = get_rank_synced_rng();
 
       // begin code adapted from gsl 1.8 //
       double sum_dist = 0.0; // corresponds to sum_p
       // norm is equivalent to size_targets
       unsigned int sum_partitions = 0; // corresponds to sum_n
 
-      binomial_distribution bino_dist;
       for ( int k = 0; k < M; k++ )
       {
         // If we have distributed all connections on the previous processes we exit the loop. It is important to

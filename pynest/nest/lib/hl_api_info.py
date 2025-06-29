@@ -39,15 +39,10 @@ from .hl_api_helper import (
 )
 from .hl_api_types import to_json
 
-__all__ = [
-    "GetStatus",
-    "help",
-    "helpdesk",
-    "SetStatus",
-    "verbosity_levels",
-]
+__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel"]
 
-verbosity_levels = nestkernel.severity_t
+
+VerbosityLevel = nestkernel.VerbosityLevel
 
 
 def helpdesk():

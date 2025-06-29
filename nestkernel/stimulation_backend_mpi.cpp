@@ -200,7 +200,7 @@ nest::StimulationBackendMPI::prepare()
     }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Input connect", msg.str() );
+    LOG( VerbosityLevel::INFO, "MPI Input connect", msg.str() );
   }
 }
 

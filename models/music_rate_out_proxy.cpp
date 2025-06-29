@@ -186,7 +186,7 @@ nest::music_rate_out_proxy::pre_run_hook()
 
 
     std::string msg = String::compose( "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "MusicRateHandler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "MusicRateHandler::publish_port()", msg.c_str() );
   }
 }
 

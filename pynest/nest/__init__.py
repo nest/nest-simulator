@@ -417,15 +417,15 @@ class NestModule(types.ModuleType):
         default=True,
     )
     verbosity = KernelAttribute(
-        "verbosity_level",
+        "VerbosityLevel",
         (
             "Controls NEST's verbosity. The following levels are available,"
-            + " from most to least chatty: M_ALL, M_DEBUG, M_STATUS, M_INFO,"
-            + " M_PROGRESS, M_DEPRECATED, M_WARNING, M_ERROR, M_FATAL, M_QUIET."
-            + " Default verbosity is M_INFO. To start NEST with a different verbosity"
+            + " from most to least chatty: ALL, DEBUG, STATUS, INFO,"
+            + " PROGRESS, DEPRECATED, WARNING, ERROR, FATAL, QUIET."
+            + " Default verbosity is INFO. To start NEST with a different verbosity"
             + " and supress the startup message, set the environment variable PYNEST_QUIET=1"
         ),
-        default=ll_api.nestkernel.severity_t.M_INFO,
+        default=ll_api.nestkernel.VerbosityLevel.INFO,
     )
 
     # Kernel attribute indices, used for fast lookup in `ll_api.py`

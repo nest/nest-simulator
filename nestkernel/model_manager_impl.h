@@ -94,7 +94,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
   {
     const std::string msg = String::compose(
       "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
-    LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
+    LOG( VerbosityLevel::ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
 

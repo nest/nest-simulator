@@ -232,7 +232,9 @@ nest::noise_generator::pre_run_hook()
   StimulationDevice::pre_run_hook();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    LOG( M_INFO, "noise_generator::pre_run_hook()", "The number of targets has changed, drawing new amplitudes." );
+    LOG( VerbosityLevel::INFO,
+      "noise_generator::pre_run_hook()",
+      "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
   }
 
@@ -402,6 +404,6 @@ nest::noise_generator::calibrate_time( const TimeConverter& tc )
     const double old = P_.dt_.get_ms();
     P_.dt_ = P_.get_default_dt();
     std::string msg = String::compose( "Default for dt changed from %1 to %2 ms", old, P_.dt_.get_ms() );
-    LOG( M_INFO, get_name(), msg );
+    LOG( VerbosityLevel::INFO, get_name(), msg );
   }
 }

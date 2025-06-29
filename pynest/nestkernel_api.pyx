@@ -186,8 +186,8 @@ cdef object any_to_pyobj(any operand):
         obj = NodeCollectionObject()
         obj._set_nc(any_cast[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
-    if is_type[severity_t](operand):
-        return any_cast[severity_t](operand)
+    if is_type[VerbosityLevel](operand):
+        return any_cast[VerbosityLevel](operand)
 
 cdef object dictionary_to_pydict(dictionary cdict):
     cdef tmp = {}
@@ -257,6 +257,8 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = (<ParameterObject>(value._datum)).thisptr
         elif type(value) is ParameterObject:
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
+        elif type(value) is type(nest.VerbosityLevel.ALL):  # ALL will always exist
+            cdict[pystr_to_string(key)] = <VerbosityLevel>(value)
         else:
             typename = type(value)
             if type(value) is list:

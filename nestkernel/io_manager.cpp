@@ -168,7 +168,7 @@ IOManager::set_data_path_prefix_( const dictionary& dict )
         break;
       }
 
-      LOG( M_ERROR, "SetStatus", "Variable data_path not set: " + msg );
+      LOG( VerbosityLevel::ERROR, "SetStatus", "Variable data_path not set: " + msg );
     }
   }
 
@@ -180,7 +180,7 @@ IOManager::set_data_path_prefix_( const dictionary& dict )
     }
     else
     {
-      LOG( M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+      LOG( VerbosityLevel::ERROR, "SetStatus", "Data prefix must not contain path elements." );
     }
   }
 }

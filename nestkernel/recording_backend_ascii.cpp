@@ -260,7 +260,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
       "the kernel property overwrite_files to true. To change the name or location of the file, "
       "change the kernel properties data_path or data_prefix, or the device property label.",
       filename );
-    LOG( M_ERROR, "RecordingBackendASCII::enroll()", msg );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::enroll()", msg );
     throw IOError();
   }
   test.close();
@@ -270,7 +270,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   if ( not file_.good() )
   {
     std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
-    LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
 

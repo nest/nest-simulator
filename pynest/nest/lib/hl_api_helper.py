@@ -521,8 +521,8 @@ class SuppressedDeprecationWarning:
             _deprecation_warning[func_name]["deprecation_issued"] = True
 
             # Suppress only if verbosity level is deprecated or lower
-            if self._verbosity_level <= nestkernel.severity_t.M_DEPRECATED:
-                nest.verbosity = nestkernel.severity_t.M_WARNING
+            if self._verbosity_level <= nestkernel.VerbosityLevel.DEPRECATED:
+                nest.verbosity = nestkernel.VerbosityLevel.WARNING
 
     def __exit__(self, *args):
         # Reset the verbosity level and deprecation warning status

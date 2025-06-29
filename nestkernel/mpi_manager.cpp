@@ -129,7 +129,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   else
   {
 #ifdef HAVE_MUSIC
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "MPIManager::init_mpi()",
       "When compiled with MUSIC, NEST must be initialized before any other modules that call MPI_Init(). "
       "Calling MPI_Abort()." );
@@ -203,7 +203,7 @@ nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 
   if ( mpi_launcher_or_mpi4py_used and mpi_num_procs > 1 )
   {
-    LOG( M_FATAL,
+    LOG( VerbosityLevel::FATAL,
       "MPIManager::initialize()",
       "You seem to be using NEST via an MPI launcher like mpirun, mpiexec or srun "
       "although NEST was not compiled with MPI support. Please see the NEST "
@@ -280,7 +280,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
     }
     else
     {
-      LOG( M_INFO, "MPIManager::finalize()", "Calling MPI_Abort() due to errors in the script." );
+      LOG( VerbosityLevel::INFO, "MPIManager::finalize()", "Calling MPI_Abort() due to errors in the script." );
       mpi_abort( exitcode );
     }
   }

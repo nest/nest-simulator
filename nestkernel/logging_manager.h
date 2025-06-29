@@ -70,7 +70,8 @@ public:
    * logging.h header in libnestutil.
    *
    */
-  void publish_log( const severity_t, const std::string&, const std::string&, const std::string&, const size_t ) const;
+  void
+  publish_log( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t ) const;
 
 
 private:
@@ -86,7 +87,7 @@ private:
 
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
-  nest::severity_t logging_level_;
+  VerbosityLevel logging_level_;
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 

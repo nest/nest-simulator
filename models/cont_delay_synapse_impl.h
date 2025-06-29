@@ -94,7 +94,7 @@ cont_delay_synapse< targetidentifierT >::check_synapse_params( const dictionary&
 {
   if ( syn_spec.known( names::delay ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel::WARNING,
       "Connect",
       "The delay will be rounded to the next multiple of the time step. "
       "To use a more precise time delay it needs to be defined within "

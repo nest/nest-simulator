@@ -50,7 +50,7 @@ ModuleManager::ModuleManager()
   const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
   if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "ModuleManager::ModuleManager",
       String::compose( "Could not add dynamic module search directory '%1'.", module_dir ) );
   }
@@ -176,7 +176,7 @@ ModuleManager::install( const std::string& name )
   // add the handle to list of loaded modules
   modules_[ name ] = ModuleMapEntry_( hModule, extension );
 
-  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
+  LOG( VerbosityLevel::INFO, "Install", ( "loaded module " + name ).c_str() );
 }
 
 } // namespace nest

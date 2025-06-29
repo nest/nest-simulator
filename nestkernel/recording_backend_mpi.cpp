@@ -185,7 +185,7 @@ nest::RecordingBackendMPI::prepare()
     }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Record connect", msg.str() );
+    LOG( VerbosityLevel::INFO, "MPI Record connect", msg.str() );
   }
 #pragma omp parallel default( none ) shared( thread_id_master )
   {

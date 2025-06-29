@@ -1421,7 +1421,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
       }
       else if ( value == n_sources and not allow_autapses_ )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
           "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
@@ -1430,7 +1430,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
 
       if ( value > 0.9 * n_sources )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
@@ -1586,7 +1586,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
       }
       else if ( value == n_targets and not allow_autapses_ )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedOutDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
           "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
@@ -1595,7 +1595,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 
       if ( value > 0.9 * n_targets )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedOutDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }

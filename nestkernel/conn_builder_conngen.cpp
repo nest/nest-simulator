@@ -134,7 +134,7 @@ ConnectionGeneratorBuilder::connect_()
   }
   else
   {
-    LOG( M_ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
+    LOG( VerbosityLevel::ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
     throw DimensionMismatch();
   }
 }

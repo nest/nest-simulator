@@ -103,7 +103,7 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
 
     std::string msg = String::compose(
       "Minimum and maximum delays were changed to %1 ms and %2 ms.", min_delay_.get_ms(), max_delay_.get_ms() );
-    LOG( M_INFO, "DelayChecker::set_min_max_delay_", msg );
+    LOG( VerbosityLevel::INFO, "DelayChecker::set_min_max_delay_", msg );
   }
 }
 

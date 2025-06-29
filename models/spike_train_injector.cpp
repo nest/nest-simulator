@@ -298,7 +298,7 @@ spike_train_injector::pre_run_hook()
   if ( is_off_grid() )
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
-    LOG( M_INFO,
+    LOG( VerbosityLevel::INFO,
       "spike_train_injector::pre_run_hook",
       "Spike train injector has been configured to emit precisely timed "
       "spikes: the kernel property off_grid_spiking has been set to true.\n\n"

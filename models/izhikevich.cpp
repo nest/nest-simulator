@@ -119,7 +119,7 @@ nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
   const double h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ and h != 1.0 )
   {
-    LOG( M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+    LOG( VerbosityLevel::INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 

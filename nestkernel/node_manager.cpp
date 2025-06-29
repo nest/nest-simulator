@@ -118,7 +118,7 @@ NodeManager::add_node( size_t model_id, long n )
   const size_t max_node_id = min_node_id + n - 1;
   if ( max_node_id < min_node_id )
   {
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "NodeManager::add_node",
       "Requested number of nodes will overflow the memory. "
       "No nodes were created" );
@@ -160,7 +160,7 @@ NodeManager::add_node( size_t model_id, long n )
   if ( model->is_off_grid() )
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
-    LOG( M_INFO,
+    LOG( VerbosityLevel::INFO,
       "NodeManager::add_node",
       "Neuron models emitting precisely timed spikes exist: "
       "the kernel property off_grid_spiking has been set to true.\n\n"
@@ -687,7 +687,7 @@ NodeManager::prepare_nodes()
   }
 
   num_active_nodes_ = num_active_nodes;
-  LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
+  LOG( VerbosityLevel::INFO, "NodeManager::prepare_nodes", os.str() );
 }
 
 void

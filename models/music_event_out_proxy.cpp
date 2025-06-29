@@ -170,7 +170,7 @@ nest::music_event_out_proxy::pre_run_hook()
     S_.published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

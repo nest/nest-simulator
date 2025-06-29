@@ -69,7 +69,7 @@ nest::VPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
     msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
 
-    LOG( M_INFO, "VPManager::initialize()", msg );
+    LOG( VerbosityLevel::INFO, "VPManager::initialize()", msg );
   }
 
   set_num_threads( 1 );
@@ -167,7 +167,7 @@ nest::VPManager::set_status( const dictionary& d )
     {
       std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
       msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
-      LOG( M_WARNING, "VPManager::set_status()", msg );
+      LOG( VerbosityLevel::WARNING, "VPManager::set_status()", msg );
     }
 
     kernel().change_number_of_threads( n_threads );

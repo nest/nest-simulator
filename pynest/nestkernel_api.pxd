@@ -69,17 +69,17 @@ cdef extern from "dictionary.h":
 
 
 cdef extern from "logging.h" namespace "nest":
-    cpdef enum severity_t:
-        M_ALL,
-        M_DEBUG,
-        M_STATUS,
-        M_INFO,
-        M_PROGRESS,
-        M_DEPRECATED,
-        M_WARNING,
-        M_ERROR,
-        M_FATAL,
-        M_QUIET
+    cpdef enum class VerbosityLevel:
+        ALL,
+        DEBUG,
+        STATUS,
+        INFO,
+        PROGRESS,
+        DEPRECATED,
+        WARNING,
+        ERROR,
+        FATAL,
+        QUIET
 
 
 cdef extern from "connection_id.h" namespace "nest":

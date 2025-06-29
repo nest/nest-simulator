@@ -1612,7 +1612,7 @@ nest::ConnectionManager::set_stdp_eps( const double stdp_eps )
     os << "Epsilon for spike-time comparison in STDP was set to "
        << std::setprecision( std::numeric_limits< long double >::digits10 ) << stdp_eps_ << ".";
 
-    LOG( M_INFO, "ConnectionManager::set_stdp_eps", os.str() );
+    LOG( VerbosityLevel::INFO, "ConnectionManager::set_stdp_eps", os.str() );
   }
 }
 
@@ -1728,7 +1728,7 @@ nest::ConnectionManager::set_connections_have_changed()
   {
     std::string msg =
       "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
-    LOG( M_WARNING, "ConnectionManager", msg );
+    LOG( VerbosityLevel::WARNING, "ConnectionManager", msg );
     // Reset the get_connections_has_been_called_ flag because we have updated connections.
     get_connections_has_been_called_ = false;
   }

@@ -116,7 +116,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const dictionary& d,
   // Check for old names
   if ( update_value_param( d, names::mean, mu_, node ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
@@ -124,7 +124,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const dictionary& d,
 
   if ( update_value_param( d, names::std, sigma_, node ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );

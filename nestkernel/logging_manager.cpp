@@ -35,7 +35,7 @@
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()
-  , logging_level_( M_ALL )
+  , logging_level_( VerbosityLevel::INFO )
   , dict_miss_is_error_( true )
 {
 }
@@ -62,17 +62,7 @@ void
 nest::LoggingManager::set_status( const dictionary& dict )
 {
   dict.update_value( names::dict_miss_is_error, dict_miss_is_error_ );
-
-  severity_t level = logging_level_;
-  if ( dict.update_value( names::verbosity, level ) )
-  {
-    if ( level < M_ALL or M_QUIET < level )
-    {
-      throw BadParameter(
-        String::compose( "Verbosity level must be between M_ALL (%1) and M_QUIET (%2).", M_ALL, M_QUIET ) );
-    }
-    logging_level_ = level;
-  }
+  dict.update_value( names::verbosity, logging_level_ ); // safe, because entry must be VerbosityLevel
 }
 
 void
@@ -109,7 +99,7 @@ nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) con
 {
   std::ostream* out;
 
-  if ( event.severity < M_WARNING )
+  if ( event.severity < VerbosityLevel::WARNING )
   {
     out = &std::cout;
   }
@@ -122,7 +112,7 @@ nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) con
 }
 
 void
-nest::LoggingManager::publish_log( const nest::severity_t s,
+nest::LoggingManager::publish_log( const VerbosityLevel s,
   const std::string& fctn,
   const std::string& msg,
   const std::string& file,

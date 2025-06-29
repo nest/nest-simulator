@@ -95,7 +95,7 @@ private:
   using maptype_::maptype_; // Inherit constructors
 
   /**
-   * @brief Cast the specified value to the specified type.
+   * @brief Cast the specified non-vector value to the specified type.
    *
    * @tparam T Type of element. If the value is not of the specified type, a TypeMismatch error is thrown.
    * @param value the any object to cast.
@@ -115,6 +115,44 @@ private:
     {
       std::string msg = std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type "
         + std::string( boost::core::demangle( typeid( T ).name() ) );
+      throw nest::TypeMismatch( msg );
+    }
+  }
+
+  /**
+   * @brief Cast the specified vector value to the specified type.
+   *
+   * @tparam T Type of vector element. If the value is not of the specified type, a TypeMismatch error is thrown.
+   * @param value the any object to cast.
+   * @param key key where the value is located in the dictionary, for information upon cast errors.
+   * @throws TypeMismatch if the value is not of specified type T.
+   * @return value cast to the specified type.
+   *
+   * @note A dedicated cast_vector_value_() allows handling of empty vectors passed from the Python level.
+   */
+  template < typename T >
+  std::vector< T >
+  cast_vector_value_( const boost::any& value, const std::string& key ) const
+  {
+    // PyNEST passes vector with element type any if and only if it needs to pass
+    // and empty vector, because the element type of empty lists cannot be inferred
+    // at the Python level. The assertion just double-checks that we never get a
+    // non-empty vector-of-any.
+    if ( value.type() == typeid( std::vector< boost::any > ) )
+    {
+      assert( boost::any_cast< std::vector< boost::any > >( value ).empty() );
+      return std::vector< T >();
+    }
+
+    // Now handle vectors with elements
+    try
+    {
+      return boost::any_cast< std::vector< T > >( value );
+    }
+    catch ( const boost::bad_any_cast& )
+    {
+      std::string msg = std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type "
+        + std::string( boost::core::demangle( typeid( std::vector< T > ).name() ) );
       throw nest::TypeMismatch( msg );
     }
   }
@@ -180,7 +218,7 @@ public:
   }
 
   /**
-   * @brief Update the specified value if there exists a value at key.
+   * @brief Update the specified non-vector value if there exists a value at key.
    *
    * @param key key where the value may be located in the dictionary.
    * @param value object to update if there exists a value at key.
@@ -195,6 +233,29 @@ public:
     if ( it != end() )
     {
       value = cast_value_< T >( it->second.item, key );
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @brief Update the specified vector value if there exists a value at key.
+   *
+   * @param key key where the value may be located in the dictionary.
+   * @param value object to update if there exists a value at key.
+   * @throws TypeMismatch if the value at key is not the same type as the value argument.
+   * @return Whether value was updated.
+   *
+   * @note The specialisation for values that are vectors allows handling of empty vectors passed from the Python level.
+   */
+  template < typename T >
+  bool
+  update_value( const std::string& key, std::vector< T >& value ) const
+  {
+    auto it = find( key );
+    if ( it != end() )
+    {
+      value = cast_vector_value_< T >( it->second.item, key );
       return true;
     }
     return false;

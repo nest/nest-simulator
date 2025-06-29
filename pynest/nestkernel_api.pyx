@@ -222,6 +222,7 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
     for key, value in py_dict.items():
         if type(value) is tuple:
             value = list(value)
+
         if type(value) is int or isinstance(value, numpy.integer):
 	    # PYTEST-NG: Should we guard against overflow given that python int has infinite range?
             cdict[pystr_to_string(key)] = <long>value
@@ -231,6 +232,11 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = <cbool>value
         elif type(value) is str:
             cdict[pystr_to_string(key)] = <string>pystr_to_string(value)
+        elif type(value) is list and len(value) == 0:
+            # We cannot infer the intended element type from an empty list.
+            # We therefore pass an empty vector[any]. vector[any] will always be empty
+            # and an empty vector will always be vector[any] in the PyNEST interface.
+            cdict[pystr_to_string(key)] = empty_any_vec()
         elif is_list_tuple_ndarray_of_float(value):
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
         elif is_list_tuple_ndarray_of_int(value):
@@ -254,11 +260,10 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         else:
             typename = type(value)
             if type(value) is list:
-                if len(value) > 0:
-                    typename = f"list of {type(value[0])}"
-                else:
-                    typename = f"empty list (for which the element type cannot be determined)"
+                assert len(value) > 0   # empty list should have been caught above
+                typename = f"list of {type(value[0])}"
             raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {typename}')
+
     return cdict
 
 
@@ -269,6 +274,11 @@ cdef object vec_of_dict_to_list(vector[dictionary] cvec):
         tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
+
+
+cdef vector[any] empty_any_vec():
+    cdef vector[any] empty_vec
+    return empty_vec
 
 
 cdef vector[dictionary] list_of_dict_to_vec(object pylist):

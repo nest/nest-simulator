@@ -42,8 +42,8 @@ def test_memsize():
 
     m_pre = nest.memory_size
 
-    n = nest.Create("parrot_neuron", 1000)
-    nest.Connect(n, n)
+    n = nest.Create("aeif_cond_alpha", 2000)
+    nest.Connect(n, n, syn_spec={"synapse_model": "stdp_synapse"})
 
     m_post = nest.memory_size
 

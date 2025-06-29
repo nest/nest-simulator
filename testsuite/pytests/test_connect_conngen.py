@@ -34,11 +34,16 @@ try:
 except ImportError:
     HAVE_CSA = False
 
-nest.ll_api.sli_run("statusdict/have_libneurosim ::")
-HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
+try:
+    import numpy
+
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
+
+HAVE_LIBNEUROSIM = nest.build_info["have_libneurosim"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_CSA, "Python CSA package is not available")
 @unittest.skipIf(not HAVE_LIBNEUROSIM, "NEST was built without support for libneurosim")
 class ConngenTestCase(unittest.TestCase):
@@ -128,7 +133,7 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType", nest.Connect, pop, pop, connspec, synspec)
+        self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType", nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_collocated_synapses(self):
         """
@@ -144,7 +149,7 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", 3)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_weight_and_delay_in_synspec_and_conngen(self):
         """
@@ -165,11 +170,11 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_w)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_w)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_d)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_d)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_wd)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_wd)
 
 
 def suite():

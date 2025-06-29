@@ -58,6 +58,7 @@ def test_set_individual_spike_trains_on_set_defaults(gen_model):
     assert not gen.individual_spike_trains
 
 
+@pytest.mark.skip(reason="PyNEST-NG Create() sets params on instances, instead of via Defaults")
 @pytest.mark.parametrize("gen_model", gen_models)
 def test_set_individual_spike_trains_on_creation(gen_model):
     """
@@ -91,7 +92,7 @@ def test_set_individual_spike_trains_on_instance(gen_model):
 
     gen = nest.Create(gen_model)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         gen.individual_spike_trains = False
 
 
@@ -172,7 +173,7 @@ def test_sinusoidal_generator_rate_profile(gen_model):
 
     parrots = nest.Create("parrot_neuron")
     sspg = nest.Create(gen_model)
-    mm = nest.Create("multimeter", {"record_from": ["rate"]})
+    mm = nest.Create("multimeter", params={"record_from": ["rate"]})
 
     nest.Connect(sspg, parrots)
     nest.Connect(mm, sspg)

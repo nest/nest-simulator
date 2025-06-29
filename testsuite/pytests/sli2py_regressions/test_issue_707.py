@@ -50,7 +50,4 @@ def test_gap_junction_weight_recording():
 
     nest.Simulate(10.0)
 
-    events = nest.GetStatus(wr, "events")[0]
-    weights = events["weights"]
-
-    assert weights[0] == 2.0
+    assert wr.get("events", "weights")[0] == 2.0

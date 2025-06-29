@@ -33,7 +33,7 @@ def test_spike_generator_large_precise_times():
     Test that spike_generator handles large precise times correctly.
     """
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": 0.1})
+    nest.resolution = 0.1
 
     sg = nest.Create(
         "spike_generator",
@@ -51,12 +51,12 @@ def test_spike_generator_large_precise_times():
 
     nest.Simulate(360000)
 
-    events = nest.GetStatus(sr, "events")[0]
+    events = sr.events
     times = events["times"]
     offsets = events["offsets"]
 
     # Check correct step, account for delay 1 ms
-    assert times[0] == 3535393
+    assert times == 3535393
 
     # Check for correct offset, precision limited by spike time * eps
-    assert abs(offsets[0]) < 1e-9
+    assert abs(offsets) < 1e-9

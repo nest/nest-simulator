@@ -58,7 +58,7 @@ import nest
 # Additionally, we set the verbosity using ``set_verbosity`` to suppress info
 # messages. We also reset the kernel to be sure to start with a clean NEST.
 
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 nest.ResetKernel()
 
 ###############################################################################

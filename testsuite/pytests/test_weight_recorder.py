@@ -28,12 +28,11 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_GSL = nest.build_info["have_gsl"]
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 
@@ -76,13 +75,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, connections.get("weight"))
+            weights = np.append(weights, connections.weight)
 
-        wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
+        wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
         self.assertEqual(wr_weights, weights)
 
+    @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
     def testMultipleThreads(self):
         """Weight Recorder Multi Threaded"""
 
@@ -104,9 +104,9 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, connections.get("weight"))
+            weights = np.append(weights, connections.weight)
 
-        wr_weights = nest.GetStatus(wr, "events")[0]["weights"]
+        wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
         self.assertEqual(wr_weights, weights)
@@ -127,15 +127,15 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
 
-        nest.SetStatus(wr, {"senders": pre[:3]})
+        wr.senders = pre[:3]
         connections = nest.GetConnections(pre[:3], post)
 
         senders = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            senders = np.append(senders, connections.get("source"))
+            senders = np.append(senders, connections.source)
 
-        wr_senders = nest.GetStatus(wr, "events")[0]["senders"]
+        wr_senders = wr.events["senders"]
 
         self.addTypeEqualityFunc(type(wr_senders), self.is_subset)
         self.assertEqual(wr_senders, senders)
@@ -156,15 +156,15 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
 
-        nest.SetStatus(wr, {"targets": post[:3]})
+        wr.targets = post[:3]
         connections = nest.GetConnections(pre, post[:3])
 
         targets = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            targets = np.append(targets, connections.get("target"))
+            targets = np.append(targets, connections.target)
 
-        wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
+        wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
         self.assertEqual(wr_targets, targets)
@@ -185,7 +185,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
 
-        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[:3]})
+        wr.set({"senders": pre[1:3], "targets": post[:3]})
 
         # simulate before GetConnections
         # as order of connections changes at beginning of simulation (sorting)
@@ -195,9 +195,9 @@ class WeightRecorderTestCase(unittest.TestCase):
         targets = np.array([])
         for i in range(1):
             nest.Simulate(1)
-            targets = np.append(targets, connections.get("target"))
+            targets = np.append(targets, connections.target)
 
-        wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
+        wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
         self.assertEqual(wr_targets, targets)
@@ -217,23 +217,27 @@ class WeightRecorderTestCase(unittest.TestCase):
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        # Senders and targets lists empty
-        self.assertFalse(nest.GetStatus(wr, "senders")[0])
-        self.assertFalse(nest.GetStatus(wr, "targets")[0])
+        # Senders and targets lists empty initially
+        assert wr.senders.tolist() == []
+        assert wr.targets.tolist() == []
 
-        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
+        wr.senders = pre[1:3]
+        wr.targets = post[3:]
 
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
+        gss = wr.senders
+        gst = wr.targets
 
-        self.assertEqual(gss.tolist(), [3, 4])
-        self.assertEqual(gst.tolist(), [10, 11])
+        assert gss.tolist() == [3, 4]
+        assert gst.tolist() == [10, 11]
 
-        nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual(gss.tolist(), [2, 6])
-        self.assertEqual(gst.tolist(), [8, 9])
+        wr.senders = nest.NodeCollection([2, 6])
+        wr.targets = nest.NodeCollection([8, 9])
+
+        gss = wr.senders
+        gst = wr.targets
+
+        assert gss.tolist() == [2, 6]
+        assert gst.tolist() == [8, 9]
 
     def testMultapses(self):
         """Weight Recorder Multapses"""
@@ -263,7 +267,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         nest.Simulate(100)
 
-        wr_events = nest.GetStatus(wr, "events")[0]
+        wr_events = wr.events
         senders = wr_events["senders"]
         targets = wr_events["targets"]
         ports = wr_events["ports"]
@@ -303,14 +307,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(sg, pre)
 
         connections = nest.GetConnections(pre, post)
-        receptors = connections.get("receptor")
-        sources = connections.get("source")
-        targets = connections.get("target")
+        receptors = connections.receptor
+        sources = connections.source
+        targets = connections.target
         connections = [(sources[i], targets[i], receptors[i]) for i in range(len(connections))]
 
         nest.Simulate(100)
 
-        wr_events = nest.GetStatus(wr, "events")[0]
+        wr_events = wr.events
         senders = wr_events["senders"]
         targets = wr_events["targets"]
         rports = wr_events["receptors"]

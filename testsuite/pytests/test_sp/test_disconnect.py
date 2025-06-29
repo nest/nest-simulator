@@ -30,14 +30,14 @@ try:
 except ImportError:
     have_mpi4py = False
 
-have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
+have_mpi = nest.build_info["have_mpi"]
 test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
 
 
 class TestDisconnectSingle(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity("M_ERROR")
+        nest.set_verbosity(nest.verbosity.M_ERROR)
         if test_with_mpi:
             self.comm = MPI.COMM_WORLD
             self.rank = self.comm.Get_rank()
@@ -111,7 +111,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
-                with self.assertRaises(nest.NESTErrors.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
 
     def test_disconnect_synapsecollection(self):

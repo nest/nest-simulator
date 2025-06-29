@@ -56,7 +56,6 @@ To configure NEST for compilation without external packages, use the following  
     cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dwith-gsl=OFF \
-          -Dwith-readline=OFF \
           -Dwith-ltdl=OFF \
           -Dwith-openmp=OFF \
           </path/to/nest/source>
@@ -176,8 +175,6 @@ External libraries
 |                                                       | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-readline=[OFF|ON|</path/to/readline>]``      | Build with GNU Readline library [default=ON]. To set a specific library, give the install path.|
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
 |                                                       | ltdl for dynamic loading of external user modules.                                             |

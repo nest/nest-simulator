@@ -54,7 +54,7 @@ EXIT_BAD_HEADER = 20
 EXIT_NO_SOURCE = 126
 
 try:
-    heuristic_folders = "nest nestkernel build_support models .git"
+    heuristic_folders = "pynest nestkernel build_support models .git"
     if "NEST_SOURCE" not in os.environ:
         if all([name in os.listdir() for name in heuristic_folders.split()]):
             os.environ["NEST_SOURCE"] = "."

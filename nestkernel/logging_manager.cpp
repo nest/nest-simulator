@@ -29,15 +29,15 @@
 // Includes from libnestutil:
 #include "logging_event.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "sliexceptions.h"
 
 nest::LoggingManager::LoggingManager()
   : client_callbacks_()
   , logging_level_( M_ALL )
   , dict_miss_is_error_( true )
+{
+}
+
+nest::LoggingManager::~LoggingManager()
 {
 }
 
@@ -56,15 +56,15 @@ nest::LoggingManager::finalize( const bool )
 }
 
 void
-nest::LoggingManager::set_status( const DictionaryDatum& dict )
+nest::LoggingManager::set_status( const dictionary& dict )
 {
-  updateValue< bool >( dict, names::dict_miss_is_error, dict_miss_is_error_ );
+  dict.update_value( names::dict_miss_is_error, dict_miss_is_error_ );
 }
 
 void
-nest::LoggingManager::get_status( DictionaryDatum& dict )
+nest::LoggingManager::get_status( dictionary& dict )
 {
-  ( *dict )[ names::dict_miss_is_error ] = dict_miss_is_error_;
+  dict[ names::dict_miss_is_error ] = dict_miss_is_error_;
 }
 
 
@@ -119,49 +119,6 @@ nest::LoggingManager::publish_log( const nest::severity_t s,
 #pragma omp critical( logging )
     {
       deliver_logging_event_( e );
-    }
-  }
-}
-
-void
-nest::LoggingManager::all_entries_accessed( const Dictionary& d,
-  const std::string& where,
-  const std::string& msg,
-  const std::string& file,
-  const size_t line ) const
-{
-  std::string missed;
-  if ( not d.all_accessed( missed ) )
-  {
-    if ( dict_miss_is_error_ )
-    {
-      throw UnaccessedDictionaryEntry( missed );
-    }
-    else
-    {
-      publish_log( M_WARNING, where, msg + missed, file, line );
-    }
-  }
-}
-
-void
-nest::LoggingManager::all_entries_accessed( const Dictionary& d,
-  const std::string& where,
-  const std::string& msg1,
-  const std::string& msg2,
-  const std::string& file,
-  const size_t line ) const
-{
-  std::string missed;
-  if ( not d.all_accessed( missed ) )
-  {
-    if ( dict_miss_is_error_ )
-    {
-      throw UnaccessedDictionaryEntry( missed + "\n" + msg2 );
-    }
-    else
-    {
-      publish_log( M_WARNING, where, msg1 + missed + "\n" + msg2, file, line );
     }
   }
 }

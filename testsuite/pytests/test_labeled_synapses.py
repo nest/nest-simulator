@@ -27,10 +27,9 @@ import unittest
 
 import nest
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
 class LabeledSynapsesTestCase(unittest.TestCase):
     """Test labeled synapses"""
@@ -128,8 +127,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             c = nest.GetConnections(a, a)
             self.assertTrue(all([x == 123 for x in c.get("synapse_label")]))
 
-    def test_SetLabelToSynapseSetStatus(self):
-        """Set a label to a labeled synapse on SetStatus."""
+    def test_SetLabelToSynapseSet(self):
+        """Set a label to a labeled synapse using set()."""
 
         for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
@@ -206,7 +205,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, "requires_symmetric")
 
             # try set a label during SetDefaults
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.SetDefaults(syn, {"synapse_label": 123})
 
             # plain connection
@@ -218,7 +217,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 + self.eprop_synapses
             ):
                 # try set on connect
-                with self.assertRaises(nest.kernel.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Connect(
                         a[:2],
                         a[-2:],
@@ -233,7 +232,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 )
             else:
                 # try set on connect
-                with self.assertRaises(nest.kernel.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Connect(
                         a,
                         a,
@@ -249,7 +248,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # try set on SetStatus
             c = nest.GetConnections(a, a)
 
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 c.set({"synapse_label": 123})
 
 

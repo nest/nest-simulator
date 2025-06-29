@@ -28,11 +28,10 @@ import nest
 import numpy as np
 import scipy.stats
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
     # sizes of source-, target-population and connection probability for
     # statistical test
@@ -72,7 +71,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
 
         # test that autapses are not permitted
         pop = nest.Create("iaf_psc_alpha", N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
     def testAutapsesFalse(self):
@@ -95,7 +94,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         # test that multapses must be permitted
         nest.ResetKernel()
         pop = nest.Create("iaf_psc_alpha", N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
         # test that multapses can only arise from symmetric
@@ -120,7 +119,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         conn_params["make_symmetric"] = False
         nest.ResetKernel()
         pop = nest.Create("iaf_psc_alpha", N)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(pop, pop, conn_params)
 
     def testMakeSymmetric(self):

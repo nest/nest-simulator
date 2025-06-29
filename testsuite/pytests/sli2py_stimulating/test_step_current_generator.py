@@ -65,7 +65,7 @@ def test_set_amplitude_times_or_values_only_fails(params):
     Ensure failure if setting only one of ``amplitude_times`` or ``amplitude_values``.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("step_current_generator", params)
 
 
@@ -76,7 +76,7 @@ def test_set_different_sized_amplitude_times_and_values_fails():
 
     params = {"amplitude_times": [1.0, 2.0], "amplitude_values": [1.0, 2.0, 3.0]}
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("step_current_generator", params)
 
 
@@ -87,7 +87,7 @@ def test_fail_if_amplitude_times_not_strictly_increases():
 
     params = {"amplitude_times": [1.0, 2.0, 2.0], "amplitude_values": [1.0, 2.0, 3.0]}
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("step_current_generator", params)
 
 

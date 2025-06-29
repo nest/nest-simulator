@@ -27,7 +27,7 @@ import nest
 import numpy as np
 import pytest
 
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 supported_source_models = ["eprop_iaf", "eprop_iaf_adapt", "eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
 supported_target_models = supported_source_models + ["eprop_readout"]
@@ -60,7 +60,7 @@ def test_unsupported_model_raises(target_model):
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse"})
 
 
@@ -251,10 +251,10 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "stop": duration["total_offset"] + duration["task"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
-    mm_out = nest.Create("multimeter", params_mm_out)
-    sr = nest.Create("spike_recorder", params_sr)
-    wr = nest.Create("weight_recorder", params_wr)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
+    mm_out = nest.Create("multimeter", params=params_mm_out)
+    sr = nest.Create("spike_recorder", params=params_sr)
+    wr = nest.Create("weight_recorder", params=params_wr)
 
     nrns_rec_record = nrns_rec[:n_record]
 
@@ -360,7 +360,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
         params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+    gen_spk_in.set(params_gen_spk_in)
 
     # Create output
 
@@ -387,7 +387,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "amplitude_values": np.tile(target_signal, n_iter * group_size),
     }
 
-    nest.SetStatus(gen_rate_target, params_gen_rate_target)
+    gen_rate_target.set(params_gen_rate_target)
 
     # Create learning window
 
@@ -396,7 +396,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "amplitude_values": [1.0],
     }
 
-    nest.SetStatus(gen_learning_window, params_gen_learning_window)
+    gen_learning_window.set(params_gen_learning_window)
 
     # Simulate
 
@@ -435,7 +435,7 @@ def test_unsupported_surrogate_gradient(source_model):
         "surrogate_gradient_function": "unsupported_surrogate_gradient",
     }
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults(source_model, params_nrn_rec)
 
 
@@ -531,7 +531,7 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
         "record_from": ["surrogate_gradient", "V_m"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
 
     params_conn_one_to_one = {"rule": "one_to_one"}
     params_syn = {
@@ -544,7 +544,7 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
         "delay": duration["step"],
     }
 
-    nest.SetStatus(gen_spk_in, {"spike_times": [1.0, 2.0, 3.0, 5.0, 9.0, 11.0]})
+    gen_spk_in.set({"spike_times": [1.0, 2.0, 3.0, 5.0, 9.0, 11.0]})
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
     nest.Connect(nrns_in, nrns_rec, params_conn_one_to_one, params_syn)
@@ -614,7 +614,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
         "record_from": ["eprop_history_duration"],
     }
 
-    mm_rec = nest.Create("multimeter", params_mm_rec)
+    mm_rec = nest.Create("multimeter", params=params_mm_rec)
 
     # Create connections
 
@@ -648,7 +648,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
 
     params_gen_spk_in = [{"spike_times": spike_times} for spike_times in input_spike_times]
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+    gen_spk_in.set(params_gen_spk_in)
 
     # Simulate
 

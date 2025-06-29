@@ -15,7 +15,6 @@ networks!
    * :ref:`music_tutorial_2`
    * :ref:`music_tutorial_3`
    * :ref:`music_tutorial_4`
-   * :ref:`music_sli`
    * :ref:`tips_music`
 
 

@@ -72,7 +72,7 @@ def test_neuron_gap_connect_with_delay_fails(conn_spec):
     leads to an error.
     """
     syn_spec = {"synapse_model": "gap_junction", "delay": 2.0}
-    with pytest.raises(nest.kernel.NESTError, match="gap_junction connection has no delay"):
+    with pytest.raises(nest.NESTError, match="gap_junction connection has no delay"):
         nest.Connect(pytest.neuron_gap, pytest.neuron_gap, conn_spec=conn_spec, syn_spec=syn_spec)
 
 
@@ -82,7 +82,7 @@ def test_neuron_nogap_nogap_connect_fails():
     """
     conn_spec = {"rule": "one_to_one", "make_symmetric": True}
     syn_spec = {"synapse_model": "gap_junction"}
-    with pytest.raises(nest.kernel.NESTError, match="The source node does not support gap junction output."):
+    with pytest.raises(nest.NESTError, match="The source node does not support gap junction output."):
         nest.Connect(pytest.neuron_no_gap, pytest.neuron_no_gap, conn_spec=conn_spec, syn_spec=syn_spec)
 
 
@@ -93,9 +93,7 @@ def test_neuron_nogap_gap_connect_fails():
     """
     conn_spec = {"rule": "one_to_one", "make_symmetric": True}
     syn_spec = {"synapse_model": "gap_junction"}
-    with pytest.raises(
-        nest.kernel.NESTError, match="The target node or synapse model does not support gap junction input."
-    ):
+    with pytest.raises(nest.NESTError, match="The target node or synapse model does not support gap junction input."):
         nest.Connect(pytest.neuron_no_gap, pytest.neuron_gap, conn_spec=conn_spec, syn_spec=syn_spec)
 
 
@@ -107,7 +105,7 @@ def test_neuron_gap_connect_not_symmetric_fails():
     conn_spec = {"rule": "one_to_one", "make_symmetric": False}
     syn_spec = {"synapse_model": "gap_junction", "weight": 2.0}
     with pytest.raises(
-        nest.kernel.NESTError,
+        nest.NESTError,
         match="Connections with this synapse model can only be created as "
         + 'one-to-one connections with "make_symmetric" set to true *',
     ):

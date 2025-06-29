@@ -68,5 +68,5 @@ def test_error_raised_for_illegal_connections_to_recording_device(model, conn_sp
     nrn = nest.Create("iaf_psc_alpha", 1)
     rec = nest.Create(model, 2)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(nrn, rec, conn_spec=conn_spec)

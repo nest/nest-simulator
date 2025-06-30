@@ -56,6 +56,7 @@ namespace nest
  */
 extern "C" int iaf_cond_exp_dynamics( double, const double*, double*, void* );
 
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based, hard threshold
 
 Short description
@@ -193,7 +194,7 @@ Examples using this model
 .. listexamples:: iaf_cond_exp
 
 EndUserDocs*/
-// clang-format off
+// clang-format on
 
 void register_iaf_cond_exp( const std::string& name );
 

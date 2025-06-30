@@ -10,7 +10,7 @@ jobs:
     if: ${{ github.repository_owner == 'nest' }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
         with:
           egress-policy: audit
           disable-telemetry: true

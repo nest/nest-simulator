@@ -14,7 +14,7 @@ on their own.
 
 .. seealso::
 
-    Before you make a pull request :ref:`see how to check your code <check_code>`  to ensure its compliant with our guidelines.
+    Before you make a pull request :ref:`see which developer tools are required <required_dev_tools>`  to ensure its compliant with our guidelines.
 
 C++ language features
 ---------------------
@@ -83,7 +83,7 @@ Coding style
 
 In the following the coding style guidelines are explained by example and some
 parts are adopted from `Google C++ Style
-Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
+Guide <https://google.github.io/styleguide/cppguide.html>`_.
 
 The #define guard
 ~~~~~~~~~~~~~~~~~
@@ -303,7 +303,7 @@ line.
 
 Control structures (``if``, ``while``, ``for``, ...) have a single space after the
 keyword. The parenthesis around the tests
-have a space after the opening and before the closing parenthesis. 
+have a space after the opening and before the closing parenthesis.
 The case labels in ``switch`` statements are not indented.
 
 .. code::
@@ -328,7 +328,7 @@ The case labels in ``switch`` statements are not indented.
 Binary operators (`+`, `-`, `*`, `||`, `&`, ...) are surrounded by one space, e.g.
 ``a + b``.
 
-Unary operators have no space between operator and operand, e.g. ``-a``. 
+Unary operators have no space between operator and operand, e.g. ``-a``.
 Do not use the negation operator `!` since it can easily be
 overseen. Instead use ``not``, e.g. ``not vec.empty()``.
 
@@ -556,7 +556,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::elapsed_timestamp() const
+    nest::Stopwatch::elapsed_us() const
     {
     #ifndef DISABLE_TIMING
       if ( isRunning() )
@@ -622,7 +622,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::get_timestamp()
+    nest::Stopwatch::get_current_time()
     {
       // works with:
       // * hambach (Linux 2.6.32 x86_64)
@@ -637,12 +637,12 @@ For example, the ``stopwatch.h`` file could look like:
     } /* namespace timer */
     #endif /* STOPWATCH_H */
 
-And the corresponding ``stopwatch.cpp``:
+And the corresponding ``stopwatch_impl.h``:
 
 .. code:: cpp
 
     /*
-     *  stopwatch.cpp
+     *  stopwatch_impl.h
      *
      *  This file is part of NEST.
      *
@@ -673,5 +673,3 @@ And the corresponding ``stopwatch.cpp``:
       return os;
     }
     }
-
-

@@ -56,6 +56,10 @@ namespace nest
 /**
  * Base class to allow storing Connectors for different synapse types
  * in vectors. We define the interface here to avoid casting.
+ *
+ * @note If any member functions need to do something special for a given connection type,
+ * declare specializations in the corresponding header file and define them in the corresponding
+ * source file. For an example, see `eprop_synapse_bsshslm_2020`.
  */
 class ConnectorBase
 {
@@ -266,6 +270,12 @@ public:
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );
+  }
+
+  void
+  push_back( ConnectionT&& c )
+  {
+    C_.push_back( std::move( c ) );
   }
 
   void

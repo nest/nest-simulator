@@ -773,54 +773,45 @@ SLIInterpreter::terminate( int returnvalue )
 void
 SLIInterpreter::message( int level, const char from[], const char text[], const char errorname[] ) const
 {
-// Only one thread may write at a time.
-#ifdef _OPENMP
-#pragma omp critical( message )
+  if ( level >= verbositylevel )
   {
-#endif
-    if ( level >= verbositylevel )
+    if ( level >= M_FATAL )
     {
-      if ( level >= M_FATAL )
-      {
-        message( std::cout, M_FATAL_NAME, from, text, errorname );
-      }
-      else if ( level >= M_ERROR )
-      {
-        message( std::cout, M_ERROR_NAME, from, text, errorname );
-      }
-      else if ( level >= M_WARNING )
-      {
-        message( std::cout, M_WARNING_NAME, from, text, errorname );
-      }
-      else if ( level >= M_DEPRECATED )
-      {
-        message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
-      }
-      else if ( level >= M_PROGRESS )
-      {
-        message( std::cout, M_PROGRESS_NAME, from, text, errorname );
-      }
-      else if ( level >= M_INFO )
-      {
-        message( std::cout, M_INFO_NAME, from, text, errorname );
-      }
-      else if ( level >= M_STATUS )
-      {
-        message( std::cout, M_STATUS_NAME, from, text, errorname );
-      }
-      else if ( level >= M_DEBUG )
-      {
-        message( std::cout, M_DEBUG_NAME, from, text, errorname );
-      }
-      else
-      {
-        message( std::cout, M_ALL_NAME, from, text, errorname );
-      }
+      message( std::cout, M_FATAL_NAME, from, text, errorname );
     }
-
-#ifdef _OPENMP
+    else if ( level >= M_ERROR )
+    {
+      message( std::cout, M_ERROR_NAME, from, text, errorname );
+    }
+    else if ( level >= M_WARNING )
+    {
+      message( std::cout, M_WARNING_NAME, from, text, errorname );
+    }
+    else if ( level >= M_DEPRECATED )
+    {
+      message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
+    }
+    else if ( level >= M_PROGRESS )
+    {
+      message( std::cout, M_PROGRESS_NAME, from, text, errorname );
+    }
+    else if ( level >= M_INFO )
+    {
+      message( std::cout, M_INFO_NAME, from, text, errorname );
+    }
+    else if ( level >= M_STATUS )
+    {
+      message( std::cout, M_STATUS_NAME, from, text, errorname );
+    }
+    else if ( level >= M_DEBUG )
+    {
+      message( std::cout, M_DEBUG_NAME, from, text, errorname );
+    }
+    else
+    {
+      message( std::cout, M_ALL_NAME, from, text, errorname );
+    }
   }
-#endif
 }
 
 void
@@ -830,94 +821,100 @@ SLIInterpreter::message( std::ostream& out,
   const char text[],
   const char errorname[] ) const
 {
-  const unsigned buflen = 30;
-  char timestring[ buflen + 1 ] = "";
-  const time_t tm = std::time( nullptr );
-
-  std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
-
-  std::string msg = String::compose( "%1 %2 [%3]: ", timestring, from, levelname );
-  out << std::endl << msg << errorname;
-
-  // Set the preferred line indentation.
-  const size_t indent = 4;
-
-  // Get size of the output window. The message text will be
-  // adapted to the width of the window.
-  //
-  // The COLUMNS variable should preferably be extracted
-  // from the environment dictionary set up by the
-  // Processes class. getenv("COLUMNS") works only on
-  // the created NEST executable (not on the messages
-  // printed by make install).
-  char const* const columns = std::getenv( "COLUMNS" );
-  size_t max_width = 78;
-  if ( columns )
+  // Only one thread may write at a time to ensure tidy output.
+#pragma omp critical( message )
   {
-    max_width = std::atoi( columns );
-  }
-  if ( max_width < 3 * indent )
-  {
-    max_width = 3 * indent;
-  }
-  const size_t width = max_width - indent;
+    const unsigned buflen = 30;
+    char timestring[ buflen + 1 ] = "";
+    const time_t tm = std::time( nullptr );
 
-  // convert char* to string to be able to use the string functions
-  std::string text_str( text );
+    std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
-  // Indent first message line
-  if ( text_str.size() != 0 )
-  {
-    std::cout << std::endl << std::string( indent, ' ' );
-  }
+    std::string msg = String::compose( "%1 %2 [%3]: ", timestring, from, levelname );
+    out << std::endl << msg << errorname;
 
-  size_t pos = 0;
+    // Set the preferred line indentation.
+    const size_t indent = 4;
 
-  for ( size_t i = 0; i < text_str.size(); ++i )
-  {
-    if ( text_str.at( i ) == '\n' and i != text_str.size() - 1 )
+    // Get size of the output window. The message text will be
+    // adapted to the width of the window.
+    //
+    // The COLUMNS variable should preferably be extracted
+    // from the environment dictionary set up by the
+    // Processes class. getenv("COLUMNS") works only on
+    // the created NEST executable (not on the messages
+    // printed by make install).
+    char const* const columns = std::getenv( "COLUMNS" );
+    size_t max_width = 78;
+    if ( columns )
     {
-      // Print a lineshift followed by an indented whitespace
-      // Manually inserted lineshift at the end of the message
-      // are suppressed.
-      out << std::endl << std::string( indent, ' ' );
-      pos = 0;
+      max_width = std::atoi( columns );
     }
-    else
+    if ( max_width < 3 * indent )
     {
-      // If we've reached the width of the output we'll print
-      // a lineshift regardless of whether '\n' is found or not.
-      // The printing is done so that no word splitting occurs.
-      size_t space = text_str.find( ' ', i ) < text_str.find( '\n' ) ? text_str.find( ' ', i ) : text_str.find( '\n' );
-      // If no space is found (i.e. the last word) the space
-      // variable is set to the end of the string.
-      if ( space == std::string::npos )
-      {
-        space = text_str.size();
-      }
+      max_width = 3 * indent;
+    }
+    const size_t width = max_width - indent;
 
-      // Start on a new line if the next word is longer than the
-      // space available (as long as the word is shorter than the
-      // total width of the printout).
-      if ( i != 0 and text_str.at( i - 1 ) == ' '
-        and static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
+    // convert char* to string to be able to use the string functions
+    std::string text_str( text );
+
+    // Indent first message line
+    if ( text_str.size() != 0 )
+    {
+      std::cout << std::endl << std::string( indent, ' ' );
+    }
+
+    size_t pos = 0;
+
+    for ( size_t i = 0; i < text_str.size(); ++i )
+    {
+      if ( text_str.at( i ) == '\n' and i != text_str.size() - 1 )
       {
+        // Print a lineshift followed by an indented whitespace
+        // Manually inserted lineshift at the end of the message
+        // are suppressed.
         out << std::endl << std::string( indent, ' ' );
         pos = 0;
       }
-
-      // Only print character if we're not at the end of the
-      // line and the last character is a space.
-      if ( not( width - pos == 0 and text_str.at( i ) == ' ' ) )
+      else
       {
-        // Print the actual character.
-        out << text_str.at( i );
-      }
+        // If we've reached the width of the output we'll print
+        // a lineshift regardless of whether '\n' is found or not.
+        // The printing is done so that no word splitting occurs.
+        size_t space =
+          text_str.find( ' ', i ) < text_str.find( '\n' ) ? text_str.find( ' ', i ) : text_str.find( '\n' );
+        // If no space is found (i.e. the last word) the space
+        // variable is set to the end of the string.
+        if ( space == std::string::npos )
+        {
+          space = text_str.size();
+        }
 
-      ++pos;
+        // Start on a new line if the next word is longer than the
+        // space available (as long as the word is shorter than the
+        // total width of the printout).
+        if ( i != 0 and text_str.at( i - 1 ) == ' '
+          and static_cast< int >( space ) - static_cast< int >( i )
+            > static_cast< int >( width ) - static_cast< int >( pos ) )
+        {
+          out << std::endl << std::string( indent, ' ' );
+          pos = 0;
+        }
+
+        // Only print character if we're not at the end of the
+        // line and the last character is a space.
+        if ( not( static_cast< int >( width ) - static_cast< int >( pos ) == 0 and text_str.at( i ) == ' ' ) )
+        {
+          // Print the actual character.
+          out << text_str.at( i );
+        }
+
+        ++pos;
+      }
     }
-  }
-  out << std::endl;
+    out << std::endl;
+  } // #pragma omp critical
 }
 
 Name

@@ -389,6 +389,15 @@ public:
     void execute( SLIInterpreter* ) const override;
   } copymodel_l_l_Dfunction;
 
+  /** @BeginDocumentation
+   *  Name: Install - install dynamically loaded module
+   */
+  class Install_sFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const override;
+  } install_sfunction;
+
   class GetConnections_DFunction : public SLIFunction
   {
   public:
@@ -545,11 +554,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } ConnectSonata_D_Function;
 
-  class ConnectTripartite_g_g_g_D_DFunction : public SLIFunction
+  class ConnectTripartite_g_g_g_D_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const override;
-  } connect_tripartite_g_g_g_D_Dfunction;
+  } connect_tripartite_g_g_g_D_D_Dfunction;
 
   class ResetKernelFunction : public SLIFunction
   {
@@ -637,52 +646,6 @@ public:
   {
     void execute( SLIInterpreter* ) const override;
   } numprocessesfunction;
-
-  /** @BeginDocumentation
-   * Name: SetFakeNumProcesses - Set a fake number of MPI processes.
-   * Synopsis: n_procs SetFakeNumProcesses -> -
-   * Description:
-   * Sets the number of MPI processes to n_procs. Used for benchmarking purposes
-   * of memory consumption only.
-   * Please note:
-   * - Simulation of the network will not be possible after setting fake
-   *   processes.
-   * - It is not possible to use this function when running a script on multiple
-   *   actual MPI processes.
-   * - The setting of the fake number of processes has to happen before the kernel
-   *   reset and before the setting of the local number of threads.
-   *   After calling SetFakeNumProcesses, it is obligatory to call either
-   *   ResetKernel or SetStatus on the Kernel for the setting of the fake
-   *   number of processes to come into effect.
-   *
-   * A typical use case would be to test if a neuronal network fits on a machine
-   * of given size without using the actual resources.
-   *
-   * Example:
-   *           %%% Set fake number of processes
-   *           100 SetFakeNumProcesses
-   *
-   *           %%% Build network
-   *           /iaf_psc_alpha 100 Create
-   *           [1 100] Range /n Set
-   *
-   *           << /source n /target n >> Connect
-   *
-   *           %%% Measure memory consumption
-   *           memory_thisjob ==
-   *
-   *     Execute this script with
-   *           mpirun -np 1 nest example.sli
-   *
-   * Availability: NEST 2.2
-   * Author: Susanne Kunkel
-   * FirstVersion: July 2011
-   * SeeAlso: NumProcesses
-   */
-  class SetFakeNumProcesses_iFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const override;
-  } setfakenumprocesses_ifunction;
 
   /** @BeginDocumentation
    *  Name: SyncProcesses - Synchronize all MPI processes.
@@ -838,10 +801,10 @@ public:
     void execute( SLIInterpreter* ) const override;
   } cvnodecollection_ivfunction;
 
-  class Cva_gFunction : public SLIFunction
+  class Cva_g_lFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const override;
-  } cva_gfunction;
+  } cva_g_lfunction;
 
   class Size_gFunction : public SLIFunction
   {
@@ -1457,35 +1420,6 @@ public:
    * value, with the help of a dictionary, or in an array (only for fixed
    * grid layers). The dictionary can be of type gaussian, 2D gaussian,
    * linear, exponential and other.
-   *
-   *
-   * Parameter name: source
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * The source dictionary enables us to give further detail on
-   * how the nodes in the source layer used in the connection function
-   * should be processed.
-   *
-   * Parameters:
-   * model*             literal
-   * lid^               integer
-   *
-   * *modeltype (i.e. /iaf_psc_alpha) of nodes that should be connected to
-   * in the layer. All nodes are used if this variable isn't set.
-   * ^Nesting depth of nodes that should be connected to. All layers are used
-   * if this variable isn't set.
-   *
-   *
-   * Parameter name: target
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * See description for source dictionary.
    *
    *
    * Parameter name: number_of_connections

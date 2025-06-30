@@ -28,8 +28,8 @@ from docutils.parsers.rst import Directive, Parser
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
 
-logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
+log.setLevel(level=logging.WARNING)
 
 
 class listnode(nodes.General, nodes.Element):
@@ -103,10 +103,12 @@ def ModelMatchExamples():
             continue
         with open(filename, "r", errors="ignore") as file:
             content = file.read()
-            for model_file in model_files:
-                if model_file in content:
-                    matches.setdefault(model_file, []).append(filename)
-
+            if "AUTOMATICALLY GENERATED" in content:
+                for model_file in model_files:
+                    if model_file in content:
+                        matches.setdefault(model_file, []).append(filename)
+            else:
+                continue
     return matches
 
 

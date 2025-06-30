@@ -89,6 +89,8 @@ EndUserDocs */
 
 namespace nest
 {
+void register_music_rate_out_proxy( const std::string& name );
+
 class music_rate_out_proxy : public DeviceNode
 {
 

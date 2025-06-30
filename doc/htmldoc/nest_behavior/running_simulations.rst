@@ -38,6 +38,7 @@ The simulation loop. Light gray boxes denote thread parallel parts, dark
 gray boxes denote :hxt_ref:`MPI` parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
 
+
 .. _simulation_resolution:
 
 Simulation resolution and update interval
@@ -129,7 +130,7 @@ NEST also has some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
 :ref:`precise spike time neurons <sim_precise_spike_times>`
 for details about neuron update in continuous time and the
-:ref:`documentation on connection management <connection_management>`
+:ref:`documentation on the connectivty concepts  <connectivity_concepts>`
 for how to set the delay when creating synapses.
 
 .. _stepped_simulations:
@@ -327,3 +328,4 @@ threads or processes):
     ``{"print_time": False}`` to avoid the overhead of the print calls.
     In these cases, the real-time factor can be computed by measuring the
     wall-clock time manually and dividing by the set model time.
+    For details on timers in NEST see :ref:`built_in_timers`.

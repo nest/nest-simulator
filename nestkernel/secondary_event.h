@@ -339,6 +339,7 @@ public:
   DelayedRateConnectionEvent* clone() const override;
 };
 
+
 /**
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
@@ -373,6 +374,22 @@ public:
 
   double get_drift_factor() const;
   double get_diffusion_factor() const;
+};
+
+/**
+ * Event for learning signal connections. The event transmits
+ * the learning signal to the connected neurons.
+ */
+class LearningSignalConnectionEvent : public DataSecondaryEvent< double, LearningSignalConnectionEvent >
+{
+
+public:
+  LearningSignalConnectionEvent()
+  {
+  }
+
+  void operator()() override;
+  LearningSignalConnectionEvent* clone() const override;
 };
 
 template < typename DataType, typename Subclass >
@@ -424,6 +441,12 @@ inline double
 DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
+}
+
+inline LearningSignalConnectionEvent*
+LearningSignalConnectionEvent::clone() const
+{
+  return new LearningSignalConnectionEvent( *this );
 }
 
 /**

@@ -25,7 +25,7 @@ Requirements and limitations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Focus on single build configuration
-* Assumes all dependencies (OpenMPI, GSL, etc) installed in a Conda environment
+* Assumes all dependencies (OpenMPI, GSL, etc) installed in a Mamba environment
 * Does not support debugging on macOS (because Eclipse does not support lldb)
 * Does not read the NEST `.clang-format` file, so code formatting may
   be incorrect
@@ -62,10 +62,10 @@ Setting up the project
 #. Right click the project and choose ``Properties`` from the context
    menu
 
-   a. Under ``C/C++ Build/Build Variables``, define ``BUILD_DIR`` and ``CONDA_ENV``,
+   a. Under ``C/C++ Build/Build Variables``, define ``BUILD_DIR`` and ``MAMBA_ENV``,
       both of type ``Path``. The first should contain the full path to the build
-      directory you created above, the second the full path to your conda
-      environment, usually something like ``.../miniconda3/envs/nest-dev``.
+      directory you created above, the second the full path to your mamba
+      environment, usually something like ``.../mamba/envs/nest-dev``.
    #. Under ``C/C++ Build – [Tab] Builder Settings``,
 
       #. uncheck ``Use default build command``
@@ -73,14 +73,14 @@ Setting up the project
 	 number of processes to your situation)
       #. set ``Build Directory`` to ``${BUILD_DIR}``
    #. Under ``C/C++ Build > Environment``, prepend
-      ``${CONDA_ENV}/bin`` to ``PATH``
+      ``${MAMBA_ENV}/bin`` to ``PATH``
    #. Under ``C/C++ General > Paths and Symbols – [Tab] Includes``, add the
       following two direcories
 
       * ``${BUILD_DIR}/libnestutil`` (contains ``config.h``)
-      * ``${CONDA_ENV}/include`` (all headers from packages provided in conda environment)
+      * ``${mamba_env}/include`` (all headers from packages provided in Mamba environment)
    #. Under ``PyDev - Interpreter/Grammar``, choose the interpreter from
-      your Conda environment (you may need to add it by following the
+      your Mamba environment (you may need to add it by following the
       ``Click here to configure an interpreter not listed`` link and
       then ``Browse for python/pypy exe`` (this temporarily takes you
       to the global Eclipse preferences in a separate window).
@@ -114,7 +114,7 @@ Visual Studio Code
 ------------------
 
 The following section will guide you through setting up Visual Studio Code (VS Code) for editing, building,
-running, and debugging NEST. Tested with Ubuntu 20.04. Steps for macOS should be equivalent, but with ``⌘``
+running, and debugging NEST. Tested with Ubuntu 22.04. Steps for macOS should be equivalent, but with ``⌘``
 instead of ``ctrl`` in keyboard shortcuts.
 
 Requirements and limitations
@@ -261,7 +261,7 @@ We need several packages installed, before we can become productive with NEST:
 * gsl
 * cmake
 * libtool
-* ipython, python, cython, ... The best way to install all the python requirements is to use `Anaconda <https://store.continuum.io/cshop/anaconda/>`_.
+* ipython, python, cython, ... The best way to install all the python requirements is to use `Mamba <https://mamba.readthedocs.io/en/latest/index.html/>`_.
 
 We present two ways to install the rest: MacPorts and Homebrew. For both versions you need to have Xcode and Xcode command line tools installed:
 
@@ -276,7 +276,7 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 Homebrew
 ^^^^^^^^
 
-1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
+1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/brew/blob/master/docs/Installation.md>`_)
 2. Open up the Terminal and execute the following lines:
 
    .. code-block:: sh
@@ -430,8 +430,8 @@ Setting up the CMake configuration in CLion has the following advantages:
 .. note::
 
    `CLion <https://www.jetbrains.com/clion/>`_ is a commercial product. It is *your responsibility* to ensure that you have a valid
-   license permitting you to use CLion (or any software product) for your work on the    
-   NEST Simulator. 
+   license permitting you to use CLion (or any software product) for your work on the
+   NEST Simulator.
 
 Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~

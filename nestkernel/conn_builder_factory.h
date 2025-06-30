@@ -36,119 +36,93 @@
 
 namespace nest
 {
+
 /**
- * Generic factory class for ConnBuilder objects.
+ * Generic factory class for bipartite ConnBuilder objects.
  *
  * This factory allows for flexible registration
- * of ConnBuilder subclasses and object creation.
+ * of bipartite ConnBuilder subclasses and object creation.
  *
  */
-class GenericConnBuilderFactory
+class GenericBipartiteConnBuilderFactory
 {
 public:
-  virtual ~GenericConnBuilderFactory()
+  virtual ~GenericBipartiteConnBuilderFactory()
   {
   }
 
   /**
    * Factory method for builders for bipartite connection rules (the default).
+   *
+   * @note
+   * - For plain bipartite connections, pass `nullptr` to `ThirdOutBuilder*`.
+   * - When the bipartite builder creates the primary connection of a tripartite connection,
+   *   pass a pointer to a \class ThirdOutBuilder object.
    */
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder*,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
+};
+
+/**
+ * Factory class for bipartite ConnBuilders
+ */
+template < typename ConnBuilderType >
+class BipartiteConnBuilderFactory : public GenericBipartiteConnBuilderFactory
+{
+public:
+  BipartiteConnBuilder*
+  create( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs ) const override
+  {
+    return new ConnBuilderType( sources, targets, third_out, conn_spec, syn_specs );
+  }
+};
+
+/**
+ * Generic factory class for tripartite ConnBuilder objects.
+ *
+ * This factory allows for flexible registration
+ * of tripartite ConnBuilder subclasses and object creation.
+ *
+ */
+class GenericThirdConnBuilderFactory
+{
+public:
+  virtual ~GenericThirdConnBuilderFactory()
+  {
+  }
 
   /**
    * Factory method for builders for tripartite connection rules.
    */
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual ThirdOutBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
-    NodeCollectionPTR,
+    ThirdInBuilder*,
     const DictionaryDatum&,
-    const std::map< Name, std::vector< DictionaryDatum > >& ) const = 0;
+    const std::vector< DictionaryDatum >& ) const = 0;
 };
 
 /**
- * Factory class for ConnBuilders
- *
- * This template class provides an interface with bipartite and tripartite `create()` methods.
- * Implementation is delegated to explicit template specialisations below, which only implement
- * the `create()` method with the proper arity depending on the `is_tripartite` flag of
- * the pertaining conn builder.
+ * Factory class for Third-factor ConnBuilders
  */
-template < typename ConnBuilderType, bool is_tripartite = ConnBuilderType::is_tripartite >
-class ConnBuilderFactory : public GenericConnBuilderFactory
+template < typename ThirdConnBuilderType >
+class ThirdConnBuilderFactory : public GenericThirdConnBuilderFactory
 {
 public:
-  ConnBuilder*
+  ThirdOutBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    assert( false ); // only specialisations should be called
-  }
-
-  //! create tripartite builder
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    assert( false ); // only specialisations should be called
-  }
-};
-
-
-// Specialisation for bipartite ConnBuilders
-template < typename ConnBuilderType >
-class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFactory
-{
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
-  {
-    return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
-  }
-
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    throw IllegalConnection( String::compose(
-      "Connection rule '%1' does not support tripartite connections.", ( *conn_spec )[ names::rule ] ) );
-  }
-};
-
-// Specialisation for tripartite ConnBuilders
-template < typename ConnBuilderType >
-class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFactory
-{
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
-  {
-    throw BadProperty(
-      String::compose( "Connection rule %1 only supports tripartite connections.", ( *conn_spec )[ names::rule ] ) );
-  }
-
-  ConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
-  {
-    return new ConnBuilderType( sources, targets, third, conn_spec, syn_specs );
+    return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
 

@@ -13,8 +13,8 @@ Docker |linux| |macos| |windows|
 :ref:`See our docker installation instructions <docker>`.
 
 
-Conda install |linux| |macos|
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+conda-forge install |linux| |macos|
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
 
@@ -31,6 +31,8 @@ We have live media (.ova) if you want to run NEST in a virtual machine.
 
 Linux |linux|
 -------------
+
+.. _ubuntu_install:
 
 Ubuntu
 ~~~~~~
@@ -66,6 +68,8 @@ Or install NEST with `NESTML <https://nestml.readthedocs.io/en/latest/index.html
 --------
 
 
+.. _macos_install:
+
 macOS |macos|
 -------------
 
@@ -79,12 +83,13 @@ macOS |macos|
 
 --------
 
+.. _windows_install:
 
 Options for Windows users |windows|
 ------------------------------------
 
 Please note that NEST does not officially support Windows. Members of our community have had success
-using NEST on Windows with the `Windows Subsystem for Linux <https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview>`_.
+using NEST on Windows with the `Windows Subsystem for Linux <https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support>`_.
 You can also try our :ref:`docker container <docker_win>`.
 
 .. |linux| image:: ../static/img/linux.png

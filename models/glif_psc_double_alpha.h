@@ -32,7 +32,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard threshold
 
 Short description
 +++++++++++++++++
@@ -56,7 +56,7 @@ The relative peak current of the slow component is given as ``amp_slow``, at
 .. math::
 
     I_\text{syn} = \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, fast} \right) + \text{amp_slow} \cdot
-\text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
+    \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
 
 Therefore if ``amp_slow`` is not 0, the peak current of the total synaptic current is larger
 than the specified weight. By default, ``glif_psc_double_alpha`` has a single synapse that
@@ -124,7 +124,7 @@ condition of
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity <../model_details/IAF_Integration_Singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++

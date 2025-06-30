@@ -27,9 +27,8 @@ import re
 from pathlib import Path
 from pprint import pformat
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-
+log.setLevel(level=logging.WARNING)
 # The following function is used in two other functions, in two separate Sphinx events
 
 
@@ -357,7 +356,7 @@ def template_renderer(app, docname, source):
         and used to inject the rendered content.
     """
     env = app.builder.env
-    template_files = ["models/index", "neurons/index", "synapses/index", "devices/index"]
+    template_files = ["models/index", "neurons/index", "synapses/index", "devices/index", "neurons/neuron_types"]
 
     # Render the document if it matches one of the specified templates
     if any(docname == template_file for template_file in template_files):

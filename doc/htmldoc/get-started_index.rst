@@ -147,6 +147,8 @@ More topics
        |neuron| More about neurons
        ^^^
 
+       * :ref:`types_neurons`
+       * :ref:`neuron_update`
        * :ref:`sim_precise_spike_times`
        * :ref:`exact_integration`
 
@@ -211,6 +213,8 @@ More topics
 
    tutorials/index
    tutorials/pynest_tutorial/index
+   neurons/neuron_update
+   neurons/neuron_types
 
 .. toctree::
    :maxdepth: 1
@@ -221,13 +225,8 @@ More topics
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
    High performance computing <hpc/index>
-   NEST models <models/index>
    NEST and SONATA <nest_sonata/nest_sonata_guide>
-   Simulation behavior <nest_behavior/running_simulations>
-   Randomness in NEST <nest_behavior/random_numbers>
-   Built-in timers <nest_behavior/built-in_timers>
    Connect NEST with other tools <interface_nest/index>
-   From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
 
 .. toctree::
    :hidden:

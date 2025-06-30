@@ -150,7 +150,7 @@ if __name__ == "__main__":
     l_paddle_positions[:, 0] -= PADDLE_WID
     r_paddle_positions = scale_coordinates(np.array(game_data["right_paddle"]))
 
-    score = np.array(game_data["score"]).astype(int)
+    score: np.ndarray = np.array(game_data["score"]).astype(int)
 
     with gzip.open(os.path.join(input_folder, "data_left.pkl.gz"), "r") as f:
         data = pickle.load(f)

@@ -277,7 +277,7 @@ def route_exec():
     if EXEC_CALL_ENABLED:
         args, kwargs = get_arguments(request)
         response = do_call("exec", args, kwargs)
-        return jsonify(response)
+        return jsonify(nest.serialize_data(response))
     else:
         flask.abort(
             403,
@@ -307,7 +307,7 @@ def route_api_call(call):
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
-    return jsonify(response)
+    return jsonify(nest.serialize_data(response))
 
 
 # ----------------------

@@ -35,26 +35,27 @@ class TestSirNeuron:
 
         nest.ResetKernel()
 
-        print('Testing single neuron dynamics of sis_neuron model')
+        print("Testing single neuron dynamics of sis_neuron model")
 
-        h_expected = [1.] * int((simtime - 1) * 10)
+        h_expected = [1.0] * int((simtime - 1) * 10)
         # expected output S: 1 time step in initial 0 state, then it takes tau_m to update
         # to the infected state which happens with prob. 1, then it takes tau_m to updae
         # to recovered state which happens with prob 1.
-        S_expected = ([0.] * int(1 + tau_m * 10) + [1.] * int(tau_m * 10)
-                      + [0.] * int((simtime - 1) * 10 - 1 - 2 * 10 * tau_m))
+        S_expected = (
+            [0.0] * int(1 + tau_m * 10) + [1.0] * int(tau_m * 10) + [0.0] * int((simtime - 1) * 10 - 1 - 2 * 10 * tau_m)
+        )
         # expected spike output: one spike one time step after neuron gets infected,
         # two spikes one time step after neuron leaves infectious state
         spikes_expected = [0.1 + tau_m + 0.1, 0.1 + 2 * tau_m + 0.1, 0.1 + 2 * tau_m + 0.1]
 
-        nrn = nest.Create('sis_neuron')
+        nrn = nest.Create("sis_neuron")
         nrn.h = 1
         nrn.mu_sis = 1
         nrn.beta_sis = 1
         nrn.tau_m = 1
 
         multi = nest.Create("multimeter", {"record_from": ["S", "h"], "interval": 0.1})
-        spike_recorder = nest.Create('spike_recorder')
+        spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(multi, nrn)
         nest.Connect(nrn, spike_recorder)
@@ -65,7 +66,7 @@ class TestSirNeuron:
         h_recorded = multi.events["h"]
         # since we only record the first (simtime - 1)ms for S and h,
         # also only record the first (simtime - 1)ms of spikes
-        spikes_recorded = spike_recorder.events['times'][spike_recorder.events['times'] <= (simtime - 1)]
+        spikes_recorded = spike_recorder.events["times"][spike_recorder.events["times"] <= (simtime - 1)]
 
         assert np.allclose(h_expected, h_recorded)
         assert np.allclose(S_expected, S_recorded)
@@ -76,16 +77,17 @@ class TestSirNeuron:
 
         nest.ResetKernel()
 
-        print('Testing propagation of infection in sis_neuron model')
+        print("Testing propagation of infection in sis_neuron model")
 
-        S_expected = ([0.] * int(1 + tau_m * 10) + [0.] * int(tau_m * 10)
-                      + [1.] * int((simtime - 1) * 10 - 1 - 2 * 10 * tau_m))
+        S_expected = (
+            [0.0] * int(1 + tau_m * 10) + [0.0] * int(tau_m * 10) + [1.0] * int((simtime - 1) * 10 - 1 - 2 * 10 * tau_m)
+        )
         # expected output S: 1 time step in initial 0 state, then it takes tau_m to update
         # neuron 1 to the infected state during which neuron 2 stays in the susceptible 0 state,
         # then it takes tau_m to update neuron 2 to the infected state
 
-        nrn_1 = nest.Create('sis_neuron')
-        nrn_2 = nest.Create('sis_neuron')
+        nrn_1 = nest.Create("sis_neuron")
+        nrn_2 = nest.Create("sis_neuron")
 
         # infect nrn_1 at time 0.1ms + tau_m
         nrn_1.h = 1
@@ -106,7 +108,7 @@ class TestSirNeuron:
         assert np.allclose(S_expected, S_recorded)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test = TestSirNeuron()
     test.test_single_neuron_dynamics()
     test.test_propagation_of_infection()

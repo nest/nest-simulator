@@ -28,7 +28,10 @@ processes and then compare results. Often, the number of virtual processes will
 be fixed while the number of MPI processes is varied, but this is not required.
 
 - The process is managed by subclasses of the `MPITestWrapper` base class
-- Each test file must contain exactly one test function
+- Each test file must contain **exactly one** test function
+    - The test function must be protected with the `@pytest.mark.skipif_incompatible_mpi`
+      marker to protect against buggy OpenMPI versions (at least up to 4.1.6; 5.0.7 and
+      later are definitely good).
     - The test function must be decorated with a subclass of `MPITestWrapper`
     - The wrapper will write a modified version of the test file as `runner.py`
       to a temporary directory and mpirun it from there; results are collected
@@ -36,7 +39,10 @@ be fixed while the number of MPI processes is varied, but this is not required.
     - The test function can be decorated with other pytest decorators. These
       are evaluated in the wrapping process
     - No decorators are written to the `runner.py` file.
-    - Test files **must not import nest** outside the test function
+    - Test files must import all required modules (especially `nest`) inside the
+      test function.
+    - The docstring for the test function shall in its last line specify what data
+      the test function outputs for comparison by the test.
     - In `runner.py`, the following constants are defined:
          - `SPIKE_LABEL`
          - `MULTI_LABEL`
@@ -44,14 +50,12 @@ be fixed while the number of MPI processes is varied, but this is not required.
       They must be used as `label` for spike recorders and multimeters, respectively,
       or for other files for output data (CSV files). They are format strings expecting
       the number of processes with which NEST is run as argument.
-- `conftest.py` must not be loaded, otherwise mpirun will return a non-zero exit code;
-  use `pytest --noconftest`
 - Set `debug=True` on the decorator to see debug output and keep the
   temporary directory that has been created (latter works only in
   Python 3.12 and later)
 - Evaluation criteria are determined by the `MPITestWrapper` subclass
 
-This is still work in progress.
+
 """
 
 import ast
@@ -99,9 +103,14 @@ class MPITestWrapper:
     """
 
     RUNNER = "runner.py"
+
+    # Formats for output file names to be written by NEST and by the evaluation function.
+    # The first placeholder will be filled with the number of processes used.
+    # SPIKE and MULTI labels are passed to spike recorder/multimeter, which add "-{Rank}.dat" automatically.
+    # For OTHER, the test function needs to provide the Rank explicitly.
     SPIKE_LABEL = "spike-{}"
     MULTI_LABEL = "multi-{}"
-    OTHER_LABEL = "other-{}"
+    OTHER_LABEL = "other-{}-{}.dat"
 
     RUNNER_TEMPLATE = textwrap.dedent(
         """\
@@ -178,12 +187,29 @@ class MPITestWrapper:
 
             res = {}
             for procs in self._procs_lst:
-                res[procs] = subprocess.run(
-                    ["mpirun", "-np", str(procs), "--oversubscribe", "python", self.RUNNER],
-                    check=True,
-                    cwd=tmpdirpath,
-                    capture_output=self._debug,
-                )
+                try:
+                    command = ["mpirun", "-np", str(procs), "--oversubscribe", "python", self.RUNNER]
+                    res[procs] = subprocess.run(
+                        command,
+                        check=True,
+                        cwd=tmpdirpath,
+                        capture_output=True,  # always capture, in case an error is thrown
+                    )
+                except subprocess.CalledProcessError as err:
+                    print("\n")
+                    print("-" * 50)
+                    print(f"Running failed for: {command}")
+                    print(f"tmpdir            : {tmpdir.name}")
+                    print("-" * 50)
+                    print("STDOUT")
+                    print("-" * 50)
+                    print(err.stdout.decode("UTF-8"))
+                    print("-" * 50)
+                    print("STDERR")
+                    print("-" * 50)
+                    print(err.stderr.decode("UTF-8"))
+                    print("-" * 50)
+                    raise err
 
             if self._debug:
                 print("\n\n")
@@ -195,15 +221,27 @@ class MPITestWrapper:
         return wrapper
 
     def _collect_result_by_label(self, tmpdirpath, label):
+        # Build complete patterns here including the rank part and ending
+        if not label.endswith("-{}-{}.dat"):
+            assert label.endswith("-{}")
+            label += "-{}.dat"
+
         try:
-            next(tmpdirpath.glob(f"{label.format('*')}.dat"))
+            next(tmpdirpath.glob(label.format("*", "*")))
         except StopIteration:
             return None  # no data for this label
 
-        return {
-            n_procs: [pd.read_csv(f, sep="\t", comment="#") for f in tmpdirpath.glob(f"{label.format(n_procs)}-*.dat")]
-            for n_procs in self._procs_lst
-        }
+        res = {}
+        for n_procs in self._procs_lst:
+            data = []
+            for f in tmpdirpath.glob(label.format(n_procs, "*")):
+                try:
+                    data.append(pd.read_csv(f, sep="\t", comment="#"))
+                except pd.errors.EmptyDataError:
+                    pass
+            res[n_procs] = data
+
+        return res
 
     def collect_results(self, tmpdirpath):
         """
@@ -265,3 +303,14 @@ class MPITestAssertEqual(MPITestWrapper):
 
             for r in res[1:]:
                 pd.testing.assert_frame_equal(res[0], r)
+
+
+class MPITestAssertCompletes(MPITestWrapper):
+    """
+    Test class that just confirms that the test code completes.
+
+    Therefore, no testing to be done on any results.
+    """
+
+    def assert_correct_results(self, tmpdirpath):
+        pass

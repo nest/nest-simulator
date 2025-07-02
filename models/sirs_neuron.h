@@ -114,6 +114,7 @@ sir_neuron, sis_neuron
 
 
 EndUserDocs */
+// clang-format on
 /**
  * SIRS neuron with three discrete states: S, I, R.
  *

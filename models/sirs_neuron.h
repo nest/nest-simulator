@@ -37,6 +37,7 @@
 
 namespace nest
 {
+// clang-format off
 /* BeginUserDocs: neuron, SIRS
 
 

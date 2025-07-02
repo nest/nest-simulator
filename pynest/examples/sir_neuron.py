@@ -36,7 +36,7 @@ import numpy as np
 # create neuron population
 num_neurons = 100
 neuron_type = "sir_neuron"  # must be one of "sir_neuron" | "sirs_neuron" | "sis_neuron"
-sir_neurons = nest.Create("sir_neuron", num_neurons)
+sir_neurons = nest.Create(neuron_type, num_neurons)
 sir_neurons.beta_sir = 0.01  # downscale infectivity from default 0.1
 
 # connect sir_neurons all-to-all

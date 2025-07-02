@@ -112,6 +112,7 @@ sirs_neuron, sir_neuron
 
 
 EndUserDocs */
+// clang-format on
 /**
 /**
  * SIS neuron with two discrete states: S, I.

@@ -55,7 +55,8 @@ register_sis_neuron( const std::string& name )
 
 
 template <>
-void RecordablesMap< sis_neuron >::create()
+void
+RecordablesMap< sis_neuron >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::S, &sis_neuron::get_output_state__ );
@@ -123,16 +124,15 @@ nest::sis_neuron::get_status( DictionaryDatum& d ) const
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
-
 }
 
 inline void
 nest::sis_neuron::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, this ); // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d, this );   // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -143,7 +143,6 @@ nest::sis_neuron::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-
 }
 
 RecordablesMap< nest::sis_neuron > nest::sis_neuron::recordablesMap_;
@@ -153,9 +152,9 @@ RecordablesMap< nest::sis_neuron > nest::sis_neuron::recordablesMap_;
  * ---------------------------------------------------------------- */
 
 nest::sis_neuron::Parameters_::Parameters_()
-  : tau_m_( 10.0 ) // ms
+  : tau_m_( 10.0 )   // ms
   , beta_sis_( 0.1 ) // unitless
-  , mu_sis_( 0.1 ) // unitless
+  , mu_sis_( 0.1 )   // unitless
 {
   recordablesMap_.create();
 }
@@ -201,7 +200,6 @@ nest::sis_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "All probabilities must be between 0 and 1." );
   }
-
 }
 
 void
@@ -303,27 +301,27 @@ nest::sis_neuron::update( Time const& origin, const long from, const long to )
       // initialize y_new
       size_t new_y;
 
-      if (S_.y_ == 0) // neuron is susceptible
+      if ( S_.y_ == 0 ) // neuron is susceptible
       {
         new_y = 0;
 
-        if (V_.rng_->drand() < P_.beta_sis_ * S_.h_)
+        if ( V_.rng_->drand() < P_.beta_sis_ * S_.h_ )
         {
           new_y = 1; // neuron gets infected
         }
       }
 
-      if (S_.y_ == 1) // neuron is infected
+      if ( S_.y_ == 1 ) // neuron is infected
       {
         new_y = 1;
-         
-        if (V_.rng_->drand() < P_.mu_sis_)
+
+        if ( V_.rng_->drand() < P_.mu_sis_ )
         {
           new_y = 0; // neuron recovers
         }
       }
 
-      if ( new_y != S_.y_)
+      if ( new_y != S_.y_ )
       {
         SpikeEvent se;
         // use multiplicity 2 to signal transition to 0 state

@@ -50,20 +50,20 @@ SIS neuron with two discrete states: Susceptible, Infected.
 Description
 +++++++++++
 
-The ``sis_neuron`` is an implementation of a neuron which has two 
-discrete states: susceptible (S) and infected (I). 
-All ``sis_neuron``s are updated synchronously. When an update occurs, 
-all susceptible neurons are infected with probability equal to  
-:math:`\min(\beta_{SIS} h,1)`, where ``h`` is the number of infected pre-synaptic 
-neurons, and ``beta_sis`` is a parameter controlling the infectivity. 
+The ``sis_neuron`` is an implementation of a neuron which has two
+discrete states: susceptible (S) and infected (I).
+All ``sis_neuron``s are updated synchronously. When an update occurs,
+all susceptible neurons are infected with probability equal to
+:math:`\min(\beta_{SIS} h,1)`, where ``h`` is the number of infected pre-synaptic
+neurons, and ``beta_sis`` is a parameter controlling the infectivity.
 Susceptible neurons that are not infected remain susceptible.
 Infected neurons become susceptible with probability ``mu_sis``.
 
 The parameter ``tau_m`` controls the  length of the time step between updates,
-and hence has no influence on the dynamics. 
-The state of the neuron is encoded in the variables ``y`` ( :math:`y=0` for
-susceptible, :math:`y=1` for infected) and ``h``, 
-which counts the number of infected pre-synaptic neurons. 
+and hence has no influence on the dynamics.
+The state of the neuron is encoded in the variables ``S`` ( :math:`S=0` for
+susceptible, :math:`S=1` for infected) and ``h``,
+which counts the number of infected pre-synaptic neurons.
 
 
 Parameters
@@ -129,7 +129,7 @@ EndUserDocs */
  * destroy the decoding scheme, as this effectively duplicates
  * every event. Using random connection routines it is therefore
  * advisable to set the property 'allow_multapses' to false.
- * 
+ *
  * @see sir_neuron
  */
 
@@ -209,7 +209,7 @@ private:
    */
   struct State_
   {
-    size_t y_;                 //!< output of neuron in [0,1]
+    size_t y_;               //!< output of neuron in [0,1]
     double h_;               //!< total input current to neuron
     double last_in_node_id_; //!< node ID of the last spike being received
     Time t_next_;            //!< time point of next update
@@ -247,7 +247,7 @@ private:
    */
   struct Variables_
   {
-    RngPtr rng_;                        //!< random number generator of my own thread
+    RngPtr rng_; //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------

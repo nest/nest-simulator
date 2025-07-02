@@ -48,23 +48,23 @@ Neuron with three discrete states: Susceptible, Infected, Recovered.
 Description
 +++++++++++
 
-The ``sir_neuron`` is an implementation of a neuron which has three 
-discrete states: susceptible (S), infected (I) and recovered (R) [1]. 
-All ``sir_neuron`` (s) of a population are updated synchronously. 
+The ``sir_neuron`` is an implementation of a neuron which has three
+discrete states: susceptible (S), infected (I) and recovered (R) [1].
+All ``sir_neuron`` (s) of a population are updated synchronously.
 
-When an update occurs, all susceptible neurons are infected with probability equal to  
-:math:`\min( \beta_{\text{SIR}} h, 1)`, where ``h`` is the number of infected 
-pre-synaptic  neurons, and ``beta_sir`` is a parameter controlling the 
+When an update occurs, all susceptible neurons are infected with probability equal to
+:math:`\min( \beta_{\text{SIR}} h, 1)`, where ``h`` is the number of infected
+pre-synaptic  neurons, and ``beta_sir`` is a parameter controlling the
 infectivity. Susceptible neurons that are not infected remain susceptible.
 Infected neurons recover with probability ``mu_sir``. Infected neurons
-that do not recover remain infected. Recovered neurons remain recovered. 
-  
-The parameter ``tau_m`` controls the 
-length of the time step between updates, and hence has no influence on the 
-dynamics. 
-The state of the neuron is encoded in the variables ``y`` ( :math:`y=0` for
-susceptible, :math:`y=1` for infected, :math:`y=2` for recovered) and ``h``, 
-which counts the number of infected pre-synaptic neurons. 
+that do not recover remain infected. Recovered neurons remain recovered.
+
+The parameter ``tau_m`` controls the
+length of the time step between updates, and hence has no influence on the
+dynamics.
+The state of the neuron is encoded in the variables ``S`` ( :math:`S=0` for
+susceptible, :math:`S=1` for infected, :math:`S=2` for recovered) and ``h``,
+which counts the number of infected pre-synaptic neurons.
 
 
 Parameters
@@ -129,7 +129,7 @@ EndUserDocs */
  * destroy the decoding scheme, as this effectively duplicates
  * every event. Using random connection routines it is therefore
  * advisable to set the property 'allow_multapses' to false.
- * 
+ *
  * @see sirs_neuron
  */
 
@@ -209,7 +209,7 @@ private:
    */
   struct State_
   {
-    size_t y_;                 //!< output of neuron in [0,1,2]
+    size_t y_;               //!< output of neuron in [0,1,2]
     double h_;               //!< total input current to neuron
     double last_in_node_id_; //!< node ID of the last spike being received
     Time t_next_;            //!< time point of next update
@@ -247,7 +247,7 @@ private:
    */
   struct Variables_
   {
-    RngPtr rng_;                        //!< random number generator of my own thread
+    RngPtr rng_; //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------

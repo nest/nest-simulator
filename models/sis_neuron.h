@@ -37,6 +37,7 @@
 
 namespace nest
 {
+// clang-format off
 /* BeginUserDocs: neuron, SIS
 
 Short description
@@ -111,6 +112,7 @@ sirs_neuron, sir_neuron
 
 
 EndUserDocs */
+// clang-format on
 /**
 /**
  * SIS neuron with two discrete states: S, I.

@@ -110,6 +110,10 @@ See also
 
 sirs_neuron, sir_neuron
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sir_neuron
 
 EndUserDocs */
 // clang-format on

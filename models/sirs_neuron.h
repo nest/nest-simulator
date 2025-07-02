@@ -112,6 +112,10 @@ See also
 
 sir_neuron, sis_neuron
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sir_neuron
 
 EndUserDocs */
 // clang-format on

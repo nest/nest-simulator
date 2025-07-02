@@ -109,6 +109,10 @@ See also
 
 sirs_neuron, sis_neuron
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sir_neuron
 
 
 EndUserDocs */

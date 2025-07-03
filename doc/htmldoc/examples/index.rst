@@ -42,7 +42,23 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: NEST Sudoku solver
+    .. grid-item-card:: Astrocytes
+           :img-top: ../static/img/astrocyte_interaction.png
+
+           * :doc:`../auto_examples/astrocytes/astrocyte_single`
+           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
+           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_bernoulli`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_fixed_indegree`
+
+    .. grid-item-card:: Multi-state neurons
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`../auto_examples/sir_neuron`
+
+.. grid:: 1 1 2 3
+
+       .. grid-item-card:: NEST Sudoku solver
            :img-top: ../static/img/sudoku_solution.gif
 
            * :doc:`../auto_examples/sudoku/sudoku_solver`
@@ -53,15 +69,6 @@ PyNEST examples
 
            * :doc:`../auto_examples/pong/run_simulations`
            * :doc:`../auto_examples/pong/generate_gif`
-
-    .. grid-item-card:: Astrocytes
-           :img-top: ../static/img/astrocyte_interaction.png
-
-           * :doc:`../auto_examples/astrocytes/astrocyte_single`
-           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
-           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
-           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_bernoulli`
-           * :doc:`../auto_examples/astrocytes/astrocyte_brunel_fixed_indegree`
 
 
 .. grid:: 1 1 2 3

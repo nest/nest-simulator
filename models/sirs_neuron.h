@@ -100,7 +100,9 @@ The following parameters can be set in the status dictionary.
 
 References
 ++++++++++
- [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
+
+.. [1] Kermack WO, McKendrick AG (1991). Contributions to the mathematical theory of epidemics—II. the problem of endemicity.
+       Bulletin of Mathematical Biology 53.
 
 Receives
 ++++++++

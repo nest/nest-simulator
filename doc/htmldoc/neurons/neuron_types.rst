@@ -496,7 +496,7 @@ The following non-linearity types are available:
   *  :doc:`/models/tanh_rate`
   *  :doc:`/models/threshold_lin_rate`
 
-Where is Non-linearity applied? 
+Where is Non-linearity applied?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -627,6 +627,7 @@ Multi-state neurons
 
      Neurons with two or three discrete states. These are the simplest neuron models with threshold activation. Binary neurons have
      On / Off behavior used in theoretical neuroscience and disease theory.
+     The SIR neurons implement 3 discrete states based on a mathematical theory of epidemics: susceptible (S), infected (I), and recovered (R).
 
 .. dropdown:: Multi-state neurons
 

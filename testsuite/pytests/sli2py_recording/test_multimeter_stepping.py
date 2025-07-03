@@ -33,6 +33,9 @@ skip_models = [
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron
     "mcculloch_pitts_neuron",  # binary neuron
+    "sirs_neuron",  # mult-state neuron
+    "sir_neuron",  # multi-state neuron
+    "sis_neuron",  # multi-state neuron
     "gauss_rate_ipn",  # rate neuron
     "lin_rate_ipn",  # rate neuron
     "lin_rate_opn",  # rate neuron

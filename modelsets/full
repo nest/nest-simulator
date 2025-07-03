@@ -107,6 +107,9 @@ sigmoid_rate
 sigmoid_rate_gg_1998
 sinusoidal_poisson_generator
 sinusoidal_gamma_generator
+sir_neuron
+sirs_neuron
+sis_neuron
 spike_recorder
 spike_generator
 spin_detector

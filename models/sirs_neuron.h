@@ -50,7 +50,7 @@ Description
 +++++++++++
 
 The ``sirs_neuron`` is an implementation of a neuron which has three
-discrete states: susceptible (S), infected (I) and recovered (R) [1].
+discrete states: susceptible (S), infected (I) and recovered (R) [1]_.
 All ``sirs_neuron`` (s) of a population are updated synchronously.
 
 When an update occurs, all susceptible neurons are infected with probability equal to

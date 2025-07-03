@@ -97,7 +97,8 @@ The following parameters can be set in the status dictionary.
 
 References
 ++++++++++
- [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
+
+..  [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
 
 Receives
 ++++++++

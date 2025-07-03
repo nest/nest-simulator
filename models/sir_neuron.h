@@ -103,7 +103,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 .. [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
-.. [2] Merger, Claudia, Jasper Albers, Carsten Honerkamp, and Moritz Helias. 2024. ‘Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves’. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
+.. [2] Merger, C, Albers J, Honerkamp C, and  Helias M. 2024. Spurious Self-Feedback of Mean-Field Predictions  Inflates Infection Curves. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
 
 
 Receives

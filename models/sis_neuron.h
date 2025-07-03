@@ -38,7 +38,7 @@
 namespace nest
 {
 // clang-format off
-/* BeginUserDocs: neuron, SIS
+/* BeginUserDocs: neuron, multi-state
 
 Short description
 +++++++++++++++++

@@ -67,7 +67,7 @@ susceptible, :math:`S=1` for infected, :math:`S=2` for recovered) and ``h``,
 which counts the number of infected pre-synaptic neurons.
 
 NEST also supports two other variants of the SIR model: the SIS model,
-where instead of transitioning to the R state, neurons become susceptible again,
+where instead of transitioning to the R state, neurons transition to the S state again,
 and the SIRS model, where neurons are able to transition from the R state to the S state. See
 `sis_neuron` and `sirs_neuron`.
 

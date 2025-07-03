@@ -188,5 +188,5 @@ enum SignalType
   SIS = 5,
   ALL = SPIKE | BINARY | SIR | SIRS | SIS
 };
-
+}
 #endif /* #ifndef NEST_TYPES_H */

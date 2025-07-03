@@ -65,6 +65,12 @@ The state of the neuron is encoded in the variables ``S`` ( :math:`S=0` for
 susceptible, :math:`S=1` for infected) and ``h``,
 which counts the number of infected pre-synaptic neurons.
 
+Nest also supports two variants of the SIS model: the SIR model,
+where instead of transitioning to the S state, neurons transition to a recovered
+(R) state, in which they remain (they can no longer transition to another state),
+and the SIRS model, where neurons transition can from the R to the S state.
+See `sir_neuron` and `sirs_neuron`.
+
 
 Parameters
 ++++++++++
@@ -99,6 +105,8 @@ References
 ++++++++++
 
  [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
+ [2] Merger, Claudia, Jasper Albers, Carsten Honerkamp, and Moritz Helias. 2024. ‘Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves’. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
+
 
 Receives
 ++++++++

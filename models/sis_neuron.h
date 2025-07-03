@@ -38,7 +38,7 @@
 namespace nest
 {
 // clang-format off
-/* BeginUserDocs: neuron, SIS
+/* BeginUserDocs: neuron, multi-state
 
 Short description
 +++++++++++++++++
@@ -51,7 +51,7 @@ Description
 +++++++++++
 
 The ``sis_neuron`` is an implementation of a neuron which has two
-discrete states: susceptible (S) and infected (I).
+discrete states: susceptible (S) and infected (I) [1]_.
 All ``sis_neuron``s are updated synchronously. When an update occurs,
 all susceptible neurons are infected with probability equal to
 :math:`\min(\beta_{SIS} h,1)`, where ``h`` is the number of infected pre-synaptic
@@ -104,8 +104,8 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
- [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
- [2] Merger, Claudia, Jasper Albers, Carsten Honerkamp, and Moritz Helias. 2024. ‘Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves’. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
+.. [1] W. O. Kermack and A. G. McKendrick, Bulletin of Mathematical Biology 53, 33 (1991).
+.. [2] Merger, Claudia, Jasper Albers, Carsten Honerkamp, and Moritz Helias. 2024. ‘Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves’. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
 
 
 Receives

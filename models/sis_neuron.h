@@ -51,7 +51,7 @@ Description
 +++++++++++
 
 The ``sis_neuron`` is an implementation of a neuron which has two
-discrete states: susceptible (S) and infected (I).
+discrete states: susceptible (S) and infected (I) [1]_.
 All ``sis_neuron``s are updated synchronously. When an update occurs,
 all susceptible neurons are infected with probability equal to
 :math:`\min(\beta_{SIS} h,1)`, where ``h`` is the number of infected pre-synaptic

@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-sir_neuron example
-----------------------------------
+Susceptible (S), Infected (I), Recovered (R) model of the spread of disease
+----------------------------------------------------------------------------
 
-This scripts simulates a number of all-to-all connected sir neurons. One neuron
+This scripts simulates a number of all-to-all connected ``sir`` neurons. One neuron
 is infected at the beginning of the simulation, all other neurons are
 susceptible. This example can be extended to the `sirs_neuron` or `sis_neuron` type by changing
 the `neuron_type` variable.

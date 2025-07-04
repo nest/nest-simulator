@@ -632,7 +632,7 @@ Multi-state neurons
 .. dropdown:: Multi-state neurons
 
     {% for items in tag_dict %}
-    {% if items.tag == "binary" %}
+    {% if items.tag == "discrete state" %}
     {% for item in items.models | sort %}
     * :doc:`/models/{{ item | replace(".html", "") }}`
     {% endfor %}

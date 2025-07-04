@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, multi-state
+/* BeginUserDocs: neuron, discrete state
 
 Short description
 +++++++++++++++++

@@ -25,7 +25,7 @@ sir_neuron example
 
 This scripts simulates a number of all-to-all connected sir neurons. One neuron
 is infected at the beginning of the simulation, all other neurons are
-susceptible. This example to the `sirs_neuron` or `sis_neuron` type by changing
+susceptible. This example can be extended to the `sirs_neuron` or `sis_neuron` type by changing
 the `neuron_type` variable.
 """
 

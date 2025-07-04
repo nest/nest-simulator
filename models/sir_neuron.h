@@ -38,7 +38,7 @@
 namespace nest
 {
 // clang-format off
-/* BeginUserDocs: neuron, SIR
+/* BeginUserDocs: neuron, discrete state
 
 Short description
 +++++++++++++++++
@@ -49,7 +49,7 @@ Description
 +++++++++++
 
 The ``sir_neuron`` is an implementation of a neuron which has three
-discrete states: susceptible (S), infected (I) and recovered (R) [1].
+discrete states: susceptible (S), infected (I) and recovered (R) [1]_.
 All ``sir_neuron`` (s) of a population are updated synchronously.
 
 When an update occurs, all susceptible neurons are infected with probability equal to
@@ -65,6 +65,11 @@ dynamics.
 The state of the neuron is encoded in the variables ``S`` ( :math:`S=0` for
 susceptible, :math:`S=1` for infected, :math:`S=2` for recovered) and ``h``,
 which counts the number of infected pre-synaptic neurons.
+
+NEST also supports two other variants of the SIR model: the SIS model,
+where instead of transitioning to the R state, neurons transition to the S state again,
+and the SIRS model, where neurons are able to transition from the R state to the S state. See
+`sis_neuron` and `sirs_neuron`.
 
 
 Parameters
@@ -98,8 +103,10 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Kermack WO, McKendrick AG (1991). Contributions to the mathematical theory of epidemics—II. the problem of endemicity.
-       Bulletin of Mathematical Biology 53.
+.. [1] Kermack WO and McKendrick AG 1991. Contributions to the mathematical theory of epidemics—II. the problem of endemicity. Bulletin of Mathematical Biology 53.
+
+.. [2] Merger, C, Albers J, Honerkamp C, and  Helias M. 2024. Spurious Self-Feedback of Mean-Field Predictions  Inflates Infection Curves. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
+
 
 Receives
 ++++++++

@@ -28,6 +28,7 @@
     --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
     --sd-color-card-border-hover: var(--nest-orange);
+    --sd-color-tabs-underline: #fff;
 }
 /* Define base font color and style */
 body{
@@ -396,6 +397,16 @@ width: 85%;
 }
 .scbs-carousel-control-prev-icon{
   background-image: url('../img/arrow_left.svg')
+}
+.sd-tab-set > input:checked + label {
+
+  border-color: var(--nest-orange) !important;
+  color: var(--nest-orange) !important;
+
+}
+.sd-tab-set > input:not(:checked) + label:hover {
+   color: var(--nest-brown) !important;
+   border-color: #f632 !important;
 }
 
 /* ************************************

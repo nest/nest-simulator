@@ -19,14 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
+@pytest.mark.skipif_incompatible_mpi
 @MPITestAssertEqual([2, 4])
 def test_issue_1957():
     """
     Confirm that GetConnections works in parallel without hanging if not all ranks have connections.
+
+    The test is performed on connection data written to OTHER_LABEL.
     """
 
     import nest

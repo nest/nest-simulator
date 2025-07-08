@@ -22,6 +22,7 @@ Welcome to the NEST Simulator documentation!
           ranging from algorithmically determined connections to data-driven connectivity.
           Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+
        .. grid-item::
 
           .. button-ref:: tutorials_guides

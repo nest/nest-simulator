@@ -39,11 +39,8 @@ neuron_type = "sir_neuron"  # must be one of "sir_neuron" | "sirs_neuron" | "sis
 sir_neurons = nest.Create(neuron_type, num_neurons)
 sir_neurons.beta_sir = 0.01  # downscale infectivity from default 0.1
 
-# connect sir_neurons all-to-all
-for i in range(num_neurons):
-    for j in range(num_neurons):
-        if i != j:
-            nest.Connect(sir_neurons[i], sir_neurons[j])
+# connect sir_neurons all-to-all avoiding self-connections (=autapses)
+nest.Connect(sir_neurons, sir_neurons, {"rule": "all_to_all", "allow_autapses": False})
 
 sir_neurons[0].S = 1  # infect zeroth neuron
 sir_neurons[1:].h = 1  # set number of infected neighbors of all other neurons to 1

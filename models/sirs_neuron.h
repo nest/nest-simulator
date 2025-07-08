@@ -105,8 +105,10 @@ The following parameters can be set in the status dictionary.
 
 References
 ++++++++++
+
 .. [1] Kermack WO and  McKendrick AG. 1991. Contributions to the mathematical theory of epidemics—II. the problem of endemicity. Bulletin of Mathematical Biology 53.
-.. [2] Merger, Claudia, Jasper Albers, Carsten Honerkamp, and Moritz Helias. 2024. ‘Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves’. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
+
+.. [2] Merger C, Albers J, Honerkamp C, and Helias M. 2024. Spurious Self-Feedback of Mean-Field Predictions Inflates Infection Curves. Physical Review E 110 (2): 024308. https://doi.org/10.1103/PhysRevE.110.024308.
 
 Receives
 ++++++++

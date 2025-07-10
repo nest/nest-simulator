@@ -5,6 +5,7 @@ build:
   tools:
     python: "3.10"
   apt_packages:
+    - graphviz
     - default-jre-headless
   jobs:
     pre_install:

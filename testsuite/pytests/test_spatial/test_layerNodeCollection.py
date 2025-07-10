@@ -27,6 +27,7 @@ import unittest
 
 import nest
 import numpy as np
+import numpy.testing as nptest
 
 
 class TestLayerNodeCollection(unittest.TestCase):
@@ -38,18 +39,18 @@ class TestLayerNodeCollection(unittest.TestCase):
         nodes = nest.Create("iaf_psc_alpha", 10)
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[5, 5]))
 
-        with self.assertRaises(nest.kernel.NESTError):
-            c = nodes + layer  # noqa: F841
-        with self.assertRaises(nest.kernel.NESTError):
-            d = layer + nodes  # noqa: F841
+        with self.assertRaises(nest.NESTError):
+            c = nodes + layer
+        with self.assertRaises(nest.NESTError):
+            d = layer + nodes
 
     def test_addTwoLayers(self):
         "Test that concatenation of two layers is illegal"
         layer1 = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[5, 5]))
         layer2 = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[5, 5]))
 
-        with self.assertRaises(nest.kernel.NESTError):
-            c = layer1 + layer2  # noqa: F841
+        with self.assertRaises(nest.NESTError):
+            c = layer1 + layer2
 
     def test_extent_center_mask(self):
         """Correct extent and center when connecting with mask"""
@@ -84,9 +85,7 @@ class TestLayerNodeCollection(unittest.TestCase):
                 density = num_nodes / (2 * r) ** num_dimensions
                 expected_conns_per_node = density * n_dim_volume
                 expected_total_conns = expected_conns_per_node * num_nodes
-                print(f"Expecting {expected_total_conns:.0f} connections")
                 nest.Connect(nodes, nodes, {"rule": "pairwise_bernoulli", "p": 1.0, "mask": mask})
-                print(f'Num. connections: {nest.GetKernelStatus("num_connections")}')
                 rel_diff = abs(nest.GetKernelStatus("num_connections") - expected_total_conns) / expected_total_conns
                 self.assertLess(rel_diff, rel_limit)
 
@@ -96,7 +95,7 @@ class TestLayerNodeCollection(unittest.TestCase):
         param = nest.random.uniform(-r, r)
         free_positions = nest.spatial.free(param, num_dimensions=2, edge_wrap=True)
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Create("iaf_psc_alpha", positions=free_positions)
 
         extent = [2 * r, 2 * r]
@@ -104,8 +103,8 @@ class TestLayerNodeCollection(unittest.TestCase):
         nodes = nest.Create("iaf_psc_alpha", positions=free_positions_extent)
 
         spatial = nodes.spatial  # Extract spatial information
-        self.assertEqual(spatial["center"], spatial["positions"][0])  # Center will be at the position of the only node
-        self.assertEqual(spatial["extent"], tuple(extent))
+        nptest.assert_array_equal(spatial["center"], spatial["positions"][0])
+        nptest.assert_array_equal(spatial["extent"], extent)
 
 
 def suite():

@@ -56,7 +56,7 @@ from scipy.optimize import bisect
 # suppress info messages.
 
 
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 nest.ResetKernel()
 
 ###############################################################################

@@ -27,20 +27,27 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "nest_datums.h"
+#include "connection_id.h"
+#include "mask.h"
+#include "mask_impl.h"
 #include "nest_time.h"
 #include "nest_types.h"
-
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
+#include "parameter.h"
+#include "random_generators.h"
 
 namespace nest
 {
+
+/**
+ * Register connection model (i.e. an instance of a class inheriting from `Connection`).
+ */
+template < template < typename > class ConnectorModelT >
+void register_connection_model( const std::string& name );
 
 void init_nest( int* argc, char** argv[] );
 void fail_exit( int exitcode );
@@ -49,13 +56,46 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
+severity_t get_verbosity();
+void set_verbosity( severity_t s );
+
+void enable_structural_plasticity();
+void disable_structural_plasticity();
+
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-/**
- * Register connection model (i.e. an instance of a class inheriting from `Connection`).
- */
-template < template < typename > class ConnectorModelT >
-void register_connection_model( const std::string& name );
+std::string print_nodes_to_string();
+
+std::string pprint_to_string( NodeCollectionPTR nc );
+
+size_t nc_size( NodeCollectionPTR nc );
+
+void set_kernel_status( const dictionary& dict );
+dictionary get_kernel_status();
+
+dictionary get_nc_status( NodeCollectionPTR node_collection );
+void set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params );
+
+void set_node_status( const size_t node_id, const dictionary& dict );
+dictionary get_node_status( const size_t node_id );
+
+void set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict );
+void set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts );
+std::vector< dictionary > get_connection_status( const std::deque< ConnectionID >& conns );
+
+NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
+
+NodeCollectionPTR create( const std::string& model_name, const size_t n );
+NodeCollectionPTR create_spatial( const dictionary& layer_dict );
+
+NodeCollectionPTR make_nodecollection( const std::vector< size_t >& node_ids );
+
+NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
+long find( const NodeCollectionPTR nc, size_t node_id );
+dictionary get_metadata( const NodeCollectionPTR nc );
+
+bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
+bool contains( const NodeCollectionPTR nc, const size_t node_id );
 
 /**
  * Register node model (i.e. an instance of a class inheriting from `Node`).
@@ -69,26 +109,28 @@ RngPtr get_rank_synced_rng();
 RngPtr get_vp_synced_rng( size_t tid );
 RngPtr get_vp_specific_rng( size_t tid );
 
-void set_kernel_status( const DictionaryDatum& dict );
-DictionaryDatum get_kernel_status();
-
-void set_node_status( const size_t node_id, const DictionaryDatum& dict );
-DictionaryDatum get_node_status( const size_t node_id );
-
-void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
-DictionaryDatum get_connection_status( const ConnectionDatum& conn );
-
-NodeCollectionPTR create( const Name& model_name, const size_t n );
-
-NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+void set_kernel_status( const dictionary& dict );
+dictionary get_kernel_status();
 
 /**
  * Create bipartite connections.
  */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& connectivity,
-  const std::vector< DictionaryDatum >& synapse_params );
+  const dictionary& connectivity,
+  const std::vector< dictionary >& synapse_params );
+
+/**
+ * Disconnect nodes.
+ *
+ * @param connectivity Must be one-to-one or all-to-all.
+ * @param synapse_params Can contain only a synapse model to limit disconnection to that model. Must be vector of length
+ * 1, but is still passed as vector for compatibility with ConnBuilder constructor.
+ */
+void disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const dictionary& connectivity,
+  const std::vector< dictionary >& synapse_params );
 
 /**
  * Create tripartite connections
@@ -99,9 +141,9 @@ void connect( NodeCollectionPTR sources,
 void connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& connectivity,
-  const DictionaryDatum& third_connectivity,
-  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
+  const dictionary& connectivity,
+  const dictionary& third_connectivity,
+  const std::map< std::string, std::vector< dictionary > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -123,16 +165,19 @@ void connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
-  std::vector< std::string >& p_keys,
+  const std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
-  std::string syn_model );
+  const std::string& syn_model );
 
-ArrayDatum get_connections( const DictionaryDatum& dict );
 
-void disconnect( const ArrayDatum& conns );
+void connect_sonata( const dictionary& graph_specs, const long hyperslab_size );
 
-void simulate( const double& t );
+std::deque< ConnectionID > get_connections( const dictionary& dict );
+
+void disconnect( const std::deque< ConnectionID >& conns );
+
+void simulate( const double t );
 
 /**
  * @fn run(const double& time)
@@ -149,7 +194,7 @@ void simulate( const double& t );
  * @see prepare()
  * @see cleanup()
  */
-void run( const double& t );
+void run( const double t );
 
 /**
  * @fn prepare()
@@ -176,20 +221,70 @@ void prepare();
  */
 void cleanup();
 
-void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
+/**
+ * Create a new Mask object using the mask factory.
+ * @param name Mask type to create.
+ * @param d    Dictionary with parameters specific for this mask type.
+ * @returns dynamically allocated new Mask object.
+ */
+static MaskPTR create_mask( const std::string& name, const dictionary& d );
 
-void set_model_defaults( const std::string model_name, const DictionaryDatum& );
-DictionaryDatum get_model_defaults( const std::string model_name );
+void copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict );
 
-ParameterDatum create_parameter( const DictionaryDatum& param_dict );
-double get_value( const ParameterDatum& param );
-bool is_spatial( const ParameterDatum& param );
-std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
-std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
+void set_model_defaults( const std::string& model_name, const dictionary& );
+dictionary get_model_defaults( const std::string& model_name );
 
-Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
-Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+// TODO-PYNEST-NG: static functions?
+ParameterPTR create_parameter( const boost::any& );
+ParameterPTR create_parameter( const double );
+ParameterPTR create_parameter( const long );
+ParameterPTR create_parameter( const dictionary& param_dict );
+ParameterPTR create_parameter( const std::string& name, const dictionary& d );
 
+using ParameterFactory = GenericFactory< Parameter >;
+using MaskFactory = GenericFactory< AbstractMask >;
+using MaskCreatorFunction = MaskFactory::CreatorFunction;
+
+ParameterFactory& parameter_factory_();
+MaskFactory& mask_factory_();
+
+double get_value( const ParameterPTR param );
+bool is_spatial( const ParameterPTR param );
+
+std::vector< double > apply( const ParameterPTR param, const NodeCollectionPTR nc );
+std::vector< double > apply( const ParameterPTR param, const dictionary& positions );
+
+NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const long* array, unsigned long n );
+NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const bool* array, unsigned long n );
+
+// for debugging and testing mostly
+std::vector< size_t > node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection );
+
+template < class T >
+inline bool
+register_parameter( const std::string& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
+
+template < class T >
+inline bool
+register_mask()
+{
+  return mask_factory_().register_subtype< T >( T::get_name() );
+}
+
+inline bool
+register_mask( const std::string& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+inline static MaskPTR
+create_mask( const std::string& name, const dictionary& d )
+{
+  return MaskPTR( mask_factory_().create( name, d ) );
+}
 }
 
 

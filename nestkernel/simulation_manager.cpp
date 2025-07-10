@@ -26,6 +26,7 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <iomanip>
 #include <limits>
 #include <vector>
 
@@ -39,8 +40,6 @@
 #include "kernel_manager.h"
 #include "stopwatch_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::SimulationManager::SimulationManager()
   : clock_( Time::tic( 0L ) )
@@ -133,7 +132,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 }
 
 void
-nest::SimulationManager::set_status( const DictionaryDatum& d )
+nest::SimulationManager::set_status( const dictionary& d )
 {
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -146,7 +145,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::biological_time, time ) )
+  if ( d.update_value( names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -171,15 +170,15 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
   }
 
-  updateValue< bool >( d, names::print_time, print_time_ );
+  d.update_value( names::print_time, print_time_ );
 
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
-  double tics_per_ms = 0.0;
-  bool tics_per_ms_updated = updateValue< double >( d, names::tics_per_ms, tics_per_ms );
+  long tics_per_ms = 0;
+  bool tics_per_ms_updated = d.update_value( names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
-  bool res_updated = updateValue< double >( d, names::resolution, resd );
+  bool res_updated = d.update_value( names::resolution, resd );
 
   if ( tics_per_ms_updated or res_updated )
   {
@@ -293,7 +292,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // must be set before nodes are created.
   // Important: wfr_comm_interval_ may change depending on use_wfr_
   bool wfr;
-  if ( updateValue< bool >( d, names::use_wfr, wfr ) )
+  if ( d.update_value( names::use_wfr, wfr ) )
   {
     if ( kernel().node_manager.size() > 0 )
     {
@@ -319,7 +318,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
   // the resolution whenever the resolution changes.
   double wfr_interval;
-  if ( updateValue< double >( d, names::wfr_comm_interval, wfr_interval ) )
+  if ( d.update_value( names::wfr_comm_interval, wfr_interval ) )
   {
     if ( not use_wfr_ )
     {
@@ -354,7 +353,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the convergence tolerance for the waveform relaxation method
   double tol;
-  if ( updateValue< double >( d, names::wfr_tol, tol ) )
+  if ( d.update_value( names::wfr_tol, tol ) )
   {
     if ( tol < 0.0 )
     {
@@ -369,7 +368,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the maximal number of iterations for the waveform relaxation method
   long max_iter;
-  if ( updateValue< long >( d, names::wfr_max_iterations, max_iter ) )
+  if ( d.update_value( names::wfr_max_iterations, max_iter ) )
   {
     if ( max_iter <= 0 )
     {
@@ -387,9 +386,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the interpolation order for the waveform relaxation method
   long interp_order;
-  if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
+  if ( d.update_value( names::wfr_interpolation_order, interp_order ) )
   {
-    if ( interp_order < 0 or interp_order == 2 or interp_order > 3 )
+    if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
       throw KernelException();
@@ -402,7 +401,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // update time limit
   double t_new = 0.0;
-  if ( updateValue< double >( d, names::update_time_limit, t_new ) )
+  if ( d.update_value( names::update_time_limit, t_new ) )
   {
     if ( t_new <= 0 )
     {
@@ -415,7 +414,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // eprop update interval
   double eprop_update_interval_new = 0.0;
-  if ( updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_new ) )
+  if ( d.update_value( names::eprop_update_interval, eprop_update_interval_new ) )
   {
     if ( eprop_update_interval_new <= 0 )
     {
@@ -428,7 +427,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // eprop learning window
   double eprop_learning_window_new = 0.0;
-  if ( updateValue< double >( d, names::eprop_learning_window, eprop_learning_window_new ) )
+  if ( d.update_value( names::eprop_learning_window, eprop_learning_window_new ) )
   {
     if ( eprop_learning_window_new <= 0 )
     {
@@ -444,35 +443,36 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     eprop_learning_window_ = eprop_learning_window_new;
   }
 
-  updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
+  d.update_value( names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
 
 void
-nest::SimulationManager::get_status( DictionaryDatum& d )
+nest::SimulationManager::get_status( dictionary& d )
 {
-  def< double >( d, names::ms_per_tic, Time::get_ms_per_tic() );
-  def< double >( d, names::tics_per_ms, Time::get_tics_per_ms() );
-  def< long >( d, names::tics_per_step, Time::get_tics_per_step() );
-  def< double >( d, names::resolution, Time::get_resolution().get_ms() );
+  d[ names::ms_per_tic ] = Time::get_ms_per_tic();
+  d[ names::tics_per_ms ] = Time::get_tics_per_ms();
+  d[ names::tics_per_step ] =
+    static_cast< size_t >( Time::get_tics_per_step() ); // casting to avoid extra checks of any types
+  d[ names::resolution ] = Time::get_resolution().get_ms();
 
-  def< double >( d, names::T_min, Time::min().get_ms() );
-  def< double >( d, names::T_max, Time::max().get_ms() );
+  d[ names::T_min ] = Time::min().get_ms();
+  d[ names::T_max ] = Time::max().get_ms();
 
-  def< double >( d, names::biological_time, get_time().get_ms() );
-  def< long >( d, names::to_do, to_do_ );
-  def< bool >( d, names::print_time, print_time_ );
+  d[ names::biological_time ] = get_time().get_ms();
+  d[ names::to_do ] = static_cast< long >( to_do_ ); // casting to avoid extra checks of any types
+  d[ names::print_time ] = print_time_;
 
-  def< bool >( d, names::prepared, prepared_ );
+  d[ names::prepared ] = prepared_;
 
-  def< bool >( d, names::use_wfr, use_wfr_ );
-  def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
-  def< double >( d, names::wfr_tol, wfr_tol_ );
-  def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
-  def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+  d[ names::use_wfr ] = use_wfr_;
+  d[ names::wfr_comm_interval ] = wfr_comm_interval_;
+  d[ names::wfr_tol ] = wfr_tol_;
+  d[ names::wfr_max_iterations ] = wfr_max_iterations_;
+  d[ names::wfr_interpolation_order ] = wfr_interpolation_order_;
 
-  def< double >( d, names::update_time_limit, update_time_limit_ );
-  def< double >( d, names::min_update_time, min_update_time_ );
-  def< double >( d, names::max_update_time, max_update_time_ );
+  d[ names::update_time_limit ] = update_time_limit_;
+  d[ names::min_update_time ] = min_update_time_;
+  d[ names::max_update_time ] = max_update_time_;
 
   sw_simulate_.get_status( d, names::time_simulate, names::time_simulate_cpu );
   sw_communicate_prepare_.get_status( d, names::time_communicate_prepare, names::time_communicate_prepare_cpu );
@@ -483,9 +483,10 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   sw_deliver_spike_data_.get_status( d, names::time_deliver_spike_data, names::time_deliver_spike_data_cpu );
   sw_deliver_secondary_data_.get_status(
     d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
-  def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
-  def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
-  def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
+
+  d[ names::eprop_update_interval ] = eprop_update_interval_;
+  d[ names::eprop_learning_window ] = eprop_learning_window_;
+  d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
 }
 
 void
@@ -834,7 +835,7 @@ nest::SimulationManager::update_()
   double start_current_update = sw_simulate_.elapsed();
   bool update_time_limit_exceeded = false;
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 // parallel section begins
 #pragma omp parallel
@@ -1123,10 +1124,10 @@ nest::SimulationManager::update_()
         node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
       }
     }
-    catch ( std::exception& e )
+    catch ( ... )
     {
-      // so throw the exception after parallel region
-      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 
@@ -1137,13 +1138,13 @@ nest::SimulationManager::update_()
   }
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised )
   {
-    if ( exceptions_raised.at( tid ).get() )
+    if ( eptr )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }

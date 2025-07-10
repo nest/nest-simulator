@@ -33,8 +33,6 @@
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 #ifdef HAVE_MPI
 
@@ -221,12 +219,12 @@ nest::MPIManager::finalize( const bool )
 }
 
 void
-nest::MPIManager::set_status( const DictionaryDatum& dict )
+nest::MPIManager::set_status( const dictionary& dict )
 {
-  updateValue< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
+  dict.update_value( names::adaptive_target_buffers, adaptive_target_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
-  updateValue< long >( dict, names::buffer_size_target_data, new_buffer_size_target_data );
+  dict.update_value( names::buffer_size_target_data, new_buffer_size_target_data );
   if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ )
     and new_buffer_size_target_data < static_cast< long >( max_buffer_size_target_data_ ) )
   {
@@ -234,32 +232,31 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
   }
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
-  updateValue< long >( dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
+  dict.update_value( names::buffer_size_spike_data, new_buffer_size_spike_data );
   if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
-  updateValue< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
-
-  updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-
-  updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
+  dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
+  dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  dict.update_value( names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
 void
-nest::MPIManager::get_status( DictionaryDatum& dict )
+nest::MPIManager::get_status( dictionary& dict )
 {
-  def< long >( dict, names::num_processes, num_processes_ );
-  def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
-  def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  dict[ names::num_processes ] = num_processes_;
+  dict[ names::mpi_rank ] = rank_;
+  dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
+  dict[ names::buffer_size_target_data ] = buffer_size_target_data_;
+  dict[ names::buffer_size_spike_data ] = buffer_size_spike_data_;
+  dict[ names::send_buffer_size_secondary_events ] = get_send_buffer_size_secondary_events_in_int();
+  dict[ names::recv_buffer_size_secondary_events ] = get_recv_buffer_size_secondary_events_in_int();
+  dict[ names::max_buffer_size_target_data ] = max_buffer_size_target_data_;
+  dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
+  dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
 }
 
 #ifdef HAVE_MPI
@@ -346,11 +343,41 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
   const auto send_ptr = local_nodes.empty() ? nullptr : &local_nodes[ 0 ];
   MPI_Allgatherv( send_ptr,
     local_nodes.size(),
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],
     &displacements[ 0 ],
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
+    comm );
+}
+
+void
+nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t >& global_nodes )
+{
+  size_t np = get_num_processes();
+  // Get size of buffers
+  std::vector< int > num_nodes_per_rank( np );
+  num_nodes_per_rank[ get_rank() ] = local_nodes.size();
+  communicate( num_nodes_per_rank );
+
+  size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  global_nodes.resize( num_globals, 0L );
+
+  // Set up displacements vector. Entry i specifies the displacement (relative
+  // to recv_buffer ) at which to place the incoming data from process i
+  std::vector< int > displacements( np, 0 );
+  for ( size_t i = 1; i < np; ++i )
+  {
+    displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
+  }
+
+  MPI_Allgatherv( &( *local_nodes.begin() ),
+    local_nodes.size(),
+    MPI_Type< size_t >::type,
+    &global_nodes[ 0 ],
+    &num_nodes_per_rank[ 0 ],
+    &displacements[ 0 ],
+    MPI_Type< size_t >::type,
     comm );
 }
 
@@ -1068,6 +1095,11 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 
 void
 nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
+{
+}
+
+void
+nest::MPIManager::communicate( std::vector< size_t >&, std::vector< size_t >& )
 {
 }
 

@@ -22,7 +22,7 @@
 
 """
 This test goes through all registered node models for which V_m can be
-set, and attempts to set V_m via SetModelStatus and SetStatus. It then
+set, and attempts to set V_m via SetModelStatus and node.set(). It then
 compares results. If both ways of setting V_m give different results,
 something is wtong with state initialization.
 
@@ -51,7 +51,7 @@ def get_models():
     return [model for model in all_models if "V_m" in nest.GetDefaults(model)]
 
 
-def create_set_status(model, new_vm_value):
+def create_set(model, new_vm_value):
     n = nest.Create(model)
     n.set(V_m=new_vm_value)
     return n
@@ -68,6 +68,6 @@ def test_set_vm(model):
     new_vm_value = random.uniform(0, 1)
 
     set_defaults_create_instance = set_defaults_create(model, new_vm_value)
-    create_set_status_instance = create_set_status(model, new_vm_value)
+    create_set_status_instance = create_set(model, new_vm_value)
 
     assert set_defaults_create_instance.V_m == create_set_status_instance.V_m

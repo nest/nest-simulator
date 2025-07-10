@@ -37,7 +37,7 @@ import nest
 import numpy as np
 
 nest.ResetKernel()
-nest.set_verbosity("M_WARNING")
+nest.set_verbosity(nest.verbosity.M_WARNING)
 
 pos = nest.spatial.grid(shape=[30, 30], extent=[3.0, 3.0], edge_wrap=True)
 

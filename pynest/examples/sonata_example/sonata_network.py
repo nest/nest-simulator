@@ -50,7 +50,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import nest
 
-nest.set_verbosity("M_ERROR")
+nest.set_verbosity(nest.verbosity.M_ERROR)
 nest.ResetKernel()
 
 ###############################################################################

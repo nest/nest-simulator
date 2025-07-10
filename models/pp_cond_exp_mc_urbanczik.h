@@ -47,9 +47,6 @@
 #include "urbanczik_archiving_node.h"
 #include "urbanczik_archiving_node_impl.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
 
 namespace nest
 {
@@ -279,8 +276,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -381,8 +378,8 @@ private:
     Parameters_( const Parameters_& );            //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
+    void set( const dictionary& ); //!< Set values from dictionary
   };
 
 
@@ -424,8 +421,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_& );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -528,10 +525,9 @@ private:
   Buffers_ B_;
 
   //! Table of compartment names
-  static std::vector< Name > comp_names_;
+  static std::vector< std::string > comp_names_;
 
-  //! Dictionary of receptor types, leads to seg fault on exit, see #328
-  // static DictionaryDatum receptor_dict_;
+  // Dictionary of receptor types, leads to seg fault on exit, see #328
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< pp_cond_exp_mc_urbanczik > recordablesMap_;
@@ -613,33 +609,33 @@ pp_cond_exp_mc_urbanczik::handles_test_event( DataLoggingRequest& dlr, size_t re
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::get_status( DictionaryDatum& d ) const
+pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
    * static member in default c'tor, but this leads to
    * a seg fault on exit, see #328
    */
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
-  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
-  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
+  dictionary receptor_dict_;
+  receptor_dict_[ names::soma_exc ] = static_cast< long >( SOMA_EXC );
+  receptor_dict_[ names::soma_inh ] = static_cast< long >( SOMA_INH );
+  receptor_dict_[ names::soma_curr ] = static_cast< long >( I_SOMA );
 
-  ( *receptor_dict_ )[ names::dendritic_exc ] = DEND_EXC;
-  ( *receptor_dict_ )[ names::dendritic_inh ] = DEND_INH;
-  ( *receptor_dict_ )[ names::dendritic_curr ] = I_DEND;
+  receptor_dict_[ names::dendritic_exc ] = static_cast< long >( DEND_EXC );
+  receptor_dict_[ names::dendritic_inh ] = static_cast< long >( DEND_INH );
+  receptor_dict_[ names::dendritic_curr ] = static_cast< long >( I_DEND );
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
+pp_cond_exp_mc_urbanczik::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

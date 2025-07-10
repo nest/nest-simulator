@@ -30,9 +30,6 @@
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "namedatum.h"
-
 
 namespace nest
 {
@@ -130,7 +127,7 @@ public:
     return false;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::other;
@@ -148,8 +145,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( dictionary& d ) const override;
+  void set_status( const dictionary& d ) override;
 
   /**
    * Since volume transmitters are duplicated on each thread, and are
@@ -175,8 +172,8 @@ private:
   struct Parameters_
   {
     Parameters_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, Node* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 
@@ -206,13 +203,13 @@ volume_transmitter::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-volume_transmitter::get_status( DictionaryDatum& d ) const
+volume_transmitter::get_status( dictionary& d ) const
 {
   P_.get( d );
 }
 
 inline void
-volume_transmitter::set_status( const DictionaryDatum& d )
+volume_transmitter::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

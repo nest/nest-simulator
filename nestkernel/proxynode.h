@@ -106,7 +106,7 @@ public:
   {
   }
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( dictionary& ) const override;
 
   /**
    * Proxy nodes have no properties.
@@ -117,7 +117,7 @@ public:
    * problems with dictionary entry checking
    */
   void
-  set_status( const DictionaryDatum& ) override
+  set_status( const dictionary& ) override
   {
     assert( false );
   }

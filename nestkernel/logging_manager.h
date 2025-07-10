@@ -28,16 +28,13 @@
 #include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging.h"
 #include "manager_interface.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 // Inclused from nestkernel:
 #include "nest_names.h"
-
-class Dictionary;
 
 namespace nest
 {
@@ -48,11 +45,12 @@ class LoggingManager : public ManagerInterface
 {
 public:
   LoggingManager();
+  ~LoggingManager() override;
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   /**
    * Register a logging client.
@@ -87,22 +85,6 @@ public:
    */
   void publish_log( const severity_t, const std::string&, const std::string&, const std::string&, const size_t ) const;
 
-  /**
-   * Implements standard behaviour for dictionary entry misses. Use with define
-   * ALL_ENTRIES_ACCESSED.
-   */
-  void all_entries_accessed( const Dictionary&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const size_t ) const;
-
-  void all_entries_accessed( const Dictionary&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const std::string&,
-    const size_t ) const;
 
 private:
   /**

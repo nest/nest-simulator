@@ -52,8 +52,6 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 
 - Executables ``<nest_install_dir>/bin``
 - Dynamic libraries ``<nest_install_dir>/lib/``
-- SLI libraries ``<nest_install_dir>/share/nest/sli``
-- SLI documentation ``<nest_install_dir>/share/doc/nest``
 - Examples ``<nest_install_dir>/share/doc/nest/examples``
 - PyNEST ``<nest_install_dir>/lib/pythonX.Y/site-packages/nest``
 - PyNEST examples ``<nest_install_dir>/share/doc/nest/examples/pynest``

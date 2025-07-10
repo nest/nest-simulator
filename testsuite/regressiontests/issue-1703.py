@@ -54,7 +54,7 @@ cmd = shlex.split('python3 -c "from mpi4py import MPI; import nest; nest.Simulat
 my_env = os.environ.copy()
 exit_code = subprocess.call(cmd, env=my_env)
 
-if nest.ll_api.sli_func("statusdict/have_music ::"):
+if nest.build_info["have_music"]:
     # Expect error, not segfault
     if exit_code == EXIT_CODE_ERROR:
         sys.exit(EXIT_SUCCESS)

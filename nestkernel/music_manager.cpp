@@ -32,8 +32,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -58,12 +56,12 @@ MUSICManager::finalize( const bool )
 }
 
 void
-MUSICManager::set_status( const DictionaryDatum& )
+MUSICManager::set_status( const dictionary& )
 {
 }
 
 void
-MUSICManager::get_status( DictionaryDatum& )
+MUSICManager::get_status( dictionary& )
 {
 }
 

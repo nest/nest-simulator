@@ -113,6 +113,6 @@ class TestSirsNeuron:
 
 
 if __name__ == "__main__":
-    test = TestSirNeuron()
+    test = TestSirsNeuron()
     test.test_single_neuron_dynamics()
     test.test_propagation_of_infection()

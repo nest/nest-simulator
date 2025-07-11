@@ -23,7 +23,7 @@ import nest
 import numpy as np
 
 
-class TestSirNeuron:
+class TestSisNeuron:
     r"""Test of sis_neuron model."""
 
     def test_single_neuron_dynamics(self):

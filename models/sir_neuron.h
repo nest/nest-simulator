@@ -94,7 +94,7 @@ The following parameters can be set in the status dictionary.
 
    1. SIR neurons must only be connected to other SIR neurons.
 
-   #. No more than one connection must be created between any pair of
+   2. No more than one connection must be created between any pair of
       SIR neurons. When using probabilistic connection rules, specify
       ``'allow_autapses': False`` to avoid accidental creation of
       multiple connections between a pair of neurons.

@@ -32,7 +32,7 @@ skip_models = [
     "ginzburg_neuron",  # binary neuron
     "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
-    "sirs_neuron",  # mult-state neuron
+    "sirs_neuron",  # multi-state neuron
     "sir_neuron",  # multi-state neuron
     "sis_neuron",  # multi-state neuron
     "gif_pop_psc_exp",  # population model, not suitable for STDP

@@ -34,7 +34,7 @@ jobs:
           diff -u <(cat ${files}) <(clang-format ${files})
 
   shellcheck:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -52,7 +52,7 @@ jobs:
           find . -iname "*.sh" -o -iname "*.sh.in" | xargs shellcheck
 
   pre-commit-hooks:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -80,7 +80,7 @@ jobs:
     #
     # This check makes sure the files in the repository are always consistent
     # in their line endings, i.e. new line, and not carriage return+line feed.
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -415,7 +415,7 @@ jobs:
           pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
   isort:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

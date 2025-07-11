@@ -688,6 +688,8 @@ jobs:
           python --version
           apt list
           pip list
+          apt list | grep -i boost
+          test -z "$(apt list | grep -i boost)"
 
       - name: "Configure NEST build"
         env:

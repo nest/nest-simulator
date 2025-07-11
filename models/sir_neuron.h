@@ -267,7 +267,7 @@ private:
 
   //! Read out the sir_neuron state of the neuron
   double
-  get_output_state__() const
+  get_output_state_() const
   {
     return S_.y_;
   }

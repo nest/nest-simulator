@@ -59,7 +59,7 @@ void
 RecordablesMap< sir_neuron >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::S, &sir_neuron::get_output_state__ );
+  insert_( names::S, &sir_neuron::get_output_state_ );
   insert_( names::h, &sir_neuron::get_input__ );
 }
 

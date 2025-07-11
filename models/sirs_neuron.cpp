@@ -340,7 +340,7 @@ nest::sirs_neuron::update( Time const& origin, const long from, const long to )
       }
 
 
-      if ( new_y != S_.y_ && new_y != 0 )
+      if ( new_y != S_.y_ and new_y != 0 )
       {
         SpikeEvent se;
         // use multiplicity 2 to signal transition to 2 state

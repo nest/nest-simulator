@@ -690,9 +690,9 @@ jobs:
           echo "INSTALLED PYTHON PACKAGES:"
           pip list
           echo "INSTALLED BOOST PACKAGES:"
-          dpkg -l 'libboost*' | grep "^ii"
+          dpkg -l 'libboost*' | grep "^ii" || true
           echo "INSTALLED BOOST HEADERS:"
-          dpkg -l 'libboost*-dev' | grep "^ii"
+          dpkg -l 'libboost*-dev' | grep "^ii"  || true
           echo "LIST HAS TO BE ZERO"
           test -z "$(dpkg -l 'libboost*-dev' | grep "^ii")"
 

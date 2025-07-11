@@ -686,10 +686,10 @@ jobs:
         run: |
           gcc --version
           python --version
-          apt list
+          apt list --installed
           pip list
-          apt list | grep -i boost
-          test -z "$(apt list | grep -i boost)"
+          apt list --installed | grep -i boost
+          test -z "$(apt list --installed | grep -i boost)"
 
       - name: "Configure NEST build"
         env:

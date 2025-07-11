@@ -683,13 +683,14 @@ jobs:
           sudo apt-get remove --autoremove 'libboost*-dev'
 
       - name: "List available packages"
+        if: "${{ ! contains(matrix.use, 'boost') }}"
         run: |
           gcc --version
           python --version
           apt list --installed
           pip list
-          apt list --installed | grep -i boost
-          test -z "$(apt list --installed | grep -i boost)"
+          apt list --installed | grep -Ei "boost.*-dev"
+          test -z "$(apt list --installed | grep -Ei "boost*-dev")"
 
       - name: "Configure NEST build"
         env:

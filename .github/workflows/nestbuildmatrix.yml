@@ -687,10 +687,12 @@ jobs:
         run: |
           gcc --version
           python --version
-          apt list --installed
           pip list
-          apt list --installed | grep -Ei "boost.*-dev"
-          test -z "$(apt list --installed | grep -Ei "boost*-dev")"
+          echo "INSTALLED BOOST PACKAGES:"
+          apt list --installed 'libboost*'
+          echo "INSTALLED BOOST HEADERS:"
+          apt list --installed 'libboost*-dev'
+          test -z "$(apt list --installed 'libboost*-dev')"
 
       - name: "Configure NEST build"
         env:

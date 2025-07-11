@@ -687,12 +687,14 @@ jobs:
         run: |
           gcc --version
           python --version
+          echo "INSTALLED PYTHON PACKAGES:"
           pip list
           echo "INSTALLED BOOST PACKAGES:"
-          apt list --installed 'libboost*'
+          dpkg -l 'libboost*' | grep "^ii"
           echo "INSTALLED BOOST HEADERS:"
-          apt list --installed 'libboost*-dev'
-          test -z "$(apt list --installed 'libboost*-dev')"
+          dpkg -l 'libboost*-dev' | grep "^ii"
+          echo "LIST HAS TO BE ZERO"
+          test -z "$(dpkg -l 'libboost*-dev' | grep "^ii")"
 
       - name: "Configure NEST build"
         env:

@@ -21,18 +21,18 @@
 
 """[[ This template demonstrates how to create a docstring for the PyNEST API.
 
-   If you have modified an API, please ensure you update the docstring!
+If you have modified an API, please ensure you update the docstring!
 
-   The format is based on `NumPy style docstring
-   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructuredText markup. Please review the syntax rules if you are
-   unfamiliar with either reStructuredText or NumPy style docstrings.
+The format is based on `NumPy style docstring
+<https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+reStructuredText markup. Please review the syntax rules if you are
+unfamiliar with either reStructuredText or NumPy style docstrings.
 
-   Copy this file and replace the sample text with a description of the API.
-   The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire
-   docstring!
-   ]]
+Copy this file and replace the sample text with a description of the API.
+The double bracketed sections [[ ]], which provide explanations, should be
+completely removed from your final version - Including this entire
+docstring!
+]]
 """
 
 

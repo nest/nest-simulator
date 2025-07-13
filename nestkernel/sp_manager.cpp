@@ -242,15 +242,6 @@ SPManager::disconnect( NodeCollectionPTR sources,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
-  if ( kernel().connection_manager.connections_have_changed() )
-  {
-#pragma omp parallel
-    {
-      const size_t tid = kernel().vp_manager.get_thread_id();
-      kernel().simulation_manager.update_connection_infrastructure( tid );
-    }
-  }
-
   BipartiteConnBuilder* cb = nullptr;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();

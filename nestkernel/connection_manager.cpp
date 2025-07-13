@@ -1131,6 +1131,9 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
+    // TODO fix-3489: Note entirely sure if we need the next two calls here,
+    //                but ran into trouble when I took both out, I think
+
     // We need to update min_delay because it is used by check_wfr_use() below
     // to set secondary event data size.
     update_delay_extrema_();
@@ -1139,12 +1142,6 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     // needs to be called before update_connection_infrastructure since
     // it resizes coefficient arrays for secondary events
     kernel().node_manager.check_wfr_use();
-
-#pragma omp parallel
-    {
-      const size_t tid = kernel().vp_manager.get_thread_id();
-      kernel().simulation_manager.update_connection_infrastructure( tid );
-    }
   }
 
   // We check, whether a synapse model is given. If not, we will iterate all.

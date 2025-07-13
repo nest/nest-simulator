@@ -31,6 +31,7 @@ import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
+from testutil import expected_synapse_counts, synapse_counts
 
 
 @pytest.fixture(autouse=True)
@@ -60,15 +61,10 @@ def test_get_connections_with_node_collection_step():
     nodes = nest.Create("iaf_psc_alpha", 3)
     nest.Connect(nodes, nodes)
 
-    conns = nest.GetConnections(nodes[::2])
-    actual_sources = conns.get("source")
-    actual_targets = conns.get("target")
+    actual = synapse_counts(nest.GetConnections(nodes[::2]), criteria=["source", "target"])
+    expected = expected_synapse_counts(sources=[1, 1, 1, 3, 3, 3], targets=[1, 2, 3, 1, 2, 3])
 
-    expected_sources = [1, 1, 1, 3, 3, 3]
-    expected_targets = [1, 2, 3, 1, 2, 3]
-
-    assert actual_sources == expected_sources
-    assert actual_targets == expected_targets
+    assert actual == expected
 
 
 def test_get_connections_with_sliced_node_collection():
@@ -77,11 +73,10 @@ def test_get_connections_with_sliced_node_collection():
     nodes = nest.Create("iaf_psc_alpha", 11)
     nest.Connect(nodes, nodes)
 
-    conns = nest.GetConnections(nodes[1:9:3])
-    actual_sources = conns.get("source")
+    actual = synapse_counts(nest.GetConnections(nodes[1:9:3]), criteria=["source"])
+    expected = expected_synapse_counts(sources=[2] * 11 + [5] * 11 + [8] * 11)
 
-    expected_sources = [2] * 11 + [5] * 11 + [8] * 11
-    assert actual_sources == expected_sources
+    assert actual == expected
 
 
 def test_get_connections_with_sliced_node_collection_2():
@@ -91,11 +86,10 @@ def test_get_connections_with_sliced_node_collection_2():
     nest.Connect(nodes, nodes)
 
     # ([ 2 3 4 ] + [ 8 9 10 11 ])[::3] -> [2 8 11]
-    conns = nest.GetConnections((nodes[1:4] + nodes[7:])[::3])
-    actual_sources = conns.get("source")
+    actual = synapse_counts(nest.GetConnections((nodes[1:4] + nodes[7:])[::3]), criteria=["source"])
+    expected = expected_synapse_counts(sources=[2] * 11 + [8] * 11 + [11] * 11)
 
-    expected_sources = [2] * 11 + [8] * 11 + [11] * 11
-    assert actual_sources == expected_sources
+    assert actual == expected
 
 
 def test_get_connections_bad_source_raises():
@@ -111,10 +105,16 @@ def test_get_connections_bad_source_raises():
 def test_get_connections_correct_table_with_node_collection_step():
     """
     Test that ``GetConnections`` table from ``NodeCollection`` sliced in step match expectations.
+
+    This test is for internal testing also of the synapse sorting process. It therefore requires
+    that the connection infrastructure has been updated before connections are read out.
     """
 
     nodes = nest.Create("iaf_psc_alpha", 3)
     nest.Connect(nodes, nodes)
+
+    # Force synapse sorting
+    nest.Simulate(0.1)
 
     conns = nest.GetConnections(nodes[::2])
     actual_row = [
@@ -134,10 +134,16 @@ def test_get_connections_correct_table_with_node_collection_step():
 def test_get_connections_correct_table_with_node_collection_index():
     """
     Test that ``GetConnections`` table from ``NodeCollection`` index match expectations.
+
+    This test is for internal testing also of the synapse sorting process. It therefore requires
+    that the connection infrastructure has been updated before connections are read out.
     """
 
     nodes = nest.Create("iaf_psc_alpha", 3)
     nest.Connect(nodes, nodes)
+
+    # Force synapse sorting
+    nest.Simulate(0.1)
 
     actual_conns = pd.DataFrame(
         nest.GetConnections(nodes[0]).get(["source", "target", "target_thread", "synapse_id", "port"])

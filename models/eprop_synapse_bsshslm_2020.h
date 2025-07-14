@@ -511,7 +511,7 @@ inline void
 eprop_synapse_bsshslm_2020< targetidentifierT >::delete_optimizer()
 {
   delete optimizer_;
-  // do not set to nullptr to allow detection of double deletion
+  optimizer_ = nullptr;
 }
 
 template < typename targetidentifierT >

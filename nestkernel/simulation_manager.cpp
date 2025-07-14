@@ -544,7 +544,13 @@ nest::SimulationManager::prepare()
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
-  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
+  // Only update connection infrastructure if we have not simulated yet. Otherwise,
+  // there might still be spikes in the event delivery data structures destined for
+  // connections that have been deleted. See #3489.
+  // We must do this here once before the first simulation round because WFR otherwise
+  // cannot do its pre-step in the first time slice.
+  if ( not simulated_
+    and ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() ) )
   {
 #pragma omp parallel
     {
@@ -1028,13 +1034,18 @@ nest::SimulationManager::update_()
             node->decay_synaptic_elements_vacant();
           }
 
-          // after structural plasticity has created and deleted
-          // connections, update the connection infrastructure; implies
-          // complete removal of presynaptic part and reconstruction
-          // from postsynaptic data
-          update_connection_infrastructure( tid );
-
         } // of structural plasticity
+
+        // If either the user or structual plasticity has modified the basis of connectivity,
+        // we need to re-build the connection infrastructure. At this point, all spikes from
+        // the previous time slice have been delivered, so we do not risk transmission via
+        // deleted connections. We don't need to do this in slice_ == 0, because there
+        // prepare() has taken care of this.
+        if ( slice_ > 0 and from_step_ == 0
+          and ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() ) )
+        {
+          update_connection_infrastructure( tid );
+        }
 
         sw_update_.start();
         const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );

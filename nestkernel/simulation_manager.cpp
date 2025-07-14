@@ -1039,8 +1039,10 @@ nest::SimulationManager::update_()
         // If either the user or structual plasticity has modified the basis of connectivity,
         // we need to re-build the connection infrastructure. At this point, all spikes from
         // the previous time slice have been delivered, so we do not risk transmission via
-        // deleted connections.
-        if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
+        // deleted connections. We don't need to do this in slice_ == 0, because there
+        // prepare() has taken care of this.
+        if ( slice_ > 0 and from_step_ == 0
+          and ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() ) )
         {
           update_connection_infrastructure( tid );
         }

@@ -330,9 +330,10 @@ SPManager::build_probability_list()
     throw std::runtime_error( "Mismatch in global positions dimensionality." );
   }
 
+
   // Resize the probability list to accommodate all neuron pairs.
   size_t total_pairs = ( num_neurons * ( num_neurons + 1 ) ) / 2;
-  probability_list.resize( total_pairs, -1.0 );
+  probability_list.resize( total_pairs, 0.0 );
 
   // Calculate probabilities for connections between all pairs of neurons.
   for ( size_t i = 0; i < num_neurons; ++i )
@@ -364,18 +365,13 @@ SPManager::build_probability_list()
         continue;
       }
 
-      if ( id_i == id_j )
-      {
-        probability_list[ index ] = 0.0; // Assign zero probability for self-connections
-      }
-      else
-      {
-        std::vector< double > pos_j(
-          global_positions.begin() + pos_dim * ( id_j - 1 ), global_positions.begin() + pos_dim * id_j );
+      
+      std::vector< double > pos_j(
+        global_positions.begin() + pos_dim * ( id_j - 1 ), global_positions.begin() + pos_dim * id_j );
 
-        double prob = gaussian_kernel( pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_ );
-        probability_list[ index ] = prob;
-      }
+      double prob = gaussian_kernel( pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_ );
+      probability_list[ index ] = prob;
+    
     }
   }
 }
@@ -648,7 +644,8 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   }
   else
   {
-    global_shuffle_spatial( pre_id_rnd, post_id_rnd, pre_ids_results, post_ids_results );
+    global_shuffle_spatial(
+      pre_id_rnd, post_id_rnd, pre_ids_results, post_ids_results, sp_conn_builder->allows_autapses() );
   }
 
   // create synapse
@@ -893,7 +890,8 @@ void
 SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
   std::vector< size_t >& post_ids,
   std::vector< size_t >& pre_ids_results,
-  std::vector< size_t >& post_ids_results )
+  std::vector< size_t >& post_ids_results,
+  bool allow_autapse )
 {
   size_t maxIterations = std::min( pre_ids.size(), post_ids.size() );
 
@@ -912,7 +910,7 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
     double rnd;
     for ( size_t post_id : post_ids )
     {
-      if ( post_id == pre_id )
+      if ( post_id == pre_id && !allow_autapse )
       {
         continue; // Skip self-connections
       }

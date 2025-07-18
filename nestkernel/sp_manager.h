@@ -221,7 +221,8 @@ public:
   void global_shuffle_spatial( std::vector< size_t >& pre_ids,
     std::vector< size_t >& post_ids,
     std::vector< size_t >& pre_ids_results,
-    std::vector< size_t >& post_ids_results );
+    std::vector< size_t >& post_ids_results,
+    bool allow_autapse );
 
   /**
    * Build a probability list for neuron connections based on spatial properties.

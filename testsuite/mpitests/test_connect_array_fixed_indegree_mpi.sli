@@ -37,6 +37,10 @@
    SeeAlso: Connect
  */
 
+
+% NOTE: Test should be re-designed because the current design can lead to different numbers of GetConnection calls
+%       on different Ranks if N is not divisible by all process numbers.
+
 (unittest) run
 /unittest using
 
@@ -45,7 +49,7 @@ skip_if_not_threaded
 [2 3] % check for 2, 3 processes
 {
 
-/N 20 def          % number of neurons in each population
+/N 24 def          % number of neurons in each population
 /K 5 def           % number of connections per neuron
 
 ResetKernel

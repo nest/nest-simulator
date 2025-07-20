@@ -29,6 +29,7 @@ when another connection is created.
 
 import nest
 import pytest
+from testutil import synapse_counts
 
 
 @pytest.fixture(autouse=True)
@@ -48,11 +49,15 @@ def test_connections_before_after_simulate(use_compressed_spikes):
     neurons = nest.Create("iaf_psc_alpha", 10)
     nest.Connect(neurons, neurons, conn_spec={"rule": "fixed_indegree", "indegree": 2})
 
-    connections_before = nest.GetConnections()
+    # SynapseCollections are considered equal if they contain the same (source, target, target_thread, syn_id)
+    # tuples, irrespective of order. We do not consider port number, because it can change due to compression.
+    # Therefore, we need to compare explicitly. Since Simulate may invalidate SynapseCollections, we need to
+    # extract data right before calling simulate.
+    connections_before = synapse_counts(nest.GetConnections())
 
     nest.Simulate(1.0)
 
-    connections_after = nest.GetConnections()
+    connections_after = synapse_counts(nest.GetConnections())
 
     assert connections_before == connections_after
 

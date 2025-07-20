@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import dataclasses
 import sys
 
@@ -113,3 +114,34 @@ def create_dataclass_fixtures(cls, module_name=None):
 def use_simulation(cls):
     # If `mark` receives one argument that is a class, it decorates that arg.
     return pytest.mark.simulation(cls, "")
+
+
+def synapse_counts(syn_collection, criteria=("source", "target", "target_thread", "synapse_id")):
+    """
+    Returns Counter object representing synapse collection.
+
+    This is useful for comparing whether two synapse collections contain the same connections
+    irrespective of ordering using source, target, target thread and synapse id as criteria.
+    By default, the "port" is ignored, since it is an implemenation detail and affected by
+    synapse sorting.
+    """
+
+    return collections.Counter(zip(*syn_collection.get(criteria).values()))
+
+
+def expected_synapse_counts(sources, targets=None, target_threads=None, syn_ids=None, ports=None):
+    """
+    From given lists of sources, targets and optionally target threads, synapse ids or ports
+    create a Counter object that can be compared to the object returned by synapse_counts.
+    """
+
+    n = len(sources)
+    data = [sources]
+    for c in [targets, target_threads, syn_ids, ports]:
+        if c is None:
+            continue
+
+        assert len(c) == n
+        data.append(c)
+
+    return collections.Counter(zip(*data))

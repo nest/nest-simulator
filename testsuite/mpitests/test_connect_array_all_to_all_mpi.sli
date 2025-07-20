@@ -37,6 +37,10 @@
    SeeAlso: Connect
  */
 
+% NOTE: Test should be re-designed because the current design can lead to different numbers of GetConnection calls
+%       on different Ranks if N is not divisible by all process numbers.
+
+
 (unittest) run
 /unittest using
 
@@ -45,7 +49,7 @@ skip_if_not_threaded
 [2 3] % check for 2, 3 processes
 {
 
-/N 10 def          % number of neurons in each population
+/N 12 def          % number of neurons in each population
 
 ResetKernel
 
@@ -71,6 +75,7 @@ ResetKernel
 /conn_dict << /rule /all_to_all >> def
 
 sources targets conn_dict syn_dict Connect % connects source to target
+
 
 /pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process

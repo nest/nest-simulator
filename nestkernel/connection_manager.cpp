@@ -996,7 +996,7 @@ nest::ConnectionManager::find_connection( const size_t tid,
 {
   // lcid will hold the position of the /first/ connection from node
   // snode_id to any local node, or be invalid
-  size_t lcid = source_table_.find_first_source( tid, syn_id, snode_id );
+  size_t lcid = source_table_.find_first_source( tid, syn_id, snode_id, use_compressed_spikes() );
   if ( lcid == invalid_index )
   {
     return invalid_index;
@@ -1446,7 +1446,7 @@ nest::ConnectionManager::get_targets( const std::vector< size_t >& sources,
   {
     for ( size_t i = 0; i < sources.size(); ++i )
     {
-      const size_t start_lcid = source_table_.find_first_source( tid, syn_id, sources[ i ] );
+      const size_t start_lcid = source_table_.find_first_source( tid, syn_id, sources[ i ], use_compressed_spikes() );
       if ( start_lcid != invalid_index )
       {
         connections_[ tid ][ syn_id ]->get_target_node_ids( tid, start_lcid, post_synaptic_element, targets[ i ] );

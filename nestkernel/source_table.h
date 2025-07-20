@@ -29,6 +29,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <utility>
 #include <vector>
 
 // Includes from nestkernel:
@@ -300,7 +301,10 @@ public:
    * Finds the first entry in sources_ at the given thread id and
    * synapse type that is equal to snode_id.
    */
-  size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
+  size_t find_first_source( const size_t tid,
+    const synindex syn_id,
+    const size_t snode_id,
+    bool isCompressedEnabled = false ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
@@ -471,27 +475,75 @@ SourceTable::no_targets_to_process( const size_t tid )
 }
 
 inline size_t
-SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
+SourceTable::find_first_source( const size_t tid,
+  const synindex syn_id,
+  const size_t snode_id,
+  bool isCompressedEnabled /* default = false */ ) const
 {
-  // binary search in sorted sources
-  const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
-  const BlockVector< Source >::const_iterator end = sources_[ tid ][ syn_id ].end();
-  BlockVector< Source >::const_iterator it = std::lower_bound( begin, end, Source( snode_id, true ) );
+  using SourceIter = BlockVector< Source >::const_iterator;
 
-  // source found by binary search could be disabled, iterate through
-  // sources until a valid one is found
-  while ( it != end )
+  const SourceIter begin = sources_[ tid ][ syn_id ].begin();
+  const SourceIter end = sources_[ tid ][ syn_id ].end();
+
+  if ( isCompressedEnabled )
   {
-    if ( it->get_node_id() == snode_id and not it->is_disabled() )
-    {
-      const size_t lcid = it - begin;
-      return lcid;
-    }
-    ++it;
-  }
+    // binary search in sorted sources
+    SourceIter it = std::lower_bound( begin, end, Source( snode_id, true ) );
 
-  // no enabled entry with this snode ID found
-  return invalid_index;
+    // source found by binary search could be disabled, iterate through
+    // sources until a valid one is found
+    while ( it != end )
+    {
+      if ( it->get_node_id() == snode_id and not it->is_disabled() )
+      {
+        const size_t lcid = it - begin;
+        return lcid;
+      }
+      ++it;
+    }
+
+    // no enabled entry with this snode ID found
+    return invalid_index;
+  }
+  else
+  {
+
+    auto nth_equal =
+      []( SourceIter first, SourceIter last, const Source& value, size_t n ) -> std::pair< bool, SourceIter >
+    {
+      if ( n == 0 )
+      {
+        auto iter = std::find( first, last, value );
+        return { iter != last, iter };
+      }
+      auto iter = std::find( first, last, value );
+      while ( n > 0 && iter != last )
+      {
+        --n;
+        iter = std::find( std::next( iter ), last, value );
+      }
+      return { iter != last, iter };
+    };
+    size_t pos = 0;
+    auto res = nth_equal( begin, end, Source( snode_id, true ), pos );
+    if ( !res.first )
+    {
+      return invalid_index;
+    }
+
+    while ( res.first )
+    {
+      if ( res.second->get_node_id() == snode_id && not res.second->is_disabled() )
+      {
+        // found a valid source
+        size_t lcid = res.second - begin;
+        return lcid;
+      }
+      ++pos;
+      res = nth_equal( std::next( res.second ), end, Source( snode_id, true ), pos );
+    }
+    return invalid_index;
+  }
 }
 
 inline void
@@ -521,8 +573,8 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
-        cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
+    cit != sources_[ tid ][ syn_id ].end();
+    ++cit )
   {
     if ( last_source != ( *cit ).get_node_id() )
     {

@@ -485,10 +485,12 @@ SourceTable::find_first_source( const size_t tid,
   const SourceIter begin = sources_[ tid ][ syn_id ].begin();
   const SourceIter end = sources_[ tid ][ syn_id ].end();
 
+  Source value {snode_id, true};
+
   if ( isCompressedEnabled )
   {
     // binary search in sorted sources
-    SourceIter it = std::lower_bound( begin, end, Source( snode_id, true ) );
+    SourceIter it = std::lower_bound( begin, end, value );
 
     // source found by binary search could be disabled, iterate through
     // sources until a valid one is found
@@ -525,7 +527,7 @@ SourceTable::find_first_source( const size_t tid,
       return { iter != last, iter };
     };
     size_t pos = 0;
-    auto res = nth_equal( begin, end, Source( snode_id, true ), pos );
+    auto res = nth_equal( begin, end, value, pos );
     if ( !res.first )
     {
       return invalid_index;
@@ -540,7 +542,7 @@ SourceTable::find_first_source( const size_t tid,
         return lcid;
       }
       ++pos;
-      res = nth_equal( std::next( res.second ), end, Source( snode_id, true ), pos );
+      res = nth_equal( std::next( res.second ), end, value, pos );
     }
     return invalid_index;
   }

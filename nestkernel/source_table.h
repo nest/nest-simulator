@@ -485,7 +485,7 @@ SourceTable::find_first_source( const size_t tid,
   const SourceIter begin = sources_[ tid ][ syn_id ].begin();
   const SourceIter end = sources_[ tid ][ syn_id ].end();
 
-  Source value {snode_id, true};
+  Source value { snode_id, true };
 
   if ( isCompressedEnabled )
   {
@@ -575,8 +575,8 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
-        cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
+    cit != sources_[ tid ][ syn_id ].end();
+    ++cit )
   {
     if ( last_source != ( *cit ).get_node_id() )
     {

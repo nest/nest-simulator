@@ -107,13 +107,13 @@ nest::sis_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_t
 inline SignalType
 nest::sis_neuron::sends_signal() const
 {
-  return SIS;
+  return BINARY;
 }
 
 inline SignalType
 nest::sis_neuron::receives_signal() const
 {
-  return SIS;
+  return BINARY;
 }
 
 
@@ -299,7 +299,7 @@ nest::sis_neuron::update( Time const& origin, const long from, const long to )
       // an event sent to all its targets
 
       // initialize y_new
-      size_t new_y;
+      size_t new_y = 0;
 
       if ( S_.y_ == 0 ) // neuron is susceptible
       {

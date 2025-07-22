@@ -183,10 +183,7 @@ enum SignalType
   NONE = 0,
   SPIKE = 1,
   BINARY = 2,
-  SIR = 3,
-  SIRS = 4,
-  SIS = 5,
-  ALL = SPIKE | BINARY | SIR | SIRS | SIS
+  ALL = SPIKE | BINARY
 };
 }
 #endif /* #ifndef NEST_TYPES_H */

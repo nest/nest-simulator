@@ -42,18 +42,6 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: NEST Sudoku solver
-           :img-top: ../static/img/sudoku_solution.gif
-
-           * :doc:`../auto_examples/sudoku/sudoku_solver`
-           * :doc:`../auto_examples/sudoku/plot_progress`
-
-    .. grid-item-card:: NEST Pong game
-           :img-top: ../static/img/pong_sim.gif
-
-           * :doc:`../auto_examples/pong/run_simulations`
-           * :doc:`../auto_examples/pong/generate_gif`
-
     .. grid-item-card:: Astrocytes
            :img-top: ../static/img/astrocyte_interaction.png
 
@@ -62,6 +50,18 @@ PyNEST examples
            * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
            * :doc:`../auto_examples/astrocytes/astrocyte_brunel_bernoulli`
            * :doc:`../auto_examples/astrocytes/astrocyte_brunel_fixed_indegree`
+
+    .. grid-item-card::  Discrete state neurons
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`Susceptible (S), Infected (I), Recovered (R) model of the spread of disease <../auto_examples/sir_neuron>`
+
+    .. grid-item-card:: Rate neurons
+           :img-top: ../static/img/pynest/rate_neuron.png
+
+           * :doc:`../auto_examples/lin_rate_ipn_network`
+           * :doc:`../auto_examples/rate_neuron_dm`
+
 
 
 .. grid:: 1 1 2 3
@@ -106,7 +106,6 @@ PyNEST examples
            * :doc:`../auto_examples/compartmental_model/two_comps`
 
 
-
     .. grid-item-card:: GIF (from Gerstner lab)
            :img-top: ../static/img/pynest/gif_pop.png
 
@@ -116,12 +115,6 @@ PyNEST examples
 
 
 .. grid:: 1 1 2 3
-
-    .. grid-item-card:: Rate neurons
-           :img-top: ../static/img/pynest/rate_neuron.png
-
-           * :doc:`../auto_examples/lin_rate_ipn_network`
-           * :doc:`../auto_examples/rate_neuron_dm`
 
 
     .. grid-item-card:: Hodgkin-Huxley
@@ -135,14 +128,15 @@ PyNEST examples
 
            * :doc:`../auto_examples/BrodyHopfield`
 
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
            * :doc:`../auto_examples/brette_gerstner_fig_2c`
            * :doc:`../auto_examples/brette_gerstner_fig_3d`
 
+
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Precise spiking
            :img-top: ../static/img/pynest/precisespiking.png
@@ -154,12 +148,26 @@ PyNEST examples
 
            * :doc:`../auto_examples/CampbellSiegert`
 
-.. grid:: 1 1 2 3
-
-      .. grid-item-card:: Decision making in recurrent network (after Wang 2002)
+    .. grid-item-card:: Decision making in recurrent network (after Wang 2002)
            :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`../auto_examples/wang_decision_making`
+
+
+.. grid:: 1 1 2 3
+
+    .. grid-item-card:: NEST Sudoku solver
+           :img-top: ../static/img/sudoku_solution.gif
+
+           * :doc:`../auto_examples/sudoku/sudoku_solver`
+           * :doc:`../auto_examples/sudoku/plot_progress`
+
+    .. grid-item-card:: NEST Pong game
+           :img-top: ../static/img/pong_sim.gif
+
+           * :doc:`../auto_examples/pong/run_simulations`
+           * :doc:`../auto_examples/pong/generate_gif`
+
 
 .. grid:: 1 1 2 3
 

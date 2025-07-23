@@ -161,6 +161,7 @@ public:
    * @param syn_id Synapse type.
    * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
    * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
+   * @param t_spike The time of the pre-synaptic spike which needs a correction.
    * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
    * correction.
    * @param t_post_spike Time of the current post-synaptic spike.
@@ -169,7 +170,9 @@ public:
     const synindex syn_id,
     const size_t lcid,
     const double t_last_pre_spike,
+    const double t_spike_critical_interval_end,
     double& weight_revert,
+    const double K_plus_revert,
     const double t_post_spike ) = 0;
 
   virtual void
@@ -438,7 +441,9 @@ public:
     const synindex syn_id,
     const size_t lcid,
     const double t_last_pre_spike,
+    const double t_spike_critical_interval_end,
     double& weight_revert,
+    const double K_plus_revert,
     const double t_post_spike ) override;
 
   // Implemented in connector_base_impl.h

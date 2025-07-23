@@ -304,6 +304,7 @@ void
 ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   const double t_last_pre_spike,
   const double weight_revert,
+  const double K_plus_revert,
   const double time_while_critical )
 {
   assert( correction_entries_stdp_ax_delay_.size()
@@ -313,8 +314,8 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
   const SpikeData& spike_data = spike_event.get_sender_spike_data();
-  correction_entries_stdp_ax_delay_[ idx ].push_back(
-    CorrectionEntrySTDPAxDelay( spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert ) );
+  correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay(
+    spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert, K_plus_revert ) );
 }
 
 void
@@ -358,7 +359,9 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
           it_corr_entry.syn_id_,
           it_corr_entry.lcid_,
           it_corr_entry.t_last_pre_spike_,
+          ( ori + Time::step( lag + 1 ) ).get_ms(),
           it_corr_entry.weight_revert_,
+          it_corr_entry.K_plus_revert_,
           t_spike.get_ms() );
       }
       // indicate that the new spike was processed by these STDP synapses

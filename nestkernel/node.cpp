@@ -144,7 +144,7 @@ Node::get_local_device_id() const
 }
 
 void
-Node::add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double )
+Node::add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double, const double )
 {
   throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
 }

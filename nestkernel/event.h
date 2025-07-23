@@ -1011,10 +1011,9 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
-  stamp_steps_ = 0; // setting stamp_steps to zero indicates
-                    // stamp_steps needs to be recalculated from
-                    // stamp_ next time it is needed (e.g., in
-                    // get_rel_delivery_steps)
+  // setting stamp_steps to zero indicates stamp_steps needs to be recalculated from stamp_ next time it is needed
+  // (e.g., in get_rel_delivery_steps)
+  stamp_steps_ = 0;
 }
 
 inline long

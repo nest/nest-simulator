@@ -179,7 +179,9 @@ public:
    */
   void correct_synapse_stdp_ax_delay( const size_t tid,
     const double t_last_pre_spike,
+    const double t_spike_critical_interval_end,
     double& weight_revert,
+    const double K_plus_revert,
     const double t_post_spike,
     const CommonSynapseProperties& );
 
@@ -462,7 +464,9 @@ template < typename targetidentifierT, typename DelayTypeT >
 inline void
 Connection< targetidentifierT, DelayTypeT >::correct_synapse_stdp_ax_delay( const size_t,
   const double,
+  const double,
   double&,
+  const double,
   const double,
   const CommonSynapseProperties& )
 {

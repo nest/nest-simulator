@@ -188,7 +188,9 @@ public:
    */
   void correct_synapse_stdp_ax_delay( const size_t tid,
     const double t_last_spike,
+    const double t_spike_critical_interval_end,
     double& weight_revert,
+    const double K_plus_revert,
     const double t_post_spike,
     const STDPPLHomAxDelayCommonProperties& cp );
 
@@ -301,8 +303,12 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
     &start,
     &finish );
 
+  // Framework for STDP with predominantly axonal delays:
+  // Store pre-synaptic trace for potential later correction
+  const double K_plus_revert = Kplus_;
+
   // facilitation due to postsynaptic spikes since last pre-synaptic spike
-  double minus_dt;
+  double minus_dt = 0.; // TODO JV
   while ( start != finish )
   {
     minus_dt = t_lastspike_ + axonal_delay_ms - ( start->t_ + dendritic_delay_ms );
@@ -331,13 +337,11 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   const long time_while_critical =
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) - 2 * get_dendritic_delay_steps() + 1;
   // Only add correction entry if there could potentially be any post-synaptic spike that occurs before the
-  // pre-synaptic one arrives at the synapse. Has to be strictly greater than min_delay, because a post-synaptic spike
-  // at time slice_origin+min_delay corresponds to the last update step in the current slice (before delivery) and was
-  // thus already known at time of delivery of the pre-synaptic one.
+  // pre-synaptic one arrives at the synapse.
   if ( time_while_critical > 0 )
   {
     static_cast< ArchivingNode* >( target )->add_correction_entry_stdp_ax_delay(
-      static_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, time_while_critical );
+      static_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, K_plus_revert, time_while_critical );
   }
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
@@ -384,28 +388,27 @@ template < typename targetidentifierT >
 inline void
 stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const double t_last_spike,
+  const double t_spike_critical_interval_end,
   double& weight_revert,
+  const double K_plus_revert,
   const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-  const double t_spike = t_lastspike_; // no new pre-synaptic spike since last send()
   const double wrong_weight = weight_; // incorrectly transmitted weight
-  weight_ = weight_revert;             // removes the last depressive step
   Node* target = get_target( tid );
 
   const double axonal_delay_ms = get_axonal_delay_ms();
   double dendritic_delay_ms = get_dendritic_delay_ms();
 
+  const double t_spike = t_spike_critical_interval_end + dendritic_delay_ms - axonal_delay_ms;
+
   // facilitation due to new post-synaptic spike
   const double minus_dt = t_last_spike + axonal_delay_ms - ( t_post_spike + dendritic_delay_ms );
 
-  double K_plus_revert;
   // Only facilitate if not facilitated already (only if first correction for this post-spike)
   if ( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() )
   {
-    // Kplus value at t_last_spike_ needed
-    K_plus_revert = ( Kplus_ - 1.0 ) / std::exp( ( t_last_spike - t_spike ) * cp.tau_plus_inv_ );
-    weight_ = facilitate_( weight_, K_plus_revert * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+    weight_ = facilitate_( weight_revert, K_plus_revert * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
 
     // update weight_revert in case further correction will be required later
     weight_revert = weight_;

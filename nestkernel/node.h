@@ -1025,6 +1025,7 @@ public:
   void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
     const double t_last_pre_spike,
     const double weight_revert,
+    const double K_plus_revert,
     const double time_while_critical );
 
   /**

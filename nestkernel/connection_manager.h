@@ -322,16 +322,19 @@ public:
    * @param syn_id Synapse type.
    * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
    * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
+   * @param t_spike
    * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
    * correction.
    * @param t_post_spike Time of the current post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( const size_t tid,
-    const synindex syn_id,
-    const size_t lcid,
-    const double t_last_pre_spike,
+  void correct_synapse_stdp_ax_delay( size_t tid,
+    synindex syn_id,
+    size_t lcid,
+    double t_last_pre_spike,
+    double t_spike_critical_interval_end,
     double& weight_revert,
-    const double t_post_spike );
+    double K_plus_revert,
+    double t_post_spike );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -937,12 +940,14 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const double t_last_pre_spike,
+  const double t_spike_critical_interval_end,
   double& weight_revert,
+  const double K_plus_revert,
   const double t_post_spike )
 {
   ++num_corrections_;
   connections_[ tid ][ syn_id ]->correct_synapse_stdp_ax_delay(
-    tid, syn_id, lcid, t_last_pre_spike, weight_revert, t_post_spike );
+    tid, syn_id, lcid, t_last_pre_spike, t_spike_critical_interval_end, weight_revert, K_plus_revert, t_post_spike );
 }
 
 inline void

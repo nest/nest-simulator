@@ -397,7 +397,7 @@ class TestSTDPPlSynapse:
 
     @pytest.mark.parametrize(
         ["dend_delay", "ax_delay"],
-        ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
+        ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (2.0, 0.0), (1.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
     )
     @pytest.mark.parametrize("model", ("iaf_psc_alpha",))
     @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))

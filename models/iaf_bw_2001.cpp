@@ -22,6 +22,7 @@
 
 #include "iaf_bw_2001.h"
 
+#include <boost/math/special_functions/gamma.hpp>
 #ifdef HAVE_GSL
 
 // Includes from libnestutil:
@@ -44,7 +45,6 @@
 
 // Includes from standard library
 #include <algorithm>
-#include <boost/math/special_functions/gamma.hpp>
 #include <typeinfo>
 
 /* ---------------------------------------------------------------------------

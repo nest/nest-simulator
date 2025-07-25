@@ -219,7 +219,7 @@ public:
 
 class UnknownNode : public KernelException
 {
-  int id_;
+  long id_;
 
 public:
   UnknownNode()
@@ -227,7 +227,7 @@ public:
     , id_( -1 )
   {
   }
-  UnknownNode( int id )
+  UnknownNode( long id )
     : KernelException( "UnknownNode" )
     , id_( id )
   {

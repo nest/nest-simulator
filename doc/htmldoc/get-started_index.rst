@@ -147,6 +147,8 @@ More topics
        |neuron| More about neurons
        ^^^
 
+       * :ref:`types_neurons`
+       * :ref:`neuron_update`
        * :ref:`sim_precise_spike_times`
        * :ref:`exact_integration`
 
@@ -212,6 +214,8 @@ More topics
 
    tutorials/index
    tutorials/pynest_tutorial/index
+   neurons/neuron_update
+   neurons/neuron_types
 
 .. toctree::
    :maxdepth: 1

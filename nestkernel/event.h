@@ -973,12 +973,14 @@ Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const s
 inline Node&
 Event::get_receiver() const
 {
+  assert( receiver_ );
   return *receiver_;
 }
 
 inline Node&
 Event::get_sender() const
 {
+  assert( sender_ );
   return *sender_;
 }
 

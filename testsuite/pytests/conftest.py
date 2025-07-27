@@ -159,7 +159,10 @@ def have_plotting():
 
 @pytest.fixture(scope="session")
 def subprocess_compatible_mpi():
-    """Until at least OpenMPI 4.1.6, the following fails due to a bug in OpenMPI, from 5.0.7 is definitely safe."""
+    """
+    Until at least OpenMPI 4.1.6, the following fails due to a bug in OpenMPI, 
+    from 5.0.7 is definitely safe.
+    """
     try: 
         res = subprocess.run(["mpirun", "-np", "1", "echo"])
         return 0 == res.returncode

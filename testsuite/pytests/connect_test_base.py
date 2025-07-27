@@ -28,7 +28,8 @@ import scipy.stats
 try:
     from mpi4py import MPI
 
-    haveMPI4Py = True
+    # set this to 'False' if NEST was compiled without MPI
+    haveMPI4Py = nest.ll_api.sli_func("statusdict/have_mpi ::")
 except ImportError:
     haveMPI4Py = False
 

@@ -27,9 +27,11 @@ import nest
 import numpy as np
 import scipy.stats
 
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
+@unittest.skipIf(not HAVE_MPI, "NEST was compiled without MPI")
 @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class TestAllToAll(connect_test_base.ConnectTestBase):

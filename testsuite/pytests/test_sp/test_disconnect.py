@@ -23,15 +23,18 @@ import unittest
 
 import nest
 
+# Check that NEST is installed with MPI support and mpi4py is available.
 try:
+    import mpi4py
+
+    HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
+except ImportError:
+    HAVE_MPI4PY = False
+
+if HAVE_MPI4PY:
     from mpi4py import MPI
 
-    have_mpi4py = True
-except ImportError:
-    have_mpi4py = False
-
-have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
+test_with_mpi = HAVE_MPI4PY and nest.num_processes > 1
 
 
 class TestDisconnectSingle(unittest.TestCase):

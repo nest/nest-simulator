@@ -28,9 +28,13 @@ import scipy.stats
 # Check that NEST is installed with MPI support and mpi4py is available.
 try:
     import mpi4py
+
     HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
 except ImportError:
     HAVE_MPI4PY = False
+
+if HAVE_MPI4PY:
+    from mpi4py import MPI
 
 
 class ConnectTestBase(unittest.TestCase):

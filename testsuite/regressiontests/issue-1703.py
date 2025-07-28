@@ -30,6 +30,7 @@ import os
 import shlex
 import subprocess
 import sys
+import nest
 
 EXIT_CODE_SUCCESS = 0
 EXIT_CODE_ERROR = 1
@@ -40,12 +41,15 @@ EXIT_SKIPPED = 200
 EXIT_FAILURE = 127
 EXIT_SEGFAULT = 139
 
-# Check that NEST is installed with Python support, and that mpi4py is available.
+# Check that NEST is installed with MPI support and mpi4py is available.
 # If not, the test is skipped.
 try:
-    import nest
-    from mpi4py import MPI  # noqa: F401
+    import mpi4py
+    HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
 except ImportError:
+    HAVE_MPI4PY = False
+    
+if not HAVE_MPI4PY:    
     sys.exit(EXIT_SKIPPED)
 
 # Attempt to import MPI from mpi4py before NEST. Running the script in a separate process,

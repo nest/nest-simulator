@@ -45,6 +45,10 @@
  *                             double value. An standard value for the growth of
  * a
  *                             synaptic element is around 0.0001 elements/ms.
+ *  z_connected      integer - Current number of connected synaptic elements. Stored
+ *                             as an integer variable. The difference between z
+ *                             and this value determines the number of vacant
+ *                             synaptic elements. Default is 0.
  *  continuous       boolean - Defines if the number of synaptic elements should
  *                             be treated as a continuous double number or as an
  *                             integer value. Default is false.

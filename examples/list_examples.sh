@@ -24,7 +24,7 @@ set -euo pipefail
 IFS=$' \n\t'
 
 echo ">>> Longest running examples:"
-egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -r | head -n 20 || true;
+grep -Eo "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -r | head -n 20 || true;
 
 echo ">>> multiple run statistics"
 for x in example_logs/*/meta.yaml; do

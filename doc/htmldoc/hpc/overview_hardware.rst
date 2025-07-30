@@ -42,5 +42,3 @@ Data and instructions are allocated through software.
 
 To efficiently run your large and complex simulation, you need to configure the optimal number of :ref:`threads <threads>` and :ref:`processes <mpi_process>` for
 your simulation and the given hardware of the HPC system you are using.
-
-

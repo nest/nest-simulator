@@ -45,6 +45,6 @@ SeeAlso: unittest::distributed_rank_invariant_collect_assert_or_die, testsuite::
 [1 2 4]
 {
  % each rank returns same result
- [1 2 3 4] 
+ [1 2 3 4]
 }
 distributed_rank_invariant_collect_assert_or_die

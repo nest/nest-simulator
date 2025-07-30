@@ -23,22 +23,22 @@
  /** @BeginDocumentation
     Name: testsuite::test_iaf_psc_exp_ps - sli script for overall test of iaf_psc_exp_ps model
 
-    Synopsis: (test_iaf_psc_exp_ps) run -> compares response to current step with reference data 
+    Synopsis: (test_iaf_psc_exp_ps) run -> compares response to current step with reference data
 
     Description:
     test_iaf_psc_exp_ps.sli is an overall test of the iaf_psc_exp_ps model connected
     to some useful devices.
 
-    A DC current is injected into the neuron using a current generator 
-    device. The membrane potential as well as the spiking activity are 
+    A DC current is injected into the neuron using a current generator
+    device. The membrane potential as well as the spiking activity are
     recorded by corresponding devices.
 
     It can be observed how the current charges the membrane, a spike
     is emitted, the neuron becomes absolute refractory, and finally
     starts to recover.
 
-    The timing of the various events on the simulation grid is of 
-    particular interest and crucial for the consistency of the 
+    The timing of the various events on the simulation grid is of
+    particular interest and crucial for the consistency of the
     simulation scheme.
 
     Although 0.1 cannot be represented in the IEEE double data type, it
@@ -46,11 +46,11 @@
     ms because by default nest is built with a timebase enabling exact
     representation of 0.1 ms.
 
-    The expected output is documented and briefly commented at the end of 
+    The expected output is documented and briefly commented at the end of
     the script.
 
     Other test programs discuss the various aspects of this script in detail,
-    see the SeeAlso key below.    
+    see the SeeAlso key below.
 
     Author:  Jeyashree Krishnan, 2017
     SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::test_iaf_psc_exp_ps_lossless
@@ -64,8 +64,8 @@
 
 ResetKernel
 
-<< 
-  /local_num_threads 1 
+<<
+  /local_num_threads 1
   /resolution h
 >> SetKernelStatus
 
@@ -88,15 +88,15 @@ neuron sp_det 1.0 h Connect
 sp_det /events get /times get First stack    % prints spike time
 
 {                                             % reference data
- dup Transpose First /test_times Set         % times of reference 
-                               
+ dup Transpose First /test_times Set         % times of reference
+
  vm [/events [/times /V_m]] get cva   % array of recorded data
   6 ToUnitTestPrecision                      % to precision of reference
   Transpose           dup ==                       % all recorded tuples
   {First test_times exch MemberQ } Select    % those with reference
  eq                                          % compare
 }
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Expected output of this program:
@@ -126,7 +126,7 @@ sp_det /events get /times get First stack    % prints spike time
 [ 48      -55.2513 ] %
 [ 49      -55.0001 ] %
 [ 50      -70      ] % <---- The membrane potential crossed threshold in the
-[ 51      -70      ] %       step 4.9 ms -> 5.0 ms. The membrane potential is 
+[ 51      -70      ] %       step 4.9 ms -> 5.0 ms. The membrane potential is
 [ 52      -70      ] %       reset (no super-threshold values can be observed).
 [ 53      -70      ] %       The precise spike time is reported at 4.90004 ms.
 [ 54      -70      ] %
@@ -146,27 +146,26 @@ sp_det /events get /times get First stack    % prints spike time
 [ 68      -70      ] %
 [ 69      -70      ] %
 [ 70      -69.6021 ] % <---- Since the neuron uses precise spike times that are not
-[ 71      -69.2081 ] %       locked to the grid, the refractory period ended after 
-[ 72      -68.818  ] %       2.0 ms during the timestep 6.9 ms -> 7.0 ms. The membrane 
+[ 71      -69.2081 ] %       locked to the grid, the refractory period ended after
+[ 72      -68.818  ] %       2.0 ms during the timestep 6.9 ms -> 7.0 ms. The membrane
 [ 73      -68.4317 ] %       potential has already started to increase again.
-[ 74      -68.0493 ] %       
+[ 74      -68.0493 ] %
 [ 75      -67.6707 ] %
 [ 76      -67.2959 ] %
 [ 77      -66.9248 ] %
-[ 78      -66.5574 ] % 
+[ 78      -66.5574 ] %
 [ 79      -66.1936 ] % <--
 ]                    %    |
 %                         |
 %                          - The simulation was run for 8.0 ms. However, in the step
 %                            7.9 ms -> 8.0 ms the voltmeter necessarily receives the
-%                            voltages that occurred at time 7.9 ms (delay h). This 
-%                            results in different end times of the recorded voltage 
-%                            traces at different resolutions. In the current 
-%                            simulation kernel there is no general cure for this 
+%                            voltages that occurred at time 7.9 ms (delay h). This
+%                            results in different end times of the recorded voltage
+%                            traces at different resolutions. In the current
+%                            simulation kernel there is no general cure for this
 %                            problem. One workaround is to end the simulation script
 %                            with "h Simulate", thereby making the script resolution
 %                            dependent.
 %
 
 exch assert_or_die
-

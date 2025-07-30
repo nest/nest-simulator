@@ -24,7 +24,7 @@
 /** @BeginDocumentation
 Name: testsuite::test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
 
-Synopsis: (test_psp_amplitude_consistency) run -> 
+Synopsis: (test_psp_amplitude_consistency) run ->
 
 Description:
 
@@ -51,9 +51,9 @@ M_ERROR setverbosity
 
 % Parameters for conductance based models
 <<
-  /E_L       0.0      % resting potential in mV 
+  /E_L       0.0      % resting potential in mV
   /g_L      30.0
-  /V_m       0.0      % initial membrane potential in mV  
+  /V_m       0.0      % initial membrane potential in mV
   /V_th     30.0      % spike threshold in mV
   /I_e       0.0      % DC current in pA
   /E_ex     40.0
@@ -68,15 +68,15 @@ M_ERROR setverbosity
 % Parameters for current based models
 <<
   /tau_m    10.0
-  /E_L       0.0      % resting potential in mV 
-  /V_m       0.0      % initial membrane potential in mV  
+  /E_L       0.0      % resting potential in mV
+  /V_m       0.0      % initial membrane potential in mV
   /V_th     15.0      % spike threshold in mV
   /I_e       0.0      % DC current in pA
   /C_m     250.0      % membrane capacity in pF
 >> /P_psc Set
 
-/ComputePSP << 
-                /model /aeif_cond_alpha 
+/ComputePSP <<
+                /model /aeif_cond_alpha
                 /params P_cond
             >> Options
 
@@ -91,7 +91,7 @@ M_ERROR setverbosity
   sg <<
      /origin 50.0            % in ms
      /spike_times [ 20.0 ]   % in ms
-     /start 0.0              % in ms 
+     /start 0.0              % in ms
      /stop  50.0             % in ms
    >> SetStatus
 

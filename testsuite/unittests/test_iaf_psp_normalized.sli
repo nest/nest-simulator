@@ -22,7 +22,7 @@
 
 
 /** @BeginDocumentation
-Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized 
+Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized
 
 Synopsis: (test_iaf_psp_normalized) run -> compare response with desired outcome
 
@@ -63,7 +63,7 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_
 (unittest) run
 /unittest using
 
-1.0    /delay Set   % in ms 
+1.0    /delay Set   % in ms
 0.001  /h     Set
 
 1.0  /u Set   % requested PSP size in mV
@@ -71,7 +71,7 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_
 <<                 % parameter of the Brunel network examples
   /tau_m   20.0    % membrane time constant in ms
   /tau_syn  0.5    % synaptic time constant in ms
-  /C_m      1.0    % membrane capacity in pF 
+  /C_m      1.0    % membrane capacity in pF
   /E_L      0.0
   /V_reset  0.0
   /V_th    15.0
@@ -82,9 +82,9 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_
 
 /psp
  [/t]
- ( 
-  E/tau_syn * 1/C_m 
-    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ (
+  E/tau_syn * 1/C_m
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
  )
  Function
 def
@@ -95,9 +95,9 @@ def
 /dpsp
  [/t]
  (
-  E/tau_syn * 1/C_m 
-    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2 
-        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m) 
+  E/tau_syn * 1/C_m
+    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2
+        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)
       )
  )
  Function
@@ -108,15 +108,15 @@ def
 P begin
 << >> begin
 
- statusdict/have_gsl :: 
+ statusdict/have_gsl ::
  {
   (                                               % closed form solution
    a=tau_m/tau_syn;
    t= (-a*LambertWm1(-exp(-1/a)/a) -1)/a / (1/tau_syn - 1/tau_m);
-  ) ExecMath 
+  ) ExecMath
  }
  {                                                % numerical solution in absence of GSL
-  {dpsp} 0. 5.0 0.00000000001 FindRoot /t Set 
+  {dpsp} 0. 5.0 0.00000000001 FindRoot /t Set
  }
  ifelse
  t psp inv
@@ -125,14 +125,14 @@ P begin
 end
 /f Set  % f is the weight required for a PSP with unit amplitude
 
-u  f mul /w Set 
+u  f mul /w Set
 
 
 
 ResetKernel
 
 
-<< 
+<<
     /resolution h
   >> SetKernelStatus
 
@@ -144,7 +144,7 @@ sg <<
      /precise_times false
      /origin 0.0            % in ms
      /spike_times [ 2.0 ]   % in ms
-     /start 1.0             % in ms 
+     /start 1.0             % in ms
      /stop 3.0              % in ms
    >> SetStatus
 
@@ -172,12 +172,7 @@ vm neuron Connect
 7.0 Simulate
 
 
-vm [/events /V_m] get cva Max 
+vm [/events /V_m] get cva Max
 
 
 1.0 sub abs 1e-6 lt   assert_or_die
-
-
-
-
-

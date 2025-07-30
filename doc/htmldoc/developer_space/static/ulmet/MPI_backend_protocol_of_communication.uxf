@@ -90,7 +90,7 @@ bg=orange</panel_attributes>
       <w>45</w>
       <h>9</h>
     </coordinates>
-    <panel_attributes>Read File 
+    <panel_attributes>Read File
 bg=yellow</panel_attributes>
     <additional_attributes/>
   </element>
@@ -182,7 +182,7 @@ connection</panel_attributes>
       <w>45</w>
       <h>9</h>
     </coordinates>
-    <panel_attributes>Read File 
+    <panel_attributes>Read File
 bg=yellow</panel_attributes>
     <additional_attributes/>
   </element>
@@ -473,7 +473,7 @@ true
       <w>321</w>
       <h>186</h>
     </coordinates>
-    <panel_attributes>             For each run 
+    <panel_attributes>             For each run
 --
 bg=light_gray</panel_attributes>
     <additional_attributes/>
@@ -648,7 +648,7 @@ bg=yellow</panel_attributes>
       <w>42</w>
       <h>12</h>
     </coordinates>
-    <panel_attributes>Delete Files 
+    <panel_attributes>Delete Files
 of configuration
 bg=orange</panel_attributes>
     <additional_attributes/>
@@ -742,7 +742,7 @@ bg=yellow</panel_attributes>
       <w>42</w>
       <h>12</h>
     </coordinates>
-    <panel_attributes>Delete Files 
+    <panel_attributes>Delete Files
 of configuration
 bg=orange</panel_attributes>
     <additional_attributes/>
@@ -778,7 +778,7 @@ bg=orange</panel_attributes>
       <h>18</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
-true 
+true
 (1,CXX_BOOL,0,0)
 </panel_attributes>
     <additional_attributes>10.0;20.0;380.0;20.0</additional_attributes>
@@ -792,7 +792,7 @@ true
       <h>18</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
-data 
+data
 (total shape,DOUBLE,Previous_source,id[0])
 </panel_attributes>
     <additional_attributes>380.0;20.0;10.0;20.0</additional_attributes>
@@ -887,7 +887,7 @@ layer=1</panel_attributes>
       <w>51</w>
       <h>12</h>
     </coordinates>
-    <panel_attributes>create file with 
+    <panel_attributes>create file with
 list of spike generators
 bg=orange
 </panel_attributes>
@@ -901,7 +901,7 @@ bg=orange
       <w>51</w>
       <h>12</h>
     </coordinates>
-    <panel_attributes>create file with 
+    <panel_attributes>create file with
 list of spike detectors
 bg=orange</panel_attributes>
     <additional_attributes/>
@@ -914,7 +914,7 @@ bg=orange</panel_attributes>
       <w>51</w>
       <h>21</h>
     </coordinates>
-    <panel_attributes>Wait input port file 
+    <panel_attributes>Wait input port file
 bg=orange</panel_attributes>
     <additional_attributes/>
   </element>

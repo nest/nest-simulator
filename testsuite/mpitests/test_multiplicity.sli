@@ -65,7 +65,7 @@ skip_if_not_threaded
 
   10. Simulate
 
-  % Both parrots should receive 2 events.  
+  % Both parrots should receive 2 events.
   sr_source /n_events get /se Set
   sr_target /n_events get /te Set
   [se te]
@@ -80,5 +80,4 @@ skip_if_not_threaded
     } forall
     list_sum [2 2] eq
   } forall
-} distributed_collect_assert_or_die 
-    
+} distributed_collect_assert_or_die

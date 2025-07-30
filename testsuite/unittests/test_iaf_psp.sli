@@ -31,20 +31,20 @@ Description:
  test_iaf_psp.sli checks the voltage response of the iaf_psc_alpha
  model neuron to a single incoming spike. The voltage excursion is
  called postsynaptic potential (PSP). In the iaf_psc_alpha model neuron
- the postsynaptic current is described by an alpha-function 
- (see [1] and references therein). The resulting PSP has a finite 
+ the postsynaptic current is described by an alpha-function
+ (see [1] and references therein). The resulting PSP has a finite
  rise-time, with voltage and current being zero in the initial
  condition (see [1]).
 
  The dynamics is tested by connecting a device that emits spikes
- at individually configurable times (see test_spike_generator) to 
- a model neuron. 
+ at individually configurable times (see test_spike_generator) to
+ a model neuron.
 
  The weight of the connection specifies the peak value (amplitude)
  of the postsynaptic current (PSC) in pA.
 
  The subthreshold dynamics of the iaf_psc_alpha is integrated exactly.
- Therefore, it is suitable to check whether the simulation kernel 
+ Therefore, it is suitable to check whether the simulation kernel
  produces results independent of the computation step size
  (resolution).
 
@@ -52,7 +52,7 @@ Description:
  step sizes h, the SLI script needs to be independent of h.
  This is achieved by specifying all time parameters in milliseconds
  (ms). In particular the time of spike emission and the synaptic
- delay need to be integer multiples of the computation step sizes 
+ delay need to be integer multiples of the computation step sizes
  to be tested. test_iaf_dc_aligned_delay demonstrates the strategy
  for the case of DC current input.
 
@@ -72,20 +72,20 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_dc_aligned_delay, testsuite::t
 (unittest) run
 /unittest using
 
-1.0 /delay Set   % in ms 
+1.0 /delay Set   % in ms
 
 
 /AlignedImpact
 {
- << >> begin    
- /d Set /h Set   
+ << >> begin
+ /d Set /h Set
 
 
 ResetKernel
 
 
-<< 
-       /local_num_threads 1   
+<<
+       /local_num_threads 1
        /resolution h
      >> SetKernelStatus
 
@@ -97,7 +97,7 @@ sg <<
      /precise_times false
      /origin 0.0            % in ms
      /spike_times [ 2.0 ]   % in ms
-     /start 1.0             % in ms 
+     /start 1.0             % in ms
      /stop 3.0              % in ms
    >> SetStatus
 
@@ -125,30 +125,30 @@ neuron sr Connect
  vm [/events [/times /V_m]] get cva  % array of recorded voltages
   6 ToUnitTestPrecision                     % to precision of reference
   Transpose                                 % all recorded tuples
-  {First test_times exch MemberQ } Select   % those with reference 
+  {First test_times exch MemberQ } Select   % those with reference
   d eq                                      % compare
-  
-  
+
+
 end
 } def
 
 
 {
- % h d,  vector of resolutions and compressed reference data   
- InflateUnitTestData 
+ % h d,  vector of resolutions and compressed reference data
+ InflateUnitTestData
 
  Transpose {AlignedImpact} MapThread
 
  true exch {and} Fold   % remove this line to see individual results
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Expected output of this program:
-% 
-% The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike recorder. Both, voltmeter and spike 
-% recorder are connected to the same neuron. 
+%
+% The output send to std::cout is a superposition of the output of
+% the voltmeter and the spike recorder. Both, voltmeter and spike
+% recorder are connected to the same neuron.
 %
 %
 % h=   (in ms)
@@ -188,9 +188,9 @@ end
 [ 28    14                 -70]
 [ 29                       -70]
 [ 30    15     6     3     -70]% <---------  Spike arrives at neuron and
-[ 31                       -69.9974]% <-     changes the state vector of the  
-[ 32    16                 -69.9899]%   |    neuron, not visible in voltage 
-[ 33                       -69.9781]%   |    because voltage of PSP initial 
+[ 31                       -69.9974]% <-     changes the state vector of the
+[ 32    16                 -69.9899]%   |    neuron, not visible in voltage
+[ 33                       -69.9781]%   |    because voltage of PSP initial
 [ 34    17                 -69.9624]%   |    condition is 0.
 [ 35           7           -69.9434]%   |
 [ 36    18                 -69.9213]%    --  Arbitrarily close to the time
@@ -220,4 +220,3 @@ end
 %
 
 rolld exec assert_or_die
-

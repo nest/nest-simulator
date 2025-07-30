@@ -20,7 +20,7 @@
  *
  */
 
- 
+
 /** @BeginDocumentation
 Name: testsuite::test_syn_hom_w - sli script for test synapse with homogeneous weight and delay.
 
@@ -82,7 +82,7 @@ neuron sr << >> /static_synapse_hom_w Connect
 
 % function expecting testdata on stack
 {                                            % reference data
- dup Transpose First /test_times Set         % times of reference 
+ dup Transpose First /test_times Set         % times of reference
 
  vm [/events [/times /V_m]] get cva   % array of recorded data
   6 ToUnitTestPrecision                      % to precision of reference
@@ -91,10 +91,10 @@ neuron sr << >> /static_synapse_hom_w Connect
  eq                                          % compare
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Expected output of this program:
-% 
+%
 % The output send to std::cout is a superposition of the output of
 % the voltmeter and the spike recorder. Both, voltmeter and spike
 % recorder are connected to the same neuron.
@@ -132,8 +132,3 @@ neuron sr << >> /static_synapse_hom_w Connect
 ]
 
 exch assert_or_die
-
-
-
-
-

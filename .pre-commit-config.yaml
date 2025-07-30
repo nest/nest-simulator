@@ -1,10 +1,13 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-yaml
+      - id: forbid-submodules
+      - id: mixed-line-ending
+      - id: fix-byte-order-marker
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.16.3
@@ -23,13 +26,27 @@ repos:
       - id: black
         language_version: python3
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.9.0
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
+        # explicitly add input files that are not "*.sh"
+        args: [
+          #
+          # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
+          # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
+          "bin/nest_vars.sh.in",   # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
+          "testsuite/run_test.sh",
+          "testsuite/do_tests.sh",
+          "testsuite/junit_xml.sh",
+          "examples/run_examples.sh",
+          "examples/list_examples.sh",
+        ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v17.0.4
     hooks:
       - id: clang-format
         types_or: [c++]
+
+exclude: 'build/.*|thirdparty/.*'

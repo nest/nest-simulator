@@ -23,27 +23,26 @@
 # cmake/NestVersionInfo.cmake
 
 # If we can't run git at all, set everything to "unknown"
-if ! command -v git > /dev/null 2>&1; then
-  echo unknown\;unknown\;unknown
+if ! command -v git >/dev/null 2>&1; then
+  echo "unknown;unknown;unknown"
   exit 0
 fi
 
-HASH=$(git rev-parse HEAD)
+HASH="$(git rev-parse HEAD)"
 
 # Might fail if not on a branch, or no remote tracking branch is set
-BRANCH_REMOTE=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>&1)
-if [ $? -eq 0 ]; then
-  REMOTE=$(echo ${BRANCH_REMOTE} | cut -d\/ -f1)
+if BRANCH_REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' || exit $?)"; then
+  REMOTE="$(echo "${BRANCH_REMOTE}" | cut -d/ -f1)"
 else
   REMOTE="unknown"
 fi
 
 # Might fail if we are not on a branch (i.e. in 'detached HEAD' mode)
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ ! $? -eq 0 ] || [ ${BRANCH} = "HEAD" ]; then
+
+if ! BRANCH="$(git rev-parse --abbrev-ref HEAD)" || [ "${BRANCH}" = "HEAD" ]; then
   BRANCH="unknown"
 fi
 
 # Printing with semicolons as separators, as this will be interpreted as
 # a list by cmake
-echo ${HASH}\;${BRANCH}\;${REMOTE}
+echo "${HASH};${BRANCH};${REMOTE}"

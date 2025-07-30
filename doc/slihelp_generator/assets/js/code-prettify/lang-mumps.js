@@ -23,13 +23,13 @@
  * To use, include prettify.js and this file in your HTML page.
  * Then put your code in an HTML tag like
  *      <pre class="prettyprint lang-mumps">(my SQL code)</pre>
- * 
+ *
  * Commands, intrinsic functions and variables taken from ISO/IEC 11756:1999(E)
  *
  * @author chris.harris@kitware.com
  *
  * Known issues:
- * 
+ *
  * - Currently can't distinguish between keywords and local or global variables having the same name
  *   for exampe SET IF="IF?"
  * - m file are already used for MatLab hence using mumps.
@@ -38,7 +38,7 @@
 (function () {
 
 
-var commands = 'B|BREAK|'       + 
+var commands = 'B|BREAK|'       +
                'C|CLOSE|'       +
                'D|DO|'          +
                'E|ELSE|'        +
@@ -52,7 +52,7 @@ var commands = 'B|BREAK|'       +
                'L|LOCK|'        +
                'M|MERGE|'       +
                'N|NEW|'         +
-               'O|OPEN|'        +     
+               'O|OPEN|'        +
                'Q|QUIT|'        +
                'R|READ|'        +
                'S|SET|'         +
@@ -61,12 +61,12 @@ var commands = 'B|BREAK|'       +
                'TRO|TROLLBACK|' +
                'TS|TSTART|'     +
                'U|USE|'         +
-               'V|VIEW|'        +  
+               'V|VIEW|'        +
                'W|WRITE|'       +
                'X|XECUTE';
 
 var intrinsicVariables = 'D|DEVICE|'       +
-                         'EC|ECODE|'       +  
+                         'EC|ECODE|'       +
                          'ES|ESTACK|'      +
                          'ET|ETRAP|'       +
                          'H|HOROLOG|'      +
@@ -83,7 +83,7 @@ var intrinsicVariables = 'D|DEVICE|'       +
                          'TR|TRESTART|'    +
                          'X|'              +
                          'Y|'              +
-                         'Z[A-Z]*|';    
+                         'Z[A-Z]*|';
 
 var intrinsicFunctions = 'A|ASCII|'        +
                          'C|CHAR|'         +
@@ -106,10 +106,10 @@ var intrinsicFunctions = 'A|ASCII|'        +
                          'ST|STACK|'       +
                          'T|TEXT|'         +
                          'TR|TRANSLATE|'   +
-                         'V|VIEW|'         * 
-                         'Z[A-Z]*|';   
+                         'V|VIEW|'         *
+                         'Z[A-Z]*|';
 
-var intrinsic = intrinsicVariables + intrinsicFunctions;                  
+var intrinsic = intrinsicVariables + intrinsicFunctions;
 
 
 var shortcutStylePatterns = [
@@ -127,9 +127,9 @@ var fallthroughStylePatterns = [
          [PR['PR_DECLARATION'], new RegExp('^(?:\\$(?:' + intrinsic + '))\\b', 'i'), null],
          // Add commands as keywords
          [PR['PR_KEYWORD'], new RegExp('^(?:[^\\$]' + commands + ')\\b', 'i'), null],
-         // A number is a decimal real literal or in scientific notation. 
+         // A number is a decimal real literal or in scientific notation.
          [PR['PR_LITERAL'],
-          /^[+-]?(?:(?:\.\d+|\d+(?:\.\d*)?)(?:E[+\-]?\d+)?)/i], 
+          /^[+-]?(?:(?:\.\d+|\d+(?:\.\d*)?)(?:E[+\-]?\d+)?)/i],
          // An identifier
          [PR['PR_PLAIN'], /^[a-z][a-zA-Z0-9]*/i],
          // Exclude $ % and ^

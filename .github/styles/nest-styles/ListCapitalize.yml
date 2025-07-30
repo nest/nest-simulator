@@ -6,4 +6,3 @@ scope: list
 nonword: true
 tokens:
   - '^[a-z].+'
-

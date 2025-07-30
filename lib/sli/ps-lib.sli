@@ -21,7 +21,7 @@
  */
 
 
-%% Library for PS conforming operators which are not 
+%% Library for PS conforming operators which are not
 %% strictly needed by the startup process.
 /** @BeginDocumentation
 Name: array - construct array with n zeros (PS)
@@ -46,7 +46,7 @@ SeeAlso: Range, LayoutArray, Table, arraystore
 %        string integer string putinterval string
 %
 /** @BeginDocumentation
-Name: putinterval - replace sections of an array/string 
+Name: putinterval - replace sections of an array/string
 
 Synopsis: string int string putinterval -> string
 array int array putinterval -> array
@@ -81,14 +81,14 @@ SeeAlso: floor, ceil
 
 /trunc trie
  [/doubletype] { int_d double_i } addtotrie
-def 
+def
 
 /** @BeginDocumentation
 Name: round - Round double to the nearest integer
 Synopsis: double round -> double
 	integer round -> double
 
-Description: Alternatives: Function round_d (undocumented) 
+Description: Alternatives: Function round_d (undocumented)
 -> behaviour and synopsis are the same.
 
 Examples:
@@ -96,7 +96,7 @@ Examples:
 1.5 round  --> 2.0
 2   round  --> 2.0
 
-Remarks: 
+Remarks:
 round_d is currently defined in SLI,
 could be implemented in C++ for efficiency.
 
@@ -120,11 +120,11 @@ def
 /** @BeginDocumentation
 Name: iround - Round and convert double to the nearest integer
 Synopsis: double iround -> int
-Description: 
+Description:
 Round the argument to the nearest integer and converts it to type int.
-Examples: 
+Examples:
 
-Remarks: 
+Remarks:
 
 Author: introduced non-trie-variant round_d, Ruediger Kupper.
 
@@ -140,18 +140,18 @@ def
 /** @BeginDocumentation
 Name: ceil - Return nearest integer larger than or equal to the argument.
 
-Description: Alternatives: Function ceil_d (undocumented) 
+Description: Alternatives: Function ceil_d (undocumented)
 -> behaviour and synopsis are the same.
 
 Parameters:
 The input argument must be of type integer or double.
 The output argument has the same type as the input argument.
 Examples: 2.87 ceil -> 3
-1.001 ceil -> 2 
+1.001 ceil -> 2
 Remarks:
 Note that for integer arguments, this function equals identity.
 
-Author: Ruediger Kupper, docu edited by Sirko Straube 
+Author: Ruediger Kupper, docu edited by Sirko Straube
 FirstVersion: 13.3.2003
 SeeAlso: floor
 */
@@ -164,7 +164,7 @@ def
 /** @BeginDocumentation
 Name: floor - Return nearest integer smaller than or equal to the argument.
 
-Description: Alternatives: Function floor_d (undocumented) 
+Description: Alternatives: Function floor_d (undocumented)
 -> behaviour and synopsis are the same.
 
 Parameters:
@@ -183,6 +183,4 @@ SeeAlso: ceil
 /floor trie
  [/doubletype]  /floor_d load addtotrie
  [/integertype] {} addtotrie
-def 
-
-
+def

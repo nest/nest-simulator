@@ -26,11 +26,11 @@ Name: testsuite::ticket-564 - Regression test for OpenMP-parallel problems on OS
 
 Synopsis: (ticket-564) run -> NEST exits if test fails
 
-Description: 
+Description:
 This test uses Connect to connect a net of 100 neurons
 to itself, with 100 connections per neuron, a total of 10000 connections.
-This is repeated 10 times, and the resulting number of connections checked. 
- 
+This is repeated 10 times, and the resulting number of connections checked.
+
 Author: Hans Ekkehard Plesser, 2012-05-27
 */
 
@@ -41,7 +41,7 @@ skip_if_not_threaded
 
 M_ERROR setverbosity
 
-{ 
+{
   /N    100  def % number of neurons
   /C    100  def % number of connections per neuron
   /N_VP 4    def % number of virtual processes
@@ -49,8 +49,8 @@ M_ERROR setverbosity
 
   [ 10 ]
   {
-    pop    
-    ResetKernel    
+    pop
+    ResetKernel
     << /total_num_virtual_procs N_VP >> SetKernelStatus
 
     /nodes /iaf_psc_alpha N Create def

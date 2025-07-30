@@ -113,5 +113,4 @@ Explore the NEST ecosystem
   :hidden:
 
   related_projects
-  citing-nest
   getting_help

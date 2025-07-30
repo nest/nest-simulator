@@ -733,9 +733,9 @@ jobs:
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && "${HOME}/.cache/sionlib.install" || 'OFF' }} \
-              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && "${HOME}/.cache/libneurosim.install" || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && "${HOME}/.cache/music.install" || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
               -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
               -Dwith-mpi-sync-timer=${{ contains(matrix.use, 'mpi-sync-timer') && 'ON' || 'OFF' }} \

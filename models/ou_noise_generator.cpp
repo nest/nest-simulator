@@ -62,9 +62,9 @@ RecordablesMap< ou_noise_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::ou_noise_generator::Parameters_::Parameters_()
-  : mean_( 0.0 )    // pA
-  , std_( 0.0 )     // pA / sqrt(s)
-  , tau_( 0.0 )    // ms
+  : mean_( 0.0 ) // pA
+  , std_( 0.0 )  // pA / sqrt(s)
+  , tau_( 0.0 )  // ms
   , dt_( get_default_dt() )
   , num_targets_( 0 )
 {
@@ -222,14 +222,13 @@ nest::ou_noise_generator::pre_run_hook()
   const double t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
-  const double noise_amp = P_.std_ *  std::sqrt(-1 * std::expm1(-2 * h / P_.tau_));
-  const double prop = std::exp(-1 * h / P_.tau_);
-  const double tau_inv =-std::expm1(-h / P_.tau_);
+  const double noise_amp = P_.std_ * std::sqrt( -1 * std::expm1( -2 * h / P_.tau_ ) );
+  const double prop = std::exp( -1 * h / P_.tau_ );
+  const double tau_inv = -std::expm1( -h / P_.tau_ );
 
   V_.noise_amp_ = noise_amp;
   V_.prop_ = prop;
   V_.tau_inv_ = tau_inv;
-
 }
 
 
@@ -287,9 +286,8 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
       // compute new currents
       for ( double& amp : B_.amps_ )
       {
-        amp = P_.mean_ * V_.tau_inv_
-            + amp * V_.prop_ + V_.noise_amp_
-            * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
+        amp = P_.mean_ * V_.tau_inv_ + amp * V_.prop_
+          + V_.noise_amp_ * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
       }
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;
@@ -345,8 +343,7 @@ nest::ou_noise_generator::set_data_from_stimulation_backend( std::vector< double
   {
     if ( input_param.size() != 3 )
     {
-      throw BadParameterValue(
-        "The size of the data for the ou_noise_generator needs to be 3 [mean, std, tau]." );
+      throw BadParameterValue( "The size of the data for the ou_noise_generator needs to be 3 [mean, std, tau]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );

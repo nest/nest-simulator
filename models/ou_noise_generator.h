@@ -207,10 +207,10 @@ private:
    */
   struct Parameters_
   {
-    double mean_;    //!< mean current, in pA
-    double std_;     //!< standard deviation of current, in pA
-    double tau_;    //!< Standard frequency in Hz
-    Time dt_;        //!< time interval between updates
+    double mean_; //!< mean current, in pA
+    double std_;  //!< standard deviation of current, in pA
+    double tau_;  //!< Standard frequency in Hz
+    Time dt_;     //!< time interval between updates
 
     /**
      * Number of targets.
@@ -266,11 +266,10 @@ private:
   {
     normal_distribution normal_dist_; //!< normal distribution
 
-    long dt_steps_;  //!< update interval in steps
-    double prop_;   //!< frequency [radian/s]
+    long dt_steps_;    //!< update interval in steps
+    double prop_;      //!< frequency [radian/s]
     double noise_amp_; //!<
-    double tau_inv_; //!<
-
+    double tau_inv_;   //!<
   };
 
   double

@@ -1320,14 +1320,15 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
-  const bool cache_prob = getValue< bool >( i->OStack.pick( 0 ) );
-  const double sigma = getValue< double >( i->OStack.pick( 1 ) );
-  const bool use_kernel = getValue< bool >( i->OStack.pick( 2 ) );
+  i->assert_stack_load( 4 );
+  const double max_distance = getValue< double >( i->OStack.pick( 0 ) );
+  const bool cache_prob = getValue< bool >( i->OStack.pick( 1 ) );
+  const double sigma = getValue< double >( i->OStack.pick( 2 ) );
+  const bool use_kernel = getValue< bool >( i->OStack.pick( 3 ) );
 
-  kernel().sp_manager.enable_structural_plasticity( use_kernel, sigma, cache_prob );
+  kernel().sp_manager.enable_structural_plasticity( use_kernel, sigma, cache_prob, max_distance );
 
-  i->OStack.pop( 3 );
+  i->OStack.pop( 4 );
   i->EStack.pop();
 }
 void
@@ -2012,8 +2013,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
 
     for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
-      it != ml.end();
-      ++it )
+          it != ml.end();
+          ++it )
     {
       mask_node_ids.push_back( it->second );
     }
@@ -2029,8 +2030,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
 
     for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
-      it != ml.end();
-      ++it )
+          it != ml.end();
+          ++it )
     {
       mask_node_ids.push_back( it->second );
     }

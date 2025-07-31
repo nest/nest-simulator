@@ -32,6 +32,7 @@
 
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
+#include "mask.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
@@ -127,7 +128,10 @@ public:
   /**
    * Enable structural plasticity
    */
-  void enable_structural_plasticity( bool use_gaussian_kernel, double gaussian_kernel_sigma, bool cache_probabilities );
+  void enable_structural_plasticity( bool use_gaussian_kernel,
+    double gaussian_kernel_sigma,
+    bool cache_probabilities,
+    double max_distance = 10000000 );
 
   /**
    * Disable structural plasticity
@@ -283,6 +287,10 @@ private:
    * Dimentionality of the neuron positions
    */
   int pos_dim;
+
+
+  double structural_plasticity_max_distance_;
+  std::unique_ptr< Mask< 2 > > distance_mask_template_;
 
   /**
    * List of precomputed probabilities for neuron connections, indexed

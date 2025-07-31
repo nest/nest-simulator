@@ -32,6 +32,7 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "kernel_manager.h"
+#include "mask.h"
 #include "nest_names.h"
 #include "sp_manager_impl.h"
 #include "spatial.h"
@@ -49,6 +50,8 @@ SPManager::SPManager()
   , sp_conn_builders_()
   , growthcurve_factories_()
   , growthcurvedict_( new Dictionary() )
+  , structural_plasticity_max_distance_( std::numeric_limits< double >::infinity() )
+  , distance_mask_template_( nullptr )
 {
 }
 
@@ -274,7 +277,7 @@ SPManager::get_neuron_pair_index( int id1, int id2 )
 {
   int max_id = std::max( id1, id2 );
   int min_id = std::min( id1, id2 );
-  int index = ( ( max_id ) * ( max_id - 1 ) ) / 2 + ( min_id - 1 );
+  int index = ( ( max_id ) *        ( max_id - 1 ) ) / 2 + ( min_id - 1 );
   return index;
 }
 
@@ -304,7 +307,7 @@ SPManager::roulette_wheel_selection( const std::vector< double >& probabilities,
 
   // Perform binary search to find the selected index
   auto it = std::lower_bound( cumulative.begin(), cumulative.end(), randomValue );
-  return static_cast< int >( std::distance( cumulative.begin(), it ) );
+  return static_cast< int >( std::distance(        cumulative.begin(), it ) );
 }
 
 
@@ -365,13 +368,12 @@ SPManager::build_probability_list()
         continue;
       }
 
-      
+
       std::vector< double > pos_j(
         global_positions.begin() + pos_dim * ( id_j - 1 ), global_positions.begin() + pos_dim * id_j );
 
       double prob = gaussian_kernel( pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_ );
       probability_list[ index ] = prob;
-    
     }
   }
 }
@@ -905,6 +907,16 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
     size_t pre_id = pre_ids.back();
     pre_ids.pop_back();
 
+
+    // build an AnchoredMask about this pre‐neuron’s position
+    std::vector< double > pre_pos(
+      global_positions.begin() + ( pre_id - 1 ) * pos_dim, global_positions.begin() + pre_id * pos_dim );
+
+    AnchoredMask< 2 > distance_mask( *distance_mask_template_, // the BallMask centered at 0
+      pre_pos                                                  // now anchored at pre_pos
+    );
+
+
     std::vector< double > probabilities;
     std::vector< size_t > valid_post_ids;
     double rnd;
@@ -913,6 +925,16 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
       if ( post_id == pre_id && !allow_autapse )
       {
         continue; // Skip self-connections
+      }
+
+      // fetch post position
+      std::vector< double > post_pos(
+        global_positions.begin() + ( post_id - 1 ) * pos_dim, global_positions.begin() + post_id * pos_dim );
+
+      // HARD cutoff via the Mask:
+      if ( !distance_mask.inside( post_pos ) )
+      {
+        continue; // distance > max_distance -> masked out entirely
       }
 
       double prob;
@@ -929,13 +951,14 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
       }
       else
       {
+        /**
         size_t pre_index = pre_id - 1;
         std::vector< double > pre_pos(
           global_positions.begin() + pre_index * pos_dim, global_positions.begin() + ( pre_index + 1 ) * pos_dim );
 
         size_t post_index = post_id - 1;
         std::vector< double > post_pos(
-          global_positions.begin() + post_index * pos_dim, global_positions.begin() + ( post_index + 1 ) * pos_dim );
+          global_positions.begin() + post_index * pos_dim, global_positions.begin() + ( post_index + 1 ) * pos_dim );**/
 
         prob = gaussian_kernel( pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_ );
       }
@@ -973,7 +996,8 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
 void
 nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
   double gaussian_kernel_sigma,
-  bool cache_probabilities )
+  bool cache_probabilities,
+  double max_distance )
 {
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
@@ -996,6 +1020,7 @@ nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
   structural_plasticity_cache_probabilities_ = cache_probabilities;
   structural_plasticity_enabled_ = true;
 
+  distance_mask_template_ = std::make_unique< BallMask< 2 > >( Position< 2 > { 0, 0 }, max_distance );
   if ( use_gaussian_kernel )
   {
     gather_global_positions_and_ids();

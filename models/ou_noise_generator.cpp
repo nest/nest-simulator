@@ -224,7 +224,7 @@ nest::ou_noise_generator::pre_run_hook()
   // scale Hz to ms
   const double noise_amp = P_.std_ *  std::sqrt(-1 * std::expm1(-2 * h / P_.tau_));
   const double prop = std::exp(-1 * h / P_.tau_);
-  const double tau_inv = h / P_.tau_;
+  const double tau_inv =-std::expm1(-h / P_.tau_);
 
   V_.noise_amp_ = noise_amp;
   V_.prop_ = prop;
@@ -296,6 +296,8 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
     }
 
     // record values
+    S_.I_avg_ = 0.0;
+
     for ( double& amp : B_.amps_ )
     {
       S_.I_avg_ += amp;

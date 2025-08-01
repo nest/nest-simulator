@@ -44,75 +44,46 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Generate a!!!!!!!j Gaussian white noise current
+Generates a temporally correlated noise current based on an Ornstein-Uhlenbeck process.
 
 Description
 +++++++++++
 
-The `ou_noise_generator` can be used to inject a Gaussian "white" noise current into a node.
-
-The current is not truly white, but a piecewise constant current with a Gaussian distributed
-amplitude with mean :math:`\mu` and standard deviation :math:`\sigma`. The current changes at
-a user-defined interval :math:`\delta` and is given by
+The `ou_noise_generator` can be used to inject a temporally correlated noise current into a node.
+The current I(t) follows an Ornstein-Uhlenbeck (OU) process, which is described by the following stochastic differential equation:
 
 .. math::
 
-  I(t) = \mu + N_j \sigma \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;,
+  dI = \frac{1}{\tau}(\mu - I)dt + \sigma_{stat} \sqrt{\frac{2}{\tau}} dW
 
-where :math:`N_j` are Gaussian random numbers with unit standard deviation and :math:`t_0` is
-the device onset time.
+where:
+ - :math:`\mu` is the long-term mean of the process (`mean` parameter).
+ - :math:`\tau` is the time constant of the correlation (`tau` parameter).
+ - :math:`\sigma_{stat}` is the stationary standard deviation of the process (`std` parameter).
+ - :math:`dW` is a Wiener process (Gaussian white noise).
 
-Additionally a sinusodially modulated term can be added to the standard
-deviation of the noise:
+The generator integrates this process at a user-defined interval `dt` and delivers the resulting current to its targets. A larger time constant :math:`\tau` results in a more slowly varying noise signal.
 
-.. math::
-
-   I(t) = \mu + N_j \sqrt{\sigma^2 + \sigma_{\text{mod}}^2 \sin(\omega t + \phi)}
-                              \quad \text{for} \quad t_0 + j \delta < t \leq t_0 + (j+1) \delta \;.
-
-The effect of the noise current on a neuron depends on the switching interval :math:`\delta`.
-For a leaky integrate-and-fire neuron with time constant :math:`\tau_m` and capacitance
-:math:`C_m`, the variance of the membrane potential is given by
-
-.. math::
-
-        \Sigma^2 = \frac{\delta \tau_m \sigma^2}{2 C_m^2}
-
-for :math:`\delta \ll \tau_m`. For details, see the `noise generator notebook
-<../model_details/ou_noise_generator.ipynb>`_.
-
-All targets of a noise generator receive different currents, but the currents for all
-targets change at the same points in time. The interval :math:`\delta` between
-changes must be a multiple of the time step.
+All targets of a noise generator receive different, independent noise currents, but the currents for all targets are updated at the same points in time. The interval `dt` between updates must be a multiple of the simulation time step.
 
 .. admonition:: Recording the generated current
 
-   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step
-   if simulating on a single thread; multiple MPI processes with one thread each also work. In this case,
-   the recording interval of the multimeter should be equal to the simulation resolution to avoid confusing effects
-   due to offset or drift between the recording times of the multimeter and the switching times of the
-   noise generator. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
+   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step if simulating on a single thread; multiple MPI processes with one thread each also work. In this case, the recording interval of the multimeter should be equal to the `dt` of the generator to avoid aliasing effects. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
 
 
 .. include:: ../models/stimulation_device.rst
 
 mean
-    The mean value :math:`\mu` of the noise current (pA)
+    The mean value :math:`\mu` to which the process reverts (pA).
 
 std
-    The standard deviation :math:`\sigma` of the noise current (pA)
+    The stationary standard deviation :math:`\sigma_{stat}` of the process (pA).
+
+tau
+    The correlation time constant :math:`\tau` of the process (ms).
 
 dt
-    The interval :math:`\delta` between changes in current (ms; default: 10 * resolution)
-
-std_mod
-    The modulation :math:`\sigma_{\text{mod}}` of the standard deviation of the noise current (pA)
-
-frequency
-    The frequency of the sine modulation (Hz)
-
-phase
-    The phase of sine modulation (0–360 deg)
+    The interval :math:`\delta` between updates of the noise current (ms).
 
 
 Setting parameters from a stimulation backend
@@ -125,24 +96,8 @@ The indexing is as follows:
 
  0. mean
  1. std
- 2. std_mod
- 3. frequency
- 4. phase
+ 2. tau
 
-Sends
-+++++
-
-CurrentEvent
-
-See also
-++++++++
-
-step_current_generator
-
-Examples using this model
-+++++++++++++++++++++++++
-
-.. listexamples:: ou_noise_generator
 
 EndUserDocs */
 

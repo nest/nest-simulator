@@ -26,6 +26,9 @@
 #include <cmath>
 #include <limits>
 
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+
 nest::SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )
 {

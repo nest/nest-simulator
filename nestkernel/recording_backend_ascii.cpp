@@ -24,13 +24,17 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "io_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "node_manager.h"
+#include "recording_backend_ascii.h"
 #include "recording_device.h"
-#include "vp_manager_impl.h"
+#include "simulation_manager.h"
 
 // includes from sli:
 #include "dictutils.h"
 
-#include "recording_backend_ascii.h"
 
 const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
 

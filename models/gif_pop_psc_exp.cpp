@@ -37,12 +37,6 @@
 #include "compose.hpp"
 #include "dict_util.h"
 
-// Includes from nestkernel:
-#include "model_manager_impl.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
-
-
 #ifdef HAVE_GSL
 
 namespace nest

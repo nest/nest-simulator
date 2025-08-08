@@ -22,9 +22,6 @@
 
 #include "stdp_nn_restr_synapse.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_stdp_nn_restr_synapse( const std::string& name )
 {

@@ -40,7 +40,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

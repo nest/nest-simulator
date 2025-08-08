@@ -21,10 +21,6 @@
  */
 
 #include "quantal_stp_synapse.h"
-#include "quantal_stp_synapse_impl.h"
-
-// Includes from nestkernel:
-#include "nest_impl.h"
 
 void
 nest::register_quantal_stp_synapse( const std::string& name )

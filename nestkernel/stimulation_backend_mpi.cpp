@@ -26,7 +26,11 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 #include "stimulation_backend.h"
 #include "stimulation_backend_mpi.h"
 #include "stimulation_device.h"

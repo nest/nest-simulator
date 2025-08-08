@@ -26,7 +26,6 @@
 
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
-#include <cstdio>
 #include <string>
 
 // Includes from libnestutil:
@@ -36,11 +35,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
 
 struct my_params

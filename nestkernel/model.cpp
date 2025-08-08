@@ -31,6 +31,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"

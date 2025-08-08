@@ -23,17 +23,8 @@
 
 #include "parrot_neuron.h"
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {

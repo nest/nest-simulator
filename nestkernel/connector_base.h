@@ -28,12 +28,18 @@
 
 // C++ includes:
 #include <cstdlib>
+#include <fstream>
 #include <vector>
 
+// Includes from models:
+#include "weight_recorder.h"
+
+#ifdef HAVE_SIONLIB
+#include <sion.h>
+#endif
+
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "sort.h"
-#include "vector_util.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -47,11 +53,14 @@
 #include "spikecounter.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dictutils.h"
 
 namespace nest
 {
+
+class ConnectorModel;
+template < typename ConnectionT >
+class GenericConnectorModel;
 
 /**
  * Base class to allow storing Connectors for different synapse types
@@ -63,7 +72,6 @@ namespace nest
  */
 class ConnectorBase
 {
-
 public:
   // Destructor needs to be declared virtual to avoid undefined
   // behavior, avoid possible memory leak and needs to be defined to
@@ -211,6 +219,14 @@ public:
    * Remove disabled connections from the connector.
    */
   virtual void remove_disabled_connections( const size_t first_disabled_index ) = 0;
+
+protected:
+  void prepare_weight_recorder_event( WeightRecorderEvent& wr_e,
+    const size_t tid,
+    const synindex syn_id,
+    const unsigned int lcid,
+    const Event& e,
+    const CommonSynapseProperties& cp );
 };
 
 /**
@@ -219,7 +235,6 @@ public:
 template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
-private:
   BlockVector< ConnectionT > C_;
   const synindex syn_id_;
 
@@ -425,7 +440,6 @@ public:
     return 1 + lcid_offset; // event was delivered to at least one target
   }
 
-  // Implemented in connector_base_impl.h
   void
   send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
 
@@ -513,6 +527,24 @@ public:
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
   }
 };
+
+template < typename ConnectionT >
+void
+Connector< ConnectionT >::send_weight_event( const size_t tid,
+  const unsigned int lcid,
+  Event& e,
+  const CommonSynapseProperties& cp )
+{
+  // If the pointer to the receiver node in the event is invalid,
+  // the event was not sent, and a WeightRecorderEvent is therefore not created.
+  if ( cp.get_weight_recorder() and e.receiver_is_valid() )
+  {
+    // Create new event to record the weight and copy relevant content.
+    WeightRecorderEvent wr_e;
+    prepare_weight_recorder_event( wr_e, tid, syn_id_, lcid, e, cp );
+    wr_e();
+  }
+}
 
 } // of namespace nest
 

@@ -26,9 +26,7 @@
 // C++ includes:
 #include <bitset>
 #include <deque>
-#include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
 
 // Includes from nestkernel:

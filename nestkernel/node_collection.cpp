@@ -27,14 +27,14 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
 #include "node.h"
-#include "vp_manager_impl.h"
 
 // C++ includes:
+#include "numeric"   // accumulate
 #include <algorithm> // copy
 #include <cmath>     // lcm
-#include <numeric>   // accumulate
 
 
 namespace nest

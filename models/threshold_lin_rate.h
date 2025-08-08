@@ -28,11 +28,8 @@
 
 // Includes from models:
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
 
 namespace nest
 {

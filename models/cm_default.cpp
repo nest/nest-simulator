@@ -22,9 +22,6 @@
 
 #include "cm_default.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 namespace nest
 {
 void

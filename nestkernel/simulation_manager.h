@@ -189,6 +189,26 @@ public:
   Time get_eprop_learning_window() const;
   bool get_eprop_reset_neurons_on_update() const;
 
+  //! Get the stopwatch to measure the time each thread is idle during network construction.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_construction_stopwatch()
+  {
+    return sw_omp_synchronization_construction_;
+  }
+
+  //! Get the stopwatch to measure the time each thread is idle during simulation.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_simulation_stopwatch()
+  {
+    return sw_omp_synchronization_simulation_;
+  }
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
+  get_mpi_synchronization_stopwatch()
+  {
+    return sw_mpi_synchronization_;
+  }
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -237,6 +257,10 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_gather_target_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_secondary_data_;
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
 
   double eprop_update_interval_;
   double eprop_learning_window_;

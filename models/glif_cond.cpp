@@ -36,8 +36,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "name.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -802,8 +800,8 @@ nest::glif_cond::handle( CurrentEvent& e )
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
+// TODO JV
+// Do not move this function as inline to h-file. It depends on universal_data_logger.h being included here.
 void
 nest::glif_cond::handle( DataLoggingRequest& e )
 {

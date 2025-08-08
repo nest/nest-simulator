@@ -22,9 +22,6 @@
 
 #include "static_synapse_hom_w.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_static_synapse_hom_w( const std::string& name )
 {

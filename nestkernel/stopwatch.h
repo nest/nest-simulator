@@ -23,21 +23,18 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-// C includes:
-#include <sys/time.h>
-
 // C++ includes:
 #include "arraydatum.h"
 #include "dictdatum.h"
 #include "dictutils.h"
 #include <algorithm>
-#include <cassert>
-#include <chrono>
 #include <iostream>
 #include <vector>
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "kernel_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -523,6 +520,90 @@ private:
   std::vector< timers::StopwatchTimer< CLOCK_MONOTONIC > > walltime_timers_;
   std::vector< timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
 };
+
+template < StopwatchGranularity detailed_timer >
+void
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::start()
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].start();
+  cputime_timers_[ kernel().vp_manager.get_thread_id() ].start();
+}
+
+template < StopwatchGranularity detailed_timer >
+void
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::stop()
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
+  cputime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
+}
+
+template < StopwatchGranularity detailed_timer >
+bool
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::is_running_() const
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].is_running_();
+}
+
+template < StopwatchGranularity detailed_timer >
+double
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::elapsed( timers::timeunit_t
+    timeunit ) const
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  return walltime_timers_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+}
+
+template < StopwatchGranularity detailed_timer >
+void
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::print( const std::string& msg,
+  timers::timeunit_t timeunit,
+  std::ostream& os ) const
+{
+  kernel().vp_manager.assert_thread_parallel();
+
+  walltime_timers_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
+}
+
+template < StopwatchGranularity detailed_timer >
+void
+Stopwatch< detailed_timer,
+  StopwatchParallelism::Threaded,
+  std::enable_if_t< use_threaded_timers
+    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::reset()
+{
+  kernel().vp_manager.assert_single_threaded();
+
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  walltime_timers_.resize( num_threads );
+  cputime_timers_.resize( num_threads );
+  for ( size_t i = 0; i < num_threads; ++i )
+  {
+    walltime_timers_[ i ].reset();
+    cputime_timers_[ i ].reset();
+  }
+}
 
 } /* namespace nest */
 #endif /* STOPWATCH_H */

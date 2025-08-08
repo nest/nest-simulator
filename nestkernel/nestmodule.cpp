@@ -29,23 +29,18 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "conn_builder.h"
-#include "connection_creator_impl.h"
 #include "free_layer.h"
-#include "genericmodel.h"
-#include "grid_layer.h"
 #include "grid_mask.h"
 #include "kernel_manager.h"
-#include "layer.h"
 #include "layer_impl.h"
+#include "logging_manager.h"
 #include "mask.h"
-#include "mask_impl.h"
-#include "model_manager_impl.h"
+#include "module_manager.h"
+#include "music_manager.h"
 #include "nest.h"
 #include "nest_datums.h"
-#include "nest_types.h"
-#include "node.h"
 #include "parameter.h"
+#include "sp_manager.h"
 #include "spatial.h"
 
 // Includes from sli:

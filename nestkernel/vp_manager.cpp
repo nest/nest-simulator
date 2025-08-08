@@ -29,10 +29,13 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
 #include "mpi_manager.h"
-#include "mpi_manager_impl.h"
-#include "vp_manager_impl.h"
+#include "node_manager.h"
+#include "simulation_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"

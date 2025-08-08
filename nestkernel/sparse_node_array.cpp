@@ -26,7 +26,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "node.h"
-#include "vp_manager_impl.h"
 
 
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, size_t node_id )

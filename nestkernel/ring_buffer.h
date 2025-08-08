@@ -29,6 +29,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -420,6 +421,36 @@ inline size_t
 MultiChannelInputBuffer< num_channels >::size() const
 {
   return buffer_.size();
+}
+
+template < unsigned int num_channels >
+MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
+  : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(),
+    std::array< double, num_channels >() )
+{
+}
+
+template < unsigned int num_channels >
+void
+MultiChannelInputBuffer< num_channels >::resize()
+{
+  const size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  if ( buffer_.size() != size )
+  {
+    buffer_.resize( size, std::array< double, num_channels >() );
+  }
+}
+
+template < unsigned int num_channels >
+void
+MultiChannelInputBuffer< num_channels >::clear()
+{
+  resize(); // does nothing if size is fine
+  // set all elements to 0.0
+  for ( size_t slot = 0; slot < buffer_.size(); ++slot )
+  {
+    reset_values_all_channels( slot );
+  }
 }
 
 } // namespace nest

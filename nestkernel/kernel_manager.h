@@ -23,29 +23,9 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-// Includes from libnestutil
-#include "config.h"
-
-// Includes from nestkernel:
-#include "connection_manager.h"
-#include "event_delivery_manager.h"
-#include "io_manager.h"
-#include "logging_manager.h"
-#include "model_manager.h"
-#include "modelrange_manager.h"
-#include "module_manager.h"
-#include "mpi_manager.h"
-#include "music_manager.h"
-#include "node_manager.h"
-#include "random_manager.h"
-#include "simulation_manager.h"
-#include "sp_manager.h"
-#include "vp_manager.h"
-
 // Includes from sli:
 #include "dictdatum.h"
 
-#include "compose.hpp"
 #include <fstream>
 
 /** @BeginDocumentation
@@ -188,9 +168,26 @@
 namespace nest
 {
 
+// Forward declarations to avoid pulling all manager headers here.
+class LoggingManager;
+class MPIManager;
+class VPManager;
+class ModuleManager;
+class RandomManager;
+class SimulationManager;
+class ModelRangeManager;
+class ConnectionManager;
+class SPManager;
+class EventDeliveryManager;
+class IOManager;
+class ModelManager;
+class MUSICManager;
+class NodeManager;
+
+class ManagerInterface;
+
 class KernelManager
 {
-private:
   KernelManager();
   ~KernelManager();
 
@@ -272,41 +269,21 @@ public:
    * NodeManager is last to ensure all model structures are in place before it is initialized.
    * @{
    */
-  LoggingManager logging_manager;
-  MPIManager mpi_manager;
-  VPManager vp_manager;
-  ModuleManager module_manager;
-  RandomManager random_manager;
-  SimulationManager simulation_manager;
-  ModelRangeManager modelrange_manager;
-  ConnectionManager connection_manager;
-  SPManager sp_manager;
-  EventDeliveryManager event_delivery_manager;
-  IOManager io_manager;
-  ModelManager model_manager;
-  MUSICManager music_manager;
-  NodeManager node_manager;
-  /**@}*/
-
-  //! Get the stopwatch to measure the time each thread is idle during network construction.
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
-  get_omp_synchronization_construction_stopwatch()
-  {
-    return sw_omp_synchronization_construction_;
-  }
-
-  //! Get the stopwatch to measure the time each thread is idle during simulation.
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
-  get_omp_synchronization_simulation_stopwatch()
-  {
-    return sw_omp_synchronization_simulation_;
-  }
-
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
-  get_mpi_synchronization_stopwatch()
-  {
-    return sw_mpi_synchronization_;
-  }
+  // Property-like access to managers (public references).
+  LoggingManager& logging_manager;
+  MPIManager& mpi_manager;
+  VPManager& vp_manager;
+  ModuleManager& module_manager;
+  RandomManager& random_manager;
+  SimulationManager& simulation_manager;
+  ModelRangeManager& modelrange_manager;
+  ConnectionManager& connection_manager;
+  SPManager& sp_manager;
+  EventDeliveryManager& event_delivery_manager;
+  IOManager& io_manager;
+  ModelManager& model_manager;
+  MUSICManager& music_manager;
+  NodeManager& node_manager;
 
 private:
   //! All managers, order determines initialization and finalization order (latter backwards)
@@ -314,39 +291,35 @@ private:
 
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
-
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
 };
 
 KernelManager& kernel();
 
-} // namespace nest
-
-inline nest::KernelManager&
-nest::KernelManager::get_kernel_manager()
+inline KernelManager&
+KernelManager::get_kernel_manager()
 {
   assert( kernel_manager_instance_ );
   return *kernel_manager_instance_;
 }
 
-inline nest::KernelManager&
-nest::kernel()
+inline KernelManager&
+kernel()
 {
   return KernelManager::get_kernel_manager();
 }
 
 inline bool
-nest::KernelManager::is_initialized() const
+KernelManager::is_initialized() const
 {
   return initialized_;
 }
 
 inline unsigned long
-nest::KernelManager::get_fingerprint() const
+KernelManager::get_fingerprint() const
 {
   return fingerprint_;
 }
+
+} // namespace nest
 
 #endif /* KERNEL_MANAGER_H */

@@ -26,15 +26,22 @@
 #include <cstdlib>
 
 // Includes from libnestutil:
-#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "nest_types.h"
+
+#include "logging.h"
+#include "logging_manager.h"
+#include "music_manager.h"
+#include "nest_names.h"
+#include "stopwatch.h"
 
 // Includes from sli:
 #include "dictutils.h"
+
+namespace nest
+{
 
 #ifdef HAVE_MPI
 
@@ -1110,3 +1117,4 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
 }
 
 #endif /* #ifdef HAVE_MPI  */
+} // namespace nest

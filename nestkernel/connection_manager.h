@@ -31,11 +31,10 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "conn_builder.h"
+#include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connector_base.h"
 #include "nest_time.h"
-#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node_collection.h"
 #include "per_thread_bool_indicator.h"
@@ -54,13 +53,17 @@ namespace nest
 {
 class GenericBipartiteConnBuilderFactory;
 class GenericThirdConnBuilderFactory;
-class spikecounter;
 class Node;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
 class GrowthCurve;
 class SpikeData;
+class BipartiteConnBuilder;
+class ThirdOutBuilder;
+class ThirdInBuilder;
+class Time;
+class TimeConverter;
 
 class ConnectionManager : public ManagerInterface
 {
@@ -75,18 +78,25 @@ public:
   };
 
   ConnectionManager();
+
   ~ConnectionManager() override;
 
   void initialize( const bool ) override;
+
   void finalize( const bool ) override;
+
   void set_status( const DictionaryDatum& ) override;
+
   void get_status( DictionaryDatum& ) override;
 
   bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
+
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
+
   void collect_compressed_spike_data( const size_t tid );
+
   void clear_compressed_spike_data_map();
 
   /**
@@ -278,6 +288,7 @@ public:
   size_t get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const;
 
   bool get_device_connected( size_t tid, size_t lcid ) const;
+
   /**
    * Triggered by volume transmitter in update.
    *
@@ -311,6 +322,7 @@ public:
    * Send event e to all device targets of source source_node_id
    */
   void send_to_devices( const size_t tid, const size_t source_node_id, Event& e );
+
   void send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e );
 
   /**
@@ -480,12 +492,14 @@ private:
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
+
   void get_connections_to_targets_( const size_t tid,
     std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
+
   void get_connections_from_sources_( const size_t tid,
     std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -944,6 +958,30 @@ inline void
 ConnectionManager::clear_compressed_spike_data_map()
 {
   source_table_.clear_compressed_spike_data_map();
+}
+
+template < typename ConnBuilder >
+void
+ConnectionManager::register_conn_builder( const std::string& name )
+{
+  assert( not connruledict_->known( name ) );
+  GenericBipartiteConnBuilderFactory* cb = new BipartiteConnBuilderFactory< ConnBuilder >();
+  assert( cb );
+  const int id = connbuilder_factories_.size();
+  connbuilder_factories_.push_back( cb );
+  connruledict_->insert( name, id );
+}
+
+template < typename ThirdConnBuilder >
+void
+ConnectionManager::register_third_conn_builder( const std::string& name )
+{
+  assert( not thirdconnruledict_->known( name ) );
+  GenericThirdConnBuilderFactory* cb = new ThirdConnBuilderFactory< ThirdConnBuilder >();
+  assert( cb );
+  const int id = thirdconnbuilder_factories_.size();
+  thirdconnbuilder_factories_.push_back( cb );
+  thirdconnruledict_->insert( name, id );
 }
 
 } // namespace nest

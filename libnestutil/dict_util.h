@@ -25,8 +25,8 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest.h"
 #include "nest_datums.h"
-#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"

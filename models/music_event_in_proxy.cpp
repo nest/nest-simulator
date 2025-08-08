@@ -31,17 +31,10 @@
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "logging.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
+#include "music_manager.h"
 
 void
 nest::register_music_event_in_proxy( const std::string& name )

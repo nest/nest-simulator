@@ -23,9 +23,9 @@
 #include "event.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
 #include "node.h"
-#include "secondary_event_impl.h"
 
 namespace nest
 {

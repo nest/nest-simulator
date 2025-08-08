@@ -33,8 +33,8 @@
 #include "config.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
-#include "nest_types.h"
 
 namespace nest
 {

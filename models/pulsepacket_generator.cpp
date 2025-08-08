@@ -27,13 +27,11 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"

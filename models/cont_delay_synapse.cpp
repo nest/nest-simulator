@@ -21,10 +21,6 @@
  */
 
 #include "cont_delay_synapse.h"
-#include "cont_delay_synapse_impl.h"
-
-// Includes from nestkernel:
-#include "nest_impl.h"
 
 void
 nest::register_cont_delay_synapse( const std::string& name )

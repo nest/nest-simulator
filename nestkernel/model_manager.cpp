@@ -31,12 +31,9 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "genericmodel_impl.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "proxynode.h"
-#include "vp_manager_impl.h"
 
 // Includes from models:
 #include "models.h"

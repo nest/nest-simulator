@@ -26,11 +26,10 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from nestkernel:
-#include "nest_types.h"
-
 // Includes from sli:
 #include "dictdatum.h"
+
+#include "mpi_manager.h"
 
 #ifdef _OPENMP
 // C includes:
@@ -89,6 +88,11 @@ public:
    * @note Returns 0 if OMP_NUM_THREADS is not set.
    */
   size_t get_OMP_NUM_THREADS() const;
+
+  /*
+   * Return the process id of the node with the specified node ID.
+   */
+  size_t get_process_id_of_node_id( const size_t node_id ) const;
 
   /**
    * Returns true if the given global node exists on this vp.
@@ -173,10 +177,9 @@ private:
   const bool force_singlethreading_;
   size_t n_threads_; //!< Number of threads per process.
 };
-}
 
 inline size_t
-nest::VPManager::get_thread_id() const
+VPManager::get_thread_id() const
 {
 #ifdef _OPENMP
   return omp_get_thread_num();
@@ -186,13 +189,13 @@ nest::VPManager::get_thread_id() const
 }
 
 inline size_t
-nest::VPManager::get_num_threads() const
+VPManager::get_num_threads() const
 {
   return n_threads_;
 }
 
 inline void
-nest::VPManager::assert_single_threaded() const
+VPManager::assert_single_threaded() const
 {
 #ifdef _OPENMP
   assert( omp_get_num_threads() == 1 );
@@ -200,7 +203,7 @@ nest::VPManager::assert_single_threaded() const
 }
 
 inline void
-nest::VPManager::assert_thread_parallel() const
+VPManager::assert_thread_parallel() const
 {
 #ifdef _OPENMP
   // omp_get_num_threads() returns int
@@ -208,5 +211,119 @@ nest::VPManager::assert_thread_parallel() const
 #endif
 }
 
+inline size_t
+VPManager::get_vp() const
+{
+  return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_processes();
+}
+
+inline size_t
+VPManager::node_id_to_vp( const size_t node_id ) const
+{
+  return node_id % get_num_virtual_processes();
+}
+
+inline size_t
+VPManager::vp_to_thread( const size_t vp ) const
+{
+  return vp / kernel().mpi_manager.get_num_processes();
+}
+
+inline size_t
+VPManager::get_num_virtual_processes() const
+{
+  return get_num_threads() * kernel().mpi_manager.get_num_processes();
+}
+
+inline bool
+VPManager::is_local_vp( const size_t vp ) const
+{
+  return kernel().mpi_manager.get_process_id_of_vp( vp ) == kernel().mpi_manager.get_rank();
+}
+
+inline size_t
+VPManager::thread_to_vp( const size_t tid ) const
+{
+  return tid * kernel().mpi_manager.get_num_processes() + kernel().mpi_manager.get_rank();
+}
+
+inline bool
+VPManager::is_node_id_vp_local( const size_t node_id ) const
+{
+  return ( node_id % get_num_virtual_processes() == static_cast< size_t >( get_vp() ) );
+}
+
+inline size_t
+VPManager::node_id_to_lid( const size_t node_id ) const
+{
+  // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
+  return std::ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
+}
+
+inline size_t
+VPManager::lid_to_node_id( const size_t lid ) const
+{
+  const size_t vp = get_vp();
+  return ( lid + static_cast< size_t >( vp == 0 ) ) * get_num_virtual_processes() + vp;
+}
+
+inline size_t
+VPManager::get_num_assigned_ranks_per_thread() const
+{
+  return std::ceil( static_cast< double >( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
+}
+
+inline size_t
+VPManager::get_start_rank_per_thread( const size_t tid ) const
+{
+  return tid * get_num_assigned_ranks_per_thread();
+}
+
+inline size_t
+VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
+{
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
+
+  // if we have more threads than ranks, or if ranks can not be
+  // distributed evenly on threads, we need to make sure, that all
+  // threads care only about existing ranks
+  if ( rank_end > kernel().mpi_manager.get_num_processes() )
+  {
+    rank_end = std::max( rank_start, kernel().mpi_manager.get_num_processes() );
+  }
+
+  return rank_end;
+}
+
+inline AssignedRanks
+VPManager::get_assigned_ranks( const size_t tid )
+{
+  AssignedRanks assigned_ranks;
+  assigned_ranks.begin = get_start_rank_per_thread( tid );
+  assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
+  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  return assigned_ranks;
+}
+
+#ifdef HAVE_MPI
+
+inline size_t
+nest::VPManager::get_process_id_of_node_id( const size_t node_id ) const
+{
+  return node_id % get_num_virtual_processes() % kernel().mpi_manager.get_num_processes();
+}
+
+#else // HAVE_MPI
+
+inline size_t
+nest::VPManager::get_process_id_of_node_id( const size_t ) const
+{
+  return 0;
+}
+
+#endif /* HAVE_MPI */
+
+} // namespace nest
 
 #endif /* #ifndef VP_MANAGER_H */

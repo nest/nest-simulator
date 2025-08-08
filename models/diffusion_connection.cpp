@@ -22,9 +22,6 @@
 
 #include "diffusion_connection.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_diffusion_connection( const std::string& name )
 {

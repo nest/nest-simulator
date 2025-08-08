@@ -30,6 +30,13 @@
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 
+#include "compose.hpp"
+#include "connection_manager.h"
+#include "dictutils.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "nest_names.h"
+
 nest::DelayChecker::DelayChecker()
   : min_delay_( Time::pos_inf() )
   , max_delay_( Time::neg_inf() )

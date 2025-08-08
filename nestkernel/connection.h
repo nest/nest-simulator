@@ -26,7 +26,6 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
-#include "connector_base_impl.h"
 #include "delay_checker.h"
 #include "event.h"
 #include "kernel_manager.h"

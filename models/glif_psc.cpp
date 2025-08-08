@@ -31,8 +31,6 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -626,12 +624,4 @@ nest::glif_psc::handle( CurrentEvent& e )
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-nest::glif_psc::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e ); // the logger does this for us
 }

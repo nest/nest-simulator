@@ -28,15 +28,11 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
-#include "connection_manager_impl.h"
-#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "model_manager.h"
 #include "send_buffer_position.h"
-#include "source.h"
-#include "stopwatch_impl.h"
+#include "simulation_manager.h"
 #include "vp_manager.h"
-#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -423,9 +419,9 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     // We introduce an explicit barrier at this point to measure how long each process idles until all other processes
     // reached this point as well. This barrier is directly followed by another implicit barrier due to global
     // communication.
-    kernel().get_mpi_synchronization_stopwatch().start();
+    kernel().simulation_manager.get_mpi_synchronization_stopwatch().start();
     kernel().mpi_manager.synchronize();
-    kernel().get_mpi_synchronization_stopwatch().stop();
+    kernel().simulation_manager.get_mpi_synchronization_stopwatch().stop();
 #endif
 
     // Given that we templatize by plain vs offgrid, this if should not be necessary, but ...
@@ -802,9 +798,9 @@ EventDeliveryManager::gather_target_data( const size_t tid )
         resize_send_recv_buffers_target_data();
       }
     } // of omp master; (no barrier)
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
 
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -819,9 +815,9 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
     kernel().connection_manager.save_source_table_entry_point( tid );
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
     kernel().connection_manager.clean_source_table( tid );
 
 #pragma omp master
@@ -874,9 +870,9 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
         resize_send_recv_buffers_target_data();
       }
     } // of omp master; no barrier
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
 
     TargetSendBufferPosition send_buffer_position(
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
@@ -891,9 +887,9 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
 
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp master
     {
@@ -916,9 +912,9 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       } // of omp master (no barrier)
-      kernel().get_omp_synchronization_construction_stopwatch().start();
+      kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-      kernel().get_omp_synchronization_construction_stopwatch().stop();
+      kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
     }
 
   } // of while

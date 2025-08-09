@@ -36,10 +36,8 @@
 #include "../nest/neststartup.h"
 
 // Includes from nestkernel:
-#include "recording_device.h"
-#include "vp_manager_impl.h"
-
 #include "recording_backend_sionlib.h"
+#include "recording_device.h"
 
 const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
 const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;

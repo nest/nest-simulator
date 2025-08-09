@@ -23,6 +23,7 @@
 #include "archiving_node.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
 
 // Includes from sli:

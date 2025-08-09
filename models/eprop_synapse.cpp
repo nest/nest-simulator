@@ -23,7 +23,6 @@
 #include "eprop_synapse.h"
 
 // nestkernel
-#include "nest_impl.h"
 
 namespace nest
 {

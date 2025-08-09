@@ -22,19 +22,10 @@
 
 #include "spin_detector.h"
 
-
-// Includes from libnestutil:
-#include "compose.hpp"
-
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
+#include <nest.h>
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_spin_detector( const std::string& name )

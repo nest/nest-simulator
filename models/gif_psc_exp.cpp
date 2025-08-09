@@ -23,10 +23,10 @@
 #include "gif_psc_exp.h"
 
 // Includes from nestkernel:
+#include "compose.hpp"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "numerics.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,9 +35,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-
-#include "compose.hpp"
-#include "numerics.h"
 
 namespace nest
 {

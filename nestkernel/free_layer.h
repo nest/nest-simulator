@@ -30,13 +30,13 @@
 
 // Includes from nestkernel:
 #include "nest_names.h"
+#include "node_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
 
 // Includes from spatial:
 #include "layer.h"
-#include "ntree_impl.h"
 
 namespace nest
 {

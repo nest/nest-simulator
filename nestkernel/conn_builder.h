@@ -40,9 +40,10 @@
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
-#include "nest_time.h"
+#include "kernel_manager.h"
 #include "node_collection.h"
 #include "parameter.h"
+#include "sp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -858,6 +859,20 @@ BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip 
   {
     ( *it )->skip( target_thread, n_skip );
   }
+}
+
+inline void
+BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
+{
+  // index tnode_id = target.get_node_id();
+  // This is the most simple case in which only the synapse_model_ has been
+  // defined. TODO: Add functionality to delete synapses with a given weight
+  // or a given delay
+  if ( synapse_model_id_.size() > 1 )
+  {
+    throw KernelException( "Can only disconnect when single element syn_spec has been used." );
+  }
+  kernel().sp_manager.disconnect( snode_id, &target, target_thread, synapse_model_id_[ 0 ] );
 }
 
 } // namespace nest

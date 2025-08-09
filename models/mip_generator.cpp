@@ -27,10 +27,9 @@
 #include "dict_util.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
 
 void
 nest::register_mip_generator( const std::string& name )

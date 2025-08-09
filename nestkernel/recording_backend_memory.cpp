@@ -21,10 +21,9 @@
  */
 
 // Includes from nestkernel:
-#include "recording_device.h"
-#include "vp_manager_impl.h"
-
 #include "recording_backend_memory.h"
+#include "recording_device.h"
+#include "simulation_manager.h"
 
 nest::RecordingBackendMemory::RecordingBackendMemory()
 {

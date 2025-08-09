@@ -28,11 +28,15 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_parameter.h"
+#include "connection_manager.h"
 #include "connector_base.h"
 #include "connector_model.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "nest.h"
 #include "nest_names.h"
-#include "sp_manager_impl.h"
 
 namespace nest
 {

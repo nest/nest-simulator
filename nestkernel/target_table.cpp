@@ -23,6 +23,9 @@
 // Includes from nestkernel:
 #include "target_table.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
+#include "mpi_manager.h"
+#include "vp_manager.h"
 
 // Includes from libnestutil
 #include "vector_util.h"

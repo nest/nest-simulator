@@ -38,7 +38,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_impl.h"
 
 void
 nest::register_music_message_in_proxy( const std::string& name )

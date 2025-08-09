@@ -26,10 +26,17 @@
 #include <cassert>
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "exceptions.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "node_manager.h"
 #include "parameter.h"
+#include "random_manager.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
 
 // Includes from sli:
 #include "sliexceptions.h"

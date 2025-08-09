@@ -461,6 +461,12 @@ glif_psc::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+void
+nest::glif_psc::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e ); // the logger does this for us
+}
+
 } // namespace nest
 
 #endif

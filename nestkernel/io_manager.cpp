@@ -38,11 +38,12 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "io_manager_impl.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+
 #ifdef HAVE_MPI
 #include "recording_backend_mpi.h"
 #include "stimulation_backend_mpi.h"

@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model.h"
+#include "model_manager.h"
 
 
 namespace nest

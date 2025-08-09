@@ -24,9 +24,8 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
-#include "nest_timeconverter.h"
-#include "nest_types.h"
 #include "node.h"
+#include "node_manager.h"
 
 // Includes from models:
 #include "weight_recorder.h"

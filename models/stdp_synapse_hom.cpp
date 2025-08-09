@@ -24,8 +24,6 @@
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
-#include "connector_model.h"
-#include "nest_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"

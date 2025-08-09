@@ -24,7 +24,8 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "stopwatch_impl.h"
+
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -65,7 +66,7 @@ PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status 
 bool
 PerThreadBoolIndicator::all_false() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 // We need two barriers here to ensure that no thread can continue and change the result
 // before all threads have determined the result.
 #pragma omp barrier
@@ -74,42 +75,42 @@ PerThreadBoolIndicator::all_false() const
   bool ret = ( are_true_ == 0 );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::all_true() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ == size_ );
 #pragma omp barrier
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_false() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ < size_ );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_true() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ > 0 );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 

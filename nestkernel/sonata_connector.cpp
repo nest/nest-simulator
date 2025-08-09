@@ -30,7 +30,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

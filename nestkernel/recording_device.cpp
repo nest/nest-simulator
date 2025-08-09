@@ -21,10 +21,11 @@
  */
 
 // Includes from libnestutil:
-#include "compose.hpp"
-#include "kernel_manager.h"
-
 #include "recording_device.h"
+#include "compose.hpp"
+#include "io_manager.h"
+#include "kernel_manager.h"
+#include "simulation_manager.h"
 
 nest::RecordingDevice::RecordingDevice()
   : DeviceNode()

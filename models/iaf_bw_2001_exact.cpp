@@ -32,8 +32,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -517,8 +515,8 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
   }
 }
 
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
+// TODO JV
+// Do not move this function as inline to h-file. It depends on universal_data_logger.h being included here.
 void
 nest::iaf_bw_2001_exact::handle( DataLoggingRequest& e )
 {

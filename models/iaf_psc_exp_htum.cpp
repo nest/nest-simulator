@@ -28,9 +28,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

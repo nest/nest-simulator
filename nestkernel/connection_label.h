@@ -25,7 +25,7 @@
 
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "nest.h"
+#include "exceptions.h"
 #include "nest_names.h"
 
 namespace nest

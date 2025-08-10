@@ -50,7 +50,8 @@ Description
 +++++++++++
 
 The `ou_noise_generator` can be used to inject a temporally correlated noise current into a node.
-The current I(t) follows an Ornstein-Uhlenbeck (OU) process, which is described by the following stochastic differential equation:
+The current I(t) follows an Ornstein-Uhlenbeck (OU) process, which is described by the following stochastic differential
+equation:
 
 .. math::
 
@@ -62,13 +63,18 @@ where:
  - :math:`\sigma_{stat}` is the stationary standard deviation of the process (`std` parameter).
  - :math:`dW` is a Wiener process (Gaussian white noise).
 
-The generator integrates this process at a user-defined interval `dt` and delivers the resulting current to its targets. A larger time constant :math:`\tau` results in a more slowly varying noise signal.
+The generator integrates this process at a user-defined interval `dt` and delivers the resulting current to its targets.
+A larger time constant :math:`\tau` results in a more slowly varying noise signal.
 
-All targets of a noise generator receive different, independent noise currents, but the currents for all targets are updated at the same points in time. The interval `dt` between updates must be a multiple of the simulation time step.
+All targets of a noise generator receive different, independent noise currents, but the currents for all targets are
+updated at the same points in time. The interval `dt` between updates must be a multiple of the simulation time step.
 
 .. admonition:: Recording the generated current
 
-   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step if simulating on a single thread; multiple MPI processes with one thread each also work. In this case, the recording interval of the multimeter should be equal to the `dt` of the generator to avoid aliasing effects. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
+   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step if
+simulating on a single thread; multiple MPI processes with one thread each also work. In this case, the recording
+interval of the multimeter should be equal to the `dt` of the generator to avoid aliasing effects. In multi-threaded
+mode, recording of noise currents is prohibited for technical reasons.
 
 
 .. include:: ../models/stimulation_device.rst

@@ -800,12 +800,4 @@ nest::glif_cond::handle( CurrentEvent& e )
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
-// TODO JV
-// Do not move this function as inline to h-file. It depends on universal_data_logger.h being included here.
-void
-nest::glif_cond::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e ); // the logger does this for us
-}
-
 #endif // HAVE_GSL

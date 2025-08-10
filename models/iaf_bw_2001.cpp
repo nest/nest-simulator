@@ -484,41 +484,5 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
   }
 }
 
-// TODO JV
-// Do not move this function as inline to h-file. It depends on universal_data_logger.h being included here.
-void
-nest::iaf_bw_2001::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e );
-}
-
-void
-nest::iaf_bw_2001::handle( SpikeEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
-
-  const auto rport = e.get_rport();
-
-  if ( rport < NMDA )
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_offset() );
-  }
-}
-
-void
-nest::iaf_bw_2001::handle( CurrentEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
-}
-
 #endif // HAVE_BOOST
 #endif // HAVE_GSL

@@ -242,7 +242,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
           cit != ( *unique_secondary_source_node_id_syn_id ).end();
           ++cit )
     {
-      const size_t source_rank = kernel().vp_manager.get_process_id_of_node_id( cit->first );
+      const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
       const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid ).size();
 
       buffer_pos_of_source_node_id_syn_id.insert(
@@ -277,7 +277,7 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
   const size_t rank_end,
   const Source& source ) const
 {
-  const size_t source_rank = kernel().vp_manager.get_process_id_of_node_id( source.get_node_id() );
+  const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
   return not( source.is_processed()
     or source.is_disabled()
@@ -409,7 +409,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     // communicated via MPI, so we prepare to return the relevant data
 
     // set the source rank
-    source_rank = kernel().vp_manager.get_process_id_of_node_id( current_source.get_node_id() );
+    source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
 
     if ( not populate_target_data_fields_( current_position, current_source, source_rank, next_target_data ) )
     {

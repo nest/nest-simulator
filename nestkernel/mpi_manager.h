@@ -103,6 +103,11 @@ public:
    */
   size_t get_process_id_of_vp( const size_t vp ) const;
 
+  /*
+   * Return the process id of the node with the specified node ID.
+   */
+  size_t get_process_id_of_node_id( const size_t node_id ) const;
+
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize
    * when compiled with MUSIC since spikes can arrive and handlers called here)
@@ -765,6 +770,23 @@ nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
 
 #ifdef HAVE_MPI
 
+inline size_t
+MPIManager::get_process_id_of_node_id( const size_t node_id ) const
+{
+  return node_id % num_processes_;
+}
+
+#else
+
+inline size_t
+MPIManager::get_process_id_of_node_id( const size_t ) const
+{
+  return 0;
+}
+
+#endif /* HAVE_MPI */
+
+#ifdef HAVE_MPI
 // Variable to hold the MPI communicator to use.
 #ifdef HAVE_MUSIC
 extern MPI::Intracomm comm;

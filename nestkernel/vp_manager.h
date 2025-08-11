@@ -89,11 +89,6 @@ public:
    */
   size_t get_OMP_NUM_THREADS() const;
 
-  /*
-   * Return the process id of the node with the specified node ID.
-   */
-  size_t get_process_id_of_node_id( const size_t node_id ) const;
-
   /**
    * Returns true if the given global node exists on this vp.
    */
@@ -305,24 +300,6 @@ VPManager::get_assigned_ranks( const size_t tid )
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   return assigned_ranks;
 }
-
-#ifdef HAVE_MPI
-
-inline size_t
-nest::VPManager::get_process_id_of_node_id( const size_t node_id ) const
-{
-  return node_id % get_num_virtual_processes() % kernel().mpi_manager.get_num_processes();
-}
-
-#else // HAVE_MPI
-
-inline size_t
-nest::VPManager::get_process_id_of_node_id( const size_t ) const
-{
-  return 0;
-}
-
-#endif /* HAVE_MPI */
 
 } // namespace nest
 

@@ -1531,7 +1531,7 @@ ConnectionManager::compute_compressed_secondary_recv_buffer_positions( const siz
         {
           const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
           const size_t sg_s_id = source_table_.pack_source_node_id_and_syn_id( source_node_id, syn_id );
-          const size_t source_rank = kernel().vp_manager.get_process_id_of_node_id( source_node_id );
+          const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_node_id );
 
           positions[ lcid ] = buffer_pos_of_source_node_id_syn_id_[ sg_s_id ]
             + kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
@@ -1836,7 +1836,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     while ( source_2_idx != csd_maps.at( syn_id ).end() )
     {
       const auto source_gid = source_2_idx->first;
-      const auto source_rank = kernel().vp_manager.get_process_id_of_node_id( source_gid );
+      const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
       if ( not( rank_start <= source_rank and source_rank < rank_end ) )
       {
         // We are not responsible for this source.

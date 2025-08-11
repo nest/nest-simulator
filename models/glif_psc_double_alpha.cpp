@@ -695,11 +695,3 @@ nest::glif_psc_double_alpha::handle( CurrentEvent& e )
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
-
-// TODO JV
-// Do not move this function as inline to h-file. It depends on universal_data_logger.h being included here.
-void
-nest::glif_psc_double_alpha::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e ); // the logger does this for us
-}

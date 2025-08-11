@@ -221,7 +221,7 @@ public:
   virtual void remove_disabled_connections( const size_t first_disabled_index ) = 0;
 
 protected:
-  void prepare_weight_recorder_event( WeightRecorderEvent& wr_e,
+  static void prepare_weight_recorder_event( WeightRecorderEvent& wr_e,
     const size_t tid,
     const synindex syn_id,
     const unsigned int lcid,

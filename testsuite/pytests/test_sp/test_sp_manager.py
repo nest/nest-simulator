@@ -66,9 +66,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 nest.structural_plasticity_synapses = {"syn1": syn_dict}
                 kernel_status = nest.structural_plasticity_synapses
                 assert "syn1" in kernel_status
-                for kv in extract_dict_a_from_b(
-                    kernel_status["syn1"], syn_dict
-                ).items():
+                for kv in extract_dict_a_from_b(kernel_status["syn1"], syn_dict).items():
                     assert kv in kernel_status["syn1"].items()
 
     def test_min_max_delay_using_default_delay(self):

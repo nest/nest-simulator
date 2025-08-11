@@ -277,7 +277,7 @@ SPManager::get_neuron_pair_index( int id1, int id2 )
 {
   int max_id = std::max( id1, id2 );
   int min_id = std::min( id1, id2 );
-  int index = ( ( max_id ) *        ( max_id - 1 ) ) / 2 + ( min_id - 1 );
+  int index = ( ( max_id ) * ( max_id - 1 ) ) / 2 + ( min_id - 1 );
   return index;
 }
 
@@ -307,7 +307,7 @@ SPManager::roulette_wheel_selection( const std::vector< double >& probabilities,
 
   // Perform binary search to find the selected index
   auto it = std::lower_bound( cumulative.begin(), cumulative.end(), randomValue );
-  return static_cast< int >( std::distance(        cumulative.begin(), it ) );
+  return static_cast< int >( std::distance( cumulative.begin(), it ) );
 }
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_sp_manager.py
+# test_sp_manager_spatial.py
 #
 # This file is part of NEST.
 #
@@ -120,9 +120,7 @@ class TestStructuralPlasticityManagerSpatial(unittest.TestCase):
             positions=nest.spatial.free(pos=positions.tolist()),
         )
 
-        nest.EnableStructuralPlasticity(
-            use_gaussian_kernel=True, gaussian_kernel_sigma=1.0
-        )
+        nest.EnableStructuralPlasticity(use_gaussian_kernel=True, gaussian_kernel_sigma=1.0)
         nest.Simulate(10.0)
 
         connections = nest.GetConnections(neurons, neurons, synapse_model="sp_synapse")
@@ -168,9 +166,7 @@ class TestStructuralPlasticityManagerSpatial(unittest.TestCase):
 
         # Expecting a NEST CppException due to missing positions
         with self.assertRaises(nest.NESTErrors.CppException) as context:
-            nest.EnableStructuralPlasticity(
-                use_gaussian_kernel=True, gaussian_kernel_sigma=1.0
-            )
+            nest.EnableStructuralPlasticity(use_gaussian_kernel=True, gaussian_kernel_sigma=1.0)
             nest.Simulate(10.0)
 
         # Check the error message

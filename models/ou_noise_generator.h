@@ -71,10 +71,10 @@ updated at the same points in time. The interval `dt` between updates must be a 
 
 .. admonition:: Recording the generated current
 
-   You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step if
-simulating on a single thread; multiple MPI processes with one thread each also work. In this case, the recording
-interval of the multimeter should be equal to the `dt` of the generator to avoid aliasing effects. In multi-threaded
-mode, recording of noise currents is prohibited for technical reasons.
+  You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step if
+  simulating on a single thread; multiple MPI processes with one thread each also work. In this case, the recording
+  interval of the multimeter should be equal to the `dt` of the generator to avoid aliasing effects. In multi-threaded
+  mode, recording of noise currents is prohibited for technical reasons.
 
 
 .. include:: ../models/stimulation_device.rst

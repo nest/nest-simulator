@@ -647,6 +647,13 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   }
   else
   {
+
+    // Shuffle pre_ids (Fisher-Yates) to randomize postsynaptic assignment order
+    for ( size_t i = pre_id_rnd.size() - 1; i > 0; --i )
+    {
+      size_t j = get_rank_synced_rng()->ulrand( i + 1 );
+      std::swap( pre_id_rnd[ i ], pre_id_rnd[ j ] );
+    }
     global_shuffle_spatial(
       pre_id_rnd, post_id_rnd, pre_ids_results, post_ids_results, sp_conn_builder->allows_autapses() );
   }

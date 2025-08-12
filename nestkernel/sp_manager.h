@@ -32,7 +32,6 @@
 
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
-#include "mask.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
@@ -131,7 +130,7 @@ public:
   void enable_structural_plasticity( bool use_gaussian_kernel,
     double gaussian_kernel_sigma,
     bool cache_probabilities,
-    double max_distance = 10000000 );
+    double max_distance = std::numeric_limits< double >::infinity() );
 
   /**
    * Disable structural plasticity
@@ -139,6 +138,12 @@ public:
   void disable_structural_plasticity();
 
   bool is_structural_plasticity_enabled() const;
+
+  /** Squared distance. Uses current pos_dim. */
+  double squared_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
+
+  /** Hard cutoff check using current max distance and metric. */
+  bool within_max_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
 
   double get_structural_plasticity_update_interval() const;
 
@@ -263,12 +268,6 @@ public:
    */
   std::vector< double > global_positions;
 
-  /**
-   * Standard deviation parameter for the Gaussian kernel used in
-   * spatial probability calculations.
-   */
-  double structural_plasticity_gaussian_kernel_sigma_;
-
 
 private:
   /**
@@ -276,6 +275,12 @@ private:
    * synapses).
    */
   double structural_plasticity_update_interval_;
+  /**
+   * Indicates whether the Structrual Plasticity functionality is On (True) of
+   * Off (False).
+   */
+  bool structural_plasticity_enabled_;
+
 
   /**
    * Flag indicating whether a Gaussian spatial kernel is used for connection
@@ -284,13 +289,11 @@ private:
   bool structural_plasticity_use_gaussian_kernel_;
 
   /**
-   * Dimentionality of the neuron positions
+   * Standard deviation parameter for the Gaussian kernel used in
+   * spatial probability calculations.
    */
-  int pos_dim;
+  double structural_plasticity_gaussian_kernel_sigma_;
 
-
-  double structural_plasticity_max_distance_;
-  std::unique_ptr< Mask< 2 > > distance_mask_template_;
 
   /**
    * List of precomputed probabilities for neuron connections, indexed
@@ -305,10 +308,16 @@ private:
   bool structural_plasticity_cache_probabilities_;
 
   /**
-   * Indicates whether the Structrual Plasticity functionality is On (True) of
-   * Off (False).
+   * Maximum allowed Euclidean distance between pre- and post-neurons.
    */
-  bool structural_plasticity_enabled_;
+  double structural_plasticity_max_distance_;
+
+  /**
+   * Dimentionality of the neuron positions
+   */
+  int pos_dim;
+
+
   std::vector< SPBuilder* > sp_conn_builders_;
 
 

@@ -24,22 +24,20 @@
 
 #ifdef HAVE_MUSIC
 
-// C++ includes:
-#include <numeric>
-
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
+#include "nest.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

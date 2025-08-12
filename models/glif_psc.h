@@ -461,10 +461,40 @@ glif_psc::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-void
-nest::glif_psc::handle( DataLoggingRequest& e )
+inline size_t
+glif_psc::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
+  {
+    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
+
+  P_.has_connections_ = true;
+  return receptor_type;
+}
+
+inline void
+glif_psc::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e ); // the logger does this for us
+}
+
+inline void
+glif_psc::handle( SpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+}
+
+inline void
+glif_psc::handle( CurrentEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 } // namespace nest

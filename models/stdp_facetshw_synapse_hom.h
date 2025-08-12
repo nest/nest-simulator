@@ -513,7 +513,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
 
     // get_history() should make sure that
     // start->t_ > t_lastspike_ - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt_causal < -1.0 * kernel().connection_manager.get_stdp_eps() );
+    assert( minus_dt_causal < -1.0 * kernel::manager< ConnectionManager >().get_stdp_eps() );
 
     a_causal_ += std::exp( minus_dt_causal / cp.tau_plus_ );
 

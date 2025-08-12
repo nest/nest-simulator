@@ -553,7 +553,7 @@ nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() <= static_cast< int >( B_.spikes_.size() ) );
 
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
+  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() );
   const auto rport = e.get_rport();
 
   if ( rport < NMDA )
@@ -584,8 +584,8 @@ nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 } // namespace

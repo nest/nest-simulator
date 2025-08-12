@@ -43,7 +43,7 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name
 size_t
 ConnectorModel::get_synapse_model_id( const std::string& name )
 {
-  return kernel().model_manager.get_synapse_model_id( name );
+  return kernel::manager< ModelManager >().get_synapse_model_id( name );
 }
 
 } // namespace nest

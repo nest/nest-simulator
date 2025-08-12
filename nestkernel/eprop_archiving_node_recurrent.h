@@ -484,7 +484,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
     return;
   }
 
-  const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const double update_interval = kernel::manager< SimulationManager >().get_eprop_update_interval().get_steps();
   const double dt = Time::get_resolution().get_ms();
   const long shift = Time::get_resolution().get_steps();
 

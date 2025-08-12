@@ -204,7 +204,7 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, from );
+    kernel::manager< EventDeliveryManager >().send( *this, se, from );
   }
 }
 

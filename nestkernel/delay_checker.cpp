@@ -137,7 +137,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 
   if ( min_delay_updated and max_delay_updated )
   {
-    if ( kernel().connection_manager.get_num_connections() > 0 )
+    if ( kernel::manager< ConnectionManager >().get_num_connections() > 0 )
     {
       throw BadProperty( "Connections already exist. Please call ResetKernel first" );
     }
@@ -162,10 +162,10 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
-  if ( kernel().simulation_manager.has_been_simulated() )
+  if ( kernel::manager< SimulationManager >().has_been_simulated() )
   {
-    const bool bad_min_delay = new_delay < kernel().connection_manager.get_min_delay();
-    const bool bad_max_delay = new_delay > kernel().connection_manager.get_max_delay();
+    const bool bad_min_delay = new_delay < kernel::manager< ConnectionManager >().get_min_delay();
+    const bool bad_max_delay = new_delay > kernel::manager< ConnectionManager >().get_max_delay();
     if ( bad_min_delay or bad_max_delay )
     {
       throw BadDelay( new_delay_ms,
@@ -223,10 +223,10 @@ nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_del
     throw BadDelay( Time::delay_steps_to_ms( ldelay ), "Delay must be greater than or equal to resolution" );
   }
 
-  if ( kernel().simulation_manager.has_been_simulated() )
+  if ( kernel::manager< SimulationManager >().has_been_simulated() )
   {
-    const bool bad_min_delay = ldelay < kernel().connection_manager.get_min_delay();
-    const bool bad_max_delay = hdelay > kernel().connection_manager.get_max_delay();
+    const bool bad_min_delay = ldelay < kernel::manager< ConnectionManager >().get_min_delay();
+    const bool bad_max_delay = hdelay > kernel::manager< ConnectionManager >().get_max_delay();
     if ( bad_min_delay )
     {
       throw BadDelay(

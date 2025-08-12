@@ -28,6 +28,8 @@
 
 #include <fstream>
 
+#include "manager_interface.h"
+
 /** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
@@ -184,27 +186,16 @@ class ModelManager;
 class MUSICManager;
 class NodeManager;
 
-class ManagerInterface;
-
-class KernelManager
+class KernelManager : public ManagerInterface
 {
-  KernelManager();
-  ~KernelManager();
-
   unsigned long fingerprint_;
-
-  static KernelManager* kernel_manager_instance_;
 
   KernelManager( KernelManager const& );  // do not implement
   void operator=( KernelManager const& ); // do not implement
 
 public:
-  /**
-   * Create/destroy and access the KernelManager singleton.
-   */
-  static void create_kernel_manager();
-  static void destroy_kernel_manager();
-  static KernelManager& get_kernel_manager();
+  KernelManager();
+  ~KernelManager() override;
 
   /**
    * Prepare kernel for operation.
@@ -214,7 +205,7 @@ public:
    *
    * @see finalize(), reset()
    */
-  void initialize();
+  void initialize( const bool adjust_number_of_threads_or_rng_only = false ) override;
 
   /**
    * Take down kernel after operation.
@@ -224,7 +215,7 @@ public:
    *
    * @see initialize(), reset()
    */
-  void finalize();
+  void finalize( const bool adjust_number_of_threads_or_rng_only = false ) override;
 
   /**
    * Reset kernel.
@@ -238,16 +229,15 @@ public:
   /**
    * Change number of threads.
    *
-   * Set the new number of threads on all managers by calling
-   * change_number_of_threads() on each of them.
+   * Set the new number of threads on all managers by calling change_number_of_threads() on each of them.
    */
   void change_number_of_threads( size_t new_num_threads );
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& );
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
-  void prepare();
-  void cleanup();
+  void prepare() override;
+  void cleanup() override;
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
@@ -261,30 +251,6 @@ public:
    */
   void write_to_dump( const std::string& msg );
 
-  /**
-   * \defgroup Manager components in NEST kernel
-   *
-   * The managers are defined below in the order in which they need to be initialized.
-   *
-   * NodeManager is last to ensure all model structures are in place before it is initialized.
-   * @{
-   */
-  // Property-like access to managers (public references).
-  LoggingManager& logging_manager;
-  MPIManager& mpi_manager;
-  VPManager& vp_manager;
-  ModuleManager& module_manager;
-  RandomManager& random_manager;
-  SimulationManager& simulation_manager;
-  ModelRangeManager& modelrange_manager;
-  ConnectionManager& connection_manager;
-  SPManager& sp_manager;
-  EventDeliveryManager& event_delivery_manager;
-  IOManager& io_manager;
-  ModelManager& model_manager;
-  MUSICManager& music_manager;
-  NodeManager& node_manager;
-
 private:
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
@@ -292,21 +258,6 @@ private:
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
 };
-
-KernelManager& kernel();
-
-inline KernelManager&
-KernelManager::get_kernel_manager()
-{
-  assert( kernel_manager_instance_ );
-  return *kernel_manager_instance_;
-}
-
-inline KernelManager&
-kernel()
-{
-  return KernelManager::get_kernel_manager();
-}
 
 inline bool
 KernelManager::is_initialized() const
@@ -318,6 +269,21 @@ inline unsigned long
 KernelManager::get_fingerprint() const
 {
   return fingerprint_;
+}
+
+namespace kernel
+{
+
+template < class T >
+inline T g_manager_instance; // one per type across all TUs
+
+template < class T >
+T&
+manager() noexcept
+{
+  return g_manager_instance< T >;
+}
+
 }
 
 } // namespace nest

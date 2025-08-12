@@ -46,7 +46,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 void
 nest::RecordingDevice::set_initialized_()
 {
-  kernel().io_manager.enroll_recorder( P_.record_to_, *this, backend_params_ );
+  kernel::manager< IOManager >().enroll_recorder( P_.record_to_, *this, backend_params_ );
 }
 
 void
@@ -54,7 +54,8 @@ nest::RecordingDevice::pre_run_hook( const std::vector< Name >& double_value_nam
   const std::vector< Name >& long_value_names )
 {
   Device::pre_run_hook();
-  kernel().io_manager.set_recording_value_names( P_.record_to_, *this, double_value_names, long_value_names );
+  kernel::manager< IOManager >().set_recording_value_names(
+    P_.record_to_, *this, double_value_names, long_value_names );
 }
 
 const std::string&
@@ -84,7 +85,7 @@ nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
   std::string record_to;
   if ( updateValue< std::string >( d, names::record_to, record_to ) )
   {
-    if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
+    if ( not kernel::manager< IOManager >().is_valid_recording_backend( record_to ) )
     {
       std::string msg = String::compose( "Unknown recording backend '%1'", record_to );
       throw BadProperty( msg );
@@ -125,7 +126,7 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  if ( kernel().simulation_manager.has_been_prepared() )
+  if ( kernel::manager< SimulationManager >().has_been_prepared() )
   {
     throw BadProperty( "Recorder parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
   }
@@ -151,7 +152,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
       }
     }
 
-    kernel().io_manager.check_recording_backend_device_status( ptmp.record_to_, backend_params );
+    kernel::manager< IOManager >().check_recording_backend_device_status( ptmp.record_to_, backend_params );
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
@@ -166,7 +167,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   }
   else
   {
-    kernel().io_manager.enroll_recorder( ptmp.record_to_, *this, d );
+    kernel::manager< IOManager >().enroll_recorder( ptmp.record_to_, *this, d );
   }
 
   // if we get here, temporaries contain consistent set of properties
@@ -187,7 +188,7 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
-    kernel().io_manager.get_recording_backend_device_defaults( P_.record_to_, d );
+    kernel::manager< IOManager >().get_recording_backend_device_defaults( P_.record_to_, d );
 
     // then overwrite with cached parameters
     for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
@@ -197,7 +198,7 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    kernel().io_manager.get_recording_backend_device_status( P_.record_to_, *this, d );
+    kernel::manager< IOManager >().get_recording_backend_device_status( P_.record_to_, *this, d );
   }
 }
 
@@ -214,6 +215,6 @@ nest::RecordingDevice::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  kernel().io_manager.write( P_.record_to_, *this, event, double_values, long_values );
+  kernel::manager< IOManager >().write( P_.record_to_, *this, event, double_values, long_values );
   S_.n_events_++;
 }

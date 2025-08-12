@@ -112,11 +112,11 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   {
     if ( not n_threads_updated )
     {
-      n_threads = n_vps / kernel().mpi_manager.get_num_processes();
+      n_threads = n_vps / kernel::manager< MPIManager >().get_num_processes();
     }
 
-    const bool n_threads_conflict = n_vps / kernel().mpi_manager.get_num_processes() != n_threads;
-    const bool n_procs_conflict = n_vps % kernel().mpi_manager.get_num_processes() != 0;
+    const bool n_threads_conflict = n_vps / kernel::manager< MPIManager >().get_num_processes() != n_threads;
+    const bool n_procs_conflict = n_vps % kernel::manager< MPIManager >().get_num_processes() != 0;
     if ( n_threads_conflict or n_procs_conflict )
     {
       throw BadProperty(
@@ -133,23 +133,23 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   if ( n_threads_updated or n_vps_updated )
   {
     std::vector< std::string > errors;
-    if ( kernel().node_manager.size() > 0 )
+    if ( kernel::manager< NodeManager >().size() > 0 )
     {
       errors.push_back( "Nodes exist" );
     }
-    if ( kernel().connection_manager.get_user_set_delay_extrema() )
+    if ( kernel::manager< ConnectionManager >().get_user_set_delay_extrema() )
     {
       errors.push_back( "Delay extrema have been set" );
     }
-    if ( kernel().simulation_manager.has_been_simulated() )
+    if ( kernel::manager< SimulationManager >().has_been_simulated() )
     {
       errors.push_back( "Network has been simulated" );
     }
-    if ( kernel().model_manager.are_model_defaults_modified() )
+    if ( kernel::manager< ModelManager >().are_model_defaults_modified() )
     {
       errors.push_back( "Model defaults were modified" );
     }
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
+    if ( kernel::manager< SPManager >().is_structural_plasticity_enabled() and n_threads > 1 )
     {
       errors.push_back( "Structural plasticity enabled: multithreading cannot be enabled" );
     }
@@ -175,7 +175,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       LOG( M_WARNING, "VPManager::set_status()", msg );
     }
 
-    kernel().change_number_of_threads( n_threads );
+    kernel::manager< KernelManager >().change_number_of_threads( n_threads );
   }
 }
 
@@ -189,7 +189,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 void
 nest::VPManager::set_num_threads( size_t n_threads )
 {
-  assert( not( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 ) );
+  assert( not( kernel::manager< SPManager >().is_structural_plasticity_enabled() and n_threads > 1 ) );
   n_threads_ = n_threads;
 
 #ifdef _OPENMP

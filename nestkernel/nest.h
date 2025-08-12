@@ -190,14 +190,14 @@ template < template < typename > class ConnectorModelT >
 void
 register_connection_model( const std::string& name )
 {
-  kernel().model_manager.register_connection_model< ConnectorModelT >( name );
+  kernel::manager< ModelManager >().register_connection_model< ConnectorModelT >( name );
 }
 
 template < typename NodeModelT >
 void
 register_node_model( const std::string& name, std::string deprecation_info )
 {
-  kernel().model_manager.register_node_model< NodeModelT >( name, deprecation_info );
+  kernel::manager< ModelManager >().register_node_model< NodeModelT >( name, deprecation_info );
 }
 
 }

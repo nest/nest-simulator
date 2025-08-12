@@ -876,10 +876,10 @@ For example, the ``stopwatch.h`` file could look like:
       std::enable_if_t< use_threaded_timers
         and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::start()
     {
-      kernel().vp_manager.assert_thread_parallel();
+      kernel::manager<VPManager>().assert_thread_parallel();
 
-      walltime_timers_[ kernel().vp_manager.get_thread_id() ].start();
-      cputime_timers_[ kernel().vp_manager.get_thread_id() ].start();
+      walltime_timers_[ kernel::manager<VPManager>().get_thread_id() ].start();
+      cputime_timers_[ kernel::manager<VPManager>().get_thread_id() ].start();
     }
 
     template < StopwatchGranularity detailed_timer >
@@ -889,10 +889,10 @@ For example, the ``stopwatch.h`` file could look like:
       std::enable_if_t< use_threaded_timers
         and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::stop()
     {
-      kernel().vp_manager.assert_thread_parallel();
+      kernel::manager<VPManager>().assert_thread_parallel();
 
-      walltime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
-      cputime_timers_[ kernel().vp_manager.get_thread_id() ].stop();
+      walltime_timers_[ kernel::manager<VPManager>().get_thread_id() ].stop();
+      cputime_timers_[ kernel::manager<VPManager>().get_thread_id() ].stop();
     }
 
     template < StopwatchGranularity detailed_timer >
@@ -902,9 +902,9 @@ For example, the ``stopwatch.h`` file could look like:
       std::enable_if_t< use_threaded_timers
         and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::is_running_() const
     {
-      kernel().vp_manager.assert_thread_parallel();
+      kernel::manager<VPManager>().assert_thread_parallel();
 
-      return walltime_timers_[ kernel().vp_manager.get_thread_id() ].is_running_();
+      return walltime_timers_[ kernel::manager<VPManager>().get_thread_id() ].is_running_();
     }
 
     template < StopwatchGranularity detailed_timer >
@@ -915,9 +915,9 @@ For example, the ``stopwatch.h`` file could look like:
         and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::elapsed( timers::timeunit_t
         timeunit ) const
     {
-      kernel().vp_manager.assert_thread_parallel();
+      kernel::manager<VPManager>().assert_thread_parallel();
 
-      return walltime_timers_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+      return walltime_timers_[ kernel::manager<VPManager>().get_thread_id() ].elapsed( timeunit );
     }
 
     template < StopwatchGranularity detailed_timer >
@@ -929,9 +929,9 @@ For example, the ``stopwatch.h`` file could look like:
       timers::timeunit_t timeunit,
       std::ostream& os ) const
     {
-      kernel().vp_manager.assert_thread_parallel();
+      kernel::manager<VPManager>().assert_thread_parallel();
 
-      walltime_timers_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
+      walltime_timers_[ kernel::manager<VPManager>().get_thread_id() ].print( msg, timeunit, os );
     }
 
     template < StopwatchGranularity detailed_timer >
@@ -941,9 +941,9 @@ For example, the ``stopwatch.h`` file could look like:
       std::enable_if_t< use_threaded_timers
         and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >::reset()
     {
-      kernel().vp_manager.assert_single_threaded();
+      kernel::manager<VPManager>().assert_single_threaded();
 
-      const size_t num_threads = kernel().vp_manager.get_num_threads();
+      const size_t num_threads = kernel::manager<VPManager>().get_num_threads();
       walltime_timers_.resize( num_threads );
       cputime_timers_.resize( num_threads );
       for ( size_t i = 0; i < num_threads; ++i )

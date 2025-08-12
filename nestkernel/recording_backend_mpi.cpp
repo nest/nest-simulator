@@ -46,7 +46,7 @@ nest::RecordingBackendMPI::~RecordingBackendMPI() throw()
 void
 nest::RecordingBackendMPI::initialize()
 {
-  auto nthreads = kernel().vp_manager.get_num_threads();
+  auto nthreads = kernel::manager< VPManager >().get_num_threads();
   std::vector< std::vector< std::vector< std::array< double, 3 > > > > empty_vector( nthreads );
   buffer_.swap( empty_vector );
   device_map devices( nthreads );
@@ -139,7 +139,7 @@ nest::RecordingBackendMPI::prepare()
       // Create the connection with MPI
       // 1) take all the ports of the connections
       // get port and update the list of devices
-      thread_id_master = kernel().vp_manager.get_thread_id();
+      thread_id_master = kernel::manager< VPManager >().get_thread_id();
     }
   }
   int count_max = 0;
@@ -193,7 +193,7 @@ nest::RecordingBackendMPI::prepare()
 #pragma omp parallel default( none ) shared( thread_id_master )
   {
     // Update all the threads
-    size_t thread_id = kernel().vp_manager.get_thread_id();
+    size_t thread_id = kernel::manager< VPManager >().get_thread_id();
     if ( thread_id != thread_id_master )
     {
       for ( auto& it_device : devices_[ thread_id ] )
@@ -293,7 +293,7 @@ nest::RecordingBackendMPI::cleanup()
     }
     // clear map of device
     commMap_.clear();
-    size_t thread_id_master = kernel().vp_manager.get_thread_id();
+    size_t thread_id_master = kernel::manager< VPManager >().get_thread_id();
     for ( auto& it_device : devices_[ thread_id_master ] )
     {
       std::get< 0 >( it_device.second ) = -1;
@@ -329,7 +329,7 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
   const std::vector< long >& )
 {
   // For each event send a message through the right MPI communicator
-  const size_t thread_id = kernel().get_kernel_manager().vp_manager.get_thread_id();
+  const size_t thread_id = kernel::manager< VPManager >().get_thread_id();
   const size_t sender = event.get_sender_node_id();
   const size_t recorder = device.get_node_id();
   const Time stamp = event.get_stamp();
@@ -388,12 +388,12 @@ nest::RecordingBackendMPI::get_port( const size_t index_node, const std::string&
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port )
   std::ostringstream basename;
-  const std::string& path = kernel().io_manager.get_data_path();
+  const std::string& path = kernel::manager< IOManager >().get_data_path();
   if ( not path.empty() )
   {
     basename << path << '/';
   }
-  basename << kernel().io_manager.get_data_prefix();
+  basename << kernel::manager< IOManager >().get_data_prefix();
 
   if ( not label.empty() )
   {

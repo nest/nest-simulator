@@ -31,7 +31,7 @@
 void
 nest::RecordingBackendScreen::initialize()
 {
-  device_data_map tmp( kernel().vp_manager.get_num_threads() );
+  device_data_map tmp( kernel::manager< VPManager >().get_num_threads() );
   device_data_.swap( tmp );
 }
 

@@ -345,7 +345,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
     if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
 
       S_.z_ = 1.0;
       S_.v_m_ -= P_.V_th_ * S_.z_;
@@ -373,8 +373,8 @@ eprop_iaf_adapt::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -382,8 +382,8 @@ eprop_iaf_adapt::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

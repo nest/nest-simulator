@@ -26,19 +26,21 @@
 /**
  *
  */
-#define LOG( s, fctn, msg ) nest::kernel().logging_manager.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+#define LOG( s, fctn, msg ) \
+  nest::kernel::manager< LoggingManager >().publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 /**
  *
  */
 #define ALL_ENTRIES_ACCESSED( d, fctn, msg ) \
-  nest::kernel().logging_manager.all_entries_accessed( ( d ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+  nest::kernel::manager< LoggingManager >().all_entries_accessed( ( d ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 /**
  *
  */
-#define ALL_ENTRIES_ACCESSED2( d, fctn, msg1, msg2 ) \
-  nest::kernel().logging_manager.all_entries_accessed( ( d ), ( fctn ), ( msg1 ), ( msg2 ), __FILE__, __LINE__ )
+#define ALL_ENTRIES_ACCESSED2( d, fctn, msg1, msg2 )              \
+  nest::kernel::manager< LoggingManager >().all_entries_accessed( \
+    ( d ), ( fctn ), ( msg1 ), ( msg2 ), __FILE__, __LINE__ )
 
 namespace nest
 {

@@ -229,7 +229,7 @@ nest::izhikevich::update( Time const& origin, const long from, const long to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
     }
 
     // set new input current
@@ -244,8 +244,8 @@ void
 nest::izhikevich::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -255,7 +255,8 @@ nest::izhikevich::handle( CurrentEvent& e )
 
   const double c = e.get_current();
   const double w = e.get_weight();
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ), w * c );
 }
 
 void

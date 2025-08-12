@@ -407,7 +407,7 @@ nest::iaf_bw_2001::pre_run_hook()
 void
 nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 {
-  std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
+  std::vector< double > s_vals( kernel::manager< ConnectionManager >().get_min_delay(), 0.0 );
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -473,7 +473,7 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 
       SpikeEvent se;
       se.set_offset( s_NMDA_delta );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
     }
 
     // set new input current

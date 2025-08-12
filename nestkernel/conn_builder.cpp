@@ -54,12 +54,8 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const std::vector< DictionaryDatum >& syn_specs )
   : third_in_builder_( nullptr )
   , third_out_builder_( nullptr )
-  , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
-      sources,
-      targets,
-      third_out_builder_,
-      conn_spec,
-      syn_specs ) )
+  , primary_builder_( kernel::manager< ConnectionManager >()
+                        .get_conn_builder( primary_rule, sources, targets, third_out_builder_, conn_spec, syn_specs ) )
 {
 }
 
@@ -75,14 +71,14 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
     third,
     third_conn_spec,
     const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] ) )
-  , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
+  , third_out_builder_( kernel::manager< ConnectionManager >().get_third_conn_builder( third_rule,
       third,
       targets,
       third_in_builder_,
       third_conn_spec,
       // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
       const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] ) )
-  , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
+  , primary_builder_( kernel::manager< ConnectionManager >().get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
@@ -131,7 +127,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   , allow_multapses_( true )
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
-  , exceptions_raised_( kernel().vp_manager.get_num_threads() )
+  , exceptions_raised_( kernel::manager< VPManager >().get_num_threads() )
   , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
@@ -160,7 +156,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+  synapse_model_id_[ 0 ] = kernel::manager< ModelManager >().get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
@@ -171,7 +167,8 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
     set_synapse_model_( syn_params, synapse_indx );
     set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+    DictionaryDatum syn_defaults =
+      kernel::manager< ModelManager >().get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during connection setup
@@ -235,9 +232,9 @@ nest::BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
   int local = true;
 
   // check whether the source is on this mpi machine
-  if ( kernel().node_manager.is_local_node_id( snode_id ) )
+  if ( kernel::manager< NodeManager >().is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+    Node* const source = kernel::manager< NodeManager >().get_node_or_proxy( snode_id, tid );
     const size_t source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -249,13 +246,13 @@ nest::BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
   }
 
   // check whether the target is on this mpi machine
-  if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+  if ( not kernel::manager< NodeManager >().is_local_node_id( tnode_id ) )
   {
     local = false;
   }
   else
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+    Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
     const size_t target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
@@ -280,7 +277,7 @@ nest::BipartiteConnBuilder::connect()
   for ( auto synapse_model_id : synapse_model_id_ )
   {
     const ConnectorModel& synapse_model =
-      kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
+      kernel::manager< ModelManager >().get_connection_model( synapse_model_id, /* thread */ 0 );
     const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
 
     if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
@@ -329,7 +326,7 @@ nest::BipartiteConnBuilder::connect()
     }
   }
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >().get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -351,7 +348,7 @@ nest::BipartiteConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >().get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -367,7 +364,8 @@ nest::BipartiteConnBuilder::update_param_dict_( size_t snode_id,
   RngPtr rng,
   size_t synapse_indx )
 {
-  assert( kernel().vp_manager.get_num_threads() == static_cast< size_t >( param_dicts_[ synapse_indx ].size() ) );
+  assert(
+    kernel::manager< VPManager >().get_num_threads() == static_cast< size_t >( param_dicts_[ synapse_indx ].size() ) );
 
   for ( auto synapse_parameter : synapse_params_[ synapse_indx ] )
   {
@@ -402,7 +400,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
 
     if ( default_weight_and_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
+      kernel::manager< ConnectionManager >().connect( snode_id,
         &target,
         target_thread,
         synapse_model_id_[ synapse_indx ],
@@ -410,7 +408,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
     }
     else if ( default_weight_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
+      kernel::manager< ConnectionManager >().connect( snode_id,
         &target,
         target_thread,
         synapse_model_id_[ synapse_indx ],
@@ -419,7 +417,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
     }
     else if ( default_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
+      kernel::manager< ConnectionManager >().connect( snode_id,
         &target,
         target_thread,
         synapse_model_id_[ synapse_indx ],
@@ -431,7 +429,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
     {
       const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
       const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect( snode_id,
+      kernel::manager< ConnectionManager >().connect( snode_id,
         &target,
         target_thread,
         synapse_model_id_[ synapse_indx ],
@@ -497,7 +495,7 @@ nest::BipartiteConnBuilder::all_parameters_scalar_() const
 bool
 nest::BipartiteConnBuilder::loop_over_targets_() const
 {
-  return targets_->size() < kernel().node_manager.size() or not targets_->is_range()
+  return targets_->size() < kernel::manager< NodeManager >().size() or not targets_->is_range()
     or parameters_requiring_skipping_.size() > 0;
 }
 
@@ -511,18 +509,20 @@ nest::BipartiteConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size
   const std::string syn_name = ( *syn_params )[ names::synapse_model ];
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-  const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+  const size_t synapse_model_id = kernel::manager< ModelManager >().get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
+  const ConnectorModel& synapse_model =
+    kernel::manager< ModelManager >().get_connection_model( synapse_model_id, /* thread */ 0 );
   synapse_model.check_synapse_params( syn_params );
 }
 
 void
 nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+  DictionaryDatum syn_defaults =
+    kernel::manager< ModelManager >().get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
@@ -538,19 +538,19 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_pa
   if ( not default_weight_and_delay_[ synapse_indx ] )
   {
     weights_[ synapse_indx ] = syn_params->known( names::weight )
-      ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel::manager< VPManager >().get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel::manager< VPManager >().get_num_threads() );
     register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
     delays_[ synapse_indx ] = syn_params->known( names::delay )
-      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel::manager< VPManager >().get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel::manager< VPManager >().get_num_threads() );
   }
   else if ( default_weight_[ synapse_indx ] )
   {
     delays_[ synapse_indx ] = syn_params->known( names::delay )
-      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel::manager< VPManager >().get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel::manager< VPManager >().get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
@@ -571,14 +571,14 @@ nest::BipartiteConnBuilder::set_synapse_params( DictionaryDatum syn_defaults,
     if ( syn_params->known( param_name ) )
     {
       synapse_params_[ synapse_indx ][ param_name ] =
-        ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
+        ConnParameter::create( ( *syn_params )[ param_name ], kernel::manager< VPManager >().get_num_threads() );
       register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >().get_num_threads(); ++tid )
   {
     param_dicts_[ synapse_indx ].push_back( new Dictionary() );
 
@@ -658,14 +658,14 @@ nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   const DictionaryDatum& third_conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : BipartiteConnBuilder( sources, third, nullptr, third_conn_spec, syn_specs )
-  , source_third_gids_( kernel().vp_manager.get_num_threads(), nullptr )
-  , source_third_counts_( kernel().vp_manager.get_num_threads(), nullptr )
+  , source_third_gids_( kernel::manager< VPManager >().get_num_threads(), nullptr )
+  , source_third_counts_( kernel::manager< VPManager >().get_num_threads(), nullptr )
 {
 #pragma omp parallel
   {
-    const size_t thrd = kernel().vp_manager.get_thread_id();
+    const size_t thrd = kernel::manager< VPManager >().get_thread_id();
     source_third_gids_[ thrd ] = new BlockVector< SourceThirdInfo_ >();
-    source_third_counts_[ thrd ] = new std::vector< size_t >( kernel().mpi_manager.get_num_processes(), 0 );
+    source_third_counts_[ thrd ] = new std::vector< size_t >( kernel::manager< MPIManager >().get_num_processes(), 0 );
   }
 }
 
@@ -673,7 +673,7 @@ nest::ThirdInBuilder::~ThirdInBuilder()
 {
 #pragma omp parallel
   {
-    const size_t thrd = kernel().vp_manager.get_thread_id();
+    const size_t thrd = kernel::manager< VPManager >().get_thread_id();
     delete source_third_gids_[ thrd ];
     delete source_third_counts_[ thrd ];
   }
@@ -682,9 +682,9 @@ nest::ThirdInBuilder::~ThirdInBuilder()
 void
 nest::ThirdInBuilder::register_connection( size_t primary_source_id, size_t third_node_id )
 {
-  const size_t tid = kernel().vp_manager.get_thread_id();
-  const auto third_node_rank =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( third_node_id ) );
+  const size_t tid = kernel::manager< VPManager >().get_thread_id();
+  const auto third_node_rank = kernel::manager< MPIManager >().get_process_id_of_vp(
+    kernel::manager< VPManager >().node_id_to_vp( third_node_id ) );
   source_third_gids_[ tid ]->push_back( { primary_source_id, third_node_id, third_node_rank } );
   ++( ( *source_third_counts_[ tid ] )[ third_node_rank ] );
 }
@@ -692,10 +692,10 @@ nest::ThirdInBuilder::register_connection( size_t primary_source_id, size_t thir
 void
 nest::ThirdInBuilder::connect_()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel::manager< VPManager >().assert_single_threaded();
 
   // count up how many source-third pairs we need to send to each rank
-  const size_t num_ranks = kernel().mpi_manager.get_num_processes();
+  const size_t num_ranks = kernel::manager< MPIManager >().get_num_processes();
   std::vector< size_t > source_third_per_rank( num_ranks, 0 );
   for ( auto stcp : source_third_counts_ )
   {
@@ -708,9 +708,9 @@ nest::ThirdInBuilder::connect_()
 
   // now find global maximum; for simplicity, we will use this to configure buffers
   std::vector< long > max_stc( num_ranks ); // MPIManager does not support size_t
-  max_stc[ kernel().mpi_manager.get_rank() ] =
+  max_stc[ kernel::manager< MPIManager >().get_rank() ] =
     *std::max_element( source_third_per_rank.begin(), source_third_per_rank.end() );
-  kernel().mpi_manager.communicate( max_stc );
+  kernel::manager< MPIManager >().communicate( max_stc );
   const size_t global_max_stc = *std::max_element( max_stc.begin(), max_stc.end() );
 
   if ( global_max_stc == 0 )
@@ -749,7 +749,7 @@ nest::ThirdInBuilder::connect_()
   // force to master thread for compatibility with MPI standard
 #pragma omp master
   {
-    kernel().mpi_manager.communicate_Alltoall( send_stg, recv_stg, send_recv_count );
+    kernel::manager< MPIManager >().communicate_Alltoall( send_stg, recv_stg, send_recv_count );
   }
 
   // Now recv_stg contains all source-third pairs where third is on current rank
@@ -757,8 +757,8 @@ nest::ThirdInBuilder::connect_()
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    RngPtr rng = kernel().random_manager.get_vp_specific_rng( tid );
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
+    RngPtr rng = kernel::manager< RandomManager >().get_vp_specific_rng( tid );
 
     for ( size_t idx = 0; idx < recv_stg.size(); idx += 2 )
     {
@@ -772,11 +772,11 @@ nest::ThirdInBuilder::connect_()
         continue;
       }
 
-      if ( kernel().vp_manager.is_node_id_vp_local( third_gid ) )
+      if ( kernel::manager< VPManager >().is_node_id_vp_local( third_gid ) )
       {
         const auto source_gid = recv_stg[ idx + 1 ];
         assert( source_gid > 0 );
-        single_connect_( source_gid, *kernel().node_manager.get_node_or_proxy( third_gid, tid ), tid, rng );
+        single_connect_( source_gid, *kernel::manager< NodeManager >().get_node_or_proxy( third_gid, tid ), tid, rng );
       }
     }
   }
@@ -802,7 +802,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   , random_pool_( true )
   , pool_size_( third->size() )
   , targets_per_third_( targets->size() / third->size() )
-  , pools_( kernel().vp_manager.get_num_threads(), nullptr )
+  , pools_( kernel::manager< VPManager >().get_num_threads(), nullptr )
 {
   updateValue< double >( conn_spec, names::p, p_ );
   updateValue< long >( conn_spec, names::pool_size, pool_size_ );
@@ -845,7 +845,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
 
 #pragma omp parallel
   {
-    const size_t thrd = kernel().vp_manager.get_thread_id();
+    const size_t thrd = kernel::manager< VPManager >().get_thread_id();
     pools_[ thrd ] = new TgtPoolMap_();
   }
 
@@ -860,7 +860,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
     size_t idx = 0;
     for ( auto tgt_it = targets_->begin(); tgt_it != targets_->end(); ++tgt_it )
     {
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+      Node* const tgt = kernel::manager< NodeManager >().get_node_or_proxy( ( *tgt_it ).node_id );
       if ( not tgt->is_proxy() )
       {
         tgt->set_tmp_nc_index( idx++ ); // must be postfix
@@ -873,7 +873,7 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 {
 #pragma omp parallel
   {
-    const size_t thrd = kernel().vp_manager.get_thread_id();
+    const size_t thrd = kernel::manager< VPManager >().get_thread_id();
     delete pools_[ thrd ];
 
     if ( not random_pool_ )
@@ -884,7 +884,7 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
       // Here we can work in parallel since we just reset to invalid_index
       for ( auto tgt_it = targets_->thread_local_begin(); tgt_it != targets_->end(); ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thrd );
+        Node* const tgt = kernel::manager< NodeManager >().get_node_or_proxy( ( *tgt_it ).node_id, thrd );
         assert( not tgt->is_proxy() );
         tgt->set_tmp_nc_index( invalid_index );
       }
@@ -896,7 +896,7 @@ void
 nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, Node& primary_target )
 {
   // We assume target is on this thread
-  const size_t tid = kernel().vp_manager.get_thread_id();
+  const size_t tid = kernel::manager< VPManager >().get_thread_id();
   RngPtr rng = get_vp_specific_rng( tid );
 
   // conditionally connect third factor
@@ -969,7 +969,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -994,7 +994,7 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1007,7 +1007,7 @@ nest::OneToOneBuilder::connect_()
       }
       else
       {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& local_nodes = kernel::manager< NodeManager >().get_local_nodes( tid );
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
@@ -1048,7 +1048,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1062,13 +1062,13 @@ nest::OneToOneBuilder::disconnect_()
         const size_t snode_id = ( *source_it ).node_id;
 
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+        if ( not kernel::manager< NodeManager >().is_local_node_id( tnode_id ) )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
         const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
@@ -1096,7 +1096,7 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1121,7 +1121,7 @@ nest::OneToOneBuilder::sp_connect_()
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
         const size_t target_thread = target->get_thread();
 
         single_connect_( snode_id, *target, target_thread, rng );
@@ -1143,7 +1143,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1161,7 +1161,7 @@ nest::OneToOneBuilder::sp_disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
         const size_t target_thread = target->get_thread();
 
         single_disconnect_( snode_id, *target, target_thread );
@@ -1183,7 +1183,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1195,7 +1195,7 @@ nest::AllToAllBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const size_t tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             skip_conn_parameter_( tid, sources_->size() );
@@ -1207,7 +1207,7 @@ nest::AllToAllBuilder::connect_()
       }
       else
       {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& local_nodes = kernel::manager< NodeManager >().get_local_nodes( tid );
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
@@ -1271,7 +1271,7 @@ nest::AllToAllBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
     try
     {
       RngPtr rng = get_vp_specific_rng( tid );
@@ -1296,7 +1296,7 @@ nest::AllToAllBuilder::sp_connect_()
             skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           const size_t target_thread = target->get_thread();
           single_connect_( snode_id, *target, target_thread, rng );
         }
@@ -1318,7 +1318,7 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1328,13 +1328,13 @@ nest::AllToAllBuilder::disconnect_()
         const size_t tnode_id = ( *target_it ).node_id;
 
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+        if ( not kernel::manager< NodeManager >().is_local_node_id( tnode_id ) )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
         const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
@@ -1367,7 +1367,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1386,7 +1386,7 @@ nest::AllToAllBuilder::sp_disconnect_()
             // Disconnecting: no parameter skipping required
             continue;
           }
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           const size_t target_thread = target->get_thread();
           single_disconnect_( snode_id, *target, target_thread );
         }
@@ -1464,7 +1464,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1476,7 +1476,7 @@ nest::FixedInDegreeBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const size_t tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
 
           const long indegree_value = std::round( indegree_->value( rng, target ) );
           if ( target->is_proxy() )
@@ -1491,7 +1491,7 @@ nest::FixedInDegreeBuilder::connect_()
       }
       else
       {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& local_nodes = kernel::manager< NodeManager >().get_local_nodes( tid );
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
@@ -1639,7 +1639,7 @@ nest::FixedOutDegreeBuilder::connect_()
     std::vector< size_t > tgt_ids_;
     const long n_rnd = targets_->size();
 
-    Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
+    Node* source_node = kernel::manager< NodeManager >().get_node_or_proxy( snode_id );
     const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
     for ( long j = 0; j < outdegree_value; ++j )
     {
@@ -1667,7 +1667,7 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
       try
       {
@@ -1676,7 +1676,7 @@ nest::FixedOutDegreeBuilder::connect_()
         std::vector< size_t >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
         {
-          Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( *tnode_id_it, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1736,7 +1736,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
-  const int M = kernel().vp_manager.get_num_virtual_processes();
+  const int M = kernel::manager< VPManager >().get_num_virtual_processes();
   const long size_sources = sources_->size();
   const long size_targets = targets_->size();
 
@@ -1746,12 +1746,12 @@ nest::FixedTotalNumberBuilder::connect_()
   // function
   std::vector< size_t > number_of_targets_on_vp( M, 0 );
   std::vector< size_t > local_targets;
-  local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+  local_targets.reserve( size_targets / kernel::manager< MPIManager >().get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
-    int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
+    int vp = kernel::manager< VPManager >().node_id_to_vp( ( *targets_ )[ t ] );
     ++number_of_targets_on_vp[ vp ];
-    if ( kernel().vp_manager.is_local_vp( vp ) )
+    if ( kernel::manager< VPManager >().is_local_vp( vp ) )
     {
       local_targets.push_back( ( *targets_ )[ t ] );
     }
@@ -1807,13 +1807,13 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
-      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const size_t vp_id = kernel::manager< VPManager >().thread_to_vp( tid );
 
-      if ( kernel().vp_manager.is_local_vp( vp_id ) )
+      if ( kernel::manager< VPManager >().is_local_vp( vp_id ) )
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
@@ -1824,7 +1824,7 @@ nest::FixedTotalNumberBuilder::connect_()
         std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
         for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
         {
-          if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
+          if ( kernel::manager< VPManager >().node_id_to_vp( *tnode_id_it ) == vp_id )
           {
             thread_local_targets.push_back( *tnode_id_it );
           }
@@ -1847,7 +1847,7 @@ nest::FixedTotalNumberBuilder::connect_()
           // targets_on_vp vector
           const long tnode_id = thread_local_targets[ t_index ];
 
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           const size_t target_thread = target->get_thread();
 
           if ( allow_autapses_ or snode_id != tnode_id )
@@ -1900,7 +1900,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -1912,7 +1912,7 @@ nest::BernoulliBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const size_t tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             // skip array parameters handled in other virtual processes
@@ -1926,7 +1926,7 @@ nest::BernoulliBuilder::connect_()
 
       else
       {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& local_nodes = kernel::manager< NodeManager >().get_local_nodes( tid );
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
@@ -2018,7 +2018,7 @@ nest::PoissonBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -2030,7 +2030,7 @@ nest::PoissonBuilder::connect_()
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const size_t tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
             // skip parameters handled in other virtual processes
@@ -2043,7 +2043,7 @@ nest::PoissonBuilder::connect_()
       }
       else
       {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& local_nodes = kernel::manager< NodeManager >().get_local_nodes( tid );
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
@@ -2140,7 +2140,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 {
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     // Use RNG generating same number sequence on all threads
     RngPtr synced_rng = get_vp_synced_rng( tid );
@@ -2168,7 +2168,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         }
         assert( indegree < sources_->size() );
 
-        target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
+        target = kernel::manager< NodeManager >().get_node_or_proxy( ( *tnode_id ).node_id, tid );
         target_thread = tid;
 
         // check whether the target is on this thread
@@ -2194,7 +2194,7 @@ nest::SymmetricBernoulliBuilder::connect_()
           }
           previous_snode_ids.insert( snode_id );
 
-          source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+          source = kernel::manager< NodeManager >().get_node_or_proxy( snode_id, tid );
           source_thread = tid;
 
           if ( source->is_proxy() )
@@ -2249,7 +2249,7 @@ nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    DictionaryDatum syn_defaults = kernel::manager< ModelManager >().get_connector_defaults( get_synapse_model() );
     const double delay = getValue< double >( syn_defaults, "delay" );
     d = Time( Time::ms( delay ) ).get_steps();
   }
@@ -2261,7 +2261,7 @@ nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::ve
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >().get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -2298,7 +2298,7 @@ nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vect
 #pragma omp parallel
   {
     // get thread id
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >().get_thread_id();
 
     try
     {
@@ -2320,7 +2320,7 @@ nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vect
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+        Node* const target = kernel::manager< NodeManager >().get_node_or_proxy( *tnode_id_it, tid );
 
         single_connect_( *snode_id_it, *target, tid, rng );
       }

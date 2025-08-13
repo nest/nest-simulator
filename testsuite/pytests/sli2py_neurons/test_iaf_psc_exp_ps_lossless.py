@@ -29,21 +29,21 @@ to some useful devices.
 The first part of this test is exactly the same as test_iaf_psc_exp_ps,
 demonstrating the numerical equivalency of both models in usual conditions.
 The only difference between the models, which is tested in the second part,
-is the detection of double threshold crossings during a simulation step 
+is the detection of double threshold crossings during a simulation step
 (so the membrane potential is again below V_th at the end of the step)
 by the lossless model.
 
 The second part tests whether the lossless spike detection algorithm [1] is
 working correctly.
 
-The algorithm checks whether a spike is emitted on the basis of the neurons position 
+The algorithm checks whether a spike is emitted on the basis of the neurons position
 in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
 S1 corresponds to threshold crossings that would also be detected by the lossy 
 implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
 The lossless model detects both.
 
 The test brings 3 neurons into the state space regions NS2, S1 and S2,
-which is done by keeping their membrane potential close to threshold and then 
+which is done by keeping their membrane potential close to threshold and then
 sending a single spike to them, which, received via different synaptic weights,
 sets the synaptic current such that the neurons are in the respective region.
 The existence and precise times of the resulting spikes are compared to reference data.

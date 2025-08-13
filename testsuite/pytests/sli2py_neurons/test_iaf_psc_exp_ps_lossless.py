@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_psc_exp_ps.py
+# test_iaf_psc_exp_ps_lossless.py
 #
 # This file is part of NEST.
 #
@@ -20,47 +20,47 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-    Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with analytical solution and tests lossless spike detection
+Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with analytical solution and tests lossless spike detection
 
-    Description:
-    test_iaf_psc_exp_ps_lossless.py is an overall test of the iaf_psc_exp_ps_lossless model connected
-    to some useful devices.
+Description:
+test_iaf_psc_exp_ps_lossless.py is an overall test of the iaf_psc_exp_ps_lossless model connected
+to some useful devices.
 
-    The first part of this test is exactly the same as test_iaf_psc_exp_ps,
-    demonstrating the numerical equivalency of both models in usual conditions.
-    The only difference between the models, which is tested in the second part,
-    is the detection of double threshold crossings during a simulation step 
-    (so the membrane potential is again below V_th at the end of the step)
-    by the lossless model.
+The first part of this test is exactly the same as test_iaf_psc_exp_ps,
+demonstrating the numerical equivalency of both models in usual conditions.
+The only difference between the models, which is tested in the second part,
+is the detection of double threshold crossings during a simulation step 
+(so the membrane potential is again below V_th at the end of the step)
+by the lossless model.
 
-    The second part tests whether the lossless spike detection algorithm [1] is
-    working correctly.
+The second part tests whether the lossless spike detection algorithm [1] is
+working correctly.
 
-    The algorithm checks whether a spike is emitted on the basis of the neurons position 
-    in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
-    S1 corresponds to threshold crossings that would also be detected by the lossy 
-    implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
-    The lossless model detects both.
+The algorithm checks whether a spike is emitted on the basis of the neurons position 
+in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
+S1 corresponds to threshold crossings that would also be detected by the lossy 
+implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
+The lossless model detects both.
 
-    The test brings 3 neurons into the state space regions NS2, S1 and S2,
-    which is done by keeping their membrane potential close to threshold and then 
-    sending a single spike to them, which, received via different synaptic weights,
-    sets the synaptic current such that the neurons are in the respective region.
-    The existence and precise times of the resulting spikes are compared to reference data.
+The test brings 3 neurons into the state space regions NS2, S1 and S2,
+which is done by keeping their membrane potential close to threshold and then 
+sending a single spike to them, which, received via different synaptic weights,
+sets the synaptic current such that the neurons are in the respective region.
+The existence and precise times of the resulting spikes are compared to reference data.
 
-    If you need to reproduce the reference data, ask the authors of [1] for the script
-    regions_algorithm.py which they used to generate Fig. 6. Here you can adjust the
-    parameters as wished and obtain the respective regions.
+If you need to reproduce the reference data, ask the authors of [1] for the script
+regions_algorithm.py which they used to generate Fig. 6. Here you can adjust the
+parameters as wished and obtain the respective regions.
 
 
-    References:
-    [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
-        (2018) Perfect Detection of Spikes in the Linear Sub-threshold
-        Dynamics of Point Neurons. Front. Neuroinform. 11:75.
-        doi: 10.3389/fninf.2017.00075
+References:
+[1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
+    (2018) Perfect Detection of Spikes in the Linear Sub-threshold
+    Dynamics of Point Neurons. Front. Neuroinform. 11:75.
+    doi: 10.3389/fninf.2017.00075
 
-    Author:  Jeyashree Krishnan, 2017, and Christian Keup, 2018
-    SeeAlso: test_iaf_psc_exp, test_iaf_psc_exp_ps
+Author:  Jeyashree Krishnan, 2017, and Christian Keup, 2018
+SeeAlso: test_iaf_psc_exp, test_iaf_psc_exp_ps
 """
 
 import nest
@@ -70,9 +70,6 @@ import pytest
 
 
 def test_precise_spiking_dc_input():
-    """
-    Exactly the same as in test_iaf_psc_exp_ps
-    """
     dt = 0.1
     dc_amp = 1000.0
 
@@ -152,7 +149,6 @@ def test_lossless_spike_detection():
     w_spike = 90.0
 
     # send one trigger spike to the nrns at specified time:
-
     sp_gen = nest.Create("spike_generator", {"precise_times": True, "spike_times": [3.0]})
 
     nest.Connect(sp_gen, nrn_nospike)
@@ -197,25 +193,3 @@ def test_lossless_spike_detection():
     assert len(time_nospike) == 0
     assert time_missingspike == pytest.approx(4.01442)
     assert time_spike == pytest.approx(4.00659)
-
-
-#     sr_nospike /events get /times get cva    % array of spike times (this one should be empty)
-#       Total                                  % sum of array elements. works also for empty array
-#       6 ToUnitTestPrecision
-#       /time_nospike Set
-
-#     sr_missingspike /events get /times get cva
-#       Total
-#       6 ToUnitTestPrecision
-#       /time_missingspike Set
-
-#     sr_spike /events get /times get cva
-#       Total
-#       6 ToUnitTestPrecision
-#       /time_spike Set
-
-
-#     { time_nospike 0 eq } assert_or_die
-#     { time_missingspike 4.01442 eq } assert_or_die
-#     { time_spike 4.00659 eq } assert_or_die
-#     pass

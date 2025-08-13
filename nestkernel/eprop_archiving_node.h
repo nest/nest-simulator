@@ -34,49 +34,97 @@
 
 namespace nest
 {
-
 /**
- * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity.
+ * @brief Base class implementing archiving for node models supporting e-prop plasticity.
+ *
+ * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
+ * according to Bellec et al. (2020) and supporting additional biological features described in Korcsak-Gorzo,
+ * Stapmanns, and Espinoza Valverde et al. (in preparation).
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
  * e-prop plasticity. It further provides a set of get, write, and set functions
  * for these histories and the hardcoded shifts to synchronize the factors of
  * the plasticity rule.
+ *
+ * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
 class EpropArchivingNode : public Node
 {
 
 public:
-  //! Default constructor.
+  /**
+   * Constructs a new EpropArchivingNode object.
+   */
   EpropArchivingNode();
 
-  //! Copy constructor.
-  EpropArchivingNode( const EpropArchivingNode& );
+  /**
+   * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
+   *
+   * @param other The other object to copy.
+   */
+  EpropArchivingNode( const EpropArchivingNode& other );
 
-  //! Initialize the update history and register the eprop synapse.
   void register_eprop_connection() override;
 
-  //! Register current update in the update history and deregister previous update.
-  void write_update_to_history( const long t_previous_update, const long t_current_update ) override;
+  void write_update_to_history( const long t_previous_update,
+    const long t_current_update,
+    const long eprop_isi_trace_cutoff = 0 ) override;
 
-  //! Get an iterator pointing to the update history entry of the given time step.
+  /**
+   * Retrieves the update history entry for a specific time step.
+   *
+   * @param time_step The time step.
+   * @return An iterator pointing to the update history for the specified time step.
+   */
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
 
-  //! Get an iterator pointing to the eprop history entry of the given time step.
+  /**
+   * Retrieves the eprop history entry for a specified time step.
+   *
+   * @param time_step The time step.
+   * @return An iterator pointing to the eprop history entry for the specified time step.
+   */
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
-  //! Erase update history parts for which the access counter has decreased to zero since no synapse needs them
-  //! any longer.
-  void erase_used_update_history();
-
-  //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
-  //! transmitted a spike in a more recent update interval.
+  /**
+   * @brief Erases the used eprop history for `bsshslm_2020` models.
+   *
+   * Erases e-prop history entries for update intervals during which no spikes were sent to the target neuron,
+   * and any entries older than the earliest time stamp required by the first update in the history.
+   */
   void erase_used_eprop_history();
 
+  /**
+   * @brief Erases the used eprop history.
+   *
+   * Erases e-prop history entries between the last and penultimate updates if they exceed the inter-spike
+   * interval trace cutoff and any entries older than the earliest time stamp required by the first update.
+   *
+   * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
+   */
+  void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
+
+  /**
+   * @brief Retrieves eprop history size.
+   *
+   * Retrieves the size of the eprop history buffer.
+   */
+  double get_eprop_history_duration() const;
+
 protected:
-  //!< Number of incoming eprop synapses
+  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+  virtual long model_dependent_history_shift_() const = 0;
+
+  /**
+   * Provides access to the template flag from the base class.
+   *
+   * @todo This should be removed once we revise the class structure.
+   */
+  virtual bool history_shift_required_() const = 0;
+
+  //! Number of incoming eprop synapses
   size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.
@@ -91,92 +139,17 @@ protected:
   //! Offset since generator signals start from time step 1.
   const long offset_gen_ = 1;
 
-  //! Connection delay from input to recurrent neurons.
+  //! Transmission delay from input to recurrent neurons.
   const long delay_in_rec_ = 1;
 
-  //! Connection delay from recurrent to output neurons.
+  //! Transmission delay from recurrent to output neurons.
   const long delay_rec_out_ = 1;
 
-  //! Connection delay between output neurons for normalization.
+  //! Transmission delay between output neurons for normalization.
   const long delay_out_norm_ = 1;
 
-  //! Connection delay from output neurons to recurrent neurons.
+  //! Transmission delay from output neurons to recurrent neurons.
   const long delay_out_rec_ = 1;
-};
-
-/**
- * Class implementing an intermediate archiving node model for recurrent node models supporting e-prop plasticity.
- */
-class EpropArchivingNodeRecurrent : public EpropArchivingNode< HistEntryEpropRecurrent >
-{
-
-public:
-  //! Default constructor.
-  EpropArchivingNodeRecurrent();
-
-  //! Copy constructor.
-  EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& );
-
-  //! Create an entry in the eprop history for the given time step and surrogate gradient.
-  void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
-
-  //! Update the learning signal in the eprop history entry of the given time step by writing the value of the incoming
-  //! learning signal to the history or adding it to the existing value in case of multiple readout neurons.
-  void write_learning_signal_to_history( const long time_step, const double learning_signal );
-
-  //! Create an entry in the firing rate regularization history for the current update.
-  void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
-
-  //! Get an iterator pointing to the firing rate regularization history of the given time step.
-  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
-
-  //! Return learning signal from history for given time step or zero if time step not in history
-  double get_learning_signal_from_history( const long time_step );
-
-  //! Erase parts of the firing rate regularization history for which the access counter in the update history has
-  //! decreased to zero since no synapse needs them any longer.
-  void erase_used_firing_rate_reg_history();
-
-  //! Count emitted spike for the firing rate regularization.
-  void count_spike();
-
-  //! Reset spike count for the firing rate regularization.
-  void reset_spike_count();
-
-private:
-  //! Count of the emitted spikes for the firing rate regularization.
-  size_t n_spikes_;
-
-  //! History of the firing rate regularization.
-  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
-};
-
-inline void
-EpropArchivingNodeRecurrent::count_spike()
-{
-  ++n_spikes_;
-}
-
-inline void
-EpropArchivingNodeRecurrent::reset_spike_count()
-{
-  n_spikes_ = 0;
-}
-
-/**
- * Class implementing an intermediate archiving node model for readout node models supporting e-prop plasticity.
- */
-class EpropArchivingNodeReadout : public EpropArchivingNode< HistEntryEpropReadout >
-{
-public:
-  //! Default constructor.
-  EpropArchivingNodeReadout();
-
-  //! Copy constructor.
-  EpropArchivingNodeReadout( const EpropArchivingNodeReadout& );
-
-  //! Create an entry in the eprop history for the given time step and error signal.
-  void write_error_signal_to_history( const long time_step, const double error_signal );
 };
 
 } // namespace nest

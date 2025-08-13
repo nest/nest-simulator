@@ -315,7 +315,7 @@ def run_simulation():
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
-    nest.local_num_threads = sim_params["n_threads"]
+    nest.local_num_threads = sim_params["n_vp"]
     nest.print_time = True
     nest.overwrite_files = True
 

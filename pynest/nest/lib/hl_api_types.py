@@ -868,8 +868,13 @@ class SynapseCollection:
         # This avoids problems with invalid SynapseCollections.
         # See also #3100.
         if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
-            # Return empty tuple if get is called with an argument
-            return {} if keys is None else ()
+            if pandas_output:
+                return pandas.DataFrame()
+            elif output == "json":
+                return to_json({})
+            else:
+                # Return empty tuple if get is called with an argument
+                return {} if keys is None else ()
 
         if keys is None:
             cmd = "GetStatus"

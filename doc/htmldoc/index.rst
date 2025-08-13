@@ -22,6 +22,7 @@ Welcome to the NEST Simulator documentation!
           ranging from algorithmically determined connections to data-driven connectivity.
           Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+
        .. grid-item::
 
           .. button-ref:: tutorials_guides
@@ -146,3 +147,4 @@ How NEST works --- The Big Picture
    NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
    NESTML <https://nestml.readthedocs.io/en/latest/>
    NESTGPU <https://nest-gpu.readthedocs.io/en/latest/>
+   NEST NEAT <https://nest-neat.readthedocs.io/en/latest/>

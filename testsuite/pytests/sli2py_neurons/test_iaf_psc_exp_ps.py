@@ -38,7 +38,7 @@ import pytest
 
 def test_iaf_psc_exp_ps_dc_input():
     dt = 0.1
-    dc_amp = 1010.0
+    dc_amp = 1000.0
 
     nest.ResetKernel()
     nest.set(resolution=dt, local_num_threads=1)

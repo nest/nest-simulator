@@ -26,6 +26,8 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest.h"
+#include "node_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"

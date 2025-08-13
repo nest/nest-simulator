@@ -47,6 +47,8 @@
 #ifdef HAVE_MPI
 #include "recording_backend_mpi.h"
 #include "stimulation_backend_mpi.h"
+#else
+#include "stimulation_backend.h"
 #endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"

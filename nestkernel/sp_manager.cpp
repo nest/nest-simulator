@@ -991,13 +991,13 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
 double
 SPManager::squared_distance( const std::vector< double >& a, const std::vector< double >& b ) const
 {
-  if ( static_cast< int >( a.size() ) != pos_dim || static_cast< int >( b.size() ) != pos_dim )
+  if ( a.size() != b.size() )
   {
-    throw std::runtime_error( "Position vector size does not match pos_dim." );
+    throw std::runtime_error( "Position vectors must have the same dimension." );
   }
 
   double d2 = 0.0;
-  for ( int i = 0; i < pos_dim; ++i )
+  for ( int i = 0; i < a.size(); ++i )
   {
     const double diff = b[ i ] - a[ i ];
     d2 += diff * diff;

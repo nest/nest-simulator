@@ -38,7 +38,7 @@ working correctly.
 
 The algorithm checks whether a spike is emitted on the basis of the neurons position
 in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
-S1 corresponds to threshold crossings that would also be detected by the lossy 
+S1 corresponds to threshold crossings that would also be detected by the lossy
 implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
 The lossless model detects both.
 
@@ -180,7 +180,7 @@ def test_lossless_spike_detection():
     nrn_spike.V_m = -49.001
 
     # swich off ext. current. This effect will reach the nrns at 3.0 due to syn delay,
-    # so that the external current will be zero when the trigger spike arrives at 4.0 .
+    # so that the external current will be zero when the trigger spike arrives at 4.0.
     dc_gen.amplitude = 0
 
     nest.Simulate(10.0)

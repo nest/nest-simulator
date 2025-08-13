@@ -32,12 +32,13 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 
-// Includes from nest:
-#include "../nest/neststartup.h"
-
 // Includes from nestkernel:
+#include "io_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 #include "recording_backend_sionlib.h"
 #include "recording_device.h"
+#include "simulation_manager.h"
 
 const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
 const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;

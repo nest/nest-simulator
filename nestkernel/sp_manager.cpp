@@ -915,13 +915,8 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
     size_t pre_id = pre_ids.back();
     pre_ids.pop_back();
 
-    std::cout << pre_id << std::endl;
-
-
-    // build an AnchoredMask about this pre‐neuron’s position
     std::vector< double > pre_pos(
       global_positions.begin() + ( pre_id - 1 ) * pos_dim, global_positions.begin() + pre_id * pos_dim );
-
 
     std::vector< double > probabilities;
     std::vector< size_t > valid_post_ids;

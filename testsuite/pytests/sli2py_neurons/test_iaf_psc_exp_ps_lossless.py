@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with analytical 
+Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with analytical
 solution and tests lossless spike detection
 
 Description:

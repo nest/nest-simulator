@@ -65,13 +65,10 @@ def test_dump_layer_connections_target_1(tmp_path, network):
 
     fname_1 = tmp_path / "conns_1.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer_1, "static_synapse", fname_1)
-    expected_dump_1 = [
-        "1 3 1 1 0 0",
-        "1 4 1 1 0.5 0",
-        "2 3 1 1 -0.5 0",
-        "2 4 1 1 0 0",
-    ]
-    actual_dump_1 = fname_1.read_text().splitlines()
+
+    # Ordering of lines is irrelevant, therefore compare sorted lists
+    expected_dump_1 = sorted(["1 3 1 1 0 0", "1 4 1 1 0.5 0", "2 3 1 1 -0.5 0", "2 4 1 1 0 0"])
+    actual_dump_1 = sorted(fname_1.read_text().splitlines())
     assert actual_dump_1 == expected_dump_1
 
 
@@ -82,9 +79,8 @@ def test_dump_layer_connections_target_2(tmp_path, network):
 
     fname_2 = tmp_path / "conns_2.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer_2, "static_synapse", fname_2)
-    expected_dump_2 = [
-        "1 5 1 1 0 0",
-        "2 6 1 1 0 0",
-    ]
-    actual_dump_2 = fname_2.read_text().splitlines()
+
+    # Ordering of lines is irrelevant, therefore compare sorted lists
+    expected_dump_2 = sorted(["1 5 1 1 0 0", "2 6 1 1 0 0"])
+    actual_dump_2 = sorted(fname_2.read_text().splitlines())
     assert actual_dump_2 == expected_dump_2

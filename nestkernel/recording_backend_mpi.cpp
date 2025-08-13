@@ -22,7 +22,7 @@
 
 // C++ includes:
 #include <iostream>
-
+#include <sstream>
 
 // Includes from nestkernel:
 #include "exceptions.h"

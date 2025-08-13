@@ -21,6 +21,7 @@
  */
 
 #include "kernel_manager.h"
+#include "stopwatch_impl.h"
 
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 
@@ -50,28 +51,30 @@ nest::KernelManager::KernelManager()
   , logging_manager()
   , mpi_manager()
   , vp_manager()
+  , module_manager()
   , random_manager()
   , simulation_manager()
   , modelrange_manager()
   , connection_manager()
   , sp_manager()
   , event_delivery_manager()
+  , io_manager()
   , model_manager()
   , music_manager()
   , node_manager()
-  , io_manager()
   , managers( { &logging_manager,
       &mpi_manager,
       &vp_manager,
+      &module_manager,
       &random_manager,
       &simulation_manager,
       &modelrange_manager,
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
+      &io_manager,
       &model_manager,
       &music_manager,
-      &io_manager,
       &node_manager } )
   , initialized_( false )
 {
@@ -86,8 +89,12 @@ nest::KernelManager::initialize()
 {
   for ( auto& manager : managers )
   {
-    manager->initialize();
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
+
+  sw_omp_synchronization_construction_.reset();
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
 
   ++fingerprint_;
   initialized_ = true;
@@ -102,6 +109,9 @@ nest::KernelManager::prepare()
   {
     manager->prepare();
   }
+
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
 }
 
 void
@@ -120,7 +130,7 @@ nest::KernelManager::finalize()
 
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
-    ( *m_it )->finalize();
+    ( *m_it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
   }
   initialized_ = false;
 }
@@ -145,7 +155,7 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalize in reverse order of initialization with old thread number set
   for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
   {
-    ( *mgr_it )->finalize( /* reset_kernel */ false );
+    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
   vp_manager.set_num_threads( new_num_threads );
@@ -153,8 +163,23 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
   {
-    manager->initialize( /* reset_kernel */ false );
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ true );
   }
+
+  // Finalizing deleted all register components. Now that all infrastructure
+  // is in place again, we can tell modules to re-register the components
+  // they provide.
+  module_manager.reinitialize_dynamic_modules();
+
+  // Prepare timers and set the number of threads for multi-threaded timers
+  kernel().simulation_manager.reset_timers_for_preparation();
+  kernel().simulation_manager.reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_preparation();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
+
+  sw_omp_synchronization_construction_.reset();
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
 }
 
 void
@@ -177,6 +202,12 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   {
     manager->get_status( dict );
   }
+
+  sw_omp_synchronization_construction_.get_status(
+    dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
+  sw_omp_synchronization_simulation_.get_status(
+    dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
+  sw_mpi_synchronization_.get_status( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void

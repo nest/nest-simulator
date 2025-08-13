@@ -69,17 +69,19 @@ public:
 
   /**
    * Export properties of the layer by setting
-   * entries in the status dictionary.
+   * entries in the status dictionary, respects slicing of given NodeCollection
    * @param d Dictionary.
+   *
+   * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( DictionaryDatum&, NodeCollection const* ) const = 0;
 
   virtual unsigned int get_num_dimensions() const = 0;
 
   /**
    * Get position of node. Only possible for local nodes.
    *
-   * @param lid index of node within layer
+   * @param lid global index of node within layer
    * @returns position of node as std::vector
    */
   virtual std::vector< double > get_position_vector( const size_t lid ) const = 0;
@@ -234,13 +236,8 @@ public:
    */
   void set_status( const DictionaryDatum& ) override;
 
-  /**
-   * Export properties of the layer by setting
-   * entries in the status dictionary.
-   *
-   * @param d Dictionary.
-   */
-  void get_status( DictionaryDatum& ) const override;
+  //! Retrieve status, slice according to node collection if given
+  void get_status( DictionaryDatum&, NodeCollection const* ) const override;
 
   unsigned int
   get_num_dimensions() const override

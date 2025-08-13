@@ -36,7 +36,7 @@ namespace nest
 {
 // Disable clang-formatting for documentation due to over-wide table.
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
 Short description
 +++++++++++++++++
@@ -154,7 +154,7 @@ The following parameters can be set in the status dictionary.
 ``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
 ``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
-``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potenial (default :math:`-\infty`)
+``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
 =============== ================== =============================== ========================================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.

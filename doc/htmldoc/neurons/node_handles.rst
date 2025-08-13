@@ -6,7 +6,7 @@ How to handle nodes (neurons and devices)
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.
 
-In most use cases, you will not need to make many changes to your scripts in NEST 3.0, unless you have used **topology** or **subnets**.
+In most use cases, you will not need to make many changes to your scripts in NEST 3, unless you have used **topology** or **subnets**.
 
 NodeCollection supports the following functionality:
 
@@ -342,4 +342,3 @@ can contain lists and single values at the same time.
     pop = nest.Create("iaf_psc_alpha", 2, params= {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]})
 
     print(pop.get(["I_e", "tau_m", "V_m"]))
-

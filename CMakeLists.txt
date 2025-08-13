@@ -67,8 +67,9 @@ set( with-modelset "full" CACHE STRING "The modelset to include. Sample configur
 set( with-models OFF CACHE STRING "The models to include as a semicolon-separated list of model headers (without the .h extension). This option is mutually exclusive with -Dwith-modelset. [default=OFF]." )
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
 set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
-set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )
 set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
+set( with-mpi-sync-timer OFF CACHE STRING "Build with mpi synchronization barrier and timer [default=OFF]. Can affect the performance." )
+set( with-threaded-timers ON CACHE STRING "Build with one internal timer per thread [default=ON]. Multi-threaded timers can affect the performance." )
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
 
 # generic build configuration
@@ -136,7 +137,6 @@ nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
 nest_process_static_libraries()
-nest_process_external_modules()
 nest_process_tics_per_ms()
 nest_process_tics_per_step()
 nest_process_with_libltdl()
@@ -145,6 +145,8 @@ nest_process_with_gsl()
 nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_detailed_timers()
+nest_process_with_threaded_timers()
+nest_process_with_mpi_sync_timer()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_sionlib()
@@ -275,13 +277,13 @@ endforeach ()
 set( MODULE_LINK_LIBS
   "-lnest"
   "-lsli"
-  "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
+  "${OpenMP_CXX_LIBRARIES}"
   "${SIONLIB_LIBRARIES}"
   "${BOOST_LIBRARIES}" )
 

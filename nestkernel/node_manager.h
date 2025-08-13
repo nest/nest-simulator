@@ -139,7 +139,7 @@ public:
    *
    * The function expects that
    * the given node ID and thread are valid. If they are not, an assertion
-   * will fail. In case the given Node does not exist on the fiven
+   * will fail. In case the given Node does not exist on the given
    * thread, a proxy is returned instead.
    *
    * @param node_id index of the Node
@@ -356,7 +356,7 @@ private:
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
-  Stopwatch sw_construction_create_;
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;
 };
 
 inline size_t

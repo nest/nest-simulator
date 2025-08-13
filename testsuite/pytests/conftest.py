@@ -32,7 +32,9 @@ Fixtures available to the entire testsuite directory.
 """
 
 import dataclasses
+import os
 import pathlib
+import subprocess
 import sys
 
 import nest
@@ -45,6 +47,18 @@ collect_ignore = ["utilities"]
 
 import testsimulation  # noqa
 import testutil  # noqa
+
+
+def pytest_configure(config):
+    """
+    Add NEST-specific markers.
+
+    See https://docs.pytest.org/en/8.0.x/how-to/mark.html.
+    """
+    config.addinivalue_line(
+        "markers",
+        "requires_many_cores: mark tests as needing many cores (deselect with '-m \"not requires_many_cores\"')",
+    )
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -65,6 +79,11 @@ def safety_reset():
 @pytest.fixture(scope="session")
 def have_threads():
     return nest.ll_api.sli_func("is_threaded")
+
+
+@pytest.fixture(scope="session")
+def report_dir() -> pathlib.Path:
+    return pathlib.Path(os.environ.get("REPORTDIR", ""))
 
 
 @pytest.fixture(autouse=True)
@@ -136,6 +155,25 @@ def have_plotting():
         return True
     except Exception:
         return False
+
+
+@pytest.fixture(scope="session")
+def subprocess_compatible_mpi():
+    """Until at least OpenMPI 4.1.6, the following fails due to a bug in OpenMPI, from 5.0.7 is definitely safe."""
+
+    res = subprocess.run(["mpirun", "-np", "1", "echo"])
+    return res.returncode == 0
+
+
+@pytest.fixture(autouse=True)
+def skipif_incompatible_mpi(request, subprocess_compatible_mpi):
+    """
+    Globally applied fixture that skips tests marked to be skipped when MPI is
+    not compatible with subprocess.
+    """
+
+    if not subprocess_compatible_mpi and request.node.get_closest_marker("skipif_incompatible_mpi"):
+        pytest.skip("skipped because MPI is incompatible with subprocess")
 
 
 @pytest.fixture(autouse=True)

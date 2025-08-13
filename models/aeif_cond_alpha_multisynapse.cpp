@@ -347,7 +347,7 @@ aeif_cond_alpha_multisynapse::Buffers_::Buffers_( aeif_cond_alpha_multisynapse& 
   , c_( nullptr )
   , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
-  , IntegrationStep_( std::min( 0.01, step_ ) )
+  , IntegrationStep_( step_ )
   , I_stim_( 0.0 )
 {
 }
@@ -416,9 +416,9 @@ aeif_cond_alpha_multisynapse::init_buffers_()
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
-
-  // We must integrate this model with high-precision to obtain decent results
-  B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
+  B_.IntegrationStep_ =
+    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {

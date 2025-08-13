@@ -31,8 +31,6 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager.h"
-#include "genericmodel.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -68,7 +66,7 @@ NodeManager::~NodeManager()
 }
 
 void
-NodeManager::initialize( const bool reset_kernel )
+NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
@@ -76,7 +74,7 @@ NodeManager::initialize( const bool reset_kernel )
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     sw_construction_create_.reset();
   }
@@ -737,6 +735,7 @@ NodeManager::check_wfr_use()
   InstantaneousRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   DelayedRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   DiffusionConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
+  LearningSignalConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
   SICEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
 }
 
@@ -787,7 +786,7 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::network_size, size() );
-  def< double >( d, names::time_construction_create, sw_construction_create_.elapsed() );
+  sw_construction_create_.get_status( d, names::time_construction_create, names::time_construction_create_cpu );
 }
 
 void

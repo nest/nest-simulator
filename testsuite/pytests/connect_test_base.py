@@ -451,6 +451,9 @@ def get_degrees(fan, pop1, pop2):
         degrees = np.sum(M, axis=1)
     elif fan == "out":
         degrees = np.sum(M, axis=0)
+    else:
+        raise ValueError(f"fan must be 'in' or 'out', got '{fan}'.")
+
     return degrees
 
 

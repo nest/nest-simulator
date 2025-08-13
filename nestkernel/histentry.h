@@ -40,18 +40,101 @@ public:
   double t_;              //!< point in time when spike occurred (in ms)
   double Kminus_;         //!< value of Kminus at that time
   double Kminus_triplet_; //!< value of triplet STDP Kminus at that time
-  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
+  size_t
+    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 };
 
-// entry in the history of plasticity rules which consider additional factors
+/**
+ * Class to represent a single entry in the spiking history of the ClopathArchivingNode or the UrbanczikArchivingNode.
+ *
+ * These history entries typically represent continuously-evolving values in time, so history timestamps correspond to
+ * ``nest.biological_time`` in simulation resolution rather than times of spikes.
+ */
 class histentry_extended
 {
 public:
   histentry_extended( double t, double dw, size_t access_counter );
 
-  double t_;              //!< point in time when spike occurred (in ms)
-  double dw_;             //!< value dependend on the additional factor
-  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
+  double t_; //!< point in time for the history entry (in ms)
+  double dw_;
+  size_t
+    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
+
+  friend bool operator<( const histentry_extended he, double t );
+};
+
+inline bool
+operator<( const histentry_extended he, double t )
+{
+  return he.t_ < t;
+}
+
+/**
+ * Base class implementing history entries for e-prop plasticity.
+ */
+class HistEntryEprop
+{
+public:
+  HistEntryEprop( long t );
+
+  long t_;
+  virtual ~HistEntryEprop()
+  {
+  }
+
+  friend bool operator<( const HistEntryEprop& he, long t );
+};
+
+inline bool
+operator<( const HistEntryEprop& he, long t )
+{
+  return he.t_ < t;
+}
+
+/**
+ * Class implementing entries of the recurrent node model's history of e-prop dynamic variables.
+ */
+class HistEntryEpropRecurrent : public HistEntryEprop
+{
+public:
+  HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal, double firing_rate_reg );
+
+  double surrogate_gradient_;
+  double learning_signal_;
+  double firing_rate_reg_;
+};
+
+/**
+ * Class implementing entries of the readout node model's history of e-prop dynamic variables.
+ */
+class HistEntryEpropReadout : public HistEntryEprop
+{
+public:
+  HistEntryEpropReadout( long t, double error_signal );
+
+  double error_signal_;
+};
+
+/**
+ * Class implementing entries of the update history for e-prop plasticity.
+ */
+class HistEntryEpropUpdate : public HistEntryEprop
+{
+public:
+  HistEntryEpropUpdate( long t, size_t access_counter );
+
+  size_t access_counter_;
+};
+
+/**
+ * Class implementing entries of the firing rate regularization history for e-prop plasticity.
+ */
+class HistEntryEpropFiringRateReg : public HistEntryEprop
+{
+public:
+  HistEntryEpropFiringRateReg( long t, double firing_rate_reg );
+
+  double firing_rate_reg_;
 };
 }
 

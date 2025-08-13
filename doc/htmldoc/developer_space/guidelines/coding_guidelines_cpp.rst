@@ -83,7 +83,7 @@ Coding style
 
 In the following the coding style guidelines are explained by example and some
 parts are adopted from `Google C++ Style
-Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
+Guide <https://google.github.io/styleguide/cppguide.html>`_.
 
 The #define guard
 ~~~~~~~~~~~~~~~~~
@@ -556,7 +556,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::elapsed_timestamp() const
+    nest::Stopwatch::elapsed_us() const
     {
     #ifndef DISABLE_TIMING
       if ( isRunning() )
@@ -622,7 +622,7 @@ For example, the ``stopwatch.h`` file could look like:
     }
 
     inline nest::Stopwatch::timestamp_t
-    nest::Stopwatch::get_timestamp()
+    nest::Stopwatch::get_current_time()
     {
       // works with:
       // * hambach (Linux 2.6.32 x86_64)
@@ -637,12 +637,12 @@ For example, the ``stopwatch.h`` file could look like:
     } /* namespace timer */
     #endif /* STOPWATCH_H */
 
-And the corresponding ``stopwatch.cpp``:
+And the corresponding ``stopwatch_impl.h``:
 
 .. code:: cpp
 
     /*
-     *  stopwatch.cpp
+     *  stopwatch_impl.h
      *
      *  This file is part of NEST.
      *

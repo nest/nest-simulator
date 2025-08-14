@@ -240,7 +240,7 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
  * and default values could be set on it.
  */
 template < typename targetidentifierT >
-class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT >
+class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
@@ -248,7 +248,7 @@ public:
   typedef EpropSynapseBSSHSLM2020CommonProperties CommonPropertiesType;
 
   //! Type of the connection base.
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   /**
    * Properties of the connection model.
@@ -277,7 +277,7 @@ public:
   //! Move assignment operator
   eprop_synapse_bsshslm_2020& operator=( eprop_synapse_bsshslm_2020&& );
 
-  using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_ms;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
@@ -315,7 +315,11 @@ public:
    *
    * @note This sets the optimizer_ member.
    */
-  void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp );
+  void check_connection( Node& s,
+    Node& t,
+    const size_t receptor_type,
+    const synindex syn_id,
+    const CommonPropertiesType& cp );
 
   //! Set the synaptic weight to the provided value.
   void
@@ -490,6 +494,7 @@ inline void
 eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   Node& t,
   size_t receptor_type,
+  const synindex syn_id,
   const CommonPropertiesType& cp )
 {
   // When we get here, delay has been set so we can check it.
@@ -499,7 +504,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   }
 
   ConnTestDummyNode dummy_target;
-  ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+  ConnectionBase::check_connection_( dummy_target, s, t, syn_id, receptor_type );
 
   t.register_eprop_connection();
 
@@ -614,8 +619,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDat
     kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
-  const auto& gcm =
-    dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020 >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {

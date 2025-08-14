@@ -173,11 +173,11 @@ public:
 void register_tsodyks_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
-class tsodyks_synapse_hom : public Connection< targetidentifierT >
+class tsodyks_synapse_hom : public Connection< targetidentifierT, TotalDelay >
 {
 public:
   typedef TsodyksHomCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
@@ -242,10 +242,10 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+    ConnectionBase::check_connection_( dummy_target, s, t, syn_id, receptor_type );
   }
 
   void

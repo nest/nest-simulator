@@ -28,16 +28,18 @@
 // Includes from nestkernel:
 #include "conn_builder_impl.h"
 #include "conn_parameter.h"
+#include "connection.h"
 #include "connection_manager.h"
+#include "delay_types.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
 #include "node.h"
+#include "target_identifier.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"
-#include "fdstream.h"
 #include "name.h"
 
 // Includes from C++:
@@ -146,15 +148,23 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   }
 
   // Synapse-specific parameters that should be skipped when we set default synapse parameters
-  skip_syn_params_ = {
-    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
-  };
+  skip_syn_params_ = { names::weight,
+    names::delay,
+    names::dendritic_delay,
+    names::axonal_delay,
+    names::min_delay,
+    names::max_delay,
+    names::num_connections,
+    names::synapse_model };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
-  default_weight_and_delay_.resize( syn_specs.size() );
+  default_dendritic_delay_.resize( syn_specs.size() );
+  default_axonal_delay_.resize( syn_specs.size() );
   weights_.resize( syn_specs.size() );
   delays_.resize( syn_specs.size() );
+  dendritic_delays_.resize( syn_specs.size() );
+  axonal_delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
@@ -166,7 +176,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
     auto syn_params = syn_specs[ synapse_indx ];
 
     set_synapse_model_( syn_params, synapse_indx );
-    set_default_weight_or_delay_( syn_params, synapse_indx );
+    set_default_weight_or_delays_( syn_params, synapse_indx );
 
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
@@ -186,6 +196,8 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   {
     reset_weights_();
     reset_delays_();
+    reset_dendritic_delays_();
+    reset_axonal_delays_();
 
     for ( auto params : synapse_params_ )
     {
@@ -210,6 +222,16 @@ nest::BipartiteConnBuilder::~BipartiteConnBuilder()
   }
 
   for ( auto delay : delays_ )
+  {
+    delete delay;
+  }
+
+  for ( auto delay : dendritic_delays_ )
+  {
+    delete delay;
+  }
+
+  for ( auto delay : axonal_delays_ )
   {
     delete delay;
   }
@@ -311,6 +333,8 @@ nest::BipartiteConnBuilder::connect()
       // call reset on all parameters
       reset_weights_();
       reset_delays_();
+      reset_dendritic_delays_();
+      reset_axonal_delays_();
 
       for ( auto params : synapse_params_ )
       {
@@ -397,45 +421,37 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
   {
     update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
 
-    if ( default_weight_and_delay_[ synapse_indx ] )
+    double delay = numerics::nan;
+    double dendritic_delay = numerics::nan;
+    double axonal_delay = numerics::nan;
+    double weight = numerics::nan;
+
+    if ( not default_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ] );
+      delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else if ( default_weight_[ synapse_indx ] )
+    if ( not default_dendritic_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      dendritic_delay = dendritic_delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else if ( default_delay_[ synapse_indx ] )
+    if ( not default_axonal_delay_[ synapse_indx ] )
     {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        numerics::nan,
-        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      axonal_delay = axonal_delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
-    else
+    if ( not default_weight_[ synapse_indx ] )
     {
-      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ],
-        delay,
-        weight );
+      weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
     }
+
+    kernel().connection_manager.connect( snode_id,
+      &target,
+      target_thread,
+      synapse_model_id_[ synapse_indx ],
+      param_dicts_[ synapse_indx ][ target_thread ],
+      delay,
+      dendritic_delay,
+      axonal_delay,
+      weight );
   }
 
   // We connect third-party only once per source-target pair, not per collocated synapse type
@@ -480,6 +496,22 @@ nest::BipartiteConnBuilder::all_parameters_scalar_() const
     }
   }
 
+  for ( auto delay : dendritic_delays_ )
+  {
+    if ( delay )
+    {
+      all_scalar = all_scalar and delay->is_scalar();
+    }
+  }
+
+  for ( auto delay : axonal_delays_ )
+  {
+    if ( delay )
+    {
+      all_scalar = all_scalar and delay->is_scalar();
+    }
+  }
+
   for ( auto params : synapse_params_ )
   {
     for ( auto synapse_parameter : params )
@@ -517,22 +549,24 @@ nest::BipartiteConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size
 }
 
 void
-nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_default_weight_or_delays_( DictionaryDatum syn_params, size_t synapse_indx )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
-  // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
+  // All synapse models have the possibility to set the delay, but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
   default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
 
+  // Based on the synapse type, it must not be allowed to specify either the total delay or axonal or dendritic delay.
+  kernel().model_manager.check_valid_default_delay_parameters( synapse_model_id_[ synapse_indx ], syn_params );
+
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
+  default_dendritic_delay_[ synapse_indx ] = not syn_params->known( names::dendritic_delay );
+  default_axonal_delay_[ synapse_indx ] = not syn_params->known( names::axonal_delay );
 
-  // If neither weight nor delay are given in the dict, we handle this separately. Important for
-  // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
-  // _all_ types of synapses.
-  default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
-
-  if ( not default_weight_and_delay_[ synapse_indx ] )
+  // If neither weight nor delay are given in the dict, we handle this separately. Important for hom_w synapses, on
+  // which weight cannot be set. However, we use default weight and delay for _all_ types of synapses.
+  if ( not( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] ) )
   {
     weights_[ synapse_indx ] = syn_params->known( names::weight )
       ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
@@ -550,6 +584,22 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_pa
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
+
+  if ( not default_dendritic_delay_[ synapse_indx ] )
+  {
+    dendritic_delays_[ synapse_indx ] = syn_params->known( names::dendritic_delay )
+      ? ConnParameter::create( ( *syn_params )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() );
+    register_parameters_requiring_skipping_( *dendritic_delays_[ synapse_indx ] );
+  }
+
+  if ( not default_axonal_delay_[ synapse_indx ] )
+  {
+    axonal_delays_[ synapse_indx ] = syn_params->known( names::axonal_delay )
+      ? ConnParameter::create( ( *syn_params )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() );
+    register_parameters_requiring_skipping_( *axonal_delays_[ synapse_indx ] );
+  }
 }
 
 void
@@ -642,6 +692,30 @@ void
 nest::BipartiteConnBuilder::reset_delays_()
 {
   for ( auto delay : delays_ )
+  {
+    if ( delay )
+    {
+      delay->reset();
+    }
+  }
+}
+
+void
+nest::BipartiteConnBuilder::reset_dendritic_delays_()
+{
+  for ( auto delay : dendritic_delays_ )
+  {
+    if ( delay )
+    {
+      delay->reset();
+    }
+  }
+}
+
+void
+nest::BipartiteConnBuilder::reset_axonal_delays_()
+{
+  for ( auto delay : axonal_delays_ )
   {
     if ( delay )
     {
@@ -1031,8 +1105,7 @@ nest::OneToOneBuilder::connect_()
     }
     catch ( std::exception& err )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
+      // We must create a new exception here, err's lifetime ends at the end of the catch block.
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }

@@ -108,7 +108,6 @@ SPManager::get_status( DictionaryDatum& d )
     def< std::string >( sp_synapse, names::synapse_model, model );
     def< bool >( sp_synapse, names::allow_autapses, ( *i )->allows_autapses() );
     def< bool >( sp_synapse, names::allow_multapses, ( *i )->allows_multapses() );
-
     def< DictionaryDatum >( sp_synapses, ( *i )->get_name(), sp_synapse );
   }
 

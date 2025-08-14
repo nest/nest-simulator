@@ -237,11 +237,6 @@ public:
    */
   int roulette_wheel_selection( const std::vector< double >& probabilities, double rnd );
 
-  void
-  set_structural_plasticity_gaussian_kernel_sigma( double sigma )
-  {
-    structural_plasticity_gaussian_kernel_sigma_ = sigma;
-  }
   /**
    * Global list of neuron IDs used for structural plasticity computations.
    */
@@ -253,19 +248,18 @@ public:
    */
   std::vector< double > global_positions;
 
-
 private:
   /**
    * Time interval for structural plasticity update (creation/deletion of
    * synapses).
    */
   double structural_plasticity_update_interval_;
+
   /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
    * Off (False).
    */
   bool structural_plasticity_enabled_;
-
 
   /**
    * Flag indicating whether a Gaussian spatial kernel is used for connection
@@ -279,7 +273,6 @@ private:
    */
   double structural_plasticity_gaussian_kernel_sigma_;
 
-
   /**
    * List of precomputed probabilities for neuron connections, indexed
    * by neuron pair indices for efficient lookup.
@@ -292,13 +285,11 @@ private:
   double structural_plasticity_max_distance_;
 
   /**
-   * Dimentionality of the neuron positions
+   * Dimensionality of the neuron positions
    */
   int pos_dim;
 
-
   std::vector< SPBuilder* > sp_conn_builders_;
-
 
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
@@ -331,7 +322,6 @@ SPManager::get_structural_plasticity_gaussian_kernel_sigma() const
 {
   return structural_plasticity_gaussian_kernel_sigma_;
 }
-
 } // namespace nest
 
 #endif /* #ifndef SP_MANAGER_H */

@@ -67,18 +67,6 @@ BOOST_AUTO_TEST_CASE( test_gaussianKernel )
   BOOST_REQUIRE_CLOSE( result, expected, 1e-6 );
 }
 
-BOOST_AUTO_TEST_CASE( test_get_neuron_pair_index )
-{
-  SPManager sp_manager;
-
-  // Test with valid IDs
-  BOOST_REQUIRE_EQUAL( sp_manager.get_neuron_pair_index( 1, 3 ), 3 );
-  BOOST_REQUIRE_EQUAL( sp_manager.get_neuron_pair_index( 3, 1 ), 3 );
-
-  // Test with same IDs
-  BOOST_REQUIRE_EQUAL( sp_manager.get_neuron_pair_index( 5, 5 ), 14 );
-}
-
 BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace nest

@@ -129,7 +129,6 @@ public:
    */
   void enable_structural_plasticity( bool use_gaussian_kernel,
     double gaussian_kernel_sigma,
-    bool cache_probabilities,
     double max_distance = std::numeric_limits< double >::infinity() );
 
   /**
@@ -199,15 +198,6 @@ public:
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
-  /**
-   * Calculate a unique index for a pair of neuron IDs for efficient lookup.
-   * The index is calculated independent of the order
-   *
-   * @param id1 First neuron ID.
-   * @param id2 Second neuron ID.
-   * @return Unique index corresponding to the neuron pair.
-   */
-  int get_neuron_pair_index( int id1, int id2 );
 
   /**
    * Compute the Gaussian kernel value between two positions.
@@ -232,11 +222,6 @@ public:
     std::vector< size_t >& pre_ids_results,
     std::vector< size_t >& post_ids_results,
     bool allow_autapse );
-
-  /**
-   * Build a probability list for neuron connections based on spatial properties.
-   */
-  void build_probability_list();
 
   /**
    * Gather global neuron positions and IDs from all nodes.
@@ -300,12 +285,6 @@ private:
    * by neuron pair indices for efficient lookup.
    */
   std::vector< double > probability_list;
-
-  /**
-   * Flag indicating whether connection probabilities should be cached
-   * for performance optimization.
-   */
-  bool structural_plasticity_cache_probabilities_;
 
   /**
    * Maximum allowed Euclidean distance between pre- and post-neurons.

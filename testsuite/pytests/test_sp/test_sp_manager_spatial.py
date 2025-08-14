@@ -75,9 +75,7 @@ class TestStructuralPlasticityManagerSpatial(unittest.TestCase):
                 nest.structural_plasticity_update_interval = 10000
                 nest.EnableStructuralPlasticity(
                     use_gaussian_kernel=True,
-                    gaussian_kernel_sigma=1.0,
-                    cache_probabilites=True,
-                )
+                    gaussian_kernel_sigma=1.0)
                 nest.Simulate(10.0)
                 status = nest.GetStatus(neurons, "synaptic_elements")
                 for st_neuron in status:

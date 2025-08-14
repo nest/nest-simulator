@@ -45,7 +45,6 @@ SPManager::SPManager()
   , structural_plasticity_enabled_( false )
   , structural_plasticity_use_gaussian_kernel_( false )
   , structural_plasticity_gaussian_kernel_sigma_( 1. )
-  , structural_plasticity_cache_probabilities_( false )
   , structural_plasticity_max_distance_( std::numeric_limits< double >::infinity() )
   , sp_conn_builders_()
   , growthcurve_factories_()
@@ -72,7 +71,6 @@ SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   structural_plasticity_enabled_ = false;
   structural_plasticity_use_gaussian_kernel_ = false;
   structural_plasticity_gaussian_kernel_sigma_ = 1.;
-  structural_plasticity_cache_probabilities_ = false;
 }
 
 void
@@ -268,17 +266,6 @@ SPManager::gather_global_positions_and_ids()
   global_positions = std::move( temp_positions );
 }
 
-// This method uses a formula based on triangular numbers
-// to map two ids to one index indepndent of theirs order
-int
-SPManager::get_neuron_pair_index( int id1, int id2 )
-{
-  int max_id = std::max( id1, id2 );
-  int min_id = std::min( id1, id2 );
-  int index = ( ( max_id ) * ( max_id - 1 ) ) / 2 + ( min_id - 1 );
-  return index;
-}
-
 
 // Method to perform roulette wheel selection
 int
@@ -315,70 +302,6 @@ SPManager::gaussian_kernel( const std::vector< double >& pos1, const std::vector
   const double d2 = squared_distance( pos1, pos2 );
   return std::exp( -d2 / ( sigma * sigma ) );
 }
-
-void
-SPManager::build_probability_list()
-{
-  size_t num_neurons = global_ids.size();
-
-  if ( global_positions.size() % num_neurons != 0 )
-  {
-    throw std::runtime_error( "Mismatch in global positions dimensionality." );
-  }
-
-
-  // Resize the probability list to accommodate all neuron pairs.
-  size_t total_pairs = ( num_neurons * ( num_neurons + 1 ) ) / 2;
-  probability_list.resize( total_pairs, 0.0 );
-
-  // Calculate probabilities for connections between all pairs of neurons.
-  for ( size_t i = 0; i < num_neurons; ++i )
-  {
-    size_t id_i = i + 1;
-    if ( id_i < 1 || id_i > num_neurons )
-    {
-      std::cerr << "Error: Neuron ID " << id_i << " out of valid range." << std::endl;
-      continue;
-    }
-
-    std::vector< double > pos_i(
-      global_positions.begin() + pos_dim * ( id_i - 1 ), global_positions.begin() + pos_dim * id_i );
-
-    for ( size_t j = i; j < num_neurons; ++j )
-    {
-      size_t id_j = j + 1;
-      if ( id_j < 1 || id_j > num_neurons )
-      {
-        std::cerr << "Error: Neuron ID " << id_j << " out of valid range." << std::endl;
-        continue;
-      }
-
-      size_t index = get_neuron_pair_index( id_i, id_j );
-
-      if ( index >= probability_list.size() )
-      {
-        std::cerr << "Error: Index out of bounds: " << index << " for ids " << id_i << " and " << id_j << std::endl;
-        continue;
-      }
-
-
-      std::vector< double > pos_j(
-        global_positions.begin() + pos_dim * ( id_j - 1 ), global_positions.begin() + pos_dim * id_j );
-
-      double d2 = squared_distance( pos_i, pos_j );
-      double r2 = structural_plasticity_max_distance_ * structural_plasticity_max_distance_;
-      if ( std::isfinite( structural_plasticity_max_distance_ ) && d2 > r2 )
-      {
-        probability_list[ index ] = 0.0;
-        continue;
-      }
-
-      double prob = gaussian_kernel( pos_i, pos_j, structural_plasticity_gaussian_kernel_sigma_ );
-      probability_list[ index ] = prob;
-    }
-  }
-}
-
 
 long
 SPManager::builder_min_delay() const
@@ -938,21 +861,8 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
       }
 
       double prob;
-      if ( structural_plasticity_cache_probabilities_ )
-      {
-        // Retrieve cached probability for the neuron pair
-        int pair_index = get_neuron_pair_index( pre_id, post_id );
-        if ( pair_index < 0 || pair_index >= static_cast< int >( probability_list.size() ) )
-        {
-          std::cerr << "Error: index out of bounds for pair (" << pre_id << ", " << post_id << ")" << std::endl;
-          continue;
-        }
-        prob = probability_list[ pair_index ];
-      }
-      else
-      {
-        prob = gaussian_kernel( pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_ );
-      }
+      prob = gaussian_kernel( pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_ );
+
       if ( prob > 0 )
       {
         probabilities.push_back( prob );
@@ -992,7 +902,7 @@ SPManager::squared_distance( const std::vector< double >& a, const std::vector< 
   }
 
   double d2 = 0.0;
-  for ( int i = 0; i < a.size(); ++i )
+  for ( std::size_t i = 0; i < a.size(); ++i )
   {
     const double diff = b[ i ] - a[ i ];
     d2 += diff * diff;
@@ -1016,7 +926,6 @@ SPManager::within_max_distance( const std::vector< double >& a, const std::vecto
 void
 nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
   double gaussian_kernel_sigma,
-  bool cache_probabilities,
   double max_distance )
 {
   if ( kernel().vp_manager.get_num_threads() > 1 )
@@ -1037,17 +946,12 @@ nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
   }
   structural_plasticity_use_gaussian_kernel_ = use_gaussian_kernel;
   structural_plasticity_gaussian_kernel_sigma_ = gaussian_kernel_sigma;
-  structural_plasticity_cache_probabilities_ = cache_probabilities;
   structural_plasticity_enabled_ = true;
   structural_plasticity_max_distance_ = max_distance;
 
   if ( use_gaussian_kernel )
   {
     gather_global_positions_and_ids();
-    if ( cache_probabilities )
-    {
-      build_probability_list();
-    }
   }
 }
 

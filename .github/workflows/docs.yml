@@ -95,10 +95,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Get master config files (from this repo)
         run: |
-          mkdir -p /temp/
           git fetch origin master
-          git show origin/master:doc/fulldoc.conf.in > /temp/doc/fulldoc.conf.in.master
-          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > /temp/doc/htmldoc/static/css/doxygen-awesome.css.master
+          git show origin/master:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
+          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
       - name: Validate inputs
         run: |
           set -euo pipefail
@@ -119,8 +118,8 @@ jobs:
       - name: Apply master config to custom source
         run: |
           mkdir -p source/doc/htmldoc/static/css
-          cp /temp/doc/fulldoc.conf.in.master doc/fulldoc.conf.in
-          cp /temp/doc/htmldoc/static/css/doxygen-awesome.css.master doc/htmldoc/static/css/doxygen-awesome.css
+          cp $RUNNER_TEMP/fulldoc.conf.in.master doc/fulldoc.conf.in
+          cp $RUNNER_TEMP/doxygen-awesome.css.master doc/htmldoc/static/css/doxygen-awesome.css
       - name: Install dependencies
         run: |
           sudo apt-get update

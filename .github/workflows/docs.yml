@@ -95,6 +95,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Get master config files (from this repo)
         run: |
+          mkdir -p /temp/
           git fetch origin master
           git show origin/master:doc/fulldoc.conf.in > /temp/doc/fulldoc.conf.in.master
           git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > /temp/doc/htmldoc/static/css/doxygen-awesome.css.master

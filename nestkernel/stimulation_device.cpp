@@ -23,6 +23,7 @@
 
 // Includes from nestkernel:
 #include "stimulation_device.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
 
 

@@ -31,13 +31,15 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "model.h"
-#include "model_manager_impl.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
 #include "node.h"
-#include "secondary_event_impl.h"
 #include "vp_manager.h"
-#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

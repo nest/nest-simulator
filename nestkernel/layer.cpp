@@ -34,11 +34,9 @@
 #include "integerdatum.h"
 
 // Includes from spatial:
-#include "connection_creator_impl.h"
 #include "free_layer.h"
 #include "grid_layer.h"
 #include "layer_impl.h"
-#include "mask_impl.h"
 #include "spatial.h"
 
 namespace nest

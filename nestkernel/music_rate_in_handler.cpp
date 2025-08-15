@@ -29,8 +29,10 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "event.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "music_manager.h"
 #include "nest_types.h"
 
 namespace nest

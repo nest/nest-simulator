@@ -22,9 +22,6 @@
 
 #include "jonke_synapse.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_jonke_synapse( const std::string& name )
 {

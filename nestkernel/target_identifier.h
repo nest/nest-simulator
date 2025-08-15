@@ -30,6 +30,8 @@
 
 #include "compose.hpp"
 #include "kernel_manager.h"
+#include "node.h"
+#include "node_manager.h"
 
 namespace nest
 {

@@ -22,10 +22,13 @@
 
 // C++ includes:
 #include <iostream>
-
+#include <sstream>
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "io_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 #include "recording_backend_mpi.h"
 #include "recording_device.h"
 

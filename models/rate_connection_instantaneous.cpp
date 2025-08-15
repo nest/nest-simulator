@@ -22,9 +22,6 @@
 
 #include "rate_connection_instantaneous.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_rate_connection_instantaneous( const std::string& name )
 {

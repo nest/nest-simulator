@@ -27,9 +27,12 @@
 #include <utility>
 
 // Includes from nestkernel:
+#include "dictutils.h"
 #include "kernel_manager.h"
+#include "mpi_manager.h"
+#include "nest_names.h"
 #include "random_generators.h"
-#include "vp_manager_impl.h"
+#include "vp_manager.h"
 
 // Includes from libnestutil:
 #ifdef HAVE_RANDOM123

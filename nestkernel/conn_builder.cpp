@@ -26,14 +26,17 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "conn_builder_impl.h"
 #include "conn_parameter.h"
 #include "connection_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "nest.h"
 #include "nest_names.h"
 #include "node.h"
-#include "vp_manager_impl.h"
+#include "node_manager.h"
+#include "random_manager.h"
 
 // Includes from sli:
 #include "dict.h"

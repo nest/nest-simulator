@@ -23,17 +23,13 @@
 #ifndef NEST_H
 #define NEST_H
 
-// C++ includes:
-#include <ostream>
-
 // Includes from libnestutil:
-#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest_datums.h"
-#include "nest_time.h"
-#include "nest_types.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -189,6 +185,20 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+
+template < template < typename > class ConnectorModelT >
+void
+register_connection_model( const std::string& name )
+{
+  kernel().model_manager.register_connection_model< ConnectorModelT >( name );
+}
+
+template < typename NodeModelT >
+void
+register_node_model( const std::string& name, std::string deprecation_info )
+{
+  kernel().model_manager.register_node_model< NodeModelT >( name, deprecation_info );
+}
 
 }
 

@@ -29,10 +29,11 @@
 #include <string>
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
+#include "nest.h"
 #include "nest_datums.h"
-#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -41,8 +42,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 void
 nest::register_music_cont_out_proxy( const std::string& name )

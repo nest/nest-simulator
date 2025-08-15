@@ -32,8 +32,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -515,55 +513,6 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-nest::iaf_bw_2001_exact::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e );
-}
-
-void
-nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() <= static_cast< int >( B_.spikes_.size() ) );
-
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
-  const auto rport = e.get_rport();
-
-  if ( rport < NMDA )
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  // we need to scale each individual S_j variable by its weight,
-  // so we store them
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
-    // since we scale entire S_j variable by the weight it also affects previous spikes.
-    // we therefore require them to be constant.
-    const size_t w_idx = rport - NMDA;
-    if ( B_.weights_[ w_idx ] == 0 )
-    {
-      B_.weights_[ w_idx ] = e.get_weight();
-    }
-    else if ( B_.weights_[ w_idx ] != e.get_weight() )
-    {
-      throw KernelException( "iaf_bw_2001_exact requires constant weights." );
-    }
-  }
-}
-
-void
-nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 #endif // HAVE_GSL

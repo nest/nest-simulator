@@ -23,7 +23,6 @@
 #include "eprop_synapse_bsshslm_2020.h"
 
 // nestkernel
-#include "nest_impl.h"
 
 namespace nest
 {

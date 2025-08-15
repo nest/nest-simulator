@@ -21,10 +21,6 @@
  */
 
 #include "stdp_facetshw_synapse_hom.h"
-#include "stdp_facetshw_synapse_hom_impl.h"
-
-// Includes from nestkernel:
-#include "nest_impl.h"
 
 void
 nest::register_stdp_facetshw_synapse_hom( const std::string& name )

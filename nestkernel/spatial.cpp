@@ -41,7 +41,6 @@
 
 // Includes from spatial:
 #include "grid_layer.h"
-#include "layer_impl.h"
 
 
 namespace nest

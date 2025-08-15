@@ -22,12 +22,11 @@
 
 #include <cmath>
 
+#include "nest.h"
 #include "node.h"
 #include "node_collection.h"
-#include "spatial.h"
-#include "vp_manager_impl.h"
-
 #include "parameter.h"
+#include "spatial.h"
 
 
 namespace nest

@@ -21,6 +21,7 @@
  */
 
 #include "ring_buffer.h"
+#include "connection_manager.h"
 
 nest::RingBuffer::RingBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(), 0.0 )

@@ -35,7 +35,6 @@
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"

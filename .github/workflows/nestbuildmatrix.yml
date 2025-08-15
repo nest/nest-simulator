@@ -33,6 +33,63 @@ jobs:
           files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
           diff -u <(cat ${files}) <(clang-format ${files})
 
+  shellcheck:
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install shellcheck
+
+      - name: "Run shellcheck..."
+        run: |
+          shellcheck --version
+          find . -iname "*.sh" -o -iname "*.sh.in" | xargs shellcheck
+
+  pre-commit-hooks:
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pre-commit
+
+      - name: "Run pre-commit checks..."
+        run: |
+          pre-commit run --all-files
+
+  no-crlf:
+    # While pre-commit-hook mixed-line-endings could check for this, it would
+    # be incompatible with "git smudge", as users may decide to use any
+    # formatting in their editor consistently.
+    # https://github.com/pre-commit/pre-commit-hooks?tab=readme-ov-file#mixed-line-ending
+    #
+    # This check makes sure the files in the repository are always consistent
+    # in their line endings, i.e. new line, and not carriage return+line feed.
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Check all files for broken line endings…"
+        run: '! find . -not -type d -exec file "{}" ";" | grep CRLF'
+
   cppcheck:
     runs-on: "ubuntu-22.04"
     steps:
@@ -509,7 +566,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -654,7 +711,7 @@ jobs:
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
@@ -706,7 +763,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
@@ -730,7 +787,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -792,7 +849,7 @@ jobs:
 
       - name: "Configure NEST build"
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           cd "$NEST_VPATH"
           cmake \
@@ -835,7 +892,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"

@@ -18,4 +18,3 @@ Syntax:
 
 .. automodule:: nest.spatial
    :members: distance
-

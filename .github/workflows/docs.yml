@@ -1,0 +1,150 @@
+name: Build and Deploy C++ Documentation
+
+on:
+  push:
+    branches: [ghpages-dev, master]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build docs for'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - v3.7
+          - v3.8
+          - master
+  repository_dispatch:
+    types: [build_docs]
+
+env:
+  DOXYGEN_VERSION: 1.9.8
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [v3.7, v3.8, master]
+        include:
+          - version: v3.7
+            branch: v3.7
+          - version: v3.8
+            branch: v3.8
+          - version: master
+            branch: master
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          #ref: ghpages-dev
+          ref: ${{ matrix.branch }}
+
+      - name: Get master config files
+        if: matrix.version != 'master'
+        run: |
+          git fetch origin master
+          git show origin/master:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
+          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz cmake build-essential
+
+      - name: Configure with CMake
+        run: |
+          #mkdir -p build-master
+          mkdir -p build-${{ matrix.version }}
+          cd build-${{ matrix.version }}
+          if [ "${{ matrix.version }}" != "master" ]; then
+            # Use master config files for non-master versions before CMake
+            cp ../doc/fulldoc.conf.in.master ../doc/fulldoc.conf.in
+            cp ../doc/htmldoc/static/css/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
+          fi
+          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+
+      - name: Generate Doxygen documentation
+        run: |
+          #cd build-master
+          cd build-${{ matrix.version }}
+          #          cat doc/fulldoc.conf
+          doxygen doc/fulldoc.conf
+
+      - name: Upload docs artifact ${{ matrix.version }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-${{ matrix.version }}
+          path: build-${{ matrix.version }}/doc/doxygen/html/
+
+  prepare-pages:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all docs artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: docs-*
+
+      - name: Prepare combined site directory
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          shopt -s nullglob
+          for d in artifacts/docs-*; do
+            version=${d#artifacts/docs-}
+            mkdir -p "_site/${version}"
+            cp -r "${d}"/* "_site/${version}/"
+          done
+          # Optional lightweight index
+          cat > _site/index.html << 'EOF'
+          <!doctype html>
+          <html>
+            <head>
+              <meta charset="utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <title>NEST Simulator C++ Doxygen</title>
+              <style>
+                body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 40px; }
+                a { display:inline-block; margin: 8px 12px; padding: 10px 14px; background:#0969da; color:#fff; border-radius:6px; text-decoration:none; }
+                a:hover { background:#0858b9; }
+              </style>
+            </head>
+            <body>
+              <h1>NEST Simulator C++ Doxygen</h1>
+              <p>Select a version:</p>
+              <div>
+                <a href="v3.7/">v3.7</a>
+                <a href="v3.8/">v3.8</a>
+                <a href="master/">master</a>
+              </div>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact (combined)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: prepare-pages
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+        #      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

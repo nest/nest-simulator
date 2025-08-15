@@ -195,8 +195,8 @@ jobs:
           path: build-custom/doc/doxygen/html/
 
   prepare-pages:
-    needs: [build-docs, build-docs-push]
-    if: ${{ always() }}
+    needs: build-docs-push
+      #if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Download all docs artifacts

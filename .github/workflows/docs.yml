@@ -7,21 +7,13 @@ on:
       - '**.md'
   workflow_dispatch:
     inputs:
-      mode:
-        description: 'Build mode: predefined matrix or custom repo/ref'
-        required: true
-        default: 'predefined'
-        type: choice
-        options:
-          - predefined
-          - custom
       custom_repository:
         description: 'Custom repository to checkout (owner/name), used when mode=custom'
-        required: false
+        required: true
         type: string
       custom_ref:
         description: 'Ref/branch/tag to checkout from custom repository, used when mode=custom'
-        required: false
+        required: true
         type: string
       label:
         description: 'Label for the docs folder (used as URL path), used when mode=custom'
@@ -34,65 +26,6 @@ env:
   DOXYGEN_VERSION: 1.9.8
 
 jobs:
-  build-docs:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [v3.7, v3.8, master]
-        include:
-          - version: v3.7
-            branch: v3.7
-          - version: v3.8
-            branch: v3.8
-          - version: master
-            branch: master
-      fail-fast: false
-    # Only for manual dispatch in predefined mode
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'predefined'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          #ref: ghpages-dev
-          ref: ${{ matrix.branch }}
-
-      - name: Get master config files
-        if: matrix.version != 'master'
-        run: |
-          git fetch origin master
-          git show origin/master:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
-          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y doxygen graphviz cmake build-essential
-
-      - name: Configure with CMake
-        run: |
-          #mkdir -p build-master
-          mkdir -p build-${{ matrix.version }}
-          cd build-${{ matrix.version }}
-          if [ "${{ matrix.version }}" != "master" ]; then
-            # Use master config files for non-master versions before CMake
-            cp ../doc/fulldoc.conf.in.master ../doc/fulldoc.conf.in
-            cp ../doc/htmldoc/static/css/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
-          fi
-          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
-
-      - name: Generate Doxygen documentation
-        run: |
-          #cd build-master
-          cd build-${{ matrix.version }}
-          #          cat doc/fulldoc.conf
-          doxygen doc/fulldoc.conf
-
-      - name: Upload docs artifact ${{ matrix.version }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs-${{ matrix.version }}
-          path: build-${{ matrix.version }}/doc/doxygen/html/
-
   # Separate job for push events that builds all versions
   build-docs-push:
     runs-on: ubuntu-latest
@@ -156,7 +89,7 @@ jobs:
   # Manual custom build from arbitrary repo/ref
   build-docs-custom:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'custom'
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Validate inputs
         run: |
@@ -175,6 +108,16 @@ jobs:
           repository: ${{ github.event.inputs.custom_repository }}
           ref: ${{ github.event.inputs.custom_ref }}
           path: source
+      - name: Get master config files (from this repo)
+        run: |
+          git fetch origin master
+          git show origin/master:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
+          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
+      - name: Apply master config to custom source
+        run: |
+          mkdir -p source/doc/htmldoc/static/css
+          cp doc/fulldoc.conf.in.master source/doc/fulldoc.conf.in
+          cp doc/htmldoc/static/css/doxygen-awesome.css.master source/doc/htmldoc/static/css/doxygen-awesome.css
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -215,7 +158,7 @@ jobs:
             mkdir -p "_site/${version}"
             cp -r "${d}"/* "_site/${version}/"
           done
-          # Dynamic index with links to all built versions/labels
+          # Static index for predefined versions
           cat > _site/index.html << 'EOF'
           <!doctype html>
           <html>
@@ -231,14 +174,11 @@ jobs:
             </head>
             <body>
               <h1>NEST Simulator C++ Doxygen</h1>
-              <p>Select a build:</p>
+              <p>Select a version:</p>
               <div>
-          EOF
-          for d in _site/*; do
-            name=$(basename "$d")
-            printf '                <a href="%s/">%s</a>\n' "$name" "$name" >> _site/index.html
-          done
-          cat >> _site/index.html << 'EOF'
+                <a href="v3.7/">v3.7</a>
+                <a href="v3.8/">v3.8</a>
+                <a href="master/">master</a>
               </div>
             </body>
           </html>

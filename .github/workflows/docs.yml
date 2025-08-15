@@ -91,6 +91,13 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get master config files (from this repo)
+        run: |
+          git fetch origin master
+          git show origin/master:doc/fulldoc.conf.in > /temp/doc/fulldoc.conf.in.master
+          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > /temp/doc/htmldoc/static/css/doxygen-awesome.css.master
       - name: Validate inputs
         run: |
           set -euo pipefail
@@ -107,17 +114,12 @@ jobs:
         with:
           repository: ${{ github.event.inputs.custom_repository }}
           ref: ${{ github.event.inputs.custom_ref }}
-          path: source
-      - name: Get master config files (from this repo)
-        run: |
-          git fetch origin master
-          git show origin/master:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
-          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
+            #path: source
       - name: Apply master config to custom source
         run: |
           mkdir -p source/doc/htmldoc/static/css
-          cp doc/fulldoc.conf.in.master source/doc/fulldoc.conf.in
-          cp doc/htmldoc/static/css/doxygen-awesome.css.master source/doc/htmldoc/static/css/doxygen-awesome.css
+          cp /temp/doc/fulldoc.conf.in.master doc/fulldoc.conf.in
+          cp /temp/doc/htmldoc/static/css/doxygen-awesome.css.master doc/htmldoc/static/css/doxygen-awesome.css
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -126,7 +128,7 @@ jobs:
         run: |
           mkdir -p build-custom
           cd build-custom
-          cmake -Dwith-devdoc=ON -Dwith-python=OFF ../source
+          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
       - name: Generate Doxygen documentation (custom)
         run: |
           cd build-custom

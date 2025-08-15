@@ -195,7 +195,7 @@ jobs:
           path: build-custom/doc/doxygen/html/
 
   prepare-pages:
-    needs: [build-docs, build-docs-push, build-docs-custom]
+    needs: [build-docs, build-docs-push]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:

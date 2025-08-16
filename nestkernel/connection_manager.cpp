@@ -137,8 +137,8 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
-    secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
+    connections_.at( tid ).resize( num_conn_models );
+    secondary_recv_buffer_pos_.at( tid ).clear();
   } // of omp parallel
 
   source_table_.initialize();

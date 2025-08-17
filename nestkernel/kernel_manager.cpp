@@ -61,19 +61,20 @@ nest::KernelManager::KernelManager()
   , model_manager()
   , music_manager()
   , node_manager()
-  , managers( { &logging_manager,
+  , managers( {
+      &logging_manager,
       &mpi_manager,
       &vp_manager,
-      &module_manager,
-      &random_manager,
-      &simulation_manager,
-      &modelrange_manager,
-      &connection_manager,
-      &sp_manager,
-      &event_delivery_manager,
       &io_manager,
+      &connection_manager,
+      &modelrange_manager,
       &model_manager,
       &music_manager,
+      &module_manager,
+      &simulation_manager,
+      &sp_manager,
+      &event_delivery_manager,
+      &random_manager,
       &node_manager } )
   , initialized_( false )
 {

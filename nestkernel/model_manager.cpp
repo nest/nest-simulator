@@ -84,6 +84,14 @@ ModelManager::initialize( const bool )
   // the model-managing data structures depend on the number of threads.
   // Models provided by extension modules will be re-registered by the ModulesManager.
   register_models();
+
+#pragma omp parallel
+  {
+    const size_t t = kernel().vp_manager.get_thread_id();
+    for (size_t model_id = 0; model_id < node_models_.size(); ++model_id) {
+        proxy_nodes_[t].push_back( create_proxynode_( t, model_id ) );
+    }
+  }
 }
 
 void
@@ -174,12 +182,6 @@ ModelManager::register_node_model_( Model* model )
 
   node_models_.push_back( model );
   modeldict_->insert( name, id );
-
-#pragma omp parallel
-  {
-    const size_t t = kernel().vp_manager.get_thread_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
-  }
 
   return id;
 }

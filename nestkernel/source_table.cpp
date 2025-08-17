@@ -44,20 +44,13 @@ nest::SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
   const size_t num_threads = kernel().vp_manager.get_num_threads();
-  sources_.resize( num_threads );
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
+  sources_.resize( num_threads, std::vector<BlockVector<nest::Source>>( num_conn_models ) );
   is_cleared_.initialize( num_threads, false );
   saved_entry_point_.initialize( num_threads, false );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
   compressible_sources_.resize( num_threads );
-
-#pragma omp parallel
-  {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    sources_.at( tid ).resize( 0 );
-    resize_sources();
-    compressible_sources_.at( tid ).resize( 0 );
-  } // of omp parallel
 }
 
 void

@@ -101,10 +101,9 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
   off_grid_emitted_spikes_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
 
-#pragma omp parallel
+  // Perform the allocation of inner vectors serially.
+  for (size_t tid = 0; tid < num_threads; ++tid)
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-
     if ( not emitted_spikes_register_[ tid ] )
     {
       emitted_spikes_register_[ tid ] = new std::vector< SpikeDataWithRank >();
@@ -114,7 +113,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     {
       off_grid_emitted_spikes_register_[ tid ] = new std::vector< OffGridSpikeDataWithRank >();
     }
-  } // of omp parallel
+  }
 }
 
 void

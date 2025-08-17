@@ -121,7 +121,8 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
   }
 
   const size_t num_threads = kernel().vp_manager.get_num_threads();
-  connections_.resize( num_threads );
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
+  connections_.resize( num_threads, std::vector< ConnectorBase* >( num_conn_models ) );
   secondary_recv_buffer_pos_.resize( num_threads );
   compressed_spike_data_.resize( 0 );
 
@@ -129,17 +130,6 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
   check_primary_connections_.initialize( num_threads, false );
   secondary_connections_exist_ = false;
   check_secondary_connections_.initialize( num_threads, false );
-
-  // We need to obtain this while in serial context to avoid problems when
-  // increasing the number of threads.
-  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
-
-#pragma omp parallel
-  {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_.at( tid ).resize( num_conn_models );
-    secondary_recv_buffer_pos_.at( tid ).clear();
-  } // of omp parallel
 
   source_table_.initialize();
   target_table_.initialize();

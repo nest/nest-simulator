@@ -40,7 +40,7 @@ working correctly.
 The algorithm checks whether a spike is emitted on the basis of the neurons position
 in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
 S1 corresponds to threshold crossings that would also be detected by the lossy
-implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
+implementation iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
 The lossless model detects both.
 
 The test brings 3 neurons into the state space regions NS2, S1 and S2,

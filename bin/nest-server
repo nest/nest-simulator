@@ -5,8 +5,6 @@ HOST="${NEST_SERVER_HOST:-127.0.0.1}"
 LOGFILE="${NEST_SERVER_LOGFILE:-/tmp/nest-server.log}"
 PORT="${NEST_SERVER_PORT:-52425}"
 STDOUT="${NEST_SERVER_STDOUT:-0}"
-TIMEOUT="${NEST_SERVER_TIMEOUT:-30}"
-WORKERS="${NEST_SERVER_WORKERS:-1}"
 
 usage() {
   echo "NEST Server"
@@ -39,14 +37,15 @@ pid() {
   pgrep -f "gunicorn nest.server.app --bind ${HOST}:${PORT}"
 }
 
+declare -a GUNICORN_OPTS
 set-gunicorn_opts() {
   # Set opts for gunicorn.
-  GUNICORN_OPTS="--bind ${HOST}:${PORT}"
-  GUNICORN_OPTS="${GUNICORN_OPTS} --log-file ${LOGFILE}"
-  [[ "${DAEMON}" -eq 1 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --daemon"
-  [[ "${STDOUT}" -eq 0 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --capture-output"
-  [[ "${TIMEOUT}" -ne 30 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --timeout ${TIMEOUT}"
-  [[ "${WORKERS}" -gt 1 ]] && GUNICORN_OPTS="${GUNICORN_OPTS} --workers ${WORKERS}"
+  GUNICORN_OPTS+=( "--bind" "${HOST}:${PORT}" )
+  [[ "${DAEMON}" -eq 1 ]] && GUNICORN_OPTS+=( "--daemon" )
+  [[ "${STDOUT}" -eq 0 ]] && GUNICORN_OPTS+=( "--capture-output" )
+  [[ "${TIMEOUT}" -ne 30 ]] && GUNICORN_OPTS+=( "--timeout" "${TIMEOUT}" )
+  [[ "${WORKERS}" -gt 1 ]] && GUNICORN_OPTS+=( "--workers" "${WORKERS}" )
+  GUNICORN_OPTS+=( "--log-file" "${LOGFILE}" )
 }
 
 start() {
@@ -61,8 +60,7 @@ start() {
     fi
 
     set-gunicorn_opts
-    # shellcheck disable=SC2086
-    exec gunicorn nest.server:app ${GUNICORN_OPTS}
+    exec gunicorn nest.server:app "${GUNICORN_OPTS[@]}"
   fi
 }
 
@@ -87,14 +85,14 @@ stop() {
 
 CMD=$1; shift
 while getopts "dh:op:t:w:" opt; do
-    case $opt in
+    case "$opt" in
         d) DAEMON=1 ;;
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;
         t) TIMEOUT=$OPTARG ;;
         w) WORKERS=$OPTARG ;;
-        *) echo "Invalid option"
+        *) usage ;;
     esac
 done
 

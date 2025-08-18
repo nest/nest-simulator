@@ -8,15 +8,15 @@ on:
   workflow_dispatch:
     inputs:
       custom_repository:
-        description: 'Custom repository to checkout (owner/name), used when mode=custom'
+        description: 'Custom repository to checkout (owner/name)'
         required: true
         type: string
       custom_ref:
-        description: 'Ref/branch/tag to checkout from custom repository, used when mode=custom'
+        description: 'Ref/branch/tag to checkout from custom repository'
         required: true
         type: string
       label:
-        description: 'Label for the docs folder (used as URL path), used when mode=custom'
+        description: 'Label for the docs folder (artifacts zip name)'
         required: false
         default: 'custom'
         type: string
@@ -102,11 +102,11 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${{ github.event.inputs.custom_repository }}" ]; then
-            echo "custom_repository input is required when mode=custom" >&2
+            echo "custom_repository input is required when using manual entry" >&2
             exit 1
           fi
           if [ -z "${{ github.event.inputs.custom_ref }}" ]; then
-            echo "custom_ref input is required when mode=custom" >&2
+            echo "custom_ref input is required when using manual entry" >&2
             exit 1
           fi
       - name: Checkout target repository
@@ -170,7 +170,7 @@ jobs:
               <title>NEST Simulator C++ Doxygen</title>
               <style>
                 body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 40px; }
-                a { display:inline-block; margin: 8px 12px; padding: 10px 14px; background:#0969da; color:#fff; border-radius:6px; text-decoration:none; }
+                a { display:inline-block; margin: 8px 12px; padding: 10px 14px; background:#ff6633; color:#fff; border-radius:6px; text-decoration:none; }
                 a:hover { background:#0858b9; }
               </style>
             </head>

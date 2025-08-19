@@ -38,6 +38,8 @@ namespace nest
 // clang-format off
 /** BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
+\class iaf_psc_alpha
+
 Short description
 +++++++++++++++++
 
@@ -206,6 +208,7 @@ Examples using this model
 .. listexamples:: iaf_psc_alpha
 
 EndUserDocs */
+
 // clang-format on
 
 void register_iaf_psc_alpha( const std::string& name );

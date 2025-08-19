@@ -40,6 +40,8 @@ namespace nest
 
 \class iaf_psc_alpha
 
+\verbatim embed:rst
+
 Short description
 +++++++++++++++++
 
@@ -207,6 +209,7 @@ Examples using this model
 
 .. listexamples:: iaf_psc_alpha
 
+\endverbatim
 EndUserDocs */
 
 // clang-format on

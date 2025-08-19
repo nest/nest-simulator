@@ -31,10 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [v3.7, v3.8, master]
+        version: [v3.8, master]
         include:
-          - version: v3.7
-            branch: v3.7
           - version: v3.8
             branch: v3.8
           - version: master

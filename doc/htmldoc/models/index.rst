@@ -18,7 +18,7 @@ NEST has over 100 models, choose an option for finding the one you need!
       :link: network_models
       :link-type: ref
 
-      **Network Models**
+      **Network models**
 
 
 

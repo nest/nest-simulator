@@ -4,8 +4,12 @@ Network Models
 ==============
 
 Here we have several examples of large-scale network models developed for NEST.
+
 You can see how to build other networks for various neuron, synapse and device types in our
 :doc:`examples gallery </examples/index>`.
+
+We have a detailed guide on :ref:`spatially-structured networks <spatial_networks>` as well.
+
 
 
 .. grid:: 1 2 3 4

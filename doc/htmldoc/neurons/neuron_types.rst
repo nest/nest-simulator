@@ -627,11 +627,12 @@ Multi-state neurons
 
      Neurons with two or three discrete states. These are the simplest neuron models with threshold activation. Binary neurons have
      On / Off behavior used in theoretical neuroscience and disease theory.
+     The SIR neurons implement 3 discrete states based on a mathematical theory of epidemics: susceptible (S), infected (I), and recovered (R).
 
 .. dropdown:: Multi-state neurons
 
     {% for items in tag_dict %}
-    {% if items.tag == "binary" %}
+    {% if items.tag == "discrete state" %}
     {% for item in items.models | sort %}
     * :doc:`/models/{{ item | replace(".html", "") }}`
     {% endfor %}

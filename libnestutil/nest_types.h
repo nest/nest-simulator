@@ -186,5 +186,4 @@ enum SignalType
   ALL = SPIKE | BINARY
 };
 }
-
 #endif /* #ifndef NEST_TYPES_H */

@@ -83,6 +83,9 @@ const Name beta( "beta" );
 const Name beta_1( "beta_1" );
 const Name beta_2( "beta_2" );
 const Name beta_Ca( "beta_Ca" );
+const Name beta_sir( "beta_sir" );
+const Name beta_sirs( "beta_sirs" );
+const Name beta_sis( "beta_sis" );
 const Name biological_time( "biological_time" );
 const Name box( "box" );
 const Name buffer_size( "buffer_size" );
@@ -186,6 +189,7 @@ const Name epsilon( "epsilon" );
 const Name equilibrate( "equilibrate" );
 const Name error_signal( "error_signal" );
 const Name eta( "eta" );
+const Name eta_sirs( "eta_sirs" );
 const Name events( "events" );
 const Name extent( "extent" );
 
@@ -333,6 +337,9 @@ const Name ms_per_tic( "ms_per_tic" );
 const Name mu( "mu" );
 const Name mu_minus( "mu_minus" );
 const Name mu_plus( "mu_plus" );
+const Name mu_sir( "mu_sir" );
+const Name mu_sirs( "mu_sirs" );
+const Name mu_sis( "mu_sis" );
 const Name mult_coupling( "mult_coupling" );
 const Name music_channel( "music_channel" );
 

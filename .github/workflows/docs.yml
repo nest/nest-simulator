@@ -24,38 +24,58 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
+            try {
+              const owner = context.repo.owner;
+              const repo = context.repo.repo;
 
-            const versions = [{ version: 'master', branch: 'master' }];
+              core.startGroup('Compute versions matrix debug');
+              core.info(`Repository: ${owner}/${repo}`);
 
-            // Select latest two tags that match vX.Y (e.g., v3.10, v3.7)
-            const tagResp = await github.rest.repos.listTags({ owner, repo, per_page: 100 });
-            const mmTags = tagResp.data
-              .map(x => x.name)
-              .filter(name => /^v(\d+)\.(\d+)$/.test(name));
+              const versions = [{ version: 'master', branch: 'master' }];
 
-            const semverSort = (a, b) => {
-              const [, amaj, amin] = a.match(/^v(\d+)\.(\d+)$/);
-              const [, bmaj, bmin] = b.match(/^v(\d+)\.(\d+)$/);
-              const ai = parseInt(amaj, 10);
-              const aj = parseInt(amin, 10);
-              const bi = parseInt(bmaj, 10);
-              const bj = parseInt(bmin, 10);
-              if (ai !== bi) return bi - ai; // major desc
-              return bj - aj; // minor desc
-            };
+              core.info('Fetching tags (per_page=100) ...');
+              const tagResp = await github.rest.repos.listTags({ owner, repo, per_page: 100 });
+              const allTagNames = tagResp.data.map(x => x.name);
+              core.info(`Total tags returned: ${tagResp.data.length}`);
+              core.info('All tag names: ' + JSON.stringify(allTagNames));
 
-            mmTags.sort(semverSort);
-            const picked = mmTags.slice(0, 2);
+              const mmPattern = /^v(\d+)\.(\d+)$/;
+              core.info(`Filter regex: ${mmPattern}`);
+              const mmTags = allTagNames.filter(name => mmPattern.test(name));
+              core.info('Filtered major.minor tags: ' + JSON.stringify(mmTags));
 
-            for (const name of picked) {
-              versions.push({ version: name, branch: name });
+              const semverSort = (a, b) => {
+                const [, amaj, amin] = a.match(/^v(\d+)\.(\d+)$/);
+                const [, bmaj, bmin] = b.match(/^v(\d+)\.(\d+)$/);
+                const ai = parseInt(amaj, 10);
+                const aj = parseInt(amin, 10);
+                const bi = parseInt(bmaj, 10);
+                const bj = parseInt(bmin, 10);
+                if (ai !== bi) return bi - ai; // major desc
+                return bj - aj; // minor desc
+              };
+
+              const sorted = [...mmTags].sort(semverSort);
+              core.info('Sorted matching tags (desc): ' + JSON.stringify(sorted));
+
+              const picked = sorted.slice(0, 2);
+              core.info('Picked latest two: ' + JSON.stringify(picked));
+              if (picked.length === 0) {
+                core.warning('No tags matched the pattern vX.Y. Is your repo using tags like vX.Y.Z?');
+              }
+
+              for (const name of picked) {
+                versions.push({ version: name, branch: name });
+              }
+
+              const matrix = { include: versions };
+              core.setOutput('matrix', JSON.stringify(matrix));
+              core.info('Final matrix: ' + JSON.stringify(matrix, null, 2));
+              core.endGroup();
+            } catch (err) {
+              core.error('Error while computing versions matrix: ' + (err && err.stack ? err.stack : err));
+              throw err;
             }
-
-            const matrix = { include: versions };
-            core.setOutput('matrix', JSON.stringify(matrix));
-            core.info('Matrix: ' + JSON.stringify(matrix, null, 2));
   # Separate job for push events that builds all versions
   build-docs-push:
     needs: determine-versions

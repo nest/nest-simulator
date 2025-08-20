@@ -31,26 +31,26 @@ Description:
 Several NEST neuron models have an alpha-shaped postsynaptic current (PSC).
 In these models the PSC is normalized to unit amplitude. Thus, a synaptic weight
 w leads to a PSC with amplitude w in units of pA.
-In order to adjust the amplitude of the postsynaptic potential (PSP) of a 
+In order to adjust the amplitude of the postsynaptic potential (PSP) of a
 neuron model with an alpha-shaped postsynaptic current (PSC) to a particular
-amplitude we need to first find the location of the maximum tmax of the PSP. 
+amplitude we need to first find the location of the maximum tmax of the PSP.
 Here, this is done in two different ways:
 1. We numerically search for the root of the derivative of the PSP
 2. We used a closed form expression to compute the position of the maximum
-The test verifies that the methods lead to the same result. The test file 
-test_iaf_psp_normalized shows how this value is used to specify w such that a 
+The test verifies that the methods lead to the same result. The test file
+test_iaf_psp_normalized shows how this value is used to specify w such that a
 PSP with a desired amplitude u in units of mV results.
 
-The closed form expression can be found by first transforming the expression 
+The closed form expression can be found by first transforming the expression
    d psp(t) / dt = 0
 into the normal form
    exp(s) = 1 + a * s,
 where s is the scaled time s=bt and a and b depend on the time constants
-a = tau_m/tau_alpha, b = 1/tau_alpha - 1/tau_m . 
+a = tau_m/tau_alpha, b = 1/tau_alpha - 1/tau_m .
 
 The solution for s can then be expressed with the help of the Lambert W-function W
 which is the inverse of x=W*exp(W) and reads
- 
+
   s = 1/a * ( -a W(-exp(-1/a)/a) - 1 )
 
 
@@ -72,7 +72,7 @@ M_ERROR setverbosity
 %
  20.0   /tau_m   Set  % membrane time constant in ms
   0.5   /tau_syn Set  % synaptic time constant in ms
-  1.0   /C_m     Set  % membrane capacity in pF 
+  1.0   /C_m     Set  % membrane capacity in pF
 
 
 % In NEST neuron models with alpha-shaped PSC, the PSCs are normalized to
@@ -80,9 +80,9 @@ M_ERROR setverbosity
 
 /psp
  [/t]
- ( 
-  E/tau_syn * 1/C_m 
-    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+ (
+  E/tau_syn * 1/C_m
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
  )
  Function
 def
@@ -91,16 +91,16 @@ def
 /dpsp
  [/t]
  (
-  E/tau_syn * 1/C_m 
-    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2 
-        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m) 
+  E/tau_syn * 1/C_m
+    * (   (-1/tau_m*exp(-t/tau_m)+1/tau_syn*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)^2
+        - (exp(-t/tau_syn) - 1/tau_syn*t*exp(-t/tau_syn)) / (1/tau_syn - 1/tau_m)
       )
  )
  Function
 def
 
 
-{dpsp} 0. 5.0 0.00000000001 FindRoot /t0 Set   % 
+{dpsp} 0. 5.0 0.00000000001 FindRoot /t0 Set   %
 
 
 
@@ -108,11 +108,10 @@ def
  []
  ( a=tau_m/tau_syn;( -a*LambertWm1(-exp(-1./a)/a) -1. )/a / (1/tau_syn - 1/tau_m) )
  Function
-def 
+def
 
 
-% assert that peak times from direct root finding and 
-% close form solution are the same 
+% assert that peak times from direct root finding and
+% close form solution are the same
 %
 psp_peaktime t0 sub abs 1e-10 lt assert_or_die
-

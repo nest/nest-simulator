@@ -32,12 +32,12 @@ and an offset in units of milliseconds. This helps to maintain a
 uniform absolute accuracy of spike times even for long simulation
 times.
 
-The user has access to the two components of the spike if the spike 
+The user has access to the two components of the spike if the spike
 recorder is set to /time_in_steps true.
 In this case the spike_recorder returns events with the properties
 /times and /offsets, where /times are the integer parts s in units of h
 and offsets are the fractional parts o in milliseconds. According to
-NEST's definition of a grid-constrained spike as a spike occuring 
+NEST's definition of a grid-constrained spike as a spike occuring
 somewhere in (t-h,t], the precise spike time is
    t = s*h - o
 
@@ -73,7 +73,7 @@ M_ERROR setverbosity
 -20    /min_exponent Set
 1e-15  /spike_absolute_accuracy Set
 
-/T 4.0 def 
+/T 4.0 def
 
 min_exponent dexp /h_min Set
 
@@ -93,15 +93,15 @@ min_exponent dexp /h_min Set
  pn sp Connect
 
 
- T Simulate 
-                          
- sp [/events [/times /offsets]] get cva 
+ T Simulate
+
+ sp [/events [/times /offsets]] get cva
 } def
 
 
 
-[0 min_exponent -2] Range 
-{ 
+[0 min_exponent -2] Range
+{
  dup min_exponent sub dexp exch  % ratio (integer) of h to smallest h
  dexp Transmission
 
@@ -122,8 +122,8 @@ Map exch pop
 
 {
  arrayload pop           % s o sr or, we compute (s*hmin-o)-(sr*hmin-or)
-                         % trying to keep the highest possible accuracy    
- exch 4 -1 roll exch     % o or s sr 
+                         % trying to keep the highest possible accuracy
+ exch 4 -1 roll exch     % o or s sr
  sub                     % o or (s-sr)
  h_min mul               % o or (s-sr)*hmin
  rolld sub               % or (s-sr)*hmin - o
@@ -132,5 +132,5 @@ Map exch pop
 Map
 
 
-Flatten {abs spike_absolute_accuracy gt } Select [] eq  % comment these two last lines to inspect the 
+Flatten {abs spike_absolute_accuracy gt } Select [] eq  % comment these two last lines to inspect the
 assert_or_die                                           % differences causing the failure

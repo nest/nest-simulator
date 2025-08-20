@@ -26,9 +26,9 @@ Name: testsuite::ticket-710 - HPC synapses do not work for spike recorders.
 
 Synopsis: (ticket-710) run -> NEST exits if test fails
 
-Description: 
+Description:
 Ensure that hpc_synapses work for spike recorders. This test creates 1 neuron and 1 spike recorder and tries to connect them.
- 
+
 Author: Susanne Kunkel, Maximilian Schmidt, 2012-04-08
  */
 

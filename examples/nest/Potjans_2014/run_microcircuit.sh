@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # run_microcircuit.sh
 #
@@ -20,30 +21,32 @@
 
 # Create output folder (if it does not exist yet) and run the simulation
 # Adapt this file to your HPC queueing system as needed
-
+set -euo pipefail
 
 # Use these variables to submit your job
-N_COMPUTE_NODES=$(grep '/n_compute_nodes' sim_params.sli | cut -d' ' -f2)
-N_MPI_PER_COMPUTE_NODE=$(grep '/n_mpi_procs_per_compute_node' sim_params.sli | cut -d' ' -f2)
-WALLTIME_LIMIT=$(grep '/walltime_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
-MEMORY_LIMIT=$(egrep '/memory_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
-STDOUT=$(grep '/std_out' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
-STDERR=$(grep '/std_err' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
+N_COMPUTE_NODES="$(grep '/n_compute_nodes' sim_params.sli | cut -d' ' -f2)"
+N_MPI_PER_COMPUTE_NODE="$(grep '/n_mpi_procs_per_compute_node' sim_params.sli | cut -d' ' -f2)"
+WALLTIME_LIMIT="$(grep '/walltime_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)"
+MEMORY_LIMIT="$(grep '/memory_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)"
+STDOUT="$(grep '/std_out' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)"
+STDERR="$(grep '/std_err' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)"
 
 # Resolve paths
-OUTPUT_PATH=$(grep '/output_path' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
-OUTPUT_PATH=$(cd $OUTPUT_PATH; pwd)
-NEST_PATH=$(grep '/nest_path' sim_params.sli | cut -d '(' -f2 | cut -d ')' -f1)
+OUTPUT_PATH="$(grep '/output_path' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)"
+OUTPUT_PATH="$(cd "$OUTPUT_PATH" || exit 1; pwd)"
+NEST_PATH="$(grep '/nest_path' sim_params.sli | cut -d '(' -f2 | cut -d ')' -f1)"
 
 # Prepare output directory
-mkdir -p $OUTPUT_PATH
-cp 'sim_params.sli' $OUTPUT_PATH
-cp 'network_params.sli' $OUTPUT_PATH
-cp 'microcircuit.sli' $OUTPUT_PATH
-cd $OUTPUT_PATH
+mkdir -pv "$OUTPUT_PATH"
+cp 'sim_params.sli' "$OUTPUT_PATH"
+cp 'network_params.sli' "$OUTPUT_PATH"
+cp 'microcircuit.sli' "$OUTPUT_PATH"
+cd "$OUTPUT_PATH"
 
 # Run
-. $NEST_PATH/bin/nest_vars.sh
-NEST_DATA_PATH=$OUTPUT_PATH
-mpirun nest $OUTPUT_PATH/microcircuit.sli
+# shellcheck source=bin/nest_vars.sh.in
+. "$NEST_PATH/bin/nest_vars.sh"
+NEST_DATA_PATH="$OUTPUT_PATH"
+export NEST_DATA_PATH STDOUT STDERR MEMORY_LIMIT WALLTIME_LIMIT N_MPI_PER_COMPUTE_NODE N_COMPUTE_NODES
+mpirun nest "$OUTPUT_PATH/microcircuit.sli"
 unset NEST_DATA_PATH

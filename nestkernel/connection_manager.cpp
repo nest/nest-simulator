@@ -1219,188 +1219,182 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const size_t tid,
 }
 
 void
+nest::ConnectionManager::get_connections_( const size_t tid,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
+  NodeCollectionPTR,
+  synindex syn_id,
+  long synapse_label ) const
+{
+  ConnectorBase* connections = connections_[ tid ][ syn_id ];
+  if ( connections )
+  {
+    // Passing target_node_id = 0 ignores target_node_id while getting connections.
+    const size_t num_connections_in_thread = connections->size();
+    for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
+    {
+      const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
+      connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
+    }
+  }
+
+  target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
+}
+
+void
+nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
+  NodeCollectionPTR target,
+  synindex syn_id,
+  long synapse_label ) const
+{
+  // Split targets into neuron- and device-vectors.
+  std::vector< size_t > target_neuron_node_ids;
+  std::vector< size_t > target_device_node_ids;
+  split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
+
+  // Getting regular connections, if they exist.
+  ConnectorBase* connections = connections_[ tid ][ syn_id ];
+  if ( connections )
+  {
+    const size_t num_connections_in_thread = connections->size();
+    for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
+    {
+      const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
+      connections->get_connection_with_specified_targets(
+        source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
+    }
+  }
+
+  // Getting connections from devices.
+  for ( auto t_node_id : target_neuron_node_ids )
+  {
+    target_table_devices_.get_connections_from_devices_( 0, t_node_id, tid, syn_id, synapse_label, conns_in_thread );
+  }
+
+  // Getting connections to devices.
+  for ( auto t_device_id : target_device_node_ids )
+  {
+    target_table_devices_.get_connections_to_devices_( 0, t_device_id, tid, syn_id, synapse_label, conns_in_thread );
+  }
+}
+
+void
+nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR source,
+  NodeCollectionPTR target,
+  synindex syn_id,
+  long synapse_label ) const
+{
+  // Split targets into neuron- and device-vectors.
+  std::vector< size_t > target_neuron_node_ids;
+  std::vector< size_t > target_device_node_ids;
+  if ( target.get() )
+  {
+    split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
+  }
+
+  const ConnectorBase* connections = connections_[ tid ][ syn_id ];
+  if ( connections )
+  {
+    const size_t num_connections_in_thread = connections->size();
+    for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
+    {
+      const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
+      if ( source->contains( source_node_id ) )
+      {
+        if ( not target.get() )
+        {
+          // Passing target_node_id = 0 ignores target_node_id while getting
+          // connections.
+          connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
+        }
+        else
+        {
+          connections->get_connection_with_specified_targets(
+            source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
+        }
+      }
+    }
+  }
+
+  NodeCollection::const_iterator s_id = source->begin();
+  for ( ; s_id < source->end(); ++s_id )
+  {
+    const size_t source_node_id = ( *s_id ).node_id;
+    if ( not target.get() )
+    {
+      target_table_devices_.get_connections( source_node_id, 0, tid, syn_id, synapse_label, conns_in_thread );
+    }
+    else
+    {
+      for ( std::vector< size_t >::const_iterator t_node_id = target_neuron_node_ids.begin();
+            t_node_id != target_neuron_node_ids.end();
+            ++t_node_id )
+      {
+        // target_table_devices_ contains connections both to and from
+        // devices. First we get connections from devices.
+        target_table_devices_.get_connections_from_devices_(
+          source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
+      }
+      for ( std::vector< size_t >::const_iterator t_node_id = target_device_node_ids.begin();
+            t_node_id != target_device_node_ids.end();
+            ++t_node_id )
+      {
+        // Then, we get connections to devices.
+        target_table_devices_.get_connections_to_devices_(
+          source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
+      }
+    }
+  }
+}
+
+void
 nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
-  if ( is_source_table_cleared() )
-  {
-    throw KernelException(
-      "Invalid attempt to access connection information: source table was "
-      "cleared." );
-  }
-
-  const size_t num_connections = get_num_connections( syn_id );
-
-  if ( num_connections == 0 )
+  if ( get_num_connections( syn_id ) == 0 )
   {
     return;
   }
 
-  if ( not source.get() and not target.get() )
-  {
 #pragma omp parallel
-    {
-      size_t tid = kernel().vp_manager.get_thread_id();
-
-      std::deque< ConnectionID > conns_in_thread;
-
-      ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections )
-      {
-        // Passing target_node_id = 0 ignores target_node_id while getting connections.
-        const size_t num_connections_in_thread = connections->size();
-        for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
-          const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
-          connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
-        }
-      }
-
-      target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
-
-      if ( conns_in_thread.size() > 0 )
-      {
-#pragma omp critical( get_connections )
-        {
-          extend_connectome( connectome, conns_in_thread );
-        }
-      }
-    } // of omp parallel
-    return;
-  } // if
-  else if ( not source.get() and target.get() )
   {
-#pragma omp parallel
+    if ( is_source_table_cleared() )
     {
-      size_t tid = kernel().vp_manager.get_thread_id();
+      throw KernelException( "Invalid attempt to access connection information: source table was cleared." );
+    }
 
-      std::deque< ConnectionID > conns_in_thread;
+    size_t tid = kernel().vp_manager.get_thread_id();
 
-      // Split targets into neuron- and device-vectors.
-      std::vector< size_t > target_neuron_node_ids;
-      std::vector< size_t > target_device_node_ids;
-      split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
+    std::deque< ConnectionID > conns_in_thread;
 
-      // Getting regular connections, if they exist.
-      ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections )
-      {
-        const size_t num_connections_in_thread = connections->size();
-        for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
-          const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
-          connections->get_connection_with_specified_targets(
-            source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
-        }
-      }
-
-      // Getting connections from devices.
-      for ( auto t_node_id : target_neuron_node_ids )
-      {
-        target_table_devices_.get_connections_from_devices_(
-          0, t_node_id, tid, syn_id, synapse_label, conns_in_thread );
-      }
-
-      // Getting connections to devices.
-      for ( auto t_device_id : target_device_node_ids )
-      {
-        target_table_devices_.get_connections_to_devices_(
-          0, t_device_id, tid, syn_id, synapse_label, conns_in_thread );
-      }
-
-      if ( conns_in_thread.size() > 0 )
-      {
-#pragma omp critical( get_connections )
-        {
-          extend_connectome( connectome, conns_in_thread );
-        }
-      }
-    } // of omp parallel
-    return;
-  } // else if
-  else if ( source.get() )
-  {
-#pragma omp parallel
+    if ( not source.get() and not target.get() )
     {
-      size_t tid = kernel().vp_manager.get_thread_id();
+      get_connections_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+    }
+    else if ( not source.get() and target.get() )
+    {
+      get_connections_to_targets_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+    }
+    else if ( source.get() )
+    {
+      get_connections_from_sources_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+    }
 
-      std::deque< ConnectionID > conns_in_thread;
-
-      // Split targets into neuron- and device-vectors.
-      std::vector< size_t > target_neuron_node_ids;
-      std::vector< size_t > target_device_node_ids;
-      if ( target.get() )
-      {
-        split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
-      }
-
-      const ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections )
-      {
-        const size_t num_connections_in_thread = connections->size();
-        for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
-        {
-          const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
-          if ( source->contains( source_node_id ) )
-          {
-            if ( not target.get() )
-            {
-              // Passing target_node_id = 0 ignores target_node_id while getting
-              // connections.
-              connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
-            }
-            else
-            {
-              connections->get_connection_with_specified_targets(
-                source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
-            }
-          }
-        }
-      }
-
-      NodeCollection::const_iterator s_id = source->begin();
-      for ( ; s_id < source->end(); ++s_id )
-      {
-        const size_t source_node_id = ( *s_id ).node_id;
-        if ( not target.get() )
-        {
-          target_table_devices_.get_connections( source_node_id, 0, tid, syn_id, synapse_label, conns_in_thread );
-        }
-        else
-        {
-          for ( std::vector< size_t >::const_iterator t_node_id = target_neuron_node_ids.begin();
-                t_node_id != target_neuron_node_ids.end();
-                ++t_node_id )
-          {
-            // target_table_devices_ contains connections both to and from
-            // devices. First we get connections from devices.
-            target_table_devices_.get_connections_from_devices_(
-              source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
-          }
-          for ( std::vector< size_t >::const_iterator t_node_id = target_device_node_ids.begin();
-                t_node_id != target_device_node_ids.end();
-                ++t_node_id )
-          {
-            // Then, we get connections to devices.
-            target_table_devices_.get_connections_to_devices_(
-              source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
-          }
-        }
-      }
-
-      if ( conns_in_thread.size() > 0 )
-      {
+    if ( conns_in_thread.size() > 0 )
+    {
 #pragma omp critical( get_connections )
-        {
-          extend_connectome( connectome, conns_in_thread );
-        }
+      {
+        extend_connectome( connectome, conns_in_thread );
       }
-    } // of omp parallel
-    return;
-  } // else if
+    }
+  }
 }
 
 void

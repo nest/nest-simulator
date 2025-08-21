@@ -15,6 +15,7 @@ env:
 
 jobs:
   determine-versions:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -70,14 +71,53 @@ jobs:
 
               const matrix = { include: versions };
               core.setOutput('matrix', JSON.stringify(matrix));
-              core.info('Final matrix: ' + JSON.stringify(matrix, null, 2));
+              core.info( 'Final matrix: ' + JSON.stringify(matrix, null, 2));
               core.endGroup();
             } catch (err) {
-              core.error('Error while computing versions matrix: ' + (err && err.stack ? err.stack : err));
+              core.error( 'Error while computing versions matrix: ' + (err && err.stack ? err.stack : err));
               throw err;
             }
+  build-docs-pull:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get master config files
+        run: |
+          git fetch https://github.com/nest/nest-simulator.git master --depth=1
+          git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
+          git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz cmake build-essential
+
+      - name: Configure with CMake
+        run: |
+          mkdir -p build-pr-${{ github.run_id }}
+          cd build-pr-${{ github.run_id }}
+          # Use master config files for non-master versions before CMake
+          cp $RUNNER_TEMP/fulldoc.conf.in.master ../doc/fulldoc.conf.in
+          cp $RUNNER_TEMP/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
+          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+
+      - name: Generate Doxygen documentation
+        run: |
+          cd build-pr-${{ github.run_id }}
+          #          cat doc/fulldoc.conf
+          doxygen doc/fulldoc.conf
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-pr-${{ github.run_id }}
+          path: build-pr-${{ github.run_id }}/doc/doxygen/html/
   # Separate job for push events that builds all versions
   build-docs-push:
+    if: github.event_name == 'push'
     needs: determine-versions
     runs-on: ubuntu-latest
     strategy:
@@ -92,9 +132,9 @@ jobs:
       - name: Get master config files
         if: matrix.version != 'master'
         run: |
-          git fetch origin master
-          git show origin/master:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
-          git show origin/master:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
+          git fetch https://github.com/nest/nest-simulator.git master --depth=1
+          git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
+          git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
 
       - name: Install dependencies
         run: |

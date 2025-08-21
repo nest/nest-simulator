@@ -42,7 +42,7 @@ namespace nest
 class TimeConverter;
 
 /**
- * Base class for all Models.
+ * Base class for all Models !testing CI with positive test!.
  *
  * Each Node class is associated with a corresponding Model
  * class. The Model class is responsible for the creation and class

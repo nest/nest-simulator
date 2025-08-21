@@ -86,7 +86,7 @@ jobs:
 
       - name: Get master config files
         run: |
-          git fetch https://github.com/nest/nest-simulator.git master --depth=1
+          git fetch https://github.com/jessica-mitchell/nest-simulator.git master --depth=1
           git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
           git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
 
@@ -132,7 +132,7 @@ jobs:
       - name: Get master config files
         if: matrix.version != 'master'
         run: |
-          git fetch https://github.com/nest/nest-simulator.git master --depth=1
+          git fetch https://github.com/jessica-mitchell/nest-simulator.git master --depth=1
           git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
           git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
 

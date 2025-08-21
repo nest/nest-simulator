@@ -556,7 +556,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
           // And send the spike event
           set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           SpikeEvent se;
-          kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
         }
       }
     }
@@ -585,12 +585,12 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // keep conductance positive
 }
@@ -604,8 +604,7 @@ nest::gif_cond_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

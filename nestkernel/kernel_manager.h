@@ -170,22 +170,6 @@
 namespace nest
 {
 
-// Forward declarations to avoid pulling all manager headers here.
-class LoggingManager;
-class MPIManager;
-class VPManager;
-class ModuleManager;
-class RandomManager;
-class SimulationManager;
-class ModelRangeManager;
-class ConnectionManager;
-class SPManager;
-class EventDeliveryManager;
-class IOManager;
-class ModelManager;
-class MUSICManager;
-class NodeManager;
-
 class KernelManager : public ManagerInterface
 {
   unsigned long fingerprint_;
@@ -275,14 +259,7 @@ namespace kernel
 {
 
 template < class T >
-inline T g_manager_instance; // one per type across all TUs
-
-template < class T >
-T&
-manager() noexcept
-{
-  return g_manager_instance< T >;
-}
+inline T manager;
 
 }
 

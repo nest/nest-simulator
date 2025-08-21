@@ -973,7 +973,7 @@ Layer< D >::dump_connections( std::ostream& out,
   def( conn_filter, names::source, NodeCollectionDatum( node_collection ) );
   def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
   def( conn_filter, names::synapse_model, syn_model );
-  ArrayDatum connectome = kernel::manager< ConnectionManager >().get_connections( conn_filter );
+  ArrayDatum connectome = kernel::manager< ConnectionManager >.get_connections( conn_filter );
 
   // Get positions of remote nodes
   std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
@@ -998,7 +998,7 @@ Layer< D >::dump_connections( std::ostream& out,
       previous_source_node_id = source_node_id;
     }
 
-    DictionaryDatum result_dict = kernel::manager< ConnectionManager >().get_synapse_status( source_node_id,
+    DictionaryDatum result_dict = kernel::manager< ConnectionManager >.get_synapse_status( source_node_id,
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),

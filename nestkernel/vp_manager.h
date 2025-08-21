@@ -29,6 +29,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+#include "kernel_manager.h"
 #include "mpi_manager.h"
 
 #ifdef _OPENMP
@@ -209,8 +210,7 @@ VPManager::assert_thread_parallel() const
 inline size_t
 VPManager::get_vp() const
 {
-  return kernel::manager< MPIManager >().get_rank()
-    + get_thread_id() * kernel::manager< MPIManager >().get_num_processes();
+  return kernel::manager< MPIManager >.get_rank() + get_thread_id() * kernel::manager< MPIManager >.get_num_processes();
 }
 
 inline size_t
@@ -222,25 +222,25 @@ VPManager::node_id_to_vp( const size_t node_id ) const
 inline size_t
 VPManager::vp_to_thread( const size_t vp ) const
 {
-  return vp / kernel::manager< MPIManager >().get_num_processes();
+  return vp / kernel::manager< MPIManager >.get_num_processes();
 }
 
 inline size_t
 VPManager::get_num_virtual_processes() const
 {
-  return get_num_threads() * kernel::manager< MPIManager >().get_num_processes();
+  return get_num_threads() * kernel::manager< MPIManager >.get_num_processes();
 }
 
 inline bool
 VPManager::is_local_vp( const size_t vp ) const
 {
-  return kernel::manager< MPIManager >().get_process_id_of_vp( vp ) == kernel::manager< MPIManager >().get_rank();
+  return kernel::manager< MPIManager >.get_process_id_of_vp( vp ) == kernel::manager< MPIManager >.get_rank();
 }
 
 inline size_t
 VPManager::thread_to_vp( const size_t tid ) const
 {
-  return tid * kernel::manager< MPIManager >().get_num_processes() + kernel::manager< MPIManager >().get_rank();
+  return tid * kernel::manager< MPIManager >.get_num_processes() + kernel::manager< MPIManager >.get_rank();
 }
 
 inline bool
@@ -266,7 +266,7 @@ VPManager::lid_to_node_id( const size_t lid ) const
 inline size_t
 VPManager::get_num_assigned_ranks_per_thread() const
 {
-  return std::ceil( static_cast< double >( kernel::manager< MPIManager >().get_num_processes() ) / n_threads_ );
+  return std::ceil( static_cast< double >( kernel::manager< MPIManager >.get_num_processes() ) / n_threads_ );
 }
 
 inline size_t
@@ -283,9 +283,9 @@ VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_as
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
   // threads care only about existing ranks
-  if ( rank_end > kernel::manager< MPIManager >().get_num_processes() )
+  if ( rank_end > kernel::manager< MPIManager >.get_num_processes() )
   {
-    rank_end = std::max( rank_start, kernel::manager< MPIManager >().get_num_processes() );
+    rank_end = std::max( rank_start, kernel::manager< MPIManager >.get_num_processes() );
   }
 
   return rank_end;

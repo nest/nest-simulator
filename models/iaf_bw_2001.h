@@ -535,7 +535,7 @@ iaf_bw_2001::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() );
+  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() );
 
   const auto rport = e.get_rport();
 
@@ -554,7 +554,7 @@ iaf_bw_2001::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

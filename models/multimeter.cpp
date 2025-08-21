@@ -206,7 +206,7 @@ multimeter::update( Time const& origin, const long from, const long )
   //
   // Note that not all nodes receiving the request will necessarily answer.
   DataLoggingRequest req;
-  kernel::manager< EventDeliveryManager >().send( *this, req );
+  kernel::manager< EventDeliveryManager >.send( *this, req );
 }
 
 void

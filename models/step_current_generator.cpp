@@ -309,7 +309,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
       S_.I_ = B_.amp_;
-      kernel::manager< EventDeliveryManager >().send( *this, ce, offs );
+      kernel::manager< EventDeliveryManager >.send( *this, ce, offs );
     }
     B_.logger_.record_data( origin.get_steps() + offs );
   }

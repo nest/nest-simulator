@@ -500,7 +500,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
 
@@ -522,7 +522,7 @@ nest::aeif_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -535,8 +535,7 @@ nest::aeif_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

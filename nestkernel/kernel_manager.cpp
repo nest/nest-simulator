@@ -43,20 +43,20 @@ namespace nest
 
 KernelManager::KernelManager()
   : fingerprint_( 0 )
-  , managers( { &kernel::manager< LoggingManager >(),
-      &kernel::manager< MPIManager >(),
-      &kernel::manager< VPManager >(),
-      &kernel::manager< ModuleManager >(),
-      &kernel::manager< RandomManager >(),
-      &kernel::manager< SimulationManager >(),
-      &kernel::manager< ModelRangeManager >(),
-      &kernel::manager< ConnectionManager >(),
-      &kernel::manager< SPManager >(),
-      &kernel::manager< EventDeliveryManager >(),
-      &kernel::manager< IOManager >(),
-      &kernel::manager< ModelManager >(),
-      &kernel::manager< MUSICManager >(),
-      &kernel::manager< NodeManager >() } )
+  , managers( { &kernel::manager< LoggingManager >,
+      &kernel::manager< MPIManager >,
+      &kernel::manager< VPManager >,
+      &kernel::manager< ModuleManager >,
+      &kernel::manager< RandomManager >,
+      &kernel::manager< SimulationManager >,
+      &kernel::manager< ModelRangeManager >,
+      &kernel::manager< ConnectionManager >,
+      &kernel::manager< SPManager >,
+      &kernel::manager< EventDeliveryManager >,
+      &kernel::manager< IOManager >,
+      &kernel::manager< ModelManager >,
+      &kernel::manager< MUSICManager >,
+      &kernel::manager< NodeManager > } )
   , initialized_( false )
 {
 }
@@ -135,7 +135,7 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
     ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
-  kernel::manager< VPManager >().set_num_threads( new_num_threads );
+  kernel::manager< VPManager >.set_num_threads( new_num_threads );
 
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
@@ -146,13 +146,13 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalizing deleted all register components. Now that all infrastructure
   // is in place again, we can tell modules to re-register the components
   // they provide.
-  kernel::manager< ModuleManager >().reinitialize_dynamic_modules();
+  kernel::manager< ModuleManager >.reinitialize_dynamic_modules();
 
   // Prepare timers and set the number of threads for multi-threaded timers
-  kernel::manager< SimulationManager >().reset_timers_for_preparation();
-  kernel::manager< SimulationManager >().reset_timers_for_dynamics();
-  kernel::manager< EventDeliveryManager >().reset_timers_for_preparation();
-  kernel::manager< EventDeliveryManager >().reset_timers_for_dynamics();
+  kernel::manager< SimulationManager >.reset_timers_for_preparation();
+  kernel::manager< SimulationManager >.reset_timers_for_dynamics();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_preparation();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_dynamics();
 }
 
 void

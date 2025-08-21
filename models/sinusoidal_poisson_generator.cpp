@@ -221,7 +221,7 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
-  const double t = kernel::manager< SimulationManager >().get_time().get_ms();
+  const double t = kernel::manager< SimulationManager >.get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );
@@ -268,7 +268,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
       else
       {
@@ -276,7 +276,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
         long n_spikes = V_.poisson_dist_( rng, param );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
-        kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
     // store rate in spks/s

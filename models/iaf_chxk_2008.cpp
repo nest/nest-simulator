@@ -424,7 +424,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 
       SpikeEvent se;
       se.set_offset( dt );
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // add incoming spikes
@@ -446,12 +446,12 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -461,7 +461,7 @@ nest::iaf_chxk_2008::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

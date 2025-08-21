@@ -92,7 +92,7 @@ get_position( NodeCollectionPTR layer_nc )
   {
     size_t node_id = ( *it ).node_id;
 
-    if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "GetPosition is currently implemented for local nodes only." );
     }
@@ -109,12 +109,12 @@ get_position( NodeCollectionPTR layer_nc )
 std::vector< double >
 get_position( const size_t node_id )
 {
-  if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+  if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
   {
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
   }
 
-  NodeCollectionPTR nc = kernel::manager< NodeManager >().node_id_to_node_collection( node_id );
+  NodeCollectionPTR nc = kernel::manager< NodeManager >.node_id_to_node_collection( node_id );
   NodeCollectionMetadataPTR meta = nc->get_metadata();
 
   if ( not meta )
@@ -149,7 +149,7 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );
-    if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
@@ -168,7 +168,7 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
       size_t node_id = ( *it ).node_id;
-      if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+      if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
       {
         throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
@@ -203,7 +203,7 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
     size_t node_id = ( *it ).node_id;
-    if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
@@ -241,7 +241,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );
-    if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
@@ -260,7 +260,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
       size_t node_id = ( *it ).node_id;
-      if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+      if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
       {
         throw KernelException( "Distance is currently implemented for local nodes only." );
       }
@@ -295,7 +295,7 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
     size_t node_id = ( *it ).node_id;
-    if ( not kernel::manager< NodeManager >().is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
@@ -333,13 +333,13 @@ distance( const ArrayDatum conns )
 
     size_t trgt = conn_id.get_target_node_id();
 
-    if ( not kernel::manager< NodeManager >().is_local_node_id( trgt ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( trgt ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
 
 
-    NodeCollectionPTR trgt_nc = kernel::manager< NodeManager >().node_id_to_node_collection( trgt );
+    NodeCollectionPTR trgt_nc = kernel::manager< NodeManager >.node_id_to_node_collection( trgt );
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
 
     // distance is NaN if source, target is not spatially distributed
@@ -406,7 +406,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
-  kernel::manager< ConnectionManager >().set_connections_have_changed();
+  kernel::manager< ConnectionManager >.set_connections_have_changed();
 
   source->connect( source_nc, target, target_nc, connector );
 }

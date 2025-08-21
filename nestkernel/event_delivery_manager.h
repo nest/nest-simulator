@@ -538,22 +538,22 @@ inline void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
-  e.set_stamp( kernel::manager< SimulationManager >().get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp( kernel::manager< SimulationManager >.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   const size_t t = source.get_thread();
   const size_t ldid = source.get_local_device_id();
-  kernel::manager< ConnectionManager >().send_from_device( t, ldid, e );
+  kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
 
 inline void
 EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
 {
   assert( not source.has_proxies() );
-  e.set_stamp( kernel::manager< SimulationManager >().get_slice_origin() + Time::step( 1 ) );
+  e.set_stamp( kernel::manager< SimulationManager >.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   const size_t t = source.get_thread();
   const size_t ldid = source.get_local_device_id();
-  kernel::manager< ConnectionManager >().send_from_device( t, ldid, e );
+  kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
 
 template < class EventT >
@@ -574,7 +574,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
   {
     local_spike_counter_[ tid ] += e.get_multiplicity();
 
-    e.set_stamp( kernel::manager< SimulationManager >().get_slice_origin() + Time::step( lag + 1 ) );
+    e.set_stamp( kernel::manager< SimulationManager >.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );
 
     if ( source.is_off_grid() )
@@ -585,7 +585,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
     {
       send_remote( tid, e, lag );
     }
-    kernel::manager< ConnectionManager >().send_to_devices( tid, source_node_id, e );
+    kernel::manager< ConnectionManager >.send_to_devices( tid, source_node_id, e );
   }
   else
   {
@@ -605,8 +605,8 @@ inline void
 EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( e.get_sender().get_node_id() );
-  const auto& targets = kernel::manager< ConnectionManager >().get_remote_targets_of_local_node( tid, lid );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel::manager< ConnectionManager >.get_remote_targets_of_local_node( tid, lid );
 
   for ( const auto& target : targets )
   {
@@ -622,8 +622,8 @@ inline void
 EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( e.get_sender().get_node_id() );
-  const auto& targets = kernel::manager< ConnectionManager >().get_remote_targets_of_local_node( tid, lid );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel::manager< ConnectionManager >.get_remote_targets_of_local_node( tid, lid );
 
   for ( const auto& target : targets )
   {
@@ -638,9 +638,9 @@ EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const lon
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  const size_t tid = kernel::manager< VPManager >().get_thread_id();
+  const size_t tid = kernel::manager< VPManager >.get_thread_id();
   const size_t source_node_id = source.get_node_id();
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( source_node_id );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
 
   if ( source.has_proxies() )
   {
@@ -652,7 +652,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =
-        kernel::manager< ConnectionManager >().get_secondary_send_buffer_positions( tid, lid, syn_id );
+        kernel::manager< ConnectionManager >.get_secondary_send_buffer_positions( tid, lid, syn_id );
 
       for ( size_t i = 0; i < positions.size(); ++i )
       {
@@ -660,7 +660,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
         e >> it;
       }
     }
-    kernel::manager< ConnectionManager >().send_to_devices( tid, source_node_id, e );
+    kernel::manager< ConnectionManager >.send_to_devices( tid, source_node_id, e );
   }
   else
   {
@@ -673,7 +673,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 inline size_t
 EventDeliveryManager::write_toggle() const
 {
-  return kernel::manager< SimulationManager >().get_slice() % 2;
+  return kernel::manager< SimulationManager >.get_slice() % 2;
 }
 
 } // namespace nest

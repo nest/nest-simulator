@@ -141,7 +141,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_parent_spikes );
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
   }
 }

@@ -472,7 +472,7 @@ nest::iaf_psc_alpha_ps::handle( SpikeEvent& e )
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
-  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel::manager< SimulationManager >.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -488,7 +488,7 @@ nest::iaf_psc_alpha_ps::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( nest::kernel::manager< SimulationManager >().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( nest::kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void
@@ -553,7 +553,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+  kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
   return;
 }
@@ -575,7 +575,7 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+  kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
   return;
 }

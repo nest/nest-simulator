@@ -387,7 +387,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      kernel::manager< EventDeliveryManager >().send( *this, *se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, *se, lag );
       delete se;
     }
 

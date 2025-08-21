@@ -123,8 +123,8 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 void
 nestshutdown( int exitcode )
 {
-  nest::kernel::manager< nest::KernelManager >().finalize();
-  nest::kernel::manager< nest::MPIManager >().mpi_finalize( exitcode );
+  nest::kernel::manager< nest::KernelManager >.finalize();
+  nest::kernel::manager< nest::MPIManager >.mpi_finalize( exitcode );
 }
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
@@ -160,7 +160,7 @@ set_communicator( PyObject* pyobj )
     throw nest::KernelException( "set_communicator: argument is not a mpi4py communicator" );
   }
 
-  nest::kernel::manager< nest::MPIManager >().set_communicator( *PyMPIComm_Get( pyobj ) );
+  nest::kernel::manager< nest::MPIManager >.set_communicator( *PyMPIComm_Get( pyobj ) );
 }
 
 #else // ! HAVE_MPI4PY

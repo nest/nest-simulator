@@ -331,7 +331,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     logger_.record_data( origin.get_steps() + lag );
@@ -350,7 +350,7 @@ nest::cm_default::handle( SpikeEvent& e )
   assert( e.get_rport() < syn_buffers_.size() );
 
   syn_buffers_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -364,7 +364,7 @@ nest::cm_default::handle( CurrentEvent& e )
 
   Compartment* compartment = c_tree_.get_compartment_opt( e.get_rport() );
   compartment->currents.add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

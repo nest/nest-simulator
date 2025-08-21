@@ -63,8 +63,8 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
       throw BadProperty( "Property weight_recorder must be a single element NodeCollection" );
     }
 
-    const size_t tid = kernel::manager< VPManager >().get_thread_id();
-    Node* wr_node = kernel::manager< NodeManager >().get_node_or_proxy( ( *wr_datum )[ 0 ], tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    Node* wr_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *wr_datum )[ 0 ], tid );
     weight_recorder* wr = dynamic_cast< weight_recorder* >( wr_node );
     if ( not wr )
     {

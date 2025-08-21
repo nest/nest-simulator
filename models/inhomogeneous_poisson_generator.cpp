@@ -82,7 +82,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 {
   Time t_rate;
 
-  if ( t <= kernel::manager< SimulationManager >().get_time().get_ms() )
+  if ( t <= kernel::manager< SimulationManager >.get_time().get_ms() )
   {
     throw BadProperty( "Time points must lie strictly in the future." );
   }
@@ -269,7 +269,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
     if ( B_.rate_ > 0 and StimulationDevice::is_active( Time::step( curr_time ) ) )
     {
       DSSpikeEvent se;
-      kernel::manager< EventDeliveryManager >().send( *this, se, offs );
+      kernel::manager< EventDeliveryManager >.send( *this, se, offs );
     }
   }
 }

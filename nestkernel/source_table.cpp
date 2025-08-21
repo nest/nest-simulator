@@ -41,7 +41,7 @@ void
 nest::SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
-  const size_t num_threads = kernel::manager< VPManager >().get_num_threads();
+  const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
   sources_.resize( num_threads );
   is_cleared_.initialize( num_threads, false );
   saved_entry_point_.initialize( num_threads, false );
@@ -51,7 +51,7 @@ nest::SourceTable::initialize()
 
 #pragma omp parallel
   {
-    const size_t tid = kernel::manager< VPManager >().get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     sources_.at( tid ).resize( 0 );
     resize_sources();
     compressible_sources_.at( tid ).resize( 0 );
@@ -93,7 +93,7 @@ nest::SourceTablePosition
 nest::SourceTable::find_maximal_position() const
 {
   SourceTablePosition max_position( -1, -1, -1 );
-  for ( size_t tid = 0; tid < kernel::manager< VPManager >().get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >.get_num_threads(); ++tid )
   {
     if ( max_position < saved_positions_[ tid ] )
     {
@@ -152,7 +152,7 @@ nest::SourceTable::clean( const size_t tid )
 size_t
 nest::SourceTable::get_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
 {
-  if ( not kernel::manager< ConnectionManager >().get_keep_source_table() )
+  if ( not kernel::manager< ConnectionManager >.get_keep_source_table() )
   {
     throw KernelException( "Cannot use SourceTable::get_node_id when get_keep_source_table is false" );
   }
@@ -211,7 +211,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
   // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel::manager< ModelManager >().get_connection_model( syn_id, tid );
+    const ConnectorModel& conn_model = kernel::manager< ModelManager >.get_connection_model( syn_id, tid );
     const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
     if ( not is_primary )
@@ -227,25 +227,25 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       }
     }
   }
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {
     // compute receive buffer positions for all unique pairs of source
     // node ID and synapse-type id on this MPI rank
     std::vector< int > recv_counts_secondary_events_in_int_per_rank(
-      kernel::manager< MPIManager >().get_num_processes(), 0 );
+      kernel::manager< MPIManager >.get_num_processes(), 0 );
 
     for ( std::set< std::pair< size_t, size_t > >::const_iterator cit =
             ( *unique_secondary_source_node_id_syn_id ).begin();
           cit != ( *unique_secondary_source_node_id_syn_id ).end();
           ++cit )
     {
-      const size_t source_rank = kernel::manager< MPIManager >().get_process_id_of_node_id( cit->first );
+      const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( cit->first );
       const size_t event_size =
-        kernel::manager< ModelManager >().get_secondary_event_prototype( cit->second, tid ).size();
+        kernel::manager< ModelManager >.get_secondary_event_prototype( cit->second, tid ).size();
 
       buffer_pos_of_source_node_id_syn_id.insert(
         std::make_pair( pack_source_node_id_and_syn_id( cit->first, cit->second ),
@@ -261,7 +261,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       ++recv_count;
     }
 
-    kernel::manager< MPIManager >().set_recv_counts_secondary_events_in_int_per_rank(
+    kernel::manager< MPIManager >.set_recv_counts_secondary_events_in_int_per_rank(
       recv_counts_secondary_events_in_int_per_rank );
     delete unique_secondary_source_node_id_syn_id;
   } // of omp single
@@ -270,9 +270,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 void
 nest::SourceTable::resize_sources()
 {
-  kernel::manager< VPManager >().assert_thread_parallel();
-  sources_.at( kernel::manager< VPManager >().get_thread_id() )
-    .resize( kernel::manager< ModelManager >().get_num_connection_models() );
+  kernel::manager< VPManager >.assert_thread_parallel();
+  sources_.at( kernel::manager< VPManager >.get_thread_id() )
+    .resize( kernel::manager< ModelManager >.get_num_connection_models() );
 }
 
 bool
@@ -280,7 +280,7 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
   const size_t rank_end,
   const Source& source ) const
 {
-  const size_t source_rank = kernel::manager< MPIManager >().get_process_id_of_node_id( source.get_node_id() );
+  const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( source.get_node_id() );
 
   return not( source.is_processed()
     or source.is_disabled()
@@ -321,14 +321,14 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
   const size_t source_rank,
   TargetData& next_target_data ) const
 {
-  assert( not kernel::manager< ConnectionManager >().use_compressed_spikes() ); // handled elsewhere
+  assert( not kernel::manager< ConnectionManager >.use_compressed_spikes() ); // handled elsewhere
 
   const auto node_id = current_source.get_node_id();
 
   // set values of next_target_data
-  next_target_data.set_source_lid( kernel::manager< VPManager >().node_id_to_lid( node_id ) );
+  next_target_data.set_source_lid( kernel::manager< VPManager >.node_id_to_lid( node_id ) );
   next_target_data.set_source_tid(
-    kernel::manager< VPManager >().vp_to_thread( kernel::manager< VPManager >().node_id_to_vp( node_id ) ) );
+    kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node_id ) ) );
   next_target_data.reset_marker();
 
   if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
@@ -349,9 +349,9 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     // the source rank will write to the buffer position relative to
     // the first position from the absolute position in the receive
     // buffer
-    const size_t relative_recv_buffer_pos = kernel::manager< ConnectionManager >().get_secondary_recv_buffer_position(
+    const size_t relative_recv_buffer_pos = kernel::manager< ConnectionManager >.get_secondary_recv_buffer_position(
                                               current_position.tid, current_position.syn_id, current_position.lcid )
-      - kernel::manager< MPIManager >().get_recv_displacement_secondary_events_in_int( source_rank );
+      - kernel::manager< MPIManager >.get_recv_displacement_secondary_events_in_int( source_rank );
 
     SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
     secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
@@ -396,7 +396,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
 
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source
-    kernel::manager< ConnectionManager >().set_source_has_more_targets( current_position.tid,
+    kernel::manager< ConnectionManager >.set_source_has_more_targets( current_position.tid,
       current_position.syn_id,
       current_position.lcid,
       next_entry_has_same_source_( current_position, current_source ) );
@@ -413,7 +413,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     // communicated via MPI, so we prepare to return the relevant data
 
     // set the source rank
-    source_rank = kernel::manager< MPIManager >().get_process_id_of_node_id( current_source.get_node_id() );
+    source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( current_source.get_node_id() );
 
     if ( not populate_target_data_fields_( current_position, current_source, source_rank, next_target_data ) )
     {
@@ -436,7 +436,7 @@ nest::SourceTable::resize_compressible_sources()
   {
     compressible_sources_[ tid ].clear();
     compressible_sources_[ tid ].resize(
-      kernel::manager< ModelManager >().get_num_connection_models(), std::map< size_t, SpikeData >() );
+      kernel::manager< ModelManager >.get_num_connection_models(), std::map< size_t, SpikeData >() );
   }
 }
 
@@ -459,13 +459,13 @@ nest::SourceTable::collect_compressible_sources( const size_t tid )
       ++lcid;
       while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
       {
-        kernel::manager< ConnectionManager >().set_source_has_more_targets( tid, syn_id, lcid - 1, true );
+        kernel::manager< ConnectionManager >.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
         ++lcid;
       }
       // Mark last connection in sequence as not having successor. This is essential if connections are
       // delete, e.g., by structural plasticity, because we do not globally reset the more_targets flag.
       assert( lcid - 1 < syn_sources.size() );
-      kernel::manager< ConnectionManager >().set_source_has_more_targets( tid, syn_id, lcid - 1, false );
+      kernel::manager< ConnectionManager >.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
     }
   }
 }
@@ -478,11 +478,11 @@ nest::SourceTable::dump_sources() const
     {
       for ( size_t lcid = 0; lcid < sources_[ tid ][ syn_id ].size(); ++lcid )
       {
-        kernel::manager< KernelManager >().write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
-          kernel::manager< MPIManager >().get_rank(),
-          kernel::manager< VPManager >().get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           sources_[ tid ][ syn_id ][ lcid ].get_node_id(),
-          kernel::manager< ConnectionManager >().get_target_node_id( tid, syn_id, lcid ),
+          kernel::manager< ConnectionManager >.get_target_node_id( tid, syn_id, lcid ),
           lcid,
           tid ) );
       }
@@ -499,9 +499,9 @@ nest::SourceTable::dump_compressible_sources() const
     {
       for ( const auto& entry : compressible_sources_[ tid ][ syn_id ] )
       {
-        kernel::manager< KernelManager >().write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
-          kernel::manager< MPIManager >().get_rank(),
-          kernel::manager< VPManager >().get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           entry.first,
           entry.second.get_lcid(),
           entry.second.get_tid() ) );
@@ -514,7 +514,7 @@ void
 nest::SourceTable::fill_compressed_spike_data(
   std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
-  const size_t num_synapse_models = kernel::manager< ModelManager >().get_num_connection_models();
+  const size_t num_synapse_models = kernel::manager< ModelManager >.get_num_connection_models();
   compressed_spike_data.clear();
   compressed_spike_data.resize( num_synapse_models );
   compressed_spike_data_map_.clear();
@@ -527,7 +527,7 @@ nest::SourceTable::fill_compressed_spike_data(
 
   // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
   //       Maybe one can exploit that to avoid searching with find() below.
-  for ( synindex syn_id = 0; syn_id < kernel::manager< ModelManager >().get_num_connection_models(); ++syn_id )
+  for ( synindex syn_id = 0; syn_id < kernel::manager< ModelManager >.get_num_connection_models(); ++syn_id )
   {
     for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
           ++target_thread )
@@ -541,7 +541,7 @@ nest::SourceTable::fill_compressed_spike_data(
           // Set up entry for new source
           const auto new_source_index = compressed_spike_data[ syn_id ].size();
 
-          compressed_spike_data[ syn_id ].emplace_back( kernel::manager< VPManager >().get_num_threads(),
+          compressed_spike_data[ syn_id ].emplace_back( kernel::manager< VPManager >.get_num_threads(),
             SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
 
           compressed_spike_data_map_[ syn_id ].insert(
@@ -571,9 +571,9 @@ nest::SourceTable::dump_compressed_spike_data(
           : compressed_spike_data_map_ ) {
       for ( const auto& entry : tab )
       {
-        kernel::manager< KernelManager >().write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
-          kernel::manager< MPIManager >().get_rank(),
-          kernel::manager< VPManager >().get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           entry.first,
           entry.second.get_source_index(),
           entry.second.get_target_thread() ) );
@@ -586,9 +586,9 @@ nest::SourceTable::dump_compressed_spike_data(
       {
         for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )
         {
-          kernel::manager< KernelManager >().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
-            kernel::manager< MPIManager >().get_rank(),
-            kernel::manager< VPManager >().get_thread_id(),
+          kernel::manager< KernelManager >.write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
+            kernel::manager< MPIManager >.get_rank(),
+            kernel::manager< VPManager >.get_thread_id(),
             six,
             tx,
             tab[ six ][ tx ].get_lcid(),

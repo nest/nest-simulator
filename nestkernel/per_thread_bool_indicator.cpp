@@ -49,7 +49,7 @@ PerThreadBoolIndicator::operator[]( const size_t tid )
 void
 PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status )
 {
-  kernel::manager< VPManager >().assert_single_threaded();
+  kernel::manager< VPManager >.assert_single_threaded();
   per_thread_status_.clear();
   per_thread_status_.resize( num_threads, BoolIndicatorUInt64( status ) );
   size_ = num_threads;
@@ -66,7 +66,7 @@ PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status 
 bool
 PerThreadBoolIndicator::all_false() const
 {
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 // We need two barriers here to ensure that no thread can continue and change the result
 // before all threads have determined the result.
 #pragma omp barrier
@@ -75,42 +75,42 @@ PerThreadBoolIndicator::all_false() const
   bool ret = ( are_true_ == 0 );
 #pragma omp barrier
 
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::all_true() const
 {
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ == size_ );
 #pragma omp barrier
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_false() const
 {
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ < size_ );
 #pragma omp barrier
 
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_true() const
 {
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ > 0 );
 #pragma omp barrier
 
-  kernel::manager< SimulationManager >().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 

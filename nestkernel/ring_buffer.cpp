@@ -25,7 +25,7 @@
 
 nest::RingBuffer::RingBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay(),
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
     0.0 )
 {
 }
@@ -34,7 +34,7 @@ void
 nest::RingBuffer::resize()
 {
   size_t size =
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay();
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -52,7 +52,7 @@ nest::RingBuffer::clear()
 
 nest::MultRBuffer::MultRBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay(),
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
     0.0 )
 {
 }
@@ -61,7 +61,7 @@ void
 nest::MultRBuffer::resize()
 {
   size_t size =
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay();
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -78,7 +78,7 @@ nest::MultRBuffer::clear()
 
 nest::ListRingBuffer::ListRingBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay() )
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay() )
 {
 }
 
@@ -86,7 +86,7 @@ void
 nest::ListRingBuffer::resize()
 {
   size_t size =
-    kernel::manager< ConnectionManager >().get_min_delay() + kernel::manager< ConnectionManager >().get_max_delay();
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );

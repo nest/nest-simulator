@@ -638,7 +638,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input currents
@@ -659,7 +659,7 @@ nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
   assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -672,7 +672,7 @@ nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

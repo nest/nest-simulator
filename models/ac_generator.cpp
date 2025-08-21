@@ -186,7 +186,7 @@ nest::ac_generator::pre_run_hook()
   StimulationDevice::pre_run_hook();
 
   const double h = Time::get_resolution().get_ms();
-  const double t = kernel::manager< SimulationManager >().get_time().get_ms();
+  const double t = kernel::manager< SimulationManager >.get_time().get_ms();
 
   // scale Hz to ms
   const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
@@ -222,7 +222,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
     {
       S_.I_ = S_.y_1_ + P_.offset_;
       ce.set_current( S_.I_ );
-      kernel::manager< EventDeliveryManager >().send( *this, ce, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, ce, lag );
     }
     B_.logger_.record_data( origin.get_steps() + lag );
   }

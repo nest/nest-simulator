@@ -253,7 +253,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     return;
   }
 
-  const long update_interval = kernel::manager< SimulationManager >().get_eprop_update_interval().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
 

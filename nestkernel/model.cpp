@@ -49,7 +49,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( kernel::manager< VPManager >().get_num_threads() );
+  set_threads_( kernel::manager< VPManager >.get_num_threads() );
 }
 
 void
@@ -130,7 +130,7 @@ Model::get_status()
   }
 
   ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] = LiteralDatum( kernel::manager< ModelManager >().get_node_model( type_id_ )->get_name() );
+  ( *d )[ names::type_id ] = LiteralDatum( kernel::manager< ModelManager >.get_node_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {

@@ -72,7 +72,7 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin(); runner != history_.end()
-        and ( t_first_read - runner->t_ > -1.0 * kernel::manager< ConnectionManager >().get_stdp_eps() );
+        and ( t_first_read - runner->t_ > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;
@@ -98,7 +98,7 @@ nest::ArchivingNode::get_K_value( double t )
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > kernel::manager< ConnectionManager >().get_stdp_eps() )
+    if ( t - history_[ i ].t_ > kernel::manager< ConnectionManager >.get_stdp_eps() )
     {
       trace_ = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       return trace_;
@@ -132,7 +132,7 @@ nest::ArchivingNode::get_K_values( double t,
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t - history_[ i ].t_ > kernel::manager< ConnectionManager >().get_stdp_eps() )
+    if ( t - history_[ i ].t_ > kernel::manager< ConnectionManager >.get_stdp_eps() )
     {
       K_triplet_value =
         ( history_[ i ].Kminus_triplet_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
@@ -163,8 +163,8 @@ nest::ArchivingNode::get_history( double t1,
     return;
   }
   std::deque< histentry >::reverse_iterator runner = history_.rbegin();
-  const double t2_lim = t2 + kernel::manager< ConnectionManager >().get_stdp_eps();
-  const double t1_lim = t1 + kernel::manager< ConnectionManager >().get_stdp_eps();
+  const double t2_lim = t2 + kernel::manager< ConnectionManager >.get_stdp_eps();
+  const double t1_lim = t1 + kernel::manager< ConnectionManager >.get_stdp_eps();
   while ( runner != history_.rend() and runner->t_ >= t2_lim )
   {
     ++runner;
@@ -198,8 +198,8 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
       const double next_t_sp = history_[ 1 ].t_;
       if ( history_.front().access_counter_ >= n_incoming_
         and t_sp_ms - next_t_sp > max_delay_
-            + Time::delay_steps_to_ms( kernel::manager< ConnectionManager >().get_min_delay() )
-            + kernel::manager< ConnectionManager >().get_stdp_eps() )
+            + Time::delay_steps_to_ms( kernel::manager< ConnectionManager >.get_min_delay() )
+            + kernel::manager< ConnectionManager >.get_stdp_eps() )
       {
         history_.pop_front();
       }

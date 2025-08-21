@@ -215,7 +215,7 @@ eprop_readout::pre_run_hook()
 void
 eprop_readout::update( Time const& origin, const long from, const long to )
 {
-  const size_t buffer_size = kernel::manager< ConnectionManager >().get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
 
   std::vector< double > error_signal_buffer( buffer_size, 0.0 );
 
@@ -247,7 +247,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
   LearningSignalConnectionEvent error_signal_event;
   error_signal_event.set_coeffarray( error_signal_buffer );
-  kernel::manager< EventDeliveryManager >().send_secondary( *this, error_signal_event );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, error_signal_event );
 
   return;
 }
@@ -283,7 +283,7 @@ eprop_readout::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -292,7 +292,7 @@ eprop_readout::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

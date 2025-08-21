@@ -408,7 +408,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
   , weight_( es.weight_ )
   , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
-  , t_next_update_( kernel::manager< SimulationManager >().get_eprop_update_interval().get_steps() )
+  , t_next_update_( kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
@@ -524,7 +524,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const long update_interval = kernel::manager< SimulationManager >().get_eprop_update_interval().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
   const long interval_step = ( t_spike - shift ) % update_interval;

@@ -268,7 +268,7 @@ TargetTableDevices::send_to_device( const size_t tid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
 {
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( source_node_id );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
   for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
         it != target_to_devices_[ tid ][ lid ].end();
         ++it )
@@ -286,7 +286,7 @@ TargetTableDevices::send_to_device( const size_t tid,
   SecondaryEvent& e,
   const std::vector< ConnectorModel* >& cm )
 {
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( source_node_id );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
   for ( auto& synid : e.get_supported_syn_ids() )
   {
     if ( target_to_devices_[ tid ][ lid ][ synid ] )
@@ -303,7 +303,7 @@ TargetTableDevices::get_synapse_status_to_device( const size_t tid,
   DictionaryDatum& dict,
   const size_t lcid ) const
 {
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( source_node_id );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
   if ( target_to_devices_[ tid ][ lid ][ syn_id ] )
   {
     target_to_devices_[ tid ][ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
@@ -318,7 +318,7 @@ TargetTableDevices::set_synapse_status_to_device( const size_t tid,
   const DictionaryDatum& dict,
   const size_t lcid )
 {
-  const size_t lid = kernel::manager< VPManager >().node_id_to_lid( source_node_id );
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
   if ( target_to_devices_[ tid ][ lid ][ syn_id ] )
   {
     target_to_devices_[ tid ][ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );

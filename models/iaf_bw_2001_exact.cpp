@@ -504,7 +504,7 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current

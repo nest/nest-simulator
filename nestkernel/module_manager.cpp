@@ -116,7 +116,7 @@ ModuleManager::install( const std::string& name )
 {
   // We cannot have connections without network elements, so we only need to check nodes.
   // Simulating an empty network causes no problems, so we don't have to check for that.
-  if ( kernel::manager< NodeManager >().size() > 0 )
+  if ( kernel::manager< NodeManager >.size() > 0 )
   {
     throw KernelException(
       "Network elements have been created, so external modules can no longer be imported. "

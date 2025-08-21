@@ -362,7 +362,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
   double delay;
   if ( updateValue< double >( d, names::delay, delay ) )
   {
-    kernel::manager< ConnectionManager >().get_delay_checker().assert_valid_delay_ms( delay );
+    kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed

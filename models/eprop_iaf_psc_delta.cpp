@@ -341,7 +341,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       S_.v_m_ = P_.V_reset_;
 
       SpikeEvent se;
-      kernel::manager< EventDeliveryManager >().send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
       z = 1.0;
     }
@@ -367,7 +367,7 @@ eprop_iaf_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -376,7 +376,7 @@ eprop_iaf_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >().get_slice_origin() ),
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
 

@@ -288,14 +288,14 @@ cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, C
 
     if ( frac_delay == 0 )
     {
-      kernel::manager< ConnectionManager >().get_delay_checker().assert_valid_delay_ms( delay );
+      kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
       set_delay_steps( Time::delay_ms_to_steps( delay ) );
       delay_offset_ = 0.0;
     }
     else
     {
       const long lowerbound = static_cast< long >( int_delay );
-      kernel::manager< ConnectionManager >().get_delay_checker().assert_two_valid_delays_steps(
+      kernel::manager< ConnectionManager >.get_delay_checker().assert_two_valid_delays_steps(
         lowerbound, lowerbound + 1 );
       set_delay_steps( lowerbound + 1 );
       delay_offset_ = h * ( 1.0 - frac_delay );

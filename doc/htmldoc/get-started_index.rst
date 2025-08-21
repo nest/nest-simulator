@@ -120,7 +120,7 @@ Next steps: Create your own network model
          * :doc:`Brunel network </auto_examples/brunel_alpha_nest>`: A random balanced network
          * :doc:`The microcircuit  model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014
          * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
-         * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
+         * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
 
 
 

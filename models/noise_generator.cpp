@@ -241,7 +241,7 @@ nest::noise_generator::pre_run_hook()
   V_.dt_steps_ = P_.dt_.get_steps();
 
   const double h = Time::get_resolution().get_ms();
-  const double t = kernel().simulation_manager.get_time().get_ms();
+  const double t = kernel::manager< SimulationManager >.get_time().get_ms();
 
   // scale Hz to ms
   const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
@@ -337,7 +337,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
     B_.logger_.record_data( origin.get_steps() + offs );
 
     DSCurrentEvent ce;
-    kernel().event_delivery_manager.send( *this, ce, offs );
+    kernel::manager< EventDeliveryManager >.send( *this, ce, offs );
   }
 }
 

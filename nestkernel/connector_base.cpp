@@ -39,7 +39,8 @@ ConnectorBase::prepare_weight_recorder_event( WeightRecorderEvent& wr_e,
   wr_e.set_rport( e.get_rport() );
   wr_e.set_stamp( e.get_stamp() );
   // Sender is not available for SecondaryEvents, and not needed, so we do not set it to avoid undefined behavior.
-  wr_e.set_sender_node_id( kernel().connection_manager.get_source_node_id( tid, syn_id, lcid ) );
+  // wr_e.set_sender_node_id( kernel::manager< ConnectionManager >.get_source_node_id( tid, syn_id, lcid ) );
+  wr_e.set_sender_node_id( kernel::manager< ConnectionManager >.get_source_node_id( tid, syn_id, lcid ) );
   wr_e.set_weight( e.get_weight() );
   wr_e.set_delay_steps( e.get_delay_steps() );
   wr_e.set_receiver( *static_cast< Node* >( cp.get_weight_recorder() ) );

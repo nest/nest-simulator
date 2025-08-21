@@ -517,7 +517,7 @@ eprop_readout::handles_test_event( CurrentEvent&, size_t receptor_type )
 inline size_t
 eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
 {
-  size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
+  size_t step_rate_model_id = kernel::manager< ModelManager >.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG and receptor_type != LEARNING_WINDOW_SIG )

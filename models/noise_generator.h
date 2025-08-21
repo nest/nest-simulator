@@ -298,7 +298,7 @@ private:
 inline size_t
 noise_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     throw KernelException( "Recording from a noise_generator is only possible in single-threaded mode." );
   }

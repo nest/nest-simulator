@@ -213,7 +213,7 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
 |                                               | [default=OFF]. Developers should wrap debugging output in      |
-|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel::manager<KernelManager>().write_dump()`  |
 |                                               | from inside it. The macro can contain almost any valid code.   |
 +-----------------------------------------------+----------------------------------------------------------------+
 

@@ -118,6 +118,9 @@ include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
 
+# enable link-time optimizations
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )

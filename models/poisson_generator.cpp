@@ -137,7 +137,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
     }
 
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, lag );
+    kernel::manager< EventDeliveryManager >.send( *this, se, lag );
   }
 }
 

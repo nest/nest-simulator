@@ -537,7 +537,7 @@ rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn()
   , B_( *this )
 {
   recordablesMap_.create();
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
 }
 
 template < class TNonlinearities >
@@ -548,7 +548,7 @@ rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn( const rate_neuron_ipn& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
 }
 
 /* ----------------------------------------------------------------
@@ -563,7 +563,7 @@ rate_neuron_ipn< TNonlinearities >::init_buffers_()
   B_.delayed_rates_in_.clear(); // includes resize
 
   // resize buffers
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   B_.instant_rates_ex_.resize( buffer_size, 0.0 );
   B_.instant_rates_in_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
@@ -614,8 +614,8 @@ rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
-  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
+  const double wfr_tol = kernel::manager< SimulationManager >.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
   // allocate memory to store rates to be sent by rate events
@@ -704,7 +704,7 @@ rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     // to avoid accumulation in the buffers of the receiving neurons.
     DelayedRateConnectionEvent drve;
     drve.set_coeffarray( new_rates );
-    kernel().event_delivery_manager.send_secondary( *this, drve );
+    kernel::manager< EventDeliveryManager >.send_secondary( *this, drve );
 
     // clear last_y_values
     std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
@@ -726,7 +726,7 @@ rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   // Send rate-neuron-event
   InstantaneousRateConnectionEvent rve;
   rve.set_coeffarray( new_rates );
-  kernel().event_delivery_manager.send_secondary( *this, rve );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, rve );
 
   // Reset variables
   std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_ex_ );
@@ -778,7 +778,7 @@ void
 rate_neuron_ipn< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
+  const long delay = e.get_delay_steps() - kernel::manager< ConnectionManager >.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

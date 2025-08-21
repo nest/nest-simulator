@@ -640,7 +640,7 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
       SpikeEvent* se;
       se = new SpikeEvent;
       se->set_multiplicity( S_.n_spikes_ );
-      kernel().event_delivery_manager.send( *this, *se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, *se, lag );
     }
   }
 }
@@ -654,11 +654,11 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
 
   if ( s > 0.0 )
   {
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), s );
   }
   else
   {
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), s );
   }
 }
 
@@ -671,7 +671,7 @@ nest::gif_pop_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

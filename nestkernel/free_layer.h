@@ -130,7 +130,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     0,
     []( size_t a, NodeIDTriple b )
     {
-      const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
+      const auto node = kernel::manager< NodeManager >.get_mpi_local_node_or_device_head( b.node_id );
       return node->is_proxy() ? a : a + 1;
     } );
 
@@ -150,7 +150,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       {
         assert( nc_it != this->node_collection_->end() );
         Position< D > point = getValue< std::vector< double > >( *it );
-        const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
+        const auto node = kernel::manager< NodeManager >.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
         assert( node );
         if ( not node->is_proxy() )
         {
@@ -188,7 +188,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
         // max_point on all processes.
         Position< D > point = pos->get_values( rng );
 
-        const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
+        const auto node = kernel::manager< NodeManager >.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
         assert( node );
         if ( not node->is_proxy() )
         {
@@ -284,7 +284,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
     {
       // Node index in node collection is global to NEST, so we need to scale down
       // to get right indices into positions_, which has only rank-local data.
-      const size_t n_procs = kernel().mpi_manager.get_num_processes();
+      const size_t n_procs = kernel::manager< MPIManager >.get_num_processes();
       size_t pos_idx = ( *nc_it ).nc_index / n_procs;
       size_t step = nc_it.get_step_size() / n_procs;
 
@@ -340,7 +340,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   // This array will be filled with node ID,pos_x,pos_y[,pos_z] for global nodes:
   std::vector< double > global_node_id_pos;
   std::vector< int > displacements;
-  kernel().mpi_manager.communicate( local_node_id_pos, global_node_id_pos, displacements );
+  kernel::manager< MPIManager >.communicate( local_node_id_pos, global_node_id_pos, displacements );
 
   // To avoid copying the vector one extra time in order to sort, we
   // sneakishly use reinterpret_cast
@@ -403,7 +403,7 @@ FreeLayer< D >::lid_to_position_id_( size_t lid ) const
   }
   else
   {
-    const auto num_procs = kernel().mpi_manager.get_num_processes();
+    const auto num_procs = kernel::manager< MPIManager >.get_num_processes();
     return lid / num_procs;
   }
 }

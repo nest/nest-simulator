@@ -91,8 +91,8 @@ nest::MPIManager::init_mpi( int*, char*** )
   // use 2 processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 );
+  kernel::manager< MPIManager >.set_buffer_size_target_data( 2 );
+  kernel::manager< MPIManager >.set_buffer_size_spike_data( 2 );
 
   recv_counts_secondary_events_in_int_per_rank_.resize( 1, 0 );
   recv_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
@@ -113,8 +113,8 @@ nest::MPIManager::set_communicator( MPI_Comm global_comm )
   // use at least 2 * number of processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel::manager< MPIManager >.set_buffer_size_target_data( 2 * kernel::manager< MPIManager >.get_num_processes() );
+  kernel::manager< MPIManager >.set_buffer_size_spike_data( 2 * kernel::manager< MPIManager >.get_num_processes() );
 }
 
 void
@@ -126,9 +126,9 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   if ( init == 0 )
   {
 #ifdef HAVE_MUSIC
-    kernel().music_manager.init_music( argc, argv );
+    kernel::manager< MUSICManager >.init_music( argc, argv );
     // get a communicator from MUSIC
-    set_communicator( static_cast< MPI_Comm >( kernel().music_manager.communicator() ) );
+    set_communicator( static_cast< MPI_Comm >( kernel::manager< MUSICManager >.communicator() ) );
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
@@ -286,7 +286,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
   {
     if ( exitcode == 0 )
     {
-      kernel().music_manager.music_finalize(); // calls MPI_Finalize()
+      kernel::manager< MUSICManager >.music_finalize(); // calls MPI_Finalize()
     }
     else
     {

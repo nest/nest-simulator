@@ -379,7 +379,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
 
   // throws if BadProperty
-  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
+  ptmp.set( d, S_, origin, kernel::manager< SimulationManager >.get_time(), this );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

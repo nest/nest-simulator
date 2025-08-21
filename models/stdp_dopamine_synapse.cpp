@@ -86,8 +86,8 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
       throw BadProperty( "Property volume_transmitter must be a single element NodeCollection" );
     }
 
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    Node* vt_node = kernel().node_manager.get_node_or_proxy( ( *vt_datum )[ 0 ], tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    Node* vt_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *vt_datum )[ 0 ], tid );
     volume_transmitter* vt = dynamic_cast< volume_transmitter* >( vt_node );
     if ( not vt )
     {

@@ -231,12 +231,12 @@ eprop_readout_bsshslm_2020::pre_run_hook()
 void
 eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const long to )
 {
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
+  const long learning_window = kernel::manager< SimulationManager >.get_eprop_learning_window().get_steps();
+  const bool with_reset = kernel::manager< SimulationManager >.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
 
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
 
   std::vector< double > error_signal_buffer( buffer_size, 0.0 );
   std::vector< double > readout_signal_unnorm_buffer( buffer_size, 0.0 );
@@ -290,7 +290,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
 
   LearningSignalConnectionEvent error_signal_event;
   error_signal_event.set_coeffarray( error_signal_buffer );
-  kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, error_signal_event );
 
   if ( V_.signal_to_other_readouts_ )
   {
@@ -299,7 +299,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     // in the next times step for computing the normalized readout signal
     DelayedRateConnectionEvent readout_signal_unnorm_event;
     readout_signal_unnorm_event.set_coeffarray( readout_signal_unnorm_buffer );
-    kernel().event_delivery_manager.send_secondary( *this, readout_signal_unnorm_event );
+    kernel::manager< EventDeliveryManager >.send_secondary( *this, readout_signal_unnorm_event );
   }
   return;
 }
@@ -356,8 +356,8 @@ eprop_readout_bsshslm_2020::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -365,8 +365,8 @@ eprop_readout_bsshslm_2020::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void
@@ -408,7 +408,7 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   }
   presyn_isis.clear();
 
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long learning_window = kernel::manager< SimulationManager >.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {
     grad /= learning_window;

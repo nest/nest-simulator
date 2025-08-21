@@ -40,59 +40,23 @@
 
 namespace nest
 {
-KernelManager* KernelManager::kernel_manager_instance_ = nullptr;
-
-void
-KernelManager::create_kernel_manager()
-{
-#pragma omp master
-  {
-    if ( not kernel_manager_instance_ )
-    {
-      kernel_manager_instance_ = new KernelManager();
-      assert( kernel_manager_instance_ );
-    }
-  }
-#pragma omp barrier
-}
-
-void
-KernelManager::destroy_kernel_manager()
-{
-  kernel_manager_instance_->logging_manager.set_logging_level( M_QUIET );
-  delete kernel_manager_instance_;
-}
 
 KernelManager::KernelManager()
   : fingerprint_( 0 )
-  , logging_manager( *new LoggingManager() )
-  , mpi_manager( *new MPIManager() )
-  , vp_manager( *new VPManager() )
-  , module_manager( *new ModuleManager() )
-  , random_manager( *new RandomManager() )
-  , simulation_manager( *new SimulationManager() )
-  , modelrange_manager( *new ModelRangeManager() )
-  , connection_manager( *new ConnectionManager() )
-  , sp_manager( *new SPManager() )
-  , event_delivery_manager( *new EventDeliveryManager() )
-  , io_manager( *new IOManager() )
-  , model_manager( *new ModelManager() )
-  , music_manager( *new MUSICManager() )
-  , node_manager( *new NodeManager() )
-  , managers( { &logging_manager,
-      &mpi_manager,
-      &vp_manager,
-      &module_manager,
-      &random_manager,
-      &simulation_manager,
-      &modelrange_manager,
-      &connection_manager,
-      &sp_manager,
-      &event_delivery_manager,
-      &io_manager,
-      &model_manager,
-      &music_manager,
-      &node_manager } )
+  , managers( { &kernel::manager< LoggingManager >,
+      &kernel::manager< MPIManager >,
+      &kernel::manager< VPManager >,
+      &kernel::manager< ModuleManager >,
+      &kernel::manager< RandomManager >,
+      &kernel::manager< SimulationManager >,
+      &kernel::manager< ModelRangeManager >,
+      &kernel::manager< ConnectionManager >,
+      &kernel::manager< SPManager >,
+      &kernel::manager< EventDeliveryManager >,
+      &kernel::manager< IOManager >,
+      &kernel::manager< ModelManager >,
+      &kernel::manager< MUSICManager >,
+      &kernel::manager< NodeManager > } )
   , initialized_( false )
 {
 }
@@ -101,17 +65,12 @@ KernelManager::~KernelManager()
 {
   if ( initialized_ )
   {
-    finalize();
-  }
-
-  for ( auto manager : managers )
-  {
-    delete manager;
+    KernelManager::finalize();
   }
 }
 
 void
-KernelManager::initialize()
+KernelManager::initialize( const bool )
 {
   for ( auto& manager : managers )
   {
@@ -143,7 +102,7 @@ KernelManager::cleanup()
 }
 
 void
-KernelManager::finalize()
+KernelManager::finalize( const bool )
 {
   FULL_LOGGING_ONLY( dump_.close(); )
 
@@ -176,7 +135,7 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
     ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
-  vp_manager.set_num_threads( new_num_threads );
+  kernel::manager< VPManager >.set_num_threads( new_num_threads );
 
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
@@ -187,13 +146,13 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalizing deleted all register components. Now that all infrastructure
   // is in place again, we can tell modules to re-register the components
   // they provide.
-  module_manager.reinitialize_dynamic_modules();
+  kernel::manager< ModuleManager >.reinitialize_dynamic_modules();
 
   // Prepare timers and set the number of threads for multi-threaded timers
-  kernel().simulation_manager.reset_timers_for_preparation();
-  kernel().simulation_manager.reset_timers_for_dynamics();
-  kernel().event_delivery_manager.reset_timers_for_preparation();
-  kernel().event_delivery_manager.reset_timers_for_dynamics();
+  kernel::manager< SimulationManager >.reset_timers_for_preparation();
+  kernel::manager< SimulationManager >.reset_timers_for_dynamics();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_preparation();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_dynamics();
 }
 
 void

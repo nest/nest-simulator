@@ -211,9 +211,9 @@ private:
   {
     long timestep_;
     double weight_;
-    long receptor_channel_;
+    size_t receptor_channel_;
 
-    Spike_( long timestep, double weight, long receptorchannel )
+    Spike_( long timestep, double weight, size_t receptorchannel )
       : timestep_( timestep )
       , weight_( weight )
       , receptor_channel_( receptorchannel )

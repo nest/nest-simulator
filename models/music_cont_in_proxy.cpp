@@ -134,7 +134,7 @@ nest::music_cont_in_proxy::pre_run_hook()
   // only publish the port once
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );

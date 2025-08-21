@@ -88,7 +88,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     send_recv_buffer_resize_log_.clear();
   }
 
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
 
   local_spike_counter_.resize( num_threads, 0 );
   reset_counters();
@@ -98,7 +98,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     if ( not emitted_spikes_register_[ tid ] )
     {
@@ -197,26 +197,26 @@ void
 EventDeliveryManager::resize_send_recv_buffers_target_data()
 {
   // compute send receive counts and allocate memory for buffers
-  send_buffer_target_data_.resize( kernel().mpi_manager.get_buffer_size_target_data() );
-  recv_buffer_target_data_.resize( kernel().mpi_manager.get_buffer_size_target_data() );
+  send_buffer_target_data_.resize( kernel::manager< MPIManager >.get_buffer_size_target_data() );
+  recv_buffer_target_data_.resize( kernel::manager< MPIManager >.get_buffer_size_target_data() );
 }
 
 void
 EventDeliveryManager::resize_send_recv_buffers_spike_data_()
 {
-  if ( kernel().mpi_manager.get_buffer_size_spike_data() > send_buffer_spike_data_.size() )
+  if ( kernel::manager< MPIManager >.get_buffer_size_spike_data() > send_buffer_spike_data_.size() )
   {
-    send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-    recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-    send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-    recv_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+    send_buffer_spike_data_.resize( kernel::manager< MPIManager >.get_buffer_size_spike_data() );
+    recv_buffer_spike_data_.resize( kernel::manager< MPIManager >.get_buffer_size_spike_data() );
+    send_buffer_off_grid_spike_data_.resize( kernel::manager< MPIManager >.get_buffer_size_spike_data() );
+    recv_buffer_off_grid_spike_data_.resize( kernel::manager< MPIManager >.get_buffer_size_spike_data() );
   }
 }
 
 void
 EventDeliveryManager::configure_spike_data_buffers()
 {
-  assert( kernel().connection_manager.get_min_delay() != 0 );
+  assert( kernel::manager< ConnectionManager >.get_min_delay() != 0 );
 
   configure_spike_register();
 
@@ -231,7 +231,7 @@ EventDeliveryManager::configure_spike_register()
 {
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     reset_spike_register_( tid );
   }
 }
@@ -240,16 +240,16 @@ void
 EventDeliveryManager::configure_secondary_buffers()
 {
   send_buffer_secondary_events_.clear();
-  send_buffer_secondary_events_.resize( kernel().mpi_manager.get_send_buffer_size_secondary_events_in_int() );
+  send_buffer_secondary_events_.resize( kernel::manager< MPIManager >.get_send_buffer_size_secondary_events_in_int() );
   recv_buffer_secondary_events_.clear();
-  recv_buffer_secondary_events_.resize( kernel().mpi_manager.get_recv_buffer_size_secondary_events_in_int() );
+  recv_buffer_secondary_events_.resize( kernel::manager< MPIManager >.get_recv_buffer_size_secondary_events_in_int() );
 }
 
 void
 EventDeliveryManager::init_moduli()
 {
-  long min_delay = kernel().connection_manager.get_min_delay();
-  long max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel::manager< ConnectionManager >.get_min_delay();
+  long max_delay = kernel::manager< ConnectionManager >.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -261,7 +261,7 @@ EventDeliveryManager::init_moduli()
 
   for ( long d = 0; d < min_delay + max_delay; ++d )
   {
-    moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
+    moduli_[ d ] = ( kernel::manager< SimulationManager >.get_clock().get_steps() + d ) % ( min_delay + max_delay );
   }
 
   // Slice-based ring-buffers have one bin per min_delay steps,
@@ -271,15 +271,15 @@ EventDeliveryManager::init_moduli()
   slice_moduli_.resize( min_delay + max_delay );
   for ( long d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] = ( ( kernel::manager< SimulationManager >.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
 
 void
 EventDeliveryManager::update_moduli()
 {
-  long min_delay = kernel().connection_manager.get_min_delay();
-  long max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel::manager< ConnectionManager >.get_min_delay();
+  long max_delay = kernel::manager< ConnectionManager >.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -296,7 +296,7 @@ EventDeliveryManager::update_moduli()
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( long d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] = ( ( kernel::manager< SimulationManager >.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
 }
 
@@ -326,10 +326,10 @@ void
 EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
   // write done marker at last position in every chunk
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel::manager< MPIManager >.get_num_processes(); ++rank )
   {
-    send_buffer_secondary_events_[ kernel().mpi_manager.get_done_marker_position_in_secondary_events_send_buffer(
-      rank ) ] = done;
+    send_buffer_secondary_events_
+      [ kernel::manager< MPIManager >.get_done_marker_position_in_secondary_events_send_buffer( rank ) ] = done;
   }
 }
 
@@ -337,14 +337,14 @@ void
 EventDeliveryManager::gather_secondary_events( const bool done )
 {
   write_done_marker_secondary_events_( done );
-  kernel().mpi_manager.communicate_secondary_events_Alltoallv(
+  kernel::manager< MPIManager >.communicate_secondary_events_Alltoallv(
     send_buffer_secondary_events_, recv_buffer_secondary_events_ );
 }
 
 bool
 EventDeliveryManager::deliver_secondary_events( const size_t tid, const bool called_from_wfr_update )
 {
-  return kernel().connection_manager.deliver_secondary_events(
+  return kernel::manager< ConnectionManager >.deliver_secondary_events(
     tid, called_from_wfr_update, recv_buffer_secondary_events_ );
 }
 
@@ -369,14 +369,14 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
   // NOTE: For meaning and logic of SpikeData flags for detecting complete transmission
   //       and information for shrink/grow, see comment in spike_data.h.
 
-  const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+  const size_t old_buff_size_per_rank = kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank();
 
   if ( global_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
     const size_t new_buff_size_per_rank =
       std::max( 2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * global_max_spikes_per_rank_ ) );
-    kernel().mpi_manager.set_buffer_size_spike_data(
-      kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
+    kernel::manager< MPIManager >.set_buffer_size_spike_data(
+      kernel::manager< MPIManager >.get_num_processes() * new_buff_size_per_rank );
     resize_send_recv_buffers_spike_data_();
     send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
   }
@@ -395,7 +395,7 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
     // Set marker at end of each chunk to DEFAULT
     reset_complete_marker_spike_data_( send_buffer_position, send_buffer );
-    std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
+    std::vector< size_t > num_spikes_per_rank( kernel::manager< MPIManager >.get_num_processes(), 0 );
 
     // Collocate spikes to send buffer
     collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
@@ -419,19 +419,19 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     // We introduce an explicit barrier at this point to measure how long each process idles until all other processes
     // reached this point as well. This barrier is directly followed by another implicit barrier due to global
     // communication.
-    kernel().simulation_manager.get_mpi_synchronization_stopwatch().start();
-    kernel().mpi_manager.synchronize();
-    kernel().simulation_manager.get_mpi_synchronization_stopwatch().stop();
+    kernel::manager< SimulationManager >.get_mpi_synchronization_stopwatch().start();
+    kernel::manager< MPIManager >.synchronize();
+    kernel::manager< SimulationManager >.get_mpi_synchronization_stopwatch().stop();
 #endif
 
     // Given that we templatize by plain vs offgrid, this if should not be necessary, but ...
     if ( off_grid_spiking_ )
     {
-      kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
+      kernel::manager< MPIManager >.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
     }
     else
     {
-      kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
+      kernel::manager< MPIManager >.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
     }
 
     sw_communicate_spike_data_.stop();
@@ -439,15 +439,15 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     global_max_spikes_per_rank_ = get_global_max_spikes_per_rank_( send_buffer_position, recv_buffer );
 
     all_spikes_transmitted =
-      global_max_spikes_per_rank_ <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+      global_max_spikes_per_rank_ <= kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank();
 
     if ( not all_spikes_transmitted )
     {
       const size_t new_buff_size_per_rank =
         static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * global_max_spikes_per_rank_ );
 
-      kernel().mpi_manager.set_buffer_size_spike_data(
-        kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
+      kernel::manager< MPIManager >.set_buffer_size_spike_data(
+        kernel::manager< MPIManager >.get_num_processes() * new_buff_size_per_rank );
       resize_send_recv_buffers_spike_data_();
       send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
     }
@@ -502,9 +502,9 @@ EventDeliveryManager::set_end_marker_( const SendBufferPosition& send_buffer_pos
 {
   // See comment in spike_data.h for logic.
   const bool collocate_complete = local_max_spikes_per_rank
-    <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
+    <= static_cast< size_t >( kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank() );
 
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel::manager< MPIManager >.get_num_processes(); ++rank )
   {
     const size_t end_idx = send_buffer_position.end( rank ) - 1;
     if ( not collocate_complete )
@@ -545,7 +545,7 @@ void
 EventDeliveryManager::reset_complete_marker_spike_data_( const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
 {
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel::manager< MPIManager >.get_num_processes(); ++rank )
   {
     const size_t idx = send_buffer_position.end( rank ) - 1;
     send_buffer[ idx ].reset_marker();
@@ -560,7 +560,7 @@ EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition&
   // TODO: send_buffer_position not needed here, only used to get endpoint of each per-rank section of buffer
 
   size_t maximum = 0;
-  for ( size_t target_rank = 0; target_rank < kernel().mpi_manager.get_num_processes(); ++target_rank )
+  for ( size_t target_rank = 0; target_rank < kernel::manager< MPIManager >.get_num_processes(); ++target_rank )
   {
     const auto& end_entry = recv_buffer[ send_buffer_position.end( target_rank ) - 1 ];
     size_t max_per_thread_max_spikes_per_rank = 0;
@@ -571,7 +571,7 @@ EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition&
     else
     {
       assert( end_entry.is_end_marker() );
-      max_per_thread_max_spikes_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+      max_per_thread_max_spikes_per_rank = kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank();
     }
     maximum = std::max( max_per_thread_max_spikes_per_rank, maximum );
   }
@@ -597,25 +597,25 @@ void
 EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer )
 {
   // deliver only at beginning of time slice
-  if ( kernel().simulation_manager.get_from_step() > 0 )
+  if ( kernel::manager< SimulationManager >.get_from_step() > 0 )
   {
     return;
   }
 
-  const size_t spike_buffer_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
-  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
+  const size_t spike_buffer_size_per_rank = kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank();
+  const std::vector< ConnectorModel* >& cm = kernel::manager< ModelManager >.get_connection_models( tid );
 
   // prepare Time objects for every possible time stamp within min_delay_
-  std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
-  for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
+  std::vector< Time > prepared_timestamps( kernel::manager< ConnectionManager >.get_min_delay() );
+  for ( size_t lag = 0; lag < static_cast< size_t >( kernel::manager< ConnectionManager >.get_min_delay() ); ++lag )
   {
     // Subtract min_delay because spikes were emitted in previous time slice and we use current clock.
-    prepared_timestamps[ lag ] =
-      kernel().simulation_manager.get_clock() + Time::step( lag + 1 - kernel().connection_manager.get_min_delay() );
+    prepared_timestamps[ lag ] = kernel::manager< SimulationManager >.get_clock()
+      + Time::step( lag + 1 - kernel::manager< ConnectionManager >.get_min_delay() );
   }
 
   // Deliver spikes sent by each rank in order
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel::manager< MPIManager >.get_num_processes(); ++rank )
   {
     // Continue with next rank if no spikes were sent by current rank
     if ( recv_buffer[ rank * spike_buffer_size_per_rank ].is_invalid_marker() )
@@ -647,7 +647,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
     size_t syn_id_batch[ SPIKES_PER_BATCH ];
     size_t lcid_batch[ SPIKES_PER_BATCH ];
 
-    if ( not kernel().connection_manager.use_compressed_spikes() )
+    if ( not kernel::manager< ConnectionManager >.use_compressed_spikes() )
     {
       for ( size_t i = 0; i < num_batches; ++i )
       {
@@ -665,7 +665,8 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           if ( tid_batch[ j ] == tid )
           {
-            kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+            kernel::manager< ConnectionManager >.send(
+              tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
           }
         }
       }
@@ -686,7 +687,8 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         if ( tid_batch[ j ] == tid )
         {
-          kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+          kernel::manager< ConnectionManager >.send(
+            tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
     }
@@ -710,7 +712,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           // find the spike-data entry for this thread
           const std::vector< SpikeData >& compressed_spike_data =
-            kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
+            kernel::manager< ConnectionManager >.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
           lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
@@ -726,7 +728,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           if ( lcid_batch[ j ] != invalid_lcid )
           {
-            kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+            kernel::manager< ConnectionManager >.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
           }
         }
       }
@@ -747,7 +749,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         // find the spike-data entry for this thread
         const std::vector< SpikeData >& compressed_spike_data =
-          kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
+          kernel::manager< ConnectionManager >.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
         lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
@@ -763,7 +765,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {
-          kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+          kernel::manager< ConnectionManager >.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
     } // if-else not compressed
@@ -774,16 +776,16 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
 void
 EventDeliveryManager::gather_target_data( const size_t tid )
 {
-  assert( not kernel().connection_manager.is_source_table_cleared() );
+  assert( not kernel::manager< ConnectionManager >.is_source_table_cleared() );
 
   // assume all threads have some work to do
   gather_completed_checker_.set_false( tid );
   assert( gather_completed_checker_.all_false() );
 
-  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  const AssignedRanks assigned_ranks = kernel::manager< VPManager >.get_assigned_ranks( tid );
 
-  kernel().connection_manager.prepare_target_table( tid );
-  kernel().connection_manager.reset_source_table_entry_point( tid );
+  kernel::manager< ConnectionManager >.prepare_target_table( tid );
+  kernel::manager< ConnectionManager >.reset_source_table_entry_point( tid );
 
   while ( gather_completed_checker_.any_false() )
   {
@@ -793,19 +795,19 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 
 #pragma omp master
     {
-      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
+      if ( kernel::manager< MPIManager >.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }
     } // of omp master; (no barrier)
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
 
-    kernel().connection_manager.restore_source_table_entry_point( tid );
+    kernel::manager< ConnectionManager >.restore_source_table_entry_point( tid );
 
     TargetSendBufferPosition send_buffer_position(
-      assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
+      assigned_ranks, kernel::manager< MPIManager >.get_send_recv_count_target_data_per_rank() );
 
     const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
     gather_completed_checker_.logical_and( tid, gather_completed );
@@ -814,16 +816,17 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
-    kernel().connection_manager.save_source_table_entry_point( tid );
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
+    kernel::manager< ConnectionManager >.save_source_table_entry_point( tid );
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
-    kernel().connection_manager.clean_source_table( tid );
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
+    kernel::manager< ConnectionManager >.clean_source_table( tid );
 
 #pragma omp master
     {
       sw_communicate_target_data_.start();
-      kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
+      kernel::manager< MPIManager >.communicate_target_data_Alltoall(
+        send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
     } // of omp master (no barriers!)
 #pragma omp barrier
@@ -832,31 +835,31 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     gather_completed_checker_.logical_and( tid, distribute_completed );
 
     // resize mpi buffers, if necessary and allowed
-    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
+    if ( gather_completed_checker_.any_false() and kernel::manager< MPIManager >.adaptive_target_buffers() )
     {
 #pragma omp master
       {
-        buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
+        buffer_size_target_data_has_changed_ = kernel::manager< MPIManager >.increase_buffer_size_target_data();
       }
 #pragma omp barrier
     }
   } // of while
 
-  kernel().connection_manager.clear_source_table( tid );
+  kernel::manager< ConnectionManager >.clear_source_table( tid );
 }
 
 void
 EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 {
-  assert( not kernel().connection_manager.is_source_table_cleared() );
+  assert( not kernel::manager< ConnectionManager >.is_source_table_cleared() );
 
   // assume all threads have some work to do
   gather_completed_checker_.set_false( tid );
   assert( gather_completed_checker_.all_false() );
 
-  const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+  const AssignedRanks assigned_ranks = kernel::manager< VPManager >.get_assigned_ranks( tid );
 
-  kernel().connection_manager.prepare_target_table( tid );
+  kernel::manager< ConnectionManager >.prepare_target_table( tid );
 
   while ( gather_completed_checker_.any_false() )
   {
@@ -865,17 +868,17 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 
 #pragma omp master
     {
-      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
+      if ( kernel::manager< MPIManager >.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }
     } // of omp master; no barrier
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
 
     TargetSendBufferPosition send_buffer_position(
-      assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
+      assigned_ranks, kernel::manager< MPIManager >.get_send_recv_count_target_data_per_rank() );
 
     const bool gather_completed =
       collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
@@ -887,14 +890,15 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
 
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
+    kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp master
     {
       sw_communicate_target_data_.start();
-      kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
+      kernel::manager< MPIManager >.communicate_target_data_Alltoall(
+        send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
     } // of omp master (no barrier)
 #pragma omp barrier
@@ -906,20 +910,20 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     gather_completed_checker_.logical_and( tid, distribute_completed );
 
     // resize mpi buffers, if necessary and allowed
-    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
+    if ( gather_completed_checker_.any_false() and kernel::manager< MPIManager >.adaptive_target_buffers() )
     {
 #pragma omp master
       {
-        buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
+        buffer_size_target_data_has_changed_ = kernel::manager< MPIManager >.increase_buffer_size_target_data();
       } // of omp master (no barrier)
-      kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().start();
+      kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-      kernel().simulation_manager.get_omp_synchronization_construction_stopwatch().stop();
+      kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
     }
 
   } // of while
 
-  kernel().connection_manager.clear_source_table( tid );
+  kernel::manager< ConnectionManager >.clear_source_table( tid );
 }
 
 bool
@@ -935,7 +939,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   // no ranks to process for this thread
   if ( assigned_ranks.begin == assigned_ranks.end )
   {
-    kernel().connection_manager.no_targets_to_process( tid );
+    kernel::manager< ConnectionManager >.no_targets_to_process( tid );
     return is_source_table_read;
   }
 
@@ -952,7 +956,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
 
   while ( true )
   {
-    valid_next_target_data = kernel().connection_manager.get_next_target_data(
+    valid_next_target_data = kernel::manager< ConnectionManager >.get_next_target_data(
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
@@ -960,11 +964,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
       {
         // entry does not fit in this part of the MPI buffer any more,
         // so we need to reject it
-        kernel().connection_manager.reject_last_target_data( tid );
+        kernel::manager< ConnectionManager >.reject_last_target_data( tid );
         // after rejecting the last target, we need to save the
         // position to start at this point again next communication
         // round
-        kernel().connection_manager.save_source_table_entry_point( tid );
+        kernel::manager< ConnectionManager >.save_source_table_entry_point( tid );
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
@@ -1024,7 +1028,7 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t ti
     send_buffer_target_data_[ send_buffer_position.begin( rank ) ].set_invalid_marker();
   }
 
-  const bool is_source_table_read = kernel().connection_manager.fill_target_buffer(
+  const bool is_source_table_read = kernel::manager< ConnectionManager >.fill_target_buffer(
     tid, assigned_ranks.begin, assigned_ranks.end, send_buffer_target_data_, send_buffer_position );
 
   return is_source_table_read;
@@ -1047,9 +1051,9 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 {
   bool are_others_completed = true;
   const unsigned int send_recv_count_target_data_per_rank =
-    kernel().mpi_manager.get_send_recv_count_target_data_per_rank();
+    kernel::manager< MPIManager >.get_send_recv_count_target_data_per_rank();
 
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel::manager< MPIManager >.get_num_processes(); ++rank )
   {
     // Check last entry for completed marker
     if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ].is_complete_marker() )
@@ -1068,7 +1072,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
       const TargetData& target_data = recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank + i ];
       if ( target_data.get_source_tid() == tid )
       {
-        kernel().connection_manager.add_target( tid, rank, target_data );
+        kernel::manager< ConnectionManager >.add_target( tid, rank, target_data );
       }
 
       // Is this the last target from this rank?

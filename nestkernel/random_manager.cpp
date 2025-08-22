@@ -87,7 +87,9 @@ nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only
   vp_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
   vp_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
 
-#pragma omp parallel
+#pragma omp parallel default(none) \
+    shared(vp_synced_rngs_, vp_specific_rngs_, rng_types_, current_rng_type_, base_seed_) \
+    firstprivate(RANK_SYNCED_SEEDER_, THREAD_SYNCED_SEEDER_, THREAD_SPECIFIC_SEEDER_)
   {
     const auto tid = kernel().vp_manager.get_thread_id();
     const std::uint32_t vp = kernel().vp_manager.get_vp(); // type required for rng initializer

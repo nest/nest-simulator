@@ -24,6 +24,7 @@
 #define SP_MANAGER_H
 
 // C++ includes:
+#include <random>
 #include <vector>
 
 // Includes from libnestutil:
@@ -126,7 +127,9 @@ public:
   /**
    * Enable structural plasticity
    */
-  void enable_structural_plasticity();
+  void enable_structural_plasticity( bool use_gaussian_kernel,
+    double gaussian_kernel_sigma,
+    double max_distance = std::numeric_limits< double >::infinity() );
 
   /**
    * Disable structural plasticity
@@ -135,7 +138,15 @@ public:
 
   bool is_structural_plasticity_enabled() const;
 
+  /** Squared distance. Uses current pos_dim. */
+  double squared_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
+
+  /** Hard cutoff check using current max distance and metric. */
+  bool within_max_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
+
   double get_structural_plasticity_update_interval() const;
+
+  double get_structural_plasticity_gaussian_kernel_sigma() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -188,6 +199,55 @@ public:
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
 
+  /**
+   * Compute the Gaussian kernel value between two positions.
+   *
+   * @param pos1 Position of the first neuron.
+   * @param pos2 Position of the second neuron.
+   * @param sigma Standard deviation for the Gaussian kernel.
+   * @return Gaussian kernel value.
+   */
+  double gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
+
+  /**
+   * Perform global shuffling of pre- and post-synaptic neurons based on spatial probabilities.
+   *
+   * @param pre_ids Vector of pre-synaptic neuron IDs.
+   * @param post_ids Vector of post-synaptic neuron IDs.
+   * @param pre_ids_results Vector to store shuffled pre-synaptic IDs.
+   * @param post_ids_results Vector to store shuffled post-synaptic IDs.
+   */
+  void global_shuffle_spatial( std::vector< size_t >& pre_ids,
+    std::vector< size_t >& post_ids,
+    std::vector< size_t >& pre_ids_results,
+    std::vector< size_t >& post_ids_results,
+    bool allow_autapse );
+
+  /**
+   * Gather global neuron positions and IDs from all nodes.
+   */
+  void gather_global_positions_and_ids();
+
+  /**
+   * Perform roulette wheel selection to randomly select an index based on probabilities.
+   *
+   * @param probabilities Vector of probabilities for selection.
+   * @param rnd Random number.
+   * @return Selected index.
+   */
+  int roulette_wheel_selection( const std::vector< double >& probabilities, double rnd );
+
+  /**
+   * Global list of neuron IDs used for structural plasticity computations.
+   */
+  std::vector< int > global_ids;
+
+  /**
+   * Global list of neuron positions used for spatial computations in
+   * structural plasticity.
+   */
+  std::vector< double > global_positions;
+
 private:
   /**
    * Time interval for structural plasticity update (creation/deletion of
@@ -200,6 +260,35 @@ private:
    * Off (False).
    */
   bool structural_plasticity_enabled_;
+
+  /**
+   * Flag indicating whether a Gaussian spatial kernel is used for connection
+   * probability computation.
+   */
+  bool structural_plasticity_use_gaussian_kernel_;
+
+  /**
+   * Standard deviation parameter for the Gaussian kernel used in
+   * spatial probability calculations.
+   */
+  double structural_plasticity_gaussian_kernel_sigma_;
+
+  /**
+   * List of precomputed probabilities for neuron connections, indexed
+   * by neuron pair indices for efficient lookup.
+   */
+  std::vector< double > probability_list;
+
+  /**
+   * Maximum allowed Euclidean distance between pre- and post-neurons.
+   */
+  double structural_plasticity_max_distance_;
+
+  /**
+   * Dimensionality of the neuron positions
+   */
+  int pos_dim;
+
   std::vector< SPBuilder* > sp_conn_builders_;
 
   /**
@@ -228,7 +317,11 @@ SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }
-
+inline double
+SPManager::get_structural_plasticity_gaussian_kernel_sigma() const
+{
+  return structural_plasticity_gaussian_kernel_sigma_;
+}
 } // namespace nest
 
 #endif /* #ifndef SP_MANAGER_H */

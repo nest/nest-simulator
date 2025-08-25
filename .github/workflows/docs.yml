@@ -10,6 +10,7 @@ on:
       - 'doc/htmldoc/static/css/doxygen-awesome.css'
   push:
     paths:
+      - '.github/workflows/docs.yml'
       - '**/*.cpp'
       - '**/*.h'
       - 'doc/fulldoc.conf.in'

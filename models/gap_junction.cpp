@@ -22,9 +22,6 @@
 
 #include "gap_junction.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_gap_junction( const std::string& name )
 {

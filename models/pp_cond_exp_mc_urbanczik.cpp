@@ -35,9 +35,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -665,7 +662,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
           // Set spike time in order to make plasticity rules work
           for ( unsigned int i = 0; i < n_spikes; i++ )
@@ -702,7 +699,8 @@ nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
   assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -714,7 +712,8 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

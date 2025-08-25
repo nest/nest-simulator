@@ -527,6 +527,12 @@ glif_cond::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+inline void
+nest::glif_cond::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e ); // the logger does this for us
+}
+
 } // namespace nest
 
 #endif // HAVE_GSL

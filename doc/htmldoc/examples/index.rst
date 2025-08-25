@@ -80,11 +80,10 @@ PyNEST examples
     .. grid-item-card::  Large scale cortical network models
            :img-top: ../static/img/network_model_sketch_mesocircuit.png
 
-           * :doc:`../auto_examples/Potjans_2014/index` (Potjans and Diesmann 2014)
+           * :doc:`Cortical Microcircuit Model <pd14:auto_examples/index>`
            * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
            * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
            * `The HuMAM model <https://github.com/INM-6/human-multi-area-model>`_: Multi-Scale Spiking Network Model of Human Cerebral Cortex
-
 
     .. grid-item-card:: EI clustered network (Rostami et al)
            :img-top: ../auto_examples/EI_clustered_network/EI_clustered_network_schematic.png
@@ -283,7 +282,6 @@ PyNEST examples
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index
-   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons

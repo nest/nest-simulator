@@ -24,8 +24,7 @@ We have a detailed guide on :ref:`spatially-structured networks <spatial_network
 
    .. grid-item-card:: Microcircuit Model
        :columns: 4
-       :link: /auto_examples/Potjans_2014/index
-       :link-type: doc
+       :link: https://microcircuit-pd14-model.readthedocs.io/en/latest/
 
        A network model example based on Potjans and Diesman 2014
 

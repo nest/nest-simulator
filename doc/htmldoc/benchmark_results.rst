@@ -101,7 +101,7 @@ Weak scaling experiment of the HPC benchmark model [6]_
 
    Example networks:
 
-   * :doc:`/auto_examples/Potjans_2014/index`
+   * :doc:`Microcircuit Model <pd14:index>`
    * `Multi-area model <https://inm-6.github.io/multi-area-model/>`_
    * :doc:`/auto_examples/hpc_benchmark`
 

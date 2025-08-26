@@ -24,7 +24,7 @@ GitHub Pages
 
 The C++ developer documentation is deployed to GitHub pages.
 
-* https://jessica-mitchell.github.io/nest-simulator/index.html
+* https://nest.github.io/nest-simulator/index.html
 
 You can view the latest master version of the documentation along with the 2 most recent releases of NEST.
 

@@ -38,9 +38,7 @@ namespace nest
 // clang-format off
 /** BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
-\class iaf_psc_alpha
 
-\verbatim embed:rst
 
 Short description
 +++++++++++++++++
@@ -209,7 +207,6 @@ Examples using this model
 
 .. listexamples:: iaf_psc_alpha
 
-\endverbatim
 EndUserDocs */
 
 // clang-format on

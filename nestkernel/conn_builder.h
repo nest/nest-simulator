@@ -734,6 +734,41 @@ private:
   long num_clusters_;
 };
 
+class AltClusteredFixedTotalNumberBuilder : public BipartiteConnBuilder
+{
+public:
+  AltClusteredFixedTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  long N_;
+  long num_clusters_;
+};
+
+class ClusteredApproxTotalNumberBuilder : public BipartiteConnBuilder
+{
+public:
+  ClusteredApproxTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  long N_;
+  long num_clusters_;
+};
+
+
 class BernoulliBuilder : public BipartiteConnBuilder
 {
 public:

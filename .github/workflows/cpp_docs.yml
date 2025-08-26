@@ -94,13 +94,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          #ref: ghpages-dev
           ref: ${{ matrix.branch }}
 
       - name: Get master config files
         if: matrix.version != 'master'
         run: |
-          # change to nest/nest-simulator for prod
           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1
           # get the version of files from master to ensure consistent output of docs on all versions
           git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
@@ -165,7 +163,7 @@ jobs:
               <style>
                 body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 40px; }
                 a { display:inline-block; margin: 8px 12px; padding: 10px 14px; background:#ff6633; color:#fff; border-radius:6px; text-decoration:none; }
-                a:hover { background:#0858b9; }
+                a:hover { background:#072f42; }
               </style>
             </head>
             <body>
@@ -216,7 +214,6 @@ jobs:
 
       - name: Get master config files
         run: |
-          # switch to nest when done testing!
           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1
           # Get master config files for consistent output of documentation
           git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master

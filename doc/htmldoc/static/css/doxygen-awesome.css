@@ -909,6 +909,7 @@ div.header {
 }
 
 div.contents, div.header .title, div.header .summary {
+    font-size: medium;
     max-width: var(--content-maxwidth);
 }
 

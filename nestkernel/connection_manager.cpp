@@ -1681,19 +1681,20 @@ nest::ConnectionManager::deliver_secondary_events( const size_t tid,
     {
       if ( positions_tid[ syn_id ].size() > 0 )
       {
-        SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
+        std::unique_ptr< SecondaryEvent > prototype =
+          kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
         size_t lcid = 0;
         const size_t lcid_end = positions_tid[ syn_id ].size();
         while ( lcid < lcid_end )
         {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin() + positions_tid[ syn_id ][ lcid ];
-          prototype << readpos;
-          prototype.set_stamp( stamp );
+          *prototype << readpos;
+          prototype->set_stamp( stamp );
 
           // send delivers event to all targets with the same source
           // and returns how many targets this event was delivered to
-          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, prototype );
+          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, *prototype );
         }
       }
     }

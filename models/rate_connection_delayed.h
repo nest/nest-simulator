@@ -99,7 +99,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -174,10 +174,10 @@ rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum&
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 rate_connection_delayed< targetidentifierT >::get_secondary_event()
 {
-  return new DelayedRateConnectionEvent();
+  return std::make_unique< DelayedRateConnectionEvent >();
 }
 
 } // namespace

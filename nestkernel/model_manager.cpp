@@ -65,12 +65,10 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize( const bool )
 {
-  if ( not proxynode_model_ )
-  {
-    proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
-    proxynode_model_->set_type_id( 1 );
-    proxynode_model_->set_threads();
-  }
+  assert( not proxynode_model_ ); // must be re-created on initialization
+  proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
+  proxynode_model_->set_type_id( 1 );
+  proxynode_model_->set_threads();
 
   const size_t num_threads = kernel().vp_manager.get_num_threads();
 
@@ -178,7 +176,7 @@ ModelManager::register_node_model_( Model* model )
 #pragma omp parallel
   {
     const size_t t = kernel().vp_manager.get_thread_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
+    proxy_nodes_.at( t ).push_back( create_proxynode_( t, id ) );
   }
 
   return id;
@@ -202,7 +200,7 @@ ModelManager::copy_node_model_( const size_t old_id, Name new_name, DictionaryDa
 #pragma omp parallel
   {
     const size_t t = kernel().vp_manager.get_thread_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
+    proxy_nodes_.at( t ).push_back( create_proxynode_( t, new_id ) );
   }
 }
 
@@ -369,12 +367,20 @@ ModelManager::clear_node_models_()
       delete node_model;
     }
   }
+  node_models_.clear();
+
+  for ( const auto& proxy_nodes_per_thread : proxy_nodes_ )
+  {
+    for ( const auto& proxy_node : proxy_nodes_per_thread )
+    {
+      delete proxy_node;
+    }
+  }
+  proxy_nodes_.clear();
 
   delete proxynode_model_;
   proxynode_model_ = nullptr;
 
-  node_models_.clear();
-  proxy_nodes_.clear();
 
   modeldict_->clear();
 

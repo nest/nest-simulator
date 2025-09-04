@@ -84,14 +84,18 @@ if __name__ == "__main__":
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace("_", " ")
         try:
             ph_res = parse_result_file(pfile)
-            results[ph_name] = ph_res
-            for k, v in ph_res.items():
-                totals[k] += v
+            if ph_res["Tests"] > 0:
+                results[ph_name] = ph_res
+                for k, v in ph_res.items():
+                    totals[k] += v
+            else:
+                results[ph_name] = None
         except Exception as err:
             msg = f"ERROR: {pfile} not parsable with error {err}"
             results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
             totals["Failed tests"].append(msg)
 
+    missing_phases = []
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
 
     col_w = max(len(c) for c in cols) + 2
@@ -113,7 +117,10 @@ if __name__ == "__main__":
     print(tline)
     for pn, pr in results.items():
         print(f"{pn:<{first_col_w}s}", end="")
-        if pr["Tests"] == 0 and pr["Failed tests"]:
+        if pr is None:
+            print(f"{'--- RESULTS MISSING FOR PHASE ---':^{len(cols) * col_w}}")
+            missing_phases.append(pn)
+        elif pr["Tests"] == 0 and pr["Failed tests"]:
             print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
         else:
             for c in cols:
@@ -133,12 +140,18 @@ if __name__ == "__main__":
     # Consistency check
     assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
 
-    if totals["Failures"] + totals["Errors"] > 0:
+    if totals["Failures"] + totals["Errors"] > 0 or missing_phases:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
-        print("    The following tests failed")
-        for t in totals["Failed tests"]:
-            print(f"    | {t}")  # | marks line for parsing
-        print()
+        if totals["Failures"] + totals["Errors"] > 0:
+            print("    The following tests failed")
+            for t in totals["Failed tests"]:
+                print(f"    | {t}")  # | marks line for parsing
+            print()
+        if missing_phases:
+            print("    The following test phases did not report results:")
+            for ph in missing_phases:
+                print(f"    | {ph}")  # | marks line for parsing
+            print()
         print("    Please report test failures by creating an issue at")
         print("        https://github.com/nest/nest-simulator/issues")
         print()

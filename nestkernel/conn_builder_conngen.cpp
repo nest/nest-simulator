@@ -130,6 +130,8 @@ ConnectionGeneratorBuilder::connect_()
         synapse_model_id_[ 0 ],
         param_dicts_[ 0 ][ target_thread ],
         params[ d_idx ],
+        numerics::nan,
+        numerics::nan,
         params[ w_idx ] );
     }
   }

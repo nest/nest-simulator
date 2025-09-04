@@ -55,6 +55,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.clopath_synapses = ["clopath_synapse", "clopath_synapse_lbl", "clopath_synapse_hpc"]
 
+        self.axonal_delay_synapses = [
+            "stdp_pl_synapse_hom_ax_delay",
+            "stdp_pl_synapse_hom_ax_delay_lbl",
+            "stdp_pl_synapse_hom_ax_delay_hpc",
+        ]
+
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 
         self.eprop_synapses_bsshslm_2020 = ["eprop_synapse_bsshslm_2020", "eprop_synapse_bsshslm_2020_hpc"]
@@ -87,6 +93,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         # in case of the clopath synapse use a supported model instead
         if syn_model in self.clopath_synapses:
             neurons = nest.Create("hh_psc_alpha_clopath", 5)
+
+        # in case of synapses with axonal delays use a supported model instead
+        if syn_model in self.axonal_delay_synapses:
+            neurons = nest.Create("iaf_psc_alpha", 5)
 
         r_type = 0
         # in case of the urbanczik synapse use a supported model instead

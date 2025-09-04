@@ -177,14 +177,14 @@ list_files() {
     #
     # instead use list_files like
     #
-    #   list_files <somedir> <some_pattern> | while read -r test_name; do ... done
+    #   for test_name in $(list_files <somedir> <some_pattern>); do ... done
     if test "${INFO_OS:-}" = "Darwin"; then
         # ref https://stackoverflow.com/a/752893
         # Note that on GNU systems an additional '-r' would be needed for
         # xargs, which is not available here.
-        find "${1}" -maxdepth 1 -name "${2}" -print0 | xargs -0 -n1 basename
+        find "${1}" -maxdepth 1 -name "${2}" -print0 | xargs -0 -n1 basename | sort
     else
-        find "${1}" -maxdepth 1 -name "${2}" -printf '%f\n'
+        find "${1}" -maxdepth 1 -name "${2}" -printf '%f\n' | sort
     fi
 }
 
@@ -353,10 +353,10 @@ if test "${PYTHON}"; then
   tests_collect="$tests_collect py"
 fi
 for test_ext in ${tests_collect} ; do
-    list_files "${TEST_BASEDIR}/unittests/" "*.${test_ext}" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/unittests/" "*.${test_ext}"); do
         run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
-    list_files "${TEST_BASEDIR}/unittests/sli2py_ignore/" "*.${test_ext}" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/unittests/sli2py_ignore/" "*.${test_ext}"); do
         run_test "unittests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
@@ -370,10 +370,10 @@ echo "---------------------------------"
 junit_open '04_regressiontests'
 
 for test_ext in ${tests_collect} ; do
-    list_files "${TEST_BASEDIR}/regressiontests" "*.${test_ext}" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/regressiontests" "*.${test_ext}"); do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
-    list_files "${TEST_BASEDIR}/regressiontests/sli2py_ignore" "*.${test_ext}" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/regressiontests/sli2py_ignore" "*.${test_ext}"); do
         run_test "regressiontests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
@@ -387,7 +387,7 @@ if test "${HAVE_MPI}" = "true"; then
     junit_open '05_mpitests'
 
     NEST="nest_indirect"
-    list_files "${TEST_BASEDIR}/mpi_selftests/pass" "*.sli" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/mpi_selftests/pass" "*.sli"); do
         run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 
@@ -396,13 +396,13 @@ if test "${HAVE_MPI}" = "true"; then
     SAVE_CODES_FAILURE="${CODES_FAILURE}"
     CODES_SUCCESS=' 1 Success (expected failure)'
     CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
-    list_files "${TEST_BASEDIR}/mpi_selftests/fail" "*.sli" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/mpi_selftests/fail" "*.sli"); do
         run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
     CODES_SUCCESS="${SAVE_CODES_SUCCESS}"
     CODES_FAILURE="${SAVE_CODES_FAILURE}"
 
-    list_files "${TEST_BASEDIR}/mpitests" "*.sli" | while read -r test_name; do
+    for test_name in $(list_files "${TEST_BASEDIR}/mpitests" "*.sli"); do
         run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 
@@ -424,7 +424,8 @@ if test "${MUSIC}"; then
 
     TESTDIR="${TEST_BASEDIR}/musictests/"
 
-    find "${TESTDIR}" -maxdepth 1 -name '*.music' -printf '%f\n' | while read -r test_name; do
+    # shellcheck disable=SC2044
+    for test_name in $(find "${TESTDIR}" -maxdepth 1 -name '*.music' -printf '%f\n'); do
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of SLI files from the '.music' file.
@@ -547,8 +548,18 @@ if test "${PYTHON}"; then
     # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
+
+	    if test "${INFO_OS:-}" = "Darwin"; then
+		# ref https://stackoverflow.com/a/752893
+		# Note that on GNU systems an additional '-r' would be needed for
+		# xargs, which is not available here.
+		proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
+	    else
+		proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
+	    fi
+
             # Loop over subdirectories whose names are the number of mpi procs to use
-            for numproc in $(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n"); do
+            for numproc in ${proc_nums}; do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
 

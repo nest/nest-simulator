@@ -29,6 +29,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -170,7 +171,7 @@ inline double
 RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -184,7 +185,7 @@ inline double
 RingBuffer::get_value_wfr_update( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -196,7 +197,7 @@ RingBuffer::get_value_wfr_update( const long offs )
 inline size_t
 RingBuffer::get_index_( const long d ) const
 {
-  const long idx = kernel().event_delivery_manager.get_modulo( d );
+  const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx );
   assert( static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
@@ -266,7 +267,7 @@ inline double
 MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -279,7 +280,7 @@ MultRBuffer::get_value( const long offs )
 inline size_t
 MultRBuffer::get_index_( const long d ) const
 {
-  const long idx = kernel().event_delivery_manager.get_modulo( d );
+  const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx and static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
 }
@@ -347,7 +348,7 @@ inline std::list< double >&
 ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -358,7 +359,7 @@ ListRingBuffer::get_list( const long offs )
 inline size_t
 ListRingBuffer::get_index_( const long d ) const
 {
-  const long idx = kernel().event_delivery_manager.get_modulo( d );
+  const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx );
   assert( static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
@@ -420,6 +421,38 @@ inline size_t
 MultiChannelInputBuffer< num_channels >::size() const
 {
   return buffer_.size();
+}
+
+template < unsigned int num_channels >
+MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
+  : buffer_(
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
+    std::array< double, num_channels >() )
+{
+}
+
+template < unsigned int num_channels >
+void
+MultiChannelInputBuffer< num_channels >::resize()
+{
+  const size_t size =
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
+  if ( buffer_.size() != size )
+  {
+    buffer_.resize( size, std::array< double, num_channels >() );
+  }
+}
+
+template < unsigned int num_channels >
+void
+MultiChannelInputBuffer< num_channels >::clear()
+{
+  resize(); // does nothing if size is fine
+  // set all elements to 0.0
+  for ( size_t slot = 0; slot < buffer_.size(); ++slot )
+  {
+    reset_values_all_channels( slot );
+  }
 }
 
 } // namespace nest

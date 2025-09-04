@@ -29,6 +29,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
+#include "node_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -114,14 +116,14 @@ Node::get_name() const
     return std::string( "UnknownNode" );
   }
 
-  return kernel().model_manager.get_node_model( model_id_ )->get_name();
+  return kernel::manager< ModelManager >.get_node_model( model_id_ )->get_name();
 }
 
 Model&
 Node::get_model_() const
 {
   assert( model_id_ >= 0 );
-  return *kernel().model_manager.get_node_model( model_id_ );
+  return *kernel::manager< ModelManager >.get_node_model( model_id_ );
 }
 
 DictionaryDatum
@@ -149,7 +151,7 @@ Node::get_status_base()
   DictionaryDatum dict = get_status_dict_();
 
   // add information available for all nodes
-  ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
+  ( *dict )[ names::local ] = kernel::manager< NodeManager >.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
   ( *dict )[ names::model_id ] = get_model_id();
   ( *dict )[ names::global_id ] = get_node_id();

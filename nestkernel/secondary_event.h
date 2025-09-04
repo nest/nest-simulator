@@ -472,6 +472,31 @@ SICEvent::clone() const
   return new SICEvent( *this );
 }
 
+template < typename DataType, typename Subclass >
+void
+DataSecondaryEvent< DataType, Subclass >::add_syn_id( const synindex synid )
+{
+  kernel::manager< VPManager >.assert_thread_parallel();
+
+  // This is done during connection model cloning, which happens thread-parallel.
+  // To not risk trashing the set data structure, we let only master register the
+  // new synid. This is not performance critical and avoiding collisions elsewhere
+  // would be more difficult, so we do it here in a master section.
+#pragma omp master
+  {
+    supported_syn_ids_.insert( synid );
+  }
+#pragma omp barrier
+}
+
+template < typename DataType, typename Subclass >
+void
+DataSecondaryEvent< DataType, Subclass >::set_coeff_length( const size_t coeff_length )
+{
+  kernel::manager< VPManager >.assert_single_threaded();
+  coeff_length_ = coeff_length;
+}
+
 } // namespace nest
 
 #endif /* #ifndef SECONDARY_EVENT_H */

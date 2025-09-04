@@ -25,7 +25,6 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "event.h"
 #include "nest_types.h"

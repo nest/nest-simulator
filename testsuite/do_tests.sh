@@ -604,6 +604,7 @@ SUMMARY_OPTS=
 if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
    SUMMARY_OPTS="${SUMMARY_OPTS} --no-manycore_tests"
 fi
+set -x
 python3 "$(dirname "$0")/summarize_tests.py" "${SUMMARY_OPTS}" "${REPORTDIR}"
 TESTSUITE_RESULT="$?"
 

@@ -553,9 +553,9 @@ if test "${PYTHON}"; then
 		# ref https://stackoverflow.com/a/752893
 		# Note that on GNU systems an additional '-r' would be needed for
 		# xargs, which is not available here.
-		proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
+                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
 	    else
-		proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
+                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
 	    fi
 
             # Loop over subdirectories whose names are the number of mpi procs to use

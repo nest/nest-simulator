@@ -418,6 +418,8 @@ echo "----------------------------"
 if test "${MUSIC}"; then
     junit_open '06_musictests'
 
+    set -x
+
     # Create a temporary directory with a unique name.
     BASEDIR="$PWD"
     TMPDIR_MUSIC="$(mktemp -d)"
@@ -512,6 +514,8 @@ if test "${MUSIC}"; then
 
         cd "${BASEDIR}"
     done
+
+    set +x
 
     junit_close
 else

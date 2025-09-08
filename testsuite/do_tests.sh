@@ -454,7 +454,7 @@ if test "${MUSIC}"; then
 
         # Copy everything to TMPDIR_MUSIC.
         # Note that variables might also be empty, so test for file existance first.
-        for filename in "${music_file}" "${sh_file}" "${input_file}" "${sli_files}"; do
+        for filename in "${music_file}" "${sh_file}" "${input_file}" ${sli_files}; do
             test -e "${filename}" && cp "${filename}" "${TMPDIR_MUSIC}"
         done
 

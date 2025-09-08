@@ -49,7 +49,7 @@ expected_num_tests = {
     "05 mpitests": 77,
     "06 musictests": 1,
     "07 pynesttests": 3719,  # without thread-dependent cases
-    "07 pynesttests mpi 2": (230, 172),  # first case without thread-depenent cases
+    "07 pynesttests mpi 2": (230, 172),  # first case without thread-dependent cases
     "07 pynesttests mpi 3": (58, 0),
     "07 pynesttests mpi 4": (65, 7),
     "07 pynesttests sli2py mpi": 13,

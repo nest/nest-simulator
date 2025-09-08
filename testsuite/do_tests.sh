@@ -418,8 +418,6 @@ echo "----------------------------"
 if test "${MUSIC}"; then
     junit_open '06_musictests'
 
-    set -x
-
     # Create a temporary directory with a unique name.
     BASEDIR="$PWD"
     TMPDIR_MUSIC="$(mktemp -d)"
@@ -454,6 +452,7 @@ if test "${MUSIC}"; then
 
         # Copy everything to TMPDIR_MUSIC.
         # Note that variables might also be empty, so test for file existance first.
+	# Note that ${sli_files} must not be quoted because it expands into multiple, space-separate file names.
         for filename in "${music_file}" "${sh_file}" "${input_file}" ${sli_files}; do
             test -e "${filename}" && cp "${filename}" "${TMPDIR_MUSIC}"
         done
@@ -514,8 +513,6 @@ if test "${MUSIC}"; then
 
         cd "${BASEDIR}"
     done
-
-    set +x
 
     junit_close
 else

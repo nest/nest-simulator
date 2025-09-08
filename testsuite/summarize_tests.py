@@ -39,17 +39,19 @@ assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 # Report error if not at least the given number of tests is reported (see #3565 for background).
 # For cases where fewer tests are performed if skip_manycore_tests is set, a tuple is given, where
 # the first number is with and the second without manycore tests.
+# Where parameterization is over thread numbers, test configurations without OpenMP will generate
+# fewer tests under pytest. To keep complexity of the testing logic in bounds, minima are used below.
 expected_num_tests = {
     "01 basetests": 6,
     "02 selftests": 8,
     "03 unittests": 27,
-    "04 regressiontests": 47,
+    "04 regressiontests": 45,  # does not include the two python-dependent tests
     "05 mpitests": 77,
     "06 musictests": 1,
-    "07 pynesttests": 3941,
-    "07 pynesttests mpi 2": (404, 172),
-    "07 pynesttests mpi 3": (232, 0),
-    "07 pynesttests mpi 4": (239, 7),
+    "07 pynesttests": 3719,  # without thread-dependent cases
+    "07 pynesttests mpi 2": (230, 172),  # first case without thread-depenent cases
+    "07 pynesttests mpi 3": (58, 0),
+    "07 pynesttests mpi 4": (65, 7),
     "07 pynesttests sli2py mpi": 13,
     "08 cpptests": 29,
 }

@@ -122,6 +122,7 @@ if __name__ == "__main__":
             results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
             totals["Failed tests"].append(msg)
 
+    missing_phases = []
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
 
     col_w = max(len(c) for c in cols) + 2
@@ -143,7 +144,10 @@ if __name__ == "__main__":
     print(tline)
     for pn, pr in results.items():
         print(f"{pn:<{first_col_w}s}", end="")
-        if pr["Tests"] == 0 and pr["Failed tests"]:
+        if pr is None:
+            print(f"{'--- RESULTS MISSING FOR PHASE ---':^{len(cols) * col_w}}")
+            missing_phases.append(pn)
+        elif pr["Tests"] == 0 and pr["Failed tests"]:
             print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
         else:
             for c in cols:

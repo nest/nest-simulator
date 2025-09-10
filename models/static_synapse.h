@@ -25,6 +25,8 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "event_delivery_manager.h"
+#include "target_identifier.h"
 
 namespace nest
 {

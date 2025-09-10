@@ -23,7 +23,6 @@
 #include "eprop_synapse.h"
 
 // nestkernel
-#include "nest_impl.h"
 
 namespace nest
 {
@@ -74,7 +73,7 @@ EpropSynapseCommonProperties::set_status( const DictionaryDatum& d, ConnectorMod
     const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
-      if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+      if ( kernel::manager< ConnectionManager >.get_num_connections( cm.get_syn_id() ) > 0 )
       {
         throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
       }

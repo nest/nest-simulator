@@ -23,9 +23,9 @@
 #include "event.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
 #include "node.h"
-#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -55,7 +55,7 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
   else
   {
-    const size_t node_id = kernel().connection_manager.get_source_node_id(
+    const size_t node_id = kernel::manager< ConnectionManager >.get_source_node_id(
       sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
     return node_id;
   }

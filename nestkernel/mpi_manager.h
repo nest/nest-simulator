@@ -35,16 +35,15 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
-#include <iostream>
 #include <limits>
 #include <numeric>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_types.h"
 #include "spike_data.h"
 #include "target_data.h"
@@ -762,6 +761,65 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
 
   communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
 }
+
+inline size_t
+nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
+{
+  return vp % num_processes_;
+}
+
+#ifdef HAVE_MPI
+
+inline size_t
+MPIManager::get_process_id_of_node_id( const size_t node_id ) const
+{
+  return node_id % num_processes_;
+}
+
+#else
+
+inline size_t
+MPIManager::get_process_id_of_node_id( const size_t ) const
+{
+  return 0;
+}
+
+#endif /* HAVE_MPI */
+
+#ifdef HAVE_MPI
+// Variable to hold the MPI communicator to use.
+#ifdef HAVE_MUSIC
+extern MPI::Intracomm comm;
+#else  /* #ifdef HAVE_MUSIC */
+extern MPI_Comm comm;
+#endif /* #ifdef HAVE_MUSIC */
+
+template < typename T >
+struct MPI_Type
+{
+  static MPI_Datatype type;
+};
+
+template < typename T >
+void
+nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
+  std::vector< T >& recv_buffer,
+  std::vector< int >& displacements,
+  std::vector< int >& recv_counts )
+{
+  // attempt Allgather
+  MPI_Allgatherv( &( *send_buffer.begin() ),
+    send_buffer.size(),
+    MPI_Type< T >::type,
+    &recv_buffer[ 0 ],
+    &recv_counts[ 0 ],
+    &displacements[ 0 ],
+    MPI_Type< T >::type,
+    comm );
+}
+
+#endif /* HAVE_MPI */
+
 }
 
 #endif /* MPI_MANAGER_H */

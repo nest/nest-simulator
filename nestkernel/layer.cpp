@@ -34,11 +34,9 @@
 #include "integerdatum.h"
 
 // Includes from spatial:
-#include "connection_creator_impl.h"
 #include "free_layer.h"
 #include "grid_layer.h"
 #include "layer_impl.h"
-#include "mask_impl.h"
 #include "spatial.h"
 
 namespace nest
@@ -58,7 +56,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   AbstractLayer* layer_local = nullptr;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_id = kernel().model_manager.get_node_model_id( element_name );
+  auto element_id = kernel::manager< ModelManager >.get_node_model_id( element_name );
 
   if ( layer_dict->known( names::positions ) )
   {
@@ -146,7 +144,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a NodeCollection for it
-  NodeCollectionPTR node_collection = kernel().node_manager.add_node( element_id, length );
+  NodeCollectionPTR node_collection = kernel::manager< NodeManager >.add_node( element_id, length );
 
   node_collection->set_metadata( layer_meta );
 

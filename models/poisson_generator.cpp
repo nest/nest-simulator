@@ -23,10 +23,9 @@
 #include "poisson_generator.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -138,7 +137,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
     }
 
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, lag );
+    kernel::manager< EventDeliveryManager >.send( *this, se, lag );
   }
 }
 

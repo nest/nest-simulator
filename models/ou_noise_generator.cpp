@@ -147,8 +147,7 @@ nest::ou_noise_generator::Parameters_::set( const DictionaryDatum& d, const ou_n
   if ( tau_ <= 0 )
   {
     throw BadProperty( "tau > 0 required." );
-  }  
-  
+  }
   double dt;
   if ( updateValueParam< double >( d, names::dt, dt, node ) )
   {

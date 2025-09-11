@@ -144,6 +144,11 @@ nest::ou_noise_generator::Parameters_::set( const DictionaryDatum& d, const ou_n
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::std, std_, node );
   updateValueParam< double >( d, names::tau, tau_, node );
+  if ( tau_ <= 0 )
+  {
+    throw BadProperty( "tau > 0 required." );
+  }  
+  
   double dt;
   if ( updateValueParam< double >( d, names::dt, dt, node ) )
   {
@@ -282,7 +287,6 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
     // >= in case we woke from inactivity
     if ( now >= B_.next_step_ )
     {
-      // std::cout << "I am in update" << std::endl;
       // compute new currents
       for ( double& amp : B_.amps_ )
       {

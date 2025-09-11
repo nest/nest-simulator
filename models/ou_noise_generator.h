@@ -89,7 +89,7 @@ tau
     The correlation time constant :math:`\tau` of the process (ms).
 
 dt
-    The interval :math:`\delta` between updates of the noise current (ms).
+    The time interval between updates of the noise current (ms).
 
 
 Setting parameters from a stimulation backend

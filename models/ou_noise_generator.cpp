@@ -64,7 +64,7 @@ RecordablesMap< ou_noise_generator >::create()
 nest::ou_noise_generator::Parameters_::Parameters_()
   : mean_( 0.0 ) // pA
   , std_( 0.0 )  // pA / sqrt(s)
-  , tau_( 0.0 )  // ms
+  , tau_( 1.0 )  // ms
   , dt_( get_default_dt() )
   , num_targets_( 0 )
 {

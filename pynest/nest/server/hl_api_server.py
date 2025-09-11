@@ -583,7 +583,7 @@ def combine(response: list) -> dict | list | None:
         return None
 
     # return first list/tuple if the response only consists of lists or tuples.
-    elif all(type(v) in [list, tuple] for v in response):
+    elif all(isinstance(v, (list, tuple)) for v in response):
         return response[0]  # TODO consider alternative: _flatten(response)
 
     # return a single merged dictionary if there are many of them

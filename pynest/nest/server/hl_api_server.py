@@ -560,15 +560,15 @@ def combine(response: list) -> dict | list | None:
     The combination of results is based on a cascade of heuristics
     based on the call that was issued and individual repsonse data:
       * if all responses are None, the combined response will also just
-        be None.
+        be None
       * the responses are known to be the same from the master and all
         workers. In this case, the combined response is just the master
-        response.
+        response
       * if the response list contains only a single actual response and
         None otherwise, the combined response will be that one actual
-        response.
+        response
        * if the response contains one list per process, the combined
-        response will be those first list.
+        response will be those first list
 
     """
 
@@ -597,6 +597,15 @@ def combine(response: list) -> dict | list | None:
 
 def merge_dicts(response: list[dict]) -> dict:
     """Merge dictionaries of the response.
+
+    This function runs through a zipped list and performs the
+    following steps:
+      * sum up all n_events fields
+      * if recording to memory: merge the event dictionaries by joining
+        all contained arrays
+      * if recording to ascii: join filenames arrays
+      * take all other values directly from the device on the first
+        process
 
     Parameters
     ----------

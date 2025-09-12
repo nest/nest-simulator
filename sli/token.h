@@ -359,7 +359,15 @@ public:
   Datum*
   datum() const
   {
-    accessed_ = true;
+    if ( not accessed_ )
+    {
+      // The if() above avoids any unnecessary updates, atomic prevents any potential
+      // data races in case the compiler does behind-the-scences magic.
+      // Backport from pynest-ng.
+#pragma omp atomic write
+      accessed_ = true;
+    }
+
     return p;
   }
 

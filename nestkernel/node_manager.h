@@ -182,6 +182,9 @@ public:
    */
   void ensure_valid_thread_local_ids();
 
+  /**
+   * Return node on thread t with given local node id.
+   */
   Node* thread_lid_to_node( size_t t, targetindex thread_local_id ) const;
 
   /**

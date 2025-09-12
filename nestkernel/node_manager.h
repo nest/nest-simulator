@@ -175,12 +175,19 @@ public:
   std::vector< Node* > get_thread_siblings( size_t n ) const;
 
   /**
-   * Ensure that all nodes in the network have valid thread-local IDs.
+   * Rebuild per-thread vectors of local nodes and of local nodes needing WFR and set thread-local ID on nodes.
    *
-   * Create up-to-date vector of local nodes, nodes_vec_.
-   * This method also sets the thread-local ID on all local nodes.
+   * @note This method must be called from a serial context before connection creation or simulation.
    */
-  void ensure_valid_thread_local_ids();
+  void update_thread_local_node_data();
+
+  /**
+   * Return true if thread-local data structures and thread-local node IDs are up to date.
+   *
+   * @note The decision is based on whether new nodes have been created since update_thread_local_node_data()
+   * was run last.
+   */
+  bool thread_local_data_is_up_to_date() const;
 
   /**
    * Return node on thread t with given local node id.
@@ -346,9 +353,9 @@ private:
                                                       //!< use the waveform relaxation method
   bool wfr_is_used_;                                  //!< there is at least one node that uses
                                                       //!< waveform relaxation
-  //! Network size when wfr_nodes_vec_ was last updated
-  size_t wfr_network_size_;
-  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+
+  size_t size_last_local_data_update_; //! Network size when local node data was last updated
+  size_t num_active_nodes_;            //!< number of nodes created by prepare_nodes
 
   std::vector< size_t > num_thread_local_devices_; //!< stores number of thread local devices
 
@@ -402,6 +409,15 @@ inline void
 NodeManager::set_have_nodes_changed( const bool changed )
 {
   have_nodes_changed_ = changed;
+}
+
+inline bool
+NodeManager::thread_local_data_is_up_to_date() const
+{
+  // Our logic assumes that we never delete nodes from a network
+  assert( size() >= size_last_local_data_update_ );
+
+  return size() == size_last_local_data_update_;
 }
 
 } // namespace

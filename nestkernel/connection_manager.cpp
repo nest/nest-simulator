@@ -443,6 +443,8 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  kernel().node_manager.update_thread_local_node_data();
+
   if ( sources->empty() )
   {
     throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
@@ -645,6 +647,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
   // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
   sw_construction_connect.start();
 
+  kernel().node_manager.update_thread_local_node_data();
+
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   // The bool indicates whether the value is an integer or not, and is determined at a later point.
   std::map< Name, std::pair< double*, bool > > param_pointers;
@@ -811,6 +815,8 @@ void
 nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
+  kernel().node_manager.update_thread_local_node_data();
+
   SonataConnector sonata_connector( graph_specs, hyberslab_size );
 
   // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
@@ -863,6 +869,8 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
   const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
   const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+
+  kernel().node_manager.update_thread_local_node_data();
 
   ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 

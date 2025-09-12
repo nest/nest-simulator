@@ -221,6 +221,9 @@ get_connections( const DictionaryDatum& dict )
 void
 disconnect( const ArrayDatum& conns )
 {
+  // probably not strictly necessarye here, but does nothing if all is up to date
+  kernel().node_manager.update_thread_local_node_data();
+
   for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
   {
     const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );

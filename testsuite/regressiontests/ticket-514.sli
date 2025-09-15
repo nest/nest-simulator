@@ -40,7 +40,7 @@
     /h Set
     ResetKernel
     << /resolution h >> SetKernelStatus
-  
+
     /poisson_generator_ps Create /pg Set
     pg << /rate 1000. >> SetStatus
 
@@ -54,4 +54,3 @@
 
 % will cause an assertion, if type of port if byte
 0.1 single_trial
-

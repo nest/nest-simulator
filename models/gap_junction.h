@@ -105,7 +105,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -131,13 +131,14 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;
@@ -176,10 +177,10 @@ gap_junction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 gap_junction< targetidentifierT >::get_secondary_event()
 {
-  return new GapJunctionEvent();
+  return std::make_unique< GapJunctionEvent >();
 }
 
 template < typename targetidentifierT >

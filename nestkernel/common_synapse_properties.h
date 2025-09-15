@@ -45,7 +45,7 @@ class TimeConverter;
  * Class containing the common properties for all connections of a certain type.
  *
  * Everything that needs to be stored commonly for all synapses goes into a
- * CommonProperty class derived by this base class.
+ * CommonProperty class derived from this base class.
  * Base class for all CommonProperty classes.
  * If the synapse type does not have any common properties, this class may be
  * used as a placeholder.

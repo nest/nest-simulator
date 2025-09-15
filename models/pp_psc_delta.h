@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, point process, current-based
+/* BeginUserDocs: neuron, point process, current-based, adaptation, stochastic
 
 Short description
 +++++++++++++++++
@@ -380,7 +380,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

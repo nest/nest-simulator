@@ -510,7 +510,7 @@ Connections
 
 This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST's online help for the full version and
-:ref:`Connection Management <connection_management>` for an introduction
+:ref:`Connectivity concepts <connectivity_concepts>` for an introduction
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``

@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
 Short description
 +++++++++++++++++
@@ -214,8 +214,6 @@ private:
     std::vector< double > y2_syn_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double V_m_;
-    double current_; //! This is the current in a time step. This is only here
-                     //! to allow logging
 
     int refractory_steps_; //!< Number of refractory steps remaining
 
@@ -275,7 +273,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -301,7 +298,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      return std::accumulate( S_.y2_syn_.begin(), S_.y2_syn_.end(), 0.0 );
     }
     else
     {

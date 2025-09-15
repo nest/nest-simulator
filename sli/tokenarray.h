@@ -262,6 +262,16 @@ public:
   }
 
   // Insertion, deletion
+
+  /**
+   * Insert element at end.
+   *
+   * @note Calling with literal value can lead to undefined behavior. The following seems safe:
+   *
+   * TokenArray ta;
+   * const size_t zero = 0;
+   * ta.push_back( zero );
+   */
   void
   push_back( const Token& t )
   {
@@ -269,6 +279,15 @@ public:
     data->push_back( t );
   }
 
+  /**
+   * Insert element at end.
+   *
+   * @note Calling with literal value can lead to undefined behavior. The following seems safe:
+   *
+   * TokenArray ta;
+   * const size_t zero = 0;
+   * ta.push_back( zero );
+   */
   void
   push_back( Datum* d )
   {

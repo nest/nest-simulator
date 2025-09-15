@@ -4,3 +4,5 @@
 auto_examples/
 # Some images are copied over from the source into the doc static.
 static/examples
+# json data is produced at build time by Sphinx
+static/data/filter_model.json

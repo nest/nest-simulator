@@ -47,12 +47,10 @@ class Event;
  * @defgroup KernelExceptions NEST kernel exception classes
  * Exception classes that are thrown by the NEST kernel to indicate
  * an error.
- * @ingroup Exceptions
  */
 
 /**
  * Base class for all Kernel exceptions.
- * @ingroup Exceptions
  * @ingroup KernelExceptions
  */
 class KernelException : public SLIException
@@ -221,7 +219,7 @@ public:
 
 class UnknownNode : public KernelException
 {
-  int id_;
+  long id_;
 
 public:
   UnknownNode()
@@ -229,7 +227,7 @@ public:
     , id_( -1 )
   {
   }
-  UnknownNode( int id )
+  UnknownNode( long id )
     : KernelException( "UnknownNode" )
     , id_( id )
   {

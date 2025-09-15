@@ -57,7 +57,8 @@ enum class ConnectionModelProperties : unsigned
   SUPPORTS_WFR = 1 << 4,
   REQUIRES_SYMMETRIC = 1 << 5,
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
-  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
+  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7,
+  REQUIRES_EPROP_ARCHIVING = 1 << 8
 };
 
 template <>
@@ -118,8 +119,9 @@ public:
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
-  virtual SecondaryEvent* get_secondary_event() = 0;
+  virtual std::unique_ptr< SecondaryEvent > get_secondary_event() = 0;
 
+  virtual size_t get_syn_id() const = 0;
   virtual void set_syn_id( synindex syn_id ) = 0;
 
   std::string
@@ -192,11 +194,12 @@ public:
     return cp_;
   }
 
+  size_t get_syn_id() const override;
   void set_syn_id( synindex syn_id ) override;
 
   void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
 
-  SecondaryEvent*
+  std::unique_ptr< SecondaryEvent >
   get_secondary_event() override
   {
     return default_connection_.get_secondary_event();

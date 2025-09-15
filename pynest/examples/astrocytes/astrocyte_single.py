@@ -68,17 +68,17 @@ import nest
 # simulation time
 sim_time = 60000
 # astrocyte parameters
-params_astro = {"IP3_0": 0.16}
+params_astro = {"delta_IP3": 0.2}
 # Poisson input for the astrocyte
 poisson_rate = 1.0
-poisson_weight = 0.1
+poisson_weight = 1.0
 
 ###############################################################################
 # Create astrocyte and devices and connect them.
 
 astrocyte = nest.Create("astrocyte_lr_1994", params=params_astro)
 ps_astro = nest.Create("poisson_generator", params={"rate": poisson_rate})
-mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
+mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca_astro"]})
 nest.Connect(ps_astro, astrocyte, syn_spec={"weight": poisson_weight})
 nest.Connect(mm_astro, astrocyte)
 
@@ -93,7 +93,7 @@ data = mm_astro.events
 
 fig, axes = plt.subplots(2, 1, sharex=True, figsize=(6.4, 4.8), dpi=100)
 axes[0].plot(data["times"], data["IP3"])
-axes[1].plot(data["times"], data["Ca"])
+axes[1].plot(data["times"], data["Ca_astro"])
 axes[0].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
 axes[1].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
 axes[1].set_xlabel("Time (ms)")

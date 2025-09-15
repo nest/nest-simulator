@@ -39,6 +39,7 @@ from .hl_api_helper import (
     is_literal,
     restructure_data,
 )
+from .hl_api_parallel_computing import Rank
 from .hl_api_simulation import GetKernelStatus
 
 try:
@@ -514,6 +515,40 @@ class NodeCollection:
 
         return list(self.get("global_id")) if len(self) > 1 else [self.get("global_id")]
 
+    def _to_array(self, selection="all"):
+        """
+        Debugging helper to extract GIDs from node collections.
+
+        `selection` can be `"all"`, `"rank"` or `"thread"` and extracts either all
+        nodes or those on the rank or thread on which it is executed. For `"thread"`,
+        separate lists are returned for all local threads independently.
+        """
+
+        res = sli_func("cva_g_l", self, selection)
+
+        if selection == "all":
+            return {"All": res}
+        elif selection == "rank":
+            return {f"Rank {Rank()}": res}
+        elif selection == "thread":
+            t_res = {}
+            thr = None
+            ix = 0
+            while ix < len(res):
+                while ix < len(res) and res[ix] != 0:
+                    t_res[thr].append(res[ix])
+                    ix += 1
+                assert ix == len(res) or ix + 3 <= len(res)
+                if ix < len(res):
+                    assert res[ix] == 0 and res[ix + 2] == 0
+                    thr = res[ix + 1]
+                    assert thr not in t_res
+                    t_res[thr] = []
+                    ix += 3
+            return t_res
+        else:
+            return res
+
     def index(self, node_id):
         """
         Find the index of a node ID in the `NodeCollection`.
@@ -546,6 +581,13 @@ class NodeCollection:
     def __getattr__(self, attr):
         if not self:
             raise AttributeError("Cannot get attribute of empty NodeCollection")
+
+        # IPython looks up this method when doing pretty printing
+        # As long as we do not provide special methods to support IPython prettyprinting,
+        # HTML-rendering, etc, we stop IPython from time-consuming checks by raising an
+        # exception here. The exception must *not* be AttributeError.
+        if attr == "_ipython_canary_method_should_not_exist_":
+            raise NotImplementedError("_ipython_canary_method_should_not_exist_")
 
         if attr == "spatial":
             metadata = sli_func("GetMetadata", self._datum)
@@ -713,12 +755,12 @@ class SynapseCollection:
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
-            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
-            srcs = srcs[:15] + ["\u22EE "] + srcs[-15:]
-            trgt = trgt[:15] + ["\u22EE "] + trgt[-15:]
-            wght = wght[:15] + ["\u22EE "] + wght[-15:]
-            dlay = dlay[:15] + ["\u22EE "] + dlay[-15:]
-            s_model = s_model[:15] + ["\u22EE "] + s_model[-15:]
+            # u'\u22ee ' is the unicode for vertical ellipsis, used when we have many connections
+            srcs = srcs[:15] + ["\u22ee "] + srcs[-15:]
+            trgt = trgt[:15] + ["\u22ee "] + trgt[-15:]
+            wght = wght[:15] + ["\u22ee "] + wght[-15:]
+            dlay = dlay[:15] + ["\u22ee "] + dlay[-15:]
+            s_model = s_model[:15] + ["\u22ee "] + s_model[-15:]
 
         headers = f"{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}" + "\n"
         borders = (
@@ -816,15 +858,23 @@ class SynapseCollection:
                {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
                 'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
+
         pandas_output = output == "pandas"
         if pandas_output and not HAVE_PANDAS:
             raise ImportError("Pandas could not be imported")
 
-        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
-        num_conns = GetKernelStatus("num_connections")  # Has to be called first because it involves MPI communication.
-        if self.__len__() == 0 or num_conns == 0:
-            # Return empty tuple if get is called with an argument
-            return {} if keys is None else ()
+        # Return empty dictionary if we have no connections
+        # We also return if the network is empty after a ResetKernel.
+        # This avoids problems with invalid SynapseCollections.
+        # See also #3100.
+        if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
+            if pandas_output:
+                return pandas.DataFrame()
+            elif output == "json":
+                return to_json({})
+            else:
+                # Return empty tuple if get is called with an argument
+                return {} if keys is None else ()
 
         if keys is None:
             cmd = "GetStatus"
@@ -885,7 +935,9 @@ class SynapseCollection:
 
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
-        # SynapseCollection, or after having done a nest.ResetKernel().
+        # SynapseCollection. We also return if the network is empty after a
+        # reset kernel. This avoids problems with invalid SynapseCollections.
+        # See also #3100.
         if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             return
 
@@ -1072,8 +1124,7 @@ class Parameter:
         return self._binop("div", rhs)
 
     def __rtruediv__(self, lhs):
-        rhs_inv = CreateParameter("constant", {"value": 1 / float(self.GetValue())})
-        return rhs_inv._binop("mul", lhs)
+        return self**-1 * lhs
 
     def __pow__(self, exponent):
         try:
@@ -1235,6 +1286,8 @@ def serialize_data(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
+    if isinstance(data, (numpy.integer)):
+        return int(data)
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serialize_data(data.get())

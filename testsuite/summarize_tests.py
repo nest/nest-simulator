@@ -27,6 +27,7 @@
 #
 # <No of tests run> <No of skipped tests> <No of failed tests> <No of errored tests> <List of unsuccessful tests>
 
+import argparse
 import glob
 import os
 import sys
@@ -35,9 +36,40 @@ import junitparser as jp
 
 assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
+# Report error if not at least the given number of tests is reported (see #3565 for background).
+# For cases where fewer tests are performed if skip_manycore_tests is set, a tuple is given, where
+# the first number is with and the second without manycore tests.
+# Where parameterization is over thread numbers, test configurations without OpenMP will generate
+# fewer tests under pytest. To keep complexity of the testing logic in bounds, minima are used below.
+expected_num_tests = {
+    "01 basetests": 6,
+    "02 selftests": 8,
+    "03 unittests": 27,
+    "04 regressiontests": 45,  # does not include the two python-dependent tests
+    "05 mpitests": 77,
+    "06 musictests": 1,
+    "07 pynesttests": 3719,  # without thread-dependent cases
+    "07 pynesttests mpi 2": (230, 172),  # first case without thread-dependent cases
+    "07 pynesttests mpi 3": (58, 0),
+    "07 pynesttests mpi 4": (65, 7),
+    "07 pynesttests sli2py mpi": 13,
+    "08 cpptests": 29,
+}
+
 
 def parse_result_file(fname):
-    results = jp.JUnitXml.fromfile(fname)
+    try:
+        results = jp.JUnitXml.fromfile(fname)
+    except Exception as err:
+        return {
+            "Tests": 1,
+            "Skipped": 0,
+            "Failures": 0,
+            "Errors": 1,
+            "Time": 0,
+            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+        }
+
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more
         suites = list(results)
@@ -62,22 +94,41 @@ def parse_result_file(fname):
 
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 2, "summarize_tests must be called with TEST_OUTDIR."
+    parser = argparse.ArgumentParser()
+    parser.add_argument("test_outdir")
+    parser.add_argument("--no-manycore-tests", action="store_true")
+    args = parser.parse_args()
 
-    test_outdir = sys.argv[1]
+    test_outdir = args.test_outdir
+    no_manycore = args.no_manycore_tests
 
     results = {}
     totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}
+    missing_tests = []
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, "*.xml"))):
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace("_", " ")
-        ph_res = parse_result_file(pfile)
-        results[ph_name] = ph_res
-        for k, v in ph_res.items():
-            totals[k] += v
+        try:
+            ph_res = parse_result_file(pfile)
+            results[ph_name] = ph_res
+            for k, v in ph_res.items():
+                totals[k] += v
+            n_expected = expected_num_tests[ph_name]
+            n_expected = n_expected if isinstance(n_expected, int) else n_expected[no_manycore]
+            if ph_res["Tests"] < n_expected:
+                missing_tests.append(f"{ph_name}: expected {n_expected}, found {ph_res['Tests']}")
+        except Exception as err:
+            msg = f"ERROR: {pfile} not parsable with error {err}"
+            results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
+            totals["Failed tests"].append(msg)
 
+    missing_phases = []
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
-    tline = "-" * (len(cols) * 10 + 20)
+
+    col_w = max(len(c) for c in cols) + 2
+    first_col_w = max(len(k) for k in results.keys())
+
+    tline = "-" * (len(cols) * col_w + first_col_w)
 
     print()
     print()
@@ -85,36 +136,51 @@ if __name__ == "__main__":
     print("NEST Testsuite Results")
 
     print(tline)
-    print("{:<20s}".format("Phase"), end="")
+    print(f"{'Phase':<{first_col_w}s}", end="")
     for c in cols:
-        print("{:>10s}".format(c), end="")
+        print(f"{c:>{col_w}s}", end="")
     print()
 
     print(tline)
     for pn, pr in results.items():
-        print("{:<20s}".format(pn), end="")
-        for c in cols:
-            fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-            print(fstr.format(pr[c]), end="")
-        print()
+        print(f"{pn:<{first_col_w}s}", end="")
+        if pr is None:
+            print(f"{'--- RESULTS MISSING FOR PHASE ---':^{len(cols) * col_w}}")
+            missing_phases.append(pn)
+        elif pr["Tests"] == 0 and pr["Failed tests"]:
+            print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
+        else:
+            for c in cols:
+                fmt = ".1f" if c == "Time" else "d"
+                print(f"{pr[c]:{col_w}{fmt}}", end="")
+            print()
 
     print(tline)
-    print("{:<20s}".format("Total"), end="")
+    print(f"{'Total':<{first_col_w}s}", end="")
     for c in cols:
-        fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-        print(fstr.format(totals[c]), end="")
+        fmt = ".1f" if c == "Time" else "d"
+        print(f"{totals[c]:{col_w}{fmt}}", end="")
     print()
     print(tline)
     print()
 
-    if totals["Failures"] + totals["Errors"] > 0:
+    # Consistency check
+    assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
+
+    if totals["Failures"] + totals["Errors"] > 0 or missing_tests:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
-        print("    The following tests failed")
-        for t in totals["Failed tests"]:
-            print(f"    | {t}")  # | marks line for parsing
-        print()
+        if totals["Failures"] + totals["Errors"] > 0:
+            print("    The following tests failed")
+            for t in totals["Failed tests"]:
+                print(f"    | {t}")  # | marks line for parsing
+            print()
+        if missing_tests:
+            print("    The following test phases did not report all expected results:")
+            for ph in missing_tests:
+                print(f"    | {ph}")  # | marks line for parsing
+            print()
         print("    Please report test failures by creating an issue at")
-        print("        https://github.com/nest/nest_simulator/issues")
+        print("        https://github.com/nest/nest-simulator/issues")
         print()
         print(tline)
         print()

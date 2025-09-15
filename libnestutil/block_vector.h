@@ -237,6 +237,14 @@ public:
   void push_back( const value_type_& value );
 
   /**
+   * @brief Move data to the end of the BlockVector.
+   * @param value Data to be moved to end of BlockVector.
+   *
+   * Moves given data to the element at the end of the BlockVector.
+   */
+  void push_back( value_type_&& value );
+
+  /**
    * Erases all the elements.
    */
   void clear();
@@ -313,15 +321,17 @@ private:
 /////////////////////////////////////////////////////////////
 
 template < typename value_type_ >
-inline BlockVector< value_type_ >::BlockVector()
-  : blockmap_( std::vector< std::vector< value_type_ > >( 1, std::vector< value_type_ >( max_block_size ) ) )
+BlockVector< value_type_ >::BlockVector()
+  : blockmap_(
+    std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
   , finish_( begin() )
 {
 }
 
 template < typename value_type_ >
-inline BlockVector< value_type_ >::BlockVector( size_t n )
-  : blockmap_( std::vector< std::vector< value_type_ > >( 1, std::vector< value_type_ >( max_block_size ) ) )
+BlockVector< value_type_ >::BlockVector( size_t n )
+  : blockmap_(
+    std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
   , finish_( begin() )
 {
   size_t num_blocks_needed = std::ceil( static_cast< double >( n ) / max_block_size );
@@ -394,7 +404,7 @@ BlockVector< value_type_ >::end() const
 }
 
 template < typename value_type_ >
-inline void
+void
 BlockVector< value_type_ >::push_back( const value_type_& value )
 {
   // If this is the last element in the current block, add another block
@@ -411,7 +421,24 @@ BlockVector< value_type_ >::push_back( const value_type_& value )
 }
 
 template < typename value_type_ >
-inline void
+void
+BlockVector< value_type_ >::push_back( value_type_&& value )
+{
+  // If this is the last element in the current block, add another block
+  if ( finish_.block_it_ == finish_.current_block_end_ - 1 )
+  {
+    // Need to get the current position here, then recreate the iterator after we extend the blockmap,
+    // because after the blockmap is changed the iterator becomes invalid.
+    const auto current_block = finish_.block_vector_it_ - finish_.block_vector_->blockmap_.begin();
+    blockmap_.emplace_back( max_block_size );
+    finish_.block_vector_it_ = finish_.block_vector_->blockmap_.begin() + current_block;
+  }
+  *finish_ = std::move( value );
+  ++finish_;
+}
+
+template < typename value_type_ >
+void
 BlockVector< value_type_ >::clear()
 {
   for ( auto it = blockmap_.begin(); it != blockmap_.end(); ++it )
@@ -442,7 +469,7 @@ BlockVector< value_type_ >::size() const
 }
 
 template < typename value_type_ >
-inline typename BlockVector< value_type_ >::iterator
+typename BlockVector< value_type_ >::iterator
 BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
 {
   assert( first.block_vector_ == this );
@@ -495,7 +522,7 @@ BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
 }
 
 template < typename value_type_ >
-inline void
+void
 BlockVector< value_type_ >::print_blocks() const
 {
   std::cerr << "this: \t\t" << this << "\n";

@@ -20,26 +20,26 @@
  *
  */
 
-/* 
+/*
     SLI Interpeter initalization
 
 */
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
 %%%  Note on Dictionary Stack Initialization
-%%% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % At startup, two dictionaries are to be on the dictionary stack:
 %
 % userdict   <----
 % systemdict
-% 
+%
 % The interpreter first pushes the system dictionary. Since all
 % modules have to be initialized in the system dictionary,
 % the user dictionary can only be pushed once the bootstraping
 % starts, i.e. at the beginning of this file.
-% 
+%
 % The operator end will prevent these two dictionaries
 % from being removed from the stack. This is according to PS.
 %
@@ -47,8 +47,8 @@
 % systemdict in order to have all new operators defined in there.
 %
 userdict begin    % initialize DictStack. This begin has NO end!!
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-systemdict begin  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+systemdict begin
 
 %% Only initialize those type tries here which are
 %% immediately needed. All others are loaded from
@@ -61,20 +61,20 @@ systemdict begin
    length counts type-dependent elements, e.g. characters of a string,
    entries of a dictonary, number of command of a procedure.
 
-   Alternatives: Functions length_p, length_lp, length_a, length_s, 
-   length_d (documented:SeeAlso) 
+   Alternatives: Functions length_p, length_lp, length_a, length_s,
+   length_d (documented:SeeAlso)
 
- Parameters: 
+ Parameters:
    One of the types proc, literal, array, string, dict
    Returns integer with number of elements.
- Examples: 
+ Examples:
    (Hello world!)      length --> 12
    {(Hello world!) ==} length --> 2
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ??
  SeeAlso: length_p, length_lp, length_a, length_s, length_d, capacity, size
-*/ 
+*/
 
 /length trie
   [/proceduretype ]        /length_p  load addtotrie
@@ -97,10 +97,10 @@ def
 
    Alternatives: Functions get_a for arrays, get_p for procedures,
    get_lp for literal procedures, get_s for strings, get_d and get_d_a
-   for dictionaries (all undocumented) 
-   -> behavior and synopsis are the same. 
+   for dictionaries (all undocumented)
+   -> behavior and synopsis are the same.
 
- Parameters: 
+ Parameters:
    array/proc/litproc/string/dict is the container,
    int/literal is the index for the lookup.
    The object returned depends on the container contents.
@@ -112,18 +112,18 @@ def
   the one of the index array of operator Part. This is useful to extract
   data from nested dictionaries and arranging them for further numerical
   processing. The array elements are sequentially applied from left to right
-  to the object resulting from the get operation of the previous element. 
+  to the object resulting from the get operation of the previous element.
   If an array element is itself an array, its elements are simultaneously
   applied to the argument and the result is an array of the same size.
-  
+
   Applications of SLI like the NEST kernel may impliment variants
   of get to provide a homogeneous interface to further containers.
-  
- Examples: 
+
+ Examples:
    (Hello World!)      0                  get --> 184
    [(Hello) 1 /a 12]   1                  get --> 1
    {(Hello World!) ==} 1                  get --> ==
-   systemdict          /get               get --> +get+    
+   systemdict          /get               get --> +get+
    [/a /b /c /d] [0 2]                    get -> [/a /c]
    << /a 3 /c 2 >>  /c                    get --> 2
    << /a 3 /c 2 >>  [/c]                  get --> 2
@@ -131,19 +131,19 @@ def
    << /a 3 /c 2 >>  [[/c /a /a]]          get --> [2 3 3]
    << /a << /b 3 /c 2 >> >>  [/a /c]      get --> 2
    << /a << /b 3 /c 2 >> >>  [/a [/b /c]] get --> [3 2]
-   
+
  Author: Gewaltig, Diesmann
  FirstVersion: ??
 
  SeeAlso: get_d, put, Part, getinterval
-*/ 
+*/
 
 
 /get_d_a
 {
  {
   dup type
-  /arraytype eq  
+  /arraytype eq
   {                  % d a
    {                 % d l
     exch dup         % l d d
@@ -151,7 +151,7 @@ def
     get_d
    }
    Map exch pop
-  }  
+  }
   {get_d}
   ifelse
  }
@@ -172,7 +172,7 @@ def
 
 /** @BeginDocumentation
  Name: put - put indexed object into container
- Synopsis: 
+ Synopsis:
            array/proc int any         --> array/proc
            array  array any           --> array
            string/array/proc int int  --> string/array/proc
@@ -184,29 +184,29 @@ def
 
    Alternatives: Functions put_a for arrays, put_p for procedures,
    put_lp for literal procedures, put_s for strings (all undocumented)
-   and put_d for dictionaries (SeeAlso) 
-   -> behaviour and synopsis are the same. 
+   and put_d for dictionaries (SeeAlso)
+   -> behaviour and synopsis are the same.
 
 
- Parameters: 
+ Parameters:
     First parameter is the container,
     Second the index,
     third the object to put.
     The modified container is returned.
- Examples: 
+ Examples:
    (Hello Wxrld!)      7 111    put --> (Hello World!)
    [(Hello) 1 /a 12]   2 /here  put --> [Hello 1 here 12]
    [[1 2][3 4]]    [1 1] 6      put --> [[1 2] [3 6]]
    {(Hello World!) ==} (Bye!) 1 put --> {(Bye!) ==}
-   systemdict          /MyLit 5 put --> -  % MyLit equals integer 5 now!    
- 
+   systemdict          /MyLit 5 put --> -  % MyLit equals integer 5 now!
+
  Author: Gewaltig, Diesmann
  FirstVersion: ??
  Remarks: Commented Hehl April 21, 1999
- 
+
  SeeAlso: get, put_d
- 
-*/ 
+
+*/
 
 
 /put trie
@@ -219,7 +219,7 @@ def
   [/stringtype           /integertype  /integertype]  /put_s     load addtotrie
 
 % The following seemingly redundant definitions fix a deficiency of /anytype
-% We must manually add the functions to the branches which have specific types 
+% We must manually add the functions to the branches which have specific types
   [/arraytype            /arraytype    /integertype ] /put_a_a_t load addtotrie
   [/arraytype            /arraytype    /doubletype ]  /put_a_a_t load addtotrie
   [/proceduretype        /integertype  /integertype ] /put_p     load addtotrie
@@ -227,7 +227,7 @@ def
   [/literalproceduretype /integertype  /integertype]  /put_lp    load addtotrie
   [/literalproceduretype /integertype  /doubletype]   /put_lp    load addtotrie
   [/dictionarytype       /literaltype  /integertype]  /put_d     load addtotrie
-  [/dictionarytype       /literaltype  /doubletype]   /put_d     load addtotrie 
+  [/dictionarytype       /literaltype  /doubletype]   /put_d     load addtotrie
 def
 
 
@@ -248,7 +248,7 @@ def
   errordict /ostack [ ] put_d
 } def
 
-init_errordict 
+init_errordict
 
 /raiseerror trie
   [/literaltype /literaltype] /raiseerror load addtotrie
@@ -262,7 +262,7 @@ def
    tries or functions by their values.
    bind works recursively and processes any nested procedure object it encounters.
    bind uses the current dictionary context to perform its operation. Thus, changing
-   the dictionary context after bound was applied has no effect on the name-lookup 
+   the dictionary context after bound was applied has no effect on the name-lookup
    of operators during the execution of the procedure.
 
    bind removes some execution overhead which is due to name-lookup. Thus, a bound procedure
@@ -273,33 +273,33 @@ def
              if you know the arguments are integer,
              {1 2 add_ii} will be the fastest choice, but there will be no
              sli-level typechecking any more!
-  Bugs: 
+  Bugs:
  Author: Gewaltig
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 370
  SeeAlso: trie, addtotrie
-*/ 
+*/
 
 /bind
 {
   0 1 2 index length 1 sub_ii
   {
-    2 copy 
-    get dup 
+    2 copy
+    get dup
     type /nametype eq
     {
       cvlit_n lookup
       {
         dup type dup
-        /functiontype eq exch /trietype eq or 
+        /functiontype eq exch /trietype eq or
         { put }{ pop pop } ifelse
-      } 
+      }
      { pop } ifelse
     }
     {
       dup type dup
-      /literalproceduretype eq exch 
+      /literalproceduretype eq exch
       /proceduretype  eq
       or
       { bind put } { pop pop } ifelse
@@ -317,7 +317,7 @@ def
    is not of simple kind (for example, there's no difference for
    integers, but there is one for procedures!)
  Parameters: any
- Examples: 
+ Examples:
  SLI ] 12 =
  12
  SLI ] {1211} =
@@ -329,10 +329,10 @@ def
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 362
  SeeAlso: ==, =only, ==only
-*/ 
+*/
 
 /=
-{ 
+{
    cout exch <- endl ;
 } bind def
 
@@ -345,7 +345,7 @@ def
    objects of simple kind (for example, there's no difference for
    integers, but there is one for procedures!)
  Parameters: any
- Examples: 
+ Examples:
  SLI ] 12 ==
  12
  SLI ] {1211} ==
@@ -357,10 +357,10 @@ def
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 362
  SeeAlso: =, =only, ==only
-*/ 
+*/
 
 /==
-{ 
+{
    cout exch <-- endl ;
 } bind def
 
@@ -369,20 +369,20 @@ def
  Synopsis: any =only --> -
  Description: like =, but without a linefeed.
  Parameters: any
- Examples: 
+ Examples:
  SLI ] 12 =only
  12SLI ] {1211} =only
  <proceduretype>SLI ]
-             
+
  Author: Gewaltig, Diesmann
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 362
  SeeAlso: =, ==, ==only
-*/ 
+*/
 
 /=only
-{ 
+{
    cout exch <- ;
 } bind def
 
@@ -391,42 +391,42 @@ def
  Synopsis: any ==only --> -
  Description: like ==, but without linefeed
  Parameters: any
- Examples: 
+ Examples:
  SLI ] 12 ==only
  12SLI ] {1211} ==only
  {1211}SLI ]
- 
- Bugs: 
+
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 362
  SeeAlso: =, ==, =only
-*/ 
+*/
 
 /==only
-{ 
+{
    cout exch <-- ;
 } bind def
 
 /** @BeginDocumentation
  Name: stack - Display operand stack
- Synopsis: stack --> - 
+ Synopsis: stack --> -
  Description:
    Displays operand stack using = operator on each object.
  Parameters: -
- Examples: 1 2 3 stack 
+ Examples: 1 2 3 stack
          --> 3
              2
              1
-           {123} stack --> <proceduretype>  
- Bugs: 
+           {123} stack --> <proceduretype>
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 522
  SeeAlso: pstack, typestack, =, ==
-*/ 
+*/
 
 /stack
 {
@@ -440,49 +440,49 @@ def
 
 /** @BeginDocumentation
  Name: typestack - Display types of operand stack
- Synopsis: typestack --> - 
+ Synopsis: typestack --> -
  Description:
    Displays operand stack, showing Type as well as value of each object.
  Parameters: -
- Examples: {1} {2} {3} typestack 
+ Examples: {1} {2} {3} typestack
 proceduretype:{3}
 proceduretype:{2}
 proceduretype:{1}
 
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
  SeeAlso: stack, pstack, =, ==
-*/ 
+*/
 
 /typestack
 {
   0 1 count 3 sub_ii
   {
     index
-    dup type =only (:) =only ==  
+    dup type =only (:) =only ==
   }
   for
 } bind def
 
 /** @BeginDocumentation
  Name: pstack - Display operand stack in syntax form.
- Synopsis: pstack --> - 
+ Synopsis: pstack --> -
  Description:
    Displays operand stack using == on each object.
  Parameters: -
- Examples: {1} {2} {3} stack 
+ Examples: {1} {2} {3} stack
          --> {3}
              {2}
              {1}
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ???
  Remarks: Commented Hehl April 20, 1999
   compare RedBook 2nd ed. page 465
  SeeAlso: stack, typestack, =, ==
-*/ 
+*/
 
 /pstack
 {
@@ -501,15 +501,15 @@ Synopsis: on ..ok .. o0 k pick -> on ..ok .. o0 ok
 Examples: 1 2 3 4 5 6 7 3 pick -> 4
 SeeAlso: over, index
 */
-/pick /index load def 
+/pick /index load def
 
 %% Routines for benchmarking
 %% ptimes, realtime, usertime, systemtime, tic, toc
 
 /** @BeginDocumentation
  Name: ptimes - returns real, user, and system time
- Synopsis:  ptimes -> [rtimes utimes stimes cutimes cstimes] 
- Description: 
+ Synopsis:  ptimes -> [rtimes utimes stimes cutimes cstimes]
+ Description:
  Calls the POSIX times() function to obtain real, user,
  and system time in seconds, as well as user and system times
  counts for all child processes.  Real time has arbitrary origin,
@@ -522,33 +522,33 @@ SeeAlso: over, index
  FirstVersion: 2003-07-29
  References: man 2 times
  SeeAlso: realtime, usertime, systemtime, tic, toc, pclockspersec, pclocks
-*/ 
+*/
 /ptimes
 {
   pclocks pclockspersec cvd div
 } def
 
 /** @BeginDocumentation
- Name: realtime - returns realtime 
+ Name: realtime - returns realtime
  Synopsis:  realtime -> rtime
- Description: 
- Calls the POSIX times() function to obtain real time in seconds. 
+ Description:
+ Calls the POSIX times() function to obtain real time in seconds.
  Real time has arbitrary origin, i.e., only differences are meaningful.
 
  Author: Hans Ekkehard Plesser
  FirstVersion: 2003-07-29
  References: man 2 times
  SeeAlso: ptimes, usertime, systemtime, tic, toc, pclockspersec, pclocks
-*/ 
+*/
 /realtime
 {
-  ptimes 0 get 
-} def  
+  ptimes 0 get
+} def
 
 /** @BeginDocumentation
- Name: usertime - returns usertime for current process 
+ Name: usertime - returns usertime for current process
  Synopsis:  usertime -> utime
- Description: 
+ Description:
  Calls the POSIX times() function to obtain usertime for the current
  process in seconds.  The value might not be meaningful if more than
  one thread is used.
@@ -557,16 +557,16 @@ SeeAlso: over, index
  FirstVersion: 2003-07-29
  References: man 2 times
  SeeAlso: ptimes, realtime, systemtime, tic, toc, pclockspersec, pclocks
-*/ 
+*/
 /usertime
 {
-  ptimes 1 get 
-} bind def  
+  ptimes 1 get
+} bind def
 
 /** @BeginDocumentation
- Name: systemtime - returns system time for current process 
+ Name: systemtime - returns system time for current process
  Synopsis:  systemtime -> stime
- Description: 
+ Description:
  Calls the POSIX times() function to obtain system time for the current
  process in seconds.  The value might not be meaningful if more than
  one thread is used.
@@ -575,24 +575,24 @@ SeeAlso: over, index
  FirstVersion: 2003-07-29
  References: man 2 times
  SeeAlso: ptimes, realtime, systemtime, tic, toc, pclockspersec, pclocks
-*/ 
+*/
 /systemtime
 {
-  ptimes 2 get 
-} bind def  
+  ptimes 2 get
+} bind def
 
 
 /** @BeginDocumentation
  Name: tic - start timing script execution
  Synopsis:  tic -> -
- Description: 
+ Description:
  Records the current real time obtained from the POSIX times() function
- as starting point for timing script execution.  
+ as starting point for timing script execution.
 
  Author: Hans Ekkehard Plesser
  FirstVersion: 2003-07-29
  SeeAlso: toc, realtime, ptimes
-*/ 
+*/
 /tic
 {
  systemdict begin
@@ -603,7 +603,7 @@ SeeAlso: over, index
 /** @BeginDocumentation
  Name: toc - Return wall clock time elapsed since tic was called.
  Synopsis:  toc -> runtime
- Description: 
+ Description:
  Determines the wall clock (real) time elapsed since tic was called
  last, in seconds.  Resolution is given by pclockspersec.
 
@@ -614,26 +614,26 @@ SeeAlso: over, index
 /toc
 {
  systemdict begin
-  realtime :tictime sub_dd 
+  realtime :tictime sub_dd
  end
 } bind def
 
 /** @BeginDocumentation
- Name: clock - returns realtime 
+ Name: clock - returns realtime
  Synopsis:  clock -> double
- Description: 
+ Description:
  Same as realtime, for backward compatibilty only.
 
  Author: Hans Ekkehard Plesser
  FirstVersion: 2003-07-29
  SeeAlso: realtime
-*/ 
+*/
 /clock { realtime } bind def
 
 /** @BeginDocumentation
  Name: sleep - Pauses current process.
  Synopsis:  t sleep -> -
- Description: 
+ Description:
   Pauses the process for t seconds. t can be integer or double.
   Resolution is given by pclockspersec.
  Examples:
@@ -671,21 +671,21 @@ def
 
 %% clic/cloc can be used to measure the number of
 %% milliseconds per interpreter cycle.
-%% The result includes also the cycles taken up by the 
+%% The result includes also the cycles taken up by the
 %% involved routines.
 
 /** @BeginDocumentation
   Name: clic - Start measuring interpreter cycles.
-  Description:	    
+  Description:
   clic/cloc can be used to measure the number of
   milliseconds per interpreter cycle.
-  The result includes also the cycles taken up by the 
+  The result includes also the cycles taken up by the
   SeeAlso: cloc, tic, toc
 */
 /clic
-{ 
+{
  systemdict begin
-  /:cliccycles cycles def   
+  /:cliccycles cycles def
  end
 } bind def
 
@@ -697,7 +697,7 @@ def
 /cloc
 {
  systemdict begin
-  cycles :cliccycles sub_ii :clicclocs sub_ii 
+  cycles :cliccycles sub_ii :clicclocs sub_ii
  end
 } bind def
 
@@ -708,16 +708,16 @@ def
 /** @BeginDocumentation
  Name: reset - Reset the SLI interpreter
  Description:
- reset re-initializes most of the SLI interpreter by clearing the operand stack, the dictionary stack, 
+ reset re-initializes most of the SLI interpreter by clearing the operand stack, the dictionary stack,
  and the userdict. reset also clears the error state.
  Non-standard symbols and data defined in any of the other dictionaries, such as the statusdict or systemdict remain unchanged.
- 
+
  SeeAlso: ResetKernel
 */
 
 /reset
 {
-  errordict /new_error false put_d 
+  errordict /new_error false put_d
   init_errordict
   clear % operand stack
   cleardictstack
@@ -728,7 +728,7 @@ def
 
 % ******************************
 % * Dictionary Query Functions
-% * 
+% *
 
 /** @BeginDocumentation
 
@@ -740,7 +740,7 @@ def
      who prints the contents of the current top-level dictionary
      to the standard output.
 
-   Remarks: taken from Matlab. 
+   Remarks: taken from Matlab.
             The listing would be more legible with a pager. If you
             want to pass the output to a stream, use topinfo_d instead.
 
@@ -762,11 +762,11 @@ def
 
    Description:
      whos prints the contents of all dictionaries which are cunnrently
-     on the dictionary stack to the standard output. 
-     Dictionaries are printed from bottom to top, i.e. 
+     on the dictionary stack to the standard output.
+     Dictionaries are printed from bottom to top, i.e.
      systemdict then userdict and then all additional dictionaries (if any).
 
-   Remarks: taken from Matlab. 
+   Remarks: taken from Matlab.
             The listing would be more legible with a pager. If you
             want to pass the output to a stream, use info_ds instead.
 
@@ -784,7 +784,7 @@ def
 % * Prints the contents of the given dictionary
 % * This one is documented in slidict.cc
 
-/info trie 
+/info trie
 [/dictionarytype]
 {
   cout exch info_d
@@ -802,8 +802,8 @@ def
 } bind addtotrie
 [/trietype]
 {
-  cout 
-(This type trie contains the following overloaded functions:\n\n) <- 
+  cout
+(This type trie contains the following overloaded functions:\n\n) <-
   exch trieinfo_os_t
 } bind addtotrie def
 
@@ -852,21 +852,21 @@ def
 
 
 /** @BeginDocumentation
- Name: cvs_f - Formatted conversion of double to string 
- 
+ Name: cvs_f - Formatted conversion of double to string
+
  Synopsis:
  x q cvs_f -> str
  x [p q] cvs_f -> str
 
- Description: 
+ Description:
 
- x q cvs_f -> str 
+ x q cvs_f -> str
  converts a double (or integer) number x into a string str with a specified number q of digits after the decimal point
 
  x [p q] cvs_f -> str
  puts in addition p minus IntegerPart(x) zeros in front of the string (nothing happens if p is smaller than the length of x's integer part).
 
- Examples: 
+ Examples:
 
  2.3456 3 cvs_f -> (2.346)
  2.3456 0 cvs_f -> (2)
@@ -882,42 +882,42 @@ def
 /cvs_f {
   /n Set    % number of desired digits after decimal point
   /x Set    % some double number
-  n 1 arraystore Flatten length 1 eq 
-  { 
-    % x n cvs_f  
-    n 0 eq   
-    {x round cvs } 
+  n 1 arraystore Flatten length 1 eq
+  {
+    % x n cvs_f
+    n 0 eq
+    {x round cvs }
     {
-      x 0. eq 
+      x 0. eq
       { (0.) n {(0) join} repeat }
-      {    
-	x abs 10. n pow mul round 
+      {
+	x abs 10. n pow mul round
 	{dup 1e9 lt} assert
 	int cvs /xstr Set
-        xstr length n lt { () n xstr length sub  {(0) join} repeat xstr join /xstr Set } if 
-	xstr 0 xstr length n sub getinterval /bd Set  % integer digits 
+        xstr length n lt { () n xstr length sub  {(0) join} repeat xstr join /xstr Set } if
+	xstr 0 xstr length n sub getinterval /bd Set  % integer digits
 	xstr xstr length n sub xstr length getinterval /ad Set % digits after decimal point
-	bd (.) ad join join    
+	bd (.) ad join join
 	bd () eq {(0) exch join} if
-        x 0 lt {(-) exch join} if % add minus sign if x<0 
-      } ifelse  
-    } ifelse        
+        x 0 lt {(-) exch join} if % add minus sign if x<0
+      } ifelse
+    } ifelse
   }
   {
-    {n 1 arraystore Flatten length 2 eq} assert   
+    {n 1 arraystore Flatten length 2 eq} assert
     % x [n1 n2] cvs_f
     n First /n1 Set
-    n Last /n2 Set      
-    x abs 10. n2 pow mul round 
+    n Last /n2 Set
+    x abs 10. n2 pow mul round
     {dup 1e9 lt} assert
     int cvs /xstr Set
-    xstr length n2 lt { () n xstr length sub  {(0) join} repeat xstr join /xstr Set } if 
-    xstr 0 xstr length n2 sub getinterval /bd Set  % integer digits 
-    bd length 0 eq { (0) /bd Set} if 
+    xstr length n2 lt { () n xstr length sub  {(0) join} repeat xstr join /xstr Set } if
+    xstr 0 xstr length n2 sub getinterval /bd Set  % integer digits
+    bd length 0 eq { (0) /bd Set} if
     xstr xstr length n2 sub xstr length getinterval /ad Set % digits after decimal point
-    () n1 bd length sub {(0) join} repeat bd join (.) ad join join    
+    () n1 bd length sub {(0) join} repeat bd join (.) ad join join
     bd () eq {(0) exch join} if
-    x 0 lt {(-) exch join} if	% add minus sign if x<0 
+    x 0 lt {(-) exch join} if	% add minus sign if x<0
   } ifelse
 } def
 
@@ -925,10 +925,10 @@ def
 /** @BeginDocumentation
 Name: statusdict - dictionary with platform dependent status
 information.
-Description: 
+Description:
 The status dictionary contains various platform dependend status
 information. Among others, it contains the following useful things:
- 
+
   argv        arraytype   full list of commandline arguments given to NEST
   userargs    arraytype   user supplied arguments, usable by scripts
   interactive booltype    does this NEST session read its commands from an interactive prompt?
@@ -936,18 +936,18 @@ information. Among others, it contains the following useful things:
   prgdatadir  stringtype  path to the installation directory
   prgdocdir   stringtype  path to the documentation directory
 
-  have_mpi    booltype    this flag is always defined and indicates whether an 
-                          MPI library is available to the NEST system or not. 
-                          The flag does not indicate whether the interpreter  
+  have_mpi    booltype    this flag is always defined and indicates whether an
+                          MPI library is available to the NEST system or not.
+                          The flag does not indicate whether the interpreter
                           actually has MPI support.
   is_mpi      booltype    this flag may not be defined if the interpreter does not
-                          have MPI support. If the value of the flag is true, the 
-                          interpreter has support for parallel computing. 
-  
+                          have MPI support. If the value of the flag is true, the
+                          interpreter has support for parallel computing.
+
 View the whole contents of the status dictionary with 'statusdict info'.
 SeeAlso: info, LocateFileNames, searchifstream, searchfile
 */
-statusdict 
+statusdict
 begin
   /userargs [] def
   /interactive true def
@@ -999,14 +999,14 @@ SeeAlso: join
    after the other. It opens the first test.dat found along the way,
    or returns false if there is no one in neither path.
   References:
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann, R Kupper
  FirstVersion: 1995
- Remarks: commented April 13, 1999 Hehl 
+ Remarks: commented April 13, 1999 Hehl
           added debugging output 4-dec-2007 R Kupper
  SeeAlso: ifstream, searchifstream, LocateFileNames
-        
-*/ 
+
+*/
 
 %% we have two versions of this routine: :searchfile_nodebug and
 %% :searchfile_debug. One issues debugging
@@ -1044,7 +1044,7 @@ SeeAlso: join
     }
     {% not found
       M_DEBUG (searchfile) (  searching for ) 4 -1 roll join ( ... no) join message
-    } ifelse    
+    } ifelse
   } forall_a
   pop
 } bind def
@@ -1053,15 +1053,15 @@ SeeAlso: join
 /** @BeginDocumentation
  Name: LocateFileNames - Look up complete pathnames of given file in given search path.
  Synopsis: stringarray string LocateFileNames -> stringarray
- Description: 
+ Description:
    Tries to locate a file specified in string using the search path of
    the stringarray. Returns an array of complete filenames including
    pathname.
  Parameters:
    stringarray : a search path
    string      : filename
-   stringarray : Returned matches     
- Examples: 
+   stringarray : Returned matches
+ Examples:
    SLISearchPath (sli-init.sli) LocateFileNames
    --> [(SLIHOME/lib/sli/sli-init.sli)]
 
@@ -1069,9 +1069,9 @@ SeeAlso: join
  FirstVersion: April 16, 1999
 
  SeeAlso:  searchfile, searchifstream
-*/ 
+*/
 /LocateFileNames
-{ << >> /TheFile 3 -1 roll  def 
+{ << >> /TheFile 3 -1 roll  def
         /FileMatches [] def
   begin
     {
@@ -1079,10 +1079,10 @@ SeeAlso: join
       dup
       ifstream
       {
-        pop                      % we don't really want a file handler!        
-        FileMatches exch append 
+        pop                      % we don't really want a file handler!
+        FileMatches exch append
         /FileMatches exch def    % store match in resulting array
-      } 
+      }
       {pop} ifelse
     } forall
     FileMatches                  % push result
@@ -1094,7 +1094,7 @@ SeeAlso: join
  Name: searchifstream - searches SLI's search path for a file
  Synopsis: string searchifstream -> istreamtype true
                                  -> false
- Description: 
+ Description:
    searchifstream calls searchfile to open the file specified in
    string for reading. Searchfile will use the Search path mechanism,
    trying any path in SLISearchPath.
@@ -1105,18 +1105,18 @@ SeeAlso: join
  Parameters:
    string is a filename with full path information or a file found
    within one of the Pathes specified in SLISearchPath.
- Examples: 
-   (sli-init.sli) searchifstream opens sli-init.sli for reading 
+ Examples:
+   (sli-init.sli) searchifstream opens sli-init.sli for reading
    since the path to system sli files is contained in SLISearchPath.
  References:
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: 1995
  Remarks: commented April 12, 1999
-          Hehl 
+          Hehl
  SeeAlso:  ifstream, searchfile, LocateFileNames
-        
-*/ 
+
+*/
 /searchifstream
 {
   SLISearchPath
@@ -1144,26 +1144,26 @@ SeeAlso: join
  Description:
   file is the PostScript operator used to open files
   for reading or writing. If opening is successful the
-  appropriate streamtype is returned. If opening fails 
-  /FileOpenError is raised. 
-  If the file name contains path information "/", the 
+  appropriate streamtype is returned. If opening fails
+  /FileOpenError is raised.
+  If the file name contains path information "/", the
   operator tries to open the specified file directly,
   otherwise if the file should be opened for reading
   the operator uses the searchpath to locate the file.
- Parameters:  
-  string1 is the file name, string2 is a modifier (r) or 
-  (w) which specifies if the file should be opened for 
-  reading or writing. 
- Examples: 
+ Parameters:
+  string1 is the file name, string2 is a modifier (r) or
+  (w) which specifies if the file should be opened for
+  reading or writing.
+ Examples:
   (sli-init.sli) (r) file type == -> istreamtype
  References:
    compare RedBook 2nd ed. page 414
  Author: Gewaltig, Diesmann
  FirstVersion: 1995
  Remarks: commented April 12, 1999
-           Hehl, Diesmann 
+           Hehl, Diesmann
  SeeAlso:  close, ofstream, ifstream, searchifstream
-*/ 
+*/
 /file trie [/stringtype /stringtype]
 {
   2 copy      % save parameters in case an error occurs.
@@ -1174,7 +1174,7 @@ SeeAlso: join
   {
     dup           % pick filenamename
     (/) search_s  % see if name contains path information
-    { 
+    {
       3 npop
       ifstream  % if so, try to open file directly
     }
@@ -1184,23 +1184,23 @@ SeeAlso: join
     } ifelse
   } ifelse
   not_b
-  { 
+  {
     2 copy (w) eq
     {
       (Could not open the following file for writing: ")
     }
     {
-      (Could not open the following file for reading: ") 
+      (Could not open the following file for reading: ")
     }
-    ifelse 
+    ifelse
     exch join (".) join /error_description Set
 
-    errordict begin  
+    errordict begin
       /message error_description def
     end
 
     /file /FileOpenError raiseerror
-  } 
+  }
   {
     3 1 roll % remove extra copy of parameters
     2 npop
@@ -1213,25 +1213,25 @@ SeeAlso: join
  Synopsis: string run -> -
  Description:
    Opens the file specified via file operator and executes it.
- Parameters: 
+ Parameters:
    string is the filename, either with complete path or found within
-   one of the SLISerachPath pathes. 
+   one of the SLISerachPath pathes.
    The extension (.sli) may be omitted.
 
- Examples: 
+ Examples:
    (MySli.sli) run            --> execute file MySli, assuming it
                                   exists in the search path entries.
    (~/MySliRoutines/DoIt) run --> execute file, ignoring search pathes
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ??
  Remarks: Commented Hehl April 21, 1999
  SeeAlso: exec, file
-*/ 
+*/
 
-/run trie [/stringtype] 
+/run trie [/stringtype]
 {
- dup 
+ dup
  (.sli) search_s
  {
    3 npop
@@ -1249,23 +1249,23 @@ SeeAlso: join
  Description:
    The new path will be appended to SLISearchPathvariable. There is no
    check if path really exists.
- Parameters: 
+ Parameters:
    string is path's name.
- Examples: 
+ Examples:
      (~/MySliRoutines) addpath --> sli files will additionally be looked
                                    for in ~/MySliRoutines now.
- Bugs: 
+ Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: ??
  Remarks: Commented Hehl April 21, 1999
  SeeAlso: searchfile, path, setpath
-*/ 
+*/
 
-/addpath trie [/stringtype] 
+/addpath trie [/stringtype]
 {
   systemdict begin
   SLISearchPath
-  exch_ append_a 
+  exch_ append_a
   /SLISearchPath exch_ def_
   end
 } bind addtotrie def
@@ -1277,7 +1277,7 @@ SeeAlso: join
 %
 % (string) patharray setpath
 % Prepend string to patharray
-% 
+%
 % Side Effects: sets SLISeachPath in systemdict.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /** @BeginDocumentation
@@ -1318,24 +1318,24 @@ def
 
 %%%%%%%%%%%%%%%%%%% Error Handling %%%%%%%%%%%%%%%%%%%%%
 
-/** @BeginDocumentation  
+/** @BeginDocumentation
 Name: handleerror - Default error handler
-Description: 
-  handleerror is the default error handler. 
+Description:
+  handleerror is the default error handler.
   It issues error messages according to the
   state of the errordict.
   The command that caused the error is left at the
   top of the dictionary stack.
 
-  An error is raised by the command 
+  An error is raised by the command
      /func /error raiseerror
 
- The flag newerror helps to distinguish between interrupts caused 
+ The flag newerror helps to distinguish between interrupts caused
  by call of stop and interrupts raised by raiseerror.
  It also helps to find errors in the handler itself. This is
  why it should be re-set to false at the very end of the handler!
-             
-Examples:  To catch errors from an unknown function f, 
+
+Examples:  To catch errors from an unknown function f,
            one can write:
 
            {f} stopped {handleerror} if
@@ -1354,12 +1354,12 @@ SeeAlso: raiseerror, raiseagain, stopped, stop, errordict
   {                                % this catches extra stops
     (\n Software Interrupt \n) =   % issued by the user
   } ifelse                         % or a user function
-  %  cleardictstack                % clean up dictionary stack 
+  %  cleardictstack                % clean up dictionary stack
 } bind def
 
 
 /MissingOptionError
-{ 
+{
   /errorname Set
   M_ERROR errorname cvs (An option for the command is missing. Please see the) message
   M_ERROR errorname cvs (documentation of ') errorname cvs join (' and 'Options' for details.) join message
@@ -1379,16 +1379,16 @@ Author: docu by Sirko Straube
 */
 /assert
 {
- << exch /func exch >> 
+ << exch /func exch >>
  begin
 
   func not
-  { 
+  {
      cerr (Assertion ) <-/func load <-- ( failed.) <- endl pop
      /assert /FailedAssertion raiseerror
   } if
  end
-} bind def 
+} bind def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % cst stands for convert string to token   %
@@ -1410,14 +1410,14 @@ SeeAlso: cv1d, cv2d, cva, cvd_s, cvi_s, cvlit, cvn, cvs, cvt_a
 {
   []                   % create array
   {                    % begin of evaluation loop
-    exch               % make string the top element 
+    exch               % make string the top element
     token_s              % get token from string
     not_b
     { exit } if        % exit loop if string is empty
     3 -1 roll          % move array on top
     exch
     append_a             % append token to array
-  } loop        
+  } loop
                        % now only the array is left
 } bind def
 
@@ -1425,33 +1425,33 @@ SeeAlso: cv1d, cv2d, cva, cvd_s, cvi_s, cvlit, cvn, cvs, cvt_a
 {
   []                   % create array
   {                    % begin of evaluation loop
-    exch               % make string the top element 
+    exch               % make string the top element
     symbol_s              % get token from string
     not_b
     { exit } if        % exit loop if string is empty
     3 -1 roll          % move array on top
     exch
     append_a             % append token to array
-  } loop        
+  } loop
                        % now only the array is left
 } bind def
 
 
 %
-% prompt 
+% prompt
 % -------
-% flushes the standard output and  
-% displays a prompt. If the operand stack 
-% is not empty, its count is also shown   
+% flushes the standard output and
+% displays a prompt. If the operand stack
+% is not empty, its count is also shown
 %
 % In synod 1.x we used the routine of GS,
 % here it is rewritten with new operators
-%            April 17. 1998, Diesmann 
+%            April 17. 1998, Diesmann
 %
 
 /sprompt
 {
-  (SLI ) 
+  (SLI )
   count 1 gt_ii      % counter has to be corrected for operative
   {                  % objects on the stack
     ([) join_s
@@ -1491,14 +1491,14 @@ Author: docu by Sirko Straube
 
 SeeAlso: GNUreadline
 */
-        
+
 /readline
 {
- cout exch  
+ cout exch
  <- ;      % readline takes prompt string as argument
  cin
  getline_is
- not 
+ not
  {
    %% cin
    pop
@@ -1513,7 +1513,7 @@ SeeAlso: GNUreadline
    {
      exch pop true
    } ifelse
- } ifelse 
+ } ifelse
 } bind def
 
 
@@ -1522,7 +1522,7 @@ SeeAlso: GNUreadline
 [/integertype]
 {
   statusdict /exitcode rolld put
-  quit  
+  quit
 } addtotrie def
 
 
@@ -1536,16 +1536,16 @@ SeeAlso: GNUreadline
 /** @BeginDocumentation
 Name: save - save interpreter state in a state dictionary
 Synopsis: save -> statedict true
-Description: 
+Description:
 
 Experimental function to save the interpreter state into a state dictionary.
 The state can then be restored, using the command restore.
-After restore, execution will resume with the next command after 'save'. 
+After restore, execution will resume with the next command after 'save'.
 The boolean return value can be used to branch execution after saving or restoring the state.
 
 Examples:
 
-save and restore can be used to implement non-local jumps within procedures and even between procedures. 
+save and restore can be used to implement non-local jumps within procedures and even between procedures.
 A saved state defines a jump position to which the execution can return by calling restore for this state.
 
 
@@ -1561,18 +1561,18 @@ Author: Marc-Oliver Gewaltig
   execstack [1 -4] Take /estack Set
   errordict /errdict Set
   currentdict end
-  dup /dstack dictstack put_d  
+  dup /dstack dictstack put_d
   true
 } def
-  
+
 /** @BeginDocumentation
 Name: restore - restore interpreter state from state dictionary
 synopsis: statedict restore -> false
-Description: 
+Description:
 
 Experimental function to restore the interpreter state from a previously stored state
 dictionary, created by the command save.
-After restore, execution will resume with the next command after 'save'. 
+After restore, execution will resume with the next command after 'save'.
 The boolean return value can be used to branch execution after saving or restoring the state.
 
 Bugs: Currently, the state of the dictionary stack cannot be restored.
@@ -1606,7 +1606,7 @@ by the following code: /exithook {} def
 
 SeeAlso: quit, exit, executive
 */
- 
+
 /exithook
 {
   quit
@@ -1614,16 +1614,16 @@ SeeAlso: quit, exit, executive
 
 /** @BeginDocumentation
 Name: callback - Function to execute before each input prompt.
-Description: 
+Description:
 callback is a procedure which is called in the executive mode, before
 the input prompt appears.
 It can be used for debugging. For example, during development, the user
 might want to see the contents of the stack after each input.
 
-callback is only called in the executive mode. It cannot be used to 
+callback is only called in the executive mode. It cannot be used to
 trace the execution of a procedure. If this is what you want to do,
 use debug instead.
- 
+
 Examples:
 The following definition will display the stack before each prompt.
 
@@ -1646,10 +1646,10 @@ SeeAlso: callback, exithook, quit, exit
 
 %% check whether GNU readline is installed. If so,
 %% use it for the executive command.
- 
+
 systemdict /GNUreadline known
 {
- 
+
  /executive
  {
   {  %% loop with stopped context to catch signals
@@ -1662,7 +1662,7 @@ systemdict /GNUreadline known
     } if
    } stopped {handleerror} if % to catch signals
   } loop
- exithook   
+ exithook
  } bind def
 
 }
@@ -1697,7 +1697,7 @@ systemdict /GNUreadline known
   (Type 'license' to display the license agreement that came with your copy of NEST.) =
   (For more information visit https://www.nest-simulator.org.) =
   (Type 'help' to see this text again.) =
-  () =  
+  () =
 } def
 
 
@@ -1720,8 +1720,8 @@ called to print the familiar greeting message.
     /:warnings load
     exch append
     /:warnings Set
-  end  
-} def 
+  end
+} def
 
 /welcome
 {
@@ -1782,11 +1782,11 @@ called to print the familiar greeting message.
 /authors
 {
   cout endl
-  (NEST has been created and is maintained by the ) <- 
+  (NEST has been created and is maintained by the ) <-
   (members of the NEST Initiative:) <- endl endl
   (For a list of associated institutions and contributors,) <- endl
   (visit us at https://www.nest-initiative.org.) <- endl endl ;
-    
+
 } def
 
 /** @BeginDocumentation
@@ -1811,7 +1811,7 @@ SeeAlso: page
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Encapsulate builtins in type-trie structures
-%% 
+%%
 
 (typeinit.sli) run
 
@@ -1841,12 +1841,12 @@ SeeAlso: page
 /:pathlist trie
 [/stringtype]
 {
-  getenv   
+  getenv
   {
     (:) breakup % breakup is defined very late
   }
- { 
-   [ ] 
+ {
+   [ ]
  } ifelse
 } bind addtotrie def
 
@@ -1870,10 +1870,10 @@ SeeAlso: page
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%    Module Initialization     %% 
-%%                              %%   
+%%    Module Initialization     %%
+%%                              %%
 %%   now execute all module     %%
-%%   commandstrings.            %% 
+%%   commandstrings.            %%
 %%   These are defined in the   %%
 %%   module classes and called  %%
 %%   by the interpreter.        %%
@@ -1881,33 +1881,33 @@ SeeAlso: page
 
 M_STATUS (sli-init) (Executing module initializers...) message
 moduleinitializers
-{ 
-  initialize_module 
+{
+  initialize_module
 } forall
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Mathematica Style Formatted IO % 
+%% Mathematica Style Formatted IO %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (FormattedIO.sli) run
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%    Debugging Features        %% 
-%%                              %%   
+%%    Debugging Features        %%
+%%                              %%
 %%   run after modules are      %%
-%%   initialized                %%   
+%%   initialized                %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (debug.sli) run
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%    Online Help System        %% 
-%%                              %%   
+%%    Online Help System        %%
+%%                              %%
 %%   run after modules are      %%
-%%   initialized                %%   
+%%   initialized                %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (helpinit.sli) run
@@ -1924,7 +1924,7 @@ moduleinitializers
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* 
+/*
  Documentation (not included in helpdesk)
  Name: :commandline - evaluates sli commandline arguments argv
  Synopsis: - :commandline -> true  (interactive session)
@@ -1950,15 +1950,15 @@ moduleinitializers
    engine called by some other application. Batch mode is protected by
    a stopped context using the standard error handler handleerror.
 
- Parameters: 
+ Parameters:
    :commandline does not take any arguments. It evaluates argv which
    resides in the statusdict.
  Examples:
- Bugs: 
+ Bugs:
  Author: Eppler, Gewaltig
  Remarks: Commented Diesmann July 8, 2000
  SeeAlso: statusdict, argv, executive, start, :parsestdin, run
-*/ 
+*/
 /:commandline
 {
   systemdict begin
@@ -1982,19 +1982,19 @@ moduleinitializers
 	dup (--help) eq over (-h) eq or
 	{
 	  /printhelp true def
-	  pop exit	
+	  pop exit
 	} if
 
 	dup (--version) eq over (-v) eq or
 	{
 	  /printversion true def
-	  pop exit	
+	  pop exit
 	} if
 
 	dup (--batch) eq over (-) eq or
 	{
 	  /batch true def
-	  pop exit	
+	  pop exit
 	} if
 
 	size 11 geq
@@ -2005,7 +2005,7 @@ moduleinitializers
 	    11 exch getinterval % stack: (...)
 	    (:) breakup
 	    statusdict /userargs rolld put
-	    exit	
+	    exit
 	  } if
 	} if
 
@@ -2032,7 +2032,7 @@ moduleinitializers
 
       } loop
 
-      empty { pop exit } if 
+      empty { pop exit } if
     } loop
 
     % Following are the helper functions that are executed according
@@ -2096,27 +2096,27 @@ moduleinitializers
  Name: start - interpreter start symbol
  Synopsis: - start -> -
  Description:
-   The full featured life of the interpreter begins after 
+   The full featured life of the interpreter begins after
    boot-strapping with sli-init.sli by pushing the start symbol.
    When no commandline arguments are present the start symbol
    prepares for an interactive session in the shell with the
-   help of the executive command. When command line arguments 
-   are present a non-interactive session is assumed and the start 
-   symbol prepares for recognition of these 
-   arguments with the help of the :commandline command.     
-   When executing files and an error is raised that is not 
+   help of the executive command. When command line arguments
+   are present a non-interactive session is assumed and the start
+   symbol prepares for recognition of these
+   arguments with the help of the :commandline command.
+   When executing files and an error is raised that is not
    caught by the script, quit with the exit code scripterror, which
    is defined in the exitcodes dictionary in statusdict.
- Parameters: 
-   start does not take any arguments. It evaluates the length 
+ Parameters:
+   start does not take any arguments. It evaluates the length
    of argv which resides in the statusdict.
  Examples:
-  Bugs: 
+  Bugs:
  Author: Gewaltig, Diesmann
  FirstVersion: similar code appeared in sli-1
  Remarks: Commented Diesmann July 8, 2000
  SeeAlso: executive, statusdict
-*/ 
+*/
 
 /start {
   {
@@ -2133,9 +2133,9 @@ moduleinitializers
       % an error occurred in a stopped context without proper error
       % handler.
       { { run } forall } stopped { handleerror scripterror quit_i } if
-      quit    
+      quit
     } ifelse
-    
+
   } stopped { handleerror } if
 
 } def
@@ -2159,20 +2159,20 @@ SeeAlso: eval
 /** @BeginDocumentation
 Name: environment - return dictionary of environment variables
 Synopsis: enviromnent -> dict
-Description: 
+Description:
 Returns dictionary with the environment variables of the process that
 invoked NEST. It is a shortcut for statusdict/environment ::, provided
 for backward compatibility.
 SeeAlso: statusdict
 */
-/environment 
+/environment
 {
   statusdict/environment ::
 } def
 
 end % systemdict
 
-(SLIUSER) :pathlist path setpath % prepend user directories    
+(SLIUSER) :pathlist path setpath % prepend user directories
 (.) path setpath                % prepend current directory
 
 
@@ -2184,11 +2184,11 @@ Returns true if NEST/SLI was compiled with support for threads, and returns
 false otherwise.
 SeeAlso: statusdict
 */
-/is_threaded 
+/is_threaded
 {
-  % We must test against "no", if threads are supported threading is a 
+  % We must test against "no", if threads are supported threading is a
   % string containing the threading model.
-  statusdict/threading :: (no) neq 
+  statusdict/threading :: (no) neq
 } def
 
 /** @BeginDocumentation
@@ -2221,7 +2221,7 @@ literal - Reason for exit
 Example:
 /unittest using
 is_threaded not { /skipped_no_threading exit_test_gracefully } if
-SeeAlso: skip_if_no_mpi, skip_if_have_mpi, skip_if_not_threaded, skip_if_without_gsl, skip_if_without_music 
+SeeAlso: skip_if_no_mpi, skip_if_have_mpi, skip_if_not_threaded, skip_if_without_gsl, skip_if_without_music
 */
 /exit_test_gracefully[/literaltype]
 {
@@ -2239,6 +2239,7 @@ special prerequisites.
 SeeAlso: exit_test_gracefully
 */
 
+/skip_if_without_boost { statusdict/have_boost :: not { /skipped_no_boost exit_test_gracefully } if } def
 /skip_if_no_mpi { statusdict/is_mpi :: not { /skipped_no_mpi exit_test_gracefully } if } def
 /skip_if_have_mpi { statusdict/is_mpi :: { /skipped_have_mpi exit_test_gracefully } if } def
 /skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def

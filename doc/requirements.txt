@@ -8,6 +8,7 @@ docutils>=0.19
 example>=0.1.0
 flask>=2.3.2
 flask_cors>=3.0.10
+graphviz
 ipykernel>=6.22.0
 ipython>=8.11.0
 jupyter>=1.0.0
@@ -25,7 +26,9 @@ scipy>=1.10.1
 seaborn>=0.12.2
 sphinx>=6.2.1
 sphinx_autobuild>=2021.3.14
+sphinx-carousel
 sphinx-copybutton>=0.5.2
+sphinx-carousel
 sphinx-notfound-page>=0.8.3
 sphinx-design>=0.4.1
 sphinx-gallery>=0.13.0

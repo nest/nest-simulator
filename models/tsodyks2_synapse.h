@@ -54,6 +54,12 @@ The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
+Setting the parameter ``tau_fac`` to zero disables facilitation.
+
+Please note that the initial value of ``u`` should be equal to the value of
+``U``. Thus, when setting a new value for ``U`` before the start of the
+simulation, make sure to set ``u`` to the same value.
+
 .. warning::
 
    This synaptic plasticity rule does not take
@@ -173,8 +179,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
-
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -223,14 +228,24 @@ constexpr ConnectionModelProperties tsodyks2_synapse< targetidentifierT >::prope
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
-  const double h = t_spike - t_lastspike_;
-  double x_decay = std::exp( -h / tau_rec_ );
-  double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+
+  if ( t_lastspike_ >= 0.0 )
+  {
+    // only update x and u if this is not the first spike to pass through the synapse
+
+    const double h = t_spike - t_lastspike_;
+    double x_decay = std::exp( -h / tau_rec_ );
+    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ ); // tau_fac == 0 disables facilitation
+
+    // now we compute spike number n+1
+    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
+  }
 
   // We use the current values for the spike number n.
   e.set_receiver( *target );
@@ -240,11 +255,9 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
   e.set_rport( get_rport() );
   e();
 
-  // now we compute spike number n+1
-  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
-
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >
@@ -256,7 +269,7 @@ tsodyks2_synapse< targetidentifierT >::tsodyks2_synapse()
   , x_( 1.0 )
   , tau_rec_( 800.0 )
   , tau_fac_( 0.0 )
-  , t_lastspike_( 0.0 )
+  , t_lastspike_( -1.0 )
 {
 }
 

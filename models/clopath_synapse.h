@@ -98,7 +98,7 @@ References
        in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+       https://modeldb.science/144566?tab=1
 
 See also
 ++++++++
@@ -167,7 +167,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -234,7 +234,7 @@ constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::proper
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
@@ -251,16 +251,18 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // spike. So we initially read the
   // history(t_last_spike - dendritic_delay, ..., T_spike-dendritic_delay]
   // which increases the access counter for these entries.
-  // At registration, all entries' access counters of
-  // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
-  // details.
+
+  // Note that in the STDP synapse, this loop iterates over post spikes,
+  // whereas here we loop over continuous-time history entries (see
+  // histentry_extended).
   target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to postsynaptic activity since last pre-synaptic spike
   while ( start != finish )
   {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
+
+    // facilitation due to postsynaptic activity since last pre-synaptic spike
     weight_ = facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
+
     ++start;
   }
 
@@ -279,6 +281,8 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   x_bar_ = x_bar_ * std::exp( ( t_lastspike_ - t_spike ) / tau_x_ ) + 1.0 / tau_x_;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

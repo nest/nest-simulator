@@ -7,30 +7,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="This is the documentation index for the NEST, a simulator for spiking neuronal networks.">
   <meta name="keywords" content="">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   {{ super() }}
 {% endblock %}
 
 <div role="main">
   {% block content %}
-  <a href="#" id="gototop"><img src="{{ pathto('_static/img/arrow-up-circle.svg',1) }}"/></a>
   <header id="header" class="wrapper clearfix">
     <div id="background" class="particle-img">
      <div id="banner">
       <div id="logo">
-        <img src="{{ pathto('_static/img/nest_docs.png',1) }}" alt="logo"/>
+        <img src="{{ pathto('_static/img/nestsimulatorlogo.png',1) }}" alt="logo"/>
       </div>
     </div>
-    <nav id="topnav" role="navigation">
-      <div class="menu-toggle">Menu</div>
-      <ul class="srt-menu" id="menu-main-navigation">
-       <li><a href="https://nest-simulator.org/">The NEST Homepage</a></li>
-        <li><a href="{{pathto('related_projects')}}">Related projects</a></li>
-        <li><a href="{{pathto('community')}}">Contact and support</a></li>
-      </ul>
-    </nav>
-   </div>
   </header>
-  {{ super() }}
+ {{ super() }}
   {% endblock %}
-</div>
+{%- block footer %}
 
+  <footer>
+  {{ super() }}
+  <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="grid_6 narrow">
+          <a href="https://www.ebrains.eu/"> <img class="icon" src="{{ pathto('_static/img/3_HBP + EBRAINS logo_Color+White.png', 1) }}" /> </a>
+        </div>
+        <div class="grid_2 narrow">
+          <img class="icon" src="{{ pathto('_static/img/eu_logo.png',1) }}" />
+        </div>
+        <div class="grid_4 narrow" >
+          <div id="attribution" style="color:#666;">
+            <a href="{{ pathto('attribution-list.html', 1) }}">Attribution for images and icons</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endblock %}
+</div>

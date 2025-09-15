@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 // Includes from libnestutil:
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -178,8 +178,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #endif /* #ifdef HAVE_MPI */
 
 void
-nest::MPIManager::initialize()
+nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
@@ -211,7 +216,7 @@ nest::MPIManager::initialize()
 }
 
 void
-nest::MPIManager::finalize()
+nest::MPIManager::finalize( const bool )
 {
 }
 
@@ -321,7 +326,12 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
   num_nodes_per_rank[ get_rank() ] = local_nodes.size();
   communicate( num_nodes_per_rank );
 
-  size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  const size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  if ( num_globals == 0 )
+  {
+    return; // must return here to avoid passing address to empty global_nodes below
+  }
+
   global_nodes.resize( num_globals, 0L );
 
   // Set up displacements vector. Entry i specifies the displacement (relative
@@ -332,7 +342,9 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
     displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
   }
 
-  MPI_Allgatherv( &( *local_nodes.begin() ),
+  // avoid dereferencing empty vector
+  const auto send_ptr = local_nodes.empty() ? nullptr : &local_nodes[ 0 ];
+  MPI_Allgatherv( send_ptr,
     local_nodes.size(),
     MPI_Type< long >::type,
     &global_nodes[ 0 ],
@@ -395,7 +407,7 @@ nest::MPIManager::communicate_Allgather( std::vector< unsigned int >& send_buffe
   int disp = 0;
   unsigned int max_recv_count = send_buffer_size_;
   bool overflow = false;
-  for ( int pid = 0; pid < get_num_processes(); ++pid )
+  for ( size_t pid = 0; pid < get_num_processes(); ++pid )
   {
     unsigned int block_disp = pid * send_buffer_size_;
     displacements[ pid ] = disp;
@@ -465,7 +477,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
   int disp = 0;
   unsigned int max_recv_count = send_buffer_size_;
   bool overflow = false;
-  for ( int pid = 0; pid < get_num_processes(); ++pid )
+  for ( size_t pid = 0; pid < get_num_processes(); ++pid )
   {
     unsigned int block_disp = pid * send_buffer_size_;
     displacements[ pid ] = disp;
@@ -555,7 +567,7 @@ nest::MPIManager::communicate_Allgather( std::vector< OffGridSpike >& send_buffe
   int disp = 0;
   unsigned int max_recv_count = send_buffer_size_;
   bool overflow = false;
-  for ( int pid = 0; pid < get_num_processes(); ++pid )
+  for ( size_t pid = 0; pid < get_num_processes(); ++pid )
   {
     unsigned int block_disp = pid * send_buffer_size_;
     displacements[ pid ] = disp;
@@ -599,7 +611,7 @@ nest::MPIManager::communicate( std::vector< double >& send_buffer,
   communicate( n_nodes );
   // Set up displacements vector.
   displacements.resize( get_num_processes(), 0 );
-  for ( int i = 1; i < get_num_processes(); ++i )
+  for ( size_t i = 1; i < get_num_processes(); ++i )
   {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
   }
@@ -829,16 +841,16 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Allgather(
       &test_send_buffer[ 0 ], packet_length, MPI_UNSIGNED, &test_recv_buffer[ 0 ], packet_length, MPI_UNSIGNED, comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Allgatherv
@@ -859,22 +871,22 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   std::vector< int > n_nodes( get_num_processes(), packet_length );
   std::vector< int > displacements( get_num_processes(), 0 );
 
-  for ( int i = 1; i < get_num_processes(); ++i )
+  for ( size_t i = 1; i < get_num_processes(); ++i )
   {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
   }
 
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     communicate_Allgatherv( test_send_buffer, test_recv_buffer, displacements, n_nodes );
   }
 
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes
@@ -893,8 +905,8 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   std::vector< OffGridSpike > test_send_buffer( packet_length );
   std::vector< OffGridSpike > test_recv_buffer( packet_length * get_num_processes() );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Allgather( &test_send_buffer[ 0 ],
@@ -906,8 +918,8 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
       comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Alltoall
@@ -927,16 +939,16 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Alltoall(
       &test_send_buffer[ 0 ], packet_length, MPI_UNSIGNED, &test_recv_buffer[ 0 ], packet_length, MPI_UNSIGNED, comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 // average communication time for a packet size of num_bytes using Alltoallv
@@ -958,14 +970,14 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   std::vector< int > n_nodes( get_num_processes(), packet_length );
   std::vector< int > displacements( get_num_processes(), 0 );
 
-  for ( int i = 1; i < get_num_processes(); ++i )
+  for ( size_t i = 1; i < get_num_processes(); ++i )
   {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
   }
 
   // start time measurement here
-  Stopwatch foo;
-  foo.start();
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > stopwatch;
+  stopwatch.start();
   for ( int i = 0; i < samples; ++i )
   {
     MPI_Alltoallv( &test_send_buffer[ 0 ],
@@ -979,8 +991,8 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
       comm );
   }
   // finish time measurement here
-  foo.stop();
-  return foo.elapsed() / samples;
+  stopwatch.stop();
+  return stopwatch.elapsed() / samples;
 }
 
 #else /* #ifdef HAVE_MPI */

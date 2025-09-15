@@ -27,6 +27,7 @@ compiled by CMake.
 """
 
 import argparse
+import itertools
 import os
 import sys
 from pathlib import Path
@@ -109,6 +110,7 @@ def get_models_from_file(model_file):
         "public Node": "node",
         "public ClopathArchivingNode": "clopath",
         "public UrbanczikArchivingNode": "urbanczik",
+        "public EpropArchivingNode": "neuron",
         "typedef binary_neuron": "binary",
         "typedef rate_": "rate",
     }
@@ -227,9 +229,7 @@ def generate_modelsmodule():
     1. the copyright header.
     2. a list of generic NEST includes
     3. the list of includes for the models to build into NEST
-    4. some boilerplate function implementations needed to fulfill the
-       Module interface
-    5. the list of model registration lines for the models to build
+    4. the list of model registration lines for the models to build
        into NEST
 
     The code is enriched by structured C++ comments as to make
@@ -241,7 +241,7 @@ def generate_modelsmodule():
     with open(fname, "r") as file:
         copyright_header = file.read()
 
-    fname = "modelsmodule.cpp"
+    fname = "models.cpp"
     modeldir = Path(blddir) / "models"
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
@@ -249,7 +249,7 @@ def generate_modelsmodule():
         file.write(
             dedent(
                 """
-            #include "modelsmodule.h"
+            #include "models.h"
 
             // Generated includes
             #include "config.h"
@@ -265,28 +265,7 @@ def generate_modelsmodule():
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
 
-        file.write(
-            dedent(
-                """
-            nest::ModelsModule::ModelsModule()
-            {
-            }
-
-            nest::ModelsModule::~ModelsModule()
-            {
-            }
-
-            const std::string
-            nest::ModelsModule::name() const
-            {
-              return std::string( "NEST standard models module" );
-            }
-
-            void
-            nest::ModelsModule::init( SLIInterpreter* )
-            {"""
-            )
-        )
+        file.write("\nvoid nest::register_models()\n{")
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")

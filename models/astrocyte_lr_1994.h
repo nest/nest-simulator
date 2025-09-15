@@ -164,15 +164,15 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======  ========= =============================================================
+======== ========= =============================================================
 **Dynamic state variables**
--------------------------------------------------------------------------------
-IP3     µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
-                  cytosol
-Ca      µM        Calcium concentration in the astrocytic cytosol
-h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
-                  yet inactivated by calcium
-======  ========= =============================================================
+--------------------------------------------------------------------------------
+IP3      µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
+                   cytosol
+Ca_astro µM        Calcium concentration in the astrocytic cytosol
+h_IP3R   unitless  Fraction of IP3 receptors on the astrocytic ER that are not
+                   yet inactivated by calcium
+======== ========= =============================================================
 
 =============== ========= =====================================================
 **Parameters**
@@ -248,7 +248,7 @@ EndUserDocs */
 
 void register_astrocyte_lr_1994( const std::string& name );
 
-class astrocyte_lr_1994 : public StructuralPlasticityNode
+class astrocyte_lr_1994 : public Node
 {
 
 public:
@@ -354,8 +354,8 @@ public:
     enum StateVecElems
     {
       IP3 = 0,
-      Ca,     // 1
-      h_IP3R, // 2
+      Ca_astro, // 1
+      h_IP3R,   // 2
       STATE_VEC_SIZE
     };
 
@@ -471,7 +471,6 @@ astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StructuralPlasticityNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -488,7 +487,6 @@ astrocyte_lr_1994::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  StructuralPlasticityNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

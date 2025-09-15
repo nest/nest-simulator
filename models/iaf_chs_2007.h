@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire, hard threshold
 
 Short description
 +++++++++++++++++
@@ -275,7 +275,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

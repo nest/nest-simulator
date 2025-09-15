@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire, had threshold
 
 Short description
 +++++++++++++++++
@@ -68,7 +68,8 @@ a different time constant. The port number has to match the respective
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
-:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
+`PyNEST Microcircuit: Helper Functions
+<https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
 
 Sends
 +++++
@@ -211,9 +212,7 @@ private:
 
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_;     //!< membrane potential, variable 2
-    double current_; //!< This is the current in a time step. This is only
-                     //!< here to allow logging
+    double V_m_; //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
     int refractory_steps_;
@@ -275,7 +274,6 @@ private:
   }; // Variables
 
   /**
-   * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -301,7 +299,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      return std::accumulate( S_.i_syn_.begin(), S_.i_syn_.end(), 0.0 );
     }
     else
     {

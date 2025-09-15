@@ -49,9 +49,8 @@ public:
   ModelManager();
   ~ModelManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -82,7 +81,7 @@ public:
    *        num_connections and the min_ and max_delay setting in
    *        ConnectorBase was moved out to the ConnectionManager
    */
-  ConnectorModel& get_connection_model( synindex syn_id, size_t t = 0 );
+  ConnectorModel& get_connection_model( synindex syn_id, size_t thread_id );
 
   const std::vector< ConnectorModel* >& get_connection_models( size_t tid );
 
@@ -96,32 +95,10 @@ public:
    * @param deprecation_info  If non-empty string, deprecation warning will
    *                          be issued for model with this info to user.
    * @return ID of the new model object.
-   * @see register_prototype_connection
+   * @see register_connection_model
    */
   template < class ModelT >
   size_t register_node_model( const Name& name, std::string deprecation_info = std::string() );
-
-  /**
-   * Copy an existing model and register it as a new model.
-   *
-   * This function allows users to create their own, cloned models.
-   * @param old_name name of existing model.
-   * @param new_name name of new model.
-   * @param params default parameters of new model.
-   * @return model ID of new Model object.
-   * @see copy_node_model_, copy_connection_model_
-   */
-  size_t copy_model( Name old_name, Name new_name, DictionaryDatum params );
-
-  /**
-   * Set the default parameters of a model.
-   *
-   * @param name of model.
-   * @param params default parameters to be set.
-   * @return true if the operation succeeded, else false
-   * @see set_node_defaults_, set_synapse_defaults_
-   */
-  bool set_model_defaults( Name name, DictionaryDatum params );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -139,6 +116,27 @@ public:
    */
   template < template < typename targetidentifierT > class ConnectionT >
   void register_connection_model( const std::string& name );
+
+  /**
+   * Copy an existing model and register it as a new model.
+   *
+   * This function allows users to create their own, cloned models.
+   * @param old_name name of existing model.
+   * @param new_name name of new model.
+   * @param params default parameters of new model.
+   * @see copy_node_model_, copy_connection_model_
+   */
+  void copy_model( Name old_name, Name new_name, DictionaryDatum params );
+
+  /**
+   * Set the default parameters of a model.
+   *
+   * @param name of model.
+   * @param params default parameters to be set.
+   * @return true if the operation succeeded, else false
+   * @see set_node_defaults_, set_synapse_defaults_
+   */
+  bool set_model_defaults( Name name, DictionaryDatum params );
 
   /**
    * @return The model ID for a Model with a given name
@@ -165,7 +163,7 @@ public:
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
-  void assert_valid_syn_id( synindex syn_id, size_t t = 0 ) const;
+  void assert_valid_syn_id( synindex syn_id, size_t t ) const;
 
   bool are_model_defaults_modified() const;
 
@@ -176,36 +174,42 @@ public:
    */
   void memory_info() const;
 
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
+  std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
+  /**
+   * Delete all models and clear the modeldict
+   *
+   * This function deletes all models, which will as a side-effect also
+   * delete all nodes. The built-in models will be re-registered in
+   * initialize()
+   */
   void clear_node_models_();
 
   void clear_connection_models_();
 
   size_t register_node_model_( Model* model );
 
-  synindex register_connection_model_( ConnectorModel* );
+  template < typename CompleteConnecionT >
+  void register_specific_connection_model_( const std::string& name );
 
   /**
    * Copy an existing node model and register it as a new model.
    *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
-   * @return model ID of new Model object.
    * @see copy_model(), copy_connection_model_()
    */
-  size_t copy_node_model_( size_t old_id, Name new_name );
+  void copy_node_model_( const size_t old_id, Name new_name, DictionaryDatum params );
 
   /**
    * Copy an existing synapse model and register it as a new model.
    *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
-   * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  size_t copy_connection_model_( size_t old_id, Name new_name );
+  void copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params );
 
   /**
    * Set the default parameters of a model.
@@ -229,34 +233,40 @@ private:
   static bool compare_model_by_id_( const int a, const int b );
 
   /**
-   * List of clean built-in node models.
-   */
-  std::vector< Model* > builtin_node_models_;
-
-  /**
-   * List of usable node models. This list is cleared and repopulated
-   * upon application startup and calls to ResetKernel.
+   * List of node models.
    *
-   * It contains copies of the built-in models, models registered from extension
-   * modules, and models created by calls to CopyModel(). The elements
-   * of this list also keep the user-modified defaults.
+   * The list contains all built-in node models requested for
+   * compilation using -Dwith-models or -Dwith-modelset, models
+   * registered from within extension modules, and models created by
+   * calls to CopyModel().
+   *
+   * This list is cleared and built-in models are re-registered upon
+   * calls to ResetKernel, while those registered from user-modules
+   * and copies are not.
+   *
+   * The elements of this list are used to create instances and are
+   * responsible for the storage of model defaults.
    */
   std::vector< Model* > node_models_;
 
   /**
-   * List of built-in clean connection models.
-   */
-  std::vector< ConnectorModel* > builtin_connection_models_;
-
-  /**
-   * The list of usable connection models.
+   * The list of connection models.
    *
-   * The first dimension keeps one entry per thread, the second dimension has the actual models.
-   * This list is cleared and repopulated upon application startup and
-   * calls to ResetKernel. The inner list contains copies of the
-   * built-in models, models registered from extension modules, and
-   * models created by calls to CopyModel(). The elements of the list
-   * also keep the user-modified defaults.
+   * This list contains all built-in connection models requested for
+   * compilation using -Dwith-models or -Dwith-modelset, models
+   * registered from within extension modules, and models created by
+   * calls to CopyModel().
+   *
+   * The first dimension is thread-optimitzed by containing one vector
+   * with all models per thread, as to avoid colliding memory accesses
+   * during connection creation.
+   *
+   * This list is cleared and built-in models are re-registered upon
+   * calls to ResetKernel, while those registered from user-modules
+   * and copies are not.
+   *
+   * The elements of this list are used to create instances and are
+   * responsible for the storage of model defaults.
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
@@ -288,23 +298,16 @@ ModelManager::are_model_defaults_modified() const
 }
 
 inline ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, size_t t )
+ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
 {
-  assert_valid_syn_id( syn_id );
-  return *( connection_models_[ t ][ syn_id ] );
+  assert_valid_syn_id( syn_id, thread_id );
+  return *( connection_models_[ thread_id ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&
 ModelManager::get_connection_models( size_t tid )
 {
   return connection_models_[ tid ];
-}
-
-inline size_t
-ModelManager::get_num_connection_models() const
-{
-  assert( connection_models_[ 0 ].size() <= invalid_synindex );
-  return connection_models_[ 0 ].size();
 }
 
 inline void
@@ -316,11 +319,11 @@ ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
   }
 }
 
-inline SecondaryEvent&
+inline std::unique_ptr< SecondaryEvent >
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
-  assert_valid_syn_id( syn_id );
-  return *get_connection_model( syn_id, tid ).get_secondary_event();
+  assert_valid_syn_id( syn_id, tid );
+  return get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 } // namespace nest

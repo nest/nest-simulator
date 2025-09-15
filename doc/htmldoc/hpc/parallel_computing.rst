@@ -161,7 +161,7 @@ Spikes between neurons and devices
 Synaptic plasticity models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For synapse models supporting plasticity, synapse dynamics in the
+For synapse models supporting :hxt_ref:`plasticity`, synapse dynamics in the
 ``Connection`` object are always handled by the virtual process of the
 `target node`.
 
@@ -203,7 +203,7 @@ experimenting.
    ``local_num_threads`` or the ``total_num_virtual_procs``
    :ref:`kernel attribute<sec_kernel_attributes>`.
 
-   
+
 Multiprocessing
 ---------------
 

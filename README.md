@@ -4,7 +4,7 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nest/nest-simulator/badge)](https://scorecard.dev/viewer/?uri=github.com/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10834751.svg)](https://doi.org/10.5281/zenodo.10834751)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17036827.svg)](https://doi.org/10.5281/zenodo.17036827)
 
 [![Latest release](https://img.shields.io/github/release/nest/nest-simulator.svg?color=brightgreen&label=latest%20release)](https://github.com/nest/nest-simulator/releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)

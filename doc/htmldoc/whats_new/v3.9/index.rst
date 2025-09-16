@@ -23,7 +23,7 @@ Model improvements
 * The tripartite connectivity, used for Astrocytes, now supports multiple primary
   connection rules.
 
-  See :doc:`/auto_examples/astrocytes/index`
+  See :doc:`Astrocyte examples </auto_examples/astrocytes/index>`
 
 Documentation additions
 -----------------------
@@ -31,7 +31,7 @@ Documentation additions
 * We now have a detailed description of neuron models in NEST, inclduding :ref:`update
   algorithm <neuron_update>` and :ref:`neuron types <types_neurons>`.
 
-* We updated the :ref:`Built-in timers <built_in_timers` section to include a graphical description of a simulation run
+* We updated the :ref:`Built-in timers <built_in_timers>` section to include a graphical description of a simulation run
   focusing on timers.
 
-* For Windows users, we added a :ref:`helpful guide <windows_install` to get NEST running on that platform with Docker.
+* For Windows users, we added a :ref:`helpful guide <windows_install>` to get NEST running on that platform with Docker.

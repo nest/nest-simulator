@@ -25,12 +25,16 @@ import numpy as np
 import pytest
 import scipy.stats
 
+# Check that NEST is installed with MPI support and mpi4py is available.
 try:
-    from mpi4py import MPI
+    import mpi4py
 
-    haveMPI4Py = True
+    HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
 except ImportError:
-    haveMPI4Py = False
+    HAVE_MPI4PY = False
+
+if HAVE_MPI4PY:
+    from mpi4py import MPI
 
 
 def setup_network(
@@ -209,7 +213,7 @@ def gather_data(data_array):
         available, the original array is returned.
 
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
         if MPI.COMM_WORLD.Get_rank() == 0:
             if isinstance(data_array, list):
@@ -263,7 +267,7 @@ def chi_squared_check(degrees, expected):
 
 def mpi_barrier():
     """Forms a barrier for MPI processes until all of them call the function."""
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         MPI.COMM_WORLD.Barrier()
 
 

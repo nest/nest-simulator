@@ -46,16 +46,16 @@ M_ERROR setverbosity
   /res Set
   ResetKernel
   << /tics_per_ms 1024. /resolution res >> SetKernelStatus
-  
-  /scg /step_current_generator 
+
+  /scg /step_current_generator
     << /amplitude_times  [ 1. 1.0625 1.125 1.1875 1.25 2. 2.5 ]
-       /amplitude_values [ 10. -20.  40.   -80.   160. -320. 640. ] 
+       /amplitude_values [ 10. -20.  40.   -80.   160. -320. 640. ]
        /allow_offgrid_times offgrid
     >> Create def
   scg /amplitude_times get ==
   /nrn /iaf_psc_alpha << /V_th 1e10 /C_m 1.0 /tau_m 1.0
                          /E_L 0.0 /V_m 0.0 /V_reset 0.0 >> Create def
-  
+
   scg nrn Connect
 
   5 res div cvi res mul Simulate

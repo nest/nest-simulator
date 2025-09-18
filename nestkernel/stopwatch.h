@@ -115,7 +115,7 @@ enum class timeunit_t : size_t
 template < clockid_t clock_type >
 class StopwatchTimer
 {
-  template < StopwatchGranularity, StopwatchParallelism, typename >
+  template < StopwatchGranularity, StopwatchParallelism >
   friend class nest::Stopwatch;
 
 public:

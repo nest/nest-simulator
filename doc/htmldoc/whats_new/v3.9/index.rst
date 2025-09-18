@@ -13,6 +13,12 @@ If you transition from an earlier version, please see our extensive
 :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the
 :ref:`list of updates for previous releases in the 3.x series <whats_new>`.
 
+
+The release of 3.9 brought a lot of changes with 110 PRs
+including 19 bug fixes and 10 enhancements. Here are some
+of the more interesting developments that happened:
+
+
 Model improvements
 ------------------
 

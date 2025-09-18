@@ -288,6 +288,8 @@ public:
    */
   ~Ntree();
 
+  using const_iterator = iterator;
+
   /**
    * Traverse quadtree structure from current ntree.
    *
@@ -305,6 +307,7 @@ public:
    * STL container compatible insert method (the first argument is ignored)
    */
   iterator insert( iterator, const value_type& val );
+  iterator insert( iterator, value_type&& val );
 
   /**
    * @returns member nodes in ntree and their position.
@@ -482,6 +485,12 @@ Ntree< D, T, max_capacity, max_depth >::insert( const std::pair< Position< D >, 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
 Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Position< D >, T >& val )
+{
+  return insert( val.first, val.second );
+}
+template < int D, class T, int max_capacity, int max_depth >
+typename Ntree< D, T, max_capacity, max_depth >::iterator
+Ntree< D, T, max_capacity, max_depth >::insert( iterator, std::pair< Position< D >, T >&& val )
 {
   return insert( val.first, val.second );
 }

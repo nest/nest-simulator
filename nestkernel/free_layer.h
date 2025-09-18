@@ -364,7 +364,7 @@ template < int D >
 void
 FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
-  // communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
+  communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
 // Helper function to compare node IDs used for sorting (Position,node ID) pairs

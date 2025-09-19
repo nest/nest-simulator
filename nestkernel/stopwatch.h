@@ -47,6 +47,7 @@ constexpr bool use_detailed_timers = true;
 #else
 constexpr bool use_detailed_timers = false;
 #endif
+
 #ifdef THREADED_TIMERS
 constexpr bool use_threaded_timers = true;
 #else
@@ -86,7 +87,8 @@ class Stopwatch;
  *   with different time units. Either runs multi-threaded or only on master.   *
  *                                                                              *
  *   Usage example:                                                             *
- *     Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > x;    *
+ *     Stopwatch< StopwatchGranularity::Normal,                                 *
+ *                StopwatchParallelism::MasterOnly > x;                         *
  *     x.start();                                                               *
  *     // ... do computations for 15.34 sec                                     *
  *     x.stop(); // only pauses stopwatch                                       *
@@ -102,12 +104,14 @@ class Stopwatch;
  *     // ^ intermediate timing without stopping the stopwatch                  *
  *     // ... more computations 1.7643 min                                      *
  *     x.stop();                                                                *
- *     x.print("Time needed ", timeunit_t::MINUTES, std::cerr);              *
+ *     x.print("Time needed ", timeunit_t::MINUTES, std::cerr);                 *
  *     // > Time needed 1,8593 min. (on cerr)                                   *
  *     // other units and output streams possible                               *
  ********************************************************************************/
+
 namespace timers
 {
+
 enum class timeunit_t : size_t
 {
   NANOSEC = 1,
@@ -129,8 +133,6 @@ class StopwatchTimer
   friend class nest::Stopwatch;
 
 public:
-  typedef size_t timestamp_t;
-
   //! Creates a stopwatch that is not running.
   StopwatchTimer()
   {
@@ -144,10 +146,11 @@ public:
   void stop();
 
   /**
-   * Returns the time elapsed between the start and stop of the stopwatch in the given unit. If it is running, it
-   * returns the time from start until now. If the stopwatch is run previously, the previous runtime is added. If you
-   * want only the last measurement, you have to reset the timer, before stating the measurement.
-   * Does not change the running state.
+   * Returns the time elapsed between the start and stop of the stopwatch in the given unit.
+   *
+   * If the stopwatch is running, it returns the time from start until now. If the stopwatch has
+   * run previously, the previous runtime is added. If you want only the last measurement, you have
+   * to reset the timer, before stating the measurement. Does not change the running state.
    */
   double elapsed( timeunit_t timeunit = timeunit_t::SECONDS ) const;
 
@@ -159,16 +162,12 @@ public:
   print( const std::string& msg = "", timeunit_t timeunit = timeunit_t::SECONDS, std::ostream& os = std::cout ) const;
 
 private:
-  //! Returns, whether the stopwatch is running.
-  bool is_running_() const;
+  size_t beg_;          //!< clock (in ns) at which timer was last started
+  size_t end_;          //!< clock (in ns) at which timer was last stopped (invariant: end_ >= beg_)
+  size_t prev_elapsed_; //!< accumulated time of all start-stop intervals since last reset
+  bool is_running_;     //!< true between start() and stop()
 
-#ifndef DISABLE_TIMING
-  timestamp_t _beg, _end;
-  size_t _prev_elapsed;
-  bool _running;
-#endif
-
-  //! Returns current time in microseconds since EPOCH.
+  //! Returns current time of clock_type in nanoseconds.
   static size_t get_current_time();
 };
 
@@ -176,81 +175,58 @@ template < clockid_t clock_type >
 inline void
 StopwatchTimer< clock_type >::start()
 {
-#ifndef DISABLE_TIMING
-  if ( not is_running_() )
+  if ( not is_running_ )
   {
-    _prev_elapsed += _end - _beg;     // store prev. time, if we resume
-    _end = _beg = get_current_time(); // invariant: _end >= _beg
-    _running = true;                  // we start running
+    prev_elapsed_ += end_ - beg_;     // store prev. time, if we resume
+    end_ = beg_ = get_current_time(); // invariant: end_ >= beg_
+    is_running_ = true;               // we start running
   }
-#endif
 }
 
 template < clockid_t clock_type >
 inline void
 StopwatchTimer< clock_type >::stop()
 {
-#ifndef DISABLE_TIMING
-  if ( is_running_() )
+  if ( is_running_ )
   {
-    _end = get_current_time(); // invariant: _end >= _beg
-    _running = false;          // we stopped running
+    end_ = get_current_time(); // invariant: end_ >= beg_
+    is_running_ = false;       // we stopped running
   }
-#endif
-}
-
-template < clockid_t clock_type >
-inline bool
-StopwatchTimer< clock_type >::is_running_() const
-{
-#ifndef DISABLE_TIMING
-  return _running;
-#else
-  return false;
-#endif
 }
 
 template < clockid_t clock_type >
 inline double
 StopwatchTimer< clock_type >::elapsed( timeunit_t timeunit ) const
 {
-#ifndef DISABLE_TIMING
   size_t time_elapsed;
-  if ( is_running_() )
+  if ( is_running_ )
   {
-    // get intermediate elapsed time; do not change _end, to be const
-    time_elapsed = get_current_time() - _beg + _prev_elapsed;
+    // get intermediate elapsed time; do not change end_, to be const
+    time_elapsed = get_current_time() - beg_ + prev_elapsed_;
   }
   else
   {
     // stopped before, get time of current measurement + last measurements
-    time_elapsed = _end - _beg + _prev_elapsed;
+    time_elapsed = end_ - beg_ + prev_elapsed_;
   }
   return static_cast< double >( time_elapsed ) / static_cast< double >( timeunit );
-#else
-  return 0.;
-#endif
 }
 
 template < clockid_t clock_type >
 inline void
 StopwatchTimer< clock_type >::reset()
 {
-#ifndef DISABLE_TIMING
-  _beg = 0; // invariant: _end >= _beg
-  _end = 0;
-  _prev_elapsed = 0; // erase all prev. measurements
-  _running = false;  // of course not running.
-#endif
+  beg_ = 0; // invariant: end_ >= beg_
+  end_ = 0;
+  prev_elapsed_ = 0;   // erase all prev. measurements
+  is_running_ = false; // of course not running.
 }
 
 template < clockid_t clock_type >
 inline void
 StopwatchTimer< clock_type >::print( const std::string& msg, timeunit_t timeunit, std::ostream& os ) const
 {
-#ifndef DISABLE_TIMING
-  double e = elapsed( timeunit );
-  os << msg << e;
+  os << msg << elapsed( timeunit );
   switch ( timeunit )
   {
   case timeunit_t::NANOSEC:
@@ -276,12 +252,7 @@ StopwatchTimer< clock_type >::print( const std::string& msg, timeunit_t timeunit
   default:
     throw BadParameter( "Invalid timeunit provided to stopwatch." );
   }
-#ifdef DEBUG
-  os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg << ", end: " << _end
-     << ", diff: " << ( _end - _beg ) << ", prev: " << _prev_elapsed << ")";
-#endif
   os << std::endl;
-#endif
 }
 
 template < clockid_t clock_type >
@@ -310,12 +281,16 @@ class Stopwatch
 {
   static constexpr bool enable_timer = detailed_timer == StopwatchGranularity::Normal or use_detailed_timers;
   static constexpr bool use_timer_array = threaded_timer == StopwatchParallelism::Threaded and use_threaded_timers;
-  template < int ClockType >
+
+  // Define StopwatchTimetType< ClockType > depending on timer compilation switches
+  // The outer conditional selects the empty type std::tuple<> is enable_timer is false, otherwise it selects the inner
+  // conditional. The inner conditional selects a vector of timers if use_timer_array is true, a single timer otherwise.
+  template < clockid_t ClockType >
   using StopwatchTimerType = std::conditional_t< enable_timer,
     std::conditional_t< use_timer_array,
       std::vector< timers::StopwatchTimer< ClockType > >,
       timers::StopwatchTimer< ClockType > >,
-    std::tuple<> >; //!< Empty tuple as an STL version of an empty class
+    std::tuple<> >;
 
 public:
   void start();

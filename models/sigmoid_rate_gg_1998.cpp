@@ -22,10 +22,7 @@
 
 #include "sigmoid_rate_gg_1998.h"
 
-// Includes from nestkernel
-#include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
+#include <dict_util.h>
 
 namespace nest
 {

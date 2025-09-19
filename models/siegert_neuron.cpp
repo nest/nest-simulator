@@ -26,7 +26,6 @@
 
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
-#include <cstdio>
 #include <string>
 
 // Includes from libnestutil:
@@ -36,11 +35,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
 
 struct my_params
@@ -191,7 +187,7 @@ nest::siegert_neuron::siegert_neuron()
   , B_( *this )
 {
   recordablesMap_.create();
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
   gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
@@ -201,7 +197,7 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
   gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
@@ -284,7 +280,7 @@ void
 nest::siegert_neuron::init_buffers_()
 {
   // resize buffers
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   B_.drift_input_.resize( buffer_size, 0.0 );
   B_.diffusion_input_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
@@ -312,8 +308,8 @@ nest::siegert_neuron::pre_run_hook()
 bool
 nest::siegert_neuron::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
-  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
+  const double wfr_tol = kernel::manager< SimulationManager >.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
   // allocate memory to store rates to be sent by rate events
@@ -357,7 +353,7 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
   // Send diffusion-event
   DiffusionConnectionEvent rve;
   rve.set_coeffarray( new_rates );
-  kernel().event_delivery_manager.send_secondary( *this, rve );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, rve );
 
   // Reset variables
   std::vector< double >( buffer_size, 0.0 ).swap( B_.drift_input_ );

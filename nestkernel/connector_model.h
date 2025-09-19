@@ -28,17 +28,16 @@
 #include <string>
 
 // Includes from libnestutil:
+#include "enum_bitfield.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
-#include "enum_bitfield.h"
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
+#include "simulation_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -143,6 +142,9 @@ public:
   }
 
 protected:
+  // helper function to avoid circular dependency
+  static size_t get_synapse_model_id( const std::string& name );
+
   std::string name_;                     //!< name of the ConnectorModel
   bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
   ConnectionModelProperties properties_; //!< connection properties

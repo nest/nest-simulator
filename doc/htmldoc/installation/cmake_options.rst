@@ -213,7 +213,7 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
 |                                               | [default=OFF]. Developers should wrap debugging output in      |
-|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel::manager<KernelManager>().write_dump()`  |
 |                                               | from inside it. The macro can contain almost any valid code.   |
 +-----------------------------------------------+----------------------------------------------------------------+
 
@@ -237,7 +237,7 @@ Generic build configuration
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++17'].           |
+| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++20'].           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |

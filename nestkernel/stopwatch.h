@@ -23,21 +23,18 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-// C includes:
-#include <sys/time.h>
-
 // C++ includes:
 #include "arraydatum.h"
 #include "dictdatum.h"
 #include "dictutils.h"
 #include <algorithm>
-#include <cassert>
-#include <chrono>
 #include <iostream>
 #include <vector>
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "kernel_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -70,7 +67,7 @@ enum class StopwatchParallelism
 // and that requires the name to be known from before. See
 // https://stackoverflow.com/questions/30418270/clang-bug-namespaced-template-class-friend
 // for details.
-template < StopwatchGranularity, StopwatchParallelism, typename >
+template < StopwatchGranularity, StopwatchParallelism >
 class Stopwatch;
 
 /********************************************************************************
@@ -118,7 +115,7 @@ enum class timeunit_t : size_t
 template < clockid_t clock_type >
 class StopwatchTimer
 {
-  template < StopwatchGranularity, StopwatchParallelism, typename >
+  template < StopwatchGranularity, StopwatchParallelism >
   friend class nest::Stopwatch;
 
 public:
@@ -221,7 +218,7 @@ StopwatchTimer< clock_type >::elapsed( timeunit_t timeunit ) const
   }
   return static_cast< double >( time_elapsed ) / static_cast< double >( timeunit );
 #else
-  return 0.;
+  return std::numeric_limits< double >::quiet_NaN();
 #endif
 }
 
@@ -315,8 +312,10 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
  *
  * In all cases, both the (monotonic) wall-time and cpu time are measured.
  */
-template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer, typename = void >
-class Stopwatch
+template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
+requires( ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers )
+  and ( threaded_timer == StopwatchParallelism::MasterOnly
+    or not use_threaded_timers ) ) class Stopwatch< detailed_timer, threaded_timer >
 {
 public:
   void
@@ -393,11 +392,9 @@ private:
   timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
-//! Stopwatch template specialization for detailed, master-only timer instances if detailed timers are deactivated.
-template <>
-class Stopwatch< StopwatchGranularity::Detailed,
-  StopwatchParallelism::MasterOnly,
-  std::enable_if< not use_detailed_timers > >
+//! Stopwatch template specialization for detailed timer instances if detailed timers are deactivated.
+template < StopwatchParallelism threaded_timer >
+requires( not use_detailed_timers ) class Stopwatch< StopwatchGranularity::Detailed, threaded_timer >
 {
 public:
   void
@@ -411,49 +408,7 @@ public:
   double
   elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
   {
-    return 0;
-  }
-  void
-  reset()
-  {
-  }
-  void
-  print( const std::string& = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
-  {
-  }
-  void
-  get_status( DictionaryDatum&, const Name&, const Name& ) const
-  {
-  }
-
-private:
-  bool
-  is_running_() const
-  {
-    return false;
-  }
-};
-
-//! Stopwatch template specialization for detailed, threaded timer instances if detailed timers are deactivated.
-template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer,
-  StopwatchParallelism::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchGranularity::Detailed and not use_detailed_timers ) > >
-{
-public:
-  void
-  start()
-  {
-  }
-  void
-  stop()
-  {
-  }
-  double
-  elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
-  {
-    return 0;
+    return std::numeric_limits< double >::quiet_NaN();
   }
   void
   reset()
@@ -480,23 +435,61 @@ private:
  * are activated or the timer is not a detailed one in the first place.
  */
 template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer,
-  StopwatchParallelism::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >
+requires( use_threaded_timers
+  and ( detailed_timer == StopwatchGranularity::Normal
+    or use_detailed_timers ) ) class Stopwatch< detailed_timer, StopwatchParallelism::Threaded >
 {
 public:
-  void start();
+  void
+  start()
+  {
+    kernel::manager< VPManager >.assert_thread_parallel();
 
-  void stop();
+    walltime_timers_[ kernel::manager< VPManager >.get_thread_id() ].start();
+    cputime_timers_[ kernel::manager< VPManager >.get_thread_id() ].start();
+  }
 
-  double elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const;
+  void
+  stop()
+  {
+    kernel::manager< VPManager >.assert_thread_parallel();
 
-  void reset();
+    walltime_timers_[ kernel::manager< VPManager >.get_thread_id() ].stop();
+    cputime_timers_[ kernel::manager< VPManager >.get_thread_id() ].stop();
+  }
 
-  void print( const std::string& msg = "",
+  double
+  elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const
+  {
+    kernel::manager< VPManager >.assert_thread_parallel();
+
+    return walltime_timers_[ kernel::manager< VPManager >.get_thread_id() ].elapsed( timeunit );
+  }
+
+  void
+  reset()
+  {
+    kernel::manager< VPManager >.assert_single_threaded();
+
+    const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
+    walltime_timers_.resize( num_threads );
+    cputime_timers_.resize( num_threads );
+    for ( size_t i = 0; i < num_threads; ++i )
+    {
+      walltime_timers_[ i ].reset();
+      cputime_timers_[ i ].reset();
+    }
+  }
+
+  void
+  print( const std::string& msg = "",
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
-    std::ostream& os = std::cout ) const;
+    std::ostream& os = std::cout ) const
+  {
+    kernel::manager< VPManager >.assert_thread_parallel();
+
+    walltime_timers_[ kernel::manager< VPManager >.get_thread_id() ].print( msg, timeunit, os );
+  }
 
   void
   get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
@@ -517,7 +510,13 @@ public:
   }
 
 private:
-  bool is_running_() const;
+  bool
+  is_running_() const
+  {
+    kernel::manager< VPManager >.assert_thread_parallel();
+
+    return walltime_timers_[ kernel::manager< VPManager >.get_thread_id() ].is_running_();
+  }
 
   // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
   std::vector< timers::StopwatchTimer< CLOCK_MONOTONIC > > walltime_timers_;

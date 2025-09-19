@@ -30,6 +30,8 @@
 
 #include "compose.hpp"
 #include "kernel_manager.h"
+#include "node.h"
+#include "node_manager.h"
 
 namespace nest
 {
@@ -136,7 +138,7 @@ public:
   get_target_ptr( const size_t tid ) const
   {
     assert( target_ != invalid_targetindex );
-    return kernel().node_manager.thread_lid_to_node( tid, target_ );
+    return kernel::manager< NodeManager >.thread_lid_to_node( tid, target_ );
   }
 
   size_t
@@ -166,7 +168,7 @@ private:
 inline void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  assert( kernel().node_manager.thread_local_data_is_up_to_date() );
+  assert( kernel::manager< NodeManager >.thread_local_data_is_up_to_date() );
 
   size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )

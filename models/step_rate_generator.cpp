@@ -23,10 +23,7 @@
 #include "step_rate_generator.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "booldatum.h"
@@ -285,7 +282,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
   const long t0 = origin.get_steps();
 
   // allocate memory to store rates to be sent by rate events
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   std::vector< double > new_rates( buffer_size, 0.0 );
 
   // Skip any times in the past. Since we must send events proactively,
@@ -327,7 +324,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
   {
     DelayedRateConnectionEvent drve;
     drve.set_coeffarray( new_rates );
-    kernel().event_delivery_manager.send_secondary( *this, drve );
+    kernel::manager< EventDeliveryManager >.send_secondary( *this, drve );
   }
 }
 

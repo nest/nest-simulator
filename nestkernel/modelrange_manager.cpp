@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model.h"
+#include "model_manager.h"
 
 
 namespace nest
@@ -112,7 +113,7 @@ ModelRangeManager::get_model_id( size_t node_id ) const
 nest::Model*
 nest::ModelRangeManager::get_model_of_node_id( size_t node_id )
 {
-  return kernel().model_manager.get_node_model( get_model_id( node_id ) );
+  return kernel::manager< ModelManager >.get_node_model( get_model_id( node_id ) );
 }
 
 const modelrange&

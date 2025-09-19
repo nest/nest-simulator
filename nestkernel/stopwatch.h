@@ -304,92 +304,19 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
 } // namespace timers
 
 
-//! This template only measures a single timer, owned by the master thread, for both detailed and regular timers.
-template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer, StopwatchParallelism::MasterOnly >
+//! Stopwatch template specialization.
+template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
+class Stopwatch
 {
-public:
-  void
-  start()
-  {
-    if constexpr ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers )
-    {
-#pragma omp master
-      {
-        walltime_timer_.start();
-        cputime_timer_.start();
-      }
-    }
-  }
+  static constexpr bool enable_timer = detailed_timer == StopwatchGranularity::Normal or use_detailed_timers;
+  static constexpr bool use_timer_array = threaded_timer == StopwatchParallelism::Threaded and use_threaded_timers;
+  template < int ClockType >
+  using StopwatchTimerType = std::conditional_t< enable_timer,
+    std::conditional_t< use_timer_array,
+      std::vector< timers::StopwatchTimer< ClockType > >,
+      timers::StopwatchTimer< ClockType > >,
+    std::tuple<> >; //!< Empty tuple as an STL version of an empty class
 
-  void
-  stop()
-  {
-#pragma omp master
-    {
-      walltime_timer_.stop();
-      cputime_timer_.stop();
-    }
-  }
-
-  double
-  elapsed( timers::timeunit_t timeunit = timers::timeunit_t::SECONDS ) const
-  {
-    double elapsed = 0.;
-#pragma omp master
-    {
-      elapsed = walltime_timer_.elapsed( timeunit );
-    };
-    return elapsed;
-  }
-
-  void
-  reset()
-  {
-#pragma omp master
-    {
-      walltime_timer_.reset();
-      cputime_timer_.reset();
-    }
-  }
-
-  void
-  print( const std::string& msg = "",
-    timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
-    std::ostream& os = std::cout ) const
-  {
-#pragma omp master
-    walltime_timer_.print( msg, timeunit, os );
-  }
-
-  void
-  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
-  {
-    def< double >( d, walltime_name, walltime_timer_.elapsed() );
-    def< double >( d, cputime_name, cputime_timer_.elapsed() );
-  }
-
-private:
-  bool
-  is_running_() const
-  {
-    bool is_running_ = false;
-#pragma omp master
-    {
-      is_running_ = walltime_timer_.is_running_();
-    };
-    return is_running_;
-  }
-
-  // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
-  timers::StopwatchTimer< CLOCK_MONOTONIC > walltime_timer_;
-  timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
-};
-
-//! Stopwatch template specialization for threaded timer instances.
-template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer, StopwatchParallelism::Threaded >
-{
 public:
   void start();
 
@@ -409,8 +336,8 @@ private:
   bool is_running_() const;
 
   // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
-  std::vector< timers::StopwatchTimer< CLOCK_MONOTONIC > > walltime_timers_;
-  std::vector< timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > > cputime_timers_;
+  StopwatchTimerType< CLOCK_MONOTONIC > walltime_timer_;
+  StopwatchTimerType< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
 } /* namespace nest */

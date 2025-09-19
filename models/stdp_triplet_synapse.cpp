@@ -22,9 +22,6 @@
 
 #include "stdp_triplet_synapse.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_stdp_triplet_synapse( const std::string& name )
 {

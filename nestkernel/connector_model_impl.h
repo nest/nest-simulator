@@ -20,28 +20,9 @@
  *
  */
 
-#ifndef CONNECTOR_MODEL_IMPL_H
-#define CONNECTOR_MODEL_IMPL_H
-
-#include "connector_model.h"
-
-// Generated includes:
-#include "config.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "enum_bitfield.h"
-
-// Includes from nestkernel:
 #include "connector_base.h"
+#include "connector_model.h"
 #include "delay_checker.h"
-#include "kernel_manager.h"
-#include "nest_time.h"
-#include "nest_timeconverter.h"
-#include "secondary_event_impl.h"
-
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -63,7 +44,7 @@ namespace nest
 // }
 
 template < typename ConnectionT >
-ConnectorModel*
+inline ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
@@ -79,7 +60,7 @@ GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id )
 }
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
   // calibrate the delay of the default properties here
@@ -93,7 +74,7 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 }
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 {
   // first get properties common to all synapses
@@ -105,7 +86,7 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
-  ( *d )[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
+  ( *d )[ names::synapse_modelid ] = get_synapse_model_id( name_ );
   ( *d )[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
   ( *d )[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }
@@ -126,12 +107,12 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // set_status calls on common properties and default connection may
   // modify min/max delay, we need to freeze the min/max_delay checking.
 
-  kernel().connection_manager.get_delay_checker().freeze_delay_update();
+  kernel::manager< ConnectionManager >.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  kernel().connection_manager.get_delay_checker().enable_delay_update();
+  kernel::manager< ConnectionManager >.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time
   // it is used
@@ -139,7 +120,7 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 }
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   // This is called just once per Connect() call, so we need not worry much about performance.
@@ -161,7 +142,7 @@ GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatu
 
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
@@ -176,7 +157,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double d = default_connection_.get_delay();
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( d );
       }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
@@ -186,8 +167,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // without delay is created.
       else
       {
-        const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
+        const double wfr_comm_interval = kernel::manager< SimulationManager >.get_wfr_comm_interval();
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
       }
     }
     catch ( BadDelay& e )
@@ -196,29 +177,29 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
           get_name(),
-          Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
-          Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
+          Time::delay_steps_to_ms( kernel::manager< ConnectionManager >.get_min_delay() ),
+          Time::delay_steps_to_ms( kernel::manager< ConnectionManager >.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
 }
 
 template < typename ConnectionT >
-size_t
+inline size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const
 {
   return default_connection_.get_syn_id();
 }
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {
   default_connection_.set_syn_id( syn_id );
 }
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
@@ -231,7 +212,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
     if ( p->known( names::delay ) )
@@ -250,7 +231,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
       }
     }
     else
@@ -294,7 +275,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
 
 template < typename ConnectionT >
-void
+inline void
 GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
@@ -322,5 +303,3 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 }
 
 } // namespace nest
-
-#endif

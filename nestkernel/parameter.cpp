@@ -22,12 +22,11 @@
 
 #include <cmath>
 
+#include "nest.h"
 #include "node.h"
 #include "node_collection.h"
-#include "spatial.h"
-#include "vp_manager_impl.h"
-
 #include "parameter.h"
+#include "spatial.h"
 
 
 namespace nest
@@ -92,14 +91,15 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
   normal_distribution::param_type param( mean_, std_ );
   dist.param( param );
   assert( normal_dists_.size() == 0 );
-  normal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+  normal_dists_.resize( kernel::manager< VPManager >.get_num_threads(), dist );
 }
 
 double
 NormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = node
+    ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )
+    : kernel::manager< VPManager >.get_thread_id();
   return normal_dists_[ tid ]( rng );
 }
 
@@ -118,14 +118,15 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
   const lognormal_distribution::param_type param( mean_, std_ );
   dist.param( param );
   assert( lognormal_dists_.size() == 0 );
-  lognormal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+  lognormal_dists_.resize( kernel::manager< VPManager >.get_num_threads(), dist );
 }
 
 double
 LognormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = node
+    ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )
+    : kernel::manager< VPManager >.get_thread_id();
   return lognormal_dists_[ tid ]( rng );
 }
 
@@ -137,7 +138,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node );
+  NodeCollectionPTR nc = kernel::manager< NodeManager >.node_id_to_node_collection( node );
   if ( not nc.get() )
   {
     throw KernelException( "NodePosParameter: not nc" );

@@ -23,10 +23,8 @@
 #ifndef GENERICMODEL_H
 #define GENERICMODEL_H
 
-// C++ includes:
-#include <new>
-
 // Includes from nestkernel:
+#include "logging_manager.h"
 #include "model.h"
 
 namespace nest
@@ -281,6 +279,24 @@ GenericModel< ElementT >::get_model_id()
 {
   return proto_.get_model_id();
 }
+
+template < typename ElementT >
+void
+GenericModel< ElementT >::deprecation_warning( const std::string& caller )
+{
+  if ( deprecation_warning_issued_ or deprecation_info_.empty() )
+  {
+    return;
+  }
+
+  if ( not deprecation_info_.empty() )
+  {
+    LOG( M_DEPRECATED, caller, "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
+  }
+
+  deprecation_warning_issued_ = true;
 }
+
+} // namespace nest
 
 #endif

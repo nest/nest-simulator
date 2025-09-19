@@ -22,9 +22,6 @@
 
 #include "sic_connection.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_sic_connection( const std::string& name )
 {

@@ -493,6 +493,12 @@ glif_psc_double_alpha::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+inline void
+glif_psc_double_alpha::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e ); // the logger does this for us
+}
+
 } // namespace nest
 
 #endif

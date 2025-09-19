@@ -55,22 +55,29 @@ constexpr bool use_threaded_timers = false;
 
 enum class StopwatchGranularity
 {
-  Normal,  //<! Always measure stopwatch
-  Detailed //<! Only measure if detailed stopwatches are activated
+  Normal,  //!< Always measure stopwatch
+  Detailed //!< Only measure if detailed stopwatches are activated
 };
 
 enum class StopwatchParallelism
 {
-  MasterOnly, //<! Only the master thread owns a stopwatch
-  Threaded    //<! Every thread measures an individual stopwatch
+  MasterOnly, //!< Only the master thread owns a stopwatch
+  Threaded    //!< Every thread measures an individual stopwatch
 };
 
-// Forward class declaration required here because friend declaration
-// in timers::StopwatchTimer must refer to nest::Stopwatch to be correct,
-// and that requires the name to be known from before. See
-// https://stackoverflow.com/questions/30418270/clang-bug-namespaced-template-class-friend
-// for details.
-template < StopwatchGranularity, StopwatchParallelism, typename >
+/**
+ * This template has two template arguments. The first one "detailed_timer" controls the granularity of the stopwatch,
+ * i.e., if the timer is considered a normal or detailed timer. The second one "threaded_timer" defines if the timer is
+ * supposed to be measured by each thread individually. In case a timer is specified as threaded, but threaded timers
+ * are turned off globally, the stopwatch will run in master-only mode instead.
+ *
+ * In all cases, both the (monotonic) wall-time and cpu time are measured.
+ *
+ * Note: Forward class declaration required here because friend declaration in timers::StopwatchTimer must refer to
+ * nest::Stopwatch to be correct, and that requires the name to be known from before. See
+ * https://stackoverflow.com/questions/30418270/clang-bug-namespaced-template-class-friend for details.
+ */
+template < StopwatchGranularity, StopwatchParallelism >
 class Stopwatch;
 
 /********************************************************************************
@@ -118,7 +125,7 @@ enum class timeunit_t : size_t
 template < clockid_t clock_type >
 class StopwatchTimer
 {
-  template < StopwatchGranularity, StopwatchParallelism, typename >
+  template < StopwatchGranularity, StopwatchParallelism >
   friend class nest::Stopwatch;
 
 public:
@@ -297,35 +304,21 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
 } // namespace timers
 
 
-/** This is the base template for all Stopwatch specializations.
- *
- * This template will be specialized in case detailed timers are deactivated or the timer is supposed to be run by
- * multiple threads. If the timer should be deactivated, because detailed timers are disabled, the template
- * specialization will be empty and optimized away by the compiler.
- * This base template only measures a single timer, owned by the master thread, which applies for both detailed and
- * regular timers. Detailed, master-only timers that are deactivated when detailed timers are turned off are handled
- * by one of the template specializations below.
- *
- * The template has three template arguments of which two act as actual parameters that need to be specified for each
- * stopwatch instance. The first one "detailed_timer" controls the granularity of the stopwatch, i.e., if the timer is
- * considered a normal or detailed timer. The second one "threaded_timer" defines if the timer is supposed to be
- * measured by each thread individually. In case a timer is specified as threaded, but threaded timers are turned off
- * globally, the stopwatch will run in master-only mode instead. The third template argument is used to enable or
- * disable certain template specializations based on compiler flags (i.e., detailed timers and threaded timers).
- *
- * In all cases, both the (monotonic) wall-time and cpu time are measured.
- */
-template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer, typename = void >
-class Stopwatch
+//! This template only measures a single timer, owned by the master thread, for both detailed and regular timers.
+template < StopwatchGranularity detailed_timer >
+class Stopwatch< detailed_timer, StopwatchParallelism::MasterOnly >
 {
 public:
   void
   start()
   {
-#pragma omp master
+    if constexpr ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers )
     {
-      walltime_timer_.start();
-      cputime_timer_.start();
+#pragma omp master
+      {
+        walltime_timer_.start();
+        cputime_timer_.start();
+      }
     }
   }
 
@@ -393,97 +386,9 @@ private:
   timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
-//! Stopwatch template specialization for detailed, master-only timer instances if detailed timers are deactivated.
-template <>
-class Stopwatch< StopwatchGranularity::Detailed,
-  StopwatchParallelism::MasterOnly,
-  std::enable_if< not use_detailed_timers > >
-{
-public:
-  void
-  start()
-  {
-  }
-  void
-  stop()
-  {
-  }
-  double
-  elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
-  {
-    return 0;
-  }
-  void
-  reset()
-  {
-  }
-  void
-  print( const std::string& = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
-  {
-  }
-  void
-  get_status( DictionaryDatum&, const Name&, const Name& ) const
-  {
-  }
-
-private:
-  bool
-  is_running_() const
-  {
-    return false;
-  }
-};
-
-//! Stopwatch template specialization for detailed, threaded timer instances if detailed timers are deactivated.
+//! Stopwatch template specialization for threaded timer instances.
 template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer,
-  StopwatchParallelism::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchGranularity::Detailed and not use_detailed_timers ) > >
-{
-public:
-  void
-  start()
-  {
-  }
-  void
-  stop()
-  {
-  }
-  double
-  elapsed( timers::timeunit_t = timers::timeunit_t::SECONDS ) const
-  {
-    return 0;
-  }
-  void
-  reset()
-  {
-  }
-  void
-  print( const std::string& = "", timers::timeunit_t = timers::timeunit_t::SECONDS, std::ostream& = std::cout ) const
-  {
-  }
-  void
-  get_status( DictionaryDatum&, const Name&, const Name& ) const
-  {
-  }
-
-private:
-  bool
-  is_running_() const
-  {
-    return false;
-  }
-};
-
-/** Stopwatch template specialization for threaded timer instances if the timer is a detailed one and detailed timers
- * are activated or the timer is not a detailed one in the first place.
- */
-template < StopwatchGranularity detailed_timer >
-class Stopwatch< detailed_timer,
-  StopwatchParallelism::Threaded,
-  std::enable_if_t< use_threaded_timers
-    and ( detailed_timer == StopwatchGranularity::Normal or use_detailed_timers ) > >
+class Stopwatch< detailed_timer, StopwatchParallelism::Threaded >
 {
 public:
   void start();
@@ -498,23 +403,7 @@ public:
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const;
 
-  void
-  get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
-  {
-    std::vector< double > wall_times( walltime_timers_.size() );
-    std::transform( walltime_timers_.begin(),
-      walltime_timers_.end(),
-      wall_times.begin(),
-      []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
-    def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
-
-    std::vector< double > cpu_times( cputime_timers_.size() );
-    std::transform( cputime_timers_.begin(),
-      cputime_timers_.end(),
-      cpu_times.begin(),
-      []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
-    def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
-  }
+  void get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const;
 
 private:
   bool is_running_() const;

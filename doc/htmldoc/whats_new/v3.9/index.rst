@@ -12,7 +12,8 @@ If you transition from an earlier version, please see our extensive
 
 
 The release of 3.9 brought a lot of changes with 110 PRs
-including 19 bug fixes and 10 enhancements. Here are some
+including 19 bug fixes and 10 enhancements as detailed in the `release notes
+on GitHub <https://github.com/nest/nest-simulator/releases/>`_. Here are some
 of the more interesting developments that happened:
 
 

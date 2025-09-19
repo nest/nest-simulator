@@ -39,11 +39,11 @@
 #include "block_vector.h"
 
 // Includes from nestkernel:
-//#include "conn_parameter.h"
-//#include "kernel_manager.h"
+#include "conn_parameter.h"
+#include "kernel_manager.h"
 #include "node_collection.h"
 #include "parameter.h"
-//#include "sp_manager.h"
+#include "sp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -95,10 +95,24 @@ public:
   virtual ~BipartiteConnBuilder();
 
   size_t
-  get_synapse_model() const;
+  get_synapse_model() const
+  {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
+    }
+    return synapse_model_id_[ 0 ];
+  }
 
   bool
-  get_default_delay() const;
+  get_default_delay() const
+  {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
+    }
+    return default_delay_[ 0 ];
+  }
 
   void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
@@ -174,7 +188,7 @@ protected:
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( size_t, Node&, size_t, RngPtr );
-  void single_disconnect_( size_t snode_id, Node& target, size_t target_thread );
+  void single_disconnect_( size_t, Node&, size_t );
 
   /**
    * Moves pointer in parameter array.
@@ -185,7 +199,8 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( size_t target_thread, size_t n_skip = 1 );
+  void skip_conn_parameter_( size_t, size_t n_skip = 1 );
+
   /**
    * Returns true if conventional looping over targets is indicated.
    *
@@ -825,6 +840,41 @@ protected:
    */
   void connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 };
+
+inline void
+BipartiteConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+{
+  if ( param.is_array() )
+  {
+    parameters_requiring_skipping_.push_back( &param );
+  }
+}
+
+inline void
+BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
+{
+  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
+        it != parameters_requiring_skipping_.end();
+        ++it )
+  {
+    ( *it )->skip( target_thread, n_skip );
+  }
+}
+
+inline void
+BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
+{
+  // index tnode_id = target.get_node_id();
+  // This is the most simple case in which only the synapse_model_ has been
+  // defined. TODO: Add functionality to delete synapses with a given weight
+  // or a given delay
+  if ( synapse_model_id_.size() > 1 )
+  {
+    throw KernelException( "Can only disconnect when single element syn_spec has been used." );
+  }
+  kernel::manager< SPManager >.disconnect( snode_id, &target, target_thread, synapse_model_id_[ 0 ] );
+}
+
 } // namespace nest
 
 #endif

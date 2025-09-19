@@ -37,7 +37,6 @@
 #include "node.h"
 #include "node_manager.h"
 #include "random_manager.h"
-#include "sp_manager.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -656,56 +655,6 @@ nest::BipartiteConnBuilder::reset_delays_()
       delay->reset();
     }
   }
-}
-
-size_t nest::BipartiteConnBuilder::get_synapse_model() const
-{
-  if ( synapse_model_id_.size() > 1 )
-  {
-    throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
-  }
-  return synapse_model_id_[ 0 ];
-}
-
-
-bool nest::BipartiteConnBuilder::get_default_delay() const
-{
-  if ( synapse_model_id_.size() > 1 )
-  {
-    throw KernelException(
-      "Can only retrieve default delay when one synapse per connection is used." );
-  }
-  return default_delay_[ 0 ];
-}
-
-void
-nest::BipartiteConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
-{
-  if ( param.is_array() )
-  {
-    parameters_requiring_skipping_.push_back( &param );
-  }
-}
-
-void
-nest::BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
-{
-  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
-  {
-    ( *it )->skip( target_thread, n_skip );
-  }
-}
-
-void
-nest::BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
-{
-  if ( synapse_model_id_.size() > 1 )
-  {
-    throw KernelException( "Can only disconnect when single element syn_spec has been used." );
-  }
-  kernel::manager< SPManager >.disconnect( snode_id, &target, target_thread, synapse_model_id_[ 0 ] );
 }
 
 nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,

@@ -29,15 +29,18 @@
 namespace nest
 {
 
+// In each of the following methods compile-time-evaluated ifs decide which code
+// is actually included.
+
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
 Stopwatch< detailed_timer, threaded_timer >::start()
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
     if constexpr ( use_timer_array )
     {
+      kernel().vp_manager.assert_thread_parallel();
       walltime_timer_[ kernel().vp_manager.get_thread_id() ].start();
       cputime_timer_[ kernel().vp_manager.get_thread_id() ].start();
     }
@@ -48,8 +51,8 @@ Stopwatch< detailed_timer, threaded_timer >::start()
         walltime_timer_.start();
         cputime_timer_.start();
       }
-    }
-  }
+    } // use_timer_array
+  }   // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -58,9 +61,9 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
     if constexpr ( use_timer_array )
     {
+      kernel().vp_manager.assert_thread_parallel();
       walltime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
       cputime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
     }
@@ -71,8 +74,8 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
         walltime_timer_.stop();
         cputime_timer_.stop();
       }
-    }
-  }
+    } // use_timer_array
+  }   // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -81,9 +84,9 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
     if constexpr ( use_timer_array )
     {
+      kernel().vp_manager.assert_thread_parallel();
       return walltime_timer_[ kernel().vp_manager.get_thread_id() ].is_running_();
     }
     else
@@ -92,11 +95,14 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
 #pragma omp master
       {
         is_running_ = walltime_timer_.is_running_();
-      };
+      }
       return is_running_;
-    }
+    } // use_timer_array
   }
-  return false;
+  else
+  {
+    return false;
+  } // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -105,9 +111,9 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
     if constexpr ( use_timer_array )
     {
+      kernel().vp_manager.assert_thread_parallel();
       return walltime_timer_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
     }
     else
@@ -118,9 +124,12 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
         elapsed = walltime_timer_.elapsed( timeunit );
       };
       return elapsed;
-    }
+    } // use_timer_array
   }
-  return std::numeric_limits< double >().quiet_NaN();
+  else
+  {
+    return std::numeric_limits< double >().quiet_NaN();
+  } // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -131,9 +140,9 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
     if constexpr ( use_timer_array )
     {
+      kernel().vp_manager.assert_thread_parallel();
       walltime_timer_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
     }
     else
@@ -142,9 +151,10 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
       {
         walltime_timer_.print( msg, timeunit, os );
       }
-    }
-  }
+    } // use_timer_array
+  }   // enable_timer
 }
+
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
 Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
@@ -174,8 +184,8 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
     {
       def< double >( d, walltime_name, walltime_timer_.elapsed() );
       def< double >( d, cputime_name, cputime_timer_.elapsed() );
-    }
-  }
+    } // use_timer_array
+  }   // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -203,9 +213,10 @@ Stopwatch< detailed_timer, threaded_timer >::reset()
         walltime_timer_.reset();
         cputime_timer_.reset();
       }
-    }
-  }
+    } // use_timer_array
+  }   // enable_timer
 }
-}
+
+} // namespace nest
 
 #endif

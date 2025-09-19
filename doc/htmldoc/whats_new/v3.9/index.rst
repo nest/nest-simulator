@@ -4,10 +4,7 @@ What's new in NEST 3.9
 ======================
 
 This page contains a summary of important breaking and non-breaking
-changes from NEST 3.8 to NEST 3.9. In addition to the `release notes
-on GitHub <https://github.com/nest/nest-simulator/releases/>`_, this
-page also contains transition information that helps you to update
-your simulation scripts when you come from an older version of NEST.
+changes from NEST 3.8 to NEST 3.9.
 
 If you transition from an earlier version, please see our extensive
 :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the

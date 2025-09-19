@@ -1964,4 +1964,234 @@ ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event&
   target_table_devices_.send_from_device( tid, ldid, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
 }
 
+
+
+bool
+ConnectionManager::valid_connection_rule( std::string rule_name )
+{
+  return connruledict_->known( rule_name );
+}
+
+long
+ConnectionManager::get_min_delay() const
+{
+  return min_delay_;
+}
+
+long
+ConnectionManager::get_max_delay() const
+{
+  return max_delay_;
+}
+
+void
+ConnectionManager::clean_source_table( const size_t tid )
+{
+  if ( not keep_source_table_ )
+  {
+    source_table_.clean( tid );
+  }
+}
+
+void
+ConnectionManager::clear_source_table( const size_t tid )
+{
+  if ( not keep_source_table_ )
+  {
+    source_table_.clear( tid );
+  }
+}
+
+bool
+ConnectionManager::get_keep_source_table() const
+{
+  return keep_source_table_;
+}
+
+bool
+ConnectionManager::is_source_table_cleared() const
+{
+  return source_table_.is_cleared();
+}
+
+void
+ConnectionManager::resize_target_table_devices_to_number_of_neurons()
+{
+  target_table_devices_.resize_to_number_of_neurons();
+}
+
+void
+ConnectionManager::resize_target_table_devices_to_number_of_synapse_types()
+{
+  target_table_devices_.resize_to_number_of_synapse_types();
+}
+
+void
+ConnectionManager::reject_last_target_data( const size_t tid )
+{
+  source_table_.reject_last_target_data( tid );
+}
+
+void
+ConnectionManager::save_source_table_entry_point( const size_t tid )
+{
+  source_table_.save_entry_point( tid );
+}
+
+void
+ConnectionManager::no_targets_to_process( const size_t tid )
+{
+  source_table_.no_targets_to_process( tid );
+}
+
+void
+ConnectionManager::reset_source_table_entry_point( const size_t tid )
+{
+  source_table_.reset_entry_point( tid );
+}
+
+void
+ConnectionManager::restore_source_table_entry_point( const size_t tid )
+{
+  source_table_.restore_entry_point( tid );
+}
+
+void
+ConnectionManager::prepare_target_table( const size_t tid )
+{
+  target_table_.prepare( tid );
+}
+
+const std::vector< Target >&
+ConnectionManager::get_remote_targets_of_local_node( const size_t tid, const size_t lid ) const
+{
+  return target_table_.get_targets( tid, lid );
+}
+
+bool
+ConnectionManager::connections_have_changed() const
+{
+  return connections_have_changed_;
+}
+
+void
+ConnectionManager::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
+{
+  target_table_.add_target( tid, target_rank, target_data );
+}
+
+bool
+ConnectionManager::get_next_target_data( const size_t tid,
+  const size_t rank_start,
+  const size_t rank_end,
+  size_t& target_rank,
+  TargetData& next_target_data )
+{
+  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
+}
+
+const std::vector< size_t >&
+ConnectionManager::get_secondary_send_buffer_positions( const size_t tid,
+  const size_t lid,
+  const synindex syn_id ) const
+{
+  return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
+}
+
+size_t
+ConnectionManager::get_secondary_recv_buffer_position( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid ) const
+{
+  return secondary_recv_buffer_pos_[ tid ][ syn_id ][ lcid ];
+}
+
+size_t
+ConnectionManager::get_num_connections_( const size_t tid, const synindex syn_id ) const
+{
+  return connections_[ tid ][ syn_id ]->size();
+}
+
+size_t
+ConnectionManager::get_source_node_id( const size_t tid, const synindex syn_index, const size_t lcid )
+{
+  return source_table_.get_node_id( tid, syn_index, lcid );
+}
+
+bool
+ConnectionManager::has_primary_connections() const
+{
+  return has_primary_connections_;
+}
+
+bool
+ConnectionManager::secondary_connections_exist() const
+{
+  return secondary_connections_exist_;
+}
+
+ bool
+ConnectionManager::use_compressed_spikes() const
+{
+  return use_compressed_spikes_;
+}
+
+double
+ConnectionManager::get_stdp_eps() const
+{
+  return stdp_eps_;
+}
+
+size_t
+ConnectionManager::get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
+{
+  return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
+}
+
+bool
+ConnectionManager::get_device_connected( const size_t tid, const size_t lcid ) const
+{
+  return target_table_devices_.is_device_connected( tid, lcid );
+}
+
+void
+ConnectionManager::send( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
+  const std::vector< ConnectorModel* >& cm,
+  Event& e )
+{
+  connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+void
+ConnectionManager::restructure_connection_tables( const size_t tid )
+{
+  assert( not source_table_.is_cleared() );
+  target_table_.clear( tid );
+  source_table_.reset_processed_flags( tid );
+}
+
+void
+ConnectionManager::set_source_has_more_targets( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
+  const bool more_targets )
+{
+  connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+}
+
+const std::vector< SpikeData >&
+ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
+{
+  return compressed_spike_data_[ syn_id ][ idx ];
+}
+
+void
+ConnectionManager::clear_compressed_spike_data_map()
+{
+  source_table_.clear_compressed_spike_data_map();
+}
+
+
 }

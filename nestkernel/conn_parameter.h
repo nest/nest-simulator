@@ -244,17 +244,7 @@ public:
   }
 
   void
-  skip( size_t tid, size_t n_skip ) const override
-  {
-    if ( next_[ tid ] < values_->end() )
-    {
-      next_[ tid ] += n_skip;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  skip( size_t tid, size_t n_skip ) const override;
 
   size_t
   number_of_values() const override
@@ -263,38 +253,18 @@ public:
   }
 
   double
-  value_double( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_->end() )
-    {
-      return *next_[ tid ]++;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  value_double( size_t tid, RngPtr, size_t, Node* ) const override;
 
   long
-  value_int( size_t, RngPtr, size_t, Node* ) const override
-  {
-    throw KernelException( "ConnParameter calls value function with false return type." );
-  }
+  value_int( size_t, RngPtr, size_t, Node* ) const override;
 
   inline bool
   is_array() const override
   {
     return true;
   }
-
-  void
-  reset() const override
-  {
-    for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
-      *it = values_->begin();
-    }
-  }
+  //LOOKFLAG
+  void reset() const override;
 
 private:
   const std::vector< double >* values_;
@@ -324,19 +294,9 @@ public:
     , next_( nthreads, values_->begin() )
   {
   }
-
+  //LOOKFLAG
   void
-  skip( size_t tid, size_t n_skip ) const override
-  {
-    if ( next_[ tid ] < values_->end() )
-    {
-      next_[ tid ] += n_skip;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  skip( size_t tid, size_t n_skip ) const override;
 
   size_t
   number_of_values() const override
@@ -345,30 +305,10 @@ public:
   }
 
   long
-  value_int( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_->end() )
-    {
-      return *next_[ tid ]++;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  value_int( size_t tid, RngPtr, size_t, Node* ) const override;
 
   double
-  value_double( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_->end() )
-    {
-      return static_cast< double >( *next_[ tid ]++ );
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  value_double( size_t tid, RngPtr, size_t, Node* ) const override;
 
   inline bool
   is_array() const override
@@ -383,13 +323,7 @@ public:
   }
 
   void
-  reset() const override
-  {
-    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
-      *it = values_->begin();
-    }
-  }
+  reset() const override;
 
 private:
   const std::vector< long >* values_;

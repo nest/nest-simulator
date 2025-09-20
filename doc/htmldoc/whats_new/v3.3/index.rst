@@ -11,7 +11,7 @@ update your simulation scripts when you come from an older version of
 NEST.
 
 If you transition from a version earlier than 3.2, please see our
-extensive :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` 
+extensive :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>`
 or :ref:`release updates for previous releases in 3.x<whats_new>`.
 
 

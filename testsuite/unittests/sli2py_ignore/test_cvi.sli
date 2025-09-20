@@ -25,15 +25,15 @@
 /** @BeginDocumentation
 Name: testsuite::test_cvi - check if cvi function works
 
-Synopsis: (test_cvi) run -> 
+Synopsis: (test_cvi) run ->
 
 Description:
 
 Tests basic properties of cvi. Note that the tests
 are directly compiled from the the Examples section of
-the documentation which is evaluated by the command 
+the documentation which is evaluated by the command
 /validate .
-Future versions of NEST should generate this test 
+Future versions of NEST should generate this test
 directly from the Examples section.
 
 Author:  130610, Diesmann
@@ -50,9 +50,3 @@ M_ERROR setverbosity
 (23) cvi      23   eq  assert_or_die
 (23.2323) cvi 23   eq  assert_or_die
 (hello) cvi    0   eq  assert_or_die
-
-
-
-
-
-

@@ -36,6 +36,7 @@
 #include "model_manager_impl.h"
 #include "node.h"
 #include "secondary_event_impl.h"
+#include "stopwatch_impl.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 

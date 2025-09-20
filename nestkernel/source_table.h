@@ -489,18 +489,20 @@ SourceTable::find_first_source( const size_t tid,
 
   if ( isCompressedEnabled )
   {
-    auto comp = [](const Source& source, const Source& value) {
-        if (source.is_disabled()) {
-            return false;
-        }
-        return source.get_node_id() < value.get_node_id();
+    auto comp = []( const Source& source, const Source& value )
+    {
+      if ( source.is_disabled() )
+      {
+        return false;
+      }
+      return source.get_node_id() < value.get_node_id();
     };
     // binary search in sorted sources
     SourceIter it = std::lower_bound( begin, end, value, comp );
 
     // source found by binary search could be disabled, iterate through
     // sources until a valid one is found
-    if (it != end )
+    if ( it != end )
     {
       const size_t lcid = it - begin;
       return lcid;
@@ -549,8 +551,8 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
-        cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
+    cit != sources_[ tid ][ syn_id ].end();
+    ++cit )
   {
     if ( last_source != ( *cit ).get_node_id() )
     {

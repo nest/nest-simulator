@@ -491,7 +491,7 @@ SourceTable::find_first_source( const size_t tid,
   {
     auto comp = []( const Source& source, const Source& value )
     {
-      if ( source.is_disabled() )
+      if ( !source.is_disabled() )
       {
         return false;
       }

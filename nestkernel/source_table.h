@@ -509,40 +509,13 @@ SourceTable::find_first_source( const size_t tid,
   }
   else
   {
-
-    auto nth_equal =
-      []( SourceIter first, SourceIter last, const Source& value, size_t n ) -> std::pair< bool, SourceIter >
+    auto sourceIter = std::find_if( begin, end, [&value]( const Source& src ) {
+      return src.get_node_id() == value.get_node_id() && not src.is_disabled();
+    } );
+    if ( sourceIter != end )
     {
-      if ( n == 0 )
-      {
-        auto iter = std::find( first, last, value );
-        return { iter != last, iter };
-      }
-      auto iter = std::find( first, last, value );
-      while ( n > 0 && iter != last )
-      {
-        --n;
-        iter = std::find( std::next( iter ), last, value );
-      }
-      return { iter != last, iter };
-    };
-    size_t pos = 0;
-    auto res = nth_equal( begin, end, value, pos );
-    if ( !res.first )
-    {
-      return invalid_index;
-    }
-
-    while ( res.first )
-    {
-      if ( res.second->get_node_id() == snode_id && not res.second->is_disabled() )
-      {
-        // found a valid source
-        size_t lcid = res.second - begin;
-        return lcid;
-      }
-      ++pos;
-      res = nth_equal( std::next( res.second ), end, value, pos );
+      const size_t lcid = sourceIter - begin;
+      return lcid;
     }
     return invalid_index;
   }

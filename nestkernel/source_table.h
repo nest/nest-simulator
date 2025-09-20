@@ -489,21 +489,22 @@ SourceTable::find_first_source( const size_t tid,
 
   if ( isCompressedEnabled )
   {
+    auto comp = [](const Source& source, const Source& value) {
+        if (source.is_disabled()) {
+            return false;
+        }
+        return source.get_node_id() < value.get_node_id();
+    };
     // binary search in sorted sources
-    SourceIter it = std::lower_bound( begin, end, value );
+    SourceIter it = std::lower_bound( begin, end, value, comp );
 
     // source found by binary search could be disabled, iterate through
     // sources until a valid one is found
-    while ( it != end )
+    if (it != end )
     {
-      if ( it->get_node_id() == snode_id and not it->is_disabled() )
-      {
-        const size_t lcid = it - begin;
-        return lcid;
-      }
-      ++it;
+      const size_t lcid = it - begin;
+      return lcid;
     }
-
     // no enabled entry with this snode ID found
     return invalid_index;
   }

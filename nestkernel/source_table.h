@@ -509,9 +509,9 @@ SourceTable::find_first_source( const size_t tid,
   }
   else
   {
-    auto sourceIter = std::find_if( begin, end, [&value]( const Source& src ) {
-      return src.get_node_id() == value.get_node_id() && not src.is_disabled();
-    } );
+    auto sourceIter = std::find_if( begin,
+      end,
+      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() && not src.is_disabled(); } );
     if ( sourceIter != end )
     {
       const size_t lcid = sourceIter - begin;
@@ -548,8 +548,8 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
-        cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
+    cit != sources_[ tid ][ syn_id ].end();
+    ++cit )
   {
     if ( last_source != ( *cit ).get_node_id() )
     {

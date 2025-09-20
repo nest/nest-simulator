@@ -46,6 +46,10 @@ Stopwatch< detailed_timer, threaded_timer >::start()
     }
     else
     {
+// This code applies for MasterOnly timers started/stopped from serial context, but also for
+// Threaded timers called from parallel contexts if `-Dwith-threaded-timers=OFF` for backward
+// compatibility with pre-3.9 timers. Therefore, we need to restrict to the master thread here and
+// cannot assert a single-threaded context.
 #pragma omp master
       {
         walltime_timer_.start();

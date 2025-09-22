@@ -304,7 +304,7 @@ public:
   size_t find_first_source( const size_t tid,
     const synindex syn_id,
     const size_t snode_id,
-    bool isCompressedEnabled = false ) const;
+    bool using_compressed_spikes = false ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
@@ -478,56 +478,38 @@ inline size_t
 SourceTable::find_first_source( const size_t tid,
   const synindex syn_id,
   const size_t snode_id,
-  bool isCompressedEnabled /* default = false */ ) const
+  bool using_compressed_spikes /* default = false */ ) const
 {
-  using SourceIter = BlockVector< Source >::const_iterator;
 
-  const SourceIter begin = sources_[ tid ][ syn_id ].begin();
-  const SourceIter end = sources_[ tid ][ syn_id ].end();
+  const auto source_begin = sources_[ tid ][ syn_id ].cbegin();
+  const auto source_end = sources_[ tid ][ syn_id ].cend();
 
-  Source value { snode_id, true };
+  const Source selected_source { snode_id, /* is_primary */ true };
 
-  if ( isCompressedEnabled )
+  auto find_source = []( auto begin, auto end, const Source& value ) -> size_t
   {
-    // auto comp = []( const Source& source, const Source& value )
-    // {
-    //   if ( source.is_disabled()  || source.get_node_id() < value.get_node_id())
-    //   {
-    //     return true;
-    //   }
-    //   return false;
-    // };
-    // binary search in sorted sources
-    SourceIter it = std::lower_bound( begin, end, value );
-
-    // source found by binary search could be disabled, iterate through
-    // sources until a valid one is found
-    if ( it != end )
+    iter = std::find_if( begin,
+      end,
+      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() && not src.is_disabled(); } );
+    if ( iter != end )
     {
-      auto sourceIter = std::find_if( it,
-        end,
-        [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() && not src.is_disabled(); } );
-      if ( sourceIter != end )
-      {
-        const size_t lcid = sourceIter - begin;
-        return lcid;
-      }
+      const size_t lcid = iter - begin;
+      return lcid;
     }
     // no enabled entry with this snode ID found
     return invalid_index;
-  }
-  else
+  };
+
+  auto iter = source_begin;
+
+  if ( using_compressed_spikes )
   {
-    auto sourceIter = std::find_if( begin,
-      end,
-      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() && not src.is_disabled(); } );
-    if ( sourceIter != end )
-    {
-      const size_t lcid = sourceIter - begin;
-      return lcid;
-    }
-    return invalid_index;
+    auto iter = std::lower_bound( iter, source_end, selected_source );
   }
+
+  auto ret = find_source( iter, source_end, selected_source );
+
+  return ret;
 }
 
 inline void

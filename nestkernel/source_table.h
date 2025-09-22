@@ -486,14 +486,14 @@ SourceTable::find_first_source( const size_t tid,
 
   const Source selected_source { snode_id, /* is_primary */ true };
 
-  auto find_source_lcid = []( auto begin, auto end, const Source& value ) -> size_t
+  auto find_source_lcid = [ &source_begin ]( auto begin, auto end, const Source& value ) -> size_t
   {
     auto iter = std::find_if( begin,
       end,
       [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() and not src.is_disabled(); } );
     if ( iter != end )
     {
-      const size_t lcid = iter - begin;
+      const size_t lcid = iter - source_begin;
       return lcid;
     }
     // no enabled entry with this snode ID found

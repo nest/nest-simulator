@@ -112,3 +112,5 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 }
 
 } // namespace nest
+
+#endif

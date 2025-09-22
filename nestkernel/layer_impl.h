@@ -19,6 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef LAYER_IMPL_H
+#define LAYER_IMPL_H
+
 #include "grid_layer.h"
 #include "layer.h"
 

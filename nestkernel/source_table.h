@@ -481,16 +481,16 @@ SourceTable::find_first_source( const size_t tid,
   bool using_compressed_spikes /* default = false */ ) const
 {
 
-  const auto source_begin = sources_[ tid ][ syn_id ].cbegin();
-  const auto source_end = sources_[ tid ][ syn_id ].cend();
+  const auto source_begin = sources_[ tid ][ syn_id ].begin();
+  const auto source_end = sources_[ tid ][ syn_id ].end();
 
   const Source selected_source { snode_id, /* is_primary */ true };
 
-  auto find_source = []( auto begin, auto end, const Source& value ) -> size_t
+  auto find_source_lcid = []( auto begin, auto end, const Source& value ) -> size_t
   {
-    iter = std::find_if( begin,
+    auto iter = std::find_if( begin,
       end,
-      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() && not src.is_disabled(); } );
+      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() and not src.is_disabled(); } );
     if ( iter != end )
     {
       const size_t lcid = iter - begin;
@@ -504,12 +504,10 @@ SourceTable::find_first_source( const size_t tid,
 
   if ( using_compressed_spikes )
   {
-    auto iter = std::lower_bound( iter, source_end, selected_source );
+    iter = std::lower_bound( iter, source_end, selected_source );
   }
 
-  auto ret = find_source( iter, source_end, selected_source );
-
-  return ret;
+  return find_source_lcid( iter, source_end, selected_source );
 }
 
 inline void

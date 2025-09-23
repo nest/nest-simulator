@@ -531,6 +531,8 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ConnectionCreator connector( connection_dict );
   connection_dict.all_entries_accessed( "ConnectLayers", "connection_dict" );
 
+  kernel().node_manager.update_thread_local_node_data();
+
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
   source->connect( source_nc, target, target_nc, connector );

@@ -25,12 +25,13 @@ import nest
 import numpy as np
 import scipy.stats
 
+# Check that NEST is installed with MPI support and mpi4py is available.
 try:
     from mpi4py import MPI
 
-    haveMPI4Py = True
+    HAVE_MPI4PY = True
 except ImportError:
-    haveMPI4Py = False
+    HAVE_MPI4PY = False
 
 
 class ConnectTestBase(unittest.TestCase):
@@ -309,7 +310,7 @@ def gather_data(data_array):
     None otherwise.
 
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
         if MPI.COMM_WORLD.Get_rank() == 0:
             if isinstance(data_array, list):
@@ -327,7 +328,7 @@ def bcast_data(data):
     """
     Broadcasts data from the root MPI node to all other nodes.
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data = MPI.COMM_WORLD.bcast(data, root=0)
     return data
 
@@ -340,7 +341,7 @@ def is_array(data):
 
 
 def mpi_barrier():
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         MPI.COMM_WORLD.Barrier()
 
 

@@ -260,7 +260,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f"local call, args={args}, kwargs={kwargs}")
         master_response = call(*args, **kwargs)
 
-    response = [master_response]
+    response = [nest.serialize_data(master_response)]
     if mpi_comm is not None:
         log(call_name, "waiting for response gather")
         response = mpi_comm.gather(response[0], root=0)
@@ -276,7 +276,7 @@ def route_exec():
     if EXEC_CALL_ENABLED:
         args, kwargs = get_arguments(request)
         response = do_call("exec", args, kwargs)
-        return jsonify(response)
+        return jsonify(nest.serialize_data(response))
     else:
         flask.abort(
             403,
@@ -306,7 +306,7 @@ def route_api_call(call):
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
-    return jsonify(response)
+    return jsonify(nest.serialize_data(response))
 
 
 # ----------------------

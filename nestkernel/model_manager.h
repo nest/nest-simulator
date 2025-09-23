@@ -169,7 +169,7 @@ public:
    */
   void memory_info() const;
 
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
+  std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
   /**
@@ -314,11 +314,11 @@ ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
   }
 }
 
-inline SecondaryEvent&
+inline std::unique_ptr< SecondaryEvent >
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
   assert_valid_syn_id( syn_id, tid );
-  return *get_connection_model( syn_id, tid ).get_secondary_event();
+  return get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 } // namespace nest

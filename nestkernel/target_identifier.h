@@ -118,10 +118,8 @@ public:
   {
   }
 
-
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
-
 
   void
   get_status( dictionary& d ) const
@@ -168,7 +166,7 @@ private:
 inline void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  kernel().node_manager.ensure_valid_thread_local_ids();
+  assert( kernel().node_manager.thread_local_data_is_up_to_date() );
 
   size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )

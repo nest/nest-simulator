@@ -105,7 +105,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -177,10 +177,10 @@ gap_junction< targetidentifierT >::get_status( dictionary& d ) const
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 gap_junction< targetidentifierT >::get_secondary_event()
 {
-  return new GapJunctionEvent();
+  return std::make_unique< GapJunctionEvent >();
 }
 
 template < typename targetidentifierT >

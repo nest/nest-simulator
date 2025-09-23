@@ -243,6 +243,9 @@ SPManager::disconnect( NodeCollectionPTR sources,
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
 {
+  // probably not strictly necessarye here, but does nothing if all is up to date
+  kernel().node_manager.update_thread_local_node_data();
+
   if ( kernel().connection_manager.connections_have_changed() )
   {
 #pragma omp parallel

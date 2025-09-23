@@ -86,7 +86,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -154,10 +154,10 @@ sic_connection< targetidentifierT >::get_status( dictionary& d ) const
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 sic_connection< targetidentifierT >::get_secondary_event()
 {
-  return new SICEvent();
+  return std::make_unique< SICEvent >();
 }
 
 template < typename targetidentifierT >

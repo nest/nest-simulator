@@ -23,6 +23,7 @@ import unittest
 
 import nest
 
+# Check that NEST is installed with MPI support and mpi4py is available.
 try:
     from mpi4py import MPI
 

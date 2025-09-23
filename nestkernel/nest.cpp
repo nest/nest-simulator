@@ -488,6 +488,9 @@ get_connections( const dictionary& dict )
 void
 disconnect( const std::deque< ConnectionID >& conns )
 {
+  // probably not strictly necessary here, but does nothing if all is up to date
+  kernel().node_manager.update_thread_local_node_data();
+
   for ( auto& conn : conns )
   {
     const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );

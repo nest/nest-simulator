@@ -151,7 +151,7 @@ public:
   }
 
   //! Get the secondary learning signal event.
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -220,10 +220,10 @@ eprop_learning_signal_connection< targetidentifierT >::set_status( const diction
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 eprop_learning_signal_connection< targetidentifierT >::get_secondary_event()
 {
-  return new LearningSignalConnectionEvent();
+  return std::make_unique< LearningSignalConnectionEvent >();
 }
 
 } // namespace nest

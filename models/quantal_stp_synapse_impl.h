@@ -43,7 +43,7 @@ quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   , tau_fac_( 0.0 )
   , n_( 1 )
   , a_( n_ )
-  , t_lastspike_( 0.0 )
+  , t_lastspike_( -1.0 )
 {
 }
 

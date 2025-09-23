@@ -36,7 +36,7 @@ import nest
 import numpy as np
 
 nest.ResetKernel()
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 
 nest.CopyModel("iaf_psc_alpha", "pyr")
 nest.CopyModel("iaf_psc_alpha", "in")

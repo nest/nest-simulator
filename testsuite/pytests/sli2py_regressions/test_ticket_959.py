@@ -30,7 +30,7 @@ import numpy as np
 
 def record_spikes(sim_time, repeats):
     nest.ResetKernel()
-    nest.set_verbosity(nest.verbosity.M_ERROR)
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
     neuron_params = {"tau_sfa": 34.0, "q_sfa": 0.0}
 

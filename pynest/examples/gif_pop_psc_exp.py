@@ -117,7 +117,7 @@ tau_in = 6.0  # in ms
 # neurons), we can build the populations using the NEST model
 # ``gif_pop_psc_exp``:
 
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 nest.ResetKernel()
 nest.resolution = dt
 nest.print_time = True

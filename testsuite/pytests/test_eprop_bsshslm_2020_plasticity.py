@@ -27,7 +27,7 @@ import nest
 import numpy as np
 import pytest
 
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 
 supported_source_models = ["eprop_iaf_bsshslm_2020", "eprop_iaf_adapt_bsshslm_2020"]
 supported_target_models = supported_source_models + ["eprop_readout_bsshslm_2020"]

@@ -47,7 +47,7 @@ pytestmark = pytest.mark.skipif_missing_threads
 @pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
-    nest.set_verbosity(nest.verbosity.M_ERROR)
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 def has_hpc_suffix(syn_model):

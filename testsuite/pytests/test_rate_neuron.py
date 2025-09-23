@@ -46,7 +46,7 @@ class RateNeuronTestCase(unittest.TestCase):
         self.dt = 0.1
         self.tstart = 10.0 * self.neuron_params["tau"]
 
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = False

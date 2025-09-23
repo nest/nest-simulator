@@ -29,7 +29,7 @@ __author__ = "naveau"
 class TestDisconnect(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity(nest.verbosity.M_ERROR)
+        nest.verbosity = nest.VerbosityLevel.ERROR
         self.exclude_synapse_model = [
             "stdp_dopamine_synapse",
             "stdp_dopamine_synapse_lbl",

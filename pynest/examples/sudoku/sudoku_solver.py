@@ -66,7 +66,7 @@ import sudoku_net
 from helpers_sudoku import get_puzzle, plot_field, validate_solution
 
 nest.local_num_threads = 8
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 logging.basicConfig(level=logging.INFO)
 
 puzzle_index = 4

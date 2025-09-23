@@ -27,7 +27,7 @@ import unittest
 
 import nest
 
-nest.set_verbosity(nest.verbosity.M_ERROR)
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 class GetConnectionsTestCase(unittest.TestCase):

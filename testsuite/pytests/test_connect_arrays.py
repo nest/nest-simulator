@@ -24,7 +24,7 @@ import unittest
 import nest
 import numpy as np
 
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 
 HAVE_THREADS = nest.build_info["have_threads"]
 

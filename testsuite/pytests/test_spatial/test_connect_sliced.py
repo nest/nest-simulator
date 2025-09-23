@@ -28,7 +28,7 @@ import nest
 import numpy as np
 import numpy.testing as nptest
 
-nest.set_verbosity(nest.verbosity.M_ERROR)
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 class ConnectSlicedSpatialTestCase(unittest.TestCase):

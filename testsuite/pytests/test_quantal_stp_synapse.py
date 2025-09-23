@@ -34,7 +34,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         """Compare quantal_stp_synapse with its deterministic equivalent"""
         nest.ResetKernel()
         nest.rng_seed = 1
-        nest.set_verbosity(nest.verbosity.M_QUIET)
+        nest.verbosity = nest.VerbosityLevel.QUIET
         n_syn = 12  # number of synapses in a connection
         n_trials = 100  # number of measurement trials
 

@@ -32,7 +32,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
     def setUp(self):
         """Set up the test."""
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # settings

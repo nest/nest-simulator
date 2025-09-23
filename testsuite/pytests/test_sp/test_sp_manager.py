@@ -33,7 +33,7 @@ def extract_dict_a_from_b(a, b):
 class TestStructuralPlasticityManager(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity(nest.verbosity.M_INFO)
+        nest.verbosity = nest.VerbosityLevel.INFO
         self.exclude_synapse_model = [
             "stdp_dopamine_synapse",
             "stdp_dopamine_synapse_lbl",

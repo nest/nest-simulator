@@ -313,7 +313,7 @@ if __name__ == "__main__":
 
     ###############################################################################
     # Ensure clean slate and make NEST less chatty
-    nest.set_verbosity(nest.verbosity.M_WARNING)
+    nest.verbosity = nest.VerbosityLevel.WARNING
     nest.ResetKernel()
 
     ###############################################################################

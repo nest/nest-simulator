@@ -29,7 +29,7 @@ import pytest
 
 def test_delay_less_than_resolution_throws():
     nest.ResetKernel()
-    nest.set_verbosity(nest.verbosity.M_ERROR)
+    nest.verbosity = nest.VerbosityLevel.ERROR
     nest.resolution = 0.3
 
     population = nest.Create("iaf_psc_alpha")

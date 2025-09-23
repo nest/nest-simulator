@@ -120,7 +120,7 @@ class TestStdpSpikeMultiplicity:
         # k spikes will be emitted at these two times
         pre_spike_times_base = [100.0, 200.0]
 
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
 
         post_weights = {"parrot": [], "parrot_ps": []}
 

@@ -342,7 +342,7 @@ def test_statistics(p_primary):
     nr_threads = 2
 
     # set NEST verbosity
-    nest.set_verbosity(nest.verbosity.M_FATAL)
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # here we test
     # 1. p_primary yields the correct indegree and outdegree
@@ -406,7 +406,7 @@ def test_autapses_true(autapses):
     }
 
     # set NEST verbosity
-    nest.set_verbosity(nest.verbosity.M_FATAL)
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # create the network
     pop_primay = nest.Create("aeif_cond_alpha_astro", N)

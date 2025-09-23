@@ -37,7 +37,7 @@ HAVE_THREADS = nest.build_info["have_threads"]
 class TestEnableMultithread(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity(nest.verbosity.M_ERROR)
+        nest.verbosity = nest.VerbosityLevel.ERROR
 
     def test_enable_multithread(self):
         nest.ResetKernel()

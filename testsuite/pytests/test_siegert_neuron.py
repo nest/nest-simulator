@@ -59,7 +59,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.start = 100.0
 
         # reset kernel
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = False

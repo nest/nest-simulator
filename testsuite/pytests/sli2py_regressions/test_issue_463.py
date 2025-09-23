@@ -35,7 +35,7 @@ def test_simulation_completes():
     """
     nest.ResetKernel()
     nest.local_num_threads = 4
-    nest.set_verbosity(nest.verbosity.M_ERROR)
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
     population_size = 10
     population_type = "iaf_psc_alpha"

@@ -39,7 +39,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # setting up the neuron and the generators

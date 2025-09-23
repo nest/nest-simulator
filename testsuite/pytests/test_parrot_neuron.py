@@ -32,7 +32,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def setUp(self):
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
@@ -130,7 +130,7 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
         # spikes than time steps
         assert spikes_expected - 3 * spikes_std > 10.0 * t_sim / resolution, "Internal inconsistency: too few spikes."
 
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = resolution
         nest.rng_seed = 123
@@ -163,7 +163,7 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         """Set up a network with pre-post spike pairings
         with t_post - t_pre = dt"""
 
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set pre and postsynaptic spike times

@@ -32,7 +32,7 @@ class IgnoreAndFireNeuronTestCase(unittest.TestCase):
     """Check ignore_and_fire neuron spike properties"""
 
     def setUp(self):
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons

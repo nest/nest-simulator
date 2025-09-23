@@ -84,7 +84,7 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
 
     def build_and_connect_nodes(self, sigma, theta):
         """sets up an erfc neuron and spin detector."""
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.rng_seed = 1
 

@@ -41,7 +41,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
         for i in range(num_iterations):
             nest.ResetKernel()
             nest.local_num_threads = local_num_threads
-            nest.set_verbosity(nest.verbosity.M_WARNING)
+            nest.verbosity = nest.VerbosityLevel.WARNING
             print("num iter {:>5d}/{}".format(i + 1, num_iterations), end="\r")
 
             parrots = nest.Create("parrot_neuron", num_neurons)

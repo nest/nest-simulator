@@ -34,7 +34,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity(nest.verbosity.M_ERROR)
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 class ConnectLayersTestCase(unittest.TestCase):

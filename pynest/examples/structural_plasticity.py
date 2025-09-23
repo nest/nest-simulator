@@ -152,7 +152,7 @@ class StructralPlasticityExample:
 
     def prepare_simulation(self):
         nest.ResetKernel()
-        nest.set_verbosity(nest.verbosity.M_ERROR)
+        nest.verbosity = nest.VerbosityLevel.ERROR
 
         ####################################################################################
         # We set global kernel parameters. Here we define the resolution

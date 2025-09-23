@@ -83,7 +83,7 @@ class TestJonkeSynapse:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity(nest.verbosity.M_WARNING)
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.resolution
 

@@ -191,10 +191,10 @@ t_U = convolution_resolution * numpy.linspace(-ulen / 2.0, ulen / 2.0, ulen) + p
 # Gaussian distribution.
 #
 # We reset the Kernel, define the simulation resolution and set the
-# verbosity using ``set_verbosity`` to suppress info messages.
+# verbosity to suppress info messages.
 
 nest.ResetKernel()
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.verbosity = nest.VerbosityLevel.WARNING
 nest.resolution = simulation_resolution
 
 

@@ -201,7 +201,7 @@ nest::RecordingBackendSIONlib::open_files_()
           "Please change data_path, or data_prefix, or set /overwrite_files "
           "to true in the root node.",
           filename );
-        LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
+        LOG( nest::VerbosityLevel::ERROR, "RecordingBackendSIONlib::open_files_()", msg );
         throw IOError();
       }
       test.close();

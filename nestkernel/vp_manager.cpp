@@ -36,6 +36,8 @@
 #include "mpi_manager.h"
 #include "node_manager.h"
 #include "simulation_manager.h"
+#include "sp_manager.h"
+
 
 // Includes from sli:
 #include "dictutils.h"

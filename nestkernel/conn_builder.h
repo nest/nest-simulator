@@ -48,6 +48,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 #include "sliexceptions.h"
+#include "nest_datums.h"
 
 namespace nest
 {

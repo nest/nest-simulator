@@ -159,7 +159,7 @@ Connector< ConnectionT >::get_source_lcids( const size_t tid,
   }
 }
 
-template < typename ConnectionT 
+template < typename ConnectionT >
 void
 Connector< ConnectionT >::get_target_node_ids( const size_t tid,
   const size_t start_lcid,

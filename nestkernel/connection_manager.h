@@ -201,8 +201,7 @@ public:
     const DictionaryDatum& third_connectivity,
     const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
-  size_t
-  find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+  size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 

@@ -1,5 +1,5 @@
 /*
- *  common_properties_hom_w.h
+ *  common_properties_hom_w.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,39 +20,35 @@
  *
  */
 
-#ifndef COMMON_PROPERTIES_HOM_W_H
-#define COMMON_PROPERTIES_HOM_W_H
+#include "common_properties_hom_w.h"
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "dictutils.h"
-#include "nest_names.h"
 
 namespace nest
 {
 
-/**
- * Class containing the common properties for all synapses with common weight.
- */
-class CommonPropertiesHomW : public CommonSynapseProperties
+CommonPropertiesHomW::CommonPropertiesHomW()
+  : CommonSynapseProperties()
+  , weight_( 1.0 )
+{}
+
+void
+CommonPropertiesHomW::get_status( DictionaryDatum& d ) const
 {
-public:
-  CommonPropertiesHomW();
+  CommonSynapseProperties::get_status( d );
+  def< double >( d, names::weight, weight_ );
+}
 
-  void get_status( DictionaryDatum& d ) const;
+double
+CommonPropertiesHomW::get_weight() const
+{
+  return weight_;
+}
 
-  double get_weight() const;
-
-  /**
-   * Set properties from the values given in dictionary.
-   */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-private:
-  // data members common to all connections
-  double weight_;
-};
+void
+CommonPropertiesHomW::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+{
+  CommonSynapseProperties::set_status( d, cm );
+  updateValue< double >( d, names::weight, weight_ );
+}
 
 } // namespace nest
-
-#endif /* #ifndef COMMON_PROPERTIES_HOM_W_H */

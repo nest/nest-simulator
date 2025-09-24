@@ -106,7 +106,7 @@ protected:
   /**
    * Return most recent spike time in ms
    */
-  inline double get_spiketime_ms() const;
+  double get_spiketime_ms() const;
 
   /**
    * Clear spike history

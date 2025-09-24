@@ -25,6 +25,7 @@ Low-level API of PyNEST Module
 
 # Since this is a low level module, we need some more trickery, thus:
 # pylint: disable=wrong-import-position
+import atexit
 import keyword
 import os
 import sys
@@ -155,7 +156,6 @@ def init(argv):
     if "PYNEST_DEBUG" in os.environ and "--debug" not in nest_argv:
         nest_argv.append("--debug")
 
-    path = os.path.dirname(__file__)
     nestkernel.init(nest_argv)
     initialized = True
 
@@ -180,6 +180,12 @@ def init(argv):
         )
         for kwl in keyword_lists:
             keyword.kwlist += GetKernelStatus(kwl)
+
+
+@atexit.register
+def shutdown():
+    """Ensures that MPI_Finalize() is called if needed."""
+    nestkernel.llapi_shutdown_nest(0)
 
 
 init(sys.argv)

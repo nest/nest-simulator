@@ -89,8 +89,12 @@ init_nest( int* argc, char** argv[] )
 }
 
 void
-fail_exit( int )
+shutdown_nest( int exitcode )
 {
+  // We must MPI_Finalize before the KernelManager() destructor runs, because
+  // both MusicManager and MPIManager may be involved, with mpi_finalize()
+  // delegating to MusicManager, which is deleted long before MPIManager.
+  kernel().mpi_manager.mpi_finalize( exitcode );
 }
 
 void

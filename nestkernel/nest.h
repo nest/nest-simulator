@@ -50,7 +50,7 @@ template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name );
 
 void init_nest( int* argc, char** argv[] );
-void fail_exit( int exitcode );
+void shutdown_nest( int exitcode );
 
 void install_module( const std::string& module_name );
 

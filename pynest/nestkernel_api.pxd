@@ -132,6 +132,7 @@ cdef extern from "mask.h" namespace "nest":
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
+    void shutdown_nest( int exitcode )
     void reset_kernel()
 
     void enable_structural_plasticity() except +custom_exception_handler

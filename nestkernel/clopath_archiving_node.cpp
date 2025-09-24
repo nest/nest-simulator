@@ -253,4 +253,16 @@ nest::ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, 
   }
 }
 
+double
+ClopathArchivingNode::get_theta_minus() const {
+
+  return theta_minus_;
+}
+
+double
+ClopathArchivingNode::get_theta_plus() const {
+
+  return theta_plus_;
+}
 } // of namespace nest
+

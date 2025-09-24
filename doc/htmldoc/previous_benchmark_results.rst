@@ -1,4 +1,4 @@
-.. _nest_benchmark_results:
+.. _previous_nest_benchmark_results:
 
 NEST performance benchmarks
 ===========================

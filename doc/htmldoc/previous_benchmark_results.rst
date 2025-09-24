@@ -4,7 +4,7 @@ Previous NEST performance benchmarks
 ====================================
 .. important::
 
-   3.8 benchmarks have been updated! Please see below for corrected version
+   NEST version 3.8 benchmarks of the Multi-area-model and HPC benchmark model have been updated due to errors in the analysis! Please see below for corrected versions.
 
 NEST performance is continuously monitored and improved across various network sizes.
 Here we show benchmarking results for NEST version 3.8 on Jureca-DC [1]_.

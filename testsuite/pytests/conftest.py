@@ -59,6 +59,10 @@ def pytest_configure(config):
         "markers",
         "requires_many_cores: mark tests as needing many cores (deselect with '-m \"not requires_many_cores\"')",
     )
+    config.addinivalue_line(
+        "markers",
+        "skipif_incompatible_mpi: mark tests requiring subprocess to invoke mpirun (needs OpenMPI 5.0.7 or later)",
+    )
 
 
 @pytest.fixture(scope="module", autouse=True)

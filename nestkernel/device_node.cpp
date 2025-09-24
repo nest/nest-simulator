@@ -1,5 +1,5 @@
 /*
- *  device_node.h
+ *  device_node.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,31 @@
  *
  */
 
-#ifndef DEVICE_NODE_H
-#define DEVICE_NODE_H
-
-// Includes from nestkernel:
-#include "node.h"
+#include "device_node.h"
 
 namespace nest
 {
 
-/**
- * Base class for device objects.
- */
-class DeviceNode : public Node
+DeviceNode::DeviceNode()
+  : Node()
+  , local_device_id_( invalid_index )
 {
+}
 
-public:
-  DeviceNode();
+DeviceNode::DeviceNode( DeviceNode const& dn )
+  : Node( dn )
+  , local_device_id_( invalid_index )
+{
+}
 
-  DeviceNode( DeviceNode const& dn );
+void DeviceNode::set_local_device_id( const size_t ldid )
+{
+  local_device_id_ = ldid;
+}
 
-  void set_local_device_id( const size_t ldid ) override;
-  size_t get_local_device_id() const override;
+size_t DeviceNode::get_local_device_id() const
+{
+  return local_device_id_;
+}
 
-protected:
-  size_t local_device_id_;
-};
-
-} // namespace
-
-#endif /* #ifndef DEVICE_NODE_H */
+} // namespace nest

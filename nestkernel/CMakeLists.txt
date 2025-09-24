@@ -29,15 +29,14 @@ set ( nestkernel_sources
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h
-      common_properties_hom_w.h
-      common_properties_hom_w.cpp
+      common_properties_hom_w.h common_properties_hom_w.cpp
       syn_id_delay.h
       connector_base.h connector_base.cpp
       connector_model.h connector_model.cpp connector_model_impl.h
       connection_id.h connection_id.cpp
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
-      device_node.h
+      device_node.h device_node.cpp
       module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp

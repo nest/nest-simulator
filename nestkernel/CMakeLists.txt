@@ -30,6 +30,7 @@ set ( nestkernel_sources
       connection.h
       connection_label.h
       common_properties_hom_w.h
+      common_properties_hom_w.cpp
       syn_id_delay.h
       connector_base.h connector_base.cpp
       connector_model.h connector_model.cpp connector_model_impl.h
@@ -70,6 +71,7 @@ set ( nestkernel_sources
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder.cpp
       conn_builder_factory.h
+      conn_builder_factory.cpp
       conn_builder_conngen.h conn_builder_conngen.cpp
       sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp

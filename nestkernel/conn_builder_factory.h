@@ -47,9 +47,7 @@ namespace nest
 class GenericBipartiteConnBuilderFactory
 {
 public:
-  virtual ~GenericBipartiteConnBuilderFactory()
-  {
-  }
+  virtual ~GenericBipartiteConnBuilderFactory();
 
   /**
    * Factory method for builders for bipartite connection rules (the default).
@@ -94,9 +92,7 @@ public:
 class GenericThirdConnBuilderFactory
 {
 public:
-  virtual ~GenericThirdConnBuilderFactory()
-  {
-  }
+  virtual ~GenericThirdConnBuilderFactory();
 
   /**
    * Factory method for builders for tripartite connection rules.

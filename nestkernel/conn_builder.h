@@ -116,36 +116,18 @@ public:
 
   //! Return true if rule allows creation of symmetric connectivity
   virtual bool
-  supports_symmetric() const
-  {
-    return false;
-  }
+  supports_symmetric() const;
 
   //! Return true if rule automatically creates symmetric connectivity
   virtual bool
-  is_symmetric() const
-  {
-    return false;
-  }
+  is_symmetric() const;
 
-  bool
-  allows_autapses() const
-  {
-    return allow_autapses_;
-  }
+  bool allows_autapses() const;
 
-  bool
-  allows_multapses() const
-  {
-    return allow_multapses_;
-  }
+  bool allows_multapses() const;
 
   //! Return true if rule is applicable only to nodes with proxies
-  virtual bool
-  requires_proxies() const
-  {
-    return true;
-  }
+  virtual bool requires_proxies() const;
 
 protected:
   //! Implements the actual connection algorithm
@@ -153,23 +135,11 @@ protected:
 
   bool all_parameters_scalar_() const;
 
-  virtual void
-  sp_connect_()
-  {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
-  }
+  virtual void sp_connect_();
 
-  virtual void
-  disconnect_()
-  {
-    throw NotImplemented( "This disconnection rule is not implemented." );
-  }
+  virtual void disconnect_();
 
-  virtual void
-  sp_disconnect_()
-  {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
-  }
+  virtual void sp_disconnect_();
 
   void update_param_dict_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, size_t indx );
 
@@ -411,10 +381,7 @@ public:
 
   //! Only call third_connect() on ThirdOutBuilder
   void
-  connect() override final
-  {
-    assert( false );
-  }
+  connect() override final;
 
   /**
    * Create third-factor connection for given primary connection.
@@ -508,10 +475,7 @@ public:
 
 private:
   void
-  connect_() override
-  {
-    assert( false );
-  } //!< only call third_connect()
+  connect_() override; //!< only call third_connect()
 
   /**
    * For block pool, return index of first pool element for given target node.
@@ -558,16 +522,10 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
 
   bool
-  supports_symmetric() const override
-  {
-    return true;
-  }
+  supports_symmetric() const override;
 
   bool
-  requires_proxies() const override
-  {
-    return false;
-  }
+  requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -609,16 +567,10 @@ public:
   }
 
   bool
-  is_symmetric() const override
-  {
-    return sources_ == targets_ and all_parameters_scalar_();
-  }
+  is_symmetric() const override;
 
   bool
-  requires_proxies() const override
-  {
-    return false;
-  }
+  requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -775,28 +727,16 @@ public:
     const std::vector< DictionaryDatum >& syn_spec );
 
   const std::string&
-  get_pre_synaptic_element_name() const
-  {
-    return pre_synaptic_element_name_;
-  }
+  get_pre_synaptic_element_name() const;
 
   const std::string&
-  get_post_synaptic_element_name() const
-  {
-    return post_synaptic_element_name_;
-  }
+  get_post_synaptic_element_name() const;
 
   void
-  set_name( const std::string& name )
-  {
-    name_ = name;
-  }
+  set_name( const std::string& name );
 
   std::string
-  get_name() const
-  {
-    return name_;
-  }
+  get_name() const;
 
   /**
    * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.

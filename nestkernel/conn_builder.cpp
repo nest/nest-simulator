@@ -274,6 +274,39 @@ nest::BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
   return local;
 }
 
+//! Return true if rule allows creation of symmetric connectivity
+bool
+nest::BipartiteConnBuilder::supports_symmetric() const
+{
+  return false;
+}
+
+//! Return true if rule automatically creates symmetric connectivity
+bool
+nest::BipartiteConnBuilder::is_symmetric() const
+{
+  return false;
+}
+
+bool
+nest::BipartiteConnBuilder::allows_autapses() const
+{
+  return allow_autapses_;
+}
+
+bool
+nest::BipartiteConnBuilder::allows_multapses() const
+{
+  return allow_multapses_;
+}
+
+//! Return true if rule is applicable only to nodes with proxies
+bool
+nest::BipartiteConnBuilder::requires_proxies() const
+{
+  return true;
+}
+
 void
 nest::BipartiteConnBuilder::connect()
 {
@@ -495,6 +528,24 @@ nest::BipartiteConnBuilder::all_parameters_scalar_() const
   }
 
   return all_scalar;
+}
+
+void
+nest::BipartiteConnBuilder::sp_connect_()
+{
+  throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
+}
+
+void
+nest::BipartiteConnBuilder::disconnect_()
+{
+  throw NotImplemented( "This disconnection rule is not implemented." );
+}
+
+void
+nest::BipartiteConnBuilder::sp_disconnect_()
+{
+  throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
 }
 
 bool
@@ -847,6 +898,13 @@ nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
 {
 }
 
+//! Only call third_connect() on ThirdOutBuilder
+void
+nest::ThirdOutBuilder::connect()
+{
+  assert( false );
+}
+
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
@@ -948,6 +1006,12 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 }
 
 void
+nest::ThirdBernoulliWithPoolBuilder::connect_()
+{
+  assert( false );
+} //!< only call third_connect()
+
+void
 nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, Node& primary_target )
 {
   // We assume target is on this thread
@@ -1016,6 +1080,19 @@ nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
     throw DimensionMismatch( "Source and Target population must be of the same size." );
   }
 }
+
+  bool
+  nest::OneToOneBuilder::supports_symmetric() const
+  {
+    return true;
+  }
+
+  bool
+  nest::OneToOneBuilder::requires_proxies() const
+  {
+    return false;
+  }
+
 
 void
 nest::OneToOneBuilder::connect_()
@@ -1229,6 +1306,18 @@ nest::OneToOneBuilder::sp_disconnect_()
       exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
+
+bool
+nest::AllToAllBuilder::is_symmetric() const
+{
+  return nest::AllToAllBuilder::sources_ == nest::AllToAllBuilder::targets_ and nest::AllToAllBuilder::all_parameters_scalar_();
+}
+
+bool
+nest::AllToAllBuilder::requires_proxies() const
+{
+  return false;
 }
 
 void
@@ -2298,6 +2387,32 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }
 }
+
+const std::string&
+nest::SPBuilder::get_pre_synaptic_element_name() const
+{
+  return nest::SPBuilder::pre_synaptic_element_name_;
+ }
+
+const std::string&
+nest::SPBuilder::get_post_synaptic_element_name() const
+{
+  return nest::SPBuilder::post_synaptic_element_name_;
+}
+
+void
+nest::SPBuilder::set_name( const std::string& name )
+{
+  nest::SPBuilder::name_ = name;
+}
+
+std::string
+nest::SPBuilder::get_name() const
+{
+  return nest::SPBuilder::name_;
+}
+
+
 
 void
 nest::SPBuilder::update_delay( long& d ) const

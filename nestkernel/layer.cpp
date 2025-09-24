@@ -163,4 +163,15 @@ AbstractLayer::get_metadata() const
   return node_collection_->get_metadata();
 }
 
+// Define the tiny accessors (moved from header)
+void AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
+{
+  node_collection_ = node_collection;
+}
+
+NodeCollectionPTR AbstractLayer::get_node_collection()
+{
+  return node_collection_;
+}
+
 } // namespace nest

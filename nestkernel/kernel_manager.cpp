@@ -187,4 +187,16 @@ KernelManager::write_to_dump( const std::string& msg )
   }
 }
 
+bool
+KernelManager::is_initialized() const
+{
+  return initialized_;
+}
+
+unsigned long
+KernelManager::get_fingerprint() const
+{
+  return fingerprint_;
+}
+
 } // namespace nest

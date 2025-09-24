@@ -395,4 +395,22 @@ IOManager::get_recording_backend_device_status( const Name backend_name,
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }
 
+const std::string&
+IOManager::get_data_path() const
+{
+  return data_path_;
+}
+
+const std::string&
+IOManager::get_data_prefix() const
+{
+  return data_prefix_;
+}
+
+bool
+IOManager::overwrite_files() const
+{
+  return overwrite_files_;
+}
+
 } // namespace nest

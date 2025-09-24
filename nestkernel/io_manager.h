@@ -173,24 +173,6 @@ private:
   std::map< Name, StimulationBackend* > stimulation_backends_;
 };
 
-inline const std::string&
-IOManager::get_data_path() const
-{
-  return data_path_;
-}
-
-inline const std::string&
-IOManager::get_data_prefix() const
-{
-  return data_prefix_;
-}
-
-inline bool
-IOManager::overwrite_files() const
-{
-  return overwrite_files_;
-}
-
 template < class RecordingBackendT >
 void
 IOManager::register_recording_backend( const Name name )

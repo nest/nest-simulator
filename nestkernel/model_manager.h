@@ -289,47 +289,17 @@ private:
 };
 
 
-inline Model*
-ModelManager::get_node_model( size_t m ) const
-{
-  assert( m < node_models_.size() );
-  return node_models_[ m ];
-}
 
-inline bool
-ModelManager::are_model_defaults_modified() const
-{
-  return model_defaults_modified_;
-}
 
-inline ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
-{
-  assert_valid_syn_id( syn_id, thread_id );
-  return *( connection_models_[ thread_id ][ syn_id ] );
-}
 
-inline const std::vector< ConnectorModel* >&
-ModelManager::get_connection_models( size_t tid )
-{
-  return connection_models_[ tid ];
-}
 
-inline void
-ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
-{
-  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
-  {
-    throw UnknownSynapseType( syn_id );
-  }
-}
 
-inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
-{
-  assert_valid_syn_id( syn_id, tid );
-  return *get_connection_model( syn_id, tid ).get_secondary_event();
-}
+
+
+
+
+
+
 
 template < class ModelT >
 size_t
@@ -403,15 +373,6 @@ ModelManager::register_specific_connection_model_( const std::string& name )
   } // end of parallel section
 }
 
-inline Node*
-ModelManager::get_proxy_node( size_t tid, size_t node_id )
-{
-  const int model_id = kernel::manager< ModelRangeManager >.get_model_id( node_id );
-  Node* proxy = proxy_nodes_[ tid ].at( model_id );
-  proxy->set_node_id_( node_id );
-  proxy->set_vp( kernel::manager< VPManager >.node_id_to_vp( node_id ) );
-  return proxy;
-}
 
 } // namespace nest
 

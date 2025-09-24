@@ -243,18 +243,6 @@ private:
   std::ofstream dump_; //!< for FULL_LOGGING output
 };
 
-inline bool
-KernelManager::is_initialized() const
-{
-  return initialized_;
-}
-
-inline unsigned long
-KernelManager::get_fingerprint() const
-{
-  return fingerprint_;
-}
-
 namespace kernel
 {
 

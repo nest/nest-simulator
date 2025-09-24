@@ -442,4 +442,9 @@ Event::~Event() {
 
 }
 
+DataLoggingReply::DataLoggingReply(
+    const DataLoggingReply::Container& info)
+  : info_(info)
+{}
+
 } // namespace nest

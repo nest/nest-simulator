@@ -527,19 +527,6 @@ protected:
   MaskDatum mask_;
 };
 
-inline void
-AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
-{
-  node_collection_ = node_collection;
-}
-
-
-inline NodeCollectionPTR
-AbstractLayer::get_node_collection()
-{
-  return node_collection_;
-}
-
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   const MaskDatum& maskd,

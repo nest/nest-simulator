@@ -43,12 +43,15 @@ EXIT_FAILURE = 127
 EXIT_SEGFAULT = 139
 
 # Check that NEST is installed with MPI support and mpi4py is available.
-# If not, the test is skipped.
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
-    import mpi4py
+    from mpi4py import MPI
 
-    HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
-except ImportError:
+    HAVE_MPI4PY = True
+except (ImportError, RuntimeError):
     HAVE_MPI4PY = False
 
 if not HAVE_MPI4PY:

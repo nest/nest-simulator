@@ -24,11 +24,15 @@ import unittest
 import nest
 import numpy as np
 
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
     HAVE_MPI4PY = True
-except ImportError:
+except (ImportError, RuntimeError):
     HAVE_MPI4PY = False
 
 HAVE_MPI = nest.build_info["have_mpi"]

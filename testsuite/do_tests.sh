@@ -225,7 +225,7 @@ if test "${PYTHON}"; then
     set -e
 
     # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
-    if test "${HAVE_MPI}" = "true" && test "${HAVE_OPENMP}" = "true" ; then
+    if test "${HAVE_MPI}" = "True" && test "${HAVE_OPENMP}" = "True" ; then
         XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
         env
         set +e
@@ -247,20 +247,24 @@ if test "${PYTHON}"; then
                 proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
 	    fi
 
-            # Loop over subdirectories whose names are the number of mpi procs to use
-            for numproc in ${proc_nums}; do
-                XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-                PYTEST_ARGS="--verbose --timeout ${TIME_LIMIT} --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+        # Loop over subdirectories whose names are the number of mpi procs to use
+        for numproc in ${proc_nums}; do
+            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+            PYTEST_ARGS="--verbose --timeout ${TIME_LIMIT} --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
 
 		set +e
 		# Some doubling up of code here because trying to add the -m 'not requires...' to PYTEST_ARGS
 		# loses the essential quotes.
 		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
 		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
-                    ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest "${PYTEST_ARGS}" -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
+            # Double-quoting PYTEST_ARGS here does not work
+            # shellcheck disable=SC2086
+            ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
 		else
 		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS}"
-                    ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest "${PYTEST_ARGS}" 2>&1 | tee -a "${TEST_LOGFILE}"
+            # Double-quoting PYTEST_ARGS here does not work
+            # shellcheck disable=SC2086
+            ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} 2>&1 | tee -a "${TEST_LOGFILE}"
 		fi
 		set -e
             done

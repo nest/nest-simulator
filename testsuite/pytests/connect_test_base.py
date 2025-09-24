@@ -26,11 +26,14 @@ import numpy as np
 import scipy.stats
 
 # Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
     HAVE_MPI4PY = True
-except ImportError:
+except (ImportError, RuntimeError):
     HAVE_MPI4PY = False
 
 

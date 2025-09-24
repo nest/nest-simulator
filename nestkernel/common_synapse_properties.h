@@ -86,17 +86,9 @@ private:
   weight_recorder* weight_recorder_;
 };
 
-inline long
-CommonSynapseProperties::get_vt_node_id() const
-{
-  return -1;
-}
 
-inline weight_recorder*
-CommonSynapseProperties::get_weight_recorder() const
-{
-  return weight_recorder_;
-}
+
+
 
 
 } // of namespace nest

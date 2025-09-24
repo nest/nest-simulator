@@ -35,7 +35,7 @@ except (ImportError, RuntimeError):
     HAVE_MPI4PY = False
 
 have_mpi = nest.build_info["have_mpi"]
-test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
+test_with_mpi = have_mpi and HAVE_MPI4PY and nest.num_processes > 1
 
 
 class TestDisconnectSingle(unittest.TestCase):

@@ -1,7 +1,7 @@
 .. _previous_nest_benchmark_results:
 
-NEST performance benchmarks
-===========================
+Previous NEST performance benchmarks
+====================================
 
 
 NEST performance is continuously monitored and improved across various network sizes.

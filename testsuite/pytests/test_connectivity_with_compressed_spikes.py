@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue_3442.py
+# test_connectivity_with_compressed_spikes.py
 #
 # This file is part of NEST.
 #

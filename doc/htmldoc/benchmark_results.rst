@@ -9,6 +9,8 @@ Here we show benchmarking results for NEST version 3.9 on Jureca-DC [1]_.
 The benchmarking framework and the structure of the graphs is described in [2]_.
 For details on `State Propagation` (i.e., `Simulation Run`), see the guides :ref:`built_in_timers` and :ref:`run_simulations`
 
+The results from previous benchmarks can be found :ref:`here <previous_nest_benchmark_results>`.
+
 Strong scaling experiment of the Microcircuit model [3]_
 ---------------------------------------------------------
 

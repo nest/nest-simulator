@@ -584,7 +584,8 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
   else
   {
     std::string msg = String::compose( "SIONBuffer: buffer overflow: ptr=%1, n=%2, max_size=%3.", ptr_, n, max_size_ );
-    LOG( M_ERROR, "RecordingBackendSIONlib::write()", msg );
+    LOG( nest::VerbosityLevel::ERROR, "RecordingBackendSIONlib::write()", msg );
+
     throw IOError();
   }
 }

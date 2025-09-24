@@ -144,11 +144,7 @@ private:
   std::deque< histentry > history_;
 };
 
-inline double
-ArchivingNode::get_spiketime_ms() const
-{
-  return last_spike_;
-}
+
 
 } // of namespace
 #endif

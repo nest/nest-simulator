@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import random
+
 import nest
 import pytest
-import random
 
 """
 Testing disconnection of connections with compressd spikes, toggled on/off, using a random edge order.

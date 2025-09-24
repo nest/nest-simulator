@@ -42,7 +42,7 @@ if ( BUILD_SPHINX_DOCS )
     COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
     COMMAND ${Python_EXECUTABLE} resolve_includes.py ${SPHINX_BUILD_DIR}/models
   )
-  
+
   add_dependencies( docs sphinxdocs )
 
   install( DIRECTORY ${_SPHINX_BUILD_DIR}

@@ -189,7 +189,10 @@ public:
    * where the node_id of the target matches target_node_id. If there are no matches,
    * the function returns invalid_index.
    */
-  virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
+  virtual size_t find_first_target( const size_t tid,
+    const size_t start_lcid,
+    const size_t target_node_id,
+    bool use_compressed_spikes = false ) const = 0;
 
   /**
    * Return lcid of first connection where the node ID of the target
@@ -464,7 +467,10 @@ public:
   }
 
   size_t
-  find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const override
+  find_first_target( const size_t tid,
+    const size_t start_lcid,
+    const size_t target_node_id,
+    bool use_compressed_spikes = false ) const override
   {
     size_t lcid = start_lcid;
     while ( true )
@@ -474,7 +480,7 @@ public:
         return lcid;
       }
 
-      if ( not C_[ lcid ].source_has_more_targets() )
+      if ( not C_[ lcid ].source_has_more_targets() and use_compressed_spikes )
       {
         return invalid_index;
       }

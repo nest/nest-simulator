@@ -55,6 +55,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
+#include "nest_types.h"
 #include "node.h"
 #include "sonata_connector.h"
 #include "stopwatch_impl.h"
@@ -978,21 +979,37 @@ nest::ConnectionManager::find_connection( const size_t tid,
 {
   // lcid will hold the position of the /first/ connection from node
   // snode_id to any local node, or be invalid
-  size_t lcid = source_table_.find_first_source( tid, syn_id, snode_id, use_compressed_spikes() );
-  if ( lcid == invalid_index )
-  {
-    return invalid_index;
-  }
 
-  // lcid will hold the position of the /first/ connection from node
-  // snode_id to node tnode_id, or be invalid
-  lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, lcid, tnode_id );
-  if ( lcid != invalid_index )
+  if ( use_compressed_spikes() )
   {
+    size_t source_index = source_table_.find_first_source( tid, syn_id, snode_id, use_compressed_spikes() );
+    if ( source_index == invalid_index )
+    {
+      return invalid_index;
+    }
+
+    // lcid will hold the position of the /first/ connection from node
+    // snode_id to node tnode_id, or be invalid
+    size_t lcid =
+      connections_[ tid ][ syn_id ]->find_first_target( tid, source_index, tnode_id, use_compressed_spikes() );
+
     return lcid;
   }
+  else
+  {
+    size_t lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, 0, tnode_id, use_compressed_spikes() );
+    if ( lcid == invalid_index )
+    {
+      return invalid_index;
+    }
 
-  return lcid;
+    std::vector< size_t > lcids {};
+    connections_[ tid ][ syn_id ]->get_source_lcids( tid, tnode_id, lcids );
+    size_t source_index = source_table_.select_source_lcid_from_list( tid, snode_id, syn_id, lcids );
+
+    return source_index;
+  }
+  return invalid_index;
 }
 
 void
@@ -1003,7 +1020,7 @@ nest::ConnectionManager::disconnect( const size_t tid,
 {
   assert( syn_id != invalid_synindex );
 
-  const size_t lcid = find_connection( tid, syn_id, snode_id, tnode_id );
+  const auto lcid = find_connection( tid, syn_id, snode_id, tnode_id );
 
   if ( lcid == invalid_index ) // this function should only be called
                                // with a valid connection
@@ -1025,7 +1042,7 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const size_t tid = kernel().vp_manager.get_thread_id();
 
   for ( std::vector< ConnectorBase* >::iterator it = connections_[ tid ].begin(); it != connections_[ tid ].end();
-        ++it )
+    ++it )
   {
     if ( *it )
     {
@@ -1312,8 +1329,8 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
     else
     {
       for ( std::vector< size_t >::const_iterator t_node_id = target_neuron_node_ids.begin();
-            t_node_id != target_neuron_node_ids.end();
-            ++t_node_id )
+        t_node_id != target_neuron_node_ids.end();
+        ++t_node_id )
       {
         // target_table_devices_ contains connections both to and from
         // devices. First we get connections from devices.
@@ -1321,8 +1338,8 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
           source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }
       for ( std::vector< size_t >::const_iterator t_node_id = target_device_node_ids.begin();
-            t_node_id != target_device_node_ids.end();
-            ++t_node_id )
+        t_node_id != target_device_node_ids.end();
+        ++t_node_id )
       {
         // Then, we get connections to devices.
         target_table_devices_.get_connections_to_devices_(

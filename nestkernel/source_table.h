@@ -26,7 +26,9 @@
 // C++ includes:
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <iostream>
+#include <iterator>
 #include <map>
 #include <set>
 #include <utility>
@@ -306,6 +308,11 @@ public:
     const size_t snode_id,
     bool using_compressed_spikes = false ) const;
 
+  size_t select_source_lcid_from_list( const size_t tid,
+    const size_t snode_id,
+    const size_t syn_id,
+    const std::vector< size_t >& lcids ) const;
+
   /**
    * Marks entry in sources_ at given position as disabled.
    */
@@ -472,6 +479,22 @@ SourceTable::no_targets_to_process( const size_t tid )
   current_positions_[ tid ].tid = -1;
   current_positions_[ tid ].syn_id = -1;
   current_positions_[ tid ].lcid = -1;
+}
+inline size_t
+SourceTable::select_source_lcid_from_list( const size_t tid,
+  const size_t snode_id,
+  const size_t syn_id,
+  const std::vector< size_t >& lcids ) const
+{
+  for ( const auto& lcid : lcids )
+  {
+    auto sources = sources_[ tid ][ syn_id ];
+    if ( lcid < sources.size() and sources[ lcid ].get_node_id() == snode_id )
+    {
+      return lcid;
+    }
+  }
+  return invalid_lcid;
 }
 
 inline size_t

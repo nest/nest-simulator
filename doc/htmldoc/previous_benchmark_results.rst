@@ -2,6 +2,7 @@
 
 Previous NEST performance benchmarks
 ====================================
+
 .. important::
 
    NEST version 3.8 benchmarks of the Multi-area-model and HPC benchmark model have been updated due to errors in the analysis! Please see below for corrected versions.

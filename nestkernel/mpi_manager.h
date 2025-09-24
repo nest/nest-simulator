@@ -441,201 +441,56 @@ public:
   };
 };
 
-inline void
-MPIManager::set_recv_counts_secondary_events_in_int_per_rank( const std::vector< int >& recv_counts_in_int_per_rank )
-{
-  recv_counts_secondary_events_in_int_per_rank_ = recv_counts_in_int_per_rank;
 
-  std::partial_sum( recv_counts_secondary_events_in_int_per_rank_.begin(),
-    recv_counts_secondary_events_in_int_per_rank_.end() - 1,
-    recv_displacements_secondary_events_in_int_per_rank_.begin() + 1 );
-}
 
-inline size_t
-MPIManager::get_recv_count_secondary_events_in_int( const size_t source_rank ) const
-{
-  return recv_counts_secondary_events_in_int_per_rank_[ source_rank ];
-}
 
-inline size_t
-MPIManager::get_recv_displacement_secondary_events_in_int( const size_t source_rank ) const
-{
-  return recv_displacements_secondary_events_in_int_per_rank_[ source_rank ];
-}
 
-inline size_t
-MPIManager::get_send_count_secondary_events_in_int( const size_t target_rank ) const
-{
-  return send_counts_secondary_events_in_int_per_rank_[ target_rank ];
-}
 
-inline size_t
-MPIManager::get_send_displacement_secondary_events_in_int( const size_t target_rank ) const
-{
-  return send_displacements_secondary_events_in_int_per_rank_[ target_rank ];
-}
 
-inline size_t
-MPIManager::get_done_marker_position_in_secondary_events_send_buffer( const size_t target_rank ) const
-{
-  return get_send_displacement_secondary_events_in_int( target_rank )
-    + get_send_count_secondary_events_in_int( target_rank ) - 1;
-}
 
-inline size_t
-MPIManager::get_done_marker_position_in_secondary_events_recv_buffer( const size_t source_rank ) const
-{
-  return get_recv_displacement_secondary_events_in_int( source_rank )
-    + get_recv_count_secondary_events_in_int( source_rank ) - 1;
-}
 
-inline size_t
-MPIManager::get_num_processes() const
-{
-  return num_processes_;
-}
 
-inline size_t
-MPIManager::get_rank() const
-{
-  return rank_;
-}
 
-inline bool
-MPIManager::is_mpi_used()
-{
-  return use_mpi_;
-}
 
-inline size_t
-MPIManager::get_buffer_size_target_data() const
-{
-  return buffer_size_target_data_;
-}
 
-inline unsigned int
-MPIManager::get_send_recv_count_target_data_per_rank() const
-{
-  return send_recv_count_target_data_per_rank_;
-}
 
-inline size_t
-MPIManager::get_buffer_size_spike_data() const
-{
-  return buffer_size_spike_data_;
-}
 
-inline unsigned int
-MPIManager::get_send_recv_count_spike_data_per_rank() const
-{
-  return send_recv_count_spike_data_per_rank_;
-}
 
-inline size_t
-MPIManager::get_send_buffer_size_secondary_events_in_int() const
-{
-  return send_displacements_secondary_events_in_int_per_rank_
-           [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
-    + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];
-}
 
-inline size_t
-MPIManager::get_recv_buffer_size_secondary_events_in_int() const
-{
-  return recv_displacements_secondary_events_in_int_per_rank_
-           [ recv_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
-    + recv_counts_secondary_events_in_int_per_rank_[ recv_counts_secondary_events_in_int_per_rank_.size() - 1 ];
-}
 
-inline void
-MPIManager::set_buffer_size_target_data( const size_t buffer_size )
-{
-  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  if ( buffer_size <= max_buffer_size_target_data_ )
-  {
-    buffer_size_target_data_ = buffer_size;
-  }
-  else
-  {
-    buffer_size_target_data_ = max_buffer_size_target_data_;
-  }
-  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
-    floor( static_cast< double >( get_buffer_size_target_data() ) / static_cast< double >( get_num_processes() ) ) );
 
-  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data() );
-}
 
-inline void
-MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
-{
-  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  buffer_size_spike_data_ = buffer_size;
 
-  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
 
-  assert( send_recv_count_spike_data_per_rank_ * get_num_processes() <= get_buffer_size_spike_data() );
-}
 
-inline bool
-MPIManager::increase_buffer_size_target_data()
-{
-  assert( adaptive_target_buffers_ );
-  if ( buffer_size_target_data_ >= max_buffer_size_target_data_ )
-  {
-    return false;
-  }
-  else
-  {
-    if ( buffer_size_target_data_ * growth_factor_buffer_target_data_ < max_buffer_size_target_data_ )
-    {
-      // this also adjusts send_recv_count_target_data_per_rank_
-      set_buffer_size_target_data(
-        static_cast< size_t >( floor( buffer_size_target_data_ * growth_factor_buffer_target_data_ ) ) );
-    }
-    else
-    {
-      // this also adjusts send_recv_count_target_data_per_rank_
-      set_buffer_size_target_data( max_buffer_size_target_data_ );
-    }
-    return true;
-  }
-}
 
-inline bool
-MPIManager::adaptive_target_buffers() const
-{
-  return adaptive_target_buffers_;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifndef HAVE_MPI
-inline std::string
-MPIManager::get_processor_name()
-{
-  char name[ 1024 ];
-  name[ 1023 ] = '\0';
-  gethostname( name, 1023 );
-  return name;
-}
 
-inline void
-MPIManager::mpi_abort( int )
-{
-}
 
-inline void
-MPIManager::communicate( std::vector< int >& )
-{
-}
 
-inline void
-MPIManager::communicate( std::vector< long >& )
-{
-}
 
-inline void
-MPIManager::synchronize()
-{
-}
+
+
+
+
+
 
 inline void
 test_link( int, int )
@@ -647,41 +502,17 @@ test_links()
 {
 }
 
-inline bool
-MPIManager::any_true( const bool my_bool )
-{
-  return my_bool;
-}
 
-inline double
-MPIManager::time_communicate( int, int )
-{
-  return 0.0;
-}
 
-inline double
-MPIManager::time_communicatev( int, int )
-{
-  return 0.0;
-}
 
-inline double
-MPIManager::time_communicate_offgrid( int, int )
-{
-  return 0.0;
-}
 
-inline double
-MPIManager::time_communicate_alltoall( int, int )
-{
-  return 0.0;
-}
 
-inline double
-MPIManager::time_communicate_alltoallv( int, int )
-{
-  return 0.0;
-}
+
+
+
+
+
+
 
 #endif /* HAVE_MPI */
 
@@ -761,30 +592,6 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
 
   communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
 }
-
-inline size_t
-nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
-{
-  return vp % num_processes_;
-}
-
-#ifdef HAVE_MPI
-
-inline size_t
-MPIManager::get_process_id_of_node_id( const size_t node_id ) const
-{
-  return node_id % num_processes_;
-}
-
-#else
-
-inline size_t
-MPIManager::get_process_id_of_node_id( const size_t ) const
-{
-  return 0;
-}
-
-#endif /* HAVE_MPI */
 
 #ifdef HAVE_MPI
 // Variable to hold the MPI communicator to use.

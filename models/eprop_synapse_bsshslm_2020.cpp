@@ -131,7 +131,10 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector(
 {
   for ( auto& c : C_ )
   {
-    c.delete_optimizer();
+    if ( not c.is_disabled() )
+    {
+      c.delete_optimizer();
+    }
   }
   C_.clear();
 }
@@ -141,7 +144,10 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
 {
   for ( auto& c : C_ )
   {
-    c.delete_optimizer();
+    if ( not c.is_disabled() )
+    {
+      c.delete_optimizer();
+    }
   }
   C_.clear();
 }

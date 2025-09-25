@@ -98,6 +98,7 @@ if __name__ == "__main__":
     test_outdir = args.test_outdir
     no_manycore = args.no_manycore_tests
     have_mpi = args.have_mpi
+    have_openmp = args.have_openmp
 
     if not have_mpi:
         # keep only phases that do not contain mpi in their name

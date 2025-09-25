@@ -42,12 +42,6 @@ assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 # Where parameterization is over thread numbers, test configurations without OpenMP will generate
 # fewer tests under pytest. To keep complexity of the testing logic in bounds, minima are used below.
 expected_num_tests = {
-    "01 basetests": 6,
-    "02 selftests": 8,
-    "03 unittests": 27,
-    "04 regressiontests": 45,  # does not include the two python-dependent tests
-    "05 mpitests": 77,
-    "06 musictests": 1,
     "07 pynesttests": 3719,  # without thread-dependent cases
     "07 pynesttests mpi 2": (230, 172),  # first case without thread-dependent cases
     "07 pynesttests mpi 3": (58, 0),
@@ -97,10 +91,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("test_outdir")
     parser.add_argument("--no-manycore-tests", action="store_true")
+    parser.add_argument("--have-mpi", action="store_true")
     args = parser.parse_args()
 
     test_outdir = args.test_outdir
     no_manycore = args.no_manycore_tests
+    have_mpi = args.have_mpi
+
+    if not have_mpi:
+        # keep only phases that do not contain mpi in their name
+        expected_num_tests = {k: v for k, v in expected_num_tests.items() if "mpi" not in k}
 
     results = {}
     totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             results[ph_name] = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [msg]}
             totals["Failed tests"].append(msg)
 
-    missing_phases = []
+    reported_phases = []
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
 
     col_w = max(len(c) for c in cols) + 2
@@ -143,10 +143,10 @@ if __name__ == "__main__":
 
     print(tline)
     for pn, pr in results.items():
+        reported_phases.append(pn)
         print(f"{pn:<{first_col_w}s}", end="")
         if pr is None:
             print(f"{'--- RESULTS MISSING FOR PHASE ---':^{len(cols) * col_w}}")
-            missing_phases.append(pn)
         elif pr["Tests"] == 0 and pr["Failed tests"]:
             print(f"{'--- XML PARSING FAILURE ---':^{len(cols) * col_w}}")
         else:
@@ -167,12 +167,18 @@ if __name__ == "__main__":
     # Consistency check
     assert totals["Failures"] + totals["Errors"] == len(totals["Failed tests"])
 
-    if totals["Failures"] + totals["Errors"] > 0 or missing_tests:
+    missing_phases = set(expected_num_tests.keys()) - set(reported_phases)
+    if totals["Failures"] + totals["Errors"] > 0 or missing_phases or missing_tests:
         print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
         if totals["Failures"] + totals["Errors"] > 0:
             print("    The following tests failed")
             for t in totals["Failed tests"]:
                 print(f"    | {t}")  # | marks line for parsing
+            print()
+        if missing_phases:
+            print("    The following test phases did not report any results:")
+            for ph in missing_phases:
+                print(f"    | {ph}")  # | marks line for parsing
             print()
         if missing_tests:
             print("    The following test phases did not report all expected results:")

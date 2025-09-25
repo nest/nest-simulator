@@ -294,10 +294,14 @@ set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.
+SUMMARY_OPTS=()
 if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
-   SUMMARY_OPTS="--no-manycore-tests"
+   SUMMARY_OPTS+=("--no-manycore-tests")
 fi
-python3 "$(dirname "$0")/summarize_tests.py" ${SUMMARY_OPTS:+"$SUMMARY_OPTS"} "${REPORTDIR}"
+if "${HAVE_MPI:-false}"; then
+   SUMMARY_OPTS+=("--have-mpi")
+fi
+python3 "$(dirname "$0")/summarize_tests.py" "${SUMMARY_OPTS[@]}" "${REPORTDIR}"
 TESTSUITE_RESULT="$?"
 
 # Mac OS X: Restore old crash reporter state

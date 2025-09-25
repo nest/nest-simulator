@@ -2220,4 +2220,17 @@ NestModule::init( SLIInterpreter* i )
   register_mask< GridMask< 2 > >();
 }
 
+bool
+NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+AbstractMask*
+NestModule::create_mask( const Name& name, const DictionaryDatum& d )
+{
+  return mask_factory_().create( name, d );
+}
+
+
 } // namespace nest

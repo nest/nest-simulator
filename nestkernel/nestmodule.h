@@ -1874,18 +1874,6 @@ NestModule::register_mask()
   return mask_factory_().register_subtype< T >( T::get_name() );
 }
 
-inline bool
-NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
-{
-  return mask_factory_().register_subtype( name, creator );
-}
-
-inline AbstractMask*
-NestModule::create_mask( const Name& name, const DictionaryDatum& d )
-{
-  return mask_factory_().create( name, d );
-}
-
 } // namespace
 
 #endif

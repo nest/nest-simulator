@@ -703,3 +703,14 @@ nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, 
 {
   // nothing to do
 }
+
+size_t RecordingBackendSIONlib::get_size() {
+
+      return ptr_;
+}
+
+size_t RecordingBackendSIONlib::SIONBuffer::get_capacity() {
+
+      return max_size_;
+}
+

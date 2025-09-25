@@ -1237,3 +1237,111 @@ nest::SimulationManager::get_previous_slice_origin() const
 {
   return clock_ - Time::step( kernel::manager< ConnectionManager >.get_min_delay() );
 }
+bool SimulationManager::get_eprop_reset_neurons_on_update() const {
+
+  return eprop_reset_neurons_on_update_;
+}
+
+Time SimulationManager::get_eprop_learning_window() const {
+
+  return Time::ms( eprop_learning_window_ );
+}
+
+Time SimulationManager::get_eprop_update_interval() const {
+
+  return Time::ms( eprop_update_interval_ );
+}
+
+size_t SimulationManager::get_wfr_interpolation_order() const {
+
+  return wfr_interpolation_order_;
+}
+
+double SimulationManager::get_wfr_tol() const {
+
+  return wfr_tol_;
+}
+
+double SimulationManager::get_wfr_comm_interval() const {
+
+  return wfr_comm_interval_;
+}
+
+bool SimulationManager::use_wfr() const {
+
+  return use_wfr_;
+}
+
+long SimulationManager::get_to_step() const {
+
+  return to_step_;
+}
+
+long SimulationManager::get_from_step() const {
+
+  return from_step_;
+}
+
+Time SimulationManager::run_end_time() const {
+
+  assert( not simulating_ ); // implicit due to using get_time()
+  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
+}
+
+Time SimulationManager::run_start_time() const {
+
+  assert( not simulating_ ); // implicit due to using get_time()
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
+}
+
+Time SimulationManager::run_duration() const {
+
+  return to_do_total_ * Time::get_resolution();
+}
+
+Time const& SimulationManager::get_clock() const {
+
+  return clock_;
+}
+
+size_t SimulationManager::get_slice() const {
+
+  return slice_;
+}
+
+bool SimulationManager::has_been_prepared() const {
+
+  return prepared_;
+}
+
+bool SimulationManager::has_been_simulated() const {
+
+  return simulated_;
+}
+
+Time const SimulationManager::get_time() const {
+
+  assert( not simulating_ );
+  return clock_ + Time::step( from_step_ );
+}
+
+Time const& SimulationManager::get_slice_origin() const {
+
+  return clock_;
+}
+
+Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >& get_mpi_synchronization_stopwatch() {
+
+    return sw_mpi_synchronization_;
+}
+
+Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >& get_omp_synchronization_simulation_stopwatch() {
+
+    return sw_omp_synchronization_simulation_;
+}
+
+Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >& get_omp_synchronization_construction_stopwatch() {
+
+    return sw_omp_synchronization_construction_;
+}
+

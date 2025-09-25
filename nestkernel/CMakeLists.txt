@@ -61,7 +61,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h pseudo_recording_device.cpp
       ring_buffer.h ring_buffer.cpp
-      secondary_event.h
+      secondary_event.h secondary_event.cpp
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp

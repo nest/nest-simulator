@@ -407,48 +407,6 @@ std::set< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids
 template < typename DataType, typename Subclass >
 size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
 
-inline GapJunctionEvent*
-GapJunctionEvent::clone() const
-{
-  return new GapJunctionEvent( *this );
-}
-
-inline InstantaneousRateConnectionEvent*
-InstantaneousRateConnectionEvent::clone() const
-{
-  return new InstantaneousRateConnectionEvent( *this );
-}
-
-inline DelayedRateConnectionEvent*
-DelayedRateConnectionEvent::clone() const
-{
-  return new DelayedRateConnectionEvent( *this );
-}
-
-inline DiffusionConnectionEvent*
-DiffusionConnectionEvent::clone() const
-{
-  return new DiffusionConnectionEvent( *this );
-}
-
-inline double
-DiffusionConnectionEvent::get_drift_factor() const
-{
-  return drift_factor_;
-}
-
-inline double
-DiffusionConnectionEvent::get_diffusion_factor() const
-{
-  return diffusion_factor_;
-}
-
-inline LearningSignalConnectionEvent*
-LearningSignalConnectionEvent::clone() const
-{
-  return new LearningSignalConnectionEvent( *this );
-}
-
 /**
  * Event for slow inward current (SIC) connections between astrocytes and neurons.
  *
@@ -465,12 +423,6 @@ public:
   void operator()();
   SICEvent* clone() const;
 };
-
-inline SICEvent*
-SICEvent::clone() const
-{
-  return new SICEvent( *this );
-}
 
 template < typename DataType, typename Subclass >
 void

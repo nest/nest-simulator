@@ -102,7 +102,7 @@ if __name__ == "__main__":
     if not have_mpi:
         # keep only phases that do not contain mpi in their name
         expected_num_tests = {k: v for k, v in expected_num_tests.items() if "mpi" not in k}
-    if have_mpi and not have_openmp:
+    if have_mpi and not have_openmp and "07 pynesttests sli2py mpi" in expected_num_tests:
         # sli2py_mpi needs both mpi and openmp
         del expected_num_tests["07 pynesttests sli2py mpi"]
 

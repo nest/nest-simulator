@@ -111,6 +111,7 @@ Source::set_node_id( const uint64_t node_id )
 {
   assert( node_id <= MAX_NODE_ID );
   node_id_ = node_id;
+  disabled_ = false;
 }
 
 inline uint64_t

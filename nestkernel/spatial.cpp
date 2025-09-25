@@ -445,4 +445,52 @@ get_layer_status( NodeCollectionPTR )
   return DictionaryDatum();
 }
 
+void
+LayerMetadata::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+{
+  layer_->get_status( d, nc );
+}
+
+const AbstractLayerPTR
+LayerMetadata::get_layer() const
+{
+  return layer_;
+}
+
+std::string
+LayerMetadata::get_type() const
+{
+  return "spatial";
+}
+
+void
+LayerMetadata::set_first_node_id( size_t node_id )
+{
+  first_node_id_ = node_id;
+}
+
+size_t
+LayerMetadata::get_first_node_id() const
+{
+  return first_node_id_;
+}
+
+bool
+LayerMetadata::operator==( const NodeCollectionMetadataPTR rhs ) const
+{
+  const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
+  if ( not rhs_layer_metadata )
+  {
+    return false;
+  }
+  // Compare status dictionaries of this layer and rhs layer
+  DictionaryDatum dict( new Dictionary() );
+  DictionaryDatum rhs_dict( new Dictionary() );
+
+  // Since we do not have access to the node collection here, we
+  // compare based on all metadata, irrespective of any slicing
+  get_status( dict, /* nc */ nullptr );
+  rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
+  return *dict == *rhs_dict;
+}
 } // namespace nest

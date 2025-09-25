@@ -343,11 +343,11 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
   const auto send_ptr = local_nodes.empty() ? nullptr : &local_nodes[ 0 ];
   MPI_Allgatherv( send_ptr,
     local_nodes.size(),
-    MPI_Type< size_t >::type,
+    MPI_Type< long >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],
     &displacements[ 0 ],
-    MPI_Type< size_t >::type,
+    MPI_Type< long >::type,
     comm );
 }
 

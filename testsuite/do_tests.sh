@@ -255,7 +255,7 @@ if test "${PYTHON}"; then
 		set +e
 		# Some doubling up of code here because trying to add the -m 'not requires...' to PYTEST_ARGS
 		# loses the essential quotes.
-		if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+		if test "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-False}" != "False"; then
 		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
             # Double-quoting PYTEST_ARGS here does not work
             # shellcheck disable=SC2086
@@ -295,10 +295,10 @@ set +e
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.
 SUMMARY_OPTS=()
-if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+if test "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-False}" != "False"; then
    SUMMARY_OPTS+=("--no-manycore-tests")
 fi
-if "${HAVE_MPI:-false}"; then
+if test "${HAVE_MPI}" = "True"; then
    SUMMARY_OPTS+=("--have-mpi")
 fi
 python3 "$(dirname "$0")/summarize_tests.py" "${SUMMARY_OPTS[@]}" "${REPORTDIR}"

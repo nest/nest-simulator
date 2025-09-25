@@ -562,16 +562,8 @@ Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 }
 
 // Proper mod which returns non-negative numbers
-static inline double
-mod( double x, double p )
-{
-  x = std::fmod( x, p );
-  if ( x < 0 )
-  {
-    x += p;
-  }
-  return x;
-}
+double
+mod( double x, double p );
 
 template < int D, class T, int max_capacity, int max_depth >
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree< D, T, max_capacity, max_depth >& q,

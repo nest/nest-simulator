@@ -584,4 +584,189 @@ Node::event_hook( DSCurrentEvent& e )
   e.get_receiver().handle( e );
 }
 
+size_t Node::get_tmp_nc_index() {
+
+  assert( tmp_nc_index_ != invalid_index );
+
+  const auto index = tmp_nc_index_;
+  tmp_nc_index_ = invalid_index;
+
+  return index;
+}
+
+void Node::set_tmp_nc_index( size_t index ) {
+
+  tmp_nc_index_ = index;
+}
+
+size_t Node::get_thread_lid() const {
+
+  return thread_lid_;
+}
+
+void Node::set_thread_lid( const size_t tlid ) {
+
+  thread_lid_ = tlid;
+}
+
+template < typename ConcreteNode > const ConcreteNode& Node::downcast( const Node& n ) {
+
+  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
+  assert( tp != 0 );
+  return *tp;
+}
+
+size_t Node::get_vp() const {
+
+  return vp_;
+}
+
+void Node::set_vp( size_t vp ) {
+
+  vp_ = vp;
+}
+
+size_t Node::get_thread() const {
+
+  return thread_;
+}
+
+void Node::set_thread( size_t t ) {
+
+  thread_ = t;
+}
+
+bool Node::is_model_prototype() const {
+
+  return vp_ == invalid_thread;
+}
+
+void Node::set_model_id( int i ) {
+
+  model_id_ = i;
+}
+
+int Node::get_model_id() const {
+
+  return model_id_;
+}
+
+void Node::set_node_id_( size_t i ) {
+
+  node_id_ = i;
+}
+
+size_t Node::get_node_id() const {
+
+  return node_id_;
+}
+
+Name Node::get_element_type() const {
+
+  return names::neuron;
+}
+
+bool Node::is_proxy() const {
+
+  return false;
+}
+
+bool Node::is_off_grid() const {
+
+  return false;
+}
+
+bool Node::one_node_per_process() const {
+
+  return false;
+}
+
+bool Node::local_receiver() const {
+
+  return false;
+}
+
+bool Node::has_proxies() const {
+
+  return true;
+}
+
+void Node::set_node_uses_wfr( const bool uwfr ) {
+
+  node_uses_wfr_ = uwfr;
+}
+
+bool Node::supports_urbanczik_archiving() const {
+
+  return false;
+}
+
+bool Node::node_uses_wfr() const {
+
+  return node_uses_wfr_;
+}
+
+bool Node::is_frozen() const {
+
+  return frozen_;
+}
+
+std::map< Name, double > Node::get_synaptic_elements() const {
+
+    return std::map< Name, double >();
+}
+
+int Node::get_synaptic_elements_connected( Name ) const {
+
+    return 0;
+}
+
+int Node::get_synaptic_elements_vacant( Name ) const {
+
+    return 0;
+}
+
+double Node::get_synaptic_elements( Name ) const {
+
+    return 0.0;
+}
+
+double Node::get_Ca_minus() const {
+
+    return 0.0;
+}
+
+void Node::finalize() {
+
+}
+
+void Node::post_run_cleanup() {
+
+}
+
+void Node::calibrate_time( const TimeConverter& ) {
+
+}
+
+SignalType
+Node::sends_signal() const
+{
+  return SPIKE;
+}
+
+SignalType
+Node::receives_signal() const
+{
+  return SPIKE;
+}
+
+void
+Node::set_frozen_( bool frozen )
+{
+  frozen_ = frozen;
+}
+
+
 } // namespace
+
+

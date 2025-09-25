@@ -797,4 +797,44 @@ NodeManager::set_status( const DictionaryDatum& )
 {
 }
 
+void NodeManager::set_have_nodes_changed( const bool changed ) {
+
+  have_nodes_changed_ = changed;
+}
+
+bool NodeManager::have_nodes_changed() const {
+
+  return have_nodes_changed_;
+}
+
+const SparseNodeArray& NodeManager::get_local_nodes( size_t t ) const {
+
+  return local_nodes_[ t ];
+}
+
+bool NodeManager::wfr_is_used() const {
+
+  return wfr_is_used_;
+}
+
+const std::vector< Node* >& NodeManager::get_wfr_nodes_on_thread( size_t t ) const {
+
+  return wfr_nodes_vec_.at( t );
+}
+
+Node* NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const {
+
+  return local_nodes_[ t ].get_node_by_index( thread_local_id );
+}
+
+size_t NodeManager::size() const {
+
+  return local_nodes_[ 0 ].get_max_node_id();
+}
+
+size_t NodeManager::get_num_active_nodes() {
+
+    return num_active_nodes_;
+}
+
 } // namespace nest

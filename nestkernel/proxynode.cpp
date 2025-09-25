@@ -100,5 +100,9 @@ proxynode::get_status( DictionaryDatum& d ) const
   ( *d )[ names::element_type ] = LiteralDatum( element_type );
 }
 
-
+bool
+proxynode::is_proxy() const
+{
+  return true;
+}
 } // namespace

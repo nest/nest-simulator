@@ -227,3 +227,24 @@ nest::RandomManager::register_rng_type( const std::string& name )
 {
   rng_types_.insert( std::make_pair( name, new RandomGeneratorFactory< RNG_TYPE >() ) );
 }
+
+
+nest::RngPtr
+nest::RandomManager::get_rank_synced_rng() const
+{
+  return rank_synced_rng_;
+}
+
+nest::RngPtr
+nest::RandomManager::get_vp_synced_rng( size_t tid ) const
+{
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
+  return vp_synced_rngs_[ tid ];
+}
+
+nest::RngPtr
+nest::RandomManager::get_vp_specific_rng( size_t tid ) const
+{
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
+  return vp_specific_rngs_[ tid ];
+}

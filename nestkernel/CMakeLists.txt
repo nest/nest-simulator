@@ -59,7 +59,7 @@ set ( nestkernel_sources
       proxynode.h proxynode.cpp
       random_generators.h
       recording_device.h recording_device.cpp
-      pseudo_recording_device.h
+      pseudo_recording_device.h pseudo_recording_device.cpp
       ring_buffer.h ring_buffer.cpp
       secondary_event.h
       slice_ring_buffer.cpp slice_ring_buffer.h

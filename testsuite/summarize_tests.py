@@ -92,6 +92,7 @@ if __name__ == "__main__":
     parser.add_argument("test_outdir")
     parser.add_argument("--no-manycore-tests", action="store_true")
     parser.add_argument("--have-mpi", action="store_true")
+    parser.add_argument("--have-openmp", action="store_true")
     args = parser.parse_args()
 
     test_outdir = args.test_outdir
@@ -101,6 +102,9 @@ if __name__ == "__main__":
     if not have_mpi:
         # keep only phases that do not contain mpi in their name
         expected_num_tests = {k: v for k, v in expected_num_tests.items() if "mpi" not in k}
+    if have_mpi and not have_openmp:
+        # sli2py_mpi needs both mpi and openmp
+        del expected_num_tests["07 pynesttests sli2py mpi"]
 
     results = {}
     totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}

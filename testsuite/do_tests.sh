@@ -301,6 +301,9 @@ fi
 if test "${HAVE_MPI}" = "True"; then
    SUMMARY_OPTS+=("--have-mpi")
 fi
+if test "${HAVE_OPENMP}" = "True"; then
+   SUMMARY_OPTS+=("--have-openmp")
+fi
 python3 "$(dirname "$0")/summarize_tests.py" "${SUMMARY_OPTS[@]}" "${REPORTDIR}"
 TESTSUITE_RESULT="$?"
 

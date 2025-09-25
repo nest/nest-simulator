@@ -30,7 +30,7 @@ set ( nestkernel_sources
       connection.h
       connection_label.h
       common_properties_hom_w.h common_properties_hom_w.cpp
-      syn_id_delay.h
+      syn_id_delay.h syn_id_delay.cpp
       connector_base.h connector_base.cpp
       connector_model.h connector_model.cpp connector_model_impl.h
       connection_id.h connection_id.cpp

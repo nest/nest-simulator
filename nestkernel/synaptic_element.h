@@ -152,92 +152,52 @@ public:
    * @param t Current time (in ms)
    */
   int
-  get_z_vacant() const
-  {
-    return std::floor( z_ ) - z_connected_;
-  }
+  get_z_vacant() const;
   /**
    * Retrieves the current number of synaptic elements bound to a synapse
    */
   int
-  get_z_connected() const
-  {
-    return z_connected_;
-  }
+  get_z_connected() const;
   /**
    * Retrieves the value of tau_vacant
    */
   double
-  get_tau_vacant() const
-  {
-    return tau_vacant_;
-  }
+  get_tau_vacant() const;
   /**
    * Changes the number of bound synaptic elements by n.
    *
    * @param n number of new connections. Can be negative.
    */
-  void
-  connect( int n )
-  {
-    z_connected_ += n;
-    if ( z_connected_ > floor( z_ ) )
-    {
-      z_ = z_connected_ + ( z_ - floor( z_ ) );
-    }
-  }
+  void connect( int n );
 
   /**
    * Used to define the dynamics of the synaptic elements using a Growth Curve
    */
   void
-  set_growth_curve( GrowthCurve& g )
-  {
-    if ( growth_curve_ != &g )
-    {
-      delete growth_curve_;
-      growth_curve_ = &g;
-    }
-  }
+  set_growth_curve( GrowthCurve& g );
 
   /**
    * Retrieves the current value of the growth rate
    */
   double
-  get_growth_rate() const
-  {
-    return growth_rate_;
-  }
+  get_growth_rate() const;
 
   void
-  set_z( const double z_new )
-  {
-    z_ = z_new;
-  }
+  set_z( const double z_new );
+
   double
-  get_z() const
-  {
-    return z_;
-  }
+  get_z() const;
   /**
    * Reduce the amount of vacant synaptic elements by a factor
    * of tau_vacant_
    */
   void
-  decay_z_vacant()
-  {
-    if ( get_z_vacant() > 0 )
-    {
-      z_ -= get_z_vacant() * tau_vacant_;
-    }
-  }
+  decay_z_vacant();
+  
 
   bool
-  continuous() const
-  {
-    return continuous_;
-  }
-
+  continuous() const;
+  
 private:
   // The current number of synaptic elements at t = z_t_
   double z_;

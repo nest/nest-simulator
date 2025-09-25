@@ -26,28 +26,28 @@
 namespace nest
 {
 
+
 Source::Source()
   : node_id_( 0 )
   , processed_( false )
   , primary_( true )
-{
-}
+{}
 
-Source::Source( const uint64_t node_id, const bool is_primary )
+Source::Source( const std::uint64_t node_id, const bool primary )
   : node_id_( node_id )
   , processed_( false )
-  , primary_( is_primary )
+  , primary_( primary )
 {
   assert( node_id <= MAX_NODE_ID );
 }
 
-void Source::set_node_id( const uint64_t node_id )
+void Source::set_node_id( const std::uint64_t node_id )
 {
   assert( node_id <= MAX_NODE_ID );
   node_id_ = node_id;
 }
 
-uint64_t Source::get_node_id() const
+std::uint64_t Source::get_node_id() const
 {
   return node_id_;
 }

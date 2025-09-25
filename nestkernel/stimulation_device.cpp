@@ -181,3 +181,15 @@ nest::StimulationDevice::get_status( DictionaryDatum& d ) const
     }
   }
 }
+
+Name
+nest::StimulationDevice::get_element_type() const
+{
+  return names::stimulator;
+}
+
+bool
+nest::StimulationDevice::has_proxies() const
+{
+  return false;
+}

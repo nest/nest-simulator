@@ -414,57 +414,57 @@ Time::delay_ms_to_steps( double ms )
 // Binary operators
 /////////////////////////////////////////////////////////////
 
-
+namespace nest {
 bool
-nest::operator==( const Time& t1, const Time& t2 )
+operator==( const Time& t1, const Time& t2 )
 {
   return t1.tics == t2.tics;
 }
 
 bool
-nest::operator!=( const Time& t1, const Time& t2 )
+operator!=( const Time& t1, const Time& t2 )
 {
   return t1.tics != t2.tics;
 }
 
 bool
-nest::operator<( const Time& t1, const Time& t2 )
+operator<( const Time& t1, const Time& t2 )
 {
   return t1.tics < t2.tics;
 }
 
 bool
-nest::operator>( const Time& t1, const Time& t2 )
+operator>( const Time& t1, const Time& t2 )
 {
   return t1.tics > t2.tics;
 }
 
 bool
-nest::operator<=( const Time& t1, const Time& t2 )
+operator<=( const Time& t1, const Time& t2 )
 {
   return t1.tics <= t2.tics;
 }
 
 bool
-nest::operator>=( const Time& t1, const Time& t2 )
+operator>=( const Time& t1, const Time& t2 )
 {
   return t1.tics >= t2.tics;
 }
 
 Time
-nest::operator+( const Time& t1, const Time& t2 )
+operator+( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics + t2.tics ); // check range
 }
 
 Time
-nest::operator-( const Time& t1, const Time& t2 )
+operator-( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics - t2.tics ); // check range
 }
 
 Time
-nest::operator*( const long factor, const Time& t )
+operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
@@ -483,11 +483,12 @@ nest::operator*( const long factor, const Time& t )
 }
 
 Time
-nest::operator*( const Time& t, long factor )
+operator*( const Time& t, long factor )
 {
   return factor * t;
 }
 
+}
 std::ostream&
 operator<<( std::ostream& strm, const Time& t )
 {

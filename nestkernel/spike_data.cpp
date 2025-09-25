@@ -176,12 +176,6 @@ SpikeData::is_invalid_marker() const
   return marker_ == SPIKE_DATA_ID_INVALID;
 }
 
-double
-SpikeData::get_offset() const
-{
-  return 0;
-}
-
 
 // --- OffGridSpikeData ---
 

@@ -56,3 +56,69 @@ Instructions
 
       cd doc/doxygen/html
       browser index.html
+
+
+
+build workflow
+--------------
+
+
+local build
+
+if make docs is run
+
+* doxygen runs and outputs xml
+
+
+* python script (ext?) is triggered and outputs json
+  task: get class names of nest module from xml
+
+
+* app(conf.py) connects json to jinja template in rst file
+
+
+* breathe extension reads the rst file and extracts desired info from xml and outputs html
+
+.. code-block::
+
+  xml snippet:
+  ------------
+
+  <compoundname>nest::ArchivingNode</compoundname>
+
+  json:
+  -----
+
+  ["nest::ArchivingNode", "nest::Connection", . . .]
+
+  rst file with jinja template:
+  -----------------------------
+
+  {% for item in json_list %}
+  .. doxgygenclass:: {{ item }}
+  {% endfor %}
+
+  rendered rst file
+  -----------------
+
+  .. doxygenclass:: nest::ArchivingNode
+
+
+
+
+Requirementts for our C++ files
+
+ * doxgyen comments (format, when, what)
+ * special groups? or keywords?
+ * possible rst markup
+
+
+Doxyfile
+
+* configuration for doxyen
+* output xml
+* include svg, dot graphs
+
+
+
+

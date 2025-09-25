@@ -44,6 +44,7 @@ private:
   bool processed_ : 1;                  //!< whether this target has already been moved
                                         //!< to the MPI buffer
   bool primary_ : 1;
+  bool disabled_ : 1;
 
 public:
   Source();
@@ -61,6 +62,7 @@ public:
 
   void set_processed( const bool processed );
   bool is_processed() const;
+
 
   /**
    * Sets whether Source is primary.
@@ -91,6 +93,7 @@ inline Source::Source()
   : node_id_( 0 )
   , processed_( false )
   , primary_( true )
+  , disabled_( false )
 {
 }
 
@@ -98,6 +101,7 @@ inline Source::Source( const uint64_t node_id, const bool is_primary )
   : node_id_( node_id )
   , processed_( false )
   , primary_( is_primary )
+  , disabled_( false )
 {
   assert( node_id <= MAX_NODE_ID );
 }
@@ -142,13 +146,13 @@ Source::is_primary() const
 inline void
 Source::disable()
 {
-  node_id_ = DISABLED_NODE_ID;
+  disabled_ = true;
 }
 
 inline bool
 Source::is_disabled() const
 {
-  return node_id_ == DISABLED_NODE_ID;
+  return disabled_;
 }
 
 inline bool

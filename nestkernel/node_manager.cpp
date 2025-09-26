@@ -339,35 +339,20 @@ NodeManager::get_nodes( const dictionary& properties, const bool local_only )
 {
   std::vector< size_t > nodes;
 
-  if ( properties.empty() )
-  {
-    std::vector< std::vector< size_t > > nodes_on_thread;
-    nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
+  std::vector< std::vector< size_t > > nodes_on_thread;
+  nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
+
 #pragma omp parallel
-    {
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      for ( auto node : get_local_nodes( tid ) )
-      {
-        nodes_on_thread[ tid ].push_back( node.get_node_id() );
-      }
-    } // omp parallel
-
-    for ( auto vec : nodes_on_thread )
-    {
-      nodes.insert( nodes.end(), vec.begin(), vec.end() );
-    }
-  }
-  else
   {
-    for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      // Select those nodes fulfilling the key/value pairs of the dictionary
-      for ( const auto& node : get_local_nodes( tid ) )
-      {
-        bool match = true;
-        const size_t node_id = node.get_node_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
+    for ( auto node : get_local_nodes( tid ) )
+    {
+      const size_t node_id = node.get_node_id();
+
+      bool match = true;
+      if ( not properties.empty() )
+      {
         const dictionary node_status = get_status( node_id );
         for ( const auto& [ key, value ] : properties )
         {
@@ -378,12 +363,17 @@ NodeManager::get_nodes( const dictionary& properties, const bool local_only )
             break;
           }
         }
-        if ( match )
-        {
-          nodes.push_back( node_id );
-        }
+      }
+      if ( match )
+      {
+        nodes_on_thread[ tid ].push_back( node_id );
       }
     }
+  } // omp parallel
+
+  for ( auto vec : nodes_on_thread )
+  {
+    nodes.insert( nodes.end(), vec.begin(), vec.end() );
   }
 
   if ( not local_only )

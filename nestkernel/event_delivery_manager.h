@@ -477,4 +477,6 @@ private:
 
 } // namespace nest
 
+#include "event_delivery_manager_impl.h"
+
 #endif /* EVENT_DELIVERY_MANAGER_H */

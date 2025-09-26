@@ -116,7 +116,9 @@ set ( nestkernel_sources
       free_layer.h
       free_layer_impl.h
       grid_layer.h
+      grid_layer_impl.h
       grid_mask.h
+      grid_mask_impl.h
       layer.h layer.cpp layer_impl.h
       mask.h mask.cpp
       ntree.h ntree.cpp

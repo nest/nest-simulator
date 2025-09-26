@@ -65,7 +65,7 @@ set ( nestkernel_sources
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
-      target_identifier.h
+      target_identifier.h target_identifier.cpp
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder.cpp
@@ -100,7 +100,8 @@ set ( nestkernel_sources
       manager_interface.h
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp
-      target.h target_data.h static_assert.h
+      target.h static_assert.h
+      target_data.h target_data.cpp
       send_buffer_position.h send_buffer_position.cpp
       source.h source.cpp
       source_table.h source_table.cpp

@@ -182,10 +182,10 @@ public:
   ~EpropSynapseCommonProperties();
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Pointer to common properties object for weight optimizer.
@@ -266,10 +266,10 @@ public:
   using ConnectionBase::get_target;
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   //! Send the spike event.
   bool send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp );
@@ -515,38 +515,38 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = sizeof( *this );
 
-  DictionaryDatum optimizer_dict = new Dictionary();
+  dictionary optimizer_dict;
 
   // The default_connection_ has no optimizer, therefore we need to protect it
   if ( optimizer_ )
   {
     optimizer_->get_status( optimizer_dict );
-    ( *d )[ names::optimizer ] = optimizer_dict;
+    d[ names::optimizer ] = optimizer_dict;
   }
 }
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+eprop_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer ) )
+  if ( d.known( names::optimizer ) )
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
     if ( optimizer_ )
     {
-      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
+      optimizer_->set_status( d.get< dictionary >( names::optimizer ) );
     }
   }
 
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
   const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();

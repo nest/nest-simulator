@@ -73,4 +73,4 @@ def test_correlospinmatrix_detector():
 
     nest.Simulate(100.0)
 
-    np.testing.assert_equal(np.array(csd.count_covariance), expected_corr)
+    np.testing.assert_equal(csd.count_covariance, expected_corr)

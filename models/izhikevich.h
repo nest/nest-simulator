@@ -169,8 +169,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   friend class RecordablesMap< izhikevich >;
@@ -207,8 +207,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -229,8 +229,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary&, const Parameters_& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -328,16 +328,16 @@ izhikevich::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-izhikevich::get_status( DictionaryDatum& d ) const
+izhikevich::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-izhikevich::set_status( const DictionaryDatum& d )
+izhikevich::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

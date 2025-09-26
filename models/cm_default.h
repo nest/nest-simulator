@@ -262,12 +262,12 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
-  void add_compartment_( DictionaryDatum& dd );
-  void add_receptor_( DictionaryDatum& dd );
+  void add_compartment_( const dictionary& dd );
+  void add_receptor_( const dictionary& dd );
 
   void init_recordables_pointers_();
   void pre_run_hook() override;
@@ -294,7 +294,7 @@ private:
   the vector 'recordables_values' stores pointers to all state variables
   present in the model
   */
-  std::vector< Name > recordables_names;
+  std::vector< std::string > recordables_names;
   std::vector< double* > recordables_values;
 
   //! Mapping of recordables names to access functions

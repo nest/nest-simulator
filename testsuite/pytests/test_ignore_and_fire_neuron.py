@@ -28,12 +28,11 @@ import nest
 import numpy
 
 
-@nest.ll_api.check_stack
 class IgnoreAndFireNeuronTestCase(unittest.TestCase):
     """Check ignore_and_fire neuron spike properties"""
 
     def setUp(self):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
@@ -62,7 +61,7 @@ class IgnoreAndFireNeuronTestCase(unittest.TestCase):
         spike_times_target = numpy.arange(first_spike_time, self.T, period)
 
         # spike times of NEST model
-        spike_times_nest = nest.GetStatus(self.spike_recorder, "events")[0]["times"]
+        spike_times_nest = self.spike_recorder.get("events", "times")
 
         # assert spike times match the expected values
         assert (spike_times_nest == spike_times_target).all()

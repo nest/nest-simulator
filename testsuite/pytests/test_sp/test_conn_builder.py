@@ -39,7 +39,7 @@ class TestSPBuilder(unittest.TestCase):
             {"synaptic_elements": {"SE1": {"z": 0.0, "growth_rate": 0.0}, "SE2": {"z": 0.0, "growth_rate": 0.0}}},
         )
         nest.Connect(neurons, neurons, "one_to_one", syn_dict)
-        status_list = nest.GetStatus(neurons, "synaptic_elements")
+        status_list = neurons.synaptic_elements
         for status in status_list:
             self.assertEqual(1, status["SE1"]["z_connected"])
             self.assertEqual(1, status["SE2"]["z_connected"])
@@ -53,7 +53,7 @@ class TestSPBuilder(unittest.TestCase):
             {"synaptic_elements": {"SE1": {"z": 0.0, "growth_rate": 0.0}, "SE2": {"z": 0.0, "growth_rate": 0.0}}},
         )
         nest.Connect(neurons, neurons, "all_to_all", syn_dict)
-        status_list = nest.GetStatus(neurons, "synaptic_elements")
+        status_list = neurons.synaptic_elements
         for status in status_list:
             self.assertEqual(2, status["SE1"]["z_connected"])
             self.assertEqual(2, status["SE2"]["z_connected"])
@@ -72,11 +72,8 @@ class TestSPBuilder(unittest.TestCase):
             {"rule": "fixed_total_number", "N": 1},
             {"rule": "pairwise_bernoulli", "p": 0.5},
         ]:
-            try:
+            with self.assertRaises(nest.NESTErrors.NotImplemented):
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
-            except nest.kernel.NESTError as e:
-                msg = "This connection rule is not implemented for structural plasticity"
-                self.assertRegex(str(e), msg)
 
 
 def suite():

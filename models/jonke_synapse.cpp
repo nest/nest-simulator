@@ -47,31 +47,31 @@ JonkeCommonProperties::JonkeCommonProperties()
 }
 
 void
-JonkeCommonProperties::get_status( DictionaryDatum& d ) const
+JonkeCommonProperties::get_status( dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::mu_plus, mu_plus_ );
-  def< double >( d, names::mu_minus, mu_minus_ );
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::Wmax, Wmax_ );
+  d[ names::alpha ] = alpha_;
+  d[ names::beta ] = beta_;
+  d[ names::lambda ] = lambda_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::Wmax ] = Wmax_;
 }
 
 void
-JonkeCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+JonkeCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::beta, beta_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
-  updateValue< double >( d, names::mu_plus, mu_plus_ );
-  updateValue< double >( d, names::mu_minus, mu_minus_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::beta, beta_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
 }
 
 

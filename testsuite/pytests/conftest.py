@@ -59,6 +59,10 @@ def pytest_configure(config):
         "markers",
         "requires_many_cores: mark tests as needing many cores (deselect with '-m \"not requires_many_cores\"')",
     )
+    config.addinivalue_line(
+        "markers",
+        "skipif_incompatible_mpi: mark tests requiring subprocess to invoke mpirun (needs OpenMPI 5.0.7 or later)",
+    )
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -78,7 +82,7 @@ def safety_reset():
 
 @pytest.fixture(scope="session")
 def have_threads():
-    return nest.ll_api.sli_func("is_threaded")
+    return nest.build_info["have_threads"]
 
 
 @pytest.fixture(scope="session")
@@ -98,7 +102,7 @@ def skipif_missing_threads(request, have_threads):
 
 @pytest.fixture(scope="session")
 def have_mpi():
-    return nest.ll_api.sli_func("statusdict/have_mpi ::")
+    return nest.build_info["have_mpi"]
 
 
 @pytest.fixture(autouse=True)
@@ -113,7 +117,7 @@ def skipif_missing_mpi(request, have_mpi):
 
 @pytest.fixture(scope="session")
 def have_gsl():
-    return nest.ll_api.sli_func("statusdict/have_gsl ::")
+    return nest.build_info["have_gsl"]
 
 
 @pytest.fixture(autouse=True)
@@ -128,7 +132,7 @@ def skipif_missing_gsl(request, have_gsl):
 
 @pytest.fixture(scope="session")
 def have_hdf5():
-    return nest.ll_api.sli_func("statusdict/have_hdf5 ::")
+    return nest.build_info["have_hdf5"]
 
 
 @pytest.fixture(autouse=True)

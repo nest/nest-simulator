@@ -53,14 +53,28 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 }
 
 void
-BufferResizeLog::to_dict( DictionaryDatum& events ) const
+BufferResizeLog::to_dict( dictionary& events ) const
 {
-  initialize_property_intvector( events, names::times );
-  append_property( events, names::times, time_steps_ );
-  initialize_property_intvector( events, "global_max_spikes_sent" );
-  append_property( events, "global_max_spikes_sent", global_max_spikes_sent_ );
-  initialize_property_intvector( events, "new_buffer_size" );
-  append_property( events, "new_buffer_size", new_buffer_size_ );
+  // TODO: PyNEST-NG: Make this lambda (which is also used in
+  // DeviceData::get_status() recording_backend_memory) available in
+  // libnestutil/dict_util.h
+  auto init_intvector = [ &events ]( std::string key ) -> std::vector< int >&
+  {
+    if ( not events.known( key ) )
+    {
+      events[ key ] = std::vector< int >();
+    }
+    return boost::any_cast< std::vector< int >& >( events[ key ] );
+  };
+
+  auto& times = init_intvector( names::times );
+  times.insert( times.end(), time_steps_.begin(), time_steps_.end() );
+
+  auto& gmss = init_intvector( names::global_max_spikes_sent );
+  gmss.insert( gmss.end(), global_max_spikes_sent_.begin(), global_max_spikes_sent_.end() );
+
+  auto& nbs = init_intvector( names::new_buffer_size );
+  nbs.insert( nbs.end(), new_buffer_size_.begin(), new_buffer_size_.end() );
 }
 
 }

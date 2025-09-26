@@ -177,5 +177,4 @@ run_test ()
     fi
 
     rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
-
 }

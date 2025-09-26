@@ -105,9 +105,9 @@ def test_iaf_psc_exp_ps_dc_input(model):
     nest.ResetKernel()
     nest.set(resolution=dt, local_num_threads=1)
 
-    dc_gen = nest.Create("dc_generator", {"amplitude": dc_amp})
+    dc_gen = nest.Create("dc_generator", params={"amplitude": dc_amp})
     nrn = nest.Create(model, 1)
-    vm = nest.Create("voltmeter", {"interval": 0.1})
+    vm = nest.Create("voltmeter", params={"interval": 0.1})
 
     syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": dt}
     nest.Connect(dc_gen, nrn, syn_spec=syn_spec)
@@ -149,14 +149,14 @@ def test_lossless_spike_detection():
     w_spike = 90.0
 
     # send one trigger spike to the nrns at specified time:
-    sp_gen = nest.Create("spike_generator", {"precise_times": True, "spike_times": [3.0]})
+    sp_gen = nest.Create("spike_generator", params={"precise_times": True, "spike_times": [3.0]})
 
     nest.Connect(sp_gen, nrn_nospike)
     nest.Connect(sp_gen, nrn_missingspike)
     nest.Connect(sp_gen, nrn_spike)
 
     # external current to keep nrns close to threshold:
-    dc_gen = nest.Create("dc_generator", {"amplitude": 52.5})
+    dc_gen = nest.Create("dc_generator", params={"amplitude": 52.5})
 
     nest.Connect(dc_gen, nrn_nospike, syn_spec={"delay": 1.0, "weight": 1})
     nest.Connect(dc_gen, nrn_missingspike, syn_spec={"delay": 1.0, "weight": 1})

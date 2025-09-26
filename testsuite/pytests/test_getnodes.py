@@ -27,7 +27,9 @@ import nest
 import pytest
 
 
-@pytest.fixture(autouse=True, params=[1, 2])
+# Apply parameterization over number of threads here, each test will be run once for
+# each parameter value. Need to protect in case we are running without threads.
+@pytest.fixture(autouse=True, params=[1, 2] if nest.build_info["have_threads"] else [1])
 def create_neurons(request):
     nest.ResetKernel()
     nest.local_num_threads = request.param

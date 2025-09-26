@@ -111,3 +111,23 @@ nest::TargetTable::add_target( const size_t tid, const size_t target_rank, const
     secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ].push_back( send_buffer_pos );
   }
 }
+
+const std::vector< nest::Target >&
+nest::TargetTable::get_targets( const size_t tid, const size_t lid ) const
+{
+  return targets_[ tid ][ lid ];
+}
+
+const std::vector< size_t >&
+nest::TargetTable::get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const
+{
+  assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
+  return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
+}
+
+void
+nest::TargetTable::clear( const size_t tid )
+{
+  targets_[ tid ].clear();
+  secondary_send_buffer_pos_[ tid ].clear();
+}

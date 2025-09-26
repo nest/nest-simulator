@@ -100,7 +100,8 @@ set ( nestkernel_sources
       manager_interface.h
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp
-      target.h static_assert.h
+      target.h target.cpp
+      static_assert.h
       target_data.h target_data.cpp
       send_buffer_position.h send_buffer_position.cpp
       source.h source.cpp

@@ -475,22 +475,6 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_target_data_;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 template < class EventT >
 inline void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )

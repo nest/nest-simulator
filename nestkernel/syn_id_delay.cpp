@@ -34,7 +34,6 @@ SynIdDelay::SynIdDelay( double d )
   set_delay_ms( d );
 }
 
-// Move the implicitly-inline special members out of the header as well.
 SynIdDelay::SynIdDelay( const SynIdDelay& s ) = default;
 SynIdDelay& SynIdDelay::operator=( const SynIdDelay& s ) = default;
 

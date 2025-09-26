@@ -106,7 +106,7 @@ set ( nestkernel_sources
       send_buffer_position.h send_buffer_position.cpp
       source.h source.cpp
       source_table.h source_table.cpp
-      source_table_position.h
+      source_table_position.h source_table_position.cpp
       spike_data.h spike_data.cpp
       structural_plasticity_node.h structural_plasticity_node.cpp
       connection_creator.h connection_creator.cpp

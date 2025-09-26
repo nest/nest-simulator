@@ -23,7 +23,7 @@ set ( nestkernel_sources
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h
-      eprop_archiving_node.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h
       eprop_archiving_node_readout.h eprop_archiving_node_readout_impl.h
       eprop_archiving_node_recurrent.h eprop_archiving_node_recurrent_impl.h
       common_synapse_properties.h common_synapse_properties.cpp
@@ -43,6 +43,7 @@ set ( nestkernel_sources
       genericmodel.h
       node_collection.h node_collection.cpp
       generic_factory.h
+      generic_factory_impl.h
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager.cpp
@@ -91,6 +92,7 @@ set ( nestkernel_sources
       delay_checker.h delay_checker.cpp
       random_manager.h random_manager.cpp
       event_delivery_manager.h
+      event_delivery_manager_impl.h
       event_delivery_manager.cpp
       node_manager.h node_manager.cpp
       logging_manager.h logging_manager.cpp
@@ -112,6 +114,7 @@ set ( nestkernel_sources
       structural_plasticity_node.h structural_plasticity_node.cpp
       connection_creator.h connection_creator.cpp
       free_layer.h
+      free_layer_impl.h
       grid_layer.h
       grid_mask.h
       layer.h layer.cpp layer_impl.h

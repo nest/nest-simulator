@@ -335,11 +335,11 @@ NodeManager::clear_node_collection_container()
 }
 
 NodeCollectionPTR
-NodeManager::get_nodes( const dictionary& params, const bool local_only )
+NodeManager::get_nodes( const dictionary& properties, const bool local_only )
 {
   std::vector< size_t > nodes;
 
-  if ( params.empty() )
+  if ( properties.empty() )
   {
     std::vector< std::vector< size_t > > nodes_on_thread;
     nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
@@ -352,8 +352,6 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
         nodes_on_thread[ tid ].push_back( node.get_node_id() );
       }
     } // omp parallel
-
-#pragma omp barrier
 
     for ( auto vec : nodes_on_thread )
     {
@@ -371,15 +369,13 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
         const size_t node_id = node.get_node_id();
 
         const dictionary node_status = get_status( node_id );
-        for ( const auto& [ key, entry ] : params )
+        for ( const auto& [ key, value ] : properties )
         {
-          if ( node_status.known( key ) )
+          // Break once we find a property that then node does not have or that has a different value
+          if ( not( node_status.known( key ) and value_equal( node_status.at( key ), value.item ) ) )
           {
-            if ( not value_equal( node_status.at( key ), entry.item ) )
-            {
-              match = false;
-              break;
-            }
+            match = false;
+            break;
           }
         }
         if ( match )

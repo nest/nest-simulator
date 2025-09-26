@@ -24,8 +24,8 @@ set ( nestkernel_sources
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h
       eprop_archiving_node.h
-      eprop_archiving_node_readout.h
-      eprop_archiving_node_recurrent.h
+      eprop_archiving_node_readout.h eprop_archiving_node_readout_impl.h
+      eprop_archiving_node_recurrent.h eprop_archiving_node_recurrent_impl.h
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h connection_label_impl.h

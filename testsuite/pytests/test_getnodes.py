@@ -57,7 +57,7 @@ class TestGetNodes:
         nodes_ref = nest.NodeCollection(list(range(1, nest.network_size + 1)))
         if nodes_ref and local_only:
             # Need to go via global_id to get empty node collection if no locals
-            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
+            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
 
         nodes = nest.GetNodes(local_only=local_only)
 
@@ -78,7 +78,7 @@ class TestGetNodes:
         nodes_ref = nest.NodeCollection(expected_ids)
         if local_only:
             # Need to go via global_id to get empty node collection if no locals
-            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
+            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
 
         nodes = nest.GetNodes(properties=filter, local_only=local_only)
         assert nodes == nodes_ref

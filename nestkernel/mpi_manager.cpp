@@ -318,7 +318,7 @@ nest::MPIManager::get_processor_name()
 }
 
 void
-nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t >& global_nodes )
+nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< long >& global_nodes )
 {
   const size_t num_procs = get_num_processes();
 
@@ -347,14 +347,14 @@ nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< 
   }
 
   // Avoid dereferencing empty vector. As long as sendcount is 0, we can pass any pointer for sendbuf.
-  size_t dummy = 0;
+  long dummy = 0;
   MPI_Allgatherv( num_local_nodes > 0 ? &local_nodes[ 0 ] : &dummy,
     num_local_nodes,
-    MPI_Type< size_t >::type,
+    MPI_Type< long >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],
     &displacements[ 0 ],
-    MPI_Type< size_t >::type,
+    MPI_Type< long >::type,
     comm );
 }
 
@@ -1071,7 +1071,7 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
-nest::MPIManager::communicate( std::vector< size_t >&, std::vector< size_t >& )
+nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
 {
 }
 

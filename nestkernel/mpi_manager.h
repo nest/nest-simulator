@@ -122,7 +122,7 @@ public:
 
   // gather all send_buffer vectors on other mpi process to recv_buffer
   // vector
-  void communicate( std::vector< size_t >& send_buffer, std::vector< size_t >& recv_buffer );
+  void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
 
   /**
    * communicate (on-grid) if compiled without MPI

@@ -345,7 +345,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
     nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
-      size_t tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
 
       for ( auto node : get_local_nodes( tid ) )
       {
@@ -370,7 +370,7 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
         bool match = true;
         const size_t node_id = node.get_node_id();
 
-        dictionary node_status = get_status( node_id );
+        const dictionary node_status = get_status( node_id );
         for ( const auto& [ key, entry ] : params )
         {
           if ( node_status.known( key ) )
@@ -402,14 +402,13 @@ NodeManager::get_nodes( const dictionary& params, const bool local_only )
         nodes.push_back( globalnodes[ i ] );
       }
     }
-
-    // get rid of any multiple entries
-    std::sort( nodes.begin(), nodes.end() );
-    const auto it = std::unique( nodes.begin(), nodes.end() );
-    nodes.resize( it - nodes.begin() );
   }
 
-  std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
+  // Get rid of any multiple entries from nodes replicated across VPs
+  std::sort( nodes.begin(), nodes.end() );
+  const auto it = std::unique( nodes.begin(), nodes.end() );
+  nodes.resize( it - nodes.begin() );
+
   NodeCollectionPTR nodecollection = NodeCollection::create( nodes );
 
   return nodecollection;

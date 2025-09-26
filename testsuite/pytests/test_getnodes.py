@@ -34,7 +34,15 @@ def create_neurons(request):
 
     nest.Create("iaf_psc_alpha", 3)
     nest.Create("iaf_psc_delta", 2, {"V_m": -77.0})
-    nest.Create("iaf_psc_alpha", 4, {"V_m": [-77.0, -66.0, -77.0, -66.0], "tau_m": [10.0, 11.0, 12.0, 13.0]})
+    # Work around because Create() with arrays does not work with more than one rank
+    # nest.Create("iaf_psc_alpha", 4, {"V_m": [-77.0, -66.0, -77.0, -66.0], "tau_m": [10.0, 11.0, 12.0, 13.0]})
+    c = nest.Create("iaf_psc_alpha", 4, {"V_m": -77.0, "tau_m": 10.0})
+    c[1].V_m = -66.0
+    c[3].V_m = -66.0
+    c[1].tau_m = 11.0
+    c[2].tau_m = 12.0
+    c[3].tau_m = 13.0
+
     nest.Create("iaf_psc_exp", 4)
     nest.Create("spike_generator", 3)
 
@@ -47,8 +55,9 @@ class TestGetNodes:
         """Test that nodes are correctly retrieved if on parameters are specified."""
 
         nodes_ref = nest.NodeCollection(list(range(1, nest.network_size + 1)))
-        if local_only:
-            nodes_ref = sum(n for n in nodes_ref if n.local)
+        if nodes_ref and local_only:
+            # Need to go via global_id to get empty node collection if no locals
+            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
 
         nodes = nest.GetNodes(local_only=local_only)
 
@@ -68,10 +77,10 @@ class TestGetNodes:
 
         nodes_ref = nest.NodeCollection(expected_ids)
         if local_only:
-            nodes_ref = sum(n for n in nodes_ref if n.local)
+            # Need to go via global_id to get empty node collection if no locals
+            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
 
         nodes = nest.GetNodes(properties=filter, local_only=local_only)
-
         assert nodes == nodes_ref
 
     def test_GetNodes_no_match(self, local_only):

@@ -138,7 +138,7 @@ public:
    * To prevent erronous calls of this function on primary connections, the base class implementation
    * below just contains `assert(false)`.
    */
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -484,7 +484,7 @@ Connection< targetidentifierT, DelayTypeT >::trigger_update_weight( const size_t
 }
 
 template < typename targetidentifierT, typename DelayTypeT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 Connection< targetidentifierT, DelayTypeT >::get_secondary_event()
 {
   assert( false and "Non-primary connections have to provide get_secondary_event()" );

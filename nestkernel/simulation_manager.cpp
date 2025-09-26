@@ -525,7 +525,7 @@ nest::SimulationManager::prepare()
     kernel().event_delivery_manager.configure_spike_data_buffers();
   }
 
-  kernel().node_manager.ensure_valid_thread_local_ids();
+  kernel().node_manager.update_thread_local_node_data();
   kernel().node_manager.prepare_nodes();
 
   // we have to do enter_runtime after prepare_nodes, since we use
@@ -844,8 +844,10 @@ nest::SimulationManager::update_()
   bool done_all = true;
   long old_to_step;
 
+  // These variables will be updated only by the master thread below
   double start_current_update = sw_simulate_.elapsed();
   bool update_time_limit_exceeded = false;
+  // End of variables updated by master thread
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
@@ -1097,16 +1099,28 @@ nest::SimulationManager::update_()
             print_progress_();
           }
 
-          // We cannot throw exception inside master, would not get caught.
+          // Track time needed for single update cycle
           const double end_current_update = sw_simulate_.elapsed();
           const double update_time = end_current_update - start_current_update;
-          update_time_limit_exceeded = update_time > update_time_limit_;
+          start_current_update = end_current_update;
+
           min_update_time_ = std::min( min_update_time_, update_time );
           max_update_time_ = std::max( max_update_time_, update_time );
-          start_current_update = end_current_update;
+
+          // If the simulation slowed down excessively, we cannot throw an exception here
+          // in the master section, as it will not be caught by our mechanism for handling
+          // exceptions in parallel context. So we set a flag and process it immediately
+          // after the master section.
+          update_time_limit_exceeded = update_time > update_time_limit_;
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
+
+        if ( update_time_limit_exceeded )
+        {
+          LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+          throw KernelException();
+        }
 
         // if block to avoid omp barrier if SIONLIB is not used
 #ifdef HAVE_SIONLIB
@@ -1117,15 +1131,7 @@ nest::SimulationManager::update_()
         kernel().get_omp_synchronization_simulation_stopwatch().stop();
 #endif
 
-        const double end_current_update = sw_simulate_.elapsed();
-        if ( end_current_update - start_current_update > update_time_limit_ )
-        {
-          LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
-          throw KernelException();
-        }
-        start_current_update = end_current_update;
-
-      } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
+      } while ( to_do_ > 0 );
 
       // End of the slice, we update the number of synaptic elements
       for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();

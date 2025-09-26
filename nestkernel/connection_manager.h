@@ -125,8 +125,6 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
-
   /**
    * Connect two nodes.
    *

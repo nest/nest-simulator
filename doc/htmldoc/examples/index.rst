@@ -4,6 +4,7 @@ PyNEST examples
 ===============
 
 .. grid:: 1 1 2 3
+    :gutter: 1
 
     .. grid-item-card:: Simple networks
            :img-top: ../static/img/pynest/mc_neuron.png
@@ -76,12 +77,13 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
 
-    .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../auto_examples/Potjans_2014/potjans_2014_raster_plot.png
+    .. grid-item-card::  Large scale cortical network models
+           :img-top: ../static/img/network_model_sketch_mesocircuit.png
 
-           * :doc:`../auto_examples/Potjans_2014/index`
-
-
+           * :doc:`Cortical Microcircuit Model <pd14:auto_examples/index>`
+           * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
+           * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
+           * `The HuMAM model <https://github.com/INM-6/human-multi-area-model>`_: Multi-Scale Spiking Network Model of Human Cerebral Cortex
 
     .. grid-item-card:: EI clustered network (Rostami et al)
            :img-top: ../auto_examples/EI_clustered_network/EI_clustered_network_schematic.png
@@ -160,6 +162,7 @@ PyNEST examples
            :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`../auto_examples/wang_decision_making`
+
 
 .. grid:: 1 1 2 3
 
@@ -283,7 +286,6 @@ PyNEST examples
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index
-   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons

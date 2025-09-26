@@ -23,12 +23,12 @@
 
 /** @BeginDocumentation
     Name: testsuite::test_fixed_indegree - Test correct connection with many targets
-    Synopsis: (test_fixed_indegree) run -> - 
+    Synopsis: (test_fixed_indegree) run -> -
 
     Description:
     test_fixed_indegree.sli checks that all-to-all connections are created
     correctly if the number of targets exceeds the number of local nodes.
-    
+
     Author: Hans Ekkehard Plesser
     SeeAlso: testsuite::test_one_to_one, testsuite::test_all_to_all,
     testsuite::test_pairwise_bernoulli
@@ -37,16 +37,16 @@
 (unittest) run
 /unittest using
 
-% With one MPI process, conventional looping is used. For 4 processes, we will 
+% With one MPI process, conventional looping is used. For 4 processes, we will
 % have fewer local nodes than targets and inverse looping is used. Due to
 % randomness, we cannot expect identical results, but we can check the number
-% of connections in total. 
+% of connections in total.
 [1 2 4]
 {
   /nrns /iaf_psc_alpha 4 Create def
-  
+
   nrns nrns << /rule /fixed_indegree /indegree 2 >> Connect
-  
+
   << >> GetConnections length
 }
 {

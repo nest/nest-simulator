@@ -1,5 +1,5 @@
 /*
- *  conn_builder_factory.h
+ *  conn_builder_factory_impl.h
  *
  *  This file is part of NEST.
  *
@@ -65,24 +65,6 @@ public:
 };
 
 /**
- * Factory class for bipartite ConnBuilders
- */
-template < typename ConnBuilderType >
-class BipartiteConnBuilderFactory : public GenericBipartiteConnBuilderFactory
-{
-public:
-  BipartiteConnBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
-  {
-    return new ConnBuilderType( sources, targets, third_out, conn_spec, syn_specs );
-  }
-};
-
-/**
  * Generic factory class for tripartite ConnBuilder objects.
  *
  * This factory allows for flexible registration
@@ -104,24 +86,7 @@ public:
     const std::vector< DictionaryDatum >& ) const = 0;
 };
 
-/**
- * Factory class for Third-factor ConnBuilders
- */
-template < typename ThirdConnBuilderType >
-class ThirdConnBuilderFactory : public GenericThirdConnBuilderFactory
-{
-public:
-  ThirdOutBuilder*
-  create( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    ThirdInBuilder* third_in,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
-  {
-    return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
-  }
-};
-
 } // namespace nest
 
+#include "conn_builder_factory_impl.h"
 #endif

@@ -28,7 +28,7 @@ set ( nestkernel_sources
       eprop_archiving_node_recurrent.h
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
-      connection_label.h
+      connection_label.h connection_label_impl.h
       common_properties_hom_w.h common_properties_hom_w.cpp
       syn_id_delay.h syn_id_delay.cpp
       connector_base.h connector_base.cpp
@@ -71,6 +71,7 @@ set ( nestkernel_sources
       conn_builder.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_factory.cpp
+      conn_builder_factory_impl.h
       conn_builder_conngen.h conn_builder_conngen.cpp
       sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
@@ -85,7 +86,7 @@ set ( nestkernel_sources
       io_manager.h io_manager.cpp
       mpi_manager.h mpi_manager.cpp
       simulation_manager.h simulation_manager.cpp
-      connection_manager.h connection_manager.cpp
+      connection_manager.h connection_manager.cpp connection_manager_impl.h
       sp_manager.h sp_manager.cpp
       delay_checker.h delay_checker.cpp
       random_manager.h random_manager.cpp

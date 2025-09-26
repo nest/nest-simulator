@@ -609,13 +609,6 @@ void Node::set_thread_lid( const size_t tlid ) {
   thread_lid_ = tlid;
 }
 
-template < typename ConcreteNode > const ConcreteNode& Node::downcast( const Node& n ) {
-
-  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
-  assert( tp != 0 );
-  return *tp;
-}
-
 size_t Node::get_vp() const {
 
   return vp_;

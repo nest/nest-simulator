@@ -1078,6 +1078,12 @@ private:
   size_t tmp_nc_index_;
 };
 
+template < typename ConcreteNode > const ConcreteNode& Node::downcast( const Node& n ) {
+
+  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
+  assert( tp != 0 );
+  return *tp;
+}
 
 } // namespace
 

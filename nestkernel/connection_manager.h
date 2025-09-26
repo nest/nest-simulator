@@ -733,31 +733,7 @@ private:
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 
-template < typename ConnBuilder >
-void
-ConnectionManager::register_conn_builder( const std::string& name )
-{
-  assert( not connruledict_->known( name ) );
-  GenericBipartiteConnBuilderFactory* cb = new BipartiteConnBuilderFactory< ConnBuilder >();
-  assert( cb );
-  const int id = connbuilder_factories_.size();
-  connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
-}
-
-template < typename ThirdConnBuilder >
-void
-ConnectionManager::register_third_conn_builder( const std::string& name )
-{
-  assert( not thirdconnruledict_->known( name ) );
-  GenericThirdConnBuilderFactory* cb = new ThirdConnBuilderFactory< ThirdConnBuilder >();
-  assert( cb );
-  const int id = thirdconnbuilder_factories_.size();
-  thirdconnbuilder_factories_.push_back( cb );
-  thirdconnruledict_->insert( name, id );
-}
-
 } // namespace nest
 
-
+#include "connection_manager_impl.h"
 #endif /* CONNECTION_MANAGER_H */

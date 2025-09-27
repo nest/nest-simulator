@@ -509,7 +509,7 @@ class NodeCollection:
 
         if isinstance(params, (list, tuple)) and len(selected_local_nodes) != len(params):
             n = len(selected_local_nodes)
-            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(n)
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(n))
 
         sli_func("SetStatus", selected_local_nodes._datum, params)
 

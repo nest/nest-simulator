@@ -486,7 +486,7 @@ class NodeCollection:
         if isinstance(params, dict):
 
             all_nodes_id = self.get("global_id")
-            only_local_nodes_idx = list (itertools.compress(all_nodes_id, local_nodes))
+            only_local_nodes_idx = list(itertools.compress(all_nodes_id, local_nodes))
             selected_local_nodes = NodeCollection(only_local_nodes_idx)
 
             node_params = selected_local_nodes[0].get()
@@ -494,7 +494,7 @@ class NodeCollection:
                 is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
                 for key, vals in params.items()
             ]
-            # only_local_nodes = sum(local_nodes) 
+
             if any(contains_list):
                 temp_param = [{} for _ in range(len(selected_local_nodes))]
 
@@ -508,7 +508,8 @@ class NodeCollection:
                 params = temp_param
 
         if isinstance(params, (list, tuple)) and len(selected_local_nodes) != len(params):
-            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(len(selected_local_nodes)))
+            n = len(selected_local_nodes)
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(n)
 
         sli_func("SetStatus", selected_local_nodes._datum, params)
 

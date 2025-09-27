@@ -145,8 +145,9 @@ def Create(model, n=1, params=None, positions=None):
         node_ids = spp()
 
     if params is not None and iterable_or_parameter_in_params:
+
         try:
-            SetStatus(node_ids, params)
+            node_ids.set(**params)
         except Exception:
             warnings.warn(
                 "SetStatus() call failed, but nodes have already been "

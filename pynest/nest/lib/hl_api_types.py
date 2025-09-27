@@ -23,6 +23,7 @@
 Classes defining the different PyNEST types
 """
 
+import itertools
 import json
 import numbers
 from math import floor, log
@@ -482,15 +483,20 @@ class NodeCollection:
                 # Adding receptors has been handled by the += operator, so we can remove the entry.
                 params.pop("receptors")
 
-        if isinstance(params, dict) and all(local_nodes):
-            node_params = self[0].get()
+        if isinstance(params, dict):
+
+            all_nodes_id = self.get("global_id")
+            only_local_nodes_idx = list (itertools.compress(all_nodes_id, local_nodes))
+            selected_local_nodes = NodeCollection(only_local_nodes_idx)
+
+            node_params = selected_local_nodes[0].get()
             contains_list = [
                 is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
                 for key, vals in params.items()
             ]
-
+            # only_local_nodes = sum(local_nodes) 
             if any(contains_list):
-                temp_param = [{} for _ in range(self.__len__())]
+                temp_param = [{} for _ in range(len(selected_local_nodes))]
 
                 for key, vals in params.items():
                     if not is_iterable(vals):
@@ -501,10 +507,10 @@ class NodeCollection:
                             temp_dict[key] = vals[i]
                 params = temp_param
 
-        if isinstance(params, (list, tuple)) and self.__len__() != len(params):
-            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
+        if isinstance(params, (list, tuple)) and len(selected_local_nodes) != len(params):
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(len(selected_local_nodes)))
 
-        sli_func("SetStatus", self._datum, params)
+        sli_func("SetStatus", selected_local_nodes._datum, params)
 
     def tolist(self):
         """

@@ -977,37 +977,23 @@ nest::ConnectionManager::find_connection( const size_t tid,
   const size_t snode_id,
   const size_t tnode_id )
 {
-  // lcid will hold the position of the /first/ connection from node
-  // snode_id to any local node, or be invalid
-
-  if ( use_compressed_spikes() )
+  if ( use_compressed_spikes_ )
   {
-    size_t source_index = source_table_.find_first_source( tid, syn_id, snode_id, use_compressed_spikes() );
+    const size_t source_index = source_table_.find_first_source( tid, syn_id, snode_id );
     if ( source_index == invalid_index )
     {
       return invalid_index;
     }
 
-    // lcid will hold the position of the /first/ connection from node
+    // lcid will hold the position of the /first/ enabled connection from node
     // snode_id to node tnode_id, or be invalid
-    size_t lcid =
-      connections_[ tid ][ syn_id ]->find_first_target( tid, source_index, tnode_id, use_compressed_spikes() );
+    const size_t lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, source_index, tnode_id );
 
     return lcid;
   }
   else
   {
-    size_t lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, 0, tnode_id, use_compressed_spikes() );
-    if ( lcid == invalid_index )
-    {
-      return invalid_index;
-    }
-
-    std::vector< size_t > lcids {};
-    connections_[ tid ][ syn_id ]->get_source_lcids( tid, tnode_id, lcids );
-    size_t source_index = source_table_.select_source_lcid_from_list( tid, snode_id, syn_id, lcids );
-
-    return source_index;
+    return connections_[ tid ][ syn_id ]->find_enabled_connection( tid, syn_id, snode_id, tnode_id, source_table_ );
   }
   return invalid_index;
 }
@@ -1445,7 +1431,7 @@ nest::ConnectionManager::get_targets( const std::vector< size_t >& sources,
   {
     for ( size_t i = 0; i < sources.size(); ++i )
     {
-      const size_t start_lcid = source_table_.find_first_source( tid, syn_id, sources[ i ], use_compressed_spikes() );
+      const size_t start_lcid = source_table_.find_first_source( tid, syn_id, sources[ i ] );
       if ( start_lcid != invalid_index )
       {
         connections_[ tid ][ syn_id ]->get_target_node_ids( tid, start_lcid, post_synaptic_element, targets[ i ] );

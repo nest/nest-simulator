@@ -44,6 +44,7 @@
 #include "nest_names.h"
 #include "node.h"
 #include "source.h"
+#include "source_table.h"
 #include "spikecounter.h"
 
 // Includes from sli:
@@ -189,20 +190,19 @@ public:
    * where the node_id of the target matches target_node_id. If there are no matches,
    * the function returns invalid_index.
    */
-  virtual size_t find_first_target( const size_t tid,
-    const size_t start_lcid,
-    const size_t target_node_id,
-    bool use_compressed_spikes = false ) const = 0;
+  virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
 
   /**
-   * Return lcid of first connection where the node ID of the target
-   * matches target_node_id; consider only the connections with lcids
-   * given in matching_lcids. If there is no match, the function returns
-   * invalid_index.
+   * Return lcid of first connection matching source and target node id and that
+   * is not disabled.
+   *
+   * Intended for use with unsorted (uncompressed) connections.
    */
-  virtual size_t find_matching_target( const size_t tid,
-    const std::vector< size_t >& matching_lcids,
-    const size_t target_node_id ) const = 0;
+  virtual size_t find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const = 0;
 
   /**
    * Disable the transfer of events through the connection at position
@@ -467,10 +467,7 @@ public:
   }
 
   size_t
-  find_first_target( const size_t tid,
-    const size_t start_lcid,
-    const size_t target_node_id,
-    bool use_compressed_spikes = false ) const override
+  find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const override
   {
     size_t lcid = start_lcid;
     while ( true )
@@ -480,7 +477,7 @@ public:
         return lcid;
       }
 
-      if ( not C_[ lcid ].source_has_more_targets() and use_compressed_spikes )
+      if ( not C_[ lcid ].source_has_more_targets() )
       {
         return invalid_index;
       }
@@ -490,15 +487,18 @@ public:
   }
 
   size_t
-  find_matching_target( const size_t tid,
-    const std::vector< size_t >& matching_lcids,
-    const size_t target_node_id ) const override
+  find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const override
   {
-    for ( size_t i = 0; i < matching_lcids.size(); ++i )
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_node_id() == target_node_id )
+      if ( source_table.get_node_id( tid, syn_id, lcid ) == source_node_id
+        and C_[ lcid ].get_target( tid )->get_node_id() == target_node_id and not C_[ lcid ].is_disabled() )
       {
-        return matching_lcids[ i ];
+        return lcid;
       }
     }
 

@@ -1453,7 +1453,7 @@ nest::ConnectionManager::sort_connections( const size_t tid )
         connections_[ tid ][ syn_id ]->sort_connections( source_table_.get_thread_local_sources( tid )[ syn_id ] );
       }
     }
-    remove_disabled_connections( tid );
+    remove_disabled_connections_( tid );
   }
 }
 
@@ -1703,8 +1703,10 @@ nest::ConnectionManager::compress_secondary_send_buffer_pos( const size_t tid )
 }
 
 void
-nest::ConnectionManager::remove_disabled_connections( const size_t tid )
+nest::ConnectionManager::remove_disabled_connections_( const size_t tid )
 {
+  assert( use_compressed_spikes_ );
+
   std::vector< ConnectorBase* >& connectors = connections_[ tid ];
 
   for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )

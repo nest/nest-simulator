@@ -469,6 +469,10 @@ public:
   size_t
   find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const override
   {
+    // TODO: Once #3544 is merged, activate this assertion. It is currently
+    //       commented out to avoid circular inclusions.
+    // assert( kernel().connection_manager.use_compressed_spikes() );
+
     size_t lcid = start_lcid;
     while ( true )
     {

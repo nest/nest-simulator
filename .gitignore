@@ -77,4 +77,4 @@ cscope.out
 *.orig
 
 # local test files
-local_tests/
+local_tests/*

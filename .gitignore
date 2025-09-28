@@ -75,3 +75,6 @@ cscope.out
 
 # Merge conflict artifacts
 *.orig
+
+# local test files
+local_tests/

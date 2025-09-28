@@ -484,9 +484,9 @@ class NodeCollection:
                 params.pop("receptors")
 
         if isinstance(params, dict):
-            all_nodes_id = self.get("global_id")
-            only_local_nodes_idx = list(itertools.compress(all_nodes_id, local_nodes))
-            selected_local_nodes = NodeCollection(only_local_nodes_idx)
+            all_nodes_ids = [self.get("global_id")] if len(self) == 1 else self.get("global_id")
+            only_local_nodes_ids = list(itertools.compress(all_nodes_ids, local_nodes))
+            selected_local_nodes = NodeCollection(only_local_nodes_ids)
 
             node_params = selected_local_nodes[0].get()
             contains_list = [

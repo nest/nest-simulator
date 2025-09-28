@@ -534,7 +534,7 @@ if test "${PYTHON}"; then
       # Loop over subdirectories whose names are the number of mpi procs to use
       for numproc in ${proc_nums}; do
         XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-        PYTEST_ARGS="--verbose --deselect-report  --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+        PYTEST_ARGS="--verbose -rs  --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
 
         if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
           PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"

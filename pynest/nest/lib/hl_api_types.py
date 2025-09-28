@@ -469,6 +469,13 @@ class NodeCollection:
 
         local_nodes = [self.local] if len(self) == 1 else self.local
 
+        all_nodes_ids = [self.get("global_id")] if len(self) == 1 else self.get("global_id")
+        only_local_nodes_ids = list(itertools.compress(all_nodes_ids, local_nodes))
+        selected_local_nodes = NodeCollection(only_local_nodes_ids)
+
+        if len(selected_local_nodes) == 0:
+            # No local nodes, nothing to do
+            return
         if isinstance(params, dict) and "compartments" in params:
             if isinstance(params["compartments"], Compartments):
                 params["compartments"] = params["compartments"].get_tuple()
@@ -484,12 +491,6 @@ class NodeCollection:
                 params.pop("receptors")
 
         if isinstance(params, dict):
-            all_nodes_ids = [self.get("global_id")] if len(self) == 1 else self.get("global_id")
-            only_local_nodes_ids = list(itertools.compress(all_nodes_ids, local_nodes))
-            selected_local_nodes = NodeCollection(only_local_nodes_ids)
-            if len(selected_local_nodes) == 0:
-                # No local nodes, nothing to do
-                return
             node_params = selected_local_nodes[0].get()
             contains_list = [
                 is_iterable(vals) and key in node_params and not is_iterable(node_params[key])

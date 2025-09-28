@@ -92,5 +92,5 @@ class TestGetNodes:
         This would lead to crashes in MPI-parallel code before #3460.
         """
 
-        nodes = nest.GetNodes({"V_m": 100.0})
+        nodes = nest.GetNodes({"V_m": 100.0}, local_only=local_only)
         assert len(nodes) == 0

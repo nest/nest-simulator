@@ -279,7 +279,7 @@ def SetStatus(nodes, params, val=None):
             return
 
     if params_is_dict:
-        node_params = only_local_nodes[0].get()
+        node_params = only_local_nodes[0].get() if set_status_nodes else nodes[0].get()
         contains_list = [
             is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
             for key, vals in params.items()

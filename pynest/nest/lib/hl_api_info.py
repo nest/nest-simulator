@@ -22,7 +22,7 @@
 """
 Functions to get information on NEST.
 """
-
+import itertools
 import os
 import textwrap
 import webbrowser
@@ -271,12 +271,15 @@ def SetStatus(nodes, params, val=None):
 
     params_is_dict = isinstance(params, dict)
     set_status_nodes = isinstance(nodes, nest.NodeCollection)
+    only_local_nodes = []
     if set_status_nodes:
         local_nodes = [nodes.local] if len(nodes) == 1 else nodes.local
-        set_status_nodes = set_status_nodes and all(local_nodes)
+        only_local_nodes = list(itertools.compress(nodes, local_nodes))
+        if len(only_local_nodes) == 0:
+            return
 
-    if params_is_dict and set_status_nodes:
-        node_params = nodes[0].get()
+    if params_is_dict:
+        node_params = only_local_nodes[0].get()
         contains_list = [
             is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
             for key, vals in params.items()

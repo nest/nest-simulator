@@ -1347,4 +1347,19 @@ void MPIManager::set_recv_counts_secondary_events_in_int_per_rank( const std::ve
     recv_displacements_secondary_events_in_int_per_rank_.begin() + 1 );
 }
 
+#ifndef HAVE_MPI
+
+void
+test_link( int, int )
+{
+}
+
+void
+test_links()
+{
+}
+
+#endif /* HAVE_MPI */
+
+
 } // namespace nest

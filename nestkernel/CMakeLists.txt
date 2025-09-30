@@ -46,7 +46,7 @@ set ( nestkernel_sources
       generic_factory_impl.h
       histentry.h histentry.cpp
       model.h model.cpp
-      model_manager.h model_manager.cpp
+      model_manager.h model_manager.cpp model_manager_impl.h
       nest_datums.h nest_datums.cpp
       nest_names.cpp nest_names.h
       nestmodule.h nestmodule.cpp
@@ -61,8 +61,8 @@ set ( nestkernel_sources
       random_generators.h
       recording_device.h recording_device.cpp
       pseudo_recording_device.h pseudo_recording_device.cpp
-      ring_buffer.h ring_buffer.cpp
-      secondary_event.h secondary_event.cpp
+      ring_buffer.h ring_buffer.cpp ring_buffer_impl.h
+      secondary_event.h secondary_event.cpp secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -85,7 +85,7 @@ set ( nestkernel_sources
       kernel_manager.h kernel_manager.cpp
       vp_manager.h vp_manager.cpp
       io_manager.h io_manager.cpp
-      mpi_manager.h mpi_manager.cpp
+      mpi_manager.h mpi_manager.cpp mpi_manager_impl.h
       simulation_manager.h simulation_manager.cpp
       connection_manager.h connection_manager.cpp connection_manager_impl.h
       sp_manager.h sp_manager.cpp
@@ -120,9 +120,9 @@ set ( nestkernel_sources
       grid_mask.h
       grid_mask_impl.h
       layer.h layer.cpp layer_impl.h
-      mask.h mask.cpp
-      ntree.h ntree.cpp
-      position.h
+      mask.h mask.cpp mask_impl.h
+      ntree.h ntree.cpp ntree_impl.h
+      position.h position_impl.h
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp

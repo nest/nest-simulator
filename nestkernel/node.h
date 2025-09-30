@@ -1027,6 +1027,11 @@ public:
     const double weight_revert,
     const double K_plus_revert,
     const double time_while_critical );
+  /**
+   * In case a correction is applied for a pre-synaptic spike, any other pre-synaptic spikes from the same synapse need
+   * to be informed of the new base weight to revert to for the correction.
+   */
+  void update_weight_revert( const size_t lcid, const double weight_revert );
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are

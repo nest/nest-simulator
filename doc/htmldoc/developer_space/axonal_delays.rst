@@ -54,7 +54,7 @@ is just smaller. In such a case, the spike would be accumulated in the wrong buf
 Instead of sending a regular ``SpikeEvent`` to signal a correction, a ``CorrectionSpikeEvent`` is sent. Overloading the handle
 function now allows handling the correction in the correct way, depending on the model implementation.
 Furthermore, neuron models must now call ``ArchivingNode::pre_run_hook_()`` in their derived pre_run_hook implementation
-and call ``reset_correction_entries_stdp_ax_delay_()`` at the end of their update implementation.
+and call ``reset_correction_entries_stdp_ax_delay_()`` at the end of each timestep in their update implementation.
 Currently, only the ``iaf_psc_alpha`` neuron model supports STDP with axonal delays.
 All other neurons will act as if the delay of incoming connections was purely dendritic.
 

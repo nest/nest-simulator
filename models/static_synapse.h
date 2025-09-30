@@ -177,6 +177,12 @@ public:
   {
     weight_ = w;
   }
+
+  double
+  get_weight() const
+  {
+    return weight_;
+  }
 };
 
 template < typename targetidentifierT >

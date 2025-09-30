@@ -304,6 +304,7 @@ void
 ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   const double t_last_pre_spike,
   const double weight_revert,
+  const double new_weight,
   const double K_plus_revert,
   const double time_while_critical )
 {
@@ -315,24 +316,77 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
 
   const SpikeData& spike_data = spike_event.get_sender_spike_data();
   correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay(
-    spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert, K_plus_revert ) );
+    spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert, new_weight, K_plus_revert ) );
 }
 
 void
-ArchivingNode::reset_correction_entries_stdp_ax_delay_()
+ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
 {
   if ( has_predominant_stdp_ax_delay_ )
   {
+    const Time& ori = kernel().simulation_manager.get_slice_origin();
+
     const long mindelay_steps = kernel().connection_manager.get_min_delay();
     assert( correction_entries_stdp_ax_delay_.size()
       == static_cast< size_t >( mindelay_steps + kernel().connection_manager.get_max_delay() ) );
 
-    for ( long lag = 0; lag < mindelay_steps; ++lag )
-    {
-      const long idx = kernel().event_delivery_manager.get_modulo( lag );
-      assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
+    const size_t idx = kernel().event_delivery_manager.get_modulo( lag );
+    assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-      std::vector< CorrectionEntrySTDPAxDelay >().swap( correction_entries_stdp_ax_delay_[ idx ] );
+    for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
+    {
+      // For each correction entry
+      for ( size_t other_idx = idx + 1; other_idx < correction_entries_stdp_ax_delay_.size(); ++other_idx )
+      {
+        std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_per_timestep =
+          correction_entries_stdp_ax_delay_[ other_idx ];
+        for ( CorrectionEntrySTDPAxDelay& other_it_corr_entry : correction_entries_per_timestep )
+        {
+          if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
+          {
+            other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
+            double dendritic_delay, axonal_delay;
+            kernel().connection_manager.get_delays(
+              get_thread(), it_corr_entry.syn_id_, it_corr_entry.lcid_, dendritic_delay, axonal_delay );
+            other_it_corr_entry.t_last_pre_spike_ =
+              ( ori + Time::step( lag + 1 ) ).get_ms() + dendritic_delay - axonal_delay;
+          }
+        }
+      }
+      for ( size_t other_idx = 0; other_idx < idx; ++other_idx )
+      {
+        std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_per_timestep =
+          correction_entries_stdp_ax_delay_[ other_idx ];
+        for ( CorrectionEntrySTDPAxDelay& other_it_corr_entry : correction_entries_per_timestep )
+        {
+          if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
+          {
+            other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
+            double dendritic_delay, axonal_delay;
+            kernel().connection_manager.get_delays(
+              get_thread(), it_corr_entry.syn_id_, it_corr_entry.lcid_, dendritic_delay, axonal_delay );
+            other_it_corr_entry.t_last_pre_spike_ =
+              ( ori + Time::step( lag + 1 ) ).get_ms() + dendritic_delay - axonal_delay;
+          }
+        }
+      }
+    }
+
+    std::vector< CorrectionEntrySTDPAxDelay >().swap( correction_entries_stdp_ax_delay_[ idx ] );
+  }
+}
+
+void
+ArchivingNode::update_weight_revert( const size_t lcid, const double weight_revert )
+{
+  for ( std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_for_timestep : correction_entries_stdp_ax_delay_ )
+  {
+    for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_for_timestep )
+    {
+      if ( it_corr_entry.lcid_ == lcid )
+      {
+        it_corr_entry.weight_revert_ = weight_revert;
+      }
     }
   }
 }
@@ -361,6 +415,7 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
           it_corr_entry.t_last_pre_spike_,
           ( ori + Time::step( lag + 1 ) ).get_ms(),
           it_corr_entry.weight_revert_,
+          it_corr_entry.new_weight_,
           it_corr_entry.K_plus_revert_,
           t_spike.get_ms() );
       }

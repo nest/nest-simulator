@@ -70,14 +70,30 @@ Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const double t_last_pre_spike,
   const double t_spike_critical_interval_end,
   double& weight_revert,
+  double& new_weight,
   const double K_plus_revert,
   const double t_post_spike )
 {
   typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >(
     kernel().model_manager.get_connection_models( tid )[ syn_id ] )
                                                            ->get_common_properties();
-  C_[ lcid ].correct_synapse_stdp_ax_delay(
-    tid, t_last_pre_spike, t_spike_critical_interval_end, weight_revert, K_plus_revert, t_post_spike, cp );
+  C_[ lcid ].correct_synapse_stdp_ax_delay( tid,
+    lcid,
+    t_last_pre_spike,
+    t_spike_critical_interval_end,
+    weight_revert,
+    new_weight,
+    K_plus_revert,
+    t_post_spike,
+    cp );
+}
+
+template < typename ConnectionT >
+void
+Connector< ConnectionT >::get_delays( const size_t lcid, double& dendritic_delay, double& axonal_delay )
+{
+  dendritic_delay = C_[ lcid ].get_dendritic_delay_ms();
+  axonal_delay = C_[ lcid ].get_axonal_delay_ms();
 }
 
 } // of namespace nest

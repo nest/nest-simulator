@@ -112,8 +112,11 @@ public:
   void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
     const double t_last_pre_spike,
     const double weight_revert,
+    const double new_weight,
     const double K_plus_revert,
     const double time_while_critical );
+
+  void update_weight_revert( const size_t lcid, const double weight_revert );
 
 protected:
   void pre_run_hook_();
@@ -133,7 +136,7 @@ protected:
    */
   void clear_history();
 
-  void reset_correction_entries_stdp_ax_delay_();
+  void reset_correction_entries_stdp_ax_delay_( const size_t lag );
 
   /**
    * Number of incoming connections from STDP connectors.
@@ -178,11 +181,13 @@ private:
       const synindex syn_id,
       const double t_last_pre_spike,
       const double weight_revert,
+      const double new_weight,
       const double K_plus_revert )
       : lcid_( lcid )
       , syn_id_( syn_id )
       , t_last_pre_spike_( t_last_pre_spike )
       , weight_revert_( weight_revert )
+      , new_weight_( new_weight )
       , K_plus_revert_( K_plus_revert )
     {
     }
@@ -191,11 +196,12 @@ private:
     synindex syn_id_;         //!< synapse-type index
     double t_last_pre_spike_; //!< time of the last pre-synaptic spike before this spike
     double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
+    double new_weight_;       //!< new weight after the latest correction
     double K_plus_revert_;    //!< pre-synaptic trace before possibly incorrect facilitation
   };
 
   //! check for correct correction entry size
-  using correction_entry_size = StaticAssert< sizeof( ArchivingNode::CorrectionEntrySTDPAxDelay ) == 32 >::success;
+  using correction_entry_size = StaticAssert< sizeof( ArchivingNode::CorrectionEntrySTDPAxDelay ) == 40 >::success;
 
 protected:
   /**

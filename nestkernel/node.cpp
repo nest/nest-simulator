@@ -149,6 +149,12 @@ Node::add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const doubl
   throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
 }
 
+void
+Node::update_weight_revert( const size_t, const double )
+{
+  throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
+}
+
 DictionaryDatum
 Node::get_status_base()
 {

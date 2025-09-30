@@ -178,9 +178,11 @@ public:
    * taking into account a new post-synaptic spike.
    */
   void correct_synapse_stdp_ax_delay( const size_t tid,
+    const size_t lcid,
     const double t_last_pre_spike,
     const double t_spike_critical_interval_end,
     double& weight_revert,
+    double& new_weight,
     const double K_plus_revert,
     const double t_post_spike,
     const CommonSynapseProperties& );
@@ -463,8 +465,10 @@ Connection< targetidentifierT, DelayTypeT >::calibrate( const TimeConverter& tc 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
 Connection< targetidentifierT, DelayTypeT >::correct_synapse_stdp_ax_delay( const size_t,
+  const size_t,
   const double,
   const double,
+  double&,
   double&,
   const double,
   const double,

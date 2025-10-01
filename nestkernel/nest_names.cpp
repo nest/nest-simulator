@@ -317,6 +317,7 @@ const Name max_buffer_size_target_data( "max_buffer_size_target_data" );
 const Name max_delay( "max_delay" );
 const Name max_num_syn_models( "max_num_syn_models" );
 const Name max_update_time( "max_update_time" );
+const Name max_V_m_rate( "max_V_m_rate" );
 const Name mean( "mean" );
 const Name memory( "memory" );
 const Name message_times( "messages_times" );

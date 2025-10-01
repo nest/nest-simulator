@@ -529,7 +529,7 @@ void
 nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() <= static_cast< int >( B_.spikes_.size() ) );
+  assert( e.get_rport() <= B_.spikes_.size() );
 
   const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
   const auto rport = e.get_rport();

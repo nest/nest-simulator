@@ -292,4 +292,6 @@ private:
 
 } // namespace nest
 
+#include "model_manager_impl.h"
+
 #endif /* MODEL_MANAGER_H */

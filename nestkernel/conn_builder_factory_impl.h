@@ -27,10 +27,10 @@
 
 namespace nest
 {
-    
+
 /**
-* Factory class for bipartite ConnBuilders
-*/
+ * Factory class for bipartite ConnBuilders
+ */
 template < typename ConnBuilderType >
 class BipartiteConnBuilderFactory : public GenericBipartiteConnBuilderFactory
 {
@@ -48,8 +48,8 @@ public:
 
 
 /**
-* Factory class for Third-factor ConnBuilders
-*/
+ * Factory class for Third-factor ConnBuilders
+ */
 template < typename ThirdConnBuilderType >
 class ThirdConnBuilderFactory : public GenericThirdConnBuilderFactory
 {
@@ -64,7 +64,6 @@ public:
     return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
-
 
 
 } // namespace nest

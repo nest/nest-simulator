@@ -240,8 +240,6 @@ TargetTableDevices::add_connection_from_device( Node& source,
 }
 
 
-
-
 void
 TargetTableDevices::get_synapse_status_from_device( const size_t tid,
   const size_t ldid,

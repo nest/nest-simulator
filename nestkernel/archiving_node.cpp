@@ -276,10 +276,10 @@ nest::ArchivingNode::clear_history()
 }
 
 double
-ArchivingNode::get_spiketime_ms() const {
+ArchivingNode::get_spiketime_ms() const
+{
 
   return last_spike_;
 }
 
 } // of namespace nest
-

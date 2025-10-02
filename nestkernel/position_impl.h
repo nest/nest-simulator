@@ -25,7 +25,8 @@
 
 #include "position.h"
 
-namespace nest{
+namespace nest
+{
 
 
 template < int D, class T >

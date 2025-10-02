@@ -45,35 +45,29 @@ struct SynIdDelay
   /**
    * Return the delay of the connection in ms
    */
-  double
-  get_delay_ms() const;
+  double get_delay_ms() const;
 
   /**
    * Set the delay of the connection specified in ms
    */
-  void
-  set_delay_ms( const double d );
+  void set_delay_ms( const double d );
 
-  void
-  set_source_has_more_targets( const bool more_targets );
+  void set_source_has_more_targets( const bool more_targets );
 
-  bool
-  source_has_more_targets() const;
+  bool source_has_more_targets() const;
 
   /**
    * Disables the synapse.
    *
    * @see is_disabled
    */
-  void
-  disable();
+  void disable();
   /**
    * Returns a flag denoting if the synapse is disabled.
    *
    * @see disable
    */
-  bool
-  is_disabled() const;
+  bool is_disabled() const;
 };
 
 //! check legal size

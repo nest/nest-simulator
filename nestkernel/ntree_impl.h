@@ -31,7 +31,8 @@
 #include <utility>
 #include <vector>
 
-namespace nest{
+namespace nest
+{
 
 
 template < int D, class T, int max_capacity, int max_depth >

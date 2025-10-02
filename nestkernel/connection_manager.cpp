@@ -1965,7 +1965,6 @@ ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event&
 }
 
 
-
 bool
 ConnectionManager::valid_connection_rule( std::string rule_name )
 {
@@ -2130,7 +2129,7 @@ ConnectionManager::secondary_connections_exist() const
   return secondary_connections_exist_;
 }
 
- bool
+bool
 ConnectionManager::use_compressed_spikes() const
 {
   return use_compressed_spikes_;

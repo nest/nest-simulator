@@ -109,8 +109,6 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 }
 
 
-
-
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   const MaskDatum& maskd,

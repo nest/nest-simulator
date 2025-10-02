@@ -401,8 +401,7 @@ protected:
 };
 
 // Proper mod which returns non-negative numbers
-double
-mod( double x, double p );
+double mod( double x, double p );
 
 
 } // namespace nest

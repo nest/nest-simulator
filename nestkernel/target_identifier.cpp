@@ -39,12 +39,14 @@ namespace nest
 TargetIdentifierPtrRport::TargetIdentifierPtrRport()
   : target_( nullptr )
   , rport_( 0 )
-{}
+{
+}
 
 TargetIdentifierPtrRport::TargetIdentifierPtrRport( const TargetIdentifierPtrRport& ) = default;
 TargetIdentifierPtrRport& TargetIdentifierPtrRport::operator=( const TargetIdentifierPtrRport& ) = default;
 
-void TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
+void
+TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
 {
   // Do nothing if called on synapse prototype
   if ( target_ )
@@ -54,22 +56,26 @@ void TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
   }
 }
 
-Node* TargetIdentifierPtrRport::get_target_ptr( const size_t ) const
+Node*
+TargetIdentifierPtrRport::get_target_ptr( const size_t ) const
 {
   return target_;
 }
 
-size_t TargetIdentifierPtrRport::get_rport() const
+size_t
+TargetIdentifierPtrRport::get_rport() const
 {
   return rport_;
 }
 
-void TargetIdentifierPtrRport::set_target( Node* target )
+void
+TargetIdentifierPtrRport::set_target( Node* target )
 {
   target_ = target;
 }
 
-void TargetIdentifierPtrRport::set_rport( size_t rprt )
+void
+TargetIdentifierPtrRport::set_rport( size_t rprt )
 {
   rport_ = rprt;
 }
@@ -81,12 +87,14 @@ void TargetIdentifierPtrRport::set_rport( size_t rprt )
 
 TargetIdentifierIndex::TargetIdentifierIndex()
   : target_( invalid_targetindex )
-{}
+{
+}
 
 TargetIdentifierIndex::TargetIdentifierIndex( const TargetIdentifierIndex& ) = default;
 TargetIdentifierIndex& TargetIdentifierIndex::operator=( const TargetIdentifierIndex& ) = default;
 
-void TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
+void
+TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
 {
   // Do nothing if called on synapse prototype
   if ( target_ != invalid_targetindex )
@@ -96,18 +104,21 @@ void TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
   }
 }
 
-Node* TargetIdentifierIndex::get_target_ptr( const size_t tid ) const
+Node*
+TargetIdentifierIndex::get_target_ptr( const size_t tid ) const
 {
   assert( target_ != invalid_targetindex );
   return kernel::manager< NodeManager >.thread_lid_to_node( tid, target_ );
 }
 
-size_t TargetIdentifierIndex::get_rport() const
+size_t
+TargetIdentifierIndex::get_rport() const
 {
   return 0;
 }
 
-void TargetIdentifierIndex::set_target( Node* target )
+void
+TargetIdentifierIndex::set_target( Node* target )
 {
   kernel::manager< NodeManager >.ensure_valid_thread_local_ids();
 
@@ -117,12 +128,13 @@ void TargetIdentifierIndex::set_target( Node* target )
     throw IllegalConnection(
       String::compose( "HPC synapses support at most %1 nodes per thread. "
                        "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
-                       max_targetindex ) );
+        max_targetindex ) );
   }
   target_ = target_lid;
 }
 
-void TargetIdentifierIndex::set_rport( size_t rprt )
+void
+TargetIdentifierIndex::set_rport( size_t rprt )
 {
   if ( rprt != 0 )
   {

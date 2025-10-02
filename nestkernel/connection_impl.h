@@ -122,4 +122,3 @@ Connection< targetidentifierT >::get_secondary_event()
 } // namespace nest
 
 #endif /* CONNECTION_IMPL_H */
-

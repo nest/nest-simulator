@@ -26,7 +26,8 @@
 
 #include "event_delivery_manager.h"
 
-namespace nest{
+namespace nest
+{
 
 template < class EventT >
 inline void
@@ -39,7 +40,6 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
   const size_t ldid = source.get_local_device_id();
   kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
-
 
 
 template < class EventT >
@@ -88,8 +88,6 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 }
 
 
-
 } // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_IMPL_H */
-

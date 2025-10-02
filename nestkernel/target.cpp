@@ -31,7 +31,8 @@ namespace nest
 
 Target::Target()
   : remote_target_id_( 0 )
-{}
+{
+}
 
 Target::Target( const Target& target )
   : remote_target_id_( target.remote_target_id_ )
@@ -59,70 +60,76 @@ Target::Target( const size_t tid, const size_t rank, const synindex syn_id, cons
   set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
-void Target::set_lcid( const size_t lcid )
+void
+Target::set_lcid( const size_t lcid )
 {
   assert( lcid < MAX_LCID );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) )
-                      | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) ) | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
 }
 
-size_t Target::get_lcid() const
+size_t
+Target::get_lcid() const
 {
   return ( ( remote_target_id_ & MASK_LCID ) >> BITPOS_LCID );
 }
 
-void Target::set_rank( const size_t rank )
+void
+Target::set_rank( const size_t rank )
 {
   assert( rank <= MAX_RANK ); // MAX_RANK is allowed since it is not used as invalid value
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) )
-                      | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) ) | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
 
-size_t Target::get_rank() const
+size_t
+Target::get_rank() const
 {
   return ( ( remote_target_id_ & MASK_RANK ) >> BITPOS_RANK );
 }
 
-void Target::set_tid( const size_t tid )
+void
+Target::set_tid( const size_t tid )
 {
   assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) )
-                      | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
-size_t Target::get_tid() const
+size_t
+Target::get_tid() const
 {
   return ( ( remote_target_id_ & MASK_TID ) >> BITPOS_TID );
 }
 
-void Target::set_syn_id( const synindex syn_id )
+void
+Target::set_syn_id( const synindex syn_id )
 {
   assert( syn_id < MAX_SYN_ID );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) )
-                      | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) ) | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
 }
 
-synindex Target::get_syn_id() const
+synindex
+Target::get_syn_id() const
 {
   return ( ( remote_target_id_ & MASK_SYN_ID ) >> BITPOS_SYN_ID );
 }
 
-void Target::set_status( enum_status_target_id set_status_to )
+void
+Target::set_status( enum_status_target_id set_status_to )
 {
   switch ( set_status_to )
   {
-    case TARGET_ID_PROCESSED:
-      remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
-      break;
-    case TARGET_ID_UNPROCESSED:
-      remote_target_id_ = remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
-      break;
-    default:
-      throw InternalError( "Invalid remote target id status." );
+  case TARGET_ID_PROCESSED:
+    remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
+    break;
+  case TARGET_ID_UNPROCESSED:
+    remote_target_id_ = remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
+    break;
+  default:
+    throw InternalError( "Invalid remote target id status." );
   }
 }
 
-enum_status_target_id Target::get_status() const
+enum_status_target_id
+Target::get_status() const
 {
   if ( ( remote_target_id_ & MASK_PROCESSED_FLAG ) >> BITPOS_PROCESSED_FLAG ) // test single bit
   {
@@ -131,17 +138,20 @@ enum_status_target_id Target::get_status() const
   return TARGET_ID_UNPROCESSED;
 }
 
-bool Target::is_processed() const
+bool
+Target::is_processed() const
 {
   return get_status() == TARGET_ID_PROCESSED;
 }
 
-double Target::get_offset() const
+double
+Target::get_offset() const
 {
   return 0.0;
 }
 
-void Target::mark_for_removal()
+void
+Target::mark_for_removal()
 {
   set_status( TARGET_ID_PROCESSED );
 }
@@ -152,14 +162,17 @@ void Target::mark_for_removal()
 OffGridTarget::OffGridTarget()
   : Target()
   , offset_( 0.0 )
-{}
+{
+}
 
 OffGridTarget::OffGridTarget( const Target& target, const double offset )
   : Target( target )
   , offset_( offset )
-{}
+{
+}
 
-double OffGridTarget::get_offset() const
+double
+OffGridTarget::get_offset() const
 {
   return offset_;
 }

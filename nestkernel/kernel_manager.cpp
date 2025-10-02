@@ -125,10 +125,10 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.
-  assert( kernel::manager<NodeManager>.size() == 0 );
-  assert( not kernel::manager<ConnectionManager>.get_user_set_delay_extrema() );
-  assert( not kernel::manager<SimulationManager>.has_been_simulated() );
-  assert( not kernel::manager<SPManager>.is_structural_plasticity_enabled() or new_num_threads == 1 );
+  assert( kernel::manager< NodeManager >.size() == 0 );
+  assert( not kernel::manager< ConnectionManager >.get_user_set_delay_extrema() );
+  assert( not kernel::manager< SimulationManager >.has_been_simulated() );
+  assert( not kernel::manager< SPManager >.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
   for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {

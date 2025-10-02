@@ -27,7 +27,8 @@
 #include "nest_names.h"
 #include "position.h"
 
-namespace nest{
+namespace nest
+{
 
 template <>
 inline Name

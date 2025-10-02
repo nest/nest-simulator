@@ -172,46 +172,61 @@ nest::SparseNodeArray::get_node_by_node_id( size_t node_id ) const
     return nullptr;
   }
 }
-size_t nest::SparseNodeArray::NodeEntry::get_node_id() const {
+size_t
+nest::SparseNodeArray::NodeEntry::get_node_id() const
+{
 
   assert( node_id_ > 0 );
   return node_id_;
 }
 
-nest::Node* nest::SparseNodeArray::NodeEntry::get_node() const {
+nest::Node*
+nest::SparseNodeArray::NodeEntry::get_node() const
+{
 
   assert( node_ );
   return node_;
 }
 
-bool nest::SparseNodeArray::is_consistent_() const {
+bool
+nest::SparseNodeArray::is_consistent_() const
+{
 
   return nodes_.size() == 0 or global_max_node_id_ > 0;
 }
 
-size_t nest::SparseNodeArray::get_max_node_id() const {
+size_t
+nest::SparseNodeArray::get_max_node_id() const
+{
 
   return global_max_node_id_;
 }
 
-nest::Node* nest::SparseNodeArray::get_node_by_index( size_t idx ) const {
+nest::Node*
+nest::SparseNodeArray::get_node_by_index( size_t idx ) const
+{
 
   assert( idx < nodes_.size() );
   return nodes_[ idx ].node_;
 }
 
-size_t nest::SparseNodeArray::size() const {
+size_t
+nest::SparseNodeArray::size() const
+{
 
   return nodes_.size();
 }
 
-nest::SparseNodeArray::const_iterator nest::SparseNodeArray::end() const {
+nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::end() const
+{
 
   return nodes_.end();
 }
 
-nest::SparseNodeArray::const_iterator nest::SparseNodeArray::begin() const {
+nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::begin() const
+{
 
   return nodes_.begin();
 }
-

@@ -197,8 +197,7 @@ public:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
   get_omp_synchronization_simulation_stopwatch();
 
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
-  get_mpi_synchronization_stopwatch();
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >& get_mpi_synchronization_stopwatch();
 
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_

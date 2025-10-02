@@ -31,7 +31,8 @@ Source::Source()
   : node_id_( 0 )
   , processed_( false )
   , primary_( true )
-{}
+{
+}
 
 Source::Source( const std::uint64_t node_id, const bool primary )
   : node_id_( node_id )
@@ -41,58 +42,69 @@ Source::Source( const std::uint64_t node_id, const bool primary )
   assert( node_id <= MAX_NODE_ID );
 }
 
-void Source::set_node_id( const std::uint64_t node_id )
+void
+Source::set_node_id( const std::uint64_t node_id )
 {
   assert( node_id <= MAX_NODE_ID );
   node_id_ = node_id;
 }
 
-std::uint64_t Source::get_node_id() const
+std::uint64_t
+Source::get_node_id() const
 {
   return node_id_;
 }
 
-void Source::set_processed( const bool processed )
+void
+Source::set_processed( const bool processed )
 {
   processed_ = processed;
 }
 
-bool Source::is_processed() const
+bool
+Source::is_processed() const
 {
   return processed_;
 }
 
-void Source::set_primary( const bool primary )
+void
+Source::set_primary( const bool primary )
 {
   primary_ = primary;
 }
 
-bool Source::is_primary() const
+bool
+Source::is_primary() const
 {
   return primary_;
 }
 
-void Source::disable()
+void
+Source::disable()
 {
   node_id_ = DISABLED_NODE_ID;
 }
 
-bool Source::is_disabled() const
+bool
+Source::is_disabled() const
 {
   return node_id_ == DISABLED_NODE_ID;
 }
 
-bool operator<( const Source& lhs, const Source& rhs )
+bool
+operator<( const Source& lhs, const Source& rhs )
 {
   return lhs.node_id_ < rhs.node_id_;
 }
 
-bool operator>( const Source& lhs, const Source& rhs )
+bool
+operator>( const Source& lhs, const Source& rhs )
 {
   return rhs < lhs;
 }
 
-bool operator==( const Source& lhs, const Source& rhs )
+bool
+operator==( const Source& lhs, const Source& rhs )
 {
   return lhs.node_id_ == rhs.node_id_;
 }

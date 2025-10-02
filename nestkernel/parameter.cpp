@@ -529,7 +529,7 @@ ConstantParameter::value( RngPtr, Node* )
 }
 
 double
-UniformParameter::  value( RngPtr rng, Node* )
+UniformParameter::value( RngPtr rng, Node* )
 {
   return lower_ + rng->drand() * range_;
 }
@@ -741,7 +741,7 @@ MinParameter::value( RngPtr rng,
 
 double
 MaxParameter::value( RngPtr rng, Node* node )
-  {
+{
   return std::max( p_->value( rng, node ), other_value_ );
 }
 

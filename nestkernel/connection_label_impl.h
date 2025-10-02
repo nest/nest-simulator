@@ -32,7 +32,7 @@ namespace nest
 {
 
 
-    /**
+/**
  * The class ConnectionLabel enables synapse model to be labeled by a positive
  * integer.
  *

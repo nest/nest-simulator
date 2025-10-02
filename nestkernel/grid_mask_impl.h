@@ -25,7 +25,8 @@
 
 #include "grid_mask.h"
 
-namespace nest{
+namespace nest
+{
 
 template < int D >
 GridMask< D >::GridMask( const DictionaryDatum& d )

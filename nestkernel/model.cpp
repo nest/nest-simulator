@@ -150,12 +150,16 @@ Model::get_status()
   return d;
 }
 
-std::string Model::get_name() const {
+std::string
+Model::get_name() const
+{
 
   return name_;
 }
 
-Node* Model::create( size_t t ) {
+Node*
+Model::create( size_t t )
+{
 
   assert( t < memory_.size() );
   Node* n = create_();
@@ -163,15 +167,18 @@ Node* Model::create( size_t t ) {
   return n;
 }
 
-size_t Model::get_type_id() const {
+size_t
+Model::get_type_id() const
+{
 
-    return type_id_;
+  return type_id_;
 }
 
-void Model::set_type_id( size_t id ) {
+void
+Model::set_type_id( size_t id )
+{
 
-    type_id_ = id;
+  type_id_ = id;
 }
 
 } // namespace
-

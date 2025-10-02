@@ -69,9 +69,8 @@ public:
   /**
    * Set parameter name to be deprecated.
    */
-  void
-  set_deprecated( std::string name );
-  
+  void set_deprecated( std::string name );
+
   /**
    * Issue a deprecation warning.
    */

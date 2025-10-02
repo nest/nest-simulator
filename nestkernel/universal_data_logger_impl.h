@@ -25,7 +25,8 @@
 
 #include "universal_data_logger.h"
 
-namespace nest{
+namespace nest
+{
 
 // must be defined in this file, since it is required by check_connection(),
 // which typically is in h-files.
@@ -102,7 +103,6 @@ UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequ
   recording_interval_ = req.get_recording_interval();
   recording_offset_ = req.get_recording_offset();
 }
-
 
 
 // must be defined in this file, since it is required by check_connection(),
@@ -585,7 +585,7 @@ UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const Data
   // send it off
   kernel::manager< EventDeliveryManager >.send_to_node( reply );
 }
-    
+
 }
 
 

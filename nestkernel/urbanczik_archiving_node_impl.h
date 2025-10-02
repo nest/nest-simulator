@@ -25,7 +25,8 @@
 
 #include "urbanczik_archiving_node.h"
 
-namespace nest{
+namespace nest
+{
 
 template < class urbanczik_parameters >
 inline double

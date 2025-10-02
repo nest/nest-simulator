@@ -59,24 +59,18 @@ public:
 
   void set_status( const DictionaryDatum&, bool ) override {};
 
-  void
-  get_status( DictionaryDatum& d, NodeCollection const* nc ) const override;
+  void get_status( DictionaryDatum& d, NodeCollection const* nc ) const override;
 
   //! Returns pointer to object with layer representation
-  const AbstractLayerPTR
-  get_layer() const;
+  const AbstractLayerPTR get_layer() const;
 
   // Using string as enum would make stuff more complicated
-  std::string
-  get_type() const override;
+  std::string get_type() const override;
 
-  void
-  set_first_node_id( size_t node_id ) override;
+  void set_first_node_id( size_t node_id ) override;
 
-  size_t
-  get_first_node_id() const override;
-  bool
-  operator==( const NodeCollectionMetadataPTR rhs ) const override;
+  size_t get_first_node_id() const override;
+  bool operator==( const NodeCollectionMetadataPTR rhs ) const override;
 
 private:
   const AbstractLayerPTR layer_; //!< layer object

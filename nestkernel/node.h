@@ -730,7 +730,7 @@ public:
    * @ingroup SP_functions
    */
   virtual void update_synaptic_elements( double ) {};
- 
+
   /**
    * Is used to reduce the number of synaptic elements in the node through
    * time.
@@ -911,16 +911,14 @@ public:
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType
-  sends_signal() const;
+  virtual SignalType sends_signal() const;
 
   /**
    * @returns type of signal this node consumes
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType
-  receives_signal() const;
+  virtual SignalType receives_signal() const;
 
   /**
    *  Return a dictionary with the node's properties.
@@ -1026,8 +1024,7 @@ protected:
   Model& get_model_() const;
 
   //! Mark node as frozen.
-  void
-  set_frozen_( bool frozen );
+  void set_frozen_( bool frozen );
 
   /**
    * Auxiliary function to downcast a Node to a concrete class derived from
@@ -1078,7 +1075,10 @@ private:
   size_t tmp_nc_index_;
 };
 
-template < typename ConcreteNode > const ConcreteNode& Node::downcast( const Node& n ) {
+template < typename ConcreteNode >
+const ConcreteNode&
+Node::downcast( const Node& n )
+{
 
   ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
   assert( tp != 0 );

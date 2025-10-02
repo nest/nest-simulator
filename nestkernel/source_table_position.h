@@ -24,10 +24,10 @@
 #define SOURCE_TABLE_POSITION_H
 
 // C++ includes:
+#include "source.h"
 #include <cassert>
 #include <iostream>
 #include <vector>
-#include "source.h" 
 
 #include "block_vector.h"
 

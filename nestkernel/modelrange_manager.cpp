@@ -135,27 +135,35 @@ ModelRangeManager::get_contiguous_node_id_range( size_t node_id ) const
   throw UnknownNode( node_id );
 }
 
-std::vector< modelrange >::const_iterator nest::ModelRangeManager::end() const {
+std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::end() const
+{
 
   return modelranges_.end();
 }
 
-std::vector< modelrange >::const_iterator nest::ModelRangeManager::begin() const {
+std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::begin() const
+{
 
   return modelranges_.begin();
 }
 
-bool nest::ModelRangeManager::is_in_range( size_t node_id ) const {
+bool
+nest::ModelRangeManager::is_in_range( size_t node_id ) const
+{
 
   return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
-void nest::ModelRangeManager::get_status( DictionaryDatum& ) {
-
+void
+nest::ModelRangeManager::get_status( DictionaryDatum& )
+{
 }
 
-void nest::ModelRangeManager::set_status( const DictionaryDatum& ) {
-
+void
+nest::ModelRangeManager::set_status( const DictionaryDatum& )
+{
 }
 
 } // namespace nest

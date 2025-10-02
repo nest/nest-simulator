@@ -28,7 +28,8 @@
 
 namespace nest
 {
-namespace timers{
+namespace timers
+{
 
 
 template < clockid_t clock_type >
@@ -248,7 +249,6 @@ Stopwatch< detailed_timer,
 }
 
 
+} // namespace nest
 
-} //namespace nest
-
-#endif 
+#endif

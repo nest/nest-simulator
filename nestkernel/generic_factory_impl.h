@@ -25,7 +25,8 @@
 
 #include "generic_factory.h"
 
-namespace nest{
+namespace nest
+{
 
 template < class BaseT >
 inline BaseT*

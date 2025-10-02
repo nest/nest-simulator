@@ -419,14 +419,6 @@ protected:
 };
 
 
-
-
-
-
-
-
-
-
 /**
  * Event for recording the weight of a spike.
  */
@@ -451,14 +443,6 @@ public:
 protected:
   size_t receiver_node_id_; //!< node ID of receiver or 0.
 };
-
-
-
-
-
-
-
-
 
 
 /**
@@ -504,11 +488,6 @@ public:
 };
 
 
-
-
-
-
-
 /**
  * Event for electrical currents.
  * Used to send currents from one node to the next.
@@ -524,11 +503,6 @@ public:
   void set_current( double );
   double get_current() const;
 };
-
-
-
-
-
 
 
 /**
@@ -608,20 +582,6 @@ private:
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Provide logged data through request transmitting reference.
  *
@@ -663,21 +623,18 @@ public:
   void operator()() override;
 
   //! Access referenced data
-  const Container&
-  get_info() const;
+  const Container& get_info() const;
 
 private:
   //! Prohibit copying
   DataLoggingReply( const DataLoggingReply& );
 
   //! Prohibit cloning
-  DataLoggingReply*
-  clone() const override;
+  DataLoggingReply* clone() const override;
 
   //! data to be transmitted, with time stamps
   const Container& info_;
 };
-
 
 
 /**
@@ -697,12 +654,6 @@ public:
   void set_conductance( double );
   double get_conductance() const;
 };
-
-
-
-
-
-
 
 
 /**
@@ -753,53 +704,8 @@ public:
 };
 
 
-
 //*************************************************************
 // Inline implementations.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

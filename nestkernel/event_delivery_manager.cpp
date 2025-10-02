@@ -1086,12 +1086,16 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
-size_t EventDeliveryManager::write_toggle() const {
+size_t
+EventDeliveryManager::write_toggle() const
+{
 
   return kernel::manager< SimulationManager >.get_slice() % 2;
 }
 
-void EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e ) {
+void
+EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
+{
 
   const size_t tid = kernel::manager< VPManager >.get_thread_id();
   const size_t source_node_id = source.get_node_id();
@@ -1125,7 +1129,9 @@ void EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e ) {
   }
 }
 
-void EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag ) {
+void
+EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
+{
 
   // Put the spike in a buffer for the remote machines
   const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
@@ -1141,7 +1147,9 @@ void EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, cons
   }
 }
 
-void EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag ) {
+void
+EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
+{
 
   // Put the spike in a buffer for the remote machines
   const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
@@ -1157,7 +1165,9 @@ void EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long la
   }
 }
 
-void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long ) {
+void
+EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
+{
 
   assert( not source.has_proxies() );
   e.set_stamp( kernel::manager< SimulationManager >.get_slice_origin() + Time::step( 1 ) );
@@ -1167,7 +1177,9 @@ void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const l
   kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
 
-long EventDeliveryManager::get_slice_modulo( long d ) {
+long
+EventDeliveryManager::get_slice_modulo( long d )
+{
 
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
@@ -1176,7 +1188,9 @@ long EventDeliveryManager::get_slice_modulo( long d ) {
   return slice_moduli_[ d ];
 }
 
-long EventDeliveryManager::get_modulo( long d ) {
+long
+EventDeliveryManager::get_modulo( long d )
+{
 
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
@@ -1185,33 +1199,45 @@ long EventDeliveryManager::get_modulo( long d ) {
   return moduli_[ d ];
 }
 
-size_t EventDeliveryManager::read_toggle() const {
+size_t
+EventDeliveryManager::read_toggle() const
+{
 
   // define in terms of write_toggle() to ensure consistency
   return 1 - write_toggle();
 }
 
-void EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking ) {
+void
+EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
+{
 
   off_grid_spiking_ = off_grid_spiking;
 }
 
-bool EventDeliveryManager::get_off_grid_communication() const {
+bool
+EventDeliveryManager::get_off_grid_communication() const
+{
 
   return off_grid_spiking_;
 }
 
-void EventDeliveryManager::send_to_node( Event& e ) {
+void
+EventDeliveryManager::send_to_node( Event& e )
+{
 
   e();
 }
 
-bool EventDeliveryManager::is_marked_for_removal_( const Target& target ) {
+bool
+EventDeliveryManager::is_marked_for_removal_( const Target& target )
+{
 
   return target.is_processed();
 }
 
-void EventDeliveryManager::reset_spike_register_( const size_t tid ) {
+void
+EventDeliveryManager::reset_spike_register_( const size_t tid )
+{
 
   emitted_spikes_register_[ tid ]->clear();
   off_grid_emitted_spikes_register_[ tid ]->clear();

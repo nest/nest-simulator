@@ -709,7 +709,8 @@ nest::BipartiteConnBuilder::reset_delays_()
   }
 }
 
-size_t nest::BipartiteConnBuilder::get_synapse_model() const
+size_t
+nest::BipartiteConnBuilder::get_synapse_model() const
 {
   if ( synapse_model_id_.size() > 1 )
   {
@@ -719,12 +720,12 @@ size_t nest::BipartiteConnBuilder::get_synapse_model() const
 }
 
 
-bool nest::BipartiteConnBuilder::get_default_delay() const
+bool
+nest::BipartiteConnBuilder::get_default_delay() const
 {
   if ( synapse_model_id_.size() > 1 )
   {
-    throw KernelException(
-      "Can only retrieve default delay when one synapse per connection is used." );
+    throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
   }
   return default_delay_[ 0 ];
 }
@@ -1081,17 +1082,17 @@ nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   }
 }
 
-  bool
-  nest::OneToOneBuilder::supports_symmetric() const
-  {
-    return true;
-  }
+bool
+nest::OneToOneBuilder::supports_symmetric() const
+{
+  return true;
+}
 
-  bool
-  nest::OneToOneBuilder::requires_proxies() const
-  {
-    return false;
-  }
+bool
+nest::OneToOneBuilder::requires_proxies() const
+{
+  return false;
+}
 
 
 void
@@ -1311,7 +1312,8 @@ nest::OneToOneBuilder::sp_disconnect_()
 bool
 nest::AllToAllBuilder::is_symmetric() const
 {
-  return nest::AllToAllBuilder::sources_ == nest::AllToAllBuilder::targets_ and nest::AllToAllBuilder::all_parameters_scalar_();
+  return nest::AllToAllBuilder::sources_ == nest::AllToAllBuilder::targets_
+    and nest::AllToAllBuilder::all_parameters_scalar_();
 }
 
 bool
@@ -2392,7 +2394,7 @@ const std::string&
 nest::SPBuilder::get_pre_synaptic_element_name() const
 {
   return nest::SPBuilder::pre_synaptic_element_name_;
- }
+}
 
 const std::string&
 nest::SPBuilder::get_post_synaptic_element_name() const
@@ -2411,7 +2413,6 @@ nest::SPBuilder::get_name() const
 {
   return nest::SPBuilder::name_;
 }
-
 
 
 void

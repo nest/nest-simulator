@@ -331,18 +331,15 @@ public:
   static void reset_resolution();
   static void reset_to_defaults();
 
-  static Time
-  get_resolution();
+  static Time get_resolution();
 
-  static bool
-  resolution_is_default();
+  static bool resolution_is_default();
 
   /////////////////////////////////////////////////////////////
   // Common zero-ary or unary operations
   /////////////////////////////////////////////////////////////
 
-  void
-  set_to_zero();
+  void set_to_zero();
 
   void advance();
 

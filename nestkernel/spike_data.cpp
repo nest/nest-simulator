@@ -31,42 +31,43 @@ namespace nest
 // --- SpikeData ---
 
 SpikeData::SpikeData()
-  : lcid_(0)
-  , marker_(SPIKE_DATA_ID_DEFAULT)
-  , lag_(0)
-  , tid_(0)
-  , syn_id_(0)
+  : lcid_( 0 )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
+  , lag_( 0 )
+  , tid_( 0 )
+  , syn_id_( 0 )
 {
 }
 
-SpikeData::SpikeData(const SpikeData& rhs)
-  : lcid_(rhs.lcid_)
-  , marker_(rhs.marker_)
-  , lag_(rhs.lag_)
-  , tid_(rhs.tid_)
-  , syn_id_(rhs.syn_id_)
+SpikeData::SpikeData( const SpikeData& rhs )
+  : lcid_( rhs.lcid_ )
+  , marker_( rhs.marker_ )
+  , lag_( rhs.lag_ )
+  , tid_( rhs.tid_ )
+  , syn_id_( rhs.syn_id_ )
 {
 }
 
-SpikeData::SpikeData(const Target& target, const size_t lag)
-  : lcid_(target.get_lcid())
-  , marker_(SPIKE_DATA_ID_DEFAULT)
-  , lag_(lag)
-  , tid_(target.get_tid())
-  , syn_id_(target.get_syn_id())
+SpikeData::SpikeData( const Target& target, const size_t lag )
+  : lcid_( target.get_lcid() )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
+  , lag_( lag )
+  , tid_( target.get_tid() )
+  , syn_id_( target.get_syn_id() )
 {
 }
 
-SpikeData::SpikeData(const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag)
-  : lcid_(lcid)
-  , marker_(SPIKE_DATA_ID_DEFAULT)
-  , lag_(lag)
-  , tid_(tid)
-  , syn_id_(syn_id)
+SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
+  : lcid_( lcid )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
+  , lag_( lag )
+  , tid_( tid )
+  , syn_id_( syn_id )
 {
 }
 
-SpikeData& SpikeData::operator=(const SpikeData& rhs)
+SpikeData&
+SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
@@ -105,7 +106,8 @@ SpikeData::set_lcid( size_t value )
 }
 
 
-double SpikeData::get_offset() const
+double
+SpikeData::get_offset() const
 {
   return 0.0;
 }
@@ -254,19 +256,17 @@ OffGridSpikeData::set( const size_t tid,
 }
 // --- SpikeDataWithRank ---
 
-SpikeDataWithRank::SpikeDataWithRank(const Target& target, const size_t lag)
-  : rank(target.get_rank())
-  , spike_data(target, lag)
+SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
+  : rank( target.get_rank() )
+  , spike_data( target, lag )
 {
 }
 
 // --- OffGridSpikeDataWithRank ---
 
-OffGridSpikeDataWithRank::OffGridSpikeDataWithRank(const Target& target,
-                                                   const size_t lag,
-                                                   const double offset)
-  : rank(target.get_rank())
-  , spike_data(target, lag, offset)
+OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset )
+  : rank( target.get_rank() )
+  , spike_data( target, lag, offset )
 {
 }
 

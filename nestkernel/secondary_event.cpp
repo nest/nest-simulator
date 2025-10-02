@@ -28,52 +28,60 @@ namespace nest
 
 // ----- GapJunctionEvent ------------------------------------------------------
 
-GapJunctionEvent* GapJunctionEvent::clone() const
+GapJunctionEvent*
+GapJunctionEvent::clone() const
 {
   return new GapJunctionEvent( *this );
 }
 
 // ----- InstantaneousRateConnectionEvent --------------------------------------
 
-InstantaneousRateConnectionEvent* InstantaneousRateConnectionEvent::clone() const
+InstantaneousRateConnectionEvent*
+InstantaneousRateConnectionEvent::clone() const
 {
   return new InstantaneousRateConnectionEvent( *this );
 }
 
 // ----- DelayedRateConnectionEvent --------------------------------------------
 
-DelayedRateConnectionEvent* DelayedRateConnectionEvent::clone() const
+DelayedRateConnectionEvent*
+DelayedRateConnectionEvent::clone() const
 {
   return new DelayedRateConnectionEvent( *this );
 }
 
 // ----- DiffusionConnectionEvent ----------------------------------------------
 
-DiffusionConnectionEvent* DiffusionConnectionEvent::clone() const
+DiffusionConnectionEvent*
+DiffusionConnectionEvent::clone() const
 {
   return new DiffusionConnectionEvent( *this );
 }
 
-double DiffusionConnectionEvent::get_drift_factor() const
+double
+DiffusionConnectionEvent::get_drift_factor() const
 {
   return drift_factor_;
 }
 
-double DiffusionConnectionEvent::get_diffusion_factor() const
+double
+DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
 }
 
 // ----- LearningSignalConnectionEvent -----------------------------------------
 
-LearningSignalConnectionEvent* LearningSignalConnectionEvent::clone() const
+LearningSignalConnectionEvent*
+LearningSignalConnectionEvent::clone() const
 {
   return new LearningSignalConnectionEvent( *this );
 }
 
 // ----- SICEvent ---------------------------------------------------------------
 
-SICEvent* SICEvent::clone() const
+SICEvent*
+SICEvent::clone() const
 {
   return new SICEvent( *this );
 }

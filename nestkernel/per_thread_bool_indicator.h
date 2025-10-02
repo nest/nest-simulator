@@ -80,14 +80,11 @@ public:
 
   BoolIndicatorUInt64& operator[]( const size_t tid );
 
-  void
-  set_true( const size_t tid );
+  void set_true( const size_t tid );
 
-  void
-  set_false( const size_t tid );
+  void set_false( const size_t tid );
 
-  void
-  logical_and( const size_t tid, const bool status );
+  void logical_and( const size_t tid, const bool status );
 
   /**
    * Resize to the given number of threads and set all elements to false.

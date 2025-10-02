@@ -56,7 +56,7 @@ class TargetData;
 class CSDMapEntry
 {
 public:
-    CSDMapEntry( size_t source_index, size_t target_thread )
+  CSDMapEntry( size_t source_index, size_t target_thread )
     : source_index_( source_index )
     , target_thread_( target_thread )
   {

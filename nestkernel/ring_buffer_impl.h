@@ -25,7 +25,8 @@
 
 #include "ring_buffer.h"
 
-namespace nest{
+namespace nest
+{
 
 template < unsigned int num_channels >
 inline void

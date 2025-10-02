@@ -25,7 +25,8 @@
 
 #include "mpi_manager.h"
 
-namespace nest{
+namespace nest
+{
 
 #ifdef HAVE_MPI
 template < class D >

@@ -57,19 +57,14 @@ public:
   TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t );
 
 
-  void
-  get_status( DictionaryDatum& d ) const;
-  Node*
-  get_target_ptr( const size_t ) const;
+  void get_status( DictionaryDatum& d ) const;
+  Node* get_target_ptr( const size_t ) const;
 
-  size_t
-  get_rport() const;
+  size_t get_rport() const;
 
-  void
-  set_target( Node* target );
+  void set_target( Node* target );
 
-  void
-  set_rport( size_t rprt );
+  void set_rport( size_t rprt );
 
 private:
   Node* target_; //!< Target node
@@ -96,18 +91,14 @@ public:
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t );
 
 
-  void
-  get_status( DictionaryDatum& d ) const;
+  void get_status( DictionaryDatum& d ) const;
 
-  Node*
-  get_target_ptr( const size_t tid ) const;
-  size_t
-  get_rport() const;
+  Node* get_target_ptr( const size_t tid ) const;
+  size_t get_rport() const;
 
   void set_target( Node* target );
 
-  void
-  set_rport( size_t rprt );
+  void set_rport( size_t rprt );
 
 private:
   targetindex target_; //!< Target node

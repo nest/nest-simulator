@@ -37,12 +37,14 @@ DeviceNode::DeviceNode( DeviceNode const& dn )
 {
 }
 
-void DeviceNode::set_local_device_id( const size_t ldid )
+void
+DeviceNode::set_local_device_id( const size_t ldid )
 {
   local_device_id_ = ldid;
 }
 
-size_t DeviceNode::get_local_device_id() const
+size_t
+DeviceNode::get_local_device_id() const
 {
   return local_device_id_;
 }

@@ -289,7 +289,6 @@ private:
 };
 
 
-
 } // namespace nest
 
 #include "model_manager_impl.h"

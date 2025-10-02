@@ -80,12 +80,16 @@ CommonSynapseProperties::calibrate( const TimeConverter& )
 {
 }
 
-weight_recorder* CommonSynapseProperties::get_weight_recorder() const {
+weight_recorder*
+CommonSynapseProperties::get_weight_recorder() const
+{
 
   return weight_recorder_;
 }
 
-long CommonSynapseProperties::get_vt_node_id() const {
+long
+CommonSynapseProperties::get_vt_node_id() const
+{
 
   return -1;
 }

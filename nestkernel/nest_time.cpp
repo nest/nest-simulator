@@ -414,7 +414,8 @@ Time::delay_ms_to_steps( double ms )
 // Binary operators
 /////////////////////////////////////////////////////////////
 
-namespace nest {
+namespace nest
+{
 bool
 operator==( const Time& t1, const Time& t2 )
 {

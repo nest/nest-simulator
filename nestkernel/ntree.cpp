@@ -26,10 +26,11 @@
 namespace nest
 {
 
-double mod(double x, double p)
+double
+mod( double x, double p )
 {
-  x = std::fmod(x, p);
-  if (x < 0)
+  x = std::fmod( x, p );
+  if ( x < 0 )
   {
     x += p;
   }

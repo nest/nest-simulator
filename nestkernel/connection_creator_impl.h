@@ -11,11 +11,11 @@
 
 #include "connection_manager.h"
 #include "kernel_manager.h"
+#include "mask.h"
 #include "nest.h"
 #include "nest_names.h"
 #include "nestmodule.h"
 #include "node_manager.h"
-#include "mask.h"
 #include "position.h"
 
 namespace nest

@@ -37,32 +37,38 @@ SynIdDelay::SynIdDelay( double d )
 SynIdDelay::SynIdDelay( const SynIdDelay& s ) = default;
 SynIdDelay& SynIdDelay::operator=( const SynIdDelay& s ) = default;
 
-double SynIdDelay::get_delay_ms() const
+double
+SynIdDelay::get_delay_ms() const
 {
   return Time::delay_steps_to_ms( delay );
 }
 
-void SynIdDelay::set_delay_ms( const double d )
+void
+SynIdDelay::set_delay_ms( const double d )
 {
   delay = Time::delay_ms_to_steps( d );
 }
 
-void SynIdDelay::set_source_has_more_targets( const bool more )
+void
+SynIdDelay::set_source_has_more_targets( const bool more )
 {
   more_targets = more;
 }
 
-bool SynIdDelay::source_has_more_targets() const
+bool
+SynIdDelay::source_has_more_targets() const
 {
   return more_targets;
 }
 
-void SynIdDelay::disable()
+void
+SynIdDelay::disable()
 {
   disabled = true;
 }
 
-bool SynIdDelay::is_disabled() const
+bool
+SynIdDelay::is_disabled() const
 {
   return disabled;
 }

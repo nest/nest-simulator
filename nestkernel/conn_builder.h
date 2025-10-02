@@ -39,16 +39,16 @@
 #include "block_vector.h"
 
 // Includes from nestkernel:
-//#include "conn_parameter.h"
-//#include "kernel_manager.h"
+// #include "conn_parameter.h"
+// #include "kernel_manager.h"
 #include "node_collection.h"
 #include "parameter.h"
-//#include "sp_manager.h"
+// #include "sp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "sliexceptions.h"
 #include "nest_datums.h"
+#include "sliexceptions.h"
 
 namespace nest
 {
@@ -95,11 +95,9 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
   virtual ~BipartiteConnBuilder();
 
-  size_t
-  get_synapse_model() const;
+  size_t get_synapse_model() const;
 
-  bool
-  get_default_delay() const;
+  bool get_default_delay() const;
 
   void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
@@ -115,12 +113,10 @@ public:
   bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   //! Return true if rule allows creation of symmetric connectivity
-  virtual bool
-  supports_symmetric() const;
+  virtual bool supports_symmetric() const;
 
   //! Return true if rule automatically creates symmetric connectivity
-  virtual bool
-  is_symmetric() const;
+  virtual bool is_symmetric() const;
 
   bool allows_autapses() const;
 
@@ -380,8 +376,7 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
 
   //! Only call third_connect() on ThirdOutBuilder
-  void
-  connect() override final;
+  void connect() override final;
 
   /**
    * Create third-factor connection for given primary connection.
@@ -474,8 +469,7 @@ public:
   void third_connect( size_t source_gid, Node& target ) override;
 
 private:
-  void
-  connect_() override; //!< only call third_connect()
+  void connect_() override; //!< only call third_connect()
 
   /**
    * For block pool, return index of first pool element for given target node.
@@ -521,11 +515,9 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  bool
-  supports_symmetric() const override;
+  bool supports_symmetric() const override;
 
-  bool
-  requires_proxies() const override;
+  bool requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -566,11 +558,9 @@ public:
   {
   }
 
-  bool
-  is_symmetric() const override;
+  bool is_symmetric() const override;
 
-  bool
-  requires_proxies() const override;
+  bool requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -726,17 +716,13 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 
-  const std::string&
-  get_pre_synaptic_element_name() const;
+  const std::string& get_pre_synaptic_element_name() const;
 
-  const std::string&
-  get_post_synaptic_element_name() const;
+  const std::string& get_post_synaptic_element_name() const;
 
-  void
-  set_name( const std::string& name );
+  void set_name( const std::string& name );
 
-  std::string
-  get_name() const;
+  std::string get_name() const;
 
   /**
    * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.

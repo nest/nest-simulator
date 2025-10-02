@@ -262,7 +262,6 @@ private:
 };
 
 
-
 template < unsigned int num_channels >
 class MultiChannelInputBuffer
 {

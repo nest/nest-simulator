@@ -159,8 +159,8 @@ public:
   /**
    * @returns the constant value of this parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
+
 private:
   double value_;
 };
@@ -199,8 +199,7 @@ public:
     range_ -= lower_;
   }
 
-  double
-  value( RngPtr rng, Node* ) override;
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double lower_, range_;
@@ -233,8 +232,7 @@ public:
     }
   }
 
-  double
-  value( RngPtr rng, Node* ) override;
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double max_;
@@ -317,8 +315,7 @@ public:
     updateValue< double >( d, names::beta, beta_ );
   }
 
-  double
-  value( RngPtr rng, Node* ) override;
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double beta_;
@@ -364,11 +361,9 @@ public:
     }
   }
 
-  double
-  value( RngPtr, Node* node ) override;
+  double value( RngPtr, Node* node ) override;
 
-  double
-  value( RngPtr,
+  double value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer&,
@@ -399,8 +394,7 @@ public:
     }
   }
 
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -441,11 +435,9 @@ public:
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -484,11 +476,9 @@ public:
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -527,11 +517,9 @@ public:
   /**
    * @returns the value of the sum.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -570,11 +558,9 @@ public:
   /**
    * @returns the value of the difference.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -631,11 +617,9 @@ public:
   /**
    * @returns the result of the comparison, bool given as a double.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -646,8 +630,7 @@ protected:
   std::shared_ptr< Parameter > const parameter2_;
 
 private:
-  bool
-  compare_( double value_a, double value_b ) const;
+  bool compare_( double value_a, double value_b ) const;
 
   int comparator_;
 };
@@ -685,10 +668,8 @@ public:
   /**
    * @returns the value chosen by the comparison.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -729,11 +710,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -772,11 +751,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -852,11 +829,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -892,11 +867,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -931,11 +904,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -973,11 +944,9 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
@@ -1036,19 +1005,16 @@ public:
   /**
    * The DimensionParameter has no double value, so this method will always throw.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   /**
    * Generates a position with values for each dimension generated from their respective parameters.
    *
    * @returns The position, given as an array.
    */
-  std::vector< double >
-  get_values( RngPtr rng );
+  std::vector< double > get_values( RngPtr rng );
 
-  int
-  get_num_dimensions() const;
+  int get_num_dimensions() const;
 
 protected:
   int num_dimensions_;
@@ -1084,8 +1050,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1125,8 +1090,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1171,8 +1135,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1219,8 +1182,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1267,8 +1229,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override;
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,

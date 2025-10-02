@@ -26,7 +26,8 @@
 // models
 #include "eprop_archiving_node_readout.h"
 
-namespace nest{
+namespace nest
+{
 
 template < bool hist_shift_required >
 void
@@ -84,7 +85,6 @@ EpropArchivingNodeReadout< hist_shift_required >::history_shift_required_() cons
 {
   return hist_shift_required;
 }
-
 
 
 }

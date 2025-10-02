@@ -163,42 +163,58 @@ SICEvent::operator()()
   receiver_->handle( *this );
 }
 
-void Event::set_rport( size_t rp ) {
+void
+Event::set_rport( size_t rp )
+{
 
   rp_ = rp;
 }
 
-void Event::set_port( size_t p ) {
+void
+Event::set_port( size_t p )
+{
 
   p_ = p;
 }
 
-size_t Event::get_rport() const {
+size_t
+Event::get_rport() const
+{
 
   return rp_;
 }
 
-size_t Event::get_port() const {
+size_t
+Event::get_port() const
+{
 
   return p_;
 }
 
-void Event::set_offset( double t ) {
+void
+Event::set_offset( double t )
+{
 
   offset_ = t;
 }
 
-double Event::get_offset() const {
+double
+Event::get_offset() const
+{
 
   return offset_;
 }
 
-void Event::set_delay_steps( long d ) {
+void
+Event::set_delay_steps( long d )
+{
 
   d_ = d;
 }
 
-long Event::get_rel_delivery_steps( const Time& t ) const {
+long
+Event::get_rel_delivery_steps( const Time& t ) const
+{
 
   if ( stamp_steps_ == 0 )
   {
@@ -207,12 +223,16 @@ long Event::get_rel_delivery_steps( const Time& t ) const {
   return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
-long Event::get_delay_steps() const {
+long
+Event::get_delay_steps() const
+{
 
   return d_;
 }
 
-void Event::set_stamp( Time const& s ) {
+void
+Event::set_stamp( Time const& s )
+{
 
   stamp_ = s;
   stamp_steps_ = 0; // setting stamp_steps to zero indicates
@@ -221,98 +241,134 @@ void Event::set_stamp( Time const& s ) {
                     // get_rel_delivery_steps)
 }
 
-Time const& Event::get_stamp() const {
+Time const&
+Event::get_stamp() const
+{
 
   return stamp_;
 }
 
-void Event::set_weight( double w ) {
+void
+Event::set_weight( double w )
+{
 
   w_ = w;
 }
 
-double Event::get_weight() const {
+double
+Event::get_weight() const
+{
 
   return w_;
 }
 
-size_t Event::get_sender_node_id() const {
+size_t
+Event::get_sender_node_id() const
+{
 
   assert( sender_node_id_ > 0 );
   return sender_node_id_;
 }
 
-Node& Event::get_sender() const {
+Node&
+Event::get_sender() const
+{
 
   assert( sender_ );
   return *sender_;
 }
 
-Node& Event::get_receiver() const {
+Node&
+Event::get_receiver() const
+{
 
   assert( receiver_ );
   return *receiver_;
 }
 
-void Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid ) {
+void
+Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid )
+{
 
   // lag and offset of SpikeData are not used here
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
 }
 
-void Event::set_sender_node_id( const size_t node_id ) {
+void
+Event::set_sender_node_id( const size_t node_id )
+{
 
   sender_node_id_ = node_id;
 }
 
-void Event::set_sender( Node& s ) {
+void
+Event::set_sender( Node& s )
+{
 
   sender_ = &s;
 }
 
-void Event::set_receiver( Node& r ) {
+void
+Event::set_receiver( Node& r )
+{
 
   receiver_ = &r;
 }
 
-bool Event::is_valid() const {
+bool
+Event::is_valid() const
+{
 
   return ( sender_is_valid() and receiver_is_valid() and d_ > 0 );
 }
 
-bool Event::receiver_is_valid() const {
+bool
+Event::receiver_is_valid() const
+{
 
   return receiver_;
 }
 
-bool Event::sender_is_valid() const {
+bool
+Event::sender_is_valid() const
+{
 
   return sender_;
 }
 
-DoubleDataEvent* DoubleDataEvent::clone() const {
+DoubleDataEvent*
+DoubleDataEvent::clone() const
+{
 
   return new DoubleDataEvent( *this );
 }
 
 
-double ConductanceEvent::get_conductance() const {
+double
+ConductanceEvent::get_conductance() const
+{
 
   return g_;
 }
 
-void ConductanceEvent::set_conductance( double g ) {
+void
+ConductanceEvent::set_conductance( double g )
+{
 
   g_ = g;
 }
 
-ConductanceEvent* ConductanceEvent::clone() const {
+ConductanceEvent*
+ConductanceEvent::clone() const
+{
 
   return new ConductanceEvent( *this );
 }
 
 
-const std::vector< Name >& DataLoggingRequest::record_from() const {
+const std::vector< Name >&
+DataLoggingRequest::record_from() const
+{
 
   // During simulation, events are created without recordables
   // information. On these, record_from() must not be called.
@@ -321,13 +377,17 @@ const std::vector< Name >& DataLoggingRequest::record_from() const {
   return *record_from_;
 }
 
-const Time& DataLoggingRequest::get_recording_offset() const {
+const Time&
+DataLoggingRequest::get_recording_offset() const
+{
 
   assert( recording_offset_.is_finite() );
   return recording_offset_;
 }
 
-const Time& DataLoggingRequest::get_recording_interval() const {
+const Time&
+DataLoggingRequest::get_recording_interval() const
+{
 
   // During simulation, events are created without recording interval
   // information. On these, get_recording_interval() must not be called.
@@ -336,115 +396,159 @@ const Time& DataLoggingRequest::get_recording_interval() const {
   return recording_interval_;
 }
 
-DataLoggingRequest* DataLoggingRequest::clone() const {
+DataLoggingRequest*
+DataLoggingRequest::clone() const
+{
 
   return new DataLoggingRequest( *this );
 }
 
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const Time& rec_offset, const std::vector< Name >& recs ) : Event() , recording_interval_( rec_int ) , recording_offset_( rec_offset ) , record_from_( &recs ) {
-
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const Time& rec_offset, const std::vector< Name >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , recording_offset_( rec_offset )
+  , record_from_( &recs )
+{
 }
 
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs ) : Event() , recording_interval_( rec_int ) , record_from_( &recs ) {
-
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
+{
 }
 
-DataLoggingRequest::DataLoggingRequest() : Event() , recording_interval_( Time::neg_inf() ) , recording_offset_( Time::ms( 0. ) ) , record_from_( nullptr ) {
-
+DataLoggingRequest::DataLoggingRequest()
+  : Event()
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , record_from_( nullptr )
+{
 }
 
-double CurrentEvent::get_current() const {
+double
+CurrentEvent::get_current() const
+{
 
   return c_;
 }
 
-void CurrentEvent::set_current( double c ) {
+void
+CurrentEvent::set_current( double c )
+{
 
   c_ = c;
 }
 
-CurrentEvent* CurrentEvent::clone() const {
+CurrentEvent*
+CurrentEvent::clone() const
+{
 
   return new CurrentEvent( *this );
 }
 
-double RateEvent::get_rate() const {
+double
+RateEvent::get_rate() const
+{
 
   return r_;
 }
 
-void RateEvent::set_rate( double r ) {
+void
+RateEvent::set_rate( double r )
+{
 
   r_ = r;
 }
 
-RateEvent* RateEvent::clone() const {
+RateEvent*
+RateEvent::clone() const
+{
 
   return new RateEvent( *this );
 }
 
-size_t WeightRecorderEvent::get_receiver_node_id() const {
+size_t
+WeightRecorderEvent::get_receiver_node_id() const
+{
 
   return receiver_node_id_;
 }
 
-void WeightRecorderEvent::set_receiver_node_id( size_t node_id ) {
+void
+WeightRecorderEvent::set_receiver_node_id( size_t node_id )
+{
 
   receiver_node_id_ = node_id;
 }
 
-WeightRecorderEvent* WeightRecorderEvent::clone() const {
+WeightRecorderEvent*
+WeightRecorderEvent::clone() const
+{
 
   return new WeightRecorderEvent( *this );
 }
 
-WeightRecorderEvent::WeightRecorderEvent() : receiver_node_id_( 0 ) {
-
+WeightRecorderEvent::WeightRecorderEvent()
+  : receiver_node_id_( 0 )
+{
 }
 
-size_t SpikeEvent::get_multiplicity() const {
+size_t
+SpikeEvent::get_multiplicity() const
+{
 
   return multiplicity_;
 }
 
-void SpikeEvent::set_multiplicity( size_t multiplicity ) {
+void
+SpikeEvent::set_multiplicity( size_t multiplicity )
+{
 
   multiplicity_ = multiplicity;
 }
 
-SpikeEvent* SpikeEvent::clone() const {
+SpikeEvent*
+SpikeEvent::clone() const
+{
 
   return new SpikeEvent( *this );
 }
 
-SpikeEvent::SpikeEvent() : multiplicity_( 1 ) {
-
+SpikeEvent::SpikeEvent()
+  : multiplicity_( 1 )
+{
 }
 
-DataLoggingReply* DataLoggingReply::clone() const {
+DataLoggingReply*
+DataLoggingReply::clone() const
+{
 
-    assert( false );
-    return nullptr;
-}
-
-
-const DataLoggingReply::Container& DataLoggingReply::get_info() const {
-
-    return info_;
+  assert( false );
+  return nullptr;
 }
 
 
-void Event::set_drift_factor( double ) {
+const DataLoggingReply::Container&
+DataLoggingReply::get_info() const
+{
 
+  return info_;
 }
 
-Event::~Event() {
 
+void
+Event::set_drift_factor( double )
+{
 }
 
-DataLoggingReply::DataLoggingReply(
-    const DataLoggingReply::Container& info)
-  : info_(info)
-{}
+Event::~Event()
+{
+}
+
+DataLoggingReply::DataLoggingReply( const DataLoggingReply::Container& info )
+  : info_( info )
+{
+}
 
 } // namespace nest

@@ -207,7 +207,6 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
 }
 
 
-
 class OffGridSpikeData : public SpikeData
 {
 private:
@@ -233,8 +232,6 @@ public:
 
 //! check legal size
 using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
-
-
 
 
 template < class TargetT >

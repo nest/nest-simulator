@@ -23,11 +23,12 @@
 #ifndef SECONDARY_EVENT_IMPL_H
 #define SECONDARY_EVENT_IMLP_H
 
-#include "secondary_event.h"
 #include "event.h"
+#include "secondary_event.h"
 #include <set>
 
-namespace nest{
+namespace nest
+{
 
 /**
  * This template function reads data of type T from a given position of a

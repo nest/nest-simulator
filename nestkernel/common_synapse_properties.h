@@ -87,10 +87,6 @@ private:
 };
 
 
-
-
-
-
 } // of namespace nest
 
 #endif

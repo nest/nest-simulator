@@ -326,4 +326,3 @@ nest::VPManager::get_assigned_ranks( const size_t tid )
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   return assigned_ranks;
 }
-

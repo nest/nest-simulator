@@ -27,7 +27,7 @@
 
 namespace nest
 {
-  
+
 template < class ModelT >
 size_t
 ModelManager::register_node_model( const Name& name, std::string deprecation_info )
@@ -99,7 +99,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     kernel::manager< ConnectionManager >.resize_connections();
   } // end of parallel section
 }
-  
+
 } // namespace nest
 
 

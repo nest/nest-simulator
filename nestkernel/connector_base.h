@@ -231,7 +231,7 @@ protected:
 
 // --- Template connector (declarations only) ---
 
-template <typename ConnectionT>
+template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
   BlockVector< ConnectionT > C_;
@@ -242,7 +242,7 @@ public:
   ~Connector() override;
 
   synindex get_syn_id() const override;
-  size_t   size() const override;
+  size_t size() const override;
 
   void get_synapse_status( size_t tid, size_t lcid, DictionaryDatum& dict ) const override;
   void set_synapse_status( size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) override;
@@ -251,53 +251,52 @@ public:
   void push_back( ConnectionT&& c );
 
   void get_connection( size_t source_node_id,
-                       size_t target_node_id,
-                       size_t tid,
-                       size_t lcid,
-                       long   synapse_label,
-                       std::deque< ConnectionID >& conns ) const override;
+    size_t target_node_id,
+    size_t tid,
+    size_t lcid,
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const override;
 
   void get_connection_with_specified_targets( size_t source_node_id,
-                       const std::vector< size_t >& target_neuron_node_ids,
-                       size_t tid,
-                       size_t lcid,
-                       long   synapse_label,
-                       std::deque< ConnectionID >& conns ) const override;
+    const std::vector< size_t >& target_neuron_node_ids,
+    size_t tid,
+    size_t lcid,
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const override;
 
   void get_all_connections( size_t source_node_id,
-                            size_t target_node_id,
-                            size_t tid,
-                            long   synapse_label,
-                            std::deque< ConnectionID >& conns ) const override;
+    size_t target_node_id,
+    size_t tid,
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const override;
 
   void get_source_lcids( size_t tid, size_t target_node_id, std::vector< size_t >& source_lcids ) const override;
 
   void get_target_node_ids( size_t tid,
-                            size_t start_lcid,
-                            const std::string& post_synaptic_element,
-                            std::vector< size_t >& target_node_ids ) const override;
+    size_t start_lcid,
+    const std::string& post_synaptic_element,
+    std::vector< size_t >& target_node_ids ) const override;
 
   size_t get_target_node_id( size_t tid, unsigned int lcid ) const override;
 
-  void   send_to_all( size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override;
+  void send_to_all( size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override;
   size_t send( size_t tid, size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override;
 
   void send_weight_event( size_t tid, unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) override;
 
   void trigger_update_weight( long vt_node_id,
-                              size_t tid,
-                              const std::vector< spikecounter >& dopa_spikes,
-                              double t_trig,
-                              const std::vector< ConnectorModel* >& cm ) override;
+    size_t tid,
+    const std::vector< spikecounter >& dopa_spikes,
+    double t_trig,
+    const std::vector< ConnectorModel* >& cm ) override;
 
   void sort_connections( BlockVector< Source >& sources ) override;
   void set_source_has_more_targets( size_t lcid, bool has_more_targets ) override;
 
   size_t find_first_target( size_t tid, size_t start_lcid, size_t target_node_id ) const override;
 
-  size_t find_matching_target( size_t tid,
-                               const std::vector< size_t >& matching_lcids,
-                               size_t target_node_id ) const override;
+  size_t
+  find_matching_target( size_t tid, const std::vector< size_t >& matching_lcids, size_t target_node_id ) const override;
 
   void disable_connection( size_t lcid ) override;
   void remove_disabled_connections( size_t first_disabled_index ) override;

@@ -195,8 +195,7 @@ template < typename ConnectionT >
 void
 Connector< ConnectionT >::send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e )
 {
-  auto const& cp =
-    static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
+  auto const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
   for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
   {
@@ -208,7 +207,10 @@ Connector< ConnectionT >::send_to_all( const size_t tid, const std::vector< Conn
 
 template < typename ConnectionT >
 size_t
-Connector< ConnectionT >::send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e )
+Connector< ConnectionT >::send( const size_t tid,
+  const size_t lcid,
+  const std::vector< ConnectorModel* >& cm,
+  Event& e )
 {
   typename ConnectionT::CommonPropertiesType const& cp =
     static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
@@ -268,9 +270,7 @@ Connector< ConnectionT >::trigger_update_weight( const long vt_node_id,
 {
   for ( size_t i = 0; i < C_.size(); ++i )
   {
-    if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
-           ->get_common_properties()
-           .get_vt_node_id()
+    if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties().get_vt_node_id()
       == vt_node_id )
     {
       C_[ i ].trigger_update_weight( tid,
@@ -297,7 +297,9 @@ Connector< ConnectionT >::set_source_has_more_targets( const size_t lcid, const 
 
 template < typename ConnectionT >
 size_t
-Connector< ConnectionT >::find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const
+Connector< ConnectionT >::find_first_target( const size_t tid,
+  const size_t start_lcid,
+  const size_t target_node_id ) const
 {
   size_t lcid = start_lcid;
   while ( true )

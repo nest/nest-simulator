@@ -30,125 +30,148 @@ namespace nest
 
 // --- TargetDataFields ---
 
-void TargetDataFields::set_lcid( const size_t lcid )
+void
+TargetDataFields::set_lcid( const size_t lcid )
 {
   lcid_ = lcid;
 }
 
-size_t TargetDataFields::get_lcid() const
+size_t
+TargetDataFields::get_lcid() const
 {
   return lcid_;
 }
 
-void TargetDataFields::set_tid( const size_t tid )
+void
+TargetDataFields::set_tid( const size_t tid )
 {
   tid_ = tid;
 }
 
-size_t TargetDataFields::get_tid() const
+size_t
+TargetDataFields::get_tid() const
 {
   return tid_;
 }
 
-void TargetDataFields::set_syn_id( const synindex syn_id )
+void
+TargetDataFields::set_syn_id( const synindex syn_id )
 {
   syn_id_ = syn_id;
 }
 
-synindex TargetDataFields::get_syn_id() const
+synindex
+TargetDataFields::get_syn_id() const
 {
   return syn_id_;
 }
 
 // --- SecondaryTargetDataFields ---
 
-void SecondaryTargetDataFields::set_recv_buffer_pos( const size_t pos )
+void
+SecondaryTargetDataFields::set_recv_buffer_pos( const size_t pos )
 {
-  assert( pos < std::numeric_limits<unsigned int>::max() );
+  assert( pos < std::numeric_limits< unsigned int >::max() );
   recv_buffer_pos_ = pos;
 }
 
-size_t SecondaryTargetDataFields::get_recv_buffer_pos() const
+size_t
+SecondaryTargetDataFields::get_recv_buffer_pos() const
 {
   return recv_buffer_pos_;
 }
 
-void SecondaryTargetDataFields::set_syn_id( const synindex syn_id )
+void
+SecondaryTargetDataFields::set_syn_id( const synindex syn_id )
 {
-  assert( syn_id < std::numeric_limits<unsigned char>::max() );
+  assert( syn_id < std::numeric_limits< unsigned char >::max() );
   syn_id_ = syn_id;
 }
 
-synindex SecondaryTargetDataFields::get_syn_id() const
+synindex
+SecondaryTargetDataFields::get_syn_id() const
 {
   return syn_id_;
 }
 
 // --- TargetData ---
 
-void TargetData::reset_marker()
+void
+TargetData::reset_marker()
 {
   marker_ = TARGET_DATA_ID_DEFAULT;
 }
 
-void TargetData::set_complete_marker()
+void
+TargetData::set_complete_marker()
 {
   marker_ = TARGET_DATA_ID_COMPLETE;
 }
 
-void TargetData::set_end_marker()
+void
+TargetData::set_end_marker()
 {
   marker_ = TARGET_DATA_ID_END;
 }
 
-void TargetData::set_invalid_marker()
+void
+TargetData::set_invalid_marker()
 {
   marker_ = TARGET_DATA_ID_INVALID;
 }
 
-bool TargetData::is_complete_marker() const
+bool
+TargetData::is_complete_marker() const
 {
   return marker_ == TARGET_DATA_ID_COMPLETE;
 }
 
-bool TargetData::is_end_marker() const
+bool
+TargetData::is_end_marker() const
 {
   return marker_ == TARGET_DATA_ID_END;
 }
 
-bool TargetData::is_invalid_marker() const
+bool
+TargetData::is_invalid_marker() const
 {
   return marker_ == TARGET_DATA_ID_INVALID;
 }
 
-void TargetData::set_source_lid( const size_t source_lid )
+void
+TargetData::set_source_lid( const size_t source_lid )
 {
   assert( source_lid < MAX_LID );
   source_lid_ = source_lid;
 }
 
-void TargetData::set_source_tid( const size_t source_tid )
+void
+TargetData::set_source_tid( const size_t source_tid )
 {
   assert( source_tid < MAX_TID );
   source_tid_ = source_tid;
 }
 
-size_t TargetData::get_source_lid() const
+size_t
+TargetData::get_source_lid() const
 {
   return source_lid_;
 }
 
-size_t TargetData::get_source_tid() const
+size_t
+TargetData::get_source_tid() const
 {
   return source_tid_;
 }
 
-void TargetData::set_is_primary( const bool is_primary )
+void
+TargetData::set_is_primary( const bool is_primary )
 {
   is_primary_ = is_primary;
 }
 
-bool TargetData::is_primary() const
+bool
+TargetData::is_primary() const
 {
   return is_primary_;
 }

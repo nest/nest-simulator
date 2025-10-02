@@ -223,6 +223,4 @@ private:
 } // namespace nest
 
 
-
-
 #endif /* SPARSE_NODE_ARRAY_H */

@@ -151,18 +151,15 @@ public:
    * @param a node of this synaptic_element
    * @param t Current time (in ms)
    */
-  int
-  get_z_vacant() const;
+  int get_z_vacant() const;
   /**
    * Retrieves the current number of synaptic elements bound to a synapse
    */
-  int
-  get_z_connected() const;
+  int get_z_connected() const;
   /**
    * Retrieves the value of tau_vacant
    */
-  double
-  get_tau_vacant() const;
+  double get_tau_vacant() const;
   /**
    * Changes the number of bound synaptic elements by n.
    *
@@ -173,31 +170,25 @@ public:
   /**
    * Used to define the dynamics of the synaptic elements using a Growth Curve
    */
-  void
-  set_growth_curve( GrowthCurve& g );
+  void set_growth_curve( GrowthCurve& g );
 
   /**
    * Retrieves the current value of the growth rate
    */
-  double
-  get_growth_rate() const;
+  double get_growth_rate() const;
 
-  void
-  set_z( const double z_new );
+  void set_z( const double z_new );
 
-  double
-  get_z() const;
+  double get_z() const;
   /**
    * Reduce the amount of vacant synaptic elements by a factor
    * of tau_vacant_
    */
-  void
-  decay_z_vacant();
-  
+  void decay_z_vacant();
 
-  bool
-  continuous() const;
-  
+
+  bool continuous() const;
+
 private:
   // The current number of synaptic elements at t = z_t_
   double z_;

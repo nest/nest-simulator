@@ -29,7 +29,8 @@ namespace nest
 CommonPropertiesHomW::CommonPropertiesHomW()
   : CommonSynapseProperties()
   , weight_( 1.0 )
-{}
+{
+}
 
 void
 CommonPropertiesHomW::get_status( DictionaryDatum& d ) const

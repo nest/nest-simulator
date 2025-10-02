@@ -20,11 +20,11 @@
  *
  */
 #include "source_table_position.h"
+#include "block_vector.h"
+#include "source.h"
 #include <cassert>
 #include <iostream>
 #include <vector>
-#include "source.h" 
-#include "block_vector.h"
 
 namespace nest
 {
@@ -33,16 +33,19 @@ SourceTablePosition::SourceTablePosition()
   : tid( -1 )
   , syn_id( -1 )
   , lcid( -1 )
-{}
+{
+}
 
 SourceTablePosition::SourceTablePosition( const long tid, const long syn_id, const long lcid )
   : tid( tid )
   , syn_id( syn_id )
   , lcid( lcid )
-{}
+{
+}
 
 void
-SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources ){
+SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources )
+{
   if ( lcid >= 0 )
   {
     return; // nothing to do if we are at a valid index

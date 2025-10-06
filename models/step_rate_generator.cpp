@@ -23,12 +23,15 @@
 #include "step_rate_generator.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+#include "nest.h"
 
 namespace nest
 {

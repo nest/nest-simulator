@@ -30,6 +30,8 @@
 // Includes from libnestutil
 #include "vector_util.h"
 
+#include <node_manager.h>
+
 void
 nest::TargetTable::initialize()
 {

@@ -24,7 +24,10 @@
 #include "parrot_neuron.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+
+#include "nest.h"
 
 namespace nest
 {

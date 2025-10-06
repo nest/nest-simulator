@@ -30,9 +30,7 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "event_delivery_manager.h"
-#include "kernel_manager.h"
 #include "nest_time.h"
-#include "node.h"
 #include "recordables_map.h"
 
 namespace nest
@@ -406,7 +404,5 @@ private:
 };
 
 } // namespace nest
-
-#include "universal_data_logger_impl.h"
 
 #endif /* #ifndef UNIVERSAL_DATA_LOGGER_H */

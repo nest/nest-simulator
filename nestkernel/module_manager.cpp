@@ -37,6 +37,8 @@
 // Includes from thirdparty:
 #include "compose.hpp"
 
+#include <node_manager.h>
+
 
 namespace nest
 {

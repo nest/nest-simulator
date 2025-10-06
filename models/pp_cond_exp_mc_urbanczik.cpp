@@ -27,18 +27,21 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iostream>
 
 // Includes from libnestutil:
 #include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "urbanczik_archiving_node_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
+
+#include "nest.h"
 
 /* ----------------------------------------------------------------
  * Compartment name list

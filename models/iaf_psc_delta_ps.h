@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

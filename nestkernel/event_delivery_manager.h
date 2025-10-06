@@ -29,20 +29,15 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
 #include "connection_manager.h"
 #include "event.h"
-#include "kernel_manager.h"
 #include "mpi_manager.h" // OffGridSpike
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 #include "per_thread_bool_indicator.h"
 #include "secondary_event.h"
-#include "simulation_manager.h"
 #include "spike_data.h"
 #include "target_table.h"
 #include "vp_manager.h"
@@ -476,7 +471,5 @@ private:
 };
 
 } // namespace nest
-
-#include "event_delivery_manager_impl.h"
 
 #endif /* EVENT_DELIVERY_MANAGER_H */

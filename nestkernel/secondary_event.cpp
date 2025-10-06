@@ -21,7 +21,7 @@
  */
 
 
-#include "secondary_event.h"
+#include "secondary_event_impl.h"
 
 namespace nest
 {

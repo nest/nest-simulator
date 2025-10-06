@@ -29,7 +29,6 @@
  */
 
 #include "node.h"
-#include "node_manager.h"
 
 namespace nest
 {
@@ -50,10 +49,8 @@ class TargetIdentifierPtrRport
 public:
   TargetIdentifierPtrRport();
 
-
-  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t );
-  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t );
-
+  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
   void get_status( DictionaryDatum& d ) const;
   Node* get_target_ptr( const size_t ) const;
@@ -83,10 +80,7 @@ class TargetIdentifierIndex
 {
 
 public:
-  TargetIdentifierIndex()
-    : target_( invalid_targetindex )
-  {
-  }
+  TargetIdentifierIndex();
 
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;

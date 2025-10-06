@@ -193,6 +193,4 @@ private:
 
 } // namespace nest
 
-#include "connection_creator_impl.h"
-
 #endif

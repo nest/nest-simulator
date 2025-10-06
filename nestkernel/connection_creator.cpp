@@ -22,6 +22,7 @@
 
 #include "connection_creator.h"
 #include "dictutils.h"
+#include "position_impl.h"
 
 namespace nest
 {

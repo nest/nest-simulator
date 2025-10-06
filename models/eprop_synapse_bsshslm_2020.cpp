@@ -22,6 +22,9 @@
 
 #include "eprop_synapse_bsshslm_2020.h"
 
+#include "connection_manager.h"
+#include "nest.h"
+
 // nestkernel
 
 namespace nest

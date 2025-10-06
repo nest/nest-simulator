@@ -23,11 +23,12 @@
 #ifndef CONNECTION_MANAGER_IMPL_H
 #define CONNECTION_MANAGER_IMPL_H
 
+#include "connection_manager.h"
 #include <cassert>
 #include <string>
 
 #include "conn_builder_factory.h"
-#include "connection_manager.h"
+#include "conn_builder_factory_impl.h"
 #include "dictdatum.h"
 
 namespace nest

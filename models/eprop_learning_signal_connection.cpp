@@ -22,6 +22,8 @@
 
 #include "eprop_learning_signal_connection.h"
 
+#include "nest.h"
+
 // nestkernel
 
 void

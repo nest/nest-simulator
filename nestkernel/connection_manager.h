@@ -28,7 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "conn_builder_factory.h"
@@ -733,5 +733,4 @@ private:
 
 } // namespace nest
 
-#include "connection_manager_impl.h"
 #endif /* CONNECTION_MANAGER_H */

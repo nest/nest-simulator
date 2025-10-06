@@ -36,12 +36,6 @@
 #include "nestmodule.h"
 #include "node.h"
 
-// Includes from sli:
-#include "sliexceptions.h"
-
-// Includes from spatial:
-#include "grid_layer.h"
-
 
 namespace nest
 {

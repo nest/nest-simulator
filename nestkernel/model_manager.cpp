@@ -32,12 +32,16 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "connector_model_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "proxynode.h"
 
 // Includes from models:
 #include "models.h"
 
+#include "modelrange_manager.h"
 
 namespace nest
 {
@@ -491,12 +495,11 @@ ModelManager::get_proxy_node( size_t tid, size_t node_id )
   return proxy;
 }
 
-SecondaryEvent&
+std::unique_ptr< SecondaryEvent >
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
-
   assert_valid_syn_id( syn_id, tid );
-  return *get_connection_model( syn_id, tid ).get_secondary_event();
+  return get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 void

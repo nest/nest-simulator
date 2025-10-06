@@ -22,6 +22,8 @@
 
 #include "stdp_facetshw_synapse_hom.h"
 
+#include "nest.h"
+
 void
 nest::register_stdp_facetshw_synapse_hom( const std::string& name )
 {

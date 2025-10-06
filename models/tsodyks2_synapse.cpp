@@ -22,6 +22,8 @@
 
 #include "tsodyks2_synapse.h"
 
+#include "nest.h"
+
 void
 nest::register_tsodyks2_synapse( const std::string& name )
 {

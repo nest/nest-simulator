@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "compose.hpp"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "numerics.h"
 
@@ -33,7 +34,6 @@
 #include "iaf_propagator.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
 
 namespace nest

@@ -111,8 +111,6 @@ protected:
   };
 };
 
-
 } // namespace nest
 
-#include "free_layer_impl.h"
 #endif

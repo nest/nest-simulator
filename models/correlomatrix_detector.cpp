@@ -32,12 +32,14 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlomatrix_detector( const std::string& name )

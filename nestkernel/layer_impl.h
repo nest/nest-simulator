@@ -19,8 +19,15 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "grid_layer.h"
+#ifndef LAYER_IMPL_H
+#define LAYER_IMPL_H
+
+#include "connection_creator_impl.h"
+#include "free_layer_impl.h"
+#include "grid_layer_impl.h"
+#include "grid_mask_impl.h"
 #include "layer.h"
+#include "mask_impl.h"
 
 namespace nest
 {
@@ -588,3 +595,4 @@ Layer< D >::dump_connections( std::ostream& out,
 
 
 } // namespace nest
+#endif

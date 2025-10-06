@@ -27,10 +27,12 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
+#include "event_delivery_manager.h"
+#include "nest.h"
 
 namespace nest
 {

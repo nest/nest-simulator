@@ -2,11 +2,11 @@
 
 #include "connector_base.h"
 
-
 #include <algorithm>
 #include <cassert>
 
 #include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
 #include "nest_names.h"
 #include "node.h"

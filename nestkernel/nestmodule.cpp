@@ -34,7 +34,7 @@
 #include "kernel_manager.h"
 #include "layer_impl.h"
 #include "logging_manager.h"
-#include "mask.h"
+#include "mask_impl.h"
 #include "module_manager.h"
 #include "music_manager.h"
 #include "nest.h"

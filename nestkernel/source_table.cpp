@@ -29,6 +29,8 @@
 #include "model_manager.h"
 #include "source_table.h"
 
+#include "connector_model.h"
+
 nest::SourceTable::SourceTable()
 {
 }

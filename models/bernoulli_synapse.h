@@ -28,6 +28,8 @@
 #include "connection.h"
 #include "kernel_manager.h"
 
+#include "nest.h"
+
 namespace nest
 {
 

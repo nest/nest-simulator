@@ -24,16 +24,10 @@
 #define EPROP_ARCHIVING_NODE_READOUT_H
 
 // models
-#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 
 // nestkernel
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
-
-// sli
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -84,5 +78,4 @@ protected:
 };
 }
 
-#include "eprop_archiving_node_readout_impl.h"
 #endif

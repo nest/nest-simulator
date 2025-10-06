@@ -28,23 +28,18 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "dictdatum.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 // Includes from standard library
-#include <algorithm>
 #include <boost/math/special_functions/gamma.hpp>
-#include <typeinfo>
 
 /* ---------------------------------------------------------------------------
  * Recordables map

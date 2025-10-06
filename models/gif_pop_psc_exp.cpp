@@ -36,6 +36,7 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "genericmodel_impl.h"
 
 #ifdef HAVE_GSL
 

@@ -40,10 +40,10 @@
 #include "logging_manager.h"
 #include "model_manager.h"
 #include "music_manager.h"
+#include "nest_timeconverter.h"
 #include "node_manager.h"
 #include "random_manager.h"
 #include "sp_manager.h"
-#include <nest_timeconverter.h>
 
 // Includes from sli:
 #include "dictutils.h"

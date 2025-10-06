@@ -24,12 +24,8 @@
 #define MODEL_H
 
 // C++ includes:
-#include <new>
 #include <string>
 #include <vector>
-
-// Includes from libnestutil:
-#include "allocator.h"
 
 // Includes from nestkernel:
 #include "node.h"

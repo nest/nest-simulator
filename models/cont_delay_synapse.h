@@ -29,6 +29,11 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "logging_manager.h"
+
+#include "connection_manager.h"
+#include "delay_checker.h"
+#include "logging.h"
 
 namespace nest
 {

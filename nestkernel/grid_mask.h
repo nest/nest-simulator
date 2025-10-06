@@ -111,6 +111,4 @@ protected:
 
 } // namespace nest
 
-#include "grid_mask_impl.h"
-
 #endif

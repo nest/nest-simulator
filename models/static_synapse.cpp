@@ -22,6 +22,8 @@
 
 #include "static_synapse.h"
 
+#include "nest.h"
+
 void
 nest::register_static_synapse( const std::string& name )
 {

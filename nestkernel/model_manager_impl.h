@@ -23,7 +23,12 @@
 #ifndef MODEL_MANAGER_IMPL_H
 #define MODEL_MANAGER_IMPL_H
 
+#include "connection_label_impl.h"
 #include "model_manager.h"
+
+#include "connector_model_impl.h"
+#include "genericmodel.h"
+#include "target_identifier.h"
 
 namespace nest
 {

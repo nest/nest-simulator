@@ -28,7 +28,6 @@
 namespace nest
 {
 
-
 template < int D, class T >
 inline Position< D, T >::Position()
 {
@@ -450,7 +449,7 @@ operator<<( std::ostream& os, const Position< D, T >& pos )
   os << ")";
   return os;
 }
-}
 
+}
 
 #endif

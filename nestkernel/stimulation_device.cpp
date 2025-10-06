@@ -26,6 +26,8 @@
 #include "io_manager.h"
 #include "kernel_manager.h"
 
+#include <nest_names.h>
+
 
 nest::StimulationDevice::StimulationDevice()
   : DeviceNode()

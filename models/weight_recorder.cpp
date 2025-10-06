@@ -27,6 +27,7 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nest_datums.h"

@@ -23,8 +23,9 @@
 #include "poisson_generator.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager.h"
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from libnestutil:

@@ -25,6 +25,7 @@
 
 #include "kernel_manager.h"
 #include "stopwatch.h"
+#include "vp_manager.h"
 
 namespace nest
 {

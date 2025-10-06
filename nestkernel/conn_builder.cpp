@@ -28,10 +28,13 @@
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "connection_manager.h"
+#include "connector_model_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model_manager.h"
+#include "mpi_manager_impl.h"
 #include "nest.h"
 #include "nest_names.h"
 #include "node.h"

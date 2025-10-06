@@ -32,7 +32,7 @@
 #include "nest_types.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

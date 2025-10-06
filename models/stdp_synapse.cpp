@@ -22,6 +22,8 @@
 
 #include "stdp_synapse.h"
 
+#include "nest.h"
+
 void
 nest::register_stdp_synapse( const std::string& name )
 {

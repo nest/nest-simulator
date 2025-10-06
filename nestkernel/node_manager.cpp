@@ -44,6 +44,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
+#include "simulation_manager.h"
+
 namespace nest
 {
 

@@ -38,6 +38,8 @@
 #include "nest.h"
 #include "nest_names.h"
 
+#include "node_manager.h"
+
 namespace nest
 {
 

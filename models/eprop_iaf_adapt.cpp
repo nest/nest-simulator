@@ -31,7 +31,10 @@
 #include "numerics.h"
 
 // nestkernel
+#include "eprop_archiving_node_readout_impl.h"
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // sli

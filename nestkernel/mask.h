@@ -29,7 +29,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_types.h"
 #include "nestmodule.h"
 
 // Includes from sli:
@@ -37,7 +36,7 @@
 #include "dictutils.h"
 
 // Includes from spatial:
-#include "position.h"
+#include "position_impl.h"
 
 namespace nest
 {
@@ -721,5 +720,4 @@ protected:
 
 } // namespace nest
 
-#include "mask_impl.h"
 #endif

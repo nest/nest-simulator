@@ -35,6 +35,7 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:

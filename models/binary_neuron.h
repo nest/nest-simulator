@@ -23,32 +23,26 @@
 #ifndef BINARY_NEURON_H
 #define BINARY_NEURON_H
 
-// C++ includes:
-#include <cmath>
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {

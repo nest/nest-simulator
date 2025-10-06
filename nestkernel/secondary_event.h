@@ -32,6 +32,8 @@
 namespace nest
 {
 
+class SICEvent;
+
 /**
  * Base class of secondary events. Provides interface for
  * serialization and deserialization. This event type may be
@@ -366,9 +368,6 @@ public:
   LearningSignalConnectionEvent* clone() const override;
 };
 
-
 } // namespace nest
-
-#include "secondary_event_impl.h"
 
 #endif /* #ifndef SECONDARY_EVENT_H */

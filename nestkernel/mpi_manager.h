@@ -27,16 +27,13 @@
 #include "config.h"
 
 // C includes:
-#include <unistd.h>
 #ifdef HAVE_MPI
 #include <mpi.h>
 #endif
 
 // C++ includes:
 #include <cassert>
-#include <cmath>
 #include <limits>
-#include <numeric>
 #include <vector>
 
 // Includes from libnestutil:
@@ -117,7 +114,7 @@ public:
   /**
    * If MPI is available, this method calls MPI_Abort with the exitcode.
    */
-  void mpi_abort( int exitcode );
+  void mpi_abort( int exitcode ) const;
 
   // gather all send_buffer vectors on other mpi process to recv_buffer
   // vector
@@ -148,15 +145,15 @@ public:
   void
   communicate( std::vector< int >& send_buffer, std::vector< int >& recv_buffer, std::vector< int >& displacements );
 
-  void communicate( double, std::vector< double >& );
+  void communicate( double, std::vector< double >& ) const;
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
   //! Sum across all ranks
-  void communicate_Allreduce_sum_in_place( double buffer );
-  void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
-  void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
-  void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
+  void communicate_Allreduce_sum_in_place( double buffer ) const;
+  void communicate_Allreduce_sum_in_place( std::vector< double >& buffer ) const;
+  void communicate_Allreduce_sum_in_place( std::vector< int >& buffer ) const;
+  void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer ) const;
 
   /**
    * Equal across all ranks.
@@ -165,11 +162,11 @@ public:
    * @return true if values across all ranks are equal, false otherwise or if
    *         any rank passes -inf as value
    */
-  bool equal_cross_ranks( const double value );
+  bool equal_cross_ranks( const double value ) const;
 
   std::string get_processor_name();
 
-  bool is_mpi_used();
+  bool is_mpi_used() const;
 
   /**
    * Returns total size of MPI buffer for communication of connections.
@@ -203,14 +200,14 @@ public:
 
 #ifdef HAVE_MPI
 
-  void communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count );
+  void communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count ) const;
 
   void communicate_Alltoallv_( void* send_buffer,
     const int* send_counts,
     const int* send_displacements,
     void* recv_buffer,
     const int* recv_counts,
-    const int* recv_displacements );
+    const int* recv_displacements ) const;
 
 #endif /* HAVE_MPI */
 
@@ -231,9 +228,9 @@ public:
    * Ensure all processes have reached the same stage by waiting until all
    * processes have sent a dummy message to process 0.
    */
-  void synchronize();
+  void synchronize() const;
 
-  bool any_true( const bool );
+  bool any_true( const bool ) const;
 
   /**
    * Benchmark communication time of different MPI methods
@@ -241,11 +238,11 @@ public:
    * The methods `time_communicate*` can be used to benchmark the timing
    * of different MPI communication methods.
    */
-  double time_communicate( int num_bytes, int samples = 1000 );
+  double time_communicate( int num_bytes, int samples = 1000 ) const;
   double time_communicatev( int num_bytes, int samples = 1000 );
-  double time_communicate_offgrid( int num_bytes, int samples = 1000 );
-  double time_communicate_alltoall( int num_bytes, int samples = 1000 );
-  double time_communicate_alltoallv( int num_bytes, int samples = 1000 );
+  double time_communicate_offgrid( int num_bytes, int samples = 1000 ) const;
+  double time_communicate_alltoall( int num_bytes, int samples = 1000 ) const;
+  double time_communicate_alltoallv( int num_bytes, int samples = 1000 ) const;
 
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
@@ -361,8 +358,8 @@ private:
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate_Allgather( std::vector< int >& );
-  void communicate_Allgather( std::vector< long >& );
+  void communicate_Allgather( std::vector< int >& ) const;
+  void communicate_Allgather( std::vector< long >& ) const;
 
   template < typename T >
   void communicate_Allgatherv( std::vector< T >& send_buffer,
@@ -442,7 +439,5 @@ public:
 };
 
 }
-
-#include "mpi_manager_impl.h"
 
 #endif /* MPI_MANAGER_H */

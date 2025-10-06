@@ -20,7 +20,7 @@
  *
  */
 
-#include "connection_manager.h"
+#include "connection_manager_impl.h"
 
 // Generated includes:
 #include "config.h"
@@ -42,13 +42,11 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
 #include "connector_base.h"
-#include "connector_model.h"
+#include "connector_model_impl.h"
 #include "delay_checker.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"

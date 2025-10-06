@@ -5,9 +5,11 @@ NEST performance benchmarks
 
 
 NEST performance is continuously monitored and improved across various network sizes.
-Here we show benchmarking results for NEST version 3.8 on Jureca-DC [1]_.
+Here we show benchmarking results for NEST version 3.9 on Jureca-DC [1]_.
 The benchmarking framework and the structure of the graphs is described in [2]_.
 For details on `State Propagation` (i.e., `Simulation Run`), see the guides :ref:`built_in_timers` and :ref:`run_simulations`
+
+The results from previous benchmarks can be found :ref:`here <previous_nest_benchmark_results>`.
 
 Strong scaling experiment of the Microcircuit model [3]_
 ---------------------------------------------------------
@@ -101,7 +103,7 @@ Weak scaling experiment of the HPC benchmark model [6]_
 
    Example networks:
 
-   * :doc:`/auto_examples/Potjans_2014/index`
+   * :doc:`Microcircuit Model <pd14:index>`
    * `Multi-area model <https://inm-6.github.io/multi-area-model/>`_
    * :doc:`/auto_examples/hpc_benchmark`
 

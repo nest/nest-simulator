@@ -113,7 +113,7 @@ Connection< targetidentifierT >::trigger_update_weight( const size_t,
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 Connection< targetidentifierT >::get_secondary_event()
 {
   assert( false and "Non-primary connections have to provide get_secondary_event()" );

@@ -28,8 +28,6 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "compose.hpp"
-#include "kernel_manager.h"
 #include "node.h"
 #include "node_manager.h"
 
@@ -85,11 +83,13 @@ class TargetIdentifierIndex
 {
 
 public:
-  TargetIdentifierIndex();
+  TargetIdentifierIndex()
+    : target_( invalid_targetindex )
+  {
+  }
 
-  TargetIdentifierIndex( const TargetIdentifierIndex& t );
-  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t );
-
+  TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
   void get_status( DictionaryDatum& d ) const;
 

@@ -42,6 +42,7 @@
 #include "parameter.h"
 #include "sp_manager.h"
 #include "spatial.h"
+#include "stopwatch_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

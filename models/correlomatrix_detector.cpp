@@ -348,7 +348,8 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       {
         size_t bin;
         size_t other = spike_j->receptor_channel_;
-        size_t sender_ind, other_ind;
+        size_t sender_ind = 0;
+        size_t other_ind = 0;
 
         if ( spike_i < spike_j->timestep_ )
         {

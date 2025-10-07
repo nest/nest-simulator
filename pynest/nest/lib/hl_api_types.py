@@ -311,6 +311,26 @@ class NodeCollection:
     def __repr__(self):
         return sli_func("pcvs", self._datum)
 
+    @property
+    def positions(self) -> tuple:
+        """
+        Return the spatial locations.
+
+        Returns
+        -------
+        tuple or tuple of tuple(s):
+            Tuple of position with 2- or 3-elements or list of positions
+
+        Notes
+        -----
+        - It only works for nodes local to the current MPI process, if
+          used in a MPI-parallel simulation.
+        """
+        try:
+            return sli_func("GetPosition", self)
+        except:
+            return ()
+
     def get(self, *params, **kwargs):
         """
         Get parameters from nodes.

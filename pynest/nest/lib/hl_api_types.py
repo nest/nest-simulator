@@ -312,7 +312,7 @@ class NodeCollection:
         return sli_func("pcvs", self._datum)
 
     @property
-    def positions(self) -> tuple:
+    def positions(self) -> tuple | tuple(tuple):
         """
         Return the spatial locations.
 

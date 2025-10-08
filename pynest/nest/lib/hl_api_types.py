@@ -326,10 +326,7 @@ class NodeCollection:
         - It only works for nodes local to the current MPI process, if
           used in a MPI-parallel simulation.
         """
-        try:
-            return sli_func("GetPosition", self)
-        except nest.NESTErrors.LayerExpected:
-            return tuple()
+        return sli_func("GetPosition", self)
 
     def get(self, *params, **kwargs):
         """

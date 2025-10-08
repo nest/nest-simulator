@@ -328,8 +328,8 @@ class NodeCollection:
         """
         try:
             return sli_func("GetPosition", self)
-        except:
-            return ()
+        except nest.NESTErrors.LayerExpected:
+            return tuple()
 
     def get(self, *params, **kwargs):
         """

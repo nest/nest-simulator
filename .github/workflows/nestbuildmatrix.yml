@@ -551,10 +551,10 @@ jobs:
         env:
           PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
-          # Configuration - Update these values for your private repository
-          PRIVATE_REPO_OWNER="${{ vars.PRIVATE_REPO_OWNER || 'your-org' }}"
-          PRIVATE_REPO_NAME="${{ vars.PRIVATE_REPO_NAME || 'your-private-repo' }}"
-          AUTHORIZED_AUTHORS_FILE="${{ vars.AUTHORIZED_AUTHORS_FILE || 'authorized_authors.txt' }}"
+          # Configuration for nest/nest-release-tools repository
+          PRIVATE_REPO_OWNER="nest"
+          PRIVATE_REPO_NAME="nest-release-tools"
+          AUTHORIZED_AUTHORS_FILE="data/gitlognames.yaml"
 
           echo "Fetching authorized authors from ${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/${AUTHORIZED_AUTHORS_FILE}"
 
@@ -584,13 +584,11 @@ jobs:
           fi
 
           # Parse authorized authors from YAML format: "Name <email>: githubhandle"
+          # Extract the "Name <email>" part before the colon
           AUTHORIZED_AUTHORS=$(echo "$AUTHORIZED_CONTENT" | grep -v '^#' | grep -v '^$' | sed 's/:.*$//' | sort -u)
           AUTHORIZED_COUNT=$(echo "$AUTHORIZED_AUTHORS" | wc -l)
 
-          echo "Found ${AUTHORIZED_COUNT} authorized author(s)"
-          echo "$AUTHORIZED_AUTHORS" | while read -r line; do
-            echo "  - ${line}"
-          done
+          echo "Found ${AUTHORIZED_COUNT} authorized author(s) (list not displayed for security)"
 
           # Output results
           echo "authorized_authors<<EOF" >> $GITHUB_OUTPUT
@@ -599,11 +597,11 @@ jobs:
           echo "authorized_count=${AUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
           echo "fetch_success=true" >> $GITHUB_OUTPUT
 
-      - name: "Compare PR authors with authorized list"
-        id: compare_authors
+      - name: "Check if PR authors are authorized"
+        id: check_authorization
         if: steps.fetch_authorized_authors.outputs.fetch_success == 'true'
         run: |
-          echo "Comparing PR authors with authorized list..."
+          echo "Checking if PR authors are in the authorized list..."
 
           # Get PR authors and authorized authors
           PR_AUTHORS="${{ steps.pr_authors.outputs.authors_multiline }}"
@@ -628,36 +626,18 @@ jobs:
             fi
           done < /tmp/pr_authors.txt
 
-          # Find authorized authors not in PR
-          MISSING_AUTHORS=""
-          MISSING_COUNT=0
-
-          while IFS= read -r auth_author; do
-            if [ -n "$auth_author" ]; then
-              # Check if this exact authorized author is in PR
-              if ! echo "$PR_AUTHORS" | grep -Fxq "$auth_author"; then
-                MISSING_AUTHORS="${MISSING_AUTHORS}${auth_author}\n"
-                MISSING_COUNT=$((MISSING_COUNT + 1))
-              fi
-            fi
-          done < /tmp/authorized_authors.txt
-
           # Output results
           echo "unauthorized_authors<<EOF" >> $GITHUB_OUTPUT
           echo -e "$UNAUTHORIZED_AUTHORS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           echo "unauthorized_count=${UNAUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
 
-          echo "missing_authors<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$MISSING_AUTHORS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "missing_count=${MISSING_COUNT}" >> $GITHUB_OUTPUT
-
           # Determine overall status
           if [ $UNAUTHORIZED_COUNT -eq 0 ]; then
-            echo "comparison_status=success" >> $GITHUB_OUTPUT
+            echo "authorization_status=success" >> $GITHUB_OUTPUT
+            echo "✅ SUCCESS: All PR authors are authorized"
           else
-            echo "comparison_status=failure" >> $GITHUB_OUTPUT
+            echo "authorization_status=failure" >> $GITHUB_OUTPUT
             echo "❌ FAILURE: Found $UNAUTHORIZED_COUNT unauthorized author(s) in this PR"
             echo "The following authors are not in the authorized list:"
             echo -e "$UNAUTHORIZED_AUTHORS"
@@ -683,31 +663,21 @@ jobs:
           echo "${{ steps.pr_authors.outputs.authors_multiline }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-          # Add comparison results if available
+          # Add authorization check results if available
           if [ "${{ steps.fetch_authorized_authors.outputs.fetch_success }}" = "true" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "## Author Authorization Check" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Authorized authors in repository:** ${{ steps.fetch_authorized_authors.outputs.authorized_count }}" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
 
-            if [ "${{ steps.compare_authors.outputs.unauthorized_count }}" -gt 0 ]; then
-              echo "⚠️ **Warning:** ${{ steps.compare_authors.outputs.unauthorized_count }} unauthorized author(s) found:" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.check_authorization.outputs.unauthorized_count }}" -gt 0 ]; then
+              echo "❌ **FAILURE:** ${{ steps.check_authorization.outputs.unauthorized_count }} unauthorized author(s) found:" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "These authors are not in the authorized list (exact name and email match required):" >> $GITHUB_STEP_SUMMARY
               echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "${{ steps.compare_authors.outputs.unauthorized_authors }}" >> $GITHUB_STEP_SUMMARY
+              echo "${{ steps.check_authorization.outputs.unauthorized_authors }}" >> $GITHUB_STEP_SUMMARY
               echo '```' >> $GITHUB_STEP_SUMMARY
             else
-              echo "✅ **All PR authors are authorized**" >> $GITHUB_STEP_SUMMARY
-            fi
-
-            if [ "${{ steps.compare_authors.outputs.missing_count }}" -gt 0 ]; then
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "**Note:** ${{ steps.compare_authors.outputs.missing_count }} authorized author(s) not contributing to this PR:" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "${{ steps.compare_authors.outputs.missing_authors }}" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "✅ **SUCCESS: All PR authors are authorized**" >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "" >> $GITHUB_STEP_SUMMARY

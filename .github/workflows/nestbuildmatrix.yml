@@ -473,6 +473,217 @@ jobs:
         run: |
           flake8 .
 
+  pr-authors:
+    runs-on: "ubuntu-22.04"
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: "Checkout repository content"
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Get PR authors from commits"
+        id: pr_authors
+        run: |
+          # Get the base and head refs for the PR
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          HEAD_REF="${{ github.event.pull_request.head.ref }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          echo "Analyzing PR #${PR_NUMBER}: ${HEAD_REF} -> ${BASE_REF}"
+
+          # Get all commits in the PR
+          COMMITS=$(git log --pretty=format:"%H|%an|%ae" ${BASE_REF}..${HEAD_REF})
+
+          if [ -z "$COMMITS" ]; then
+            echo "No commits found in PR"
+            echo "authors=[]" >> $GITHUB_OUTPUT
+            echo "author_count=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Extract unique authors (name and email pairs)
+          UNIQUE_AUTHORS=$(echo "$COMMITS" | sort -u -t'|' -k2,3 | cut -d'|' -f2,3)
+
+          # Count authors
+          AUTHOR_COUNT=$(echo "$UNIQUE_AUTHORS" | wc -l)
+
+          # Create JSON array of authors
+          AUTHORS_JSON="["
+          FIRST=true
+          while IFS='|' read -r name email; do
+            if [ "$FIRST" = true ]; then
+              FIRST=falseh
+            else
+              AUTHORS_JSON="${AUTHORS_JSON},"
+            fi
+            AUTHORS_JSON="${AUTHORS_JSON}{\"name\":\"${name}\",\"email\":\"${email}\"}"
+          done <<< "$UNIQUE_AUTHORS"
+          AUTHORS_JSON="${AUTHORS_JSON}]"
+
+          echo "Found ${AUTHOR_COUNT} unique author(s):"
+          echo "$UNIQUE_AUTHORS" | while IFS='|' read -r name email; do
+            echo "  - ${name} <${email}>"
+          done
+
+          # Output results
+          echo "authors=${AUTHORS_JSON}" >> $GITHUB_OUTPUT
+          echo "author_count=${AUTHOR_COUNT}" >> $GITHUB_OUTPUT
+
+          # Also output as multiline for easy reading
+          {
+            echo "authors_multiline<<EOF"
+            echo "$UNIQUE_AUTHORS" | while IFS='|' read -r name email; do
+              echo "${name} <${email}>"
+            done
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: "Fetch authorized authors from private repository"
+        id: fetch_authorized_authors
+        if: env.PRIVATE_REPO_TOKEN != ''
+        env:
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          # Configuration for nest/nest-release-tools repository
+          PRIVATE_REPO_OWNER="nest"
+          PRIVATE_REPO_NAME="nest-release-tools"
+          AUTHORIZED_AUTHORS_FILE="data/gitlognames.yaml"
+
+          echo "Fetching authorized authors from ${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/${AUTHORIZED_AUTHORS_FILE}"
+
+          # Fetch the authorized authors file from private repository
+          RESPONSE=$(curl -s -H "Authorization: token ${PRIVATE_REPO_TOKEN}" \
+            -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/contents/${AUTHORIZED_AUTHORS_FILE}")
+
+          # Check if the request was successful (raw API returns 404 for not found)
+          if [ -z "$RESPONSE" ] || echo "$RESPONSE" | grep -q "Not Found"; then
+            echo "Warning: Could not find authorized authors file at ${AUTHORIZED_AUTHORS_FILE}"
+            echo "authorized_authors=[]" >> $GITHUB_OUTPUT
+            echo "authorized_count=0" >> $GITHUB_OUTPUT
+            echo "fetch_success=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Extract the content (raw content is already plain text when using v3.raw)
+          AUTHORIZED_CONTENT="$RESPONSE"
+
+          if [ -z "$AUTHORIZED_CONTENT" ]; then
+            echo "Warning: Could not decode authorized authors file content"
+            echo "authorized_authors=[]" >> $GITHUB_OUTPUT
+            echo "authorized_count=0" >> $GITHUB_OUTPUT
+            echo "fetch_success=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Parse authorized authors from YAML format: "Name <email>: githubhandle"
+          # Extract the "Name <email>" part before the colon
+          AUTHORIZED_AUTHORS=$(echo "$AUTHORIZED_CONTENT" | grep -v '^#' | grep -v '^$' | sed 's/:.*$//' | sort -u)
+          AUTHORIZED_COUNT=$(echo "$AUTHORIZED_AUTHORS" | wc -l)
+
+          echo "Found ${AUTHORIZED_COUNT} authorized author(s) (list not displayed for security)"
+
+          # Output results
+          echo "authorized_authors<<EOF" >> $GITHUB_OUTPUT
+          echo "$AUTHORIZED_AUTHORS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "authorized_count=${AUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
+          echo "fetch_success=true" >> $GITHUB_OUTPUT
+
+      - name: "Check if PR authors are authorized"
+        id: check_authorization
+        if: steps.fetch_authorized_authors.outputs.fetch_success == 'true'
+        run: |
+          echo "Checking if PR authors are in the authorized list..."
+
+          # Get PR authors and authorized authors
+          PR_AUTHORS="${{ steps.pr_authors.outputs.authors_multiline }}"
+          AUTHORIZED_AUTHORS="${{ steps.fetch_authorized_authors.outputs.authorized_authors }}"
+
+          # Create temporary files for comparison
+          echo "$PR_AUTHORS" > /tmp/pr_authors.txt
+          echo "$AUTHORIZED_AUTHORS" > /tmp/authorized_authors.txt
+
+          # Find authors in PR but not in authorized list
+          UNAUTHORIZED_AUTHORS=""
+          UNAUTHORIZED_COUNT=0
+
+          while IFS= read -r pr_author; do
+            if [ -n "$pr_author" ]; then
+              # Check if this exact author (name and email) is in authorized list
+              # We need exact match of the full "Name <email>" format
+              if ! echo "$AUTHORIZED_AUTHORS" | grep -Fxq "$pr_author"; then
+                UNAUTHORIZED_AUTHORS="${UNAUTHORIZED_AUTHORS}${pr_author}\n"
+                UNAUTHORIZED_COUNT=$((UNAUTHORIZED_COUNT + 1))
+              fi
+            fi
+          done < /tmp/pr_authors.txt
+
+          # Output results
+          echo "unauthorized_authors<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$UNAUTHORIZED_AUTHORS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "unauthorized_count=${UNAUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
+
+          # Determine overall status
+          if [ $UNAUTHORIZED_COUNT -eq 0 ]; then
+            echo "authorization_status=success" >> $GITHUB_OUTPUT
+            echo "✅ SUCCESS: All PR authors are authorized"
+          else
+            echo "authorization_status=failure" >> $GITHUB_OUTPUT
+            echo "❌ FAILURE: Found $UNAUTHORIZED_COUNT unauthorized author(s) in this PR"
+            echo "The following authors are not in the authorized list:"
+            echo -e "$UNAUTHORIZED_AUTHORS"
+
+            # Check if we should fail the build (configurable via repository variable)
+            FAIL_ON_UNAUTHORIZED="${{ vars.FAIL_ON_UNAUTHORIZED_AUTHORS || 'true' }}"
+            if [ "$FAIL_ON_UNAUTHORIZED" = "true" ]; then
+              echo "Build failed due to unauthorized authors (set FAIL_ON_UNAUTHORIZED_AUTHORS=false to disable)"
+              exit 1
+            else
+              echo "Build continues despite unauthorized authors (FAIL_ON_UNAUTHORIZED_AUTHORS=false)"
+            fi
+          fi
+
+      - name: "Display PR authors summary"
+        run: |
+          echo "## PR Authors Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total unique authors:** ${{ steps.pr_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Authors:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.pr_authors.outputs.authors_multiline }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Add authorization check results if available
+          if [ "${{ steps.fetch_authorized_authors.outputs.fetch_success }}" = "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Author Authorization Check" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [ "${{ steps.check_authorization.outputs.unauthorized_count }}" -gt 0 ]; then
+              echo "❌ **FAILURE:** ${{ steps.check_authorization.outputs.unauthorized_count }} unauthorized author(s) found:" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "These authors are not in the authorized list (exact name and email match required):" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "${{ steps.check_authorization.outputs.unauthorized_authors }}" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ **SUCCESS: All PR authors are authorized**" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ **Note:** Author authorization check skipped (private repository access not configured)" >> $GITHUB_STEP_SUMMARY
+          fi
+
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-22.04"

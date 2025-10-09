@@ -563,8 +563,8 @@ jobs:
             -H "Accept: application/vnd.github.v3.raw" \
             "https://api.github.com/repos/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/contents/${AUTHORIZED_AUTHORS_FILE}")
 
-          # Check if the request was successful
-          if echo "$RESPONSE" | grep -q '"message": "Not Found"'; then
+          # Check if the request was successful (raw API returns 404 for not found)
+          if [ -z "$RESPONSE" ] || echo "$RESPONSE" | grep -q "Not Found"; then
             echo "Warning: Could not find authorized authors file at ${AUTHORIZED_AUTHORS_FILE}"
             echo "authorized_authors=[]" >> $GITHUB_OUTPUT
             echo "authorized_count=0" >> $GITHUB_OUTPUT
@@ -572,8 +572,8 @@ jobs:
             exit 0
           fi
 
-          # Extract the content (assuming it's base64 encoded)
-          AUTHORIZED_CONTENT=$(echo "$RESPONSE" | jq -r '.content // empty' | base64 -d)
+          # Extract the content (raw content is already plain text when using v3.raw)
+          AUTHORIZED_CONTENT="$RESPONSE"
 
           if [ -z "$AUTHORIZED_CONTENT" ]; then
             echo "Warning: Could not decode authorized authors file content"

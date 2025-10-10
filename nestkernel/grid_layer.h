@@ -163,6 +163,4 @@ protected:
 
 } // namespace nest
 
-#include "grid_layer_impl.h"
-
 #endif

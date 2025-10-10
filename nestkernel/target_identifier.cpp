@@ -42,9 +42,6 @@ TargetIdentifierPtrRport::TargetIdentifierPtrRport()
 {
 }
 
-TargetIdentifierPtrRport::TargetIdentifierPtrRport( const TargetIdentifierPtrRport& ) = default;
-TargetIdentifierPtrRport& TargetIdentifierPtrRport::operator=( const TargetIdentifierPtrRport& ) = default;
-
 void
 TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
 {
@@ -90,9 +87,6 @@ TargetIdentifierIndex::TargetIdentifierIndex()
 {
 }
 
-TargetIdentifierIndex::TargetIdentifierIndex( const TargetIdentifierIndex& ) = default;
-TargetIdentifierIndex& TargetIdentifierIndex::operator=( const TargetIdentifierIndex& ) = default;
-
 void
 TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
 {
@@ -120,7 +114,7 @@ TargetIdentifierIndex::get_rport() const
 void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  kernel::manager< NodeManager >.ensure_valid_thread_local_ids();
+  assert( kernel::manager< NodeManager >.thread_local_data_is_up_to_date() );
 
   const size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )

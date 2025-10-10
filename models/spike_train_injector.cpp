@@ -24,11 +24,13 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "event_delivery_manager.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

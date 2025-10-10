@@ -27,6 +27,8 @@
 #include "kernel_manager.h"
 #include "simulation_manager.h"
 
+#include <nest_names.h>
+
 nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()

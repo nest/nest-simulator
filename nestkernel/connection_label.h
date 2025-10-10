@@ -42,5 +42,4 @@ const static long UNLABELED_CONNECTION = -1;
 
 } // namespace nest
 
-#include "connection_label_impl.h"
 #endif /* CONNECTION_LABEL_H */

@@ -108,9 +108,6 @@ private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];
 };
 
-
 } // namespace nest
-
-#include "urbanczik_archiving_node_impl.h"
 
 #endif /* #ifndef URBANCZIK_ARCHIVING_NODE_H */

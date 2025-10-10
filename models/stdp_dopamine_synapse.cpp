@@ -29,6 +29,9 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+#include "nest.h"
+#include "node_manager.h"
+
 void
 nest::register_stdp_dopamine_synapse( const std::string& name )
 {

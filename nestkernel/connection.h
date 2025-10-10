@@ -26,23 +26,14 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
-#include "delay_checker.h"
 #include "event.h"
-#include "kernel_manager.h"
-#include "nest.h"
-#include "nest_names.h"
 #include "nest_time.h"
-#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
+#include <connector_model.h>
 
 namespace nest
 {
@@ -133,7 +124,7 @@ public:
    * To prevent erronous calls of this function on primary connections, the base class implementation
    * below just contains `assert(false)`.
    */
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -315,5 +306,4 @@ protected:
 
 } // namespace nest
 
-#include "connection_impl.h"
 #endif /* CONNECTION_H */

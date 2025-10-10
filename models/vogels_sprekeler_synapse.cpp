@@ -22,6 +22,8 @@
 
 #include "vogels_sprekeler_synapse.h"
 
+#include "nest.h"
+
 void
 nest::register_vogels_sprekeler_synapse( const std::string& name )
 {

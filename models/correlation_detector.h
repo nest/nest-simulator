@@ -30,10 +30,10 @@
 
 // Includes from nestkernel:
 #include "event.h"
-#include "nest_timeconverter.h"
-#include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
+
+#include "nest_names.h"
 
 
 namespace nest

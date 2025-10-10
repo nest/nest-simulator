@@ -30,6 +30,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 #include "recording_device.h"
@@ -37,6 +38,8 @@
 // Includes from sli:
 #include "dictutils.h"
 #include "name.h"
+
+#include "node_manager.h"
 
 /* BeginUserDocs: device, recorder
 

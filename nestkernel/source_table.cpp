@@ -29,6 +29,8 @@
 #include "model_manager.h"
 #include "source_table.h"
 
+#include "connector_model.h"
+
 nest::SourceTable::SourceTable()
 {
 }
@@ -245,7 +247,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
     {
       const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( cit->first );
       const size_t event_size =
-        kernel::manager< ModelManager >.get_secondary_event_prototype( cit->second, tid ).size();
+        kernel::manager< ModelManager >.get_secondary_event_prototype( cit->second, tid )->size();
 
       buffer_pos_of_source_node_id_syn_id.insert(
         std::make_pair( pack_source_node_id_and_syn_id( cit->first, cit->second ),

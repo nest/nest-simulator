@@ -28,6 +28,8 @@
 #include "exceptions.h"
 #include "nest_names.h"
 
+#include <connection_label.h>
+
 namespace nest
 {
 

@@ -23,9 +23,6 @@
 #ifndef RATE_NEURON_IPN_H
 #define RATE_NEURON_IPN_H
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
 #include <cmath> // in case we need isnan() // fabs
 #include <string>
@@ -35,12 +32,13 @@
 #include "connection.h"
 #include "event.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "node.h"
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"

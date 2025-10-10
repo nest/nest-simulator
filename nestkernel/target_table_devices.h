@@ -30,7 +30,6 @@
 #include "connection_id.h"
 #include "connector_base.h"
 #include "event.h"
-#include "kernel_manager.h"
 #include "nest_types.h"
 
 // Includes from SLI:

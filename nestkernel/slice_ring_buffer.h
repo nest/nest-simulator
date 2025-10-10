@@ -24,17 +24,7 @@
 #define SLICE_RING_BUFFER_H
 
 // C++ includes:
-#include <algorithm>
-#include <cassert>
-#include <functional>
 #include <vector>
-
-// Generated includes:
-#include "config.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager.h"
-#include "kernel_manager.h"
 
 namespace nest
 {

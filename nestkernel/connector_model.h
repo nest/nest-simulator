@@ -33,7 +33,6 @@
 
 // Includes from nestkernel:
 #include "event.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
 #include "simulation_manager.h"
@@ -118,7 +117,7 @@ public:
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
-  virtual SecondaryEvent* get_secondary_event() = 0;
+  virtual std::unique_ptr< SecondaryEvent > get_secondary_event() = 0;
 
   virtual size_t get_syn_id() const = 0;
   virtual void set_syn_id( synindex syn_id ) = 0;
@@ -201,11 +200,7 @@ public:
 
   void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
 
-  SecondaryEvent*
-  get_secondary_event() override
-  {
-    return default_connection_.get_secondary_event();
-  }
+  std::unique_ptr< SecondaryEvent > get_secondary_event() override;
 
   ConnectionT const&
   get_default_connection() const

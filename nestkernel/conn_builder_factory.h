@@ -88,5 +88,4 @@ public:
 
 } // namespace nest
 
-#include "conn_builder_factory_impl.h"
 #endif

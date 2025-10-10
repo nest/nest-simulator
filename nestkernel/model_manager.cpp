@@ -32,12 +32,16 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "connector_model_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "proxynode.h"
 
 // Includes from models:
 #include "models.h"
 
+#include "modelrange_manager.h"
 
 namespace nest
 {
@@ -62,12 +66,10 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize( const bool )
 {
-  if ( not proxynode_model_ )
-  {
-    proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
-    proxynode_model_->set_type_id( 1 );
-    proxynode_model_->set_threads();
-  }
+  assert( not proxynode_model_ ); // must be re-created on initialization
+  proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
+  proxynode_model_->set_type_id( 1 );
+  proxynode_model_->set_threads();
 
   const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
 
@@ -175,7 +177,7 @@ ModelManager::register_node_model_( Model* model )
 #pragma omp parallel
   {
     const size_t t = kernel::manager< VPManager >.get_thread_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
+    proxy_nodes_.at( t ).push_back( create_proxynode_( t, id ) );
   }
 
   return id;
@@ -199,7 +201,7 @@ ModelManager::copy_node_model_( const size_t old_id, Name new_name, DictionaryDa
 #pragma omp parallel
   {
     const size_t t = kernel::manager< VPManager >.get_thread_id();
-    proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
+    proxy_nodes_.at( t ).push_back( create_proxynode_( t, new_id ) );
   }
 }
 
@@ -367,12 +369,20 @@ ModelManager::clear_node_models_()
       delete node_model;
     }
   }
+  node_models_.clear();
+
+  for ( const auto& proxy_nodes_per_thread : proxy_nodes_ )
+  {
+    for ( const auto& proxy_node : proxy_nodes_per_thread )
+    {
+      delete proxy_node;
+    }
+  }
+  proxy_nodes_.clear();
 
   delete proxynode_model_;
   proxynode_model_ = nullptr;
 
-  node_models_.clear();
-  proxy_nodes_.clear();
 
   modeldict_->clear();
 
@@ -485,12 +495,11 @@ ModelManager::get_proxy_node( size_t tid, size_t node_id )
   return proxy;
 }
 
-SecondaryEvent&
+std::unique_ptr< SecondaryEvent >
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
-
   assert_valid_syn_id( syn_id, tid );
-  return *get_connection_model( syn_id, tid ).get_secondary_event();
+  return get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 void

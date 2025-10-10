@@ -28,10 +28,7 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "compose.hpp"
-#include "kernel_manager.h"
 #include "node.h"
-#include "node_manager.h"
 
 namespace nest
 {
@@ -52,10 +49,8 @@ class TargetIdentifierPtrRport
 public:
   TargetIdentifierPtrRport();
 
-
-  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t );
-  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t );
-
+  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
+  TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
   void get_status( DictionaryDatum& d ) const;
   Node* get_target_ptr( const size_t ) const;
@@ -87,9 +82,8 @@ class TargetIdentifierIndex
 public:
   TargetIdentifierIndex();
 
-  TargetIdentifierIndex( const TargetIdentifierIndex& t );
-  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t );
-
+  TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
+  TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
   void get_status( DictionaryDatum& d ) const;
 

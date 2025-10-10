@@ -22,6 +22,8 @@
 
 #include "tsodyks_synapse_hom.h"
 
+#include "nest.h"
+
 void
 nest::register_tsodyks_synapse_hom( const std::string& name )
 {

@@ -417,9 +417,6 @@ private:
   Position< D, int > upper_right_;
 };
 
-
 } // namespace nest
-
-#include "position_impl.h"
 
 #endif

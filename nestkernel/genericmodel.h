@@ -118,6 +118,4 @@ private:
 
 } // namespace nest
 
-#include "genericmodel_impl.h"
-
 #endif

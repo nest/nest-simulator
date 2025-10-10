@@ -30,6 +30,7 @@
 #include "connection_manager.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "mpi_manager_impl.h"
 #include "send_buffer_position.h"
 #include "simulation_manager.h"
 #include "vp_manager.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include "layer.h"
+#include "layer_impl.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -34,9 +34,8 @@
 #include "integerdatum.h"
 
 // Includes from spatial:
-#include "free_layer.h"
-#include "grid_layer.h"
-#include "layer_impl.h"
+#include "free_layer_impl.h"
+#include "grid_layer_impl.h"
 #include "spatial.h"
 
 namespace nest

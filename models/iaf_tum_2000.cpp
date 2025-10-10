@@ -25,13 +25,12 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "iaf_propagator.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "numerics.h"
+#include "ring_buffer_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

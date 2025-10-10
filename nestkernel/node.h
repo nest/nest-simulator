@@ -34,10 +34,9 @@
 #include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
-#include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "secondary_event.h"
+#include "secondary_event_impl.h"
 #include "weight_optimizer.h"
 
 // Includes from sli:

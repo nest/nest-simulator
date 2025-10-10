@@ -22,6 +22,9 @@
 
 #include "eprop_synapse.h"
 
+#include "connection_manager.h"
+#include "nest.h"
+
 // nestkernel
 
 namespace nest

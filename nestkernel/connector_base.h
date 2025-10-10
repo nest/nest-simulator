@@ -27,7 +27,6 @@
 #include "config.h"
 
 // C++ includes:
-#include <cstdlib>
 #include <fstream>
 #include <vector>
 
@@ -38,22 +37,16 @@
 #include <sion.h>
 #endif
 
-// Includes from libnestutil:
-#include "sort.h"
-
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
-#include "connector_model.h"
 #include "event.h"
-#include "nest_datums.h"
-#include "nest_names.h"
 #include "node.h"
 #include "source.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "dictutils.h"
+#include "block_vector.h"
+
 
 namespace nest
 {
@@ -303,7 +296,5 @@ public:
 };
 
 } // of namespace nest
-
-#include "connector_base_impl.h"
 
 #endif

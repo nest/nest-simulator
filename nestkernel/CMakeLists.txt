@@ -27,11 +27,11 @@ set ( nestkernel_sources
       eprop_archiving_node_readout.h eprop_archiving_node_readout_impl.h
       eprop_archiving_node_recurrent.h eprop_archiving_node_recurrent_impl.h
       common_synapse_properties.h common_synapse_properties.cpp
-      connection.h
+      connection.h connection_impl.h
       connection_label.h connection_label_impl.h
       common_properties_hom_w.h common_properties_hom_w.cpp
       syn_id_delay.h syn_id_delay.cpp
-      connector_base.h connector_base.cpp
+      connector_base.h connector_base.cpp connector_base_impl.h
       connector_model.h connector_model.cpp connector_model_impl.h
       connection_id.h connection_id.cpp
       deprecation_warning.h deprecation_warning.cpp

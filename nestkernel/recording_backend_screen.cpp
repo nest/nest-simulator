@@ -28,6 +28,8 @@
 
 #include "recording_backend_screen.h"
 
+#include <nest_names.h>
+
 void
 nest::RecordingBackendScreen::initialize()
 {

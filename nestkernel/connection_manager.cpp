@@ -20,7 +20,7 @@
  *
  */
 
-#include "connection_manager.h"
+#include "connection_manager_impl.h"
 
 // Generated includes:
 #include "config.h"
@@ -42,13 +42,11 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
 #include "connector_base.h"
-#include "connector_model.h"
+#include "connector_model_impl.h"
 #include "delay_checker.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
@@ -446,6 +444,8 @@ ConnectionManager::connect( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  kernel::manager< NodeManager >.update_thread_local_node_data();
+
   if ( sources->empty() )
   {
     throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
@@ -486,32 +486,6 @@ ConnectionManager::connect( NodeCollectionPTR sources,
   set_connections_have_changed();
 
   cb.connect();
-}
-
-
-void
-ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
-{
-  // Get synapse id
-  size_t syn_id = 0;
-  auto synmodel = syn_spec->lookup( names::model );
-  if ( not synmodel.empty() )
-  {
-    const std::string synmodel_name = getValue< std::string >( synmodel );
-    // The following throws UnknownSynapseType for invalid synmodel_name
-    syn_id = kernel::manager< ModelManager >.get_synapse_model_id( synmodel_name );
-  }
-  // Connect all sources to all targets
-  for ( auto&& source : sources )
-  {
-    auto source_node = kernel::manager< NodeManager >.get_node_or_proxy( source );
-    for ( auto&& target : targets )
-    {
-      auto target_node = kernel::manager< NodeManager >.get_node_or_proxy( target );
-      auto target_thread = target_node->get_thread();
-      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
-    }
-  }
 }
 
 
@@ -648,6 +622,8 @@ ConnectionManager::connect_arrays( long* sources,
 {
   // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
   sw_construction_connect.start();
+
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   // The bool indicates whether the value is an integer or not, and is determined at a later point.
@@ -816,6 +792,8 @@ void
 ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
+  kernel::manager< NodeManager >.update_thread_local_node_data();
+
   SonataConnector sonata_connector( graph_specs, hyberslab_size );
 
   // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
@@ -868,6 +846,8 @@ ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
   const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
   const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 
@@ -1683,19 +1663,20 @@ ConnectionManager::deliver_secondary_events( const size_t tid,
     {
       if ( positions_tid[ syn_id ].size() > 0 )
       {
-        SecondaryEvent& prototype = kernel::manager< ModelManager >.get_secondary_event_prototype( syn_id, tid );
+        std::unique_ptr< SecondaryEvent > prototype =
+          kernel::manager< ModelManager >.get_secondary_event_prototype( syn_id, tid );
 
         size_t lcid = 0;
         const size_t lcid_end = positions_tid[ syn_id ].size();
         while ( lcid < lcid_end )
         {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin() + positions_tid[ syn_id ][ lcid ];
-          prototype << readpos;
-          prototype.set_stamp( stamp );
+          *prototype << readpos;
+          prototype->set_stamp( stamp );
 
           // send delivers event to all targets with the same source
           // and returns how many targets this event was delivered to
-          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, prototype );
+          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, *prototype );
         }
       }
     }

@@ -28,6 +28,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
+#include <nest_names.h>
+
 namespace nest
 {
 

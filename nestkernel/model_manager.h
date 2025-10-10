@@ -27,22 +27,12 @@
 #include <string>
 
 // Includes from nestkernel:
-#include "connection_label.h"
 #include "connection_manager.h"
-#include "connector_model_impl.h"
-#include "genericmodel.h"
-#include "kernel_manager.h"
-#include "logging_manager.h"
 #include "manager_interface.h"
 #include "model.h"
-#include "modelrange_manager.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "target_identifier.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
 
 
 namespace nest
@@ -179,7 +169,7 @@ public:
    */
   void memory_info() const;
 
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
+  std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
   /**
@@ -290,7 +280,5 @@ private:
 
 
 } // namespace nest
-
-#include "model_manager_impl.h"
 
 #endif /* MODEL_MANAGER_H */

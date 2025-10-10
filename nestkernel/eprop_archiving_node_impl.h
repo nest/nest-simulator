@@ -29,20 +29,6 @@ namespace nest
 {
 
 template < typename HistEntryT >
-EpropArchivingNode< HistEntryT >::EpropArchivingNode()
-  : Node()
-  , eprop_indegree_( 0 )
-{
-}
-
-template < typename HistEntryT >
-EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
-  : Node( n )
-  , eprop_indegree_( n.eprop_indegree_ )
-{
-}
-
-template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {

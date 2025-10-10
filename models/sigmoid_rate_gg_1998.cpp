@@ -22,7 +22,7 @@
 
 #include "sigmoid_rate_gg_1998.h"
 
-#include <dict_util.h>
+#include "dict_util.h"
 
 namespace nest
 {

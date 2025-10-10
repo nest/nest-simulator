@@ -27,7 +27,7 @@
 #include "archiving_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 #include "cm_compartmentcurrents.h"
 #include "cm_tree.h"

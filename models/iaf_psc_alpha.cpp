@@ -28,9 +28,11 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "numerics.h"
+#include "ring_buffer_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

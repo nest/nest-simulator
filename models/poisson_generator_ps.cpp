@@ -27,11 +27,12 @@
 #include <limits>
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "event_delivery_manager.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"

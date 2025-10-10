@@ -30,9 +30,6 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
-#include "kernel_manager.h"
-#include "nest_time.h"
-#include "nest_types.h"
 
 namespace nest
 {
@@ -289,9 +286,6 @@ private:
   std::vector< std::array< double, num_channels > > buffer_;
 };
 
-
 } // namespace nest
-
-#include "ring_buffer_impl.h"
 
 #endif /* #ifndef RING_BUFFER_H */

@@ -25,14 +25,11 @@
 
 // Includes from nestkernel:
 #include "event.h"
-#include "exceptions.h"
-#include "generic_factory.h"
-#include "ntree.h"
+#include "generic_factory_impl.h"
+#include "ntree_impl.h"
 #include "parameter.h"
-#include "position.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "sharedptrdatum.h"
 #include "slifunction.h"
 #include "slimodule.h"

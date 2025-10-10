@@ -26,7 +26,6 @@
 // Includes from nestkernel:
 #include "connection.h"
 #include "event_delivery_manager.h"
-#include "target_identifier.h"
 
 namespace nest
 {
@@ -188,7 +187,6 @@ template < typename targetidentifierT >
 void
 static_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
   def< long >( d, names::size_of, sizeof( *this ) );

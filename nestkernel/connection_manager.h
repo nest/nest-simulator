@@ -28,7 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "conn_builder_factory.h"
@@ -134,8 +134,6 @@ public:
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
-
-  void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
 
   /**
    * Connect two nodes.
@@ -735,5 +733,4 @@ private:
 
 } // namespace nest
 
-#include "connection_manager_impl.h"
 #endif /* CONNECTION_MANAGER_H */

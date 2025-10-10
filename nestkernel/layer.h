@@ -25,22 +25,14 @@
 
 // C++ includes:
 #include <bitset>
-#include <iostream>
 #include <utility>
 
-// Includes from nestkernel:
-#include "kernel_manager.h"
-#include "nest_names.h"
-#include "nest_types.h"
-
 // Includes from sli:
-#include "booldatum.h"
 #include "dictutils.h"
-#include "grid_mask.h"
 
 // Includes from spatial:
 #include "connection_creator.h"
-#include "ntree.h"
+#include "ntree_impl.h"
 #include "position.h"
 
 namespace nest

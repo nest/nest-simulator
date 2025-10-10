@@ -19,8 +19,12 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef CONNECTOR_MODEL_IMPL_H
+#define CONNECTOR_MODEL_IMPL_H
 
-#include "connector_base.h"
+#include "connection_impl.h"
+#include "connection_manager.h"
+#include "connector_base_impl.h"
 #include "connector_model.h"
 #include "delay_checker.h"
 
@@ -44,7 +48,14 @@ namespace nest
 // }
 
 template < typename ConnectionT >
-inline ConnectorModel*
+std::unique_ptr< SecondaryEvent >
+GenericConnectorModel< ConnectionT >::get_secondary_event()
+{
+  return default_connection_.get_secondary_event();
+}
+
+template < typename ConnectionT >
+ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
@@ -60,7 +71,7 @@ GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id )
 }
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 {
   // calibrate the delay of the default properties here
@@ -74,7 +85,7 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 }
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 {
   // first get properties common to all synapses
@@ -120,7 +131,7 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 }
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   // This is called just once per Connect() call, so we need not worry much about performance.
@@ -142,7 +153,7 @@ GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatu
 
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
@@ -185,21 +196,21 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 }
 
 template < typename ConnectionT >
-inline size_t
+size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const
 {
   return default_connection_.get_syn_id();
 }
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {
   default_connection_.set_syn_id( syn_id );
 }
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
@@ -225,13 +236,13 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   else
   {
     // check delay
-    double delay = 0.0;
+    double delay_in = 0.0;
 
-    if ( updateValue< double >( p, names::delay, delay ) )
+    if ( updateValue< double >( p, names::delay, delay_in ) )
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
-        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay_in );
       }
     }
     else
@@ -275,7 +286,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
 
 template < typename ConnectionT >
-inline void
+void
 GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
@@ -303,3 +314,4 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 }
 
 } // namespace nest
+#endif // CONNECTOR_MODEL_IMPL_H

@@ -34,7 +34,7 @@
 #include "kernel_manager.h"
 #include "layer_impl.h"
 #include "logging_manager.h"
-#include "mask.h"
+#include "mask_impl.h"
 #include "module_manager.h"
 #include "music_manager.h"
 #include "nest.h"
@@ -42,6 +42,7 @@
 #include "parameter.h"
 #include "sp_manager.h"
 #include "spatial.h"
+#include "stopwatch_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

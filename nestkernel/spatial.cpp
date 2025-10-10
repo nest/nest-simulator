@@ -36,12 +36,6 @@
 #include "nestmodule.h"
 #include "node.h"
 
-// Includes from sli:
-#include "sliexceptions.h"
-
-// Includes from spatial:
-#include "grid_layer.h"
-
 
 namespace nest
 {
@@ -404,6 +398,8 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   connection_dict->clear_access_flags();
   ConnectionCreator connector( connection_dict );
   ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
+
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel::manager< ConnectionManager >.set_connections_have_changed();

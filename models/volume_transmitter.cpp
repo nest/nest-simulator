@@ -24,6 +24,7 @@
 
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "spikecounter.h"
 

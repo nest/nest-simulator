@@ -25,14 +25,15 @@
 
 #include "connection.h"
 
+#include "connection_manager.h"
+#include "delay_checker.h"
+#include "nest_timeconverter.h"
+
 namespace nest
 {
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
-
-template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
@@ -63,7 +64,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 }
 
 template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
@@ -71,7 +72,7 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 }
 
 template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
   double delay;
@@ -84,13 +85,13 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
 }
 
 template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
 {
 }
 
 template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 {
   Time t = tc.from_old_steps( syn_id_delay_.delay );
@@ -103,7 +104,7 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 }
 
 template < typename targetidentifierT >
-inline void
+void
 Connection< targetidentifierT >::trigger_update_weight( const size_t,
   const std::vector< spikecounter >&,
   const double,
@@ -113,7 +114,7 @@ Connection< targetidentifierT >::trigger_update_weight( const size_t,
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 Connection< targetidentifierT >::get_secondary_event()
 {
   assert( false and "Non-primary connections have to provide get_secondary_event()" );

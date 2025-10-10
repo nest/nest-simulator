@@ -32,12 +32,14 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlomatrix_detector( const std::string& name )
@@ -348,7 +350,8 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       {
         size_t bin;
         size_t other = spike_j->receptor_channel_;
-        size_t sender_ind, other_ind;
+        size_t sender_ind = 0;
+        size_t other_ind = 0;
 
         if ( spike_i < spike_j->timestep_ )
         {

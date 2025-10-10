@@ -23,9 +23,11 @@
 // Includes from nestkernel:
 #include "target_table_devices.h"
 #include "connector_base.h"
-#include "connector_model.h"
+#include "connector_model_impl.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+
+#include "node_manager.h"
 
 namespace nest
 {

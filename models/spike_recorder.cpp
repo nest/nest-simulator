@@ -23,17 +23,11 @@
 #include "spike_recorder.h"
 
 
-// Includes from libnestutil:
-#include "compose.hpp"
-
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "node_manager.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_spike_recorder( const std::string& name )

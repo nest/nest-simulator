@@ -25,6 +25,8 @@
 #include "recording_device.h"
 #include "simulation_manager.h"
 
+#include <nest_names.h>
+
 nest::RecordingBackendMemory::RecordingBackendMemory()
 {
 }

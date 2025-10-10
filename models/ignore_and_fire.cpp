@@ -22,16 +22,15 @@
 
 #include "ignore_and_fire.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "iaf_propagator.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "ring_buffer_impl.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

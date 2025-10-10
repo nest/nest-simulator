@@ -22,6 +22,8 @@
 
 #include "rate_connection_instantaneous.h"
 
+#include "nest.h"
+
 void
 nest::register_rate_connection_instantaneous( const std::string& name )
 {

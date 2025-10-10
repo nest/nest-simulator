@@ -91,6 +91,4 @@ private:
 
 } // namespace nest
 
-#include "generic_factory_impl.h"
-
 #endif

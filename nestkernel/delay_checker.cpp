@@ -39,6 +39,8 @@
 #include "nest_names.h"
 #include "nest_time.h"
 
+#include <simulation_manager.h>
+
 
 nest::DelayChecker::DelayChecker()
   : min_delay_( Time::pos_inf() )

@@ -26,7 +26,7 @@
 // nestkernel
 #include "connection.h"
 #include "connector_base.h"
-#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 #include "target_identifier.h"
 #include "weight_optimizer.h"
 

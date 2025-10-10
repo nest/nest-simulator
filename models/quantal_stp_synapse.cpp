@@ -22,6 +22,8 @@
 
 #include "quantal_stp_synapse.h"
 
+#include "nest.h"
+
 void
 nest::register_quantal_stp_synapse( const std::string& name )
 {

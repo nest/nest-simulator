@@ -491,15 +491,28 @@ jobs:
       - name: "Get PR authors from commits"
         id: pr_authors
         run: |
-          # Get the base and head refs for the PR
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          HEAD_REF="${{ github.event.pull_request.head.ref }}"
+          # Get PR information
           PR_NUMBER="${{ github.event.pull_request.number }}"
+          REPO_OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
 
-          echo "Analyzing PR #${PR_NUMBER}: ${HEAD_REF} -> ${BASE_REF}"
+          echo "Analyzing PR #${PR_NUMBER} in ${REPO_OWNER}/${REPO_NAME}"
 
-          # Get all commits in the PR
-          COMMITS=$(git log --pretty=format:"%H|%an|%ae" ${BASE_REF}..${HEAD_REF})
+          # Get commits from GitHub API
+          echo "Fetching commits from GitHub API..."
+          COMMITS_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/pulls/${PR_NUMBER}/commits")
+
+          # Check if the API call was successful
+          if [ -z "$COMMITS_RESPONSE" ] || echo "$COMMITS_RESPONSE" | grep -q '"message"'; then
+            echo "Error: Failed to fetch commits from GitHub API"
+            echo "$COMMITS_RESPONSE"
+            exit 1
+          fi
+
+          # Extract commit information using jq
+          COMMITS=$(echo "$COMMITS_RESPONSE" | jq -r '.[] | "\(.sha)|\(.commit.author.name)|\(.commit.author.email)"')
 
           if [ -z "$COMMITS" ]; then
             echo "No commits found in PR"

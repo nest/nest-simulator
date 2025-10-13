@@ -566,8 +566,6 @@ jobs:
           # Check if the request was successful (raw API returns 404 for not found)
           if [ -z "$RESPONSE" ] || echo "$RESPONSE" | grep -q "Not Found"; then
             echo "Warning: Could not find authorized authors file at ${AUTHORIZED_AUTHORS_FILE}"
-            echo "authorized_authors=[]" >> $GITHUB_OUTPUT
-            echo "authorized_count=0" >> $GITHUB_OUTPUT
             echo "fetch_success=false" >> $GITHUB_OUTPUT
             exit 0
           fi
@@ -577,23 +575,18 @@ jobs:
 
           if [ -z "$AUTHORIZED_CONTENT" ]; then
             echo "Warning: Could not decode authorized authors file content"
-            echo "authorized_authors=[]" >> $GITHUB_OUTPUT
-            echo "authorized_count=0" >> $GITHUB_OUTPUT
             echo "fetch_success=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           # Parse authorized authors from YAML format: "Name <email>: githubhandle"
-          # Extract the "Name <email>" part before the colon
-          AUTHORIZED_AUTHORS=$(echo "$AUTHORIZED_CONTENT" | grep -v '^#' | grep -v '^$' | sed 's/:.*$//' | sort -u)
-          AUTHORIZED_COUNT=$(echo "$AUTHORIZED_AUTHORS" | wc -l)
+          # Extract the "Name <email>" part before the colon and store in secure temp file
+          echo "$AUTHORIZED_CONTENT" | grep -v '^#' | grep -v '^$' | sed 's/:.*$//' | sort -u > /tmp/authorized_authors_secure.txt
+          AUTHORIZED_COUNT=$(wc -l < /tmp/authorized_authors_secure.txt)
 
-          echo "Found ${AUTHORIZED_COUNT} authorized author(s) (list not displayed for security)"
+          echo "Found ${AUTHORIZED_COUNT} authorized author(s) (list stored securely, not exposed)"
 
-          # Output results
-          echo "authorized_authors<<EOF" >> $GITHUB_OUTPUT
-          echo "$AUTHORIZED_AUTHORS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Only output success status and count - never the actual names
           echo "authorized_count=${AUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
           echo "fetch_success=true" >> $GITHUB_OUTPUT
 
@@ -603,15 +596,14 @@ jobs:
         run: |
           echo "Checking if PR authors are in the authorized list..."
 
-          # Get PR authors and authorized authors
+          # Get PR authors from previous step output
           PR_AUTHORS="${{ steps.pr_authors.outputs.authors_multiline }}"
-          AUTHORIZED_AUTHORS="${{ steps.fetch_authorized_authors.outputs.authorized_authors }}"
 
-          # Create temporary files for comparison
+          # Create temporary file for PR authors
           echo "$PR_AUTHORS" > /tmp/pr_authors.txt
-          echo "$AUTHORIZED_AUTHORS" > /tmp/authorized_authors.txt
 
           # Find authors in PR but not in authorized list
+          # Use the secure temp file created in previous step
           UNAUTHORIZED_AUTHORS=""
           UNAUTHORIZED_COUNT=0
 
@@ -619,17 +611,14 @@ jobs:
             if [ -n "$pr_author" ]; then
               # Check if this exact author (name and email) is in authorized list
               # We need exact match of the full "Name <email>" format
-              if ! echo "$AUTHORIZED_AUTHORS" | grep -Fxq "$pr_author"; then
+              if ! grep -Fxq "$pr_author" /tmp/authorized_authors_secure.txt; then
                 UNAUTHORIZED_AUTHORS="${UNAUTHORIZED_AUTHORS}${pr_author}\n"
                 UNAUTHORIZED_COUNT=$((UNAUTHORIZED_COUNT + 1))
               fi
             fi
           done < /tmp/pr_authors.txt
 
-          # Output results
-          echo "unauthorized_authors<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$UNAUTHORIZED_AUTHORS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Only output count and status - never store unauthorized names
           echo "unauthorized_count=${UNAUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
 
           # Determine overall status
@@ -639,8 +628,7 @@ jobs:
           else
             echo "authorization_status=failure" >> $GITHUB_OUTPUT
             echo "❌ FAILURE: Found $UNAUTHORIZED_COUNT unauthorized author(s) in this PR"
-            echo "The following authors are not in the authorized list:"
-            echo -e "$UNAUTHORIZED_AUTHORS"
+            echo "Unauthorized authors found (names not displayed for security)"
 
             # Check if we should fail the build (configurable via repository variable)
             FAIL_ON_UNAUTHORIZED="${{ vars.FAIL_ON_UNAUTHORIZED_AUTHORS || 'true' }}"
@@ -651,6 +639,9 @@ jobs:
               echo "Build continues despite unauthorized authors (FAIL_ON_UNAUTHORIZED_AUTHORS=false)"
             fi
           fi
+
+          # Clean up temporary files for security
+          rm -f /tmp/authorized_authors_secure.txt /tmp/pr_authors.txt
 
       - name: "Display PR authors summary"
         run: |
@@ -670,12 +661,10 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
 
             if [ "${{ steps.check_authorization.outputs.unauthorized_count }}" -gt 0 ]; then
-              echo "❌ **FAILURE:** ${{ steps.check_authorization.outputs.unauthorized_count }} unauthorized author(s) found:" >> $GITHUB_STEP_SUMMARY
+              echo "❌ **FAILURE:** ${{ steps.check_authorization.outputs.unauthorized_count }} unauthorized author(s) found" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "These authors are not in the authorized list (exact name and email match required):" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo "${{ steps.check_authorization.outputs.unauthorized_authors }}" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "Some authors in this PR are not in the authorized list (exact name and email match required)." >> $GITHUB_STEP_SUMMARY
+              echo "Contact repository administrators for access." >> $GITHUB_STEP_SUMMARY
             else
               echo "✅ **SUCCESS: All PR authors are authorized**" >> $GITHUB_STEP_SUMMARY
             fi

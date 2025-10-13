@@ -495,24 +495,36 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           REPO_OWNER="${{ github.repository_owner }}"
           REPO_NAME="${{ github.event.repository.name }}"
+          TOKEN="${{ github.token }}"
 
           echo "Analyzing PR #${PR_NUMBER} in ${REPO_OWNER}/${REPO_NAME}"
 
           # Get commits from GitHub API
           echo "Fetching commits from GitHub API..."
-          COMMITS_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          RESPONSE_FILE="/tmp/pr_commits.json"
+          HTTP_STATUS=$(curl -sS \
+            -H "Authorization: Bearer ${TOKEN}" \
             -H "Accept: application/vnd.github.v3+json" \
+            -o "${RESPONSE_FILE}" \
+            -w "%{http_code}" \
             "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/pulls/${PR_NUMBER}/commits")
 
-          # Check if the API call was successful
-          if [ -z "$COMMITS_RESPONSE" ] || echo "$COMMITS_RESPONSE" | grep -q '"message"'; then
-            echo "Error: Failed to fetch commits from GitHub API"
-            echo "$COMMITS_RESPONSE"
+          # Check HTTP status code
+          if [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+            echo "Error: Failed to fetch commits from GitHub API (HTTP ${HTTP_STATUS})"
+            head -c 500 "${RESPONSE_FILE}" || true
+            exit 1
+          fi
+
+          # Validate that the response is a JSON array
+          if ! jq -e 'type == "array"' "${RESPONSE_FILE}" > /dev/null; then
+            echo "Error: Unexpected API response (not a JSON array)"
+            head -c 500 "${RESPONSE_FILE}" || true
             exit 1
           fi
 
           # Extract commit information using jq
-          COMMITS=$(echo "$COMMITS_RESPONSE" | jq -r '.[] | "\(.sha)|\(.commit.author.name)|\(.commit.author.email)"')
+          COMMITS=$(jq -r '.[] | "\(.sha)|\(.commit.author.name)|\(.commit.author.email)"' "${RESPONSE_FILE}")
 
           if [ -z "$COMMITS" ]; then
             echo "No commits found in PR"

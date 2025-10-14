@@ -1,5 +1,5 @@
 /*
- *  connection_manager.h
+ *  connection_manager_impl.h
  *
  *  This file is part of NEST.
  *

@@ -1,5 +1,5 @@
 /*
- *  conn_builder_factory_impl.h
+ *  conn_builder_factory.h
  *
  *  This file is part of NEST.
  *

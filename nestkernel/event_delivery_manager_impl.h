@@ -1,5 +1,5 @@
 /*
- *  event_delivery_manager.cpp
+ *  event_delivery_manager_impl.h
  *
  *  This file is part of NEST.
  *

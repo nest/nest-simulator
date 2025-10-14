@@ -1,5 +1,5 @@
 /*
- *  mask_impl_impl.h
+ *  mask_impl.h
  *
  *  This file is part of NEST.
  *

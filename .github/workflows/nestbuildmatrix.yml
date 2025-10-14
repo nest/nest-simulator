@@ -656,6 +656,10 @@ jobs:
 
       - name: "Display PR authors summary"
         run: |
+          echo "Starting PR authors summary display..."
+          echo "Author count: ${{ steps.pr_authors.outputs.author_count }}"
+          echo "Authors multiline: ${{ steps.pr_authors.outputs.authors_multiline }}"
+
           echo "## PR Authors Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total unique authors:** ${{ steps.pr_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY

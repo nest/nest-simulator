@@ -595,4 +595,5 @@ Layer< D >::dump_connections( std::ostream& out,
 
 
 } // namespace nest
+
 #endif

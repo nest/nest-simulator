@@ -539,26 +539,12 @@ jobs:
           # Count authors
           AUTHOR_COUNT=$(echo "$UNIQUE_AUTHORS" | wc -l)
 
-          # Create JSON array of authors
-          AUTHORS_JSON="["
-          FIRST=true
-          while IFS='|' read -r name email; do
-            if [ "$FIRST" = true ]; then
-              FIRST=falseh
-            else
-              AUTHORS_JSON="${AUTHORS_JSON},"
-            fi
-            AUTHORS_JSON="${AUTHORS_JSON}{\"name\":\"${name}\",\"email\":\"${email}\"}"
-          done <<< "$UNIQUE_AUTHORS"
-          AUTHORS_JSON="${AUTHORS_JSON}]"
-
           echo "Found ${AUTHOR_COUNT} unique author(s):"
           echo "$UNIQUE_AUTHORS" | while IFS='|' read -r name email; do
             echo "  - ${name} <${email}>"
           done
 
           # Output results
-          echo "authors=${AUTHORS_JSON}" >> $GITHUB_OUTPUT
           echo "author_count=${AUTHOR_COUNT}" >> $GITHUB_OUTPUT
 
           # Also output as multiline for easy reading

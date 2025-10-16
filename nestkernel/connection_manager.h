@@ -330,15 +330,10 @@ public:
     size_t lcid,
     double t_last_pre_spike,
     double t_spike_critical_interval_end,
-    double& weight_revert,
+    const double weight_revert,
     double& new_weight,
     double K_plus_revert,
     double t_post_spike );
-  void get_delays( const size_t tid,
-    const synindex syn_id,
-    const size_t lcid,
-    double& dendritic_delay,
-    double& axonal_delay );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -965,7 +960,7 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
   const size_t lcid,
   const double t_last_pre_spike,
   const double t_spike_critical_interval_end,
-  double& weight_revert,
+  const double weight_revert,
   double& new_weight,
   const double K_plus_revert,
   const double t_post_spike )
@@ -980,16 +975,6 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
     new_weight,
     K_plus_revert,
     t_post_spike );
-}
-
-inline void
-ConnectionManager::get_delays( const size_t tid,
-  const synindex syn_id,
-  const size_t lcid,
-  double& dendritic_delay,
-  double& axonal_delay )
-{
-  return connections_[ tid ][ syn_id ]->get_delays( lcid, dendritic_delay, axonal_delay );
 }
 
 inline void

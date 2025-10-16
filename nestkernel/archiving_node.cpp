@@ -333,9 +333,11 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
     const size_t idx = kernel().event_delivery_manager.get_modulo( lag );
     assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
+    // iterate over all pre-synaptic spikes which are no longer critical
     for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
     {
-      // For each correction entry
+      // For each other still critical pre-synaptic spike which arrived over the same synapse, update the weight to
+      // revert to, as the pre-synaptic spike which is now no longer critical will no longer perform facilitation
       for ( size_t other_idx = idx + 1; other_idx < correction_entries_stdp_ax_delay_.size(); ++other_idx )
       {
         std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_per_timestep =
@@ -345,11 +347,6 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
           if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
           {
             other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
-            double dendritic_delay, axonal_delay;
-            kernel().connection_manager.get_delays(
-              get_thread(), it_corr_entry.syn_id_, it_corr_entry.lcid_, dendritic_delay, axonal_delay );
-            other_it_corr_entry.t_last_pre_spike_ =
-              ( ori + Time::step( lag + 1 ) ).get_ms() + dendritic_delay - axonal_delay;
           }
         }
       }
@@ -362,11 +359,6 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
           if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
           {
             other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
-            double dendritic_delay, axonal_delay;
-            kernel().connection_manager.get_delays(
-              get_thread(), it_corr_entry.syn_id_, it_corr_entry.lcid_, dendritic_delay, axonal_delay );
-            other_it_corr_entry.t_last_pre_spike_ =
-              ( ori + Time::step( lag + 1 ) ).get_ms() + dendritic_delay - axonal_delay;
           }
         }
       }

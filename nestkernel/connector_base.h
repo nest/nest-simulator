@@ -171,12 +171,10 @@ public:
     const size_t lcid,
     const double t_last_pre_spike,
     const double t_spike_critical_interval_end,
-    double& weight_revert,
+    const double weight_revert,
     double& new_weight,
     const double K_plus_revert,
     const double t_post_spike ) = 0;
-
-  virtual void get_delays( const size_t lcid, double& dendritic_delay, double& axonal_delay ) = 0;
 
   virtual void
   send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
@@ -445,12 +443,10 @@ public:
     const size_t lcid,
     const double t_last_pre_spike,
     const double t_spike_critical_interval_end,
-    double& weight_revert,
+    const double weight_revert,
     double& new_weight,
     const double K_plus_revert,
     const double t_post_spike ) override;
-
-  void get_delays( const size_t lcid, double& dendritic_delay, double& axonal_delay ) override;
 
   // Implemented in connector_base_impl.h
   void

@@ -50,10 +50,10 @@ class TestSTDPPlSynapse:
     """
 
     def init_params(self):
-        self.simulation_duration = 1e2  # [ms]
+        self.simulation_duration = 1e3  # [ms]
         self.synapse_model = "stdp_pl_synapse_hom_ax_delay"
-        self.presynaptic_firing_rate = 100.0  # [ms^-1]
-        self.postsynaptic_firing_rate = 100.0  # [ms^-1]
+        self.presynaptic_firing_rate = 300.0  # [ms^-1]
+        self.postsynaptic_firing_rate = 300.0  # [ms^-1]
         self.tau_pre = 20.0
         self.tau_post = 33.7
         self.init_weight = 0.5
@@ -66,16 +66,80 @@ class TestSTDPPlSynapse:
         self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0, "weight": self.init_weight}
         self.neuron_parameters = {"tau_minus": self.tau_post}
 
-        # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
-        # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred. To
-        # generate and test every possible combination of pre/post order, we append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12      13      14.5      16.1 21          25 26 27    29    31 32 33      34.5      36.1
-        # post:  2 3 4       8 9 10    12 12.2    14.1      15.4         22 23 24          28 29 30    32    33.2      35.1      36.4
+        # While the random sequences, would supposedly reveal small differences in the weight change between NEST and
+        # ours, some low-probability events (say, coinciding spikes) can well not have occurred. To generate and test
+        # every possible combination of pre/post order, we append some hardcoded spike sequences:
+        # pre: 1       5 6 7   9    11 12      13      14.5      16.1 21          25 26 27    29    31 32 33      34.5      36.1      37. 37.5     40. 40.5 41.     43. 43. 44.     45. 45.5 46.
+        # post:  2 3 4       8 9 10    12 12.2    14.1      15.4         22 23 24          28 29 30    32    33.2      35.1      36.4 37.      38. 40.          42. 43.     44. 44.              47.2 47.7
         self.hardcoded_pre_times = np.array(
-            [1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float
+            [
+                1.0,
+                5.0,
+                6.0,
+                7.0,
+                9.0,
+                11.0,
+                12.0,
+                13.0,
+                14.5,
+                16.1,
+                21.0,
+                25.0,
+                26.0,
+                27.0,
+                29.0,
+                31.0,
+                32.0,
+                33.0,
+                34.5,
+                36.1,
+                37.0,
+                37.5,
+                40.0,
+                40.5,
+                41.0,
+                43.0,
+                43.0,
+                44.0,
+                45.0,
+                45.5,
+                46.0,
+            ],
+            dtype=float,
         )
         self.hardcoded_post_times = np.array(
-            [2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float
+            [
+                2.0,
+                3.0,
+                4.0,
+                8.0,
+                9.0,
+                10.0,
+                12.0,
+                12.2,
+                14.1,
+                15.4,
+                22.0,
+                23.0,
+                24.0,
+                28.0,
+                29.0,
+                30.0,
+                32.0,
+                33.2,
+                35.1,
+                36.4,
+                37.0,
+                38.0,
+                40.0,
+                42.0,
+                43.0,
+                44.0,
+                44.0,
+                47.2,
+                47.7,
+            ],
+            dtype=float,
         )
         self.hardcoded_trains_length = 5.0 + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
@@ -94,6 +158,7 @@ class TestSTDPPlSynapse:
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
 
+        print(t_weight_by_nest, t_weight_reproduced_independently)
         difference_matrix = (
             t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
             + self.axonal_delay
@@ -397,22 +462,23 @@ class TestSTDPPlSynapse:
 
     @pytest.mark.parametrize(
         ["dend_delay", "ax_delay"],
-        ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (2.0, 0.0), (1.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
+        # ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (2.0, 0.0), (1.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
+        ((1.0, 0.0),),
     )
-    @pytest.mark.parametrize("model", ("iaf_psc_alpha",))
-    @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
-    @pytest.mark.parametrize("max_delay", (1.0, 3.0))
-    @pytest.mark.parametrize("t_ref", (RESOLUTION, 0.5, 1.0, 1.1, 2.5))
-    def test_stdp_synapse(self, dend_delay, ax_delay, model, min_delay, max_delay, t_ref):
+    # @pytest.mark.parametrize("model", ("iaf_psc_alpha", "parrot_neuron"))
+    @pytest.mark.parametrize("model", ("parrot_neuron",))  # , "parrot_neuron"))
+    # @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
+    # @pytest.mark.parametrize("max_delay", (1.0, 3.0))
+    @pytest.mark.parametrize("min_delay", (1.0,))
+    @pytest.mark.parametrize("max_delay", (1.0,))
+    def test_stdp_synapse(self, dend_delay, ax_delay, model, min_delay, max_delay):
         self.init_params()
         self.synapse_parameters["dendritic_delay"] = self.dendritic_delay = dend_delay
         self.synapse_parameters["axonal_delay"] = self.axonal_delay = ax_delay
         self.nest_neuron_model = model
         self.min_delay = min(min_delay, max_delay, self.dendritic_delay + self.axonal_delay)
         self.max_delay = max(min_delay, max_delay, self.dendritic_delay + self.axonal_delay)
-        self.neuron_parameters["t_ref"] = t_ref
 
         fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
         fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
-        fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
         self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)

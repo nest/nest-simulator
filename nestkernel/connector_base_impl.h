@@ -69,7 +69,7 @@ Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const size_t lcid,
   const double t_last_pre_spike,
   const double t_spike_critical_interval_end,
-  double& weight_revert,
+  const double weight_revert,
   double& new_weight,
   const double K_plus_revert,
   const double t_post_spike )
@@ -86,14 +86,6 @@ Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
     K_plus_revert,
     t_post_spike,
     cp );
-}
-
-template < typename ConnectionT >
-void
-Connector< ConnectionT >::get_delays( const size_t lcid, double& dendritic_delay, double& axonal_delay )
-{
-  dendritic_delay = C_[ lcid ].get_dendritic_delay_ms();
-  axonal_delay = C_[ lcid ].get_axonal_delay_ms();
 }
 
 } // of namespace nest

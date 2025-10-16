@@ -39,6 +39,7 @@
 #include "dictutils.h"
 
 #include <numeric>
+#include <unistd.h>
 
 namespace nest
 {
@@ -85,7 +86,7 @@ MPIManager::MPIManager()
 #ifndef HAVE_MPI
 
 void
-nest::MPIManager::init_mpi( int*, char*** )
+MPIManager::init_mpi( int*, char*** )
 {
   // if ! HAVE_MPI, initialize process entries for 1 rank
   // use 2 processes entries (need at least two
@@ -299,7 +300,7 @@ MPIManager::mpi_finalize( int exitcode )
 #else /* #ifdef HAVE_MPI */
 
 void
-nest::MPIManager::mpi_finalize( int )
+MPIManager::mpi_finalize( int )
 {
 }
 
@@ -1010,7 +1011,7 @@ MPIManager::time_communicate_alltoallv( int num_bytes, int samples ) const
 
 // communicate (on-grid) if compiled without MPI
 void
-nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
+MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   std::vector< unsigned int >& recv_buffer,
   std::vector< int >& displacements )
 {
@@ -1026,7 +1027,7 @@ nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
 
 // communicate (off-grid) if compiled without MPI
 void
-nest::MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
+MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,
   std::vector< int >& displacements )
 {
@@ -1041,7 +1042,7 @@ nest::MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate( std::vector< double >& send_buffer,
+MPIManager::communicate( std::vector< double >& send_buffer,
   std::vector< double >& recv_buffer,
   std::vector< int >& displacements )
 {
@@ -1051,7 +1052,7 @@ nest::MPIManager::communicate( std::vector< double >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate( std::vector< unsigned long >& send_buffer,
+MPIManager::communicate( std::vector< unsigned long >& send_buffer,
   std::vector< unsigned long >& recv_buffer,
   std::vector< int >& displacements )
 {
@@ -1061,7 +1062,7 @@ nest::MPIManager::communicate( std::vector< unsigned long >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate( std::vector< int >& send_buffer,
+MPIManager::communicate( std::vector< int >& send_buffer,
   std::vector< int >& recv_buffer,
   std::vector< int >& displacements )
 {
@@ -1071,46 +1072,46 @@ nest::MPIManager::communicate( std::vector< int >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buffer )
+MPIManager::communicate( double send_val, std::vector< double >& recv_buffer ) const
 {
   recv_buffer.resize( 1 );
   recv_buffer[ 0 ] = send_val;
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
+MPIManager::communicate( std::vector< long >&, std::vector< long >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( double )
+MPIManager::communicate_Allreduce_sum_in_place( double ) const
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& ) const
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& ) const
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer )
+MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer ) const
 {
   recv_buffer.swap( send_buffer );
 }
 
 bool
-nest::MPIManager::equal_cross_ranks( const double )
+MPIManager::equal_cross_ranks( const double ) const
 {
   return true;
 }
 
 void
-nest::MPIManager::communicate_recv_counts_secondary_events()
+MPIManager::communicate_recv_counts_secondary_events()
 {
   // since we only have one process, the send count is equal to the recv count
   send_counts_secondary_events_in_int_per_rank_ = recv_counts_secondary_events_in_int_per_rank_;
@@ -1149,21 +1150,21 @@ MPIManager::get_process_id_of_node_id( const size_t ) const
 #ifndef HAVE_MPI
 
 double
-MPIManager::time_communicate_alltoallv( int, int )
+MPIManager::time_communicate_alltoallv( int, int ) const
 {
 
   return 0.0;
 }
 
 double
-MPIManager::time_communicate_alltoall( int, int )
+MPIManager::time_communicate_alltoall( int, int ) const
 {
 
   return 0.0;
 }
 
 double
-MPIManager::time_communicate_offgrid( int, int )
+MPIManager::time_communicate_offgrid( int, int ) const
 {
 
   return 0.0;
@@ -1177,21 +1178,21 @@ MPIManager::time_communicatev( int, int )
 }
 
 double
-MPIManager::time_communicate( int, int )
+MPIManager::time_communicate( int, int ) const
 {
 
   return 0.0;
 }
 
 bool
-MPIManager::any_true( const bool my_bool )
+MPIManager::any_true( const bool my_bool ) const
 {
 
   return my_bool;
 }
 
 void
-MPIManager::synchronize()
+MPIManager::synchronize() const
 {
 }
 
@@ -1206,14 +1207,13 @@ MPIManager::communicate( std::vector< int >& )
 }
 
 void
-MPIManager::mpi_abort( int )
+MPIManager::mpi_abort( int ) const
 {
 }
 
 std::string
 MPIManager::get_processor_name()
 {
-
   char name[ 1024 ];
   name[ 1023 ] = '\0';
   gethostname( name, 1023 );

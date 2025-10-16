@@ -23,7 +23,7 @@
 One neuron with Ornstein-Uhlenbeck noise
 ----------------------------------------
 
-This script simulates a neuron with input from the ou_noise_generator and
+This script simulates a neuron with input from the ``ou_noise_generator`` and
 records the neuron's membrane potential.
 """
 
@@ -47,8 +47,8 @@ voltmeter = nest.Create("voltmeter")
 
 ###############################################################################
 # Third, we configure the OU-noise generator. The parameters are:
-# mean and std in pA, tau (correlation time) and dt in ms.
-# The update interval dt must be a multiple of the simulation resolution.
+# ``mean`` and ``std`` in `pA`, ``tau`` (correlation time) and ``dt`` in `ms`.
+# The update interval ``dt`` must be a multiple of the simulation resolution.
 
 ou_noise.set(
     {

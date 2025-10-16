@@ -23,8 +23,8 @@
 Comparing white and OU noise
 ----------------------------
 
-This example compares two neurons: one driven by the noise_generator (white noise)
-and one driven by the ou_noise_generator (temporally correlated noise).
+This example compares two neurons: one driven by the ``noise_generator`` (white noise)
+and one driven by the ``ou_noise_generator`` (temporally correlated noise).
 We match the mean and variance of both inputs and report firing rate,
 ISI coefficient of variation, and membrane-potential statistics.
 """
@@ -58,7 +58,7 @@ sr_ou = nest.Create("spike_recorder")
 
 ###############################################################################
 # Third, we create and configure the generators. We use the same mean and
-# stationary standard deviation for both inputs and set tau only for the
+# stationary standard deviation for both inputs and set ``tau`` only for the
 # OU generator.
 
 mean_I, std_I = 250.0, 50.0
@@ -82,7 +82,7 @@ nest.Connect(mm_ou, n_ou)
 nest.Simulate(simtime)
 
 ###############################################################################
-# Finally, we compute the membrane-potential mean/std (after a 1 s burn-in),
+# Finally, we compute the membrane-potential 'mean/std' (after a 1 s burn-in),
 # firing rate, and ISI coefficient of variation.
 
 

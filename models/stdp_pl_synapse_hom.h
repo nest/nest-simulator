@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "connection_manager.h"
 
 namespace nest
 {

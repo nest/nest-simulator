@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
+#include "connection_manager.h"
 
 namespace nest
 {

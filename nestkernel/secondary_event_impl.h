@@ -21,7 +21,7 @@
  */
 
 #ifndef SECONDARY_EVENT_IMPL_H
-#define SECONDARY_EVENT_IMLP_H
+#define SECONDARY_EVENT_IMPL_H
 
 #include "event.h"
 #include "secondary_event.h"

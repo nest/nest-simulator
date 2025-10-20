@@ -21,7 +21,8 @@
  */
 
 #include "sonata_connector.h"
-#include "config.h"
+#include "connection_manager.h"
+#include "model_manager.h"
 
 #ifdef HAVE_HDF5
 

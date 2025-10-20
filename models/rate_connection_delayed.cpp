@@ -22,7 +22,7 @@
 
 #include "rate_connection_delayed.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_rate_connection_delayed( const std::string& name )

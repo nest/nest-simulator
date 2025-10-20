@@ -49,45 +49,6 @@ EventDeliveryManager::send( Node& source, EventT& e, const long lag )
   send_local_( source, e, lag );
 }
 
-template <>
-inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag )
-{
-  const size_t tid = source.get_thread();
-  const size_t source_node_id = source.get_node_id();
-  e.set_sender_node_id( source_node_id );
-  if ( source.has_proxies() )
-  {
-    local_spike_counter_[ tid ] += e.get_multiplicity();
-
-    e.set_stamp( kernel::manager< SimulationManager >.get_slice_origin() + Time::step( lag + 1 ) );
-    e.set_sender( source );
-
-    if ( source.is_off_grid() )
-    {
-      send_off_grid_remote( tid, e, lag );
-    }
-    else
-    {
-      send_remote( tid, e, lag );
-    }
-    kernel::manager< ConnectionManager >.send_to_devices( tid, source_node_id, e );
-  }
-  else
-  {
-    send_local_( source, e, lag );
-  }
-}
-
-template <>
-inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
-{
-  e.set_sender_node_id( source.get_node_id() );
-  send_local_( source, e, lag );
-}
-
-
 } // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_IMPL_H */

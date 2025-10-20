@@ -39,6 +39,7 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "booldatum.h"

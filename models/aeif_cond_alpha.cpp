@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-#include <iostream>
 #include <limits>
 
 // Includes from libnestutil:
@@ -35,9 +34,11 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 

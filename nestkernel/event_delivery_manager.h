@@ -24,7 +24,6 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
-#include <cassert>
 #include <vector>
 
 // Includes from libnestutil:

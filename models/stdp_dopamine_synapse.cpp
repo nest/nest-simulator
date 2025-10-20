@@ -29,7 +29,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 #include "node_manager.h"
 
 void

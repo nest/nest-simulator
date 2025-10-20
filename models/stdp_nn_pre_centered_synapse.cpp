@@ -22,7 +22,7 @@
 
 #include "stdp_nn_pre_centered_synapse.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_stdp_nn_pre_centered_synapse( const std::string& name )

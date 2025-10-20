@@ -22,7 +22,7 @@
 
 #include "ht_synapse.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_ht_synapse( const std::string& name )

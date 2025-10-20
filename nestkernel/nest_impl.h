@@ -1,5 +1,5 @@
 /*
- *  rate_connection_instantaneous.cpp
+ *  nest_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,12 +20,29 @@
  *
  */
 
-#include "rate_connection_instantaneous.h"
+#ifndef NEST_IMPL_H
+#define NEST_IMPL_H
 
-#include "nest_impl.h"
+#include "model_manager_impl.h"
+#include "nest.h"
 
-void
-nest::register_rate_connection_instantaneous( const std::string& name )
+namespace nest
 {
-  register_connection_model< rate_connection_instantaneous >( name );
+
+template < template < typename > class ConnectorModelT >
+void
+register_connection_model( const std::string& name )
+{
+  kernel::manager< ModelManager >.template register_connection_model< ConnectorModelT >( name );
 }
+
+template < typename NodeModelT >
+void
+register_node_model( const std::string& name, std::string deprecation_info )
+{
+  kernel::manager< ModelManager >.template register_node_model< NodeModelT >( name, deprecation_info );
+}
+
+}
+
+#endif /* NEST_IMPL_H */

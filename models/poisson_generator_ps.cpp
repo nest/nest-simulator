@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"

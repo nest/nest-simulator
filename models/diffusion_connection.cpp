@@ -22,7 +22,7 @@
 
 #include "diffusion_connection.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_diffusion_connection( const std::string& name )

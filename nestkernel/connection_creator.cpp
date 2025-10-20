@@ -22,7 +22,8 @@
 
 #include "connection_creator.h"
 #include "dictutils.h"
-#include "position_impl.h"
+#include "logging_manager.h"
+#include "model_manager.h"
 
 namespace nest
 {

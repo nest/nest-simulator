@@ -41,6 +41,7 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "node.h"
 #include "random_generators.h"
 #include "recordables_map.h"

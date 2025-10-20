@@ -31,6 +31,7 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 void
 nest::register_mip_generator( const std::string& name )

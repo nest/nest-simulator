@@ -33,7 +33,9 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

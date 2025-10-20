@@ -32,6 +32,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "nest.h"
 #include "nestmodule.h"
 #include "node.h"

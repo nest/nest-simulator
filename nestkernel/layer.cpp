@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest_names.h"
 #include "node_collection.h"
 #include "parameter.h"

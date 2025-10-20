@@ -22,7 +22,7 @@
 
 #include "eprop_learning_signal_connection.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 // nestkernel
 

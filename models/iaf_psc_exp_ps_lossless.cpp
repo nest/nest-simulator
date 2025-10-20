@@ -32,6 +32,7 @@
 #include "dict_util.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
+#include "nest_impl.h"
 #include "regula_falsi.h"
 
 // Includes from sli:

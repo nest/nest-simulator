@@ -25,13 +25,14 @@
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 namespace nest
 {

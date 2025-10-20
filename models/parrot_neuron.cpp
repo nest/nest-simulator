@@ -26,8 +26,9 @@
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 namespace nest
 {

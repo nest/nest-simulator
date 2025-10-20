@@ -26,6 +26,8 @@
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
+#include "simulation_manager.h"
 #include "spikecounter.h"
 
 // Includes from libnestutil:

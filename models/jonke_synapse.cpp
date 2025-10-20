@@ -22,7 +22,7 @@
 
 #include "jonke_synapse.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_jonke_synapse( const std::string& name )

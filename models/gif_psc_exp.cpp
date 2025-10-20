@@ -27,6 +27,7 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 
 // Includes from libnestutil:

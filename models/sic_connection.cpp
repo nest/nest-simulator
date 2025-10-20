@@ -22,7 +22,7 @@
 
 #include "sic_connection.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_sic_connection( const std::string& name )

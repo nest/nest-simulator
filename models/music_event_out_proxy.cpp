@@ -40,7 +40,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "music_manager.h"
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_music_event_out_proxy( const std::string& name )

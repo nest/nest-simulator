@@ -34,8 +34,8 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
-#include "nest.h"
 #include "nest_datums.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:

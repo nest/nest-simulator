@@ -27,6 +27,7 @@
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nest_datums.h"
+#include "node.h"
 
 // Includes from sli:
 #include "dictdatum.h"

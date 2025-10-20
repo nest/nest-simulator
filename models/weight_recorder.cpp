@@ -29,8 +29,8 @@
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "nest.h"
 #include "nest_datums.h"
+#include "nest_impl.h"
 #include "node_collection.h"
 #include "node_manager.h"
 

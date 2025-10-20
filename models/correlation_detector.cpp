@@ -31,6 +31,7 @@
 #include "dict_util.h"
 #include "genericmodel_impl.h"
 #include "logging.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

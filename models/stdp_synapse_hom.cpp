@@ -28,7 +28,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_stdp_synapse_hom( const std::string& name )

@@ -22,9 +22,6 @@
 
 #include "erfc_neuron.h"
 
-// Includes from nestkernel
-#include "kernel_manager.h"
-
 namespace nest
 {
 void

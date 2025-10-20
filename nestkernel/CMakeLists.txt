@@ -78,7 +78,7 @@ set ( nestkernel_sources
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
-      nest.h nest.cpp
+      nest.h nest.cpp nest_impl.h
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h

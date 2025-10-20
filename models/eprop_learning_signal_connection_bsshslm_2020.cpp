@@ -22,7 +22,7 @@
 
 #include "eprop_learning_signal_connection_bsshslm_2020.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 // nestkernel
 

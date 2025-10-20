@@ -22,7 +22,7 @@
 
 #include "gap_junction.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_gap_junction( const std::string& name )

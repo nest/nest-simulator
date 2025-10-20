@@ -28,7 +28,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_datums.h"
 
 // Includes from sli:
@@ -185,20 +184,6 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
-
-template < template < typename > class ConnectorModelT >
-void
-register_connection_model( const std::string& name )
-{
-  kernel::manager< ModelManager >.template register_connection_model< ConnectorModelT >( name );
-}
-
-template < typename NodeModelT >
-void
-register_node_model( const std::string& name, std::string deprecation_info )
-{
-  kernel::manager< ModelManager >.template register_node_model< NodeModelT >( name, deprecation_info );
-}
 
 }
 

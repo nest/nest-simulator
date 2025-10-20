@@ -28,7 +28,7 @@
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "numerics.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"

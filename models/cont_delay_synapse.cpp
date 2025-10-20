@@ -22,7 +22,7 @@
 
 #include "cont_delay_synapse.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 void
 nest::register_cont_delay_synapse( const std::string& name )

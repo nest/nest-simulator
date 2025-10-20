@@ -30,6 +30,7 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "ring_buffer_impl.h"
 
 // Includes from sli:

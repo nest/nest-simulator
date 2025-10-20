@@ -22,15 +22,10 @@
 
 #include "inhomogeneous_poisson_generator.h"
 
-// C++ includes:
-#include <cmath>
-
-// Includes from libnestutil:
-#include "numerics.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 

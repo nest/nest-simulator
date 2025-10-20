@@ -29,6 +29,8 @@
 #include "layer.h"
 #include "mask_impl.h"
 
+#include <booldatum.h>
+
 namespace nest
 {
 

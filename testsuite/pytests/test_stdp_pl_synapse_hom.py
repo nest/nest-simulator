@@ -64,7 +64,7 @@ class TestSTDPPlSynapse:
             "tau_plus": self.tau_pre,
         }
         self.synapse_parameters = {"synapse_model": self.synapse_model, "receptor_type": 0, "weight": self.init_weight}
-        self.neuron_parameters = {"tau_minus": self.tau_post}
+        self.neuron_parameters = {"tau_minus": self.tau_post, "t_ref": 0.0}
 
         # While the random sequences, would supposedly reveal small differences in the weight change between NEST and
         # ours, some low-probability events (say, coinciding spikes) can well not have occurred. To generate and test
@@ -158,7 +158,6 @@ class TestSTDPPlSynapse:
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
 
-        print(t_weight_by_nest, t_weight_reproduced_independently)
         difference_matrix = (
             t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
             + self.axonal_delay
@@ -462,15 +461,11 @@ class TestSTDPPlSynapse:
 
     @pytest.mark.parametrize(
         ["dend_delay", "ax_delay"],
-        # ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (2.0, 0.0), (1.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
-        ((1.0, 0.0),),
+        ((1.0, 0.0), (0.5, 0.5), (0.0, 1.0), (2.0, 0.0), (1.0, 1.0), (0.0, 2.0), (RESOLUTION, 0.0), (0.0, RESOLUTION)),
     )
-    # @pytest.mark.parametrize("model", ("iaf_psc_alpha", "parrot_neuron"))
-    @pytest.mark.parametrize("model", ("parrot_neuron",))  # , "parrot_neuron"))
-    # @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
-    # @pytest.mark.parametrize("max_delay", (1.0, 3.0))
-    @pytest.mark.parametrize("min_delay", (1.0,))
-    @pytest.mark.parametrize("max_delay", (1.0,))
+    @pytest.mark.parametrize("model", ("iaf_psc_alpha", "iaf_psc_delta"))
+    @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
+    @pytest.mark.parametrize("max_delay", (1.0, 3.0))
     def test_stdp_synapse(self, dend_delay, ax_delay, model, min_delay, max_delay):
         self.init_params()
         self.synapse_parameters["dendritic_delay"] = self.dendritic_delay = dend_delay

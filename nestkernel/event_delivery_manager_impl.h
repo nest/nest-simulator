@@ -25,12 +25,13 @@
 #define EVENT_DELIVERY_MANAGER_IMPL_H
 
 #include "event_delivery_manager.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
 
 template < class EventT >
-inline void
+void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
@@ -43,7 +44,7 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 
 
 template < class EventT >
-inline void
+void
 EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
   send_local_( source, e, lag );

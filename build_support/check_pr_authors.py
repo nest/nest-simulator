@@ -34,7 +34,6 @@ SECURITY NOTE: This script is designed to protect sensitive data:
 
 import argparse
 import json
-import logging
 import os
 import sys
 import tempfile
@@ -75,19 +74,9 @@ def get_pr_commits(pr_number: int, repo_owner: str, repo_name: str, token: str) 
         return commits
     except requests.exceptions.RequestException as e:
         print(f"Error: Failed to fetch commits from GitHub API: {e}")
-        print(f"URL: {url}")
-        if "response" in locals():
-            print(f"Response status: {response.status_code}")
-            if response.status_code == 404:
-                print("This might indicate the PR number is invalid or the repository doesn't exist")
-            elif response.status_code == 401:
-                print("This might indicate the GitHub token doesn't have the required permissions")
-        else:
-            print("No response received")
         sys.exit(1)
     except ValueError as e:
         print(f"Error: {e}")
-        print(f"URL: {url}")
         sys.exit(1)
 
 
@@ -179,7 +168,6 @@ def main():
     args = parser.parse_args()
 
     # Get PR commits and extract authors
-    print(f"Debug: Fetching commits for PR #{args.pr_number} in {args.repo_owner}/{args.repo_name}")
     commits = get_pr_commits(args.pr_number, args.repo_owner, args.repo_name, args.github_token)
 
     if not commits:
@@ -199,7 +187,7 @@ def main():
     # Output author count and authors list for GitHub Actions
     print(f"author_count={author_count}")
 
-    # Output authors list in GitHub Actions format for step summary display
+    # Output authors as formatted list for GitHub Actions step summary
     authors_formatted = "\n".join([f"{name} <{email}>" for name, email in pr_authors])
     print("authors_formatted<<EOF")
     print(authors_formatted)
@@ -207,9 +195,6 @@ def main():
 
     # Try to fetch validated authors if private repo is configured
     validated_authors = None
-    print(
-        f"Debug: Private repo configured: owner={bool(args.private_repo_owner)}, name={bool(args.private_repo_name)}, token={bool(args.private_repo_token)}"
-    )
     if args.private_repo_owner and args.private_repo_name and args.private_repo_token:
         validated_authors = fetch_validated_authors(
             args.private_repo_owner, args.private_repo_name, args.authors_file_path, args.private_repo_token

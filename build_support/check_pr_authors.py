@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+#
+# check_pr_authors.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #!/usr/bin/env python3
 """
 Check PR authors against validated author list.
@@ -196,7 +216,8 @@ def main():
         print("validation_status=failure")
         print("❌ FAILURE: Found unknown author(s) in this PR")
         print(
-            "The authors of this PR may be contributing for the first time or may have modified their author information. Author information requires review."
+            "The authors of this PR may be contributing for the first time or may have "
+            "modified their author information. Author information requires review."
         )
 
         # Log unknown authors (these are PR authors, so it's safe to show them)

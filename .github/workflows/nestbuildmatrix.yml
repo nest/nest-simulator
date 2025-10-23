@@ -517,7 +517,7 @@ jobs:
             --private-repo-name "${{ secrets.PRIVATE_REPO_NAME }}" \
             --private-repo-token "${{ secrets.PRIVATE_REPO_TOKEN }}" \
             --authors-file-path "${{ vars.VALIDATED_AUTHORS_FILE_PATH || 'data/gitlognames.yaml' }}" \
-            --fail-on-unknown ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' }} 2>&1 | tee /tmp/script_output.txt
+            ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' && '--fail-on-unknown' || '' }} 2>&1 | tee /tmp/script_output.txt
 
           # Check if script failed
           SCRIPT_EXIT_CODE=${PIPESTATUS[0]}

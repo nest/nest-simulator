@@ -507,6 +507,7 @@ jobs:
           FAIL_ON_UNKNOWN_AUTHORS: ${{ vars.FAIL_ON_UNKNOWN_AUTHORS || 'true' }}
         run: |
           # Run the script and capture outputs
+          echo "Running PR authors check script..."
           python build_support/check_pr_authors.py \
             --pr-number ${{ github.event.pull_request.number }} \
             --repo-owner ${{ github.repository_owner }} \
@@ -516,7 +517,16 @@ jobs:
             --private-repo-name "${{ secrets.PRIVATE_REPO_NAME }}" \
             --private-repo-token "${{ secrets.PRIVATE_REPO_TOKEN }}" \
             --authors-file-path "${{ vars.VALIDATED_AUTHORS_FILE_PATH || 'data/gitlognames.yaml' }}" \
-            --fail-on-unknown ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' }} > /tmp/script_output.txt 2>&1
+            --fail-on-unknown ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' }} 2>&1 | tee /tmp/script_output.txt
+
+          # Check if script failed
+          SCRIPT_EXIT_CODE=${PIPESTATUS[0]}
+          if [ $SCRIPT_EXIT_CODE -ne 0 ]; then
+            echo "Script failed with exit code $SCRIPT_EXIT_CODE"
+            echo "Script output:"
+            cat /tmp/script_output.txt
+            exit $SCRIPT_EXIT_CODE
+          fi
 
           # Extract outputs for GitHub Actions
           if [ -f /tmp/script_output.txt ]; then
@@ -534,9 +544,6 @@ jobs:
               cat /tmp/authors_formatted.txt >> $GITHUB_OUTPUT
               echo "EOF" >> $GITHUB_OUTPUT
             fi
-
-            # Display the script output
-            cat /tmp/script_output.txt
           fi
 
       - name: "Display PR authors summary"

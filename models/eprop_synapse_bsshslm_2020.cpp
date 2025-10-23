@@ -22,8 +22,10 @@
 
 #include "eprop_synapse_bsshslm_2020.h"
 
-// nestkernel
+#include "connection_manager.h"
 #include "nest_impl.h"
+
+// nestkernel
 
 namespace nest
 {
@@ -79,7 +81,7 @@ EpropSynapseBSSHSLM2020CommonProperties::set_status( const DictionaryDatum& d, C
     const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
-      if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+      if ( kernel::manager< ConnectionManager >.get_num_connections( cm.get_syn_id() ) > 0 )
       {
         throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
       }

@@ -24,16 +24,12 @@
 #define CONNECTION_MANAGER_IMPL_H
 
 #include "connection_manager.h"
-
-// C++ includes:
+#include <cassert>
 #include <string>
 
-// Includes from nestkernel:
-#include "conn_builder.h"
 #include "conn_builder_factory.h"
-#include "connector_base.h"
-#include "kernel_manager.h"
-#include "target_table_devices_impl.h"
+#include "conn_builder_factory_impl.h"
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -62,24 +58,7 @@ ConnectionManager::register_third_conn_builder( const std::string& name )
   thirdconnruledict_->insert( name, id );
 }
 
-inline void
-ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, Event& e )
-{
-  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_connection_models( tid ) );
-}
-
-inline void
-ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e )
-{
-  target_table_devices_.send_to_device( tid, source_node_id, e, kernel().model_manager.get_connection_models( tid ) );
-}
-
-inline void
-ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event& e )
-{
-  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_connection_models( tid ) );
-}
-
 } // namespace nest
+
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

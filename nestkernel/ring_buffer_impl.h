@@ -25,18 +25,53 @@
 
 #include "ring_buffer.h"
 
+namespace nest
+{
+
 template < unsigned int num_channels >
-nest::MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
-  : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(),
+inline void
+MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const size_t slot )
+{
+  assert( slot < buffer_.size() );
+  buffer_[ slot ].fill( 0.0 );
+}
+
+template < unsigned int num_channels >
+inline void
+MultiChannelInputBuffer< num_channels >::add_value( const size_t slot, const size_t channel, const double value )
+{
+  buffer_[ slot ][ channel ] += value;
+}
+
+template < unsigned int num_channels >
+inline const std::array< double, num_channels >&
+MultiChannelInputBuffer< num_channels >::get_values_all_channels( const size_t slot ) const
+{
+  assert( slot < buffer_.size() );
+  return buffer_[ slot ];
+}
+
+template < unsigned int num_channels >
+inline size_t
+MultiChannelInputBuffer< num_channels >::size() const
+{
+  return buffer_.size();
+}
+
+template < unsigned int num_channels >
+MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
+  : buffer_(
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
     std::array< double, num_channels >() )
 {
 }
 
 template < unsigned int num_channels >
 void
-nest::MultiChannelInputBuffer< num_channels >::resize()
+MultiChannelInputBuffer< num_channels >::resize()
 {
-  const size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  const size_t size =
+    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size, std::array< double, num_channels >() );
@@ -45,7 +80,7 @@ nest::MultiChannelInputBuffer< num_channels >::resize()
 
 template < unsigned int num_channels >
 void
-nest::MultiChannelInputBuffer< num_channels >::clear()
+MultiChannelInputBuffer< num_channels >::clear()
 {
   resize(); // does nothing if size is fine
   // set all elements to 0.0
@@ -53,6 +88,8 @@ nest::MultiChannelInputBuffer< num_channels >::clear()
   {
     reset_values_all_channels( slot );
   }
+}
+
 }
 
 #endif

@@ -26,19 +26,12 @@
 // Includes from nestkernel; placed here so module developer does not need to
 // include them manually
 #include "config.h"
-#include "connection_manager_impl.h"
-#include "connector_model_impl.h"
 #include "exceptions.h"
 #include "genericmodel.h"
-#include "genericmodel_impl.h"
-#include "io_manager_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
-#include "model_manager_impl.h"
 #include "nest.h"
-#include "nest_impl.h"
 #include "nestmodule.h"
-#include "sp_manager_impl.h"
 #include "target_identifier.h"
 
 // C++ includes

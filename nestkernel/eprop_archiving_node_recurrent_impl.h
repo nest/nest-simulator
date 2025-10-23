@@ -20,17 +20,49 @@
  *
  */
 
-// nestkernel
-#include "eprop_archiving_node.h"
-#include "eprop_archiving_node_impl.h"
-#include "eprop_archiving_node_recurrent.h"
-#include "kernel_manager.h"
+#ifndef EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
+#define EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
 
-// sli
-#include "dictutils.h"
+#include "eprop_archiving_node_recurrent.h"
 
 namespace nest
 {
+
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::count_spike()
+{
+  ++n_spikes_;
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
+{
+  n_spikes_ = 0;
+}
+
+template < bool hist_shift_required >
+long
+EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shift_() const
+{
+  if constexpr ( hist_shift_required )
+  {
+    return get_shift();
+  }
+  else
+  {
+    return -delay_rec_out_;
+  }
+}
+
+template < bool hist_shift_required >
+bool
+EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
+{
+  return hist_shift_required;
+}
 
 template < bool hist_shift_required >
 std::map< std::string, typename EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_function >
@@ -212,7 +244,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
     return;
   }
 
-  const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const double update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
   const double dt = Time::get_resolution().get_ms();
   const long shift = Time::get_resolution().get_steps();
 
@@ -300,4 +332,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
 }
 
 
-} // namespace nest
+}
+
+
+#endif

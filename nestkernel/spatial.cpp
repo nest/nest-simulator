@@ -32,16 +32,10 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "nest.h"
 #include "nestmodule.h"
 #include "node.h"
-
-// Includes from sli:
-#include "sliexceptions.h"
-
-// Includes from spatial:
-#include "grid_layer.h"
-#include "layer_impl.h"
 
 
 namespace nest
@@ -93,7 +87,7 @@ get_position( NodeCollectionPTR layer_nc )
   {
     size_t node_id = ( *it ).node_id;
 
-    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "GetPosition is currently implemented for local nodes only." );
     }
@@ -110,12 +104,12 @@ get_position( NodeCollectionPTR layer_nc )
 std::vector< double >
 get_position( const size_t node_id )
 {
-  if ( not kernel().node_manager.is_local_node_id( node_id ) )
+  if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
   {
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
   }
 
-  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node_id );
+  NodeCollectionPTR nc = kernel::manager< NodeManager >.node_id_to_node_collection( node_id );
   NodeCollectionMetadataPTR meta = nc->get_metadata();
 
   if ( not meta )
@@ -150,7 +144,7 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );
-    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
@@ -169,7 +163,7 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
       size_t node_id = ( *it ).node_id;
-      if ( not kernel().node_manager.is_local_node_id( node_id ) )
+      if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
       {
         throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
@@ -204,7 +198,7 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
     size_t node_id = ( *it ).node_id;
-    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
@@ -242,7 +236,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );
-    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
@@ -261,7 +255,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
       size_t node_id = ( *it ).node_id;
-      if ( not kernel().node_manager.is_local_node_id( node_id ) )
+      if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
       {
         throw KernelException( "Distance is currently implemented for local nodes only." );
       }
@@ -296,7 +290,7 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
     size_t node_id = ( *it ).node_id;
-    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
@@ -334,13 +328,13 @@ distance( const ArrayDatum conns )
 
     size_t trgt = conn_id.get_target_node_id();
 
-    if ( not kernel().node_manager.is_local_node_id( trgt ) )
+    if ( not kernel::manager< NodeManager >.is_local_node_id( trgt ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
     }
 
 
-    NodeCollectionPTR trgt_nc = kernel().node_manager.node_id_to_node_collection( trgt );
+    NodeCollectionPTR trgt_nc = kernel::manager< NodeManager >.node_id_to_node_collection( trgt );
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
 
     // distance is NaN if source, target is not spatially distributed
@@ -406,10 +400,10 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ConnectionCreator connector( connection_dict );
   ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
 
-  kernel().node_manager.update_thread_local_node_data();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
-  kernel().connection_manager.set_connections_have_changed();
+  kernel::manager< ConnectionManager >.set_connections_have_changed();
 
   source->connect( source_nc, target, target_nc, connector );
 }
@@ -448,4 +442,52 @@ get_layer_status( NodeCollectionPTR )
   return DictionaryDatum();
 }
 
+void
+LayerMetadata::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+{
+  layer_->get_status( d, nc );
+}
+
+const AbstractLayerPTR
+LayerMetadata::get_layer() const
+{
+  return layer_;
+}
+
+std::string
+LayerMetadata::get_type() const
+{
+  return "spatial";
+}
+
+void
+LayerMetadata::set_first_node_id( size_t node_id )
+{
+  first_node_id_ = node_id;
+}
+
+size_t
+LayerMetadata::get_first_node_id() const
+{
+  return first_node_id_;
+}
+
+bool
+LayerMetadata::operator==( const NodeCollectionMetadataPTR rhs ) const
+{
+  const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
+  if ( not rhs_layer_metadata )
+  {
+    return false;
+  }
+  // Compare status dictionaries of this layer and rhs layer
+  DictionaryDatum dict( new Dictionary() );
+  DictionaryDatum rhs_dict( new Dictionary() );
+
+  // Since we do not have access to the node collection here, we
+  // compare based on all metadata, irrespective of any slicing
+  get_status( dict, /* nc */ nullptr );
+  rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
+  return *dict == *rhs_dict;
+}
 } // namespace nest

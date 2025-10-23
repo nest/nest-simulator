@@ -39,13 +39,15 @@
 #include "block_vector.h"
 
 // Includes from nestkernel:
-#include "conn_parameter.h"
-#include "nest_time.h"
+// #include "conn_parameter.h"
+// #include "kernel_manager.h"
 #include "node_collection.h"
 #include "parameter.h"
+// #include "sp_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
+#include "nest_datums.h"
 #include "sliexceptions.h"
 
 namespace nest
@@ -93,25 +95,9 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
   virtual ~BipartiteConnBuilder();
 
-  size_t
-  get_synapse_model() const
-  {
-    if ( synapse_model_id_.size() > 1 )
-    {
-      throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
-    }
-    return synapse_model_id_[ 0 ];
-  }
+  size_t get_synapse_model() const;
 
-  bool
-  get_default_delay() const
-  {
-    if ( synapse_model_id_.size() > 1 )
-    {
-      throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
-    }
-    return default_delay_[ 0 ];
-  }
+  bool get_default_delay() const;
 
   void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
@@ -127,37 +113,17 @@ public:
   bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   //! Return true if rule allows creation of symmetric connectivity
-  virtual bool
-  supports_symmetric() const
-  {
-    return false;
-  }
+  virtual bool supports_symmetric() const;
 
   //! Return true if rule automatically creates symmetric connectivity
-  virtual bool
-  is_symmetric() const
-  {
-    return false;
-  }
+  virtual bool is_symmetric() const;
 
-  bool
-  allows_autapses() const
-  {
-    return allow_autapses_;
-  }
+  bool allows_autapses() const;
 
-  bool
-  allows_multapses() const
-  {
-    return allow_multapses_;
-  }
+  bool allows_multapses() const;
 
   //! Return true if rule is applicable only to nodes with proxies
-  virtual bool
-  requires_proxies() const
-  {
-    return true;
-  }
+  virtual bool requires_proxies() const;
 
 protected:
   //! Implements the actual connection algorithm
@@ -165,29 +131,17 @@ protected:
 
   bool all_parameters_scalar_() const;
 
-  virtual void
-  sp_connect_()
-  {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
-  }
+  virtual void sp_connect_();
 
-  virtual void
-  disconnect_()
-  {
-    throw NotImplemented( "This disconnection rule is not implemented." );
-  }
+  virtual void disconnect_();
 
-  virtual void
-  sp_disconnect_()
-  {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
-  }
+  virtual void sp_disconnect_();
 
   void update_param_dict_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, size_t indx );
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( size_t, Node&, size_t, RngPtr );
-  void single_disconnect_( size_t, Node&, size_t );
+  void single_disconnect_( size_t snode_id, Node& target, size_t target_thread );
 
   /**
    * Moves pointer in parameter array.
@@ -198,8 +152,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( size_t, size_t n_skip = 1 );
-
+  void skip_conn_parameter_( size_t target_thread, size_t n_skip = 1 );
   /**
    * Returns true if conventional looping over targets is indicated.
    *
@@ -423,11 +376,7 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
 
   //! Only call third_connect() on ThirdOutBuilder
-  void
-  connect() override final
-  {
-    assert( false );
-  }
+  void connect() override final;
 
   /**
    * Create third-factor connection for given primary connection.
@@ -520,11 +469,7 @@ public:
   void third_connect( size_t source_gid, Node& target ) override;
 
 private:
-  void
-  connect_() override
-  {
-    assert( false );
-  } //!< only call third_connect()
+  void connect_() override; //!< only call third_connect()
 
   /**
    * For block pool, return index of first pool element for given target node.
@@ -570,17 +515,9 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  bool
-  supports_symmetric() const override
-  {
-    return true;
-  }
+  bool supports_symmetric() const override;
 
-  bool
-  requires_proxies() const override
-  {
-    return false;
-  }
+  bool requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -621,17 +558,9 @@ public:
   {
   }
 
-  bool
-  is_symmetric() const override
-  {
-    return sources_ == targets_ and all_parameters_scalar_();
-  }
+  bool is_symmetric() const override;
 
-  bool
-  requires_proxies() const override
-  {
-    return false;
-  }
+  bool requires_proxies() const override;
 
 protected:
   void connect_() override;
@@ -787,29 +716,13 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 
-  const std::string&
-  get_pre_synaptic_element_name() const
-  {
-    return pre_synaptic_element_name_;
-  }
+  const std::string& get_pre_synaptic_element_name() const;
 
-  const std::string&
-  get_post_synaptic_element_name() const
-  {
-    return post_synaptic_element_name_;
-  }
+  const std::string& get_post_synaptic_element_name() const;
 
-  void
-  set_name( const std::string& name )
-  {
-    name_ = name;
-  }
+  void set_name( const std::string& name );
 
-  std::string
-  get_name() const
-  {
-    return name_;
-  }
+  std::string get_name() const;
 
   /**
    * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
@@ -839,27 +752,6 @@ protected:
    */
   void connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 };
-
-inline void
-BipartiteConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
-{
-  if ( param.is_array() )
-  {
-    parameters_requiring_skipping_.push_back( &param );
-  }
-}
-
-inline void
-BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
-{
-  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
-  {
-    ( *it )->skip( target_thread, n_skip );
-  }
-}
-
 } // namespace nest
 
 #endif

@@ -23,14 +23,10 @@
 #ifndef WEIGHT_RECORDER_H
 #define WEIGHT_RECORDER_H
 
-// C++ includes:
-#include <vector>
-
 // Includes from nestkernel:
-#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
-#include "kernel_manager.h"
+#include "nest_datums.h"
 #include "nest_types.h"
 #include "recording_device.h"
 

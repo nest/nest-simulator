@@ -27,12 +27,13 @@
 #include <limits>
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -205,7 +206,7 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, from );
+    kernel::manager< EventDeliveryManager >.send( *this, se, from );
   }
 }
 

@@ -28,7 +28,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 #include "dictdatum.h"
 
@@ -491,6 +491,12 @@ glif_psc_double_alpha::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+}
+
+inline void
+glif_psc_double_alpha::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e ); // the logger does this for us
 }
 
 } // namespace nest

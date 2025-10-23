@@ -85,7 +85,7 @@ def build_network(layer_type):
 
 @pytest.mark.parametrize("layer_type", ["grid", "free"])
 def test_source_layer_nodes_dump(tmp_path, expected_source_nodes_dump, layer_type):
-    """Test that source layer nodes dump mathces expectation."""
+    """Test that source layer nodes dump matches expectation."""
 
     src_layer, _ = build_network(layer_type)
 
@@ -98,7 +98,7 @@ def test_source_layer_nodes_dump(tmp_path, expected_source_nodes_dump, layer_typ
 
 @pytest.mark.parametrize("layer_type", ["grid", "free"])
 def test_target_layer_nodes_dump(tmp_path, expected_target_nodes_dump, layer_type):
-    """Test that target layer nodes dump mathces expectation."""
+    """Test that target layer nodes dump matches expectation."""
 
     _, tgt_layer = build_network(layer_type)
 
@@ -111,7 +111,7 @@ def test_target_layer_nodes_dump(tmp_path, expected_target_nodes_dump, layer_typ
 
 @pytest.mark.parametrize("layer_type", ["grid", "free"])
 def test_layer_connections_dump(tmp_path, expected_conn_dump, layer_type):
-    """Test that layer connections dump mathces expectation."""
+    """Test that layer connections dump matches expectation."""
 
     src_layer, tgt_layer = build_network(layer_type)
 

@@ -33,8 +33,11 @@
 #include "dictutils.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
+#include "nest_impl.h"
 
 void
 nest::register_music_event_in_proxy( const std::string& name )

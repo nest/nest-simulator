@@ -38,6 +38,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
 #include "nest_impl.h"

@@ -488,204 +488,84 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Get PR authors from commits"
-        id: pr_authors
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.10"
+
+      - name: "Install dependencies"
         run: |
-          # Get PR information
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          REPO_OWNER="${{ github.repository_owner }}"
-          REPO_NAME="${{ github.event.repository.name }}"
-          TOKEN="${{ github.token }}"
+          pip install requests
 
-          echo "Analyzing PR #${PR_NUMBER} in ${REPO_OWNER}/${REPO_NAME}"
-
-          # Get commits from GitHub API
-          echo "Fetching commits from GitHub API..."
-          RESPONSE_FILE="/tmp/pr_commits.json"
-          HTTP_STATUS=$(curl -sS \
-            -H "Authorization: Bearer ${TOKEN}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -o "${RESPONSE_FILE}" \
-            -w "%{http_code}" \
-            "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/pulls/${PR_NUMBER}/commits")
-
-          # Check HTTP status code
-          if [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
-            echo "Error: Failed to fetch commits from GitHub API (HTTP ${HTTP_STATUS})"
-            head -c 500 "${RESPONSE_FILE}" || true
-            exit 1
-          fi
-
-          # Validate that the response is a JSON array
-          if ! jq -e 'type == "array"' "${RESPONSE_FILE}" > /dev/null; then
-            echo "Error: Unexpected API response (not a JSON array)"
-            head -c 500 "${RESPONSE_FILE}" || true
-            exit 1
-          fi
-
-          # Extract commit information using jq
-          COMMITS=$(jq -r '.[] | "\(.sha)|\(.commit.author.name)|\(.commit.author.email)"' "${RESPONSE_FILE}")
-
-          if [ -z "$COMMITS" ]; then
-            echo "No commits found in PR"
-            echo "authors=[]" >> $GITHUB_OUTPUT
-            echo "author_count=0" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Extract unique authors (name and email pairs)
-          UNIQUE_AUTHORS=$(echo "$COMMITS" | sort -u -t'|' -k2,3 | cut -d'|' -f2,3)
-
-          # Count authors
-          AUTHOR_COUNT=$(echo "$UNIQUE_AUTHORS" | wc -l)
-
-          echo "Found ${AUTHOR_COUNT} unique author(s):"
-          echo "$UNIQUE_AUTHORS" | while IFS='|' read -r name email; do
-            echo "  - ${name} <${email}>"
-          done
-
-          # Output results
-          echo "author_count=${AUTHOR_COUNT}" >> $GITHUB_OUTPUT
-
-          # Also output as multiline for easy reading
-          {
-            echo "authors_multiline<<EOF"
-            echo "$UNIQUE_AUTHORS" | while IFS='|' read -r name email; do
-              echo "${name} <${email}>"
-            done
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-      - name: "Fetch authorized authors from private repository"
-        id: fetch_authorized_authors
-        if: env.PRIVATE_REPO_TOKEN != ''
+      - name: "Check PR authors"
+        id: check_authors
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          PRIVATE_REPO_OWNER: ${{ secrets.PRIVATE_REPO_OWNER }}
+          PRIVATE_REPO_NAME: ${{ secrets.PRIVATE_REPO_NAME }}
+          FAIL_ON_UNKNOWN_AUTHORS: ${{ vars.FAIL_ON_UNKNOWN_AUTHORS || 'true' }}
         run: |
-          # Configuration for nest/nest-release-tools repository
-          PRIVATE_REPO_OWNER="nest"
-          PRIVATE_REPO_NAME="nest-release-tools"
-          AUTHORIZED_AUTHORS_FILE="data/gitlognames.yaml"
+          # Run the script and capture outputs
+          python build_support/check_pr_authors.py \
+            --pr-number ${{ github.event.pull_request.number }} \
+            --repo-owner ${{ github.repository_owner }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --github-token ${{ github.token }} \
+            --private-repo-owner "${{ secrets.PRIVATE_REPO_OWNER }}" \
+            --private-repo-name "${{ secrets.PRIVATE_REPO_NAME }}" \
+            --private-repo-token "${{ secrets.PRIVATE_REPO_TOKEN }}" \
+            --authors-file-path "${{ vars.VALIDATED_AUTHORS_FILE_PATH || 'data/gitlognames.yaml' }}" \
+            --fail-on-unknown ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' }} > /tmp/script_output.txt 2>&1
 
-          echo "Fetching authorized authors from ${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/${AUTHORIZED_AUTHORS_FILE}"
+          # Extract outputs for GitHub Actions
+          if [ -f /tmp/script_output.txt ]; then
+            # Extract key=value pairs and set as GitHub outputs
+            grep "^[a-zA-Z_][a-zA-Z0-9_]*=" /tmp/script_output.txt | while IFS='=' read -r key value; do
+              echo "${key}=${value}" >> $GITHUB_OUTPUT
+            done
 
-          # Fetch the authorized authors file from private repository
-          RESPONSE=$(curl -s -H "Authorization: token ${PRIVATE_REPO_TOKEN}" \
-            -H "Accept: application/vnd.github.v3.raw" \
-            "https://api.github.com/repos/${PRIVATE_REPO_OWNER}/${PRIVATE_REPO_NAME}/contents/${AUTHORIZED_AUTHORS_FILE}")
-
-          # Check if the request was successful (raw API returns 404 for not found)
-          if [ -z "$RESPONSE" ] || echo "$RESPONSE" | grep -q "Not Found"; then
-            echo "Warning: Could not find authorized authors file at ${AUTHORIZED_AUTHORS_FILE}"
-            echo "fetch_success=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Extract the content (raw content is already plain text when using v3.raw)
-          AUTHORIZED_CONTENT="$RESPONSE"
-
-          if [ -z "$AUTHORIZED_CONTENT" ]; then
-            echo "Warning: Could not decode authorized authors file content"
-            echo "fetch_success=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          # Parse authorized authors from YAML format: "Name <email>: githubhandle"
-          # Extract the "Name <email>" part before the colon and store in secure temp file
-          echo "$AUTHORIZED_CONTENT" | grep -v '^#' | grep -v '^$' | sed 's/:.*$//' | sort -u > /tmp/authorized_authors_secure.txt
-          AUTHORIZED_COUNT=$(wc -l < /tmp/authorized_authors_secure.txt)
-
-          echo "Found ${AUTHORIZED_COUNT} authorized author(s) (list stored securely, not exposed)"
-
-          # Only output success status and count - never the actual names
-          echo "authorized_count=${AUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
-          echo "fetch_success=true" >> $GITHUB_OUTPUT
-
-      - name: "Check if PR authors are authorized"
-        id: check_authorization
-        if: steps.fetch_authorized_authors.outputs.fetch_success == 'true'
-        run: |
-          echo "Checking if PR authors are in the authorized list..."
-
-          # Get PR authors from previous step output
-          PR_AUTHORS="${{ steps.pr_authors.outputs.authors_multiline }}"
-
-          # Create temporary file for PR authors
-          echo "$PR_AUTHORS" > /tmp/pr_authors.txt
-
-          # Find authors in PR but not in authorized list
-          # Use the secure temp file created in previous step
-          UNAUTHORIZED_AUTHORS=""
-          UNAUTHORIZED_COUNT=0
-
-          while IFS= read -r pr_author; do
-            if [ -n "$pr_author" ]; then
-              # Check if this exact author (name and email) is in authorized list
-              # We need exact match of the full "Name <email>" format
-              if ! grep -Fxq "$pr_author" /tmp/authorized_authors_secure.txt; then
-                UNAUTHORIZED_AUTHORS="${UNAUTHORIZED_AUTHORS}${pr_author}\n"
-                UNAUTHORIZED_COUNT=$((UNAUTHORIZED_COUNT + 1))
-              fi
+            # Handle formatted authors list for GitHub Actions step summary
+            if grep -q "authors_formatted<<EOF" /tmp/script_output.txt; then
+              # Extract authors between EOF markers
+              sed -n '/authors_formatted<<EOF/,/^EOF$/p' /tmp/script_output.txt | \
+                sed '1d;$d' > /tmp/authors_formatted.txt
+              echo "authors_formatted<<EOF" >> $GITHUB_OUTPUT
+              cat /tmp/authors_formatted.txt >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
             fi
-          done < /tmp/pr_authors.txt
 
-          # Only output count and status - never store unauthorized names
-          echo "unauthorized_count=${UNAUTHORIZED_COUNT}" >> $GITHUB_OUTPUT
-
-          # Determine overall status
-          if [ $UNAUTHORIZED_COUNT -eq 0 ]; then
-            echo "authorization_status=success" >> $GITHUB_OUTPUT
-            echo "✅ SUCCESS: All PR authors are authorized"
-          else
-            echo "authorization_status=failure" >> $GITHUB_OUTPUT
-            echo "❌ FAILURE: Found $UNAUTHORIZED_COUNT unauthorized author(s) in this PR"
-            echo "Unauthorized authors found (names not displayed for security)"
-
-            # Check if we should fail the build (configurable via repository variable)
-            FAIL_ON_UNAUTHORIZED="${{ vars.FAIL_ON_UNAUTHORIZED_AUTHORS || 'true' }}"
-            if [ "$FAIL_ON_UNAUTHORIZED" = "true" ]; then
-              echo "Build failed due to unauthorized authors (set FAIL_ON_UNAUTHORIZED_AUTHORS=false to disable)"
-              exit 1
-            else
-              echo "Build continues despite unauthorized authors (FAIL_ON_UNAUTHORIZED_AUTHORS=false)"
-            fi
+            # Display the script output
+            cat /tmp/script_output.txt
           fi
-
-          # Clean up temporary files for security
-          rm -f /tmp/authorized_authors_secure.txt /tmp/pr_authors.txt
 
       - name: "Display PR authors summary"
         run: |
-          echo "Starting PR authors summary display..."
-          echo "Author count: ${{ steps.pr_authors.outputs.author_count }}"
-          echo "Authors multiline: ${{ steps.pr_authors.outputs.authors_multiline }}"
-
           echo "## PR Authors Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total unique authors:** ${{ steps.pr_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Total unique authors:** ${{ steps.check_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Authors:**" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.pr_authors.outputs.authors_multiline }}" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.check_authors.outputs.authors_formatted }}" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-          # Add authorization check results if available
-          if [ "${{ steps.fetch_authorized_authors.outputs.fetch_success }}" = "true" ]; then
+          # Add validation check results if available
+          if [ "${{ steps.check_authors.outputs.validation_status }}" = "success" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "## Author Authorization Check" >> $GITHUB_STEP_SUMMARY
+            echo "## Author Validation Check" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-
-            if [ "${{ steps.check_authorization.outputs.unauthorized_count }}" -gt 0 ]; then
-              echo "❌ **FAILURE:** ${{ steps.check_authorization.outputs.unauthorized_count }} unauthorized author(s) found" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "Some authors in this PR are not in the authorized list (exact name and email match required)." >> $GITHUB_STEP_SUMMARY
-              echo "Contact repository administrators for access." >> $GITHUB_STEP_SUMMARY
-            else
-              echo "✅ **SUCCESS: All PR authors are authorized**" >> $GITHUB_STEP_SUMMARY
-            fi
+            echo "✅ **SUCCESS: All PR authors are validated**" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_authors.outputs.validation_status }}" = "failure" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Author Validation Check" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **FAILURE:** ${{ steps.check_authors.outputs.unknown_count }} unknown author(s) found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The authors of this PR may be contributing for the first time or may have modified their author information. Author information requires review." >> $GITHUB_STEP_SUMMARY
           else
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "ℹ️ **Note:** Author authorization check skipped (private repository access not configured)" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ **Note:** Author validation check skipped (private repository access not configured)" >> $GITHUB_STEP_SUMMARY
           fi
 
   sphinx-rtd:

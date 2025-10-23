@@ -548,6 +548,7 @@ jobs:
 
       - name: "Display PR authors summary"
         run: |
+          # Create summary content
           echo "## PR Authors Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Total unique authors:** ${{ steps.check_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY
@@ -574,6 +575,35 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "ℹ️ **Note:** Author validation check skipped (private repository access not configured)" >> $GITHUB_STEP_SUMMARY
           fi
+
+          # Also display in build logs for visibility
+          echo "=== PR AUTHORS SUMMARY ==="
+          echo "## PR Authors Summary"
+          echo ""
+          echo "**Total unique authors:** ${{ steps.check_authors.outputs.author_count }}"
+          echo ""
+          echo "**Authors:**"
+          echo '```'
+          echo "${{ steps.check_authors.outputs.authors_formatted }}"
+          echo '```'
+
+          if [ "${{ steps.check_authors.outputs.validation_status }}" = "success" ]; then
+            echo ""
+            echo "## Author Validation Check"
+            echo ""
+            echo "✅ **SUCCESS: All PR authors are validated**"
+          elif [ "${{ steps.check_authors.outputs.validation_status }}" = "failure" ]; then
+            echo ""
+            echo "## Author Validation Check"
+            echo ""
+            echo "❌ **FAILURE:** ${{ steps.check_authors.outputs.unknown_count }} unknown author(s) found"
+            echo ""
+            echo "The authors of this PR may be contributing for the first time or may have modified their author information. Author information requires review."
+          else
+            echo ""
+            echo "ℹ️ **Note:** Author validation check skipped (private repository access not configured)"
+          fi
+          echo "========================="
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)

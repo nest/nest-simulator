@@ -8,7 +8,7 @@ In NEST, transmission delays are specified with the ``delay`` parameter.
 Delays are considered fully dendritic by all built-in models and therefore, the ``delay`` parameter is still used by
 most models.
 
-Since NEST 3.9, it is also possible to specify both explicit, heterogeneous axonal and dendritic delays for models
+It is now also possible to specify both explicit, heterogeneous axonal and dendritic delays for models
 supporting this feature. This is useful for STDP models and other models relying on the timing of spike arrival at the
 synapse.
 

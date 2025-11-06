@@ -30,7 +30,7 @@ stimulators = [
 ]
 
 
-# TODO: Split the three tests into separate test functions; for the third test, use 
+# TODO: Split the three tests into separate test functions; for the third test, use
 #           pytest.raises(nest.kernel.NESTError, match="<NEST ERROR NAME>")
 #       to tighten the test
 

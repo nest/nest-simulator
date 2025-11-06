@@ -34,6 +34,7 @@ stimulators = [
 #           pytest.raises(nest.kernel.NESTError, match="<NEST ERROR NAME>")
 #       to tighten the test
 
+
 @pytest.mark.parametrize("stim_model", stimulators)
 def test_multiple_static_synapse_connections(stim_model):
     """

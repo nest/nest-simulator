@@ -66,7 +66,7 @@ Parameters
 
 =================== =========================== ======================================================
 **Common properties**
------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
  volume_transmitter :py:class:`.NodeCollection` :ref:`Volume transmitter <volume_transmitter>`
                                                 collecting the spikes from the pool of dopamine
                                                 releasing neurons and transmitting the spikes to the

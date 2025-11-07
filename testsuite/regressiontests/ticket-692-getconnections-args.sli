@@ -26,11 +26,11 @@ Name: testsuite::ticket-692 - ensure GetConnections checks its args
 
 Synopsis: (ticket-686-positive-parameters) run -> NEST exits if test fails
 
-Description: 
+Description:
 This tests ensures that models with parameters C_m or tau_* throw an exception
 when trying to set a value that is not strictly positive.
- 
-The test also ensures that values can actually be set to different, positive 
+
+The test also ensures that values can actually be set to different, positive
 values.
 
 Author: Hans Ekkehard Plesser, 2013-04-18
@@ -48,17 +48,17 @@ ResetKernel
   /all_fine true def
 
   [ /source /target ]
-  { 
+  {
     /key Set
 
     [ 0 0.0 () << >> /foo ]
     {
       /val Set
-      
+
       mark
-      { 
+      {
 	<< >> dup key val put_d GetConnections
-      }      
+      }
       stopped
       {
 	% we got an exception, need to clean up
@@ -69,19 +69,19 @@ ResetKernel
       }
       {
 	% model failed to raise exception
-	/all_fine false def	  
+	/all_fine false def
       }
       ifelse   % stopped
-      
+
       % clear stack
       counttomark npop pop % need to pop mark separately
-      
-      clear    
+
+      clear
     } forall
   }
   forall
-  
-  all_fine  
+
+  all_fine
 
 } assert_or_die
 

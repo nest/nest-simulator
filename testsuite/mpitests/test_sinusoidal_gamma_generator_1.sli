@@ -49,7 +49,7 @@ skip_if_not_threaded
 {
   /individual Set
 
-  /nodes total_vps 2 mul def  
+  /nodes total_vps 2 mul def
 
   % set resolution and total/local number of threads
   <<
@@ -58,7 +58,7 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /sinusoidal_gamma_generator
-  << 
+  <<
     /rate 1000.
     /amplitude 1000.
     /frequency 100.
@@ -66,8 +66,8 @@ skip_if_not_threaded
     /individual_spike_trains individual
   >> SetDefaults
 
-  /gens [ nodes ] 
-  { 
+  /gens [ nodes ]
+  {
     ;
     /sinusoidal_gamma_generator Create
   } Table def
@@ -76,7 +76,7 @@ skip_if_not_threaded
 
   [ gens pnet ] { Connect } ScanThread
   pnet { sr Connect } forall
-  
+
   10. Simulate
 
   sr
@@ -89,11 +89,11 @@ skip_if_not_threaded
   GetKernelStatus /node_models get /sinusoidal_gamma_generator MemberQ
   {
     /sr false spg_tester def
-    
-    % get events, replace vectors with SLI arrays    
+
+    % get events, replace vectors with SLI arrays
     /ev sr /events get def
     ev keys { /k Set ev dup k get cva k exch put } forall
-    ev 
+    ev
   }
   {
     << >>

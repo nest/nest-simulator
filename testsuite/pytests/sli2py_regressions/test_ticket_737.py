@@ -25,6 +25,7 @@ import pytest
 """
 Regression test for Ticket #737.
 
+Test ported from SLI regression test
 Ensure that stimulation devices can only be connected with a single synapse type.
 """
 

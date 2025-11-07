@@ -91,6 +91,7 @@ def test_ticket_481():
     """
     Ensure that poisson_generator_ps delivers spikes to more than one node.
 
+    Test ported from SLI regression test
     This test checks if a poisson generator can correctly deliver spikes to multiple neurons
     through synapses of identical or different types. The key assertion is that neuron membrane
     potentials exceed a reference voltage in all valid configurations, indicating successful spike delivery.

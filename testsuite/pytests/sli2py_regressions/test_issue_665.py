@@ -22,7 +22,7 @@
 """
 Regression test for Issue #665 (GitHub).
 
-    Test ported from SLI regression test
+Test ported from SLI regression test
 This test ensures that ConnectLayers correctly handles devices with thread
 siblings as sources and targets.
 

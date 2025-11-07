@@ -22,6 +22,16 @@
 import nest
 import pytest
 
+"""
+ticket 800: Ensure that spatial parameters check their parameters
+
+Test ported from SLI regression test
+
+This ticket ensures that spatial parameters check their parameters for
+validity, e.g., strictly positive sigma for a Gaussian.
+
+Author: Hans Ekkehard Plesser, 2014-12-13
+"""
 # --- Good and bad parameter sets ---
 good_random_parameters = [
     ("uniform", {"min": 0.0, "max": 1.0}),

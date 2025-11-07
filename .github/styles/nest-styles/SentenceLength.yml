@@ -5,4 +5,3 @@ scope: sentence
 level: suggestion
 max: 25
 token: \b(\w+)\b
-

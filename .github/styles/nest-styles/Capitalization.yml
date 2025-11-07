@@ -4,4 +4,3 @@ message: "'%s' should be in sentence case"
 level: warning
 scope: heading
 match: $sentence
-

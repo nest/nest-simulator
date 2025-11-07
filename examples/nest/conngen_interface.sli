@@ -20,7 +20,7 @@
  *
  */
 
-% 
+%
 % This example shows how to use the Connection Generator Interface of
 % libneurosim ([1]) from the SLI level. It connects two small neuronal
 % populations using a connection pattern specified in the XML notation

@@ -24,7 +24,7 @@
 %% NEST Library for the testsuite
 %%
 %% (C) 2007-2012 The NEST Collaboration
-%%        
+%%
 %%  Authors   Jochen Martin Eppler
 %%            eppler@biologie.uni-freiburg.de
 %%            Markus Diesmann
@@ -71,7 +71,7 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
   not
   {
     M_FATAL (unittest::assert_or_die)
-    (Assertion failed) 
+    (Assertion failed)
     /die_message lookup { (: ) exch join join } if
     (.) join message
 
@@ -87,7 +87,7 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
  begin
 
    /func load pass_or_die
-   % check if the condition returned a boolean:   
+   % check if the condition returned a boolean:
    dup type /booltype eq not
    {
       M_FATAL (unittest::assert_or_die)
@@ -98,13 +98,13 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
       M_FATAL (unittest::assert_or_die)
      (Exiting with code 2.) message
 
-     2 quit_i    
+     2 quit_i
    } if
-   
+
    not
    {
      M_FATAL (unittest::assert_or_die)
-     (Assertion failed)     
+     (Assertion failed)
      /die_message lookup { (: ) exch join join } if
      (.\nAssertion:\n) join /func load pcvs join  message
 
@@ -119,7 +119,7 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
 
 /assert_or_die[/booltype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     assert_or_die
@@ -128,7 +128,7 @@ SeeAlso: unittest::fail_or_die, unittest::pass_or_die, assert, quit
 
 /assert_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     assert_or_die
@@ -143,7 +143,7 @@ Synopsis: {code}        pass_or_die -> -
 
 Diagnostics:
 This function will quit nest if the code block raises any error.
-It will print an error message to cerr, too. If string is given, it will be 
+It will print an error message to cerr, too. If string is given, it will be
 included in the error message.
 
 Examples:
@@ -169,7 +169,7 @@ SeeAlso: unittest::assert_or_die, unittest::fail_or_die, stopped, assert, quit
 
   /func load stopped
   {
-    handleerror    
+    handleerror
 
     M_FATAL (unittest::pass_or_die)
     (Code block did not pass)
@@ -184,7 +184,7 @@ SeeAlso: unittest::assert_or_die, unittest::fail_or_die, stopped, assert, quit
 
 /pass_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     pass_or_die
@@ -204,13 +204,13 @@ This procedure is provided to test that certain errors are raised, e.g., when
 illegal values are set.
 
 Diagnostics:
-This function will quit nest if the code does NOT raise an error 
+This function will quit nest if the code does NOT raise an error
 (exit code 3). It will print an error message to cerr, too.
 
 Examples:
 /unittest (7391) require
 /unittest using
-  { 1 0 div } fail_or_die    
+  { 1 0 div } fail_or_die
   { << /resolution 0 >> SetKernelStatus} fail_or_die
 endusing
 
@@ -226,7 +226,7 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
 {
   << exch /func exch >>
   begin
-    
+
     /func load stopped not  % got a problem if we were NOT stopped
     {
       M_FATAL (unittest::fail_or_die)
@@ -237,7 +237,7 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
       M_FATAL (unittest::fail_or_die) (Exiting with code 3.) message
 
       3 quit_i
-    } 
+    }
     if
 
     % clear errordict, gleaned from /handleerror
@@ -249,11 +249,11 @@ SeeAlso: unittest::assert_or_die, unittest::pass_or_die, assert, quit
     errordict /ostack get restoreostack
   end
 
-} bind def 
+} bind def
 
 /fail_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     fail_or_die
@@ -272,7 +272,7 @@ is a call of operator add in a situation where the operand stack is empty. add
 raises a StackUnderflow error in this case which is a scripterror and the desired
 behavior. There are several alternative and undesired behaviors of the code block
 in question. add may return without raising an error, this is not the expected behavior
-and therefore failbutnocrash_or_die reports a problem. However, other scenarios 
+and therefore failbutnocrash_or_die reports a problem. However, other scenarios
 are that the code block causes an assertion to fail or that it causes a segmentation
 fault. In contrast to fail_or_die, failbutnocrash_or_die survives such a crash of
 the code block to be tested. This is achieved by probing the code block in a separate
@@ -280,7 +280,7 @@ nest instance and inspecting the result. The procedure uses the symbolic exit co
 defined in statusdict::exitcodes, scripterror is one of them.
 
 Diagnostics:
-This function will quit nest  (exit code 3) if the code does NOT raise an error of the 
+This function will quit nest  (exit code 3) if the code does NOT raise an error of the
 scripterror type. It will print an error message to cerr, too.
 
 Examples:
@@ -303,7 +303,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
 
  (echo ")
  /func load pcvs join
- ( exec" | ) join 
+ ( exec" | ) join
  (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
@@ -318,7 +318,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
   % this is the desired behavior
  }
  {
-  % nest chrashed, for example with return values 
+  % nest chrashed, for example with return values
   %  statusdict/exitcodes/abort ::    (e.g. caused by failed assertion)
   %  statusdict/exitcodes/segfault :: (e.g illegal access of memory)
   % or nest completed successfully
@@ -330,7 +330,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
 
   M_FATAL (unittest::failbutnocrash_or_die) (Exiting with code 3.) message
 
-  3 quit_i  
+  3 quit_i
 
  }
  ifelse
@@ -340,7 +340,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
 
 /failbutnocrash_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     failbutnocrash_or_die
@@ -377,7 +377,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
  (echo ")
  /func load pcvs join
- ( exec" | ) join 
+ ( exec" | ) join
  (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
@@ -395,7 +395,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
   % this is the desired behavior
  }
  {
-  % nest chrashed, for example with return values 
+  % nest chrashed, for example with return values
   %  statusdict/exitcodes/abort ::    (e.g. caused by failed assertion)
   %  statusdict/exitcodes/segfault :: (e.g illegal access of memory)
   % or nest completed successfully
@@ -407,7 +407,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
   M_FATAL (unittest::passorfailbutnocrash_or_die) (Exiting with code 2.) message
 
-  3 quit_i  
+  3 quit_i
 
  }
  ifelse
@@ -417,7 +417,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
 /passorfailbutnocrash_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     passorfailbutnocrash_or_die
@@ -433,20 +433,20 @@ Synopsis: { code } [string] crash_or_die -> -
 Description:
 
 The procedure tests that the code block crashes nest. An example
-is a call of operator add_dd in a situation where the operand stack is empty. 
+is a call of operator add_dd in a situation where the operand stack is empty.
 add_dd does not check whether the operand stack contains enough data, no exception
 is raised. Therefore, the assertion in the C++ implementation of add_dd that the
 operand stack contains at least 2 elements fails and nest terminates with the exit
-code statusdict::exitcodes::abort. This is the desired behavior and therefore 
-crash_or_die reports success. There are several alternative and undesired behaviors 
-of the code block in question. add_dd may raise a StackUnderflow error, return without 
-raising an error, or crash because of a segmentation fault. This is not the expected behavior 
-and therefore crash_or_die reports a problem. Like failbutnocrash_or_die, crash_or_die 
-survives a crash of the code block by probing the code block in a separate nest instance 
-and inspecting the result. The procedure uses the symbolic exit codes defined in 
+code statusdict::exitcodes::abort. This is the desired behavior and therefore
+crash_or_die reports success. There are several alternative and undesired behaviors
+of the code block in question. add_dd may raise a StackUnderflow error, return without
+raising an error, or crash because of a segmentation fault. This is not the expected behavior
+and therefore crash_or_die reports a problem. Like failbutnocrash_or_die, crash_or_die
+survives a crash of the code block by probing the code block in a separate nest instance
+and inspecting the result. The procedure uses the symbolic exit codes defined in
 statusdict::exitcodes, abort is one of them.
 This test does not work if nest is compiled with the NDEBUG flag set and it is not
-safe to just test for a crash because nest may become inconsistent without crashing. 
+safe to just test for a crash because nest may become inconsistent without crashing.
 Therefore, crah_or_die always reports success if the NDEBUG flag is set.
 
 Diagnostics:
@@ -475,7 +475,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
   (echo ")
   /func load pcvs join
-  ( exec" | ) join 
+  ( exec" | ) join
   (') statusdict /argv get First (') join join join
   ( -) join /command Set
 
@@ -488,7 +488,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
    % this is the desired behavior
   }
   {
-   % nest chrashed, for example with return values 
+   % nest chrashed, for example with return values
    %  statusdict/exitcodes/scripterror ::    (a SLI exception)
    %  statusdict/exitcodes/segfault :: (e.g illegal access of memory)
    % or nest completed successfully
@@ -500,7 +500,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
    M_FATAL (unittest::crash_or_die) (Exiting with code 3.) message
 
-   3 quit_i  
+   3 quit_i
   }
   ifelse
  } if   % of ndebug
@@ -509,7 +509,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
 /crash_or_die[/proceduretype /stringtype]
 {
-  << >> 
+  << >>
   begin
     /die_message Set
     crash_or_die
@@ -520,12 +520,12 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
 
 /** @BeginDocumentation
 Name: unittest::ToUnitTestPrecision  - reduce argument to specified precision.
-   
+
 Synopsis:
    double integer ToUnitTestPrecision -> double or integer
    array  integer ToUnitTestPrecision -> array
    other  integer ToUnitTestPrecision -> other
-   
+
 Description:
 Reduces its double argument to the precision specified by the integer.
 If the first argument is an array, ToUnitTestPrecision is recursively
@@ -537,7 +537,7 @@ The contents of the stream is converted back to a numerical object by
 operator token. This guarantees that for the conversion from text to double
 the same algorithm
 is used for the argument of  ToUnitTestPrecision and the reference data,
-usually explicitly specified in the test file as an array. 
+usually explicitly specified in the test file as an array.
 The double argument may contain an integral value or be converted to and
 integral value due to the required precision. In this case the output
 operator of the stream may decide to represent the value as an integer,
@@ -559,7 +559,7 @@ Examples:
                   6 ToUnitTestPrecision   --> [7.83635 (flower) -32.3876]
   -70             6 ToUnitTestPrecision type --> /integertype
   -70.0           6 ToUnitTestPrecision type --> /integertype
-  
+
 Author: Markus Diesmann
 
 FirstVersion: 071108
@@ -607,16 +607,16 @@ Description:
  The idea of the compressed data format is to represent the reference
  data in a compact human readable format at the end of the testsuite
  files. Although redundant, the time stamps of all step sizes
- corresponding to a particular reference data point are listed. 
+ corresponding to a particular reference data point are listed.
 Examples:
 % h=   (in ms)
 [ 0.1   0.2    0.5   1.0 ]
 %
 % time                    voltage
 [
-[  1                     -69.4229]    
-[  2     1               -68.8515]    
-[  3                     -68.2858]    
+[  1                     -69.4229]
+[  2     1               -68.8515]
+[  3                     -68.2858]
 [  4     2               -67.7258]
 [  5           1         -67.1713]
 [  6     3               -66.6223]
@@ -626,9 +626,9 @@ Examples:
 [ 10     5     2    1    -64.4806]
 [ 11                     -63.9584]
 ]
- 
 
- 
+
+
 Author: Markus Diesmann
 FirstVersion: 071128
 SeeAlso: unittest::ToUnitTestPrecision
@@ -648,11 +648,11 @@ SeeAlso: unittest::ToUnitTestPrecision
   /m Set          % multipler of highest resolution
 
   d [[1 -1] 1] Part           % first and last entry at highest resolution
-  {cvd m div ceil cvi m mul} 
+  {cvd m div ceil cvi m mul}
     1 MapAt                   % reduce to first entry available at this resolution
   d [1 1] Part sub 1 add      % index in data array
-  m append /r Set             % distance between available data points 
-  
+  m append /r Set             % distance between available data points
+
 
   d r Take [/All [2 -1]] Part /di AppendTo
 
@@ -696,13 +696,13 @@ SeeAlso: unittest::distributed_assert_or_die, nest_indirect
 }
 def
 
-/* 
+/*
 Name: :exec_test_function - Execute test function in distributed job
 
 Synopsis: array func exec_test_function -> -
 
 Description:
-The array argument is ignored. The test function func is executed and the 
+The array argument is ignored. The test function func is executed and the
 result sent back to the calling process via stdout (shpawn piping). The test
 function must leave exactly one element on the stack.
 */
@@ -712,16 +712,16 @@ function must leave exactly one element on the stack.
   mark exch exec    % execute the test function
                     % if the test function terminates with an exception,
                     % execution will terminate here, and no result
-                    % will be sent below    
+                    % will be sent below
   counttomark /stackload Set
-  stackload 1 eq 
+  stackload 1 eq
   {
-    % handle case with one result special, since we need result from stack    
+    % handle case with one result special, since we need result from stack
     /result :send_distributed
   }
   {
-    stackload 0 eq 
-      { /passed :send_distributed } 
+    stackload 0 eq
+      { /passed :send_distributed }
       { /error  :send_distributed }  % more than one item left on stack
     ifelse
   } ifelse
@@ -730,10 +730,10 @@ function must leave exactly one element on the stack.
 }
 def
 
-/* 
+/*
 Name: :send_distributed - Package and send message from parallel run
 
-Synposis: [result] flag :send_distributed -> - 
+Synposis: [result] flag :send_distributed -> -
 
 Description:
 
@@ -761,12 +761,12 @@ SeeAlso: unittest:mpirun_self
 {
   /flag Set
   (:) flag cvs join (:) join Rank cvs join (:) join
-  flag /result eq 
-  { 
-    % if result is dict, serialize as array 
-    exch    
-    DictQ { cva /:serialized:dict exch 2 arraystore } if    
-    pcvs join 
+  flag /result eq
+  {
+    % if result is dict, serialize as array
+    exch
+    DictQ { cva /:serialized:dict exch 2 arraystore } if
+    pcvs join
   } if
   (:) join
   =
@@ -779,12 +779,12 @@ SeeAlso: unittest:mpirun_self
 % string [begin end] :extract_regexp_match -> string[begin:end]  (pythonic indexing)
 /:extract_regexp_match
 {
-  arrayload 2 eq assert 
+  arrayload 2 eq assert
   1 pick sub  % stack: string start length
   getinterval
 } def
 
-/* 
+/*
  Name: :parse_message_line - Parse one input line for message and return flag and result
 
  Synposis: string :parse_message_line -> [flag rank [result]] true
@@ -802,7 +802,7 @@ SeeAlso: unittest:mpirun_self
 
     mark  % so we can clear any mess left in case of errors
 
-    % The argument value 4 is for regexec per r9713. Once #560 is fixed, it 
+    % The argument value 4 is for regexec per r9713. Once #560 is fixed, it
     % may need to be changed.
     :message_line_regexp line 4 0 regexec
 
@@ -815,8 +815,8 @@ SeeAlso: unittest:mpirun_self
 
       % ensure that regexp matched entire line
       matches 0 get arrayload % get start and end of total match
-      2 eq (unittest:::parse_message_line: clean message line) assert_or_die  
-      line length eq exch 0 eq and not { stop }  if  
+      2 eq (unittest:::parse_message_line: clean message line) assert_or_die
+      line length eq exch 0 eq and not { stop }  if
 
       % extract flag and check it is valid
       /flag line matches 1 get :extract_regexp_match cvlit def
@@ -839,22 +839,22 @@ SeeAlso: unittest:mpirun_self
       % convert result to SLI objects; empty array for empty string
       result cst % convert to token string
       empty not  % test array for emptyness, not string, to handle strings of spaces
-      { cvx_a exec } if   % otherwise, leave empty array 
+      { cvx_a exec } if   % otherwise, leave empty array
       /result Set
       % if result is serialized dict, de-serialize
-      result ArrayQ 
-      { 
+      result ArrayQ
+      {
         empty not
         {
-	  First /:serialized:dict eq 
-	  { 
-            result length 2 eq 
+	  First /:serialized:dict eq
+	  {
+            result length 2 eq
             (unittest:::parse_message_line: deserialization structure ok) assert_or_die
-	    result 1 get dup length 2 mod 0 eq 
+	    result 1 get dup length 2 mod 0 eq
             (unittest:::parse_message_line: proper key-value pairs) assert_or_die
 	    2 Partition   % split array to key-value pairs
-	    /result << >> def         % insert into result dict   
-	    { result exch arrayload ; put } forall	
+	    /result << >> def         % insert into result dict
+	    { result exch arrayload ; put } forall
 	  } if
 	}
 	{
@@ -863,15 +863,15 @@ SeeAlso: unittest:mpirun_self
       }
       {
         pop
-      } ifelse     
+      } ifelse
 
       % We leave the output array on the stack. We do NOT push a bool to
       % signal status, that is indicated by the fact that we did not call stop
       [ flag rank result ]
-    } 
+    }
     stopped
     {
-      % stopped, either explicitly above or due to error; 
+      % stopped, either explicitly above or due to error;
       % we clean up if error and signal that we did not parse a message
       errordict /newerror get { errordict /newerror false put } if
       counttomark npop pop
@@ -880,13 +880,13 @@ SeeAlso: unittest:mpirun_self
     {
       % not stopped, we got proper result, flag true
       counttomark 1 eq assert  % only result error on stack
-      exch pop                 % remove mark      
-      true      
+      exch pop                 % remove mark
+      true
     } ifelse
-} def 
+} def
 
 
-/* 
+/*
 Name: :collect_distributed_results - Collects results from spawned parallel runs
 
 Synopsis: istream num_procs mode :collect_distributed_results -> array status
@@ -899,60 +899,60 @@ returned by mpirun_self and the number of mpi processes started.
 ranks in the parallel process executed by mpirun_self. The individual
 processes should send results by calling :send_distributed.
 
-If mode is 
-  /none no MPI process should send a result 
+If mode is
+  /none no MPI process should send a result
   /one  precisely one MPI process should send a result
   /each each MPI process should send a result
 In any case, all MPI process should pass.
 
-The array returned contains one string result sent, in arbitrary order. 
+The array returned contains one string result sent, in arbitrary order.
 status is true if the requirements according to mode are fulfilled. status
 may be false if one or several parallel processes have crashed.
 
 SeeAlso: unittest::mpirun_self
 */
 /:collect_distributed_results
-{  
-  << >> begin  
+{
+  << >> begin
   /mode Set
   /nproc Set
-  nproc array /pass_count   Set  % array with one element per rank  
-  nproc array /result_count Set  % array with one element per rank  
+  nproc array /pass_count   Set  % array with one element per rank
+  nproc array /result_count Set  % array with one element per rank
   [ exch
-    { 
-      eof 
+    {
+      eof
       {
 	exit
-      } 
+      }
       {
 	getline
 	{
           :parse_message_line
-	  { 
-            arrayload 3 eq 
+	  {
+            arrayload 3 eq
             (unittest:::collect_distributed_results: good parse) assert_or_die
-	    
+
 	    /res Set /rank Set /flag Set
             [/passed /result] flag MemberQ   % executed correctly, count as pass
             {
-	      % hike result counter for rank	    
+	      % hike result counter for rank
 	      /pass_count pass_count dup rank get 1 add rank exch put def
 	    } if
             /result flag eq   % got result
             {
-	      % hike result counter for rank	    
+	      % hike result counter for rank
 	      /result_count result_count dup rank get 1 add rank exch put def
-	      res exch % leave result on stack	    
+	      res exch % leave result on stack
 	    } if
 	  } if
-	} if 
-      } ifelse 
+	} if
+      } ifelse
     } loop pop
   ]
 
   % pass count must be exactly one for all ranks
   /ones_array nproc array 1 add def
-  pass_count ones_array eq 
+  pass_count ones_array eq
 
   % test whether mode requirements are fulfilled
   mark
@@ -964,7 +964,7 @@ SeeAlso: unittest::mpirun_self
 
   mode /none eq { exch pop } if  % drop empty result array
 
-  end  
+  end
 
 } def
 
@@ -981,7 +981,7 @@ The array specifies a list of numbers of
 jobs. distributed_assert_or_die executes the procedure specified as
 the second argument in parallel for all of the numbers of jobs given
 in the arrays. This means that distributed_assert_or_die carries out
-as many distributed simulations as there are entries in the array. 
+as many distributed simulations as there are entries in the array.
 
 In each of the simulations a single job is expected to return a
 value on the stack. It is of no importance which job returns the
@@ -1012,14 +1012,14 @@ FirstVersion: 090715
 
 SeeAlso: unittest::distributed_invariant_assert_or_die, nest_indirect, unittest::mpirun_self, unittest::assert_or_die
 */
-/distributed_assert_or_die 
+/distributed_assert_or_die
 [/arraytype /proceduretype /proceduretype]
 {
  rollu    % safe the test function
  statusdict/is_mpi ::   % are we in a distributed job ?
  {
-   % we are in a distributed job    
-   :exec_test_function    
+   % we are in a distributed job
+   :exec_test_function
  }
  {
    % we are in the wrapper dispatching and collecting
@@ -1028,47 +1028,47 @@ SeeAlso: unittest::distributed_invariant_assert_or_die, nest_indirect, unittest:
    {
      /num_procs Set
      (N_MPI: ) =only num_procs =   % display number of processes
- 
+
      num_procs mpirun_self
      num_procs /one :collect_distributed_results
      % got a result from one MPI process
-     (unittest::distributed_assert_or_die: collected results) assert_or_die          
+     (unittest::distributed_assert_or_die: collected results) assert_or_die
     } Map
-   1 Flatten              % unpack, so we have flat list with one item per process     
-   exch 
+   1 Flatten              % unpack, so we have flat list with one item per process
+   exch
    (unittest::distributed_assert_or_die: results ok) assert_or_die  % using the test function
  }
- ifelse 
+ ifelse
 }
 def
 
-/distributed_assert_or_die 
+/distributed_assert_or_die
 [/arraytype /proceduretype]
 {
- { true exch { and } Fold } distributed_assert_or_die  % all runs return true 
+ { true exch { and } Fold } distributed_assert_or_die  % all runs return true
 }
-def 
+def
 
 
 /** @BeginDocumentation
 Name: unittest::distributed_invariant_assert_or_die - Checks whether code is independent of number of number of jobs
 
 Synopsis: array proc distributed_invariant_assert_or_die -> -
-       
+
 Description:
 
 The array specifies a list of numbers of
 jobs. distributed_assert_or_die executes the procedure specified as
 the second argument in parallel for all of the numbers of jobs given
 in the arrays. This means that distributed_invariant_assert_or_die carries out
-as many distributed simulations as there are entries in the array. 
+as many distributed simulations as there are entries in the array.
 
 In each of the simulations a single job is expected to return a
 value on the stack. It is of no importance which job returns the
 value.  After completion of all simulations distributed_invariant_assert_or_die
 checks whether the results of all runs are identical.
 
-See distributed_assert_or_die for further documentation and 
+See distributed_assert_or_die for further documentation and
 implementation details.
 
 Author: Diesmann
@@ -1082,7 +1082,7 @@ SeeAlso: unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_se
 {
  {Split length 1 eq} distributed_assert_or_die    % all runs return same result
 }
-def 
+def
 
 
 /** @BeginDocumentation
@@ -1097,13 +1097,13 @@ The array specifies a list of numbers of
 jobs. distributed_collect_assert_or_die executes the procedure specified as
 the second argument in parallel for all of the numbers of jobs given
 in the arrays. This means that distributed_collect_assert_or_die carries out
-as many distributed simulations as there are entries in the array. 
+as many distributed simulations as there are entries in the array.
 
 In each of the simulations all jobs are expected to return a value on
 the stack. The order in which the jobs are completed is of no
 importance.  After completion of all simulations
 distributed_collect_assert_or_die compares the sets of results of all
-the simulations using the comparison function supplied by the second 
+the simulations using the comparison function supplied by the second
 procedure. If the second procedure is not given it requires that all
 jobs of all runs return true.
 
@@ -1129,14 +1129,14 @@ FirstVersion: 100925
 
 SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_assert_or_die, nest_indirect, unittest::mpirun_self, unittest::assert_or_die
 */
-/distributed_collect_assert_or_die 
+/distributed_collect_assert_or_die
 [/arraytype /proceduretype /proceduretype]
 {
   rollu  % save the test function
-  statusdict/is_mpi ::   
+  statusdict/is_mpi ::
   {
-    % we are in a distributed job    
-    :exec_test_function    
+    % we are in a distributed job
+    :exec_test_function
   }
   {
     % we are in the wrapper dispatching and collecting
@@ -1154,25 +1154,25 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
     exch
     (unittest::distributed_collect_assert_or_die: results ok) assert_or_die  % using the test function
   }
-  ifelse 
+  ifelse
 }
 def
 
 
-/distributed_collect_assert_or_die 
+/distributed_collect_assert_or_die
 [/arraytype /proceduretype]
 {
- { {true exch {and} Fold}  Map  true exch {and} Fold } 
+ { {true exch {and} Fold}  Map  true exch {and} Fold }
 
- distributed_collect_assert_or_die   % all runs return true for all jobs 
+ distributed_collect_assert_or_die   % all runs return true for all jobs
 }
-def 
+def
 
 /** @BeginDocumentation
 Name: unittest::distributed_process_invariant_collect_assert_or_die - Checks whether the pooled results of all ranks are equal, independent of the number of MPI processes
 
 Synopsis: array proc distributed_process_invariant_collect_assert_or_die -> -
-      
+
 Description:
 
 The array specifies a list of numbers of
@@ -1190,7 +1190,7 @@ contents of all sets of results, pooled across ranks, is
 identical. The order of the results in each set is irrelevant.
 
 See distributed_collect_assert_or_die for further documentation and
-implementation details and distributed_rank_invariant_collect_assert_or_die for 
+implementation details and distributed_rank_invariant_collect_assert_or_die for
 a version requiring identical output from each rank.
 
 Author: Diesmann
@@ -1202,21 +1202,21 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 /distributed_process_invariant_collect_assert_or_die
 [/arraytype /proceduretype]
 {
-  
-  {   
+
+  {
     { 1 Flatten } Map   % combine results across ranks for each process
     /results Set
 
     % build reference from results of one process;
     % create dictionary with individual results as keys and number as values
     /reference << >> def
-    results First 
+    results First
     {
       pcvs cvlit /key Set
       reference key known
       {
         reference dup key get 1 add   % add one
-        key exch put	
+        key exch put
       }
       {
         reference key 1 put           % add new key with value one
@@ -1232,36 +1232,36 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
         counts key known
         {
 	  counts dup key get 1 sub   % subtract one
-	  key exch put	
+	  key exch put
 	}
         {
           counts /error 99 put       % flag error
           exit
 	}
         ifelse
-      } forall      
+      } forall
       counts /error known
-      { 
+      {
         false   % something went wrong
       }
       {
         true counts values { 0 eq and } Fold  % ensure all counts are zero
       }
       ifelse
-    } Map    
+    } Map
     % ensure all processes gave true
     true exch { and } Fold
-  }    
+  }
   distributed_collect_assert_or_die  % all runs return same collected result
 }
-def 
+def
 
 
 /** @BeginDocumentation
 Name: unittest::distributed_process_invariant_events_assert_or_die - Checks whether the pooled event dictionaries from all ranks are equal, independent of the number of MPI processes
 
 Synopsis: array proc distributed_process_invariant_events_assert_or_die -> -
-      
+
 Description:
 
 The array specifies a list of numbers of
@@ -1280,7 +1280,7 @@ pooled contents of the events dictionaries is invariant under the
 number of MPI processes.
 
 See distributed_collect_assert_or_die for further documentation and
-implementation details and distributed_rank_invariant_collect_assert_or_die for 
+implementation details and distributed_rank_invariant_collect_assert_or_die for
 a version requiring identical output from each rank.
 
 Author: Plesser
@@ -1296,7 +1296,7 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 /distributed_process_invariant_events_assert_or_die
 [/arraytype /proceduretype]
 {
-  {  % evaluation function; called with array of arrays of event dicts on stack  
+  {  % evaluation function; called with array of arrays of event dicts on stack
     /results Set
 
     % ensure that all dicts have identical keys
@@ -1310,9 +1310,9 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
     % For each run, go through events dicts and convert to arrays of strings, with one string per event,
     % combining data from all keys for that event (fixed order of keys), then combine across
     % ranks for each run and sort
-    results { [] exch { /d Set [ keylits { d exch get } forall ] 
+    results { [] exch { /d Set [ keylits { d exch get } forall ]
                                { nkeys arraystore () exch { cvs (_) join join } Fold } MapThread join
-                      } Fold Sort 
+                      } Fold Sort
             } Map
 
     % we now have array of arrays, should be identical
@@ -1325,17 +1325,17 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
 
     dup First /reference Set
     Rest true exch { reference eq and } Fold
-  }    
+  }
   distributed_collect_assert_or_die  % all runs return same collected result
 }
-def 
+def
 
 
 /** @BeginDocumentation
 Name: unittest::distributed_rank_invariant_collect_assert_or_die - Checks whether all ranks produce equal results, independent of the number of MPI processes
 
 Synopsis: array proc distributed_rank_invariant_collect_assert_or_die -> -
-      
+
 Description:
 
 The array specifies a list of numbers of
@@ -1353,7 +1353,7 @@ contents of the results of all ranks are identical, independent of
 the number of processes.
 
 See distributed_collect_assert_or_die for further documentation and
-implementation details and distributed_process_invariant_collect_assert_or_die for 
+implementation details and distributed_process_invariant_collect_assert_or_die for
 a version requiring identical output from each rank.
 
 Author: Diesmann
@@ -1370,9 +1370,9 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
     dup First /reference Set  % take first as reference
     Rest                      % results from all other ranks
     true exch { reference eq and } Fold     % check if all equal reference
-  } distributed_collect_assert_or_die  
+  } distributed_collect_assert_or_die
 }
-def 
+def
 
 
 /** @BeginDocumentation
@@ -1396,7 +1396,7 @@ SeeAlso:  unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_s
 {
   statusdict/is_mpi ::   % are we in a distributed job ?
   {
-    :exec_test_function    
+    :exec_test_function
   }
   {
     % we are in the wrapper dispatching and collecting
@@ -1405,14 +1405,14 @@ SeeAlso:  unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_s
     {
       /num_procs Set
       (N_MPI: ) =only num_procs =   % display number of processes
-      
+
       num_procs mpirun_self
       num_procs /none :collect_distributed_results
       (unittest::distributed_pass_or_die: collected results) assert_or_die % got a result from each MPI process
     } forall
     % if we get here, all assert_or_dies passed above, so all is fine
   }
-  ifelse 
+  ifelse
 }
 def
 

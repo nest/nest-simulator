@@ -112,7 +112,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -214,10 +214,10 @@ diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 diffusion_connection< targetidentifierT >::get_secondary_event()
 {
-  return new DiffusionConnectionEvent();
+  return std::make_unique< DiffusionConnectionEvent >();
 }
 
 } // namespace

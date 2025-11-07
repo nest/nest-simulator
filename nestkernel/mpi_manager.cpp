@@ -320,25 +320,36 @@ nest::MPIManager::get_processor_name()
 void
 nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< long >& global_nodes )
 {
-  size_t np = get_num_processes();
-  // Get size of buffers
-  std::vector< int > num_nodes_per_rank( np );
-  num_nodes_per_rank[ get_rank() ] = local_nodes.size();
-  communicate( num_nodes_per_rank );
+  const size_t num_procs = get_num_processes();
 
-  size_t num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  // We need to work with int in much what follows, because several MPI_Allgatherv() arguments must be int.
+  assert( local_nodes.size() <= std::numeric_limits< int >::max() );
+  const int num_local_nodes = static_cast< int >( local_nodes.size() );
+
+  // Get number of nodes per rank and total.
+  std::vector< int > num_nodes_per_rank( num_procs );
+  num_nodes_per_rank[ get_rank() ] = num_local_nodes;
+  communicate( num_nodes_per_rank );
+  const int num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
+  if ( num_globals == 0 )
+  {
+    return; // Must return here to avoid passing address to empty global_nodes below
+  }
+
   global_nodes.resize( num_globals, 0L );
 
   // Set up displacements vector. Entry i specifies the displacement (relative
   // to recv_buffer ) at which to place the incoming data from process i
-  std::vector< int > displacements( np, 0 );
-  for ( size_t i = 1; i < np; ++i )
+  std::vector< int > displacements( num_procs, 0 );
+  for ( size_t i = 1; i < num_procs; ++i )
   {
     displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
   }
 
-  MPI_Allgatherv( &( *local_nodes.begin() ),
-    local_nodes.size(),
+  // Avoid dereferencing empty vector. As long as sendcount is 0, we can pass any pointer for sendbuf.
+  long dummy = 0;
+  MPI_Allgatherv( num_local_nodes > 0 ? &local_nodes[ 0 ] : &dummy,
+    num_local_nodes,
     MPI_Type< long >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],

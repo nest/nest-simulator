@@ -74,4 +74,3 @@ skip_if_not_threaded
 {
   << /connection_type /pairwise_bernoulli_on_target >> test_connection
 } distributed_process_invariant_collect_assert_or_die
-

@@ -55,16 +55,12 @@ skip_if_not_threaded
 
   pnet { pg exch Connect } forall
   pnet { sr Connect } forall
-  
+
   10. Simulate
 
-  % get events, replace vectors with SLI arrays    
+  % get events, replace vectors with SLI arrays
   /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
-  ev 
+  ev
 
 } distributed_process_invariant_events_assert_or_die
-
-
-
-    

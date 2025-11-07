@@ -8,6 +8,7 @@ versions of NEST. On the linked pages, you will find both information about new
 features, as well as quick guides on how to transition your simulation code to
 the new versions.
 
+* :ref:`NEST 3.9 <release_3.9>`
 * :ref:`NEST 3.8 <release_3.8>`
 * :ref:`NEST 3.7 <release_3.7>`
 * :ref:`NEST 3.6 <release_3.6>`
@@ -23,6 +24,7 @@ the new versions.
    :hidden:
    :glob:
 
+   v3.9/*
    v3.8/*
    v3.7/*
    v3.6/*

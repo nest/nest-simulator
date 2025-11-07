@@ -56,7 +56,7 @@ namespace nest
 extern "C" inline int iaf_bw_2001_exact_dynamics( double, const double y[], double f[], void* pnode );
 
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, hard threshold
 
 Short description
 +++++++++++++++++

@@ -49,15 +49,15 @@ skip_if_not_threaded
 {
   empty
   {
-    ; true 
+    ; true
   }
   {
     /items Set
     items [ 1 -2 ] Take  % all except last element
-    { 1 add -1 2 arraystore items exch Take 
-      exch /item Set 
+    { 1 add -1 2 arraystore items exch Take
+      exch /item Set
       true exch { item neq and } Fold
-    } MapIndexed 
+    } MapIndexed
     true exch { and } Fold
   } ifelse
 
@@ -77,8 +77,8 @@ skip_if_not_threaded
     /total_num_virtual_procs total_vps
   >> SetKernelStatus
 
-  /sinusoidal_poisson_generator 
-  << 
+  /sinusoidal_poisson_generator
+  <<
      /rate  1000.
      /amplitude   1000.
      /frequency 100.
@@ -90,7 +90,7 @@ skip_if_not_threaded
   /srs /spike_recorder n Create def
 
   gen parrots Connect
-  
+
   parrots srs << /rule /one_to_one >> Connect
 
   10. Simulate
@@ -102,7 +102,7 @@ skip_if_not_threaded
 % we only run for two MPI with two threads each
 % thus, each MP process returns an array with two spike-train arrays
 % we pool all the arrays (i.e., total spike trains) and they must all
-% be identical 
+% be identical
 [ 2 ]
 {
   /srs 16 true run_simple_net def
@@ -110,7 +110,7 @@ skip_if_not_threaded
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
   srs { [/events /times] get cva } Map { empty not exch ; } Select
-  
+
   % expect array with two arrays of spike times
   all_different
 }

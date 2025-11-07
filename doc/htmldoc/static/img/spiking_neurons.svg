@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="47.54332mm"
+   height="26.894484mm"
+   viewBox="0 0 47.54332 26.894484"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   inkscape:export-filename="astrocyte.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="diagrams_models_david.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showguides="true"
+     inkscape:zoom="0.31912962"
+     inkscape:cx="2071.2587"
+     inkscape:cy="971.39212"
+     inkscape:window-width="1850"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false"><sodipodi:guide
+       position="-303.04761,418.83111"
+       orientation="0,-1"
+       id="guide44"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-147.0259,290.28227"
+       orientation="1,0"
+       id="guide45"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-58.719849,533.63149"
+       orientation="0,-1"
+       id="guide46"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-18.04613,536.99822"
+       orientation="0,-1"
+       id="guide47"
+       inkscape:locked="false" /><sodipodi:guide
+       position="312.08627,521.64287"
+       orientation="0,-1"
+       id="guide48"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-82.379329,479.42977"
+       orientation="0,-1"
+       id="guide49"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-24.71504,291.81201"
+       orientation="0,-1"
+       id="guide53"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-94.037209,360.15969"
+       orientation="0,-1"
+       id="guide57"
+       inkscape:locked="false" /><sodipodi:guide
+       position="-57.457829,274.46278"
+       orientation="0,-1"
+       id="guide58"
+       inkscape:locked="false" /><sodipodi:guide
+       position="143.14845,496.1453"
+       orientation="1,0"
+       id="guide43"
+       inkscape:locked="false" /><sodipodi:guide
+       position="332.10591,459.35719"
+       orientation="1,0"
+       id="guide50"
+       inkscape:locked="false" /><inkscape:grid
+       id="grid52"
+       units="px"
+       originx="-368.4588"
+       originy="-264.65721"
+       spacingx="0.26458333"
+       spacingy="0.26458334"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14902"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="false" /><sodipodi:guide
+       position="105.1396,426.24655"
+       orientation="1,0"
+       id="guide66"
+       inkscape:locked="false" /><sodipodi:guide
+       position="72.60405,404.10458"
+       orientation="1,0"
+       id="guide68"
+       inkscape:locked="false" /><inkscape:page
+       x="3.2985715e-06"
+       y="1.1813057e-05"
+       width="47.54332"
+       height="26.894484"
+       id="page2"
+       margin="0"
+       bleed="0" /></sodipodi:namedview><defs
+     id="defs1"><style
+       class="style-fonts"
+       id="style1">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-3">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-6">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-9">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-2">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-26">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-7">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-90">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-0">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-1">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-21">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-13">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-07">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-8">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-37">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-05">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-67">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-93">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-675">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-06">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-15">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style><style
+       class="style-fonts"
+       id="style1-33">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style></defs><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-368.45881,-264.65722)"><path
+       style="fill:#232323;stroke:none;stroke-width:0.348988"
+       d="m 382.55069,266.24144 c 0.70994,-0.19414 1.33467,-0.60779 2.02868,-0.83233 0.21481,-0.0697 0.43651,0.0262 0.64133,-0.0414 0.20512,-0.0677 0.25805,-0.31094 0.15321,-0.48625 -0.17544,-0.29381 -0.58876,-0.23949 -0.86705,-0.16673 -0.79613,0.20844 -1.57823,0.58504 -2.31842,0.93508 -0.30023,0.14199 -0.7301,0.24421 -0.69998,0.66468 0.0598,0.84411 1.6775,1.1871 2.2939,1.48442 0.24945,0.12033 0.77469,0.41528 0.73027,0.75358 -0.0377,0.29095 -0.49831,0.38634 -0.73027,0.42052 -0.85959,0.127 -1.33764,-0.17646 -2.10102,-0.43229 -0.27982,-0.0941 -0.59676,0.0444 -0.54032,0.38175 0.075,0.44537 0.67223,0.63169 1.04742,0.7215 0.93486,0.22374 3.3954,0.15308 3.09046,-1.37359 -0.24492,-1.22561 -2.06677,-1.17234 -2.72821,-2.02867 m 9.49105,2.10106 c 0.24107,0.55841 0.67586,1.11374 1.23166,1.38824 0.40772,0.20136 0.9099,0.0207 0.7736,-0.5146 -0.0896,-0.35168 -0.45285,-0.21578 -0.7008,-0.35426 -0.37593,-0.20993 -0.58997,-0.63763 -0.72484,-1.02652 l 1.81131,-0.86941 c -0.2976,-0.96937 -1.90215,0.11652 -2.53582,0.28977 0,-0.33669 0.0161,-0.67822 -0.007,-1.01428 -0.0122,-0.18737 -0.19514,-1.82295 -0.64361,-1.3196 -0.25073,0.28153 -0.003,1.11594 -0.002,1.46447 6.9e-4,0.65791 0.0812,1.37726 -0.0108,2.0287 -0.0397,0.28256 -0.26622,0.50544 -0.2578,0.79682 0.0194,0.67931 0.66731,0.49273 0.83992,0 0.10258,-0.29252 0.0887,-0.58575 0.22533,-0.86933 m -2.38116,-2.98772 c -0.72282,0.28344 0.34657,1.16114 0.82508,0.91437 0.37087,-0.19141 -0.43307,-1.0681 -0.82508,-0.91437 m 6.29342,0.95914 c -0.0217,-0.19485 -0.0581,-0.34235 -0.17343,-0.50695 -0.70953,-1.01845 -1.51489,0.12828 -0.40609,0.4497 0.1902,0.0555 0.38346,0.0555 0.57952,0.0571 m -9.49103,2.8256 c 0.27351,0.25103 0.56486,0.52507 0.94188,0.59954 1.91299,0.37814 2.1099,-1.90261 0.72455,-2.73834 -0.80285,-0.48437 -1.81429,-0.25917 -2.13015,0.68974 -0.3702,1.11193 -0.30129,2.70131 -0.0819,3.83987 0.0568,0.29855 0.73495,1.54315 0.87782,0.65067 0.0734,-0.45584 -0.3448,-1.10635 -0.39181,-1.59254 -0.0469,-0.48349 0.0593,-0.96477 0.0596,-1.44894 m 10.79519,-1.30417 c -7e-4,-0.2293 -0.14992,-1.30806 -0.59174,-0.76267 -0.15262,0.18836 -0.0528,0.53803 -0.0731,0.76267 -0.0579,0.64514 -0.3455,1.39894 0.37469,1.73879 0.30238,-0.49409 0.58183,-1.00902 0.9636,-1.4489 0.12289,-0.14152 0.32798,-0.41383 0.5481,-0.34734 0.44446,0.13432 0.37365,1.15501 0.53234,1.50613 0.0798,0.17632 0.29668,0.50027 0.52037,0.3046 0.20953,-0.18319 0.0331,-0.59359 -0.0191,-0.81138 -0.13819,-0.58142 -0.0715,-1.79162 -0.81291,-1.9969 -0.62196,-0.17215 -1.07837,0.68779 -1.44251,1.055 m 4.99915,1.66643 c -0.0111,0.50734 -0.0111,1.96133 -0.45495,2.27878 -0.32208,0.23028 -1.42759,-1.1432 -1.52573,-0.10416 -0.0551,0.57796 1.34245,1.42126 1.81191,1.038 0.79601,-0.64976 0.66314,-2.56409 1.01681,-3.50251 0.12772,-0.33881 0.51005,-0.83164 0.33955,-1.21148 -0.0987,-0.21956 -0.40068,-0.24925 -0.57765,-0.11015 -0.18402,0.14455 -0.21555,0.41075 -0.3572,0.58959 -0.29115,0.36772 -1.48834,0.78431 -1.67673,0.077 -0.23389,-0.87767 1.2854,-0.50933 1.49331,-0.76777 0.41529,-0.51635 -0.7279,-0.71003 -1.01121,-0.63766 -0.97475,0.24913 -1.9562,1.461 -0.86837,2.23075 0.49213,0.3482 1.26528,0.28536 1.81026,0.11983 m -12.29471,-2.10908 c -0.38763,0.12222 -0.12965,1.66415 -0.0417,1.96382 0.0508,0.17203 0.19744,0.4485 0.42364,0.38052 0.52171,-0.15667 0.0867,-1.63625 0.0151,-1.97382 -0.0373,-0.17909 -0.16585,-0.44351 -0.39727,-0.37052 m 5.34875,0.0124 c -0.44922,0.0741 -0.13793,1.64299 -0.0592,1.95146 0.0443,0.17478 0.16136,0.44619 0.39368,0.38054 0.53835,-0.15203 0.11083,-1.55756 0.0355,-1.90163 -0.0395,-0.18214 -0.1217,-0.47101 -0.36967,-0.43037 m -7.61664,0.14676 c 0.80228,0.14294 1.03674,1.70465 -6e-5,1.5682 -0.92418,-0.12165 -0.83262,-1.7166 6e-5,-1.5682 z"
+       id="path19"
+       inkscape:export-filename="spiking_neurons.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" /><!-- svg-source:excalidraw --><mask
+       id="mask4" /><mask
+       id="mask6" /><mask
+       id="mask8" /><mask
+       id="mask10" /><mask
+       id="mask12" /><mask
+       id="mask14" /><mask
+       id="mask17" /><!-- svg-source:excalidraw --><mask
+       id="mask4-9" /><mask
+       id="mask6-8" /><mask
+       id="mask8-7" /><mask
+       id="mask10-2" /><mask
+       id="mask12-8" /><mask
+       id="mask16" /><!-- svg-source:excalidraw --><mask
+       id="mask4-2" /><mask
+       id="mask8-9" /><mask
+       id="mask10-5" /><mask
+       id="mask12-4" /><mask
+       id="mask14-2" /><mask
+       id="mask16-0" /><mask
+       id="mask18" /><mask
+       id="mask20" /><mask
+       id="mask22" /><mask
+       id="mask24" /><!-- svg-source:excalidraw --><mask
+       id="mask2" /><mask
+       id="mask4-1" /><mask
+       id="mask6-4" /><mask
+       id="mask10-50" /><mask
+       id="mask14-7" /><!-- svg-source:excalidraw --><mask
+       id="mask2-8" /><mask
+       id="mask6-83" /><mask
+       id="mask8-4" /><mask
+       id="mask10-0" /><mask
+       id="mask14-3" /><!-- svg-source:excalidraw --><mask
+       id="mask2-0" /><mask
+       id="mask6-9" /><mask
+       id="mask8-3" /><mask
+       id="mask10-9" /><mask
+       id="mask12-2" /><mask
+       id="mask14-9" /><mask
+       id="mask16-3" /><mask
+       id="mask18-8" /><mask
+       id="mask20-7" /><mask
+       id="mask22-3" /><mask
+       id="mask24-2" /><mask
+       id="mask26" /><mask
+       id="mask28" /><mask
+       id="mask32" /><!-- svg-source:excalidraw --><mask
+       id="mask4-8" /><mask
+       id="mask6-0" /><mask
+       id="mask8-2" /><mask
+       id="mask10-07" /><mask
+       id="mask12-3" /><mask
+       id="mask14-4" /><mask
+       id="mask16-2" /><mask
+       id="mask18-9" /><mask
+       id="mask20-0" /><mask
+       id="mask22-8" /><mask
+       id="mask24-6" /><mask
+       id="mask26-7" /><mask
+       id="mask30" /><mask
+       id="mask32-9" /><mask
+       id="mask34" /><mask
+       id="mask36" /><mask
+       id="mask38" /><mask
+       id="mask40" /><mask
+       id="mask42" /><mask
+       id="mask44" /><mask
+       id="mask46" /><mask
+       id="mask48" /><mask
+       id="mask50" /><mask
+       id="mask52" /><mask
+       id="mask54" /><mask
+       id="mask56" /><mask
+       id="mask58" /><mask
+       id="mask60" /><mask
+       id="mask62" /><mask
+       id="mask64" /><!-- svg-source:excalidraw --><mask
+       id="mask4-7" /><mask
+       id="mask6-43" /><!-- svg-source:excalidraw --><mask
+       id="mask4-71" /><mask
+       id="mask6-40" /><mask
+       id="mask8-6" /><!-- svg-source:excalidraw --><g
+       stroke-linecap="round"
+       id="g4-80"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(10.171554,131.69514)"
+         id="g1-81"><path
+           d="m 0.84,-0.73 c 96.61,0.04 482.64,1.15 579.35,1.16 M -0.17,1.51 C 96.24,1.15 482.49,-1.26 579.34,-1.47"
+           stroke="#ff6633"
+           stroke-width="4"
+           fill="none"
+           id="path1-02" /></g><g
+         transform="translate(10.171554,131.69514)"
+         id="g2-2"><path
+           d="m 555.88,7.18 c 6.89,-2.85 16.93,-4.31 23.46,-8.65 m -23.46,8.65 c 6.45,-3.1 11.87,-3.81 23.46,-8.65"
+           stroke="#ff6633"
+           stroke-width="4"
+           fill="none"
+           id="path2-97" /></g><g
+         transform="translate(10.171554,131.69514)"
+         id="g3-5"><path
+           d="m 555.81,-9.92 c 6.95,3.07 17.01,7.52 23.53,8.45 m -23.53,-8.45 c 6.5,1.03 11.93,4.46 23.53,8.45"
+           stroke="#ff6633"
+           stroke-width="4"
+           fill="none"
+           id="path3-64" /></g></g><mask
+       id="mask4-6" /><g
+       stroke-linecap="round"
+       id="g6-3"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(110.17155,11.695139)"
+         id="g5-7"><path
+           d="m -0.65,0.69 c 0.32,16.78 1.36,82.74 1.66,99.34 M 1.21,0 C 1.44,17.04 0.15,84.63 0,101.58"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path4-97" /></g></g><mask
+       id="mask6-49" /><g
+       stroke-linecap="round"
+       id="g8-17"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(210.17155,11.695139)"
+         id="g7-0"><path
+           d="M 0.95,0.1 C 1.19,16.88 0.74,84.53 0.71,101.38 M -0.02,-0.89 C 0.19,15.47 0.05,82.25 0.12,99.52"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path6-6" /></g></g><mask
+       id="mask8-0" /><g
+       stroke-linecap="round"
+       id="g10-85"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(250.17155,11.695139)"
+         id="g9-3"><path
+           d="M 0.44,-0.97 C 0.38,16.04 0.26,84.96 0.19,101.92 M -0.79,1.13 c 0.29,16.7 2.83,82.36 3.38,99.16"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path8-94" /></g></g><mask
+       id="mask10-1" /><g
+       stroke-linecap="round"
+       id="g12-5"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(390.17155,11.695139)"
+         id="g11-4"><path
+           d="M -0.2,-0.43 C 0.25,16.83 2.54,85.36 2.77,102.55 M -1.76,-1.7 c 0.36,17.01 3.8,85.48 4.11,102.57"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path10-1" /></g></g><mask
+       id="mask12-5" /><g
+       stroke-linecap="round"
+       id="g14-54"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(430.17155,11.695139)"
+         id="g13-9"><path
+           d="M 0.96,-0.95 C 1.25,15.82 1.22,83.78 1.11,100.6 M 0.01,1.17 C 0.16,18.1 -0.43,85.35 0.02,101.95"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path12-8" /></g></g><mask
+       id="mask14-38" /><g
+       stroke-linecap="round"
+       id="g16-52"
+       transform="matrix(0.08135959,0,0,0.08135959,367.80782,276.46031)"><g
+         transform="translate(490.01738,12.588243)"
+         id="g15-22"><path
+           d="M 1.15,-0.86 C 1.37,16.26 0.84,84.9 0.76,101.79 M 0.3,1.3 C 0.47,18.18 0.21,83.42 0.2,100.13"
+           stroke="#1e1e1e"
+           stroke-width="4"
+           fill="none"
+           id="path14-7" /></g></g><mask
+       id="mask16-03" /><!-- svg-source:excalidraw --><mask
+       id="mask4-0" /><mask
+       id="mask6-1" /><mask
+       id="mask8-41" /><mask
+       id="mask12-9" /><!-- svg-source:excalidraw --><mask
+       id="mask4-91" /><mask
+       id="mask6-03" /><mask
+       id="mask10-7" /><!-- svg-source:excalidraw --><mask
+       id="mask6-5" /><mask
+       id="mask10-93" /><mask
+       id="mask14-1" /><mask
+       id="mask18-0" /><!-- svg-source:excalidraw --><mask
+       id="mask10-3" /><mask
+       id="mask14-21" /><mask
+       id="mask18-89" /><mask
+       id="mask22-82" /><!-- svg-source:excalidraw --><mask
+       id="mask8-03" /><mask
+       id="mask12-7" /><mask
+       id="mask16-8" /><path
+       style="fill:#252525;stroke:none;stroke-width:0.247614"
+       d="m 411.80391,289.3902 c 0.0235,0.54718 -0.0955,1.59012 0.30386,2.01012 0.43164,0.45393 1.42772,-0.20514 1.37768,-0.7615 -0.0553,-0.61531 -0.65774,0.43144 -0.92923,0.37448 -0.38431,-0.0806 -0.35387,-1.26339 -0.27288,-1.55046 0.15348,-0.54402 1.05573,-0.11188 1.15844,-0.72779 h -1.17926 c -0.003,-0.12727 -0.18029,-1.06202 -0.41912,-0.62385 -0.11715,0.21491 0.049,0.51634 -0.14453,0.70625 -0.18894,0.18543 -0.51673,0.0815 -0.72577,0.24113 -0.1666,0.12721 -0.16648,0.3988 0.0543,0.46745 0.22488,0.0699 0.55268,-0.0895 0.77648,-0.13583 z"
+       id="path31-6-22" /><!-- svg-source:excalidraw --><mask
+       id="mask4-3" /><mask
+       id="mask8-75" /><mask
+       id="mask10-8" /><mask
+       id="mask12-1" /><!-- svg-source:excalidraw --><mask
+       id="mask2-03" /><mask
+       id="mask6-6" /><mask
+       id="mask10-74" /><mask
+       id="mask12-6" /><!-- svg-source:excalidraw --><mask
+       id="mask-usAb6USveUPUEAwlPIBJt"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1711.9503"
+         height="621.24451"
+         id="rect17" /><rect
+         x="1330.1437"
+         y="472.48776"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect18" /></mask><mask
+       id="mask-48NT3KkRuZYvAlyzlmfn9"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="2683.6455"
+         height="333.90344"
+         id="rect24" /><rect
+         x="2136.5432"
+         y="200.01263"
+         fill="#000000"
+         width="107.36523"
+         height="64.400002"
+         opacity="1"
+         id="rect25" /></mask><mask
+       id="mask-RAsrBMn-Ux8upF21-Sgrx"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1019.9377"
+         height="838.51709"
+         id="rect30" /><rect
+         x="792.75769"
+         y="633.47052"
+         fill="#000000"
+         width="252.95703"
+         height="32.200001"
+         opacity="1"
+         id="rect31" /></mask><mask
+       id="mask-ra-xoXCpKcxtOTRvVpZKf"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1854.0552"
+         height="832.28046"
+         id="rect37" /><rect
+         x="1618.1378"
+         y="331.60699"
+         fill="#000000"
+         width="270.74414"
+         height="96.599998"
+         opacity="1"
+         id="rect38" /></mask><mask
+       id="mask-aYc6c7S_giOqhHZvKzBND"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1862.1145"
+         height="845.59082"
+         id="rect44" /><rect
+         x="1632.4562"
+         y="637.77448"
+         fill="#000000"
+         width="252.95703"
+         height="32.200001"
+         opacity="1"
+         id="rect45" /></mask><mask
+       id="mask-RLh_7sqDvKkhdQIvWQiRM"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1705.3574"
+         height="895.79462"
+         id="rect49" /><rect
+         x="1326.2188"
+         y="747.21497"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect50" /></mask><mask
+       id="mask-aQYzC_jEexyN_K8Esby0q"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1713.2278"
+         height="1040.2041"
+         id="rect63" /><rect
+         x="1330.8972"
+         y="887.21545"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect64" /></mask><mask
+       id="mask72" /><mask
+       id="mask74" /><mask
+       id="mask76" /><mask
+       id="mask84" /><mask
+       id="mask-Opjn_nAqVx-0vYVokcgFM"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1711.4454"
+         height="1179.0013"
+         id="rect88" /><rect
+         x="1334.8489"
+         y="1029.1156"
+         fill="#000000"
+         width="147.13672"
+         height="96.599998"
+         opacity="1"
+         id="rect89" /></mask><mask
+       id="mask-0LcETKpT9Yob1w4B1-8jD"><rect
+         x="0"
+         y="0"
+         fill="#ffffff"
+         width="1709.3024"
+         height="1354.9363"
+         id="rect95" /><rect
+         x="1327.8109"
+         y="1198.2921"
+         fill="#000000"
+         width="154.91602"
+         height="96.599998"
+         opacity="1"
+         id="rect96" /></mask><mask
+       id="mask101" /><mask
+       id="mask103" /><!-- svg-source:excalidraw --><mask
+       id="mask2-1" /><mask
+       id="mask4-03" /><mask
+       id="mask6-3" /><mask
+       id="mask8-40" /><mask
+       id="mask10-56" /><!-- svg-source:excalidraw --><!-- svg-source:excalidraw --><mask
+       id="mask4-73" /><mask
+       id="mask6-87" /></g></svg>

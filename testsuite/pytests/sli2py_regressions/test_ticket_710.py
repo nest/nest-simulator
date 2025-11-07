@@ -26,7 +26,7 @@ import pytest
 def test_static_synapse_hpc_connects_to_spike_recorder():
     """
     Regression test for Ticket #710.
-
+    Test ported from SLI regression test
     Ensure that static_synapse_hpc can be used to connect a neuron to a spike recorder.
     """
     nest.ResetKernel()

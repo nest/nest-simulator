@@ -144,15 +144,26 @@ class MPITestWrapper:
         _RemoveDecoratorsAndMPITestImports().visit(tree)
         return ast.unparse(tree)
 
+    @staticmethod
+    def _arg_to_str(arg):
+        """
+        Ensure strings remain wrapped in quotes; for functions we need to provide the function name.
+        Only functions in the plain namespace work.
+        """
+
+        if isinstance(arg, str):
+            return f"'{arg}'"
+        elif inspect.isroutine(arg):
+            return arg.__name__
+        else:
+            return arg
+
     def _params_as_str(self, *args, **kwargs):
         return ", ".join(
             part
             for part in (
-                ", ".join(f"{arg if not inspect.isfunction(arg) else arg.__name__}" for arg in args),
-                ", ".join(
-                    f"{key}={value if not inspect.isfunction(value) else value.__name__}"
-                    for key, value in kwargs.items()
-                ),
+                ", ".join(f"{self._arg_to_str(arg)}" for arg in args),
+                ", ".join(f"{key}={self._arg_to_str(value)}" for key, value in kwargs.items()),
             )
             if part
         )

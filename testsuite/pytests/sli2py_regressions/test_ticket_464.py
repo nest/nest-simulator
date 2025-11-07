@@ -37,7 +37,7 @@ def skip_if_have_mpi(func):
 def test_ticket_464():
     """
     Ensure that NEST triggers an error with a frozen multimeter connected to a node.
-    
+
     Test ported from SLI regression test
     This test has been modified to reflect that NEST now protects multimeter against being frozen.
     The first test triggers an error instead of an assertion, and crash_or_die has been replaced by fail_or_die.

@@ -27,6 +27,7 @@ def test_stdp_dopamine_synapse_weight_constant_without_presynaptic_spikes():
     """
     Regression test for Ticket #716.
 
+    Test ported from SLI regression test
     Ensure that the weight of an stdp_dopamine_synapse is constant in the absence of presynaptic spiking.
     """
     nest.ResetKernel()

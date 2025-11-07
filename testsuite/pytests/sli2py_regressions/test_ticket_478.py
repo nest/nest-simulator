@@ -24,6 +24,7 @@ Regression test for Ticket #478.
 
 Ensure that devices can only be connected using static synapses.
 
+Test ported from SLI regression test
 This test ensures that NEST throws an exception if one tries to connect generator devices
 (sending DSSpikeEvents or DSCurrentEvents) or a multimeter (sending DataLoggingRequest)
 to a neuron using a plastic synapse.

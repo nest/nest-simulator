@@ -48,4 +48,3 @@ References
 .. [1] Lazar, A. et al. (2009). SORN: a Self-organizing Recurrent Neural Network. Frontiers in Computational Neuroscience, 3. DOI: `10.3389/neuro.10.023.2009 <https://doi.org/10.3389/neuro.10.023.2009>`__
 
 .. [2] Klos, C. et al. Bridging structure and function: A model of sequence learning and prediction in primary visual cortex. PLoS Computational Biology, 14(6). DOI: `10.1371/journal.pcbi.1006187 <https://doi.org/10.1371/journal.pcbi.1006187>`__
-

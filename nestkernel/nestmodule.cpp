@@ -47,6 +47,7 @@
 #include "node.h"
 #include "parameter.h"
 #include "spatial.h"
+#include "stopwatch_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"

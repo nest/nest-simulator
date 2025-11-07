@@ -1,7 +1,7 @@
 .hoverxtool + .tooltip > .tooltip-inner {
 	background-color: #FF6633;
-    color: #FFFFFF; 
-    border: 1px solid #FDDCD1; 
+    color: #FFFFFF;
+    border: 1px solid #FDDCD1;
     padding: 4px;
     font-size: 16px;
     width: auto;
@@ -15,6 +15,6 @@
 }
 
 .hoverxtool_highlighter {
-	border-bottom:2px dotted #FDDCD1;  
+	border-bottom:2px dotted #FDDCD1;
     padding:0.03em 0.15em;
 }

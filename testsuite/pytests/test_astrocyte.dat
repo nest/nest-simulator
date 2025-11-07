@@ -1,14 +1,14 @@
-# 
+#
 # test_astrocyte.dat
-# 
+#
 # This file is part of NEST.
-# 
+#
 # This .dat file contains the recordings of the state variables of an
 # astrocyte, simulated using the ODEINT solver of SciPy, with the
 # implementation detailed in
 # ``doc/htmldoc/model_details/astrocyte_model_implementation.ipynb``.
 # This data is used as reference for the tests in ``test_astrocyte.py``.
-# 
+#
 #        Times                     IP3                    Ca_astro                  h_IP3R
 1.000000000000000056e-01 9.999882386709698645e-01 1.000187105302611235e+00 9.999799984511013040e-01
 2.000000000000000111e-01 9.999764775066160016e-01 1.000374129429669079e+00 9.999599938057039950e-01

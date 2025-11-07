@@ -50,7 +50,7 @@
       - define own functions
       - set parameters in a simple way
       - communicate with the user in a simple way
-      
+
    This brunel-2000_newconnect_dc.sli
 
       - does not have any Poisson generators
@@ -211,8 +211,8 @@ statusdict/userargs :: size 1 geq
 } ifelse
 
 % set resolution and total/local number of threads
-<< 
-    /resolution  dt 
+<<
+    /resolution  dt
     /local_num_threads local_num_threads
     /overwrite_files true
 >> SetKernelStatus
@@ -281,7 +281,7 @@ statusdict/userargs :: size 1 geq
 
       (Connecting inhibitory population.) =
       E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
-      
+
       I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
 
       % Spike recorders are connected to the first Nrec neurons in each
@@ -317,4 +317,3 @@ statusdict/userargs :: size 1 geq
   (Inhibitory rate   : ) =only insr ComputeRate =only ( Hz) =
   (Building time     : ) =only BuildCPUTime =only ( s) =
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
-

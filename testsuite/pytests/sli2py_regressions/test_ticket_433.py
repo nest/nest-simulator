@@ -24,6 +24,7 @@ Regression test for Ticket #433.
 
 Test against receptor_type mishandling in ht_neuron.
 
+Test ported from SLI regression test
 This test ensures that:
 - ht_neuron rejects connections with invalid or missing receptor_type.
 - receptor_type is properly passed in spatial connections.

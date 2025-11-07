@@ -125,8 +125,6 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
-
   /**
    * Connect two nodes.
    *
@@ -472,6 +470,26 @@ private:
   size_t get_num_target_data( const size_t tid ) const;
 
   size_t get_num_connections_( const size_t tid, const synindex syn_id ) const;
+
+  //! See get_connections()
+  void get_connections_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
+  void get_connections_to_targets_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
+  void get_connections_from_sources_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
 
   void get_source_node_ids_( const size_t tid,
     const synindex syn_id,

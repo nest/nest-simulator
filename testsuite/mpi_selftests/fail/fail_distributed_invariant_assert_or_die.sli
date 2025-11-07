@@ -43,6 +43,6 @@ SeeAlso: testsuite::crash_distributed_invariant_assert_or_die, testsuite::test_d
 [1 2 4]
 {
   % return different result for four procs
-  0 Rank eq { [20.5 (foo) 45 NumProcesses 4 eq] } if  
+  0 Rank eq { [20.5 (foo) 45 NumProcesses 4 eq] } if
 }
 distributed_invariant_assert_or_die

@@ -755,7 +755,7 @@ class SynapseCollection:
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
-            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
+            # u'\u22ee ' is the unicode for vertical ellipsis, used when we have many connections
             srcs = srcs[:15] + ["\u22ee "] + srcs[-15:]
             trgt = trgt[:15] + ["\u22ee "] + trgt[-15:]
             wght = wght[:15] + ["\u22ee "] + wght[-15:]
@@ -1286,6 +1286,8 @@ def serialize_data(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
+    if isinstance(data, (numpy.integer)):
+        return int(data)
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serialize_data(data.get())

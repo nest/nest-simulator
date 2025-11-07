@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""[[ This template demonstrates how to create a docstring for the PyNEST API.
+"""
+[[ This template demonstrates how to create a docstring for the PyNEST API.
 
 If you have modified an API, please ensure you update the docstring!
 

@@ -48,7 +48,7 @@ skip_if_not_threaded
 {
   /individual Set
 
-  /nodes total_vps 2 mul def  
+  /nodes total_vps 2 mul def
 
   % set resolution and total/local number of threads
   <<
@@ -57,7 +57,7 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /sinusoidal_gamma_generator
-  << 
+  <<
     /rate 1000.
     /amplitude 1000.
     /frequency 100.
@@ -71,7 +71,7 @@ skip_if_not_threaded
 
   pnet { gen exch Connect } forall
   pnet { sr Connect } forall
-  
+
   10. Simulate
 
   sr
@@ -85,10 +85,10 @@ skip_if_not_threaded
   {
     /sr true spg_tester def
 
-    % get events, replace vectors with SLI arrays    
+    % get events, replace vectors with SLI arrays
     /ev sr /events get def
     ev keys { /k Set ev dup k get cva k exch put } forall
-    ev 
+    ev
   }
   {
     << >>

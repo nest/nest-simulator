@@ -29,7 +29,7 @@
 %% The i/o facilities model those of Mathematica.
 %%
 
-/** @BeginDocumentation 
+/** @BeginDocumentation
 Name: ReadModes - dictionary with type specifiers for read functions
 Description:
 The following read modes are available:
@@ -50,7 +50,7 @@ FirstVersion: Jun 17 2000
     /Double    /ReadDouble load
     /Integer   /ReadInt    load
     /String    /getline    load
-   >> 
+   >>
 def
 
 /ArrayQ trie [/arraytype] true  addtotrie
@@ -101,7 +101,7 @@ Parameters: istream : an input stream
                       Integer- specifies an integer
                       Word   - a white space separated string
                       String - a text line terminated with a newline character
- 
+
 Description: ReadList reads the rest of a file into an array. If [types] contains
              more than one type specifier, the array is constructed from subarray with
              elements of the types, specified by  [types].
@@ -109,11 +109,11 @@ Description: ReadList reads the rest of a file into an array. If [types] contain
  	     ReadList tries to allocate the result array in advance. The option
 	     BufferSize can be specified to optimize this behaviour.
 
-             The valid type specifiers are defined in the ReadModes dictionary.              
-         
+             The valid type specifiers are defined in the ReadModes dictionary.
+
 Examples: istream [/Number /Number] ReadList -> [[1 2] [3 4] ...]
-          istream [/Number] ReadList -> [1 2 3 4 ...] 
- 
+          istream [/Number] ReadList -> [1 2 3 4 ...]
+
 References: ReadList approximates the Mathematica function.
 Author: Marc-Oliver Gewaltig
 FirstVersion: Jun 17 2000
@@ -121,13 +121,13 @@ SeeAlso: Read, ReadModes, Export
 */
 
 /ReadList
-<< /BufferSize 1000 >> 
+<< /BufferSize 1000 >>
 Options
 
 /ReadList
 [/istreamtype /arraytype]
 {
-  {cvn} Map % Convert all literals to names, 
+  {cvn} Map % Convert all literals to names,
   << >> begin
   [] /ReadList /BufferSize GetOption reserve_a
   %istream [result] array
@@ -161,7 +161,7 @@ Options
     {
       types Read
       {
-        % [] istream [result] 
+        % [] istream [result]
         3 -1 roll exch_
         append_a
         exch_
@@ -180,8 +180,8 @@ Name: SaveDictionary - Save contents of a dictionary to a file.
 Synopsis: dict (fname) SaveDictionary -> -
 Description: SaveDictionary tries to save the contents of the dictionary
  to a file. For this, it reproduces the input syntax of the dictionary.
- Thus, the resulting file is a readable ASCII-file. 
- 
+ Thus, the resulting file is a readable ASCII-file.
+
  SaveDictionary only processes those definitions which have a
  keyboard input form. Currently, the following types are saved
    - integertype
@@ -212,9 +212,9 @@ SeeAlso: RestoreDictionary, MergeDictionary
     exch <--
     ( def \n) <-
 } def
-  
+
 /:out [/ostreamtype /nametype /anytype] {2 npop} def
-/:out [/ostreamtype /nametype /doubletype] 
+/:out [/ostreamtype /nametype /doubletype]
 {
     rollu
     cvlit <--
@@ -223,16 +223,16 @@ SeeAlso: RestoreDictionary, MergeDictionary
     ( def \n) <-
 } def
 
-/:out [/ostreamtype /nametype /integertype] 
+/:out [/ostreamtype /nametype /integertype]
 /_:out load def
 
 /:out [/ostreamtype /nametype /stringtype]
 /_:out load def
 
-/:out [/ostreamtype /nametype /arraytype] 
+/:out [/ostreamtype /nametype /arraytype]
 /_:out load def
 
-%/:out [/ostreamtype /nametype /proceduretype] 
+%/:out [/ostreamtype /nametype /proceduretype]
 %/_:out load def
 
 /** @BeginDocumentation
@@ -260,29 +260,29 @@ SeeAlso: SaveDictionary, MergeDictionary
   << >> begin
   (r) file
   cvx exec
-  currentdict 
+  currentdict
   end
 } def
 
 
 /** @BeginDocumentation
-Name: Export - save in a foreign file format 
-Synopsis: 
-(fname) any         Export -> 
+Name: Export - save in a foreign file format
+Synopsis:
+(fname) any         Export ->
 (fname) any literal Export ->
-Examples:    
-(spike.gdf) [ [1 121] [2 127] ]         Export --> 
-(hello.dat) [ [3 121 4.3] [9 127 4.2] ] Export --> 
+Examples:
+(spike.gdf) [ [1 121] [2 127] ]         Export -->
+(hello.dat) [ [3 121 4.3] [9 127 4.2] ] Export -->
 Description:
-The currently supported formats are GDF (.gdf) and Table (.dat), 
-only the first argument style is currently supported. 
+The currently supported formats are GDF (.gdf) and Table (.dat),
+only the first argument style is currently supported.
 Export raises an /UnknownExportFormat error if an unsupported
 output format is requested.
 Author: Diesmann
 FirstVersion: 10.5.2001
-Remarks: 
+Remarks:
 The Mathematica implementation is much more general.
-Mathematica does not support GDF. 
+Mathematica does not support GDF.
 References:
    [1] The Mathematica Book "Export"
 SeeAlso: ReadList
@@ -294,16 +294,16 @@ SeeAlso: ReadList
  dup
  (.) breakup Last
  % array filename (gdf)
- [(gdf) (dat)] exch  MemberQ   
+ [(gdf) (dat)] exch  MemberQ
  not
- {exch /Export /UnknownExportFormat raiseerror} if 
+ {exch /Export /UnknownExportFormat raiseerror} if
  % array filename
  (w) file
  exch
- % file array 
+ % file array
  {
-  dup  
-  [1 -2] Take 
+  dup
+  [1 -2] Take
   exch
   Last
   rollu
@@ -311,17 +311,8 @@ SeeAlso: ReadList
    <- (\t) <-
   }
   forall
-  exch <- endl 
+  exch <- endl
  }
  forall
  closeostream
 } def
-
-
-
-
-
-
-
-
-

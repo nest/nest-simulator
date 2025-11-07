@@ -63,7 +63,7 @@ mciproxy << /port_name (voltage_in) >> SetStatus
    arrayload pop
   7 ToUnitTestPrecision cvs /RefValueChannelB Set
   7 ToUnitTestPrecision cvs /RefValueChannelA Set
-  
+
   ReceiveDataPacket
 
   arrayload pop

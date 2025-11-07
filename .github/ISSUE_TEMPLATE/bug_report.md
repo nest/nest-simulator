@@ -31,7 +31,7 @@ If applicable, add screenshots to help explain your problem.
  - NEST-Version: [e.g. nest-2.18, or git hash]
  - Installation: [e.g. conda packet, apt, with/out MPI, ...]
    (in case you compiled the source code manually, provide the
-    "Installation Summary" that you see at the end of the 
+    "Installation Summary" that you see at the end of the
     cmake step)
 
 **Additional context**

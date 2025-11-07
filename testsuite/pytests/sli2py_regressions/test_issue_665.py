@@ -18,100 +18,79 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Regression test for Issue #665 (GitHub).
 
+Test ported from SLI regression test
 This test ensures that ConnectLayers correctly handles devices with thread
 siblings as sources and targets.
+
+See also
+- https://github.com/nest/nest-simulator/issues/665
+- https://github.com/nest/nest-simulator/pull/666
 """
 
 import nest
 import pytest
 
+pytestmark = pytest.mark.skipif_missing_threads
 
-@pytest.mark.skipif_not_threaded
-def test_connect_layers_with_devices():
-    """
-    Test that ConnectLayers correctly handles devices with thread siblings.
-    """
-    # Define connection specifications
-    connspec = {"connection_type": "pairwise_bernoulli_on_source"}
 
-    # Reset the kernel and set the number of threads
+@pytest.fixture(autouse=True)
+def reset_kernel():
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 4})
 
-    # Create layers
-    pgl = nest.CreateLayer({"elements": "poisson_generator", "shape": [1, 1]})
-    nnl = nest.CreateLayer({"elements": "iaf_psc_alpha", "shape": [2, 2]})
 
-    # Connect layers
-    nest.ConnectLayers(pgl, nnl, connspec)
+@pytest.mark.parametrize(
+    "connspec",
+    [
+        {"rule": "pairwise_bernoulli", "p": 1, "use_on_source": True},
+        {"rule": "pairwise_bernoulli", "p": 1, "use_on_source": False},
+        {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False},
+    ],
+)
+def test_connect_generator_layer(connspec):
+    """
+    Confirm that devices can be connected as sources to layers with arbitrary connection rules.
+    Each neuron should appear exactly once as a connection target.
+    """
 
-    # Get connections and targets
-    src = nest.GetNodes(pgl)[0]
-    tgts = nest.GetNodes(nnl)
-    conns = nest.GetConnections(source=src)
-    ctgts = sorted(conn[1] for conn in conns)
+    nest.local_num_threads = 4
 
-    # Check if targets match expected
-    assert tgts == ctgts
+    gen_layer = nest.Create("poisson_generator", positions=nest.spatial.grid(shape=[1, 1]))
+    nrn_layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[2, 2]))
 
-    # Test different connection types
-    for conn_type in ["pairwise_bernoulli_on_source", "pairwise_bernoulli_on_target"]:
-        connspec["connection_type"] = conn_type
-        nest.ConnectLayers(pgl, nnl, connspec)
-        conns = nest.GetConnections(source=src)
-        ctgts = sorted(conn[1] for conn in conns)
-        assert tgts == ctgts
+    nest.Connect(gen_layer, nrn_layer, connspec)
+    conns = nest.GetConnections(source=gen_layer).get("target")
 
-    # Test with specific number of connections
-    connspec["connection_type"] = "pairwise_bernoulli_on_source"
-    connspec["number_of_connections"] = 1
-    nest.ConnectLayers(pgl, nnl, connspec)
-    conns = nest.GetConnections(source=src)
-    ctgts = sorted(conn[1] for conn in conns)
-    assert tgts == ctgts
+    assert sorted(conns) == list(nrn_layer.global_id)
 
-    connspec["connection_type"] = "pairwise_bernoulli_on_target"
-    connspec["number_of_connections"] = 4
-    connspec["allow_multapses"] = False
-    nest.ConnectLayers(pgl, nnl, connspec)
-    conns = nest.GetConnections(source=src)
-    ctgts = sorted(conn[1] for conn in conns)
-    assert tgts == ctgts
 
-    # Second set of tests: Neuron layer to single recorder
-    srl = nest.CreateLayer({"elements": "spike_recorder", "shape": [1, 1]})
-    nest.ConnectLayers(nnl, srl, connspec)
+@pytest.mark.parametrize(
+    "connspec,pass_expected",
+    [
+        [{"rule": "pairwise_bernoulli", "p": 1, "use_on_source": True}, True],
+        [{"rule": "pairwise_bernoulli", "p": 1, "use_on_source": False}, False],
+        [{"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False}, False],
+    ],
+)
+def test_connect_recorder_layer(connspec, pass_expected):
+    """
+    Confirm that neurons can be connected to a recorder with pairwise bernoulli used on source.
+    Other connection rules shall trigger an error. If connections are created, each neuron shall
+    appear exactly once as a connection source.
+    """
 
-    tgt = nest.GetNodes(srl)[0]
-    srcs = nest.GetNodes(nnl)
-    conns = nest.GetConnections(target=tgt)
-    csrcs = sorted(conn[0] for conn in conns)
+    nest.local_num_threads = 4
 
-    assert srcs == csrcs
+    nrn_layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[2, 2]))
+    rec_layer = nest.Create("spike_recorder", positions=nest.spatial.grid(shape=[1, 1]))
 
-    # Test different connection types for layer to recorder
-    for conn_type in ["pairwise_bernoulli_on_source", "pairwise_bernoulli_on_target"]:
-        connspec["connection_type"] = conn_type
-        nest.ConnectLayers(nnl, srl, connspec)
-        conns = nest.GetConnections(target=tgt)
-        csrcs = sorted(conn[0] for conn in conns)
-        assert srcs == csrcs
-
-    # Test with specific number of connections for layer to recorder
-    connspec["connection_type"] = "pairwise_bernoulli_on_source"
-    connspec["number_of_connections"] = 4
-    connspec["allow_multapses"] = False
-    nest.ConnectLayers(nnl, srl, connspec)
-    conns = nest.GetConnections(target=tgt)
-    csrcs = sorted(conn[0] for conn in conns)
-    assert srcs == csrcs
-
-    connspec["connection_type"] = "pairwise_bernoulli_on_target"
-    connspec["number_of_connections"] = 1
-    nest.ConnectLayers(nnl, srl, connspec)
-    conns = nest.GetConnections(target=tgt)
-    csrcs = sorted(conn[0] for conn in conns)
-    assert srcs == csrcs
+    if pass_expected:
+        nest.Connect(nrn_layer, rec_layer, connspec)
+        conns = nest.GetConnections(target=rec_layer).get("source")
+        assert sorted(conns) == list(nrn_layer.global_id)
+    else:
+        with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+            nest.Connect(nrn_layer, rec_layer, connspec)

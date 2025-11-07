@@ -27,6 +27,7 @@ def test_integer_weights_and_delays_do_not_crash():
     """
     Regression test for Ticket #772.
 
+    Test ported from SLI regression test
     Ensure that integer values for weight and delay do not crash NEST in Connect.
     """
     # First test: single integer weight and delay

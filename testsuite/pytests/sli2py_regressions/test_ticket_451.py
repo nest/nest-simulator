@@ -26,6 +26,7 @@ def test_ticket_451():
     """
     Guard against infinite loops in Random*Connect.
 
+    Test ported from SLI regression test
     This test ensures that conditions leading to infinite loops in
     random connection routines are caught when restrictions on multapses
     and autapses are taken into account.

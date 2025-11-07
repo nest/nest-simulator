@@ -52,8 +52,8 @@ skip_if_without_gsl
 
 ResetKernel
 
-<< 
-  /local_num_threads 1 
+<<
+  /local_num_threads 1
   /resolution h
   /use_wfr true
   /wfr_tol 0.0001
@@ -61,7 +61,7 @@ ResetKernel
   /wfr_max_iterations 10
   /wfr_comm_interval 1.0
 >> SetKernelStatus
-    
+
 /hh_psc_alpha_gap Create /neuron1 Set
 /hh_psc_alpha_gap Create /neuron2 Set
 
@@ -69,7 +69,7 @@ ResetKernel
 /static_synapse /static2 CopyModel
 
 neuron1
-<< 
+<<
   /I_e 200.
 >> SetStatus
 
@@ -97,8 +97,8 @@ neuron1 neuron2
 20 Simulate
 
 {                                             % reference data
- dup Transpose First /test_times Set         % times of reference 
-                               
+ dup Transpose First /test_times Set         % times of reference
+
  vm [/events [/times /V_m]] get cva   % array of recorded data
   5 ToUnitTestPrecision                      % to precision of reference
   Transpose                                  % all recorded tuples
@@ -106,11 +106,11 @@ neuron1 neuron2
  eq                                          % compare
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Expected output of this program:
-% 
-% The output send to std::cout is a superposition of 
+%
+% The output send to std::cout is a superposition of
 % the output of the voltmeter.
 %
 % time (in steps)  voltage (in mV)
@@ -129,7 +129,7 @@ neuron1 neuron2
 [ 12   -68.548 ]
 [ 13   -68.413 ]
 [ 14   -68.276 ]
-[ 15   -68.136 ] 
+[ 15   -68.136 ]
 %
 % ...
 %
@@ -148,9 +148,9 @@ neuron1 neuron2
 [ 129  -49.786 ]
 [ 130  -71.323 ]
 [ 131  -83.787 ]
-% 
+%
 % ...
-%   
+%
 [ 190  -71.023 ]
 [ 191  -70.833 ]
 [ 192  -70.647 ]
@@ -161,8 +161,6 @@ neuron1 neuron2
 [ 197  -69.783 ]
 [ 198  -69.622 ]
 [ 199  -69.464 ]
-]   
+]
 
 exch assert_or_die
-
-

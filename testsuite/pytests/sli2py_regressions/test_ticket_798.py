@@ -27,6 +27,7 @@ def test_quantal_stp_synapse_multithreaded():
     """
     Regression test for Ticket #798.
 
+    Test ported from SLI regression test
     Ensure random number generation does not fail in multi-threaded simulation of quantal_stp_synapse.
     """
     nest.ResetKernel()

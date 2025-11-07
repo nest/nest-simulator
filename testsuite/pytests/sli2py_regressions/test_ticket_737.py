@@ -22,48 +22,59 @@
 import nest
 import pytest
 
-SKIP_LIST = ["step_rate_generator"]
+"""
+Regression test for Ticket #737.
 
-# Get all stimulator models
+Ensure that stimulation devices can only be connected with a single synapse type.
+"""
+
+
+# Get all viable stimulator models
+SKIP_LIST = ["step_rate_generator"]
 stimulators = [
     m for m in nest.node_models if m not in SKIP_LIST and nest.GetDefaults(m).get("element_type") == "stimulator"
 ]
 
 
-# TODO: Split the three tests into separate test functions; for the third test, use
-#           pytest.raises(nest.kernel.NESTError, match="<NEST ERROR NAME>")
-#       to tighten the test
+@pytest.fixture(params=stimulators)
+def stimulator_and_neuron(request):
+    stim_model = request.param
 
-
-@pytest.mark.parametrize("stim_model", stimulators)
-def test_multiple_static_synapse_connections(stim_model):
-    """
-    Regression test for Ticket #737.
-
-    Ensure that stimulation devices can only be connected with a single synapse type.
-    """
-    # First test: multiple connections with same type (static_synapse)
     nest.ResetKernel()
     stim = nest.Create(stim_model)
     n = nest.Create("iaf_psc_alpha")
+
+    yield stim, n
+
+
+def test_ticket_737_all_static(stimulator_and_neuron):
+    """Confirm we can connect multiple times with static_synapse."""
+
+    stim, n = stimulator_and_neuron
+
     nest.Connect(stim, n, "all_to_all", syn_spec="static_synapse")
     nest.Connect(stim, n, "all_to_all", syn_spec="static_synapse")
 
-    # Second test: multiple connections of user-defined type
-    nest.ResetKernel()
-    stim = nest.Create(stim_model)
-    n = nest.Create("iaf_psc_alpha")
-    synmodel = f"{stim_model}_syn"
+
+def test_ticket_737_user_defined(stimulator_and_neuron):
+    """Confirm we can connect multiple times with user-defined synapse model."""
+
+    stim, n = stimulator_and_neuron
+
+    synmodel = f"{stim.model}_syn"
     nest.CopyModel("static_synapse", synmodel)
     nest.Connect(stim, n, "all_to_all", syn_spec=synmodel)
     nest.Connect(stim, n, "all_to_all", syn_spec=synmodel)
 
-    # Third test: no multiple connections with different types
-    nest.ResetKernel()
-    stim = nest.Create(stim_model)
-    n = nest.Create("iaf_psc_alpha")
-    synmodel = f"{stim_model}_syn"
+
+def test_ticket_737_break_on_different_types(stimulator_and_neuron):
+    """Confirm NEST raises error if trying to connect one generator with different synpase models."""
+
+    stim, n = stimulator_and_neuron
+
+    synmodel = f"{stim.model}_syn"
     nest.CopyModel("static_synapse", synmodel)
     nest.Connect(stim, n, "all_to_all", syn_spec="static_synapse")
-    with pytest.raises(nest.NESTError):
+
+    with pytest.raises(nest.kernel.NESTError, match="IllegalConnection"):
         nest.Connect(stim, n, "all_to_all", syn_spec=synmodel)

@@ -25,15 +25,15 @@
 /** @BeginDocumentation
 Name: testsuite::test_cva - check if cva function works
 
-Synopsis: (test_cva) run -> 
+Synopsis: (test_cva) run ->
 
 Description:
 
 Tests basic properties of cva. Note that the tests
 are directly compiled from the Examples section of
-the documentation which is evaluated by the command 
+the documentation which is evaluated by the command
 /validate .
-Future versions of NEST should generate this test 
+Future versions of NEST should generate this test
 directly from the Examples section.
 
 Author:  130603, Diesmann
@@ -50,4 +50,3 @@ M_ERROR setverbosity
 [ << /a 1 >> << /b 2>>] cva [[/a 1] [/b 2]] eq       assert_or_die
 [1 3 -5 2] cv_iv cva        [1 3 -5 2] eq            assert_or_die
 [1. 3. -5. 2.] cv_dv cva    [1. 3. -5. 2.] eq        assert_or_die
-

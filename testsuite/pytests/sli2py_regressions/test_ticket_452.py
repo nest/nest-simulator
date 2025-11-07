@@ -50,7 +50,7 @@ def test_ticket_452():
     Ensure that simulations with precise spike timing yield identical results
     independent of whether one simulates the full simulation time without interruption,
     or splits the simulation into many small pieces.
-    
+
     Test ported from SLI regression test
     Note: The problem was unrelated to the setting of kernel property  /off_grid_spiking
     and the spike_recorder property  /precise_times.

@@ -27,6 +27,7 @@ def test_ticket_414():
     """
     Regression test for Ticket #414.
 
+    Test ported from SLI regression test
     This test asserts that neurons can receive spikes even when frozen.
 
     Author: Hans E Plesser, 2010-04-21

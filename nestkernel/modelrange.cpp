@@ -34,3 +34,30 @@ nest::modelrange::extend_range( size_t new_last_node_id )
 {
   last_node_id_ = new_last_node_id;
 }
+size_t
+nest::modelrange::get_last_node_id() const
+{
+
+  return last_node_id_;
+}
+
+size_t
+nest::modelrange::get_first_node_id() const
+{
+
+  return first_node_id_;
+}
+
+size_t
+nest::modelrange::get_model_id() const
+{
+
+  return model_;
+}
+
+bool
+nest::modelrange::is_in_range( size_t node_id ) const
+{
+
+  return ( node_id >= first_node_id_ and node_id <= last_node_id_ );
+}

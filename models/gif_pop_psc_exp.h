@@ -25,11 +25,11 @@
 
 
 // Includes from nestkernel:
-#include "nest.h"
+#include "nest_impl.h"
 #include "node.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 #ifdef HAVE_GSL
 

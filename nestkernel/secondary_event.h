@@ -32,6 +32,8 @@
 namespace nest
 {
 
+class SICEvent;
+
 /**
  * Base class of secondary events. Provides interface for
  * serialization and deserialization. This event type may be
@@ -106,33 +108,6 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
   for ( size_t i = 0; i < num_uints; i++ )
   {
     memcpy( &( *( pos + i ) ), c + i * sizeof( unsigned int ), std::min( left_to_copy, sizeof( unsigned int ) ) );
-    left_to_copy -= sizeof( unsigned int );
-  }
-
-  pos += num_uints;
-}
-
-/**
- * This template function reads data of type T from a given position of a
- * std::vector< unsigned int >. The function is used to read SecondaryEvents
- * data from the NEST communication buffer. The pos iterator is advanced
- * during execution. For a discussion on the functionality of this function see
- * github issue #181 and pull request #184.
- */
-template < typename T >
-void
-read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
-{
-  // there is no aliasing problem here, since cast to char* invalidate strict
-  // aliasing assumptions
-  char* const c = reinterpret_cast< char* >( &d );
-
-  const size_t num_uints = number_of_uints_covered< T >();
-  size_t left_to_copy = sizeof( T );
-
-  for ( size_t i = 0; i < num_uints; i++ )
-  {
-    memcpy( c + i * sizeof( unsigned int ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
 
@@ -247,6 +222,7 @@ public:
 
     return pos;
   }
+
 
   /**
    * The following operator is used to write the information of the
@@ -391,86 +367,6 @@ public:
   void operator()() override;
   LearningSignalConnectionEvent* clone() const override;
 };
-
-template < typename DataType, typename Subclass >
-inline DataType
-DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
-{
-  DataType elem;
-  read_from_comm_buffer( elem, pos );
-  return elem;
-}
-
-template < typename DataType, typename Subclass >
-std::set< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
-
-template < typename DataType, typename Subclass >
-size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
-
-inline GapJunctionEvent*
-GapJunctionEvent::clone() const
-{
-  return new GapJunctionEvent( *this );
-}
-
-inline InstantaneousRateConnectionEvent*
-InstantaneousRateConnectionEvent::clone() const
-{
-  return new InstantaneousRateConnectionEvent( *this );
-}
-
-inline DelayedRateConnectionEvent*
-DelayedRateConnectionEvent::clone() const
-{
-  return new DelayedRateConnectionEvent( *this );
-}
-
-inline DiffusionConnectionEvent*
-DiffusionConnectionEvent::clone() const
-{
-  return new DiffusionConnectionEvent( *this );
-}
-
-inline double
-DiffusionConnectionEvent::get_drift_factor() const
-{
-  return drift_factor_;
-}
-
-inline double
-DiffusionConnectionEvent::get_diffusion_factor() const
-{
-  return diffusion_factor_;
-}
-
-inline LearningSignalConnectionEvent*
-LearningSignalConnectionEvent::clone() const
-{
-  return new LearningSignalConnectionEvent( *this );
-}
-
-/**
- * Event for slow inward current (SIC) connections between astrocytes and neurons.
- *
- * The event transmits the slow inward current to the connected neurons.
- */
-class SICEvent : public DataSecondaryEvent< double, SICEvent >
-{
-
-public:
-  SICEvent()
-  {
-  }
-
-  void operator()();
-  SICEvent* clone() const;
-};
-
-inline SICEvent*
-SICEvent::clone() const
-{
-  return new SICEvent( *this );
-}
 
 } // namespace nest
 

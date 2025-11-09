@@ -29,7 +29,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -37,8 +36,12 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
 #include "nest_impl.h"
+#include "universal_data_logger_impl.h"
 
 void
 nest::register_music_rate_in_proxy( const std::string& name )
@@ -108,7 +111,7 @@ nest::music_rate_in_proxy::music_rate_in_proxy()
   , S_()
 {
   // Register port for the model so it is available as default
-  kernel().music_manager.register_music_in_port( P_.port_name_ );
+  kernel::manager< MUSICManager >.register_music_in_port( P_.port_name_ );
 }
 
 nest::music_rate_in_proxy::music_rate_in_proxy( const music_rate_in_proxy& n )
@@ -117,7 +120,7 @@ nest::music_rate_in_proxy::music_rate_in_proxy( const music_rate_in_proxy& n )
   , S_( n.S_ )
 {
   // Register port for node instance because MusicManager manages ports via reference count
-  kernel().music_manager.register_music_in_port( P_.port_name_ );
+  kernel::manager< MUSICManager >.register_music_in_port( P_.port_name_ );
 }
 
 
@@ -136,7 +139,7 @@ nest::music_rate_in_proxy::pre_run_hook()
   // only publish the port once
   if ( not S_.registered_ )
   {
-    kernel().music_manager.register_music_rate_in_proxy( P_.port_name_, P_.channel_, this );
+    kernel::manager< MUSICManager >.register_music_rate_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;
   }
 }
@@ -160,8 +163,8 @@ nest::music_rate_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  kernel().music_manager.unregister_music_in_port( P_.port_name_ );
-  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
+  kernel::manager< MUSICManager >.unregister_music_in_port( P_.port_name_ );
+  kernel::manager< MUSICManager >.register_music_in_port( ptmp.port_name_ );
   P_ = ptmp;
   S_ = stmp;
 }
@@ -174,7 +177,7 @@ nest::music_rate_in_proxy::update( Time const&, const long, const long )
 void
 nest::music_rate_in_proxy::handle( InstantaneousRateConnectionEvent& e )
 {
-  kernel().event_delivery_manager.send_secondary( *this, e );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, e );
 }
 
 

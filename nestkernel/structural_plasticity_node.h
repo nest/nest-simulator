@@ -151,18 +151,6 @@ private:
   std::map< Name, SynapticElement > synaptic_elements_map_;
 };
 
-inline double
-StructuralPlasticityNode::get_tau_Ca() const
-{
-  return tau_Ca_;
-}
-
-inline double
-StructuralPlasticityNode::get_Ca_minus() const
-{
-  return Ca_minus_;
-}
-
 } // of namespace
 
 #endif /* #ifndef STRUCTURAL_PLASTICITY_NODE_H */

@@ -22,7 +22,6 @@
 
 #include "gap_junction.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

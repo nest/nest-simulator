@@ -23,26 +23,89 @@
 #ifndef MPI_MANAGER_IMPL_H
 #define MPI_MANAGER_IMPL_H
 
-#include "config.h"
-
-#ifdef HAVE_MPI
-// C includes:
-#include <mpi.h>
-#endif /* #ifdef HAVE_MPI */
-
 #include "mpi_manager.h"
 
-// Includes from nestkernel:
-#include "kernel_manager.h"
-
-inline size_t
-nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
+namespace nest
 {
-  return vp % num_processes_;
+
+#ifdef HAVE_MPI
+template < class D >
+void
+MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
+  std::vector< D >& recv_buffer,
+  const unsigned int send_recv_count )
+{
+  void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
+  void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
+
+  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count );
+}
+
+template < class D >
+void
+MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+{
+  void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
+  void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
+
+  communicate_Alltoallv_( send_buffer_int,
+    &send_counts_secondary_events_in_int_per_rank_[ 0 ],
+    &send_displacements_secondary_events_in_int_per_rank_[ 0 ],
+    recv_buffer_int,
+    &recv_counts_secondary_events_in_int_per_rank_[ 0 ],
+    &recv_displacements_secondary_events_in_int_per_rank_[ 0 ] );
+}
+
+#else // HAVE_MPI
+template < class D >
+void
+MPIManager::MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
+  std::vector< D >& recv_buffer,
+  const unsigned int )
+{
+  recv_buffer.swap( send_buffer );
+}
+
+template < class D >
+void
+MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+{
+  recv_buffer.swap( send_buffer );
+}
+
+#endif /* HAVE_MPI */
+
+template < class D >
+void
+MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+{
+  const size_t send_recv_count_target_data_in_int_per_rank =
+    sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
+}
+
+template < class D >
+void
+MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+{
+  const size_t send_recv_count_spike_data_in_int_per_rank =
+    sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank );
+}
+
+template < class D >
+void
+MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+{
+  const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
+    sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
 }
 
 #ifdef HAVE_MPI
-
 // Variable to hold the MPI communicator to use.
 #ifdef HAVE_MUSIC
 extern MPI::Intracomm comm;
@@ -74,21 +137,9 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
     comm );
 }
 
-inline size_t
-nest::MPIManager::get_process_id_of_node_id( const size_t node_id ) const
-{
-  return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
-}
-
-#else // HAVE_MPI
-
-
-inline size_t
-nest::MPIManager::get_process_id_of_node_id( const size_t ) const
-{
-  return 0;
-}
-
 #endif /* HAVE_MPI */
 
-#endif /* MPI_MANAGER_IMPL_H */
+
+}
+
+#endif

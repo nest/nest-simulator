@@ -28,25 +28,19 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "dictdatum.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 // Includes from standard library
-#include <algorithm>
 #include <boost/math/special_functions/gamma.hpp>
-#include <typeinfo>
 
 /* ---------------------------------------------------------------------------
  * Recordables map
@@ -409,7 +403,7 @@ nest::iaf_bw_2001::pre_run_hook()
 void
 nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 {
-  std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
+  std::vector< double > s_vals( kernel::manager< ConnectionManager >.get_min_delay(), 0.0 );
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -475,7 +469,7 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 
       SpikeEvent se;
       se.set_offset( s_NMDA_delta );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -484,42 +478,6 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-nest::iaf_bw_2001::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e );
-}
-
-void
-nest::iaf_bw_2001::handle( SpikeEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
-
-  const auto rport = e.get_rport();
-
-  if ( rport < NMDA )
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_offset() );
-  }
-}
-
-void
-nest::iaf_bw_2001::handle( CurrentEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 #endif // HAVE_BOOST

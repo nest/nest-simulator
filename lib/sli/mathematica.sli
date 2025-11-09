@@ -696,7 +696,7 @@ end
 % the level specification is restriced to [n], 130222 MD
 /MapAtLevel
 {
- 0 get 
+ 0 get
  MapRecursion
 } def
 
@@ -711,7 +711,7 @@ end
   rolld  % p i a
 
   {
-             % p i ai 
+             % p i ai
    rollu     % ai p i
    2 copy    % ai p i p i
    5 -1 roll % p i p i ai
@@ -719,7 +719,7 @@ end
    MapRecursion
   } Map
           % p i a
-  rollu   % a p i 
+  rollu   % a p i
   2 npop  % a
  }
  {pop Map}
@@ -1014,7 +1014,7 @@ def
      MapIndexed works similar to Map, however, in adition to the
      element its index within the array is also passed to the function.
      Note that the index starts with 1, according to Mathematica convention.
-     This is unlike in forallindexed where in accordance with Postscript 
+     This is unlike in forallindexed where in accordance with Postscript
      array indices start with 0.
      The result of MapIndexed is a list with the same number of values as the
      argument list.
@@ -1710,16 +1710,16 @@ SeeAlso: MathematicaToSliIndex
 
 
    [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part  --> [[5 6] [1 8]]
-   [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19  
-   [3 4 5 6 7] [-2] Part                                   --> 6 
+   [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19
+   [3 4 5 6 7] [-2] Part                                   --> 6
    [3 [-9 -12] 5 6 7] [2] Part                             --> [-9 -12]
    [3 [-9 -12] 5 6 7] [2 2] Part                           --> -12
-   [3 [-9 -12] 5 6 7] [[2 3]] Part                         --> [[-9 -12] 5] 
+   [3 [-9 -12] 5 6 7] [[2 3]] Part                         --> [[-9 -12] 5]
    [3 [-9 -12] 5 6 7] [[2 3 2]] Part                       --> [[-9 -12] 5 [-9 -12]]
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part    --> [] 
-   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part     --> [] 
-   [3 [5 -12] 6 9]  [ [ 2 ] ] Part                         --> [[5 -12]] 
-   [3 [5 -12] 6 9]  [ [ 2 ] 2] Part                        --> [-12] 
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part    --> []
+   [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part     --> []
+   [3 [5 -12] 6 9]  [ [ 2 ] ] Part                         --> [[5 -12]]
+   [3 [5 -12] 6 9]  [ [ 2 ] 2] Part                        --> [-12]
    [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part --> [[6 5] [7 4] [8 1]]
 
   Bugs:
@@ -1795,14 +1795,14 @@ def
      rolld                         % a jm im
      dup                           % a jm im im
      rollu                         % a im jm im
-     sub 1 add   
-     dup 0 lt			    % if 2nd parameter < 0, set it to zero to force getinterval 
+     sub 1 add
+     dup 0 lt			    % if 2nd parameter < 0, set it to zero to force getinterval
      {				    % to return empty array as requested by Take in this case
-       pop 0 
-     } if 
-    
+       pop 0
+     } if
+
      getinterval
-     
+
    } case
 
    1 index 3 eq
@@ -1811,7 +1811,7 @@ def
      dup rollu Most MathematicaToSliIndex rolld Last append
      Range     % a r
      exch      % r a
-     container % r a c 
+     container % r a c
      rolld     % a c r
      {
        2 index
@@ -1849,8 +1849,8 @@ Operations are the same on strings.
 The implementation of Take uses the command container to abstract
 the container type.
 
-Note that Take handles indices ranging from -N to N where 
-    N is the length of the original container and asking for index 0 
+Note that Take handles indices ranging from -N to N where
+    N is the length of the original container and asking for index 0
     will return an empty array.
 
 If the specified indices do not exist in the container, Take throws a RangeCheck error.
@@ -1865,7 +1865,7 @@ Examples:
  [1 2 3 4 5] [1 -2] Take   --> [1 2 3 4]
  [1 2 3 4 5] [1 -2 2] Take --> [1 3]
  [1 2 3 4 5] [1 -1 2] Take --> [1 3 5]
-% [1 2 3 4 5] [1 6] Take    --> [Error]: RangeCheck 
+% [1 2 3 4 5] [1 6] Take    --> [Error]: RangeCheck
  (HAL) {1 add} Map     --> (IBM)
  (HAL) 2 Take          --> (HA)
  (HAL) -2 Take         --> (AL)
@@ -2486,7 +2486,7 @@ def
 /** @BeginDocumentation
    Name: Dot1D - Compute the inner product of two vectors.
    Synopsis: array array Dot1D -> num
-   Description: 
+   Description:
    Dot1D expects two one dimensional arrays or vectors and computes the
    inner product of the two arguments.
    Dot1D works equally well for arrays, doublevectors and intvectors.
@@ -2530,7 +2530,7 @@ def
    not yet protected by trie
   Author: Marc-Oliver Gewaltig, Diesmann
   FirstVersion: 31.5.2000, rewritten Dec 18 2012
-  
+
   Remarks:
   SeeAlso: Times, Dot
   References:
@@ -2539,7 +2539,7 @@ def
 /OuterProduct
 {
  exch
- { 1 index mul } Map 
+ { 1 index mul } Map
  exch pop
 } bind def
 
@@ -2954,7 +2954,7 @@ Synposis: dictionary DictQ -> true
           any        DictQ -> false
 SeeAlso: NumberQ, LiteralQ, ArrayQ
 */
-/DictQ trie 
+/DictQ trie
   [/dictionarytype] true addtotrie
   [/anytype]        false addtotrie
 def
@@ -3307,20 +3307,20 @@ SeeAlso: Min, Sort
 /Max
 {
    size 0 eq
-   {  
+   {
      /Max /RangeCheck raiseerror
    } if
    dup 0 get  % start value as sentinel
-   exch 
-   { 
+   exch
+   {
       dup 2 index gt % compare current element with sentinel
-     { 
+     {
        exch pop % if element is greater than sentinel, make it new sentinel
-     } 
+     }
      {
         pop  %else discard
-     } ifelse 
-   } forall 
+     } ifelse
+   } forall
 } def
 
 /** @BeginDocumentation
@@ -3348,20 +3348,20 @@ SeeAlso: Max, Sort, Mean, Variance
 /Min
 {
    size 0 eq
-   {  
+   {
      /Min /RangeCheck raiseerror
    } if
    dup 0 get  % start value as sentinel
-   exch 
-   { 
+   exch
+   {
       dup 2 index lt % compare current element with sentinel
-     { 
+     {
        exch pop % if element is less than sentinel, make it new sentinel
-     } 
+     }
      {
         pop  %else discard
-     } ifelse 
-   } forall 
+     } ifelse
+   } forall
 }
 def
 
@@ -3672,7 +3672,7 @@ def
 
    <</args [] >> begin                 % dictionary to store argument names of the pure function
                                        % in the #1, ..., #n notation. In case of only a single argument
-                                       % the # is sufficient 
+                                       % the # is sufficient
 % expr
      expr_sequence                        % length
 
@@ -3684,7 +3684,7 @@ def
 
      args length 0 gt
      {
-      {<< >> begin} 
+      {<< >> begin}
       args Sort Reverse { cvlit append (Set) cvn append } forall
 
       exch join {end} join
@@ -4034,7 +4034,7 @@ def
    {
     (#) cvn /out cdict AppendTo
 %   /argument match
-   (#) /args AppendTo 
+   (#) /args AppendTo
 %  1 /n_args Set
    }
    ifelse
@@ -4383,10 +4383,10 @@ Description:
 
  This is to be distinguished from Map which individually applies
  the function to the elements of the array,
-   [f(a(1),f(a(2), ...,f(a(n))] 
+   [f(a(1),f(a(2), ...,f(a(n))]
 
 Parameters:
-  array is an arbitrarily shaped heterogeneous array. 
+  array is an arbitrarily shaped heterogeneous array.
   proc is any procedure object (pure function).
 
 Examples:
@@ -4825,7 +4825,7 @@ SeeAlso: MapThread, forall, Map, MapIndexed, NestList, FoldList
 
 /Map [/doublevectortype /proceduretype] /Map_ load def
 /Map [/intvectortype /proceduretype] /Map_ load def
- 
+
 /arrayload_ /arrayload load def
 
 /arrayload [/arraytype] /arrayload_ load def
@@ -4879,15 +4879,15 @@ SeeAlso: zeros, ones, Range, array, LayoutArray, Table
 
 /getinterval [/intvectortype /integertype /integertype]
 {
-   2 arraystore arange 
-   get_iv_iv 
-} def 
+   2 arraystore arange
+   get_iv_iv
+} def
 
 /getinterval [/doublevectortype /integertype /integertype]
 {
-   2 arraystore arange 
-   get_dv_iv 
-} def 
+   2 arraystore arange
+   get_dv_iv
+} def
 
 /<. mark def
 /<# mark def
@@ -4907,11 +4907,11 @@ This constructor uses the type of the first element in the sequence to determine
 elements will be converted.
 FirstVersion: Dec 18 2012
 Author: Marc-Oliver Gewaltig
-*/ 
-/> 
+*/
+/>
 {
   counttomark arraystore exch ;
-  dup 0 get type 
+  dup 0 get type
   switchbegin
   1 index /doubletype eq { pop cv_dv exit} case
   1 index /integertype eq { pop cv_iv exit} case

@@ -45,7 +45,7 @@ def test_issue_connect_array_mpi(connspec):
     """
 
     import nest
-    import pandas as pd
+    import pandas as pd  # noqa: F811
 
     N = 10
 
@@ -55,8 +55,11 @@ def test_issue_connect_array_mpi(connspec):
     nrns = nest.Create("parrot_neuron", n=N)
 
     # Build arrays assigning unique weight and delay to each source-target pair
-    gids_to_weights = lambda sgids, tgids: sgids + 100 * tgids
-    gids_to_delays = lambda sgids, tgids: nest.resolution * (1 + 97 * sgids + tgids)
+    def gids_to_weights(sgids, tgids):
+        return sgids + 100 * tgids
+
+    def gids_to_delays(sgids, tgids):
+        return nest.resolution * (1 + 97 * sgids + tgids)
 
     gids = np.array(nrns.tolist())
 

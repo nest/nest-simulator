@@ -40,7 +40,8 @@ be fixed while the number of MPI processes is varied, but this is not required.
       are evaluated in the wrapping process
     - No decorators are written to the `runner.py` file.
     - Test files must import all required modules (especially `nest`) inside the
-      test function.
+      test function. If such imports import modules also imported at the module level
+      of the test script, add `# noqa: F811` to the import inside the test function.
     - The docstring for the test function shall in its last line specify what data
       the test function outputs for comparison by the test.
     - In `runner.py`, the following constants are defined:

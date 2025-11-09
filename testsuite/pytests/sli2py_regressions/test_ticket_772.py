@@ -23,37 +23,23 @@ import nest
 import pytest
 
 
-def test_integer_weights_and_delays_do_not_crash():
+@pytest.mark.parametrize(
+    "rule, n_tgts, weights, delays",
+    [("all_to_all", 1, 1, 4), ("all_to_all", 1, [[1, 1]], [[4, 6]]), ("one_to_one", 2, [1, 1], [4, 6])],
+)
+def test_integer_weights_and_delays_do_not_crash(rule, n_tgts, weights, delays):
     """
     Regression test for Ticket #772.
 
     Test ported from SLI regression test
     Ensure that integer values for weight and delay do not crash NEST in Connect.
     """
-    # First test: single integer weight and delay
-    nest.ResetKernel()
-    n = nest.Create("iaf_psc_alpha", 2)
-    nest.Connect(
-        n, n, conn_spec={"rule": "all_to_all"}, syn_spec={"synapse_model": "static_synapse", "weight": 1, "delay": 4}
-    )
 
-    # Second test: list of integer weights and delays (all_to_all)
-    nest.ResetKernel()
-    n = nest.Create("iaf_psc_alpha", 2)
+    n = nest.Create("parrot_neuron", 2)
     nest.Connect(
         n,
-        n,
-        conn_spec={"rule": "all_to_all"},
-        syn_spec={"synapse_model": "static_synapse", "weight": [1, 1], "delay": [4, 6]},
-    )
-
-    # Third test: list of integer weights and delays (one_to_one)
-    nest.ResetKernel()
-    n = nest.Create("iaf_psc_alpha", 2)
-    nest.Connect(
-        n,
-        n,
-        conn_spec={"rule": "one_to_one"},
-        syn_spec={"synapse_model": "static_synapse", "weight": [1, 1], "delay": [4, 6]},
+        n[:n_tgts],
+        conn_spec={"rule": rule},
+        syn_spec={"synapse_model": "static_synapse", "weight": weights, "delay": delays},
     )
     # No assertion needed, test passes if no error is raised.

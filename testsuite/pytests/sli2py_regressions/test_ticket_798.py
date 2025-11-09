@@ -23,6 +23,7 @@ import nest
 import pytest
 
 
+@pytest.mark.skipif_missing_threads
 def test_quantal_stp_synapse_multithreaded():
     """
     Regression test for Ticket #798.
@@ -31,6 +32,7 @@ def test_quantal_stp_synapse_multithreaded():
     Ensure random number generation does not fail in multi-threaded simulation of quantal_stp_synapse.
     """
     nest.ResetKernel()
+    nest.local_num_threads = 4
     nest.SetDefaults(
         "quantal_stp_synapse", {"U": 0.2, "u": 0.2, "tau_fac": 500.0, "tau_rec": 200.0, "weight": 1.0, "n": 5}
     )

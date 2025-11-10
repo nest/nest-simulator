@@ -36,122 +36,85 @@ Author: Hans Ekkehard Plesser, 2010-06-28
 import nest
 import pytest
 
-
-@pytest.fixture(autouse=True)
-def prepare_kernel():
-    nest.ResetKernel()
-    nest.set_verbosity("M_INFO")
+pytestmark = pytest.mark.skipif("ht_neuron" not in nest.node_models, reason="ht_neuron not available")
 
 
-@pytest.mark.skipif("ht_neuron" not in nest.node_models, reason="ht_neuron not available")
-def test_explicit_receptor_type():
+@pytest.fixture
+def nodes():
+    ht_layer = nest.Create("ht_neuron", positions=nest.spatial.grid(shape=[2, 3]))
+    ampa_id = nest.GetDefaults("ht_neuron")["receptor_types"]["AMPA"]
+    yield ht_layer, ampa_id
+
+
+def test_explicit_receptor_type(nodes):
     """
     Test that explicit receptor_type works for ht_neuron.
     """
-    nest.ResetKernel()
-    nest.CopyModel("ht_neuron", "MyHT")
-    nest.CopyModel("poisson_generator", "RetinaGen", {"rate": 10.0})
-    nest.CopyModel("parrot_neuron", "RetinaNode")
-    ampa = nest.GetDefaults("MyHT")["receptor_types"]["AMPA"]
-    shape = [10, 10]
-    extent = [8.0, 8.0]
-    retina_gen = nest.Create("RetinaGen", positions=nest.spatial.grid(shape=shape, extent=extent))
-    retina = nest.Create("RetinaNode", positions=nest.spatial.grid(shape=shape, extent=extent))
-    Tp = nest.Create("MyHT", positions=nest.spatial.grid(shape=shape, extent=extent))
-    nest.Connect(retina_gen, retina, conn_spec="one_to_one")
-    # Explicit receptor_type
-    nest.Connect(retina_gen, Tp, conn_spec={"rule": "one_to_one"}, syn_spec={"receptor_type": ampa})
-    nest.Simulate(10.0)
+
+    ht_layer, ampa_id = nodes
+    nest.Connect(ht_layer, ht_layer, "one_to_one", {"receptor_type": ampa_id})
 
 
-@pytest.mark.skipif("ht_neuron" not in nest.node_models, reason="ht_neuron not available")
-def test_implicit_receptor_type_fails():
+def test_missing_receptor_type(nodes):
     """
-    Test that missing receptor_type raises an error for ht_neuron.
+    Test that explicit receptor_type works for ht_neuron.
     """
-    nest.ResetKernel()
-    nest.CopyModel("ht_neuron", "MyHT")
-    nest.CopyModel("poisson_generator", "RetinaGen", {"rate": 10.0})
-    nest.CopyModel("parrot_neuron", "RetinaNode")
-    shape = [10, 10]
-    extent = [8.0, 8.0]
-    retina_gen = nest.Create("RetinaGen", positions=nest.spatial.grid(shape=shape, extent=extent))
-    retina = nest.Create("RetinaNode", positions=nest.spatial.grid(shape=shape, extent=extent))
-    Tp = nest.Create("MyHT", positions=nest.spatial.grid(shape=shape, extent=extent))
-    nest.Connect(retina_gen, retina, conn_spec="one_to_one")
-    # Missing receptor_type should fail
-    with pytest.raises(nest.NESTError):
-        nest.Connect(retina_gen, Tp, conn_spec={"rule": "one_to_one"})
+
+    ht_layer, ampa_id = nodes
+    with pytest.raises(nest.kernel.NESTError, match="UnknownReceptorType"):
+        nest.Connect(ht_layer, ht_layer, "one_to_one")
 
 
-@pytest.mark.skipif("ht_neuron" not in nest.node_models, reason="ht_neuron not available")
-def test_connectlayers_receptor_type():
+def test_connectlayers_receptor_type(nodes):
     """
     Test that receptor_type is properly passed in spatial Connect.
     """
-    nest.ResetKernel()
-    nest.CopyModel("ht_neuron", "MyHT")
-    nest.CopyModel("poisson_generator", "RetinaGen", {"rate": 10.0})
-    nest.CopyModel("parrot_neuron", "RetinaNode")
-    ampa = nest.GetDefaults("MyHT")["receptor_types"]["AMPA"]
-    shape = [10, 10]
-    extent = [8.0, 8.0]
-    retina = nest.Create("RetinaNode", positions=nest.spatial.grid(shape=shape, extent=extent))
-    Tp = nest.Create("MyHT", positions=nest.spatial.grid(shape=shape, extent=extent))
-    # receptor_type passed in syn_spec
+
+    ht_layer, ampa_id = nodes
     nest.Connect(
-        retina,
-        Tp,
-        conn_spec={
+        ht_layer,
+        ht_layer,
+        {
             "rule": "pairwise_bernoulli",
             "p": 1.0,
-            "mask": {"circular": {"radius": 2.0}},
+            "mask": {"circular": {"radius": 1.0}},
         },
-        syn_spec={"receptor_type": ampa, "synapse_model": "ht_synapse"},
+        syn_spec={"receptor_type": ampa_id, "synapse_model": "ht_synapse"},
     )
-    nest.Simulate(10.0)
 
 
-@pytest.mark.skipif("ht_neuron" not in nest.node_models, reason="ht_neuron not available")
-def test_connectlayers_receptor_type_in_synapse():
+def test_connectlayers_receptor_type_in_synapse(nodes):
     """
     Test that receptor_type in custom synapse model works in spatial Connect.
     """
-    nest.ResetKernel()
-    nest.CopyModel("ht_neuron", "MyHT")
-    nest.CopyModel("poisson_generator", "RetinaGen", {"rate": 10.0})
-    nest.CopyModel("parrot_neuron", "RetinaNode")
-    ampa = nest.GetDefaults("MyHT")["receptor_types"]["AMPA"]
-    # Create a custom synapse model with receptor_type set
-    nest.CopyModel("ht_synapse", "ht_syn_ampa", {"receptor_type": ampa})
-    shape = [10, 10]
-    extent = [8.0, 8.0]
-    retina = nest.Create("RetinaNode", positions=nest.spatial.grid(shape=shape, extent=extent))
-    Tp = nest.Create("MyHT", positions=nest.spatial.grid(shape=shape, extent=extent))
+
+    ht_layer, ampa_id = nodes
+    nest.CopyModel("ht_synapse", "ht_syn_ampa", {"receptor_type": ampa_id})
     nest.Connect(
-        retina,
-        Tp,
-        conn_spec={
+        ht_layer,
+        ht_layer,
+        {
             "rule": "pairwise_bernoulli",
             "p": 1.0,
-            "mask": {"circular": {"radius": 2.0}},
+            "mask": {"circular": {"radius": 1.0}},
         },
-        syn_spec={"synapse_model": "ht_syn_ampa"},
+        syn_spec={"receptor_type": ampa_id, "synapse_model": "ht_syn_ampa"},
     )
-    nest.Simulate(10.0)
 
 
 def test_all_models_with_receptor_types_reject_static_synapse():
     """
     Assert that all models with receptor_types reject connections with plain static_synapse.
     """
-    for mod in nest.node_models:
-        dflts = nest.GetDefaults(mod)
-        if "receptor_types" in dflts:
+
+    src = nest.Create("parrot_neuron")
+
+    for model in nest.node_models:
+        # Need to avoid eprop_readout neurons because they handle spike input via static_synapse
+        # and use receptor types only to distiguish readout and target signal for recording.
+        if not model.startswith("eprop_readout") and "receptor_types" in (dflts := nest.GetDefaults(model)):
             # Avoid models with auto-generated ports (length 0 or less)
             if len(dflts["receptor_types"]) > 0:
-                nest.ResetKernel()
-                src = nest.Create(mod)
-                tgt = nest.Create(mod)
-                with pytest.raises(nest.NESTError):
+                tgt = nest.Create(model)
+                with pytest.raises(nest.kernel.NESTError, match="UnknownReceptorType|IncompatibleReceptorType"):
                     nest.Connect(src, tgt, syn_spec="static_synapse")

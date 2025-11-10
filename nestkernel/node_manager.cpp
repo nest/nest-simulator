@@ -350,7 +350,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
     nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
     {
-      size_t tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
 
       for ( auto node : get_local_nodes( tid ) )
       {
@@ -387,6 +387,12 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
               break;
             }
           }
+          else
+          {
+            // We were looking for a parameter not existing in the node, so it is no match.
+            match = false;
+            break;
+          }
         }
         if ( match )
         {
@@ -408,15 +414,14 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
         nodes.push_back( globalnodes[ i ] );
       }
     }
-
-    // get rid of any multiple entries
-    std::sort( nodes.begin(), nodes.end() );
-    std::vector< long >::iterator it;
-    it = std::unique( nodes.begin(), nodes.end() );
-    nodes.resize( it - nodes.begin() );
   }
 
-  std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
+  // get rid of any multiple entries
+  std::sort( nodes.begin(), nodes.end() );
+  std::vector< long >::iterator it;
+  it = std::unique( nodes.begin(), nodes.end() );
+  nodes.resize( it - nodes.begin() );
+
   IntVectorDatum nodes_datum( nodes );
   NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
 

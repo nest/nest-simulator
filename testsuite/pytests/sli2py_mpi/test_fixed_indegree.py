@@ -37,6 +37,6 @@ def test_fixed_indegree():
     nest.Connect(nrns, nrns, {"rule": "fixed_indegree", "indegree": 2})
 
     # Write data to minimal CSV file
-    with open(OTHER_LABEL.format(nest.num_processes, nest.Rank()), "w") as of:
+    with open(OTHER_LABEL.format(nest.num_processes, nest.Rank()), "w") as of:  # noqa: F821
         of.write("n_conn\n")
         of.write(f"{nest.num_connections}\n")

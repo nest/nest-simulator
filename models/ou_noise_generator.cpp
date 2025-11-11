@@ -222,8 +222,7 @@ nest::ou_noise_generator::pre_run_hook()
 
   V_.dt_steps_ = P_.dt_.get_steps();
 
-  const double h = Time::get_resolution().get_ms();
-  const double t = kernel().simulation_manager.get_time().get_ms();
+  const double h = P_.dt_.get_ms();
 
   V_.prop_ = std::exp( -h / P_.tau_ );
   V_.noise_amp_ = P_.std_ * std::sqrt( -std::expm1( -2.0 * h / P_.tau_ ) );

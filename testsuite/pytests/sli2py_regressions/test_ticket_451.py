@@ -26,7 +26,8 @@ import pytest
 Regression test for Ticket #451.
 
 Test ported from SLI regression test.
-Guard against infinite loops in random connection routines when multapse/autapse constraints make the request infeasible.
+Guard against infinite loops in random connection routines when multapse/autapse constraints make the request
+infeasible.
 """
 
 

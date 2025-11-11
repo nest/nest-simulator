@@ -28,7 +28,8 @@ from mpi_test_wrapper import MPITestAssertEqual
 @MPITestAssertEqual([1, 2, 4])
 def test_gamma_sup_generator():
     """
-    Creates a gamma_sup_generator and sends spikes to spike recorder. Assert invariant results for fixed VP number. This is a partial response to ticket #551. May be adapted to other generators.
+    Creates a gamma_sup_generator and sends spikes to spike recorder. Assert invariant results for fixed VP number.
+    This is a partial response to ticket #551. May be adapted to other generators.
 
     The test compares data written by spike_recorder to SPIKE_LABEL.
     """

@@ -116,7 +116,6 @@ public:
   ou_noise_generator();
   ou_noise_generator( const ou_noise_generator& );
 
-
   //! Allow multimeter to connect to local instances
   bool local_receiver() const override;
 
@@ -170,7 +169,7 @@ private:
   {
     double mean_; //!< mean current, in pA
     double std_;  //!< standard deviation of current, in pA
-    double tau_;  //!< Standard frequency in Hz
+    double tau_;  //!< OU time constant, in ms
     Time dt_;     //!< time interval between updates
 
     /**
@@ -227,10 +226,11 @@ private:
   {
     normal_distribution normal_dist_; //!< normal distribution
 
-    long dt_steps_;    //!< update interval in steps
-    double prop_;      //!< frequency [radian/s]
-    double noise_amp_; //!<
-    double tau_inv_;   //!<
+    long dt_steps_;       //!< update interval in steps
+    double prop_;         //!< frequency [radian/s]
+    double noise_amp_;    //!< noise amplitude for one update, in pA
+    double mean_weight_;  //!< weight for mean contribution
+    double mean_incr_;    //!< precomputed mean contribution per step
   };
 
   double

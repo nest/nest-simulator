@@ -28,9 +28,10 @@ from mpi_test_wrapper import MPITestAssertEqual
 @MPITestAssertEqual([1, 2, 4])
 def test_gamma_sup_generator():
     """
-    Creates ginzburg neurons and sends spikes to spike recorder. Assert invariant results for fixed VP number. This is a partial response to #551. May be adapted to other generators.
+    Creates ginzburg neurons and sends spikes to spike recorder. Assert invariant results for fixed VP number.
+    This is a partial response to #551. May be adapted to other generators.
 
-     The test compares data written by spike_recorder to SPIKE_LABEL.
+    The test compares data written by spike_recorder to SPIKE_LABEL.
     """
 
     import nest

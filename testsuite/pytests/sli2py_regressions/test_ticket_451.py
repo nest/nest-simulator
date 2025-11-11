@@ -18,72 +18,88 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import nest
 import pytest
 
+"""
+Regression test for Ticket #451.
 
-def test_ticket_451():
-    """
-    Guard against infinite loops in Random*Connect.
+Test ported from SLI regression test.
+Guard against infinite loops in random connection routines when multapse/autapse constraints make the request infeasible.
+"""
 
-    Test ported from SLI regression test
-    This test ensures that conditions leading to infinite loops in
-    random connection routines are caught when restrictions on multapses
-    and autapses are taken into account.
 
-    Author: Hans Ekkehard Plesser, 2010-09-20
-    """
-
-    # Create three iaf_psc_alpha neurons
+def _create_populations():
     nodes = nest.Create("iaf_psc_alpha", 3)
-    first = nodes[:1]  # Take first node
+    first = nodes[:1]
+    return nodes, first
 
-    # Test fixed indegree connections
-    with pytest.raises(Exception):
-        nest.Connect(
-            nodes, first, {"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False, "allow_autapses": True}
-        )
 
-    nest.Connect(
-        nodes, first, {"rule": "fixed_indegree", "indegree": 3, "allow_multapses": False, "allow_autapses": True}
-    )
-    nest.Connect(
-        nodes, first, {"rule": "fixed_indegree", "indegree": 2, "allow_multapses": False, "allow_autapses": True}
-    )
+IMPOSSIBLE_SCENARIOS = (
+    (
+        {"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False, "allow_autapses": True},
+        False,
+        "Indegree",
+    ),
+    (
+        {"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False, "allow_autapses": False},
+        False,
+        "Indegree",
+    ),
+    (
+        {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False, "allow_autapses": True},
+        True,
+        "Outdegree",
+    ),
+    (
+        {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False, "allow_autapses": False},
+        True,
+        "Outdegree",
+    ),
+)
 
-    with pytest.raises(Exception):
-        nest.Connect(
-            nodes, first, {"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False, "allow_autapses": False}
-        )
 
-    nest.Connect(
-        nodes, first, {"rule": "fixed_indegree", "indegree": 2, "allow_multapses": False, "allow_autapses": False}
-    )
-    nest.Connect(
-        nodes, first, {"rule": "fixed_indegree", "indegree": 1, "allow_multapses": True, "allow_autapses": True}
-    )
+@pytest.mark.parametrize("conn_spec,use_first_as_source,error_pattern", IMPOSSIBLE_SCENARIOS)
+def test_ticket_451_rejects_impossible_random_connect_requests(conn_spec, use_first_as_source, error_pattern):
+    """
+    Ensure random connection rules raise for infeasible multapse/autapse constraints.
+    """
 
-    # Test fixed outdegree connections
-    with pytest.raises(Exception):
-        nest.Connect(
-            first, nodes, {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False, "allow_autapses": True}
-        )
+    nest.ResetKernel()
+    nodes, first = _create_populations()
 
-    nest.Connect(
-        first, nodes, {"rule": "fixed_outdegree", "outdegree": 3, "allow_multapses": False, "allow_autapses": True}
-    )
-    nest.Connect(
-        first, nodes, {"rule": "fixed_outdegree", "outdegree": 2, "allow_multapses": False, "allow_autapses": True}
-    )
+    sources, targets = (first, nodes) if use_first_as_source else (nodes, first)
 
-    with pytest.raises(Exception):
-        nest.Connect(
-            first, nodes, {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False, "allow_autapses": False}
-        )
+    with pytest.raises(nest.kernel.NESTError, match=error_pattern):
+        nest.Connect(sources, targets, conn_spec)
 
-    nest.Connect(
-        first, nodes, {"rule": "fixed_outdegree", "outdegree": 2, "allow_multapses": False, "allow_autapses": False}
-    )
-    nest.Connect(
-        first, nodes, {"rule": "fixed_outdegree", "outdegree": 1, "allow_multapses": True, "allow_autapses": False}
-    )
+
+VALID_SCENARIOS = (
+    ({"rule": "fixed_indegree", "indegree": 3, "allow_multapses": False, "allow_autapses": True}, False, 3),
+    ({"rule": "fixed_indegree", "indegree": 2, "allow_multapses": False, "allow_autapses": True}, False, 2),
+    ({"rule": "fixed_indegree", "indegree": 2, "allow_multapses": False, "allow_autapses": False}, False, 2),
+    ({"rule": "fixed_indegree", "indegree": 1, "allow_multapses": True, "allow_autapses": True}, False, 1),
+    ({"rule": "fixed_outdegree", "outdegree": 3, "allow_multapses": False, "allow_autapses": True}, True, 3),
+    ({"rule": "fixed_outdegree", "outdegree": 2, "allow_multapses": False, "allow_autapses": True}, True, 2),
+    ({"rule": "fixed_outdegree", "outdegree": 2, "allow_multapses": False, "allow_autapses": False}, True, 2),
+    ({"rule": "fixed_outdegree", "outdegree": 1, "allow_multapses": True, "allow_autapses": False}, True, 1),
+)
+
+
+@pytest.mark.parametrize("conn_spec,use_first_as_source,expected_connections", VALID_SCENARIOS)
+def test_ticket_451_accepts_feasible_random_connect_requests(conn_spec, use_first_as_source, expected_connections):
+    """
+    Ensure random connection rules succeed when the requested indegree/outdegree is feasible.
+    """
+
+    nest.ResetKernel()
+    nodes, first = _create_populations()
+
+    sources, targets = (first, nodes) if use_first_as_source else (nodes, first)
+
+    nest.Connect(sources, targets, conn_spec)
+
+    connections = nest.GetConnections(source=sources, target=targets)
+
+    assert len(connections) == expected_connections

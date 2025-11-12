@@ -305,6 +305,35 @@ class MPITestAssertEqual(MPITestWrapper):
                 pd.testing.assert_frame_equal(res[0], r)
 
 
+class MPITestAssertAllRanksEqual(MPITestWrapper):
+    """
+    Assert that the results from all ranks are equal, independent of number of ranks.
+    """
+
+    def assert_correct_results(self, tmpdirpath):
+        self.collect_results(tmpdirpath)
+
+        all_res = []
+        if self._spike:
+            raise NotImplementedError("SPIKE data not supported by MPITestAssertAllRanksEqual")
+
+        if self._multi:
+            raise NotImplementedError("MULTI data not supported by MPITestAssertAllRanksEqual")
+
+        if self._other:
+            all_res = list(self._other.values())  # need to get away from dict_values to allow indexing below
+
+        assert len(all_res) == len(self._procs_lst), "Missing data for some process numbers"
+        assert len(all_res[0]) == self._procs_lst[0], "Data for first proc number does not match number of procs"
+
+        reference = all_res[0][0]
+        for res, num_ranks in zip(all_res, self._procs_lst):
+            assert len(res) == num_ranks, f"Got data for {len(res)} ranks, expected {num_ranks}."
+
+            for r in res:
+                pd.testing.assert_frame_equal(r, reference)
+
+
 class MPITestAssertCompletes(MPITestWrapper):
     """
     Test class that just confirms that the test code completes.

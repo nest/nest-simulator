@@ -226,7 +226,7 @@ nest::ou_noise_generator::pre_run_hook()
 
   V_.prop_ = std::exp( -h / P_.tau_ );
   V_.noise_amp_ = P_.std_ * std::sqrt( -std::expm1( -2.0 * h / P_.tau_ ) );
-  V_.mean_weight_= 1.0 - V_.prop_;
+  V_.mean_weight_ = 1.0 - V_.prop_;
   V_.mean_incr_ = P_.mean_ * V_.mean_weight_;
 }
 
@@ -272,13 +272,13 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
 
     const long now = start + offs;
 
+    // Update OU process state if next update is due
     if ( now >= B_.next_step_ )
     {
       // compute new currents
       for ( double& amp : B_.amps_ )
       {
-        amp = V_.mean_incr_ + amp * V_.prop_
-          + V_.noise_amp_ * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
+        amp = V_.mean_incr_ + amp * V_.prop_ + V_.noise_amp_ * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
       }
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;
@@ -286,6 +286,7 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
 
     S_.I_avg_ = 0.0;
 
+    // Skip sending events while generator is inactiv
     if ( not StimulationDevice::is_active( Time::step( now ) ) )
     {
       B_.logger_.record_data( origin.get_steps() + offs );

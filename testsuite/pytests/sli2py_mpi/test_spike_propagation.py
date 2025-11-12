@@ -24,7 +24,7 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 
 @pytest.mark.skipif_incompatible_mpi
-@MPITestAssertEqual([1, 2, 4], debug=True)
+@MPITestAssertEqual([1, 2, 4], debug=False)
 def test_spike_propagation():
     """
     Confirm that spikes travel along a chain of neurons independent of how many ranks they are distributed over.

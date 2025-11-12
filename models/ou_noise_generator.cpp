@@ -272,13 +272,6 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
 
     const long now = start + offs;
 
-    if ( not StimulationDevice::is_active( Time::step( now ) ) )
-    {
-      B_.logger_.record_data( origin.get_steps() + offs );
-      continue;
-    }
-
-    // >= in case we woke from inactivity
     if ( now >= B_.next_step_ )
     {
       // compute new currents
@@ -291,9 +284,15 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
       B_.next_step_ = now + V_.dt_steps_;
     }
 
-    // record values
     S_.I_avg_ = 0.0;
 
+    if ( not StimulationDevice::is_active( Time::step( now ) ) )
+    {
+      B_.logger_.record_data( origin.get_steps() + offs );
+      continue;
+    }
+
+    // record values
     for ( double& amp : B_.amps_ )
     {
       S_.I_avg_ += amp;

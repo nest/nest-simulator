@@ -25,10 +25,38 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 @pytest.mark.skipif_missing_threads
 @pytest.mark.skipif_incompatible_mpi
+@pytest.mark.parametrize(
+    "gen_model, params",
+    [
+        ["gamma_sup_generator", {"rate": 1000}],
+        ["mip_generator", {"rate": 2000, "p_copy": 0.5}],
+        ["noise_generator", {"mean": 1000, "std": 500, "dt": 1}],
+        ["poisson_generator", {"rate": 1000}],
+        ["poisson_generator_ps", {"rate": 1000}],
+        ["ppd_sup_generator", {"rate": 1000}],
+        ["pulsepacket_generator", {"pulse_times": [5], "activity": 5, "sdev": 2}],
+        [
+            "sinusoidal_gamma_generator",
+            {"rate": 1000, "amplitude": 1000, "frequency": 100, "order": 3, "individual_spike_trains": False},
+        ],
+        [
+            "sinusoidal_gamma_generator",
+            {"rate": 1000, "amplitude": 1000, "frequency": 100, "order": 3, "individual_spike_trains": True},
+        ],
+        [
+            "sinusoidal_poisson_generator",
+            {"rate": 1000, "amplitude": 1000, "frequency": 100, "individual_spike_trains": False},
+        ],
+        [
+            "sinusoidal_poisson_generator",
+            {"rate": 1000, "amplitude": 1000, "frequency": 100, "individual_spike_trains": True},
+        ],
+    ],
+)
 @MPITestAssertEqual([1, 2, 4])
-def test_mip_generator():
+def test_generators(gen_model, params):
     """
-    Creates a mip_generator and sends spikes to spike recorder.
+    Creates a generator and sends spikes to spike recorder.
     Assert invariant results for fixed VP number. This is a partial response to ticket #551.
     May be adapted to other generators.
 
@@ -38,11 +66,12 @@ def test_mip_generator():
     import nest
 
     TOTAL_VPS = 4
+    NEED_IAF = ["noise_generator"]
 
     nest.set(total_num_virtual_procs=TOTAL_VPS, overwrite_files=True)
 
-    gen = nest.Create("mip_generator", params={"rate": 2000, "p_copy": 0.5})
-    pnet = nest.Create("parrot_neuron", TOTAL_VPS)
+    gen = nest.Create(gen_model, params=params)
+    pnet = nest.Create("parrot_neuron" if gen_model not in NEED_IAF else "iaf_psc_alpha", TOTAL_VPS)
     sr = nest.Create(
         "spike_recorder",
         params={
@@ -56,6 +85,7 @@ def test_mip_generator():
     nest.Connect(pnet, sr)
 
     nest.Simulate(10)
+    assert nest.local_spike_counter > 0
 
     # Uncomment next line to provoke test failure
     # nest.Simulate(20 if nest.num_processes == 1 else 40)

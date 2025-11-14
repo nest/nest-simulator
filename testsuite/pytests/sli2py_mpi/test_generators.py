@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_mip_generator.py
+# test_generators.py
 #
 # This file is part of NEST.
 #

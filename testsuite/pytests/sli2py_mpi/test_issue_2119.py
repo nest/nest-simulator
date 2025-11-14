@@ -24,11 +24,11 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 # use default parameters for double-valued params
 random_params = [
-    ["'exponential'", {}],
-    ["'normal'", {}],
-    ["'lognormal'", {}],
-    ["'uniform'", {}],
-    ["'uniform_int'", {"max": 10}],
+    ["exponential", {}],
+    ["normal", {}],
+    ["lognormal", {}],
+    ["uniform", {}],
+    ["uniform_int", {"max": 10}],
 ]
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue_2119.py
+# test_spike_propagation.py
 #
 # This file is part of NEST.
 #
@@ -22,34 +22,33 @@
 import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
-# use default parameters for double-valued params
-random_params = [
-    ["exponential", {}],
-    ["normal", {}],
-    ["lognormal", {}],
-    ["uniform", {}],
-    ["uniform_int", {"max": 10}],
-]
-
 
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize(["kind", "specs"], random_params)
-@MPITestAssertEqual([1, 2, 4])
-def test_issue_2119(kind, specs):
+@MPITestAssertEqual([1, 2, 4], debug=False)
+def test_spike_propagation():
     """
-    Confirm that randomized node parameters work correctly under MPI and OpenMP.
+    Confirm that spikes travel along a chain of neurons independent of how many ranks they are distributed over.
 
-    The test is performed on GID-V_m data written to OTHER_LABEL.
+    The test compares data written by spike_recorder to SPIKE_LABEL.
     """
 
     import nest
-    import pandas as pd
 
-    nest.ResetKernel()
-    nest.total_num_virtual_procs = 4
+    N = 7
 
-    nrn = nest.Create("iaf_psc_alpha", n=4, params={"V_m": nest.CreateParameter(kind, specs)})
-
-    pd.DataFrame.from_dict(nrn.get(["global_id", "V_m"])).dropna().to_csv(
-        OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False  # noqa: F821
+    sg = nest.Create("spike_generator", params={"spike_times": [1]})
+    nrns = nest.Create("parrot_neuron", N)
+    srec = nest.Create(
+        "spike_recorder",
+        params={
+            "label": SPIKE_LABEL.format(nest.num_processes),  # noqa: F821
+            "record_to": "ascii",
+            "time_in_steps": True,
+        },
     )
+
+    nest.Connect(sg, nrns[0])
+    nest.Connect(nrns[:-1], nrns[1:], "one_to_one")
+    nest.Connect(nrns, srec)
+
+    nest.Simulate(10)

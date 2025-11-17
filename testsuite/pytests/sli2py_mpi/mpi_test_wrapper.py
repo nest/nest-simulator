@@ -40,7 +40,8 @@ be fixed while the number of MPI processes is varied, but this is not required.
       are evaluated in the wrapping process
     - No decorators are written to the `runner.py` file.
     - Test files must import all required modules (especially `nest`) inside the
-      test function.
+      test function. If such imports import modules also imported at the module level
+      of the test script, add `# noqa: F811` to the import inside the test function.
     - The docstring for the test function shall in its last line specify what data
       the test function outputs for comparison by the test.
     - In `runner.py`, the following constants are defined:
@@ -144,15 +145,26 @@ class MPITestWrapper:
         _RemoveDecoratorsAndMPITestImports().visit(tree)
         return ast.unparse(tree)
 
+    @staticmethod
+    def _arg_to_str(arg):
+        """
+        Ensure strings remain wrapped in quotes; for functions we need to provide the function name.
+        Only functions in the plain namespace work.
+        """
+
+        if isinstance(arg, str):
+            return f"'{arg}'"
+        elif inspect.isroutine(arg):
+            return arg.__name__
+        else:
+            return arg
+
     def _params_as_str(self, *args, **kwargs):
         return ", ".join(
             part
             for part in (
-                ", ".join(f"{arg if not inspect.isfunction(arg) else arg.__name__}" for arg in args),
-                ", ".join(
-                    f"{key}={value if not inspect.isfunction(value) else value.__name__}"
-                    for key, value in kwargs.items()
-                ),
+                ", ".join(f"{self._arg_to_str(arg)}" for arg in args),
+                ", ".join(f"{key}={self._arg_to_str(value)}" for key, value in kwargs.items()),
             )
             if part
         )
@@ -303,6 +315,35 @@ class MPITestAssertEqual(MPITestWrapper):
 
             for r in res[1:]:
                 pd.testing.assert_frame_equal(res[0], r)
+
+
+class MPITestAssertAllRanksEqual(MPITestWrapper):
+    """
+    Assert that the results from all ranks are equal, independent of number of ranks.
+    """
+
+    def assert_correct_results(self, tmpdirpath):
+        self.collect_results(tmpdirpath)
+
+        all_res = []
+        if self._spike:
+            raise NotImplementedError("SPIKE data not supported by MPITestAssertAllRanksEqual")
+
+        if self._multi:
+            raise NotImplementedError("MULTI data not supported by MPITestAssertAllRanksEqual")
+
+        if self._other:
+            all_res = list(self._other.values())  # need to get away from dict_values to allow indexing below
+
+        assert len(all_res) == len(self._procs_lst), "Missing data for some process numbers"
+        assert len(all_res[0]) == self._procs_lst[0], "Data for first proc number does not match number of procs"
+
+        reference = all_res[0][0]
+        for res, num_ranks in zip(all_res, self._procs_lst):
+            assert len(res) == num_ranks, f"Got data for {len(res)} ranks, expected {num_ranks}."
+
+            for r in res:
+                pd.testing.assert_frame_equal(r, reference)
 
 
 class MPITestAssertCompletes(MPITestWrapper):

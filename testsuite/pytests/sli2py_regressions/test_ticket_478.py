@@ -24,12 +24,11 @@ Regression test for Ticket #478.
 
 Ensure that devices can only be connected using static synapses.
 
-Test ported from SLI regression test
-This test ensures that NEST throws an exception if one tries to connect generator devices
-(sending DSSpikeEvents or DSCurrentEvents) or a multimeter (sending DataLoggingRequest)
-to a neuron using a plastic synapse.
+Test ported from SLI regression test.
 
-Author: Hans Ekkehard Plesser, 2010-10-22
+Ensure that NEST throws an exception if one tries to connect poisson_generator
+(sending DSSpikeEvents), noise_generator (sending DSCurrentEvents) or multimeter
+(sending DataLoggingRequest) to a neuron using a plastic synapse.
 """
 
 import nest
@@ -37,6 +36,8 @@ import pytest
 
 # Exclude synapse types not relevant for spiking devices as senders
 EXCLUDED_SYNAPSES = {
+    "eprop_learning_signal_connection",
+    "eprop_learning_signal_connection_bsshslm_2020",
     "gap_junction",
     "sic_connection",
     "rate_connection_delayed",
@@ -44,15 +45,20 @@ EXCLUDED_SYNAPSES = {
 }
 
 
+def _try_to_connect(src, tgt, syn, src_params=None):
+    nest.ResetKernel()
+    src = nest.Create(src, params=src_params)
+    tgt = nest.Create(tgt)
+    syn_spec = {"synapse_model": syn}
+    if "volume_transmitter" in nest.GetDefaults(syn).keys():
+        vt = nest.Create("volume_transmitter")
+        nest.SetDefaults(syn, {"volume_transmitter": vt})
+    nest.Connect(src, tgt, syn_spec=syn_spec)
+
+
 # Helper to get sorted list of parameter keys for a synapse model
 def _synapse_param_keys(model):
     return sorted(str(k) for k in nest.GetDefaults(model).keys())
-
-
-@pytest.fixture(autouse=True)
-def prepare_kernel():
-    nest.ResetKernel()
-    nest.set_verbosity("M_ERROR")
 
 
 def test_generators_static_and_plastic_synapses():
@@ -70,6 +76,7 @@ def test_generators_static_and_plastic_synapses():
         "poisson_generator_ps",
     ]
     ds_models = [m for m in candidate_generators if m in nest.node_models]
+    assert len(ds_models) > 0
 
     # Identify static and plastic synapse models
     static_defaults = _synapse_param_keys("static_synapse")
@@ -80,6 +87,7 @@ def test_generators_static_and_plastic_synapses():
         if m not in EXCLUDED_SYNAPSES
         and (_synapse_param_keys(m) == static_defaults or _synapse_param_keys(m) == static_lbl_defaults)
     ]
+    assert len(static_syn_models) > 0
     plastic_syn_models = [
         m
         for m in nest.synapse_models
@@ -87,36 +95,29 @@ def test_generators_static_and_plastic_synapses():
         and _synapse_param_keys(m) != static_defaults
         and _synapse_param_keys(m) != static_lbl_defaults
     ]
+    assert len(plastic_syn_models) > 0
 
     # All static synapses should work for all generator models
     for syn in static_syn_models:
         for gen in ds_models:
-            nest.ResetKernel()
-            src = nest.Create(gen)
-            tgt = nest.Create("iaf_psc_alpha")
-            try:
-                nest.Connect(src, tgt, syn_spec={"synapse_model": syn})
-            except nest.NESTError as e:
-                # Only skip if it's an IllegalConnection, otherwise re-raise
-                if "IllegalConnection" in str(type(e)):
-                    print(f"SKIP: {gen} -> iaf_psc_alpha with {syn}: {e}")
-                    continue
-                raise
+            _try_to_connect(
+                src=gen, tgt="iaf_psc_alpha", syn=syn
+            )  # this should not throw an (IllegalConnection) exception
 
     # All plastic synapses should fail for all generator models
     for syn in plastic_syn_models:
         for gen in ds_models:
-            nest.ResetKernel()
-            src = nest.Create(gen)
-            tgt = nest.Create("iaf_psc_alpha")
-            with pytest.raises(nest.NESTError):
-                nest.Connect(src, tgt, syn_spec={"synapse_model": syn})
+            with pytest.raises(nest.NESTError) as exception_info:
+                _try_to_connect(src=gen, tgt="iaf_psc_alpha", syn=syn)
+            assert "IllegalConnection" in str(type(exception_info.value))
 
 
 def test_multimeter_static_and_plastic_synapses():
     """
-    Test that multimeter can only be connected to neurons using static (non-HPC) synapses,
-    and fails for plastic and _hpc static synapses.
+    Test that multimeter can only be connected to neurons using static
+    (non-HPC) synapses, and fails for plastic and _hpc static synapses.
+    (Since the multimeter uses non-zero rports, it must also fail on
+    HPC synapses.)
     """
     # Identify static and plastic synapse models as above
     static_defaults = _synapse_param_keys("static_synapse")
@@ -127,6 +128,7 @@ def test_multimeter_static_and_plastic_synapses():
         if m not in EXCLUDED_SYNAPSES
         and (_synapse_param_keys(m) == static_defaults or _synapse_param_keys(m) == static_lbl_defaults)
     ]
+    assert len(static_syn_models) > 0
     plastic_syn_models = [
         m
         for m in nest.synapse_models
@@ -134,6 +136,8 @@ def test_multimeter_static_and_plastic_synapses():
         and _synapse_param_keys(m) != static_defaults
         and _synapse_param_keys(m) != static_lbl_defaults
     ]
+    assert len(plastic_syn_models) > 0
+
     # Static synapses that are not _hpc
     static_non_hpc_models = [m for m in static_syn_models if not m.endswith("_hpc")]
     # Models that should fail: all plastic + static _hpc
@@ -141,21 +145,12 @@ def test_multimeter_static_and_plastic_synapses():
 
     # All static non-HPC synapses should work
     for syn in static_non_hpc_models:
-        nest.ResetKernel()
-        src = nest.Create("multimeter", params={"record_from": ["V_m"]})
-        tgt = nest.Create("iaf_psc_alpha")
-        try:
-            nest.Connect(src, tgt, syn_spec={"synapse_model": syn})
-        except nest.NESTError as e:
-            if "IllegalConnection" in str(type(e)):
-                print(f"SKIP: multimeter -> iaf_psc_alpha with {syn}: {e}")
-                continue
-            raise
+        _try_to_connect(
+            src="multimeter", src_params={"record_from": ["V_m"]}, tgt="iaf_psc_alpha", syn=syn
+        )  # this should not throw an (IllegalConnection) exception
 
     # All plastic and static _hpc synapses should fail
     for syn in models_to_fail:
-        nest.ResetKernel()
-        src = nest.Create("multimeter", params={"record_from": ["V_m"]})
-        tgt = nest.Create("iaf_psc_alpha")
-        with pytest.raises(nest.NESTError):
-            nest.Connect(src, tgt, syn_spec={"synapse_model": syn})
+        with pytest.raises(nest.NESTError) as exception_info:
+            _try_to_connect(src="multimeter", src_params={"record_from": ["V_m"]}, tgt="iaf_psc_alpha", syn=syn)
+        assert "IllegalConnection" in str(type(exception_info.value))

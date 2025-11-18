@@ -126,3 +126,13 @@ def test_identical_recording_from_multiple_multimeters(model):
 
     for recordable in recordables:
         nptest.assert_array_equal(mm1.events[recordable], mm2.events[recordable])
+
+
+@pytest.mark.parametrize("interval", [0, 0.05, 0.15])
+def test_bad_intervals_detected(interval):
+    """
+    Test that NEST raises BadProperty if interval cannot be represented as multiple of resolution.
+    """
+
+    with pytest.raises(nest.kernel.NESTError, match="BadProperty"):
+        nest.Create("multimeter", params={"interval": interval})

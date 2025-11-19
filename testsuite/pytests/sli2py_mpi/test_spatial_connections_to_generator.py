@@ -23,15 +23,10 @@ import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 """
-Confirm that spatial connections are created consistently for fixed VP.
+Confirm that spatial connections to a generator are created consistently for fixed VP.
 
-This test is parameterized at three levels:
-- Neuron and generator as source
-- Free and grid layers
-- Different spatial connection rules
-
-Connections to recorders are handled in a separate test, as they only work with
-the pairwise-bernoulli-on-source connection rule.
+This test is parameterized over free and grid layers. Only pairwise-bernoulli-on-source
+is suitable as probabilistic connection rule when connecting to a device.
 """
 
 
@@ -39,7 +34,6 @@ the pairwise-bernoulli-on-source connection rule.
 # the free positions with basic Python commands.
 @pytest.mark.skipif_incompatible_mpi
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize("source_model", ["poisson_generator", "parrot_neuron"])
 @pytest.mark.parametrize(
     "geometry",
     [
@@ -47,17 +41,8 @@ the pairwise-bernoulli-on-source connection rule.
         ("grid", {"shape": [5, 5], "extent": [6, 6], "edge_wrap": True}),
     ],
 )
-@pytest.mark.parametrize(
-    "conn_spec",
-    [
-        {"rule": "fixed_indegree", "indegree": 10},
-        {"rule": "fixed_outdegree", "outdegree": 10},
-        {"rule": "pairwise_bernoulli", "p": 0.5, "use_on_source": False},
-        {"rule": "pairwise_bernoulli", "p": 0.5, "use_on_source": True},
-    ],
-)
 @MPITestAssertEqual([1, 2, 4], debug=False)
-def test_spatial_connections(source_model, geometry, conn_spec):
+def test_spatial_connections(geometry):
     """
     Confirm that spatial connections are created consistently for fixed VP.
 
@@ -77,13 +62,13 @@ def test_spatial_connections(source_model, geometry, conn_spec):
     else:
         assert kind == "grid"
         pos = nest.spatial.grid(**specs)
-    source_layer = nest.Create(source_model, positions=pos)
-    target_layer = nest.Create("parrot_neuron", positions=pos)
+    source_layer = nest.Create("parrot_neuron", positions=pos)
+    target_layer = nest.Create("spike_recorder", positions=pos)
 
     nest.Connect(
         source_layer,
         target_layer,
-        {**conn_spec, "mask": {"circular": {"radius": 2.5}}},
+        {"rule": "pairwise_bernoulli", "p": 0.5, "use_on_source": True, "mask": {"circular": {"radius": 2.5}}},
         {
             "weight": nest.spatial_distributions.gaussian(10 * nest.spatial.distance, std=2),
             "delay": 0.1 + 0.2 * nest.spatial.distance,

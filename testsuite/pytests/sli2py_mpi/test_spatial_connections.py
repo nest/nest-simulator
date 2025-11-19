@@ -22,10 +22,24 @@
 import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
+"""
+Confirm that spatial connections are created consistently for fixed VP.
+
+This test is parameterized at three levels:
+- Neuron and generator as source
+- Free and grid layers
+- Different spatial connection rules
+
+Connections to recorders are handled in a separate test, as they do not work
+with fixed_indegree and there is no elegant way of filtering that case out.
+"""
+
 
 # We cannot use nest or numpy outside the test function itself, so we need to create
 # the free positions with basic Python commands.
 @pytest.mark.skipif_incompatible_mpi
+@pytest.mark.skipif_missing_threads
+@pytest.mark.parametrize("source_model", ["poisson_generator", "parrot_neuron"])
 @pytest.mark.parametrize(
     "geometry",
     [
@@ -43,7 +57,7 @@ from mpi_test_wrapper import MPITestAssertEqual
     ],
 )
 @MPITestAssertEqual([1, 2, 4], debug=False)
-def test_spatial_connections(geometry, conn_spec):
+def test_spatial_connections(source_model, geometry, conn_spec):
     """
     Confirm that spatial connections are created consistently for fixed VP.
 
@@ -63,11 +77,12 @@ def test_spatial_connections(geometry, conn_spec):
     else:
         assert kind == "grid"
         pos = nest.spatial.grid(**specs)
-    lyr = nest.Create("parrot_neuron", positions=pos)
+    source_layer = nest.Create(source_model, positions=pos)
+    target_layer = nest.Create("parrot_neuron", positions=pos)
 
     nest.Connect(
-        lyr,
-        lyr,
+        source_layer,
+        target_layer,
         {**conn_spec, "mask": {"circular": {"radius": 2.5}}},
         {
             "weight": nest.spatial_distributions.gaussian(10 * nest.spatial.distance, std=2),

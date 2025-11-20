@@ -134,5 +134,7 @@ def test_bad_intervals_detected(interval):
     Test that NEST raises BadProperty if interval cannot be represented as multiple of resolution.
     """
 
+    nest.resolution = 0.1
+
     with pytest.raises(nest.kernel.NESTError, match="BadProperty"):
         nest.Create("multimeter", params={"interval": interval})

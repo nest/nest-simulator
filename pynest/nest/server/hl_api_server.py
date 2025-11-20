@@ -198,6 +198,7 @@ def do_exec(args, kwargs):
         with Capturing() as stdout:
             globals_ = globals().copy()
             globals_.update(get_modules_from_env())
+            locals_ = globals_
             get_or_error(exec)(source_cleaned, globals_, locals_)
         if len(stdout) > 0:
             response["stdout"] = "\n".join(stdout)
@@ -205,6 +206,7 @@ def do_exec(args, kwargs):
         code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
         globals_ = get_restricted_globals()
         globals_.update(get_modules_from_env())
+        locals_ = globals_
         get_or_error(exec)(code, globals_, locals_)
         if "_print" in locals_:
             response["stdout"] = "".join(locals_["_print"].txt)

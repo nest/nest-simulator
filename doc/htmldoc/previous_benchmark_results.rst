@@ -1,15 +1,16 @@
-.. _nest_benchmark_results:
+.. _previous_nest_benchmark_results:
 
-NEST performance benchmarks
-===========================
+Previous NEST performance benchmarks
+====================================
 
+.. important::
+
+   NEST version 3.8 benchmarks of the Multi-area-model and HPC benchmark model have been updated due to errors in the analysis! Please see below for corrected versions.
 
 NEST performance is continuously monitored and improved across various network sizes.
-Here we show benchmarking results for NEST version 3.9 on Jureca-DC [1]_.
+Here we show benchmarking results for NEST version 3.8 on Jureca-DC [1]_.
 The benchmarking framework and the structure of the graphs is described in [2]_.
 For details on `State Propagation` (i.e., `Simulation Run`), see the guides :ref:`built_in_timers` and :ref:`run_simulations`
-
-The results from previous benchmarks can be found :ref:`here <previous_nest_benchmark_results>`.
 
 Strong scaling experiment of the Microcircuit model [3]_
 ---------------------------------------------------------
@@ -20,7 +21,7 @@ Strong scaling experiment of the Microcircuit model [3]_
        :columns: 10
        :class: sd-align-major-center
 
-       .. image:: /static/img/mc_benchmark.png
+       .. image:: /static/img/mc_benchmark_NEST-v3.8.png
 
 .. grid:: 1 1 1 1
 
@@ -49,11 +50,11 @@ Strong scaling experiment of the Multi-area-model [5]_
 
        Dynamical regime: Ground state
 
-       .. image:: /static/img/mam_ground-state_benchmark.png
+       .. image:: /static/img/mam_ground-state_benchmark_NEST-v3.8.png
 
        Dynamical regime: Metastable state
 
-       .. image:: /static/img/mam_metastable-state_benchmark.png
+       .. image:: /static/img/mam_metastable-state_benchmark_NEST-v3.8.png
 
 
 .. grid:: 1 1 1 1
@@ -80,7 +81,7 @@ Weak scaling experiment of the HPC benchmark model [6]_
        :columns: 10
        :class: sd-align-major-center
 
-       .. image:: /static/img/hpc_benchmark.png
+       .. image:: /static/img/hpc_benchmark_NEST-v3.8.png
 
 
 .. grid:: 1 1 1 1

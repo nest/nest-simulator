@@ -40,4 +40,4 @@ def test_get_conns_with_empty_ranks():
     nest.Connect(nrns, nrns)
 
     conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1, errors="ignore")
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821

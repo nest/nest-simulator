@@ -51,6 +51,9 @@ be fixed while the number of MPI processes is varied, but this is not required.
       They must be used as `label` for spike recorders and multimeters, respectively,
       or for other files for output data (TAB-separated CSV files). They are format
       strings expecting the number of processes with which NEST is run as argument.
+    - A function taking a single argument ``all_res`` and performing assertions on it
+      can be passed to the constructor of the wrapper. This allows test-specific additional
+      checks on the collected data from all MPI processes without requiring MPI4Py.
 - Set `debug=True` on the decorator to see debug output and keep the
   temporary directory that has been created (latter works only in
   Python 3.12 and later)
@@ -126,7 +129,13 @@ class MPITestWrapper:
         """
     )
 
-    def __init__(self, procs_lst, debug=False):
+    def __init__(self, procs_lst, debug=False, specific_assert=None):
+        """
+        procs_lst : list of number of process to run tests for, e.g., [1, 2, 4]
+        debug     : if True, provide output during execution and do not delete temp directory (Python >=3.12)
+        specific_assert : function taking ``all_res`` as input and performing test-specific assertions after the overall check performed by the wrapper class
+        """
+
         try:
             iter(procs_lst)
         except TypeError:
@@ -137,6 +146,7 @@ class MPITestWrapper:
         self._spike = None
         self._multi = None
         self._other = None
+        self._specific_assert = specific_assert
 
     @staticmethod
     def _pure_test_func(func):
@@ -292,33 +302,29 @@ class MPITestAssertEqual(MPITestWrapper):
     def assert_correct_results(self, tmpdirpath):
         self.collect_results(tmpdirpath)
 
-        all_res = []
+        all_res = {}
         if self._spike:
             # For each number of procs, combine results across VPs and sort by time and sender
 
             # Include only frames containing at least one non-nan value so pandas knows datatypes.
             # .all() returns True for empty arrays.
-            all_res.append(
-                [
-                    pd.concat(self._drop_empty_dataframes(spikes), ignore_index=True).sort_values(
-                        by=["time_step", "time_offset", "sender"], ignore_index=True
-                    )
-                    for spikes in self._spike.values()
-                ]
-            )
+            all_res["spike"] = [
+                pd.concat(self._drop_empty_dataframes(spikes), ignore_index=True).sort_values(
+                    by=["time_step", "time_offset", "sender"], ignore_index=True
+                )
+                for spikes in self._spike.values()
+            ]
 
         if self._multi:
             # For each number of procs, combine results across VPs and sort by time and sender
             # Include only frames containing at least one non-nan value so pandas knows datatypes.
             # .all() returns True for empty arrays.
-            all_res.append(
-                [
-                    pd.concat(self._drop_empty_dataframes(mmdata), ignore_index=True).sort_values(
-                        by=["time_step", "time_offset", "sender"], ignore_index=True
-                    )
-                    for mmdata in self._multi.values()
-                ]
-            )
+            all_res["multi"] = [
+                pd.concat(self._drop_empty_dataframes(mmdata), ignore_index=True).sort_values(
+                    by=["time_step", "time_offset", "sender"], ignore_index=True
+                )
+                for mmdata in self._multi.values()
+            ]
 
         if self._other:
             # For each number of procs, combine across ranks or VPs (depends on what test has written) and
@@ -331,21 +337,22 @@ class MPITestAssertEqual(MPITestWrapper):
             # [0] then picks the first DataFrame from that list
             # columns need to be converted to list() to be passed to sort_values()
             all_columns = list(next(iter(self._other.values()))[0].columns)
-            all_res.append(
-                [
-                    pd.concat(self._drop_empty_dataframes(others), ignore_index=True).sort_values(
-                        by=all_columns, ignore_index=True
-                    )
-                    for others in self._other.values()
-                ]
-            )
+            all_res["other"] = [
+                pd.concat(self._drop_empty_dataframes(others), ignore_index=True).sort_values(
+                    by=all_columns, ignore_index=True
+                )
+                for others in self._other.values()
+            ]
 
         assert all_res, "No test data collected"
-        for res in all_res:
+        for res in all_res.values():
             assert len(res) == len(self._procs_lst), "Could not collect data for all procs"
 
             for r in res[1:]:
                 pd.testing.assert_frame_equal(res[0], r)
+
+        if self._specific_assert:
+            self._specific_assert(all_res)
 
 
 class MPITestAssertAllRanksEqual(MPITestWrapper):
@@ -376,6 +383,9 @@ class MPITestAssertAllRanksEqual(MPITestWrapper):
             for r in res:
                 pd.testing.assert_frame_equal(r, reference)
 
+        if self._specific_assert:
+            self._specific_assert(all_res)
+
 
 class MPITestAssertCompletes(MPITestWrapper):
     """
@@ -385,4 +395,5 @@ class MPITestAssertCompletes(MPITestWrapper):
     """
 
     def assert_correct_results(self, tmpdirpath):
-        pass
+        if self._specific_assert:
+            self._specific_assert(all_res)

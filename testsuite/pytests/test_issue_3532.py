@@ -45,15 +45,31 @@ def network(request):
     yield nrns
 
 
-def test_disconnect_one_by_one(network):
-    n_nodes = len(network)
-    pairs = [(i, j) for i in range(n_nodes) for j in range(n_nodes)]
+@pytest.mark.parametrize("with_compressed_spikes", [False, True])
+@pytest.mark.parametrize("n_nodes", [5, 10, 13, 42])
+def test_disconnect_one_by_one(with_compressed_spikes, n_nodes):
+    nest.ResetKernel()
+
+    nest.use_compressed_spikes = with_compressed_spikes
+
+    n = nest.Create("parrot_neuron", n_nodes)
+    nest.Connect(n, n)
+
+    nest.GetConnections()
+
+    pairs = [(i, j) for i in range(1, n_nodes + 1) for j in range(1, n_nodes + 1)]
     random.shuffle(pairs)
 
+    pre_conns = get_conn_pairs()
     for i, j in pairs:
-        nest.Disconnect(network[i], network[j])
+        nest.Disconnect(n[i - 1], n[j - 1])
 
-    assert len(nest.GetConnections()) == 0
+        post_conns = get_conn_pairs()
+
+        # must pass tuple with single tuple-element to set() to get one-element set of tuples instead of two-element set of node ids.
+        assert pre_conns - post_conns == set(((i, j),))
+
+        pre_conns = post_conns
 
 
 def test_disconnect_one_to_one(network):

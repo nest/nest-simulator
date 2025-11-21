@@ -29,7 +29,7 @@ from numpy import meshgrid
 
 
 @pytest.mark.skipif_incompatible_mpi
-@MPITestAssertEqual([1, 2, 4], debug=True)
+@MPITestAssertEqual([1, 2, 4], debug=False)
 def test_collocated_synapses():
     """
     Test that lists of parameter dictionaries for collocated synapses are handled correctly.

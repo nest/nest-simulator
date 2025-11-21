@@ -113,7 +113,6 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_con
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 template <>
@@ -122,7 +121,6 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connec
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 
@@ -131,10 +129,7 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector(
 {
   for ( auto& c : C_ )
   {
-    if ( not c.is_disabled() )
-    {
-      c.delete_optimizer();
-    }
+    c.delete_optimizer();
   }
   C_.clear();
 }
@@ -144,10 +139,7 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
 {
   for ( auto& c : C_ )
   {
-    if ( not c.is_disabled() )
-    {
-      c.delete_optimizer();
-    }
+    c.delete_optimizer();
   }
   C_.clear();
 }

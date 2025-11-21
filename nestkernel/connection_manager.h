@@ -389,11 +389,6 @@ public:
   void sort_connections( const size_t tid );
 
   /**
-   * Removes disabled connections (of structural plasticity)
-   */
-  void remove_disabled_connections( const size_t tid );
-
-  /**
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
@@ -495,6 +490,11 @@ private:
     const synindex syn_id,
     const size_t tnode_id,
     std::vector< size_t >& sources );
+
+  /**
+   * Removes disabled connections (of structural plasticity)
+   */
+  void remove_disabled_connections_( const size_t tid );
 
   /**
    * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and

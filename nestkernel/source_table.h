@@ -140,7 +140,6 @@ private:
    */
   static const size_t min_deleted_elements_ = 1000000;
 
-
   /**
    * Returns whether this Source object should be considered when
    * constructing MPI buffers for communicating connections.
@@ -303,10 +302,7 @@ public:
    * Finds the first entry in sources_ at the given thread id and
    * synapse type that is equal to snode_id.
    */
-  size_t find_first_source( const size_t tid,
-    const synindex syn_id,
-    const size_t snode_id,
-    bool using_compressed_spikes = false ) const;
+  size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
 
   size_t select_source_lcid_from_list( const size_t tid,
     const size_t snode_id,
@@ -495,42 +491,6 @@ SourceTable::select_source_lcid_from_list( const size_t tid,
     }
   }
   return invalid_lcid;
-}
-
-inline size_t
-SourceTable::find_first_source( const size_t tid,
-  const synindex syn_id,
-  const size_t snode_id,
-  bool using_compressed_spikes /* default = false */ ) const
-{
-
-  const auto source_begin = sources_[ tid ][ syn_id ].begin();
-  const auto source_end = sources_[ tid ][ syn_id ].end();
-
-  const Source selected_source { snode_id, /* is_primary */ true };
-
-  auto find_source_lcid = [ &source_begin ]( auto begin, auto end, const Source& value ) -> size_t
-  {
-    auto iter = std::find_if( begin,
-      end,
-      [ &value ]( const Source& src ) { return src.get_node_id() == value.get_node_id() and not src.is_disabled(); } );
-    if ( iter != end )
-    {
-      const size_t lcid = iter - source_begin;
-      return lcid;
-    }
-    // no enabled entry with this snode ID found
-    return invalid_index;
-  };
-
-  auto iter = source_begin;
-
-  if ( using_compressed_spikes )
-  {
-    iter = std::lower_bound( iter, source_end, selected_source );
-  }
-
-  return find_source_lcid( iter, source_end, selected_source );
 }
 
 inline void

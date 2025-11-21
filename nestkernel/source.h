@@ -43,17 +43,12 @@ private:
   uint64_t node_id_ : NUM_BITS_NODE_ID; //!< node ID of source
   bool processed_ : 1;                  //!< whether this target has already been moved
                                         //!< to the MPI buffer
-  bool primary_ : 1;
-  bool disabled_ : 1;
+  bool primary_ : 1;                    //!< source of primary connection
+  bool disabled_ : 1;                   //!< connection has been disabled
 
 public:
   Source();
   explicit Source( const uint64_t node_id, const bool primary );
-
-  /**
-   * Sets node_id_ to the specified value.
-   */
-  void set_node_id( const uint64_t node_id );
 
   /**
    * Returns this Source's node ID.
@@ -62,7 +57,6 @@ public:
 
   void set_processed( const bool processed );
   bool is_processed() const;
-
 
   /**
    * Sets whether Source is primary.
@@ -104,14 +98,6 @@ inline Source::Source( const uint64_t node_id, const bool is_primary )
   , disabled_( false )
 {
   assert( node_id <= MAX_NODE_ID );
-}
-
-inline void
-Source::set_node_id( const uint64_t node_id )
-{
-  assert( node_id <= MAX_NODE_ID );
-  node_id_ = node_id;
-  disabled_ = false;
 }
 
 inline uint64_t

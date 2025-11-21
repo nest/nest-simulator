@@ -133,7 +133,8 @@ class MPITestWrapper:
         """
         procs_lst : list of number of process to run tests for, e.g., [1, 2, 4]
         debug     : if True, provide output during execution and do not delete temp directory (Python >=3.12)
-        specific_assert : function taking ``all_res`` as input and performing test-specific assertions after the overall check performed by the wrapper class
+        specific_assert : function taking ``all_res`` as input and performing test-specific assertions
+                          after the overall check performed by the wrapper class
         """
 
         try:
@@ -395,5 +396,4 @@ class MPITestAssertCompletes(MPITestWrapper):
     """
 
     def assert_correct_results(self, tmpdirpath):
-        if self._specific_assert:
-            self._specific_assert(all_res)
+        assert self._specific_assert is None, "MPITestAssertCompletes does not support specific_assert."

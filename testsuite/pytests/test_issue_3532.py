@@ -71,7 +71,8 @@ def test_disconnect_one_by_one(with_compressed_spikes, n_nodes):
 
         post_conns = get_conn_pairs()
 
-        # must pass tuple with single tuple-element to set() to get one-element set of tuples instead of two-element set of node ids.
+        # must pass tuple with single tuple-element to set() to get one-element set of tuples
+        # instead of two-element set of node ids.
         assert pre_conns - post_conns == set(((i, j),))
 
         pre_conns = post_conns

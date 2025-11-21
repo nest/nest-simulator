@@ -346,6 +346,7 @@ class MPITestAssertEqual(MPITestWrapper):
             ]
 
         assert all_res, "No test data collected"
+
         for res in all_res.values():
             assert len(res) == len(self._procs_lst), "Could not collect data for all procs"
 

@@ -32,6 +32,11 @@ Testing disconnection of connections with compressd spikes, toggled on/off, usin
 cases = [(compressed_spikes, n_nodes) for compressed_spikes in [False, True] for n_nodes in [5, 10, 13, 42]]
 
 
+def get_conn_pairs():
+    conns = nest.GetConnections()
+    return set(zip(conns.sources(), conns.targets()))
+
+
 @pytest.fixture(params=cases, ids=[f"{compr}-{nn}" for compr, nn in cases])
 def network(request):
     compressed_spikes, n_nodes = request.param

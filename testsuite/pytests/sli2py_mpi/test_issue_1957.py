@@ -47,7 +47,7 @@ def test_issue_1957():
     if pre_conns:
         # need to do this here, Disconnect invalidates pre_conns
         df = pd.DataFrame.from_dict(pre_conns.get()).drop(labels="target_thread", axis=1)
-        df.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+        df.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821
 
     nest.Disconnect(nrn, nrn)
     nest.Disconnect(nrn, nrn)

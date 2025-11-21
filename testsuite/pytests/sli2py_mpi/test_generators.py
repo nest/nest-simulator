@@ -33,6 +33,7 @@ from mpi_test_wrapper import MPITestAssertEqual
         ["noise_generator", {"mean": 1000, "std": 500, "dt": 1}],
         ["poisson_generator", {"rate": 1000}],
         ["poisson_generator_ps", {"rate": 1000}],
+        ["pp_psc_delta", {"I_e": 1000}],  # not strictly a generator, but behaves like one here
         ["ppd_sup_generator", {"rate": 1000}],
         ["pulsepacket_generator", {"pulse_times": [5], "activity": 5, "sdev": 2}],
         [
@@ -84,7 +85,7 @@ def test_generators(gen_model, params):
     nest.Connect(gen, pnet)
     nest.Connect(pnet, sr)
 
-    nest.Simulate(10)
+    nest.Simulate(50)
     assert nest.local_spike_counter > 0
 
     # Uncomment next line to provoke test failure

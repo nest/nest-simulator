@@ -208,11 +208,4 @@ def GetLocalNodeCollection(nc):
     if not isinstance(nc, NodeCollection):
         raise TypeError("GetLocalNodeCollection requires a NodeCollection in order to run")
 
-    rank = Rank()
-    num_procs = NumProcesses()
-    first_in_nc = nc[0].global_id
-    first_index = ((rank - first_in_nc % num_procs) + num_procs) % num_procs
-    if first_index <= len(nc):
-        return nc[first_index : len(nc) : num_procs]
-    else:
-        return NodeCollection([])
+    return nc[nc.local]

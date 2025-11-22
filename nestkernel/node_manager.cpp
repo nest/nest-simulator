@@ -337,10 +337,7 @@ NodeManager::clear_node_collection_container()
 NodeCollectionPTR
 NodeManager::get_nodes( const dictionary& properties, const bool local_only )
 {
-  std::vector< size_t > nodes;
-
-  std::vector< std::vector< size_t > > nodes_on_thread;
-  nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
+  std::vector< std::vector< size_t > > nodes_on_thread( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -363,14 +360,15 @@ NodeManager::get_nodes( const dictionary& properties, const bool local_only )
             break;
           }
         }
-      }
-      if ( match )
-      {
-        nodes_on_thread[ tid ].push_back( node_id );
+        if ( match )
+        {
+          nodes_on_thread[ tid ].push_back( node_id );
+        }
       }
     }
   } // omp parallel
 
+  std::vector< size_t > nodes;
   for ( auto vec : nodes_on_thread )
   {
     nodes.insert( nodes.end(), vec.begin(), vec.end() );

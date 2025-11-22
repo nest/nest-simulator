@@ -292,8 +292,7 @@ public:
    * - Precondition: State of the node corresponds to the time ``origin+from``.
    * - Postcondition: State of the node corresponds to the time ``origin+to``.
    *
-   * Each step between ``from`` and ``to`` corresponding to one simulation
-   * resolution (``nest.resolution``) timestep.
+   * Each step between ``from`` and ``to`` corresponds to one simulation timestep (``nest.resolution``).
    *
    * If events are emitted, they have time stamps in the interval
    * ``T+from+1 .. T+to``.

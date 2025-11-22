@@ -360,10 +360,11 @@ NodeManager::get_nodes( const dictionary& properties, const bool local_only )
             break;
           }
         }
-        if ( match )
-        {
-          nodes_on_thread[ tid ].push_back( node_id );
-        }
+      }
+
+      if ( match )
+      {
+        nodes_on_thread[ tid ].push_back( node_id );
       }
     }
   } // omp parallel

@@ -42,11 +42,6 @@ assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 # Where parameterization is over thread numbers, test configurations without OpenMP will generate
 # fewer tests under pytest. To keep complexity of the testing logic in bounds, minima are used below.
 expected_num_tests = {
-    "01 basetests": 6,
-    "02 selftests": 8,
-    "03 unittests": 1,  # set to 1 to avoid complications during porting to Pytest
-    "04 regressiontests": 1,  # set to 1 to avoid complications during porting to Pytest
-    "05 mpitests": 1,  # set to 1 to avoid complications during porting to Pytest
     "06 musictests": 1,
     "07 pynesttests": 3719,  # without thread-dependent cases
     "07 pynesttests mpi 2": (230, 172),  # first case without thread-dependent cases

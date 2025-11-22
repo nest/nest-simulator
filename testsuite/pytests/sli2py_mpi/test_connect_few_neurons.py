@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_connect_few_neurons.py
 #
 # This file is part of NEST.
 #
@@ -23,21 +23,20 @@ import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize("N", [4, 7])
+@pytest.mark.parametrize("connspec", ["all_to_all", "one_to_one", {"rule": "pairwise_bernoulli", "p": 1.0}])
 @MPITestAssertEqual([1, 4], debug=False)
-def test_all_to_all(N):
+def test_connect_few_neurons(connspec):
     """
-    Confirm that all-to-all connections created correctly for more targets than local nodes.
+    Confirm that connections created correctly for more targets than local nodes.
 
     The test is performed on connection data written to OTHER_LABEL.
     """
 
     import nest
 
-    nrns = nest.Create("parrot_neuron", n=N)
-    nest.Connect(nrns, nrns, "all_to_all")
+    nrns = nest.Create("parrot_neuron", n=4)
+    nest.Connect(nrns, nrns, connspec)
 
     conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
     conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821

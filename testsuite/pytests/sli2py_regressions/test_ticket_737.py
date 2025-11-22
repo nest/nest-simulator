@@ -77,5 +77,5 @@ def test_ticket_737_break_on_different_types(stimulator_and_neuron):
     nest.CopyModel("static_synapse", synmodel)
     nest.Connect(stim, n, "all_to_all", syn_spec="static_synapse")
 
-    with pytest.raises(nest.kernel.NESTError, match="IllegalConnection"):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(stim, n, "all_to_all", syn_spec=synmodel)

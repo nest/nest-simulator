@@ -68,8 +68,8 @@ def test_sinusoidal_generator_with_spike_recorder(gen_model, num_threads):
         gen_model,
         params={
             "rate": 100,
-            "amplitude": 50.0,
-            "frequency": 10.0,
+            "amplitude": 50,
+            "frequency": 10,
         },
     )
     srec = nest.Create(

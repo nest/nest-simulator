@@ -27,6 +27,7 @@ import nest
 import numpy as np
 import pytest
 from scipy.signal import fftconvolve
+import math
 
 
 @pytest.fixture
@@ -61,7 +62,9 @@ def test_ou_noise_mean_and_variance(prepare_kernel):
     # run for resolution dt=0.1 project to iaf_psc_alpha.
     # create 100 repetitions of 1000ms simulations
 
-    oung = nest.Create("ou_noise_generator", {"mean": 0.0, "std": 60.0, "tau": 1.0, "dt": 0.1})
+    oung = nest.Create(
+        "ou_noise_generator", {"mean": 0.0, "std": 60.0, "tau": 1.0, "dt": 0.1}
+    )
     neuron = nest.Create("iaf_psc_alpha")
 
     # we need to connect to a neuron otherwise the generator does not generate
@@ -91,7 +94,10 @@ def test_ou_noise_generator_autocorrelation(prepare_kernel):
     dt = 0.1
     tau = 1.0
 
-    oung = nest.Create("ou_noise_generator", {"mean": 0.0, "std": 60.0, "tau": tau, "dt": nest.resolution})
+    oung = nest.Create(
+        "ou_noise_generator",
+        {"mean": 0.0, "std": 60.0, "tau": tau, "dt": nest.resolution},
+    )
     neuron = nest.Create("iaf_psc_alpha")
 
     # we need to connect to a neuron otherwise the generator does not generate
@@ -111,15 +117,21 @@ def test_ou_noise_generator_autocorrelation(prepare_kernel):
     # theoretical lag-1: exp(-dt/tau)
     theor_ac1 = np.exp(-dt / tau)
 
-    assert abs(emp_ac1 - theor_ac1) < 0.05, f"autocorr {emp_ac1:.3f} vs theoretical {theor_ac1:.3f}"
+    assert abs(emp_ac1 - theor_ac1) < 0.05, (
+        f"autocorr {emp_ac1:.3f} vs theoretical {theor_ac1:.3f}"
+    )
 
 
 def test_cross_correlation(prepare_kernel):
     # two neurons driven by the same OU noise should remain uncorrelated
     dt, tau = 0.1, 1.0
 
-    ou = nest.Create("ou_noise_generator", {"mean": 0.0, "std": 50.0, "tau": tau, "dt": dt})
-    neurons = nest.Create("iaf_psc_alpha", 2, {"E_L": 0.0, "V_th": 1e9, "C_m": 1.0, "tau_m": tau})
+    ou = nest.Create(
+        "ou_noise_generator", {"mean": 0.0, "std": 50.0, "tau": tau, "dt": dt}
+    )
+    neurons = nest.Create(
+        "iaf_psc_alpha", 2, {"E_L": 0.0, "V_th": 1e9, "C_m": 1.0, "tau_m": tau}
+    )
     nest.Connect(ou, neurons)
 
     mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": dt})
@@ -153,3 +165,171 @@ def test_cross_correlation(prepare_kernel):
 
     # maximum absolute cross-corr should be near zero
     assert np.max(np.abs(corr[mid:])) < 0.05
+
+
+def _run_ou_with_on_off(
+    mean=0.0,
+    std=10.0,
+    tau=100.0,
+    dt=1.0,
+    start_on=200.0,
+    stop_on=500.0,
+    section_ms=1000.0,
+    n_sections=40,
+):
+    """
+    Run an ou_noise_generator that is active only in [start_on, stop_on)
+    of each section of length section_ms, for n_sections sections.
+
+    Returns
+    -------
+    times : np.ndarray
+    I     : np.ndarray
+    """
+    nest.resolution = dt
+
+    neuron = nest.Create("iaf_psc_alpha")
+    ou = nest.Create(
+        "ou_noise_generator",
+        params={
+            "mean": mean,
+            "std": std,
+            "tau": tau,
+            "dt": dt,
+            "start": start_on,
+            "stop": stop_on,
+        },
+    )
+    nest.Connect(ou, neuron)
+
+    mm = nest.Create(
+        "multimeter",
+        params={
+            "record_from": ["I"],
+            "interval": dt,
+        },
+    )
+    nest.Connect(mm, ou, syn_spec={"weight": 1.0})
+
+    for k in range(n_sections):
+        nest.SetStatus(
+            ou,
+            {
+                "origin": float(k * section_ms),
+                "mean": mean,
+                "std": std,
+                "tau": tau,
+                "dt": dt,
+            },
+        )
+        nest.Simulate(section_ms)
+
+    ev = mm.get("events")
+    times = np.asarray(ev["times"])
+    I = np.asarray(ev["I"])
+
+    assert times.size > 0, "No samples recorded by multimeter."
+    return times, I
+
+
+def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
+    """
+    When the generator is outside [start, stop), the recorded current I
+    must be zero (up to numerical tolerance), while inside the
+    active window the OU process must exhibit non-zero variance.
+    """
+    mean, std, tau, dt = 0.0, 10.0, 100.0, 1.0
+    start_on, stop_on = 200.0, 500.0
+    section_ms = 1000.0
+    n_sections = 40
+
+    times, I = _run_ou_with_on_off(
+        mean=mean,
+        std=std,
+        tau=tau,
+        dt=dt,
+        start_on=start_on,
+        stop_on=stop_on,
+        section_ms=section_ms,
+        n_sections=n_sections,
+    )
+
+    pos = times % section_ms
+    on_mask = (pos >= start_on) & (pos < stop_on)
+    off_mask = ~on_mask
+
+    # We need both ON and OFF samples for this test
+    assert np.any(on_mask), "No ON-window samples recorded."
+    assert np.any(off_mask), "No OFF-window samples recorded."
+
+    # OFF samples should be exactly zero
+    off_vals = I[off_mask]
+    assert np.allclose(off_vals, 0.0, atol=1e-12), (
+        f"Inactive samples are not zero-gated (max |I_off| = {np.max(np.abs(off_vals))})."
+    )
+
+    # ON samples must show variance.
+    on_vals = I[on_mask]
+    assert np.std(on_vals) > 0.0, "Active-window output has zero variance;"
+
+
+def test_ou_noise_generator_jump_continuity_across_gaps(prepare_kernel):
+    """
+    Across inactive gaps, the OU state should evolve as an OU process
+    with time constant tau. We test this by comparing the empirical
+    correlation between the last ON sample in section s and the first
+    ON sample in section s+1 to the theoretical value exp(-gap/tau).
+    """
+    mean, std, tau, dt = 0.0, 10.0, 100.0, 1.0
+    start_on, stop_on = 100.0, 200.0
+    section_ms = 400.0
+    n_sections = 60
+
+    times, I = _run_ou_with_on_off(
+        mean=mean,
+        std=std,
+        tau=tau,
+        dt=dt,
+        start_on=start_on,
+        stop_on=stop_on,
+        section_ms=section_ms,
+        n_sections=n_sections,
+    )
+
+    pos = times % section_ms
+    on_mask = (pos >= start_on) & (pos < stop_on)
+    sections = (times // section_ms).astype(int)
+
+    first_vals = []
+    last_vals = []
+
+    for s in range(sections.min(), sections.max() + 1):
+        m = (sections == s) & on_mask
+        Is = I[m]
+        if Is.size == 0:
+            continue
+        first_vals.append(Is[0])
+        last_vals.append(Is[-1])
+
+    first_vals = np.asarray(first_vals)
+    last_vals = np.asarray(last_vals)
+
+    assert first_vals.size >= 2, "Not enough ON-window sections."
+
+    last_before = last_vals[:-1]
+    first_after = first_vals[1:]
+
+    assert np.std(last_before) > 0.0
+    assert np.std(first_after) > 0.0
+
+    # Time between the last ON sample in section s and first ON sample in s+1
+    gap_ms = section_ms - (stop_on - dt) + start_on
+    theor_corr = math.exp(-gap_ms / tau)
+
+    emp_corr = np.corrcoef(last_before, first_after)[0, 1]
+
+    # Allow for stochastic variability;
+    assert abs(emp_corr - theor_corr) < 0.2, (
+        f"OU continuity mismatch across gaps: "
+        f"empirical corr={emp_corr:.3f}, theoretical={theor_corr:.3f}, gap={gap_ms:.1f} ms"
+    )

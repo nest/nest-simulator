@@ -266,24 +266,14 @@ void
 nest::ou_noise_generator::update( Time const& origin, const long from, const long to )
 {
   const long start = origin.get_steps();
+  const double res_ms = Time::get_resolution().get_ms();
+  const double ou_dt_ms = P_.dt_.get_ms();
 
   for ( long offs = from; offs < to; ++offs )
   {
-
     const long now = start + offs;
 
     // Update OU process state if next update is due
-    if ( now >= B_.next_step_ )
-    {
-      // compute new currents
-      for ( double& amp : B_.amps_ )
-      {
-        amp = V_.mean_incr_ + amp * V_.prop_ + V_.noise_amp_ * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
-      }
-      // use now as reference, in case we woke up from inactive period
-      B_.next_step_ = now + V_.dt_steps_;
-    }
-
     S_.I_avg_ = 0.0;
 
     // Skip sending events while generator is inactiv
@@ -294,6 +284,42 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
     }
 
     // record values
+    if ( now >= B_.next_step_ )
+    {
+      // time since last OU update
+      double step_ms = ou_dt_ms;
+
+      if ( B_.next_step_ > 0 )
+      {
+        const long last_update_step = B_.next_step_ - V_.dt_steps_;
+        const long gap_steps = now - last_update_step;
+        step_ms = gap_steps * res_ms;
+      }
+
+      double prop = V_.prop_;
+      double noise_amp = V_.noise_amp_;
+      double mean_incr = V_.mean_incr_;
+
+      // if the gap differs from OU update, recompute OU coefficients
+      if ( std::fabs( step_ms - ou_dt_ms ) > 1e-12 )
+      {
+        const double exp_fac = std::exp( -step_ms / P_.tau_ );
+        prop = exp_fac;
+        noise_amp = P_.std_ * std::sqrt( -std::expm1( -2.0 * step_ms / P_.tau_ ) );
+        mean_incr = P_.mean_ * ( 1.0 - exp_fac );
+      }
+
+      // jump OU state forward by step_ms
+      for ( double& amp : B_.amps_ )
+      {
+        amp = mean_incr + prop * amp + noise_amp * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
+      }
+
+      // schedule next update time
+      B_.next_step_ = now + V_.dt_steps_;
+    }
+
+    // record average of currents over all targets
     for ( double& amp : B_.amps_ )
     {
       S_.I_avg_ += amp;
@@ -330,8 +356,8 @@ nest::ou_noise_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 
-void
-nest::ou_noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+auto
+nest::ou_noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param ) -> void
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_;

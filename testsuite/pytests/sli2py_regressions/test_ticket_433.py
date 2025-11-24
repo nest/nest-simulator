@@ -61,7 +61,7 @@ def test_missing_receptor_type(nodes):
     """
 
     ht_layer, ampa_id = nodes
-    with pytest.raises(nest.kernel.NESTError, match="UnknownReceptorType"):
+    with pytest.raises(nest.NESTErrors.UnknownReceptorType):
         nest.Connect(ht_layer, ht_layer, "one_to_one")
 
 
@@ -116,5 +116,5 @@ def test_all_models_with_receptor_types_reject_static_synapse():
             # Avoid models with auto-generated ports (length 0 or less)
             if len(dflts["receptor_types"]) > 0:
                 tgt = nest.Create(model)
-                with pytest.raises(nest.kernel.NESTError, match="UnknownReceptorType|IncompatibleReceptorType"):
+                with pytest.raises((nest.NESTErrors.UnknownReceptorType, nest.NESTErrors.IncompatibleReceptorType)):
                     nest.Connect(src, tgt, syn_spec="static_synapse")

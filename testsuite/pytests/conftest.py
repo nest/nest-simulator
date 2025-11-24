@@ -61,7 +61,23 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         "markers",
+        "skipif_missing_mpi: mark tests requiring MPI support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
         "skipif_incompatible_mpi: mark tests requiring subprocess to invoke mpirun (needs OpenMPI 5.0.7 or later)",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_threads: mark tests requiring multithreading support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_gsl: mark tests requiring GSL support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_hdf5: mark tests requiring HDF5 support in NEST",
     )
 
 

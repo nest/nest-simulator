@@ -115,6 +115,7 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_vacant, new_tau_vacant );
   updateValue< bool >( d, names::continuous, continuous_ );
   updateValue< double >( d, names::z, z_ );
+  updateValue< double >( d, names::z_connected, z_connected_ );
 
   if ( d->known( names::growth_curve ) )
   {

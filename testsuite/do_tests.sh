@@ -135,6 +135,7 @@ get_build_info ()
 
 HAVE_MPI="$(get_build_info have_mpi)"
 HAVE_OPENMP="$(get_build_info have_threads)"
+HAVE_MUSIC=${MUSIC:+True}
 
 if test "${HAVE_MPI}" = "True"; then
     MPI_LAUNCHER="$(get_build_info mpiexec)"
@@ -176,7 +177,7 @@ echo "  Sysinfo: $(uname -s -r -m)"
 echo
 echo "  NEST version ....... $(get_build_info version)"
 echo "  PREFIX ............. $PREFIX"
-if test -n "${MUSIC}"; then
+if test -n "${HAVE_MUSIC}" = "True"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
     echo "  MUSIC executable ... ${MUSIC} (version ${MUSIC_VERSION})"
 fi
@@ -303,6 +304,9 @@ if test "${HAVE_MPI}" = "True"; then
 fi
 if test "${HAVE_OPENMP}" = "True"; then
    SUMMARY_OPTS+=("--have-openmp")
+fi
+if test "${HAVE_MUSIC}" = "True"; then
+   SUMMARY_OPTS+=("--have-music")
 fi
 python3 "$(dirname "$0")/summarize_tests.py" "${SUMMARY_OPTS[@]}" "${REPORTDIR}"
 TESTSUITE_RESULT="$?"

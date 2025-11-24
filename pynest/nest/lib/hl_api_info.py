@@ -110,7 +110,15 @@ def help(obj=None, return_text=False):
         print(nest.__doc__)
 
 
-@deprecated("get", "Instead of GetStatus(nrns|conns, args), use nrns|conns.get(args).")
+@deprecated(
+    "get",
+    " ".join(
+        (
+            "GetStatus() is deprecated and will be removed in a future version of NEST.",
+            "Instead of GetStatus(nrns|conns, args), use nrns|conns.get(args).",
+        )
+    ),
+)
 def GetStatus(nodes_or_conns, keys=None, output=""):
     if keys:
         return nodes_or_conns.get(keys, output=output)
@@ -118,6 +126,14 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
         return nodes_or_conns.get(output=output)
 
 
-@deprecated("set", "Instead of SetStatus(nrns|conns, args), use nrns|conns.set(args).")
+@deprecated(
+    "set",
+    " ".join(
+        (
+            "SetStatus() is deprecated and will be removed in a future version of NEST.",
+            "Instead of SetStatus(nrns|conns, args), use nrns|conns.set(args).",
+        )
+    ),
+)
 def SetStatus(nodes_or_conns, params, val=None):
     nodes_or_conns.set(params if val is None else {params: val})

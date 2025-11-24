@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_all_to_all.py
+# test_spike_propagation.py
 #
 # This file is part of NEST.
 #
@@ -23,21 +23,32 @@ import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@pytest.mark.parametrize("N", [4, 7])
-@MPITestAssertEqual([1, 4], debug=False)
-def test_all_to_all(N):
+@MPITestAssertEqual([1, 2, 4], debug=False)
+def test_spike_propagation():
     """
-    Confirm that all-to-all connections created correctly for more targets than local nodes.
+    Confirm that spikes travel along a chain of neurons independent of how many ranks they are distributed over.
 
-    The test is performed on connection data written to OTHER_LABEL.
+    The test compares data written by spike_recorder to SPIKE_LABEL.
     """
 
     import nest
 
-    nrns = nest.Create("parrot_neuron", n=N)
-    nest.Connect(nrns, nrns, "all_to_all")
+    N = 7
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    sg = nest.Create("spike_generator", params={"spike_times": [1]})
+    nrns = nest.Create("parrot_neuron", N)
+    srec = nest.Create(
+        "spike_recorder",
+        params={
+            "label": SPIKE_LABEL.format(nest.num_processes),  # noqa: F821
+            "record_to": "ascii",
+            "time_in_steps": True,
+        },
+    )
+
+    nest.Connect(sg, nrns[0])
+    nest.Connect(nrns[:-1], nrns[1:], "one_to_one")
+    nest.Connect(nrns, srec)
+
+    nest.Simulate(10)

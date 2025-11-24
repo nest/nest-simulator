@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_consistent_local_vps.py
+# test_ticket_955.py
 #
 # This file is part of NEST.
 #
@@ -19,26 +19,30 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
+
 import pytest
+from mpi_test_wrapper import MPITestAssertCompletes
 
 
-@pytest.mark.skipif_missing_threads
-def test_consistent_local_vps():
+@pytest.mark.skipif_incompatible_mpi
+@pytest.mark.parametrize(
+    "spec",
+    [
+        {"pos": [[0, 0]], "extent": [1, 1]},
+        {"pos": [[0, 0, 0]], "extent": [1, 1, 1]},
+        {"shape": [1, 1]},
+        {"shape": [1, 1, 1]},
+    ],
+)
+@MPITestAssertCompletes([1, 2, 4])
+def test_ticket_955(spec):
     """
-    Test local_vps field of kernel status.
+    Confirm one can create a layer with just a single element also when running in parallel.
 
-    This test ensures that the PyNEST-generated local_vps information
-    agrees with the thread-VP mappings in the kernel.
+    This test only confirms completion, no data is tested.
     """
-    n_vp = 3 * nest.num_processes
-    nest.total_num_virtual_procs = n_vp
 
-    local_vps = list(nest.GetLocalVPs())
+    import nest
 
-    # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
-
-    vp_direct = list(nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
-    assert vp_direct == vp_indirect
+    geom = nest.spatial.free(**spec) if "pos" in spec else nest.spatial.grid(**spec)
+    nest.Create("parrot_neuron", positions=geom)

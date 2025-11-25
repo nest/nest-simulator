@@ -191,19 +191,10 @@ Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
   if ( cached_vector_md_ == node_collection->get_metadata() )
   {
     // Convert from vector to Ntree
-    // PYNEST-NG: Why different from Master?
-    typename std::back_insert_iterator< Ntree< D, size_t > > to = std::back_inserter( *cached_ntree_ );
-
-    for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator from = cached_vector_->begin();
-          from != cached_vector_->end();
-          ++from )
-    {
-      *to = *from;
-    }
+    std::copy( cached_vector_->begin(), cached_vector_->end(), std::back_inserter( *cached_ntree_ ) );
   }
   else
   {
-
     insert_global_positions_ntree_( *cached_ntree_, node_collection );
   }
 

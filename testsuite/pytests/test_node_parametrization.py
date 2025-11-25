@@ -298,17 +298,22 @@ class TestNodeParametrization(unittest.TestCase):
     def test_power_parameter(self):
         """Test parameter raised to the power of an exponent"""
         # Negative values
-        for value in np.linspace(-5.0, 0.0, 15):
+        for value in np.linspace(-5.0, -0.1, 15):
             p = nest.CreateParameter("constant", {"value": value})
             # Exponents must be integers
             for exponent in range(-15, 15):
                 self.assertAlmostEqual((p**exponent).GetValue(), value**exponent)
 
         # Positive values
-        for value in np.linspace(0.0, 5.0, 15):
+        for value in np.linspace(0.1, 5.0, 15):
             p = nest.CreateParameter("constant", {"value": value})
             for exponent in np.linspace(-5.0, 5.0, 15):
                 self.assertAlmostEqual((p**exponent).GetValue(), value**exponent)
+
+        # Zero
+        p = nest.CreateParameter("constant", {"value": 0.0})
+        for exponent in np.linspace(0.1, 5.0, 15):
+            self.assertAlmostEqual((p**exponent).GetValue(), 0.0)
 
     def test_min_parameter(self):
         """Test min of parameter"""

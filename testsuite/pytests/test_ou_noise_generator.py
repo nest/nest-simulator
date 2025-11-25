@@ -222,12 +222,12 @@ def _run_ou_with_on_off(
     currents = np.asarray(ev["I"])
 
     assert times.size > 0, "No samples recorded by multimeter."
-    return times, I
+    return times, currents
 
 
 def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
     """
-    When the generator is outside [start, stop), the recorded current I
+    When the generator is outside [start, stop), the recorded currents
     must be zero (up to numerical tolerance), while inside the
     active window the OU process must exhibit non-zero variance.
     """
@@ -256,13 +256,13 @@ def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
     assert np.any(off_mask), "No OFF-window samples recorded."
 
     # OFF samples should be exactly zero
-    off_vals = I[off_mask]
+    off_vals = currents[off_mask]
     assert np.allclose(
         off_vals, 0.0, atol=1e-12
     ), f"Inactive samples are not zero-gated (max |I_off| = {np.max(np.abs(off_vals))})."
 
     # ON samples must show variance.
-    on_vals = I[on_mask]
+    on_vals = currents[on_mask]
     assert np.std(on_vals) > 0.0, "Active-window output has zero variance;"
 
 

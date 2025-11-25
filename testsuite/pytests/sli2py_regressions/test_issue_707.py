@@ -28,7 +28,7 @@ import nest
 import pytest
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_gap_junction_weight_recording():
     """
     Test that the weight of gap junctions can be recorded with the weight_recorder.

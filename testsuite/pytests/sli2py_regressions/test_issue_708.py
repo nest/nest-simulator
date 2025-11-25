@@ -28,7 +28,7 @@ import nest
 import pytest
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_copymodel_with_secondary_events():
     """
     Test that CopyModel works with connection types that use secondary events.

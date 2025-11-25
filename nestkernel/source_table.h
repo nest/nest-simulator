@@ -296,8 +296,12 @@ public:
     std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
-   * Finds the first entry in sources_ at the given thread id and
-   * synapse type that is equal to snode_id.
+   * Finds the first non-disabled entry in sources_ at the given thread id and synapse type that has sender equal to
+   * snode_id.
+   *
+   * @returns local connection id (lcid) or `invalid_index`
+   *
+   * @note For compressed spikes, it uses binary search, otherwise linear search.
    */
   size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
 

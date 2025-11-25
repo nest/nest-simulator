@@ -137,18 +137,10 @@ print_nodes_to_string()
 std::string
 pprint_to_string( NodeCollectionPTR nc )
 {
-  if ( nc )
-  {
-    std::stringstream stream;
-    nc->print_me( stream );
-    return stream.str();
-  }
-  else
-  {
-    // PYNEST-NG: added this, not sure why this can happen now, but could not previously
-    std::cout << "pprint_to_string: nc is not assigned" << std::endl;
-    return "";
-  }
+  assert( nc );
+  std::stringstream stream;
+  nc->print_me( stream );
+  return stream.str();
 }
 
 size_t

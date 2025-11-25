@@ -644,6 +644,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
     for ( auto& param_key : p_keys )
     {
       // Check that the parameter exists for the synapse model.
+      // This also takes care of dictionary access checking—any parameter given in params
+      // that is not known will be flagged here.
       const auto syn_model_default_it = syn_model_defaults.find( param_key );
       if ( syn_model_default_it == syn_model_defaults.end() )
       {
@@ -750,13 +752,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        // PYNEST-NG: Possible performance bottleneck
-        param_dicts[ tid ].init_access_flags( /* thread_local_dict */ true );
-
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
-
-        // PYNEST-NG: Possible performance bottleneck
-        param_dicts[ tid ].all_entries_accessed( "connect_arrays", "params", /* thread_local_dict */ true );
 
         increment_wd( w, d );
       }

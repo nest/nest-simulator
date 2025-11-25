@@ -565,5 +565,3 @@ dictionary::all_entries_accessed( const std::string& where,
     throw nest::UnaccessedDictionaryEntry( what, where, missed );
   }
 }
-
-// TODO-PYNEST-NG: Convenience function for accessed()?

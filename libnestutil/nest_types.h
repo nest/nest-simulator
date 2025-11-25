@@ -129,7 +129,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
 /**
  *  For enumerations of synapse types.
  */
-typedef size_t synindex; // PYNEST-NG check if size_t instead of unsigned int causes problems
+typedef size_t synindex;
 const synindex invalid_synindex = MAX_SYN_ID;
 
 /**

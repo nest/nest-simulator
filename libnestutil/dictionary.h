@@ -83,12 +83,12 @@ struct DictEntry_
 
 class dictionary : public std::map< std::string, DictEntry_ >
 {
-  // TODO-PYNEST-NG: Meta-information about entries:
+  // PYNEST-NG-FUTURE: Meta-information about entries:
   //                   * Value type (enum?)
   //                   * Whether value is writable
   //                   * Docstring for each entry
 private:
-  // TODO: PYNEST-NG: maybe change to unordered map, as that provides
+  // PYNEST-NG-FUTURE: maybe change to unordered map, as that provides
   // automatic hashing of keys (currently strings) which might make
   // lookups more efficient
   using maptype_ = std::map< std::string, DictEntry_ >;

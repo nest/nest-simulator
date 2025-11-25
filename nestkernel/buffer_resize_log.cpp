@@ -55,7 +55,7 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 void
 BufferResizeLog::to_dict( dictionary& events ) const
 {
-  // TODO: PyNEST-NG: Make this lambda (which is also used in
+  // TODO-PyNEST-NG: Make this lambda (which is also used in
   // DeviceData::get_status() recording_backend_memory) available in
   // libnestutil/dict_util.h
   auto init_intvector = [ &events ]( std::string key ) -> std::vector< int >&

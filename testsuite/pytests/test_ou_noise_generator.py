@@ -23,11 +23,12 @@
 Tests parameter setting and statistical correctness for one application.
 """
 
+import math
+
 import nest
 import numpy as np
 import pytest
 from scipy.signal import fftconvolve
-import math
 
 
 @pytest.fixture
@@ -62,9 +63,7 @@ def test_ou_noise_mean_and_variance(prepare_kernel):
     # run for resolution dt=0.1 project to iaf_psc_alpha.
     # create 100 repetitions of 1000ms simulations
 
-    oung = nest.Create(
-        "ou_noise_generator", {"mean": 0.0, "std": 60.0, "tau": 1.0, "dt": 0.1}
-    )
+    oung = nest.Create("ou_noise_generator", {"mean": 0.0, "std": 60.0, "tau": 1.0, "dt": 0.1})
     neuron = nest.Create("iaf_psc_alpha")
 
     # we need to connect to a neuron otherwise the generator does not generate
@@ -117,21 +116,15 @@ def test_ou_noise_generator_autocorrelation(prepare_kernel):
     # theoretical lag-1: exp(-dt/tau)
     theor_ac1 = np.exp(-dt / tau)
 
-    assert abs(emp_ac1 - theor_ac1) < 0.05, (
-        f"autocorr {emp_ac1:.3f} vs theoretical {theor_ac1:.3f}"
-    )
+    assert abs(emp_ac1 - theor_ac1) < 0.05, f"autocorr {emp_ac1:.3f} vs theoretical {theor_ac1:.3f}"
 
 
 def test_cross_correlation(prepare_kernel):
     # two neurons driven by the same OU noise should remain uncorrelated
     dt, tau = 0.1, 1.0
 
-    ou = nest.Create(
-        "ou_noise_generator", {"mean": 0.0, "std": 50.0, "tau": tau, "dt": dt}
-    )
-    neurons = nest.Create(
-        "iaf_psc_alpha", 2, {"E_L": 0.0, "V_th": 1e9, "C_m": 1.0, "tau_m": tau}
-    )
+    ou = nest.Create("ou_noise_generator", {"mean": 0.0, "std": 50.0, "tau": tau, "dt": dt})
+    neurons = nest.Create("iaf_psc_alpha", 2, {"E_L": 0.0, "V_th": 1e9, "C_m": 1.0, "tau_m": tau})
     nest.Connect(ou, neurons)
 
     mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": dt})
@@ -183,8 +176,8 @@ def _run_ou_with_on_off(
 
     Returns
     -------
-    times : np.ndarray
-    I     : np.ndarray
+    times   : np.ndarray
+    currents: np.ndarray
     """
     nest.resolution = dt
 
@@ -226,7 +219,7 @@ def _run_ou_with_on_off(
 
     ev = mm.get("events")
     times = np.asarray(ev["times"])
-    I = np.asarray(ev["I"])
+    currents = np.asarray(ev["I"])
 
     assert times.size > 0, "No samples recorded by multimeter."
     return times, I
@@ -243,7 +236,7 @@ def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
     section_ms = 1000.0
     n_sections = 40
 
-    times, I = _run_ou_with_on_off(
+    times, currents = _run_ou_with_on_off(
         mean=mean,
         std=std,
         tau=tau,
@@ -264,9 +257,9 @@ def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
 
     # OFF samples should be exactly zero
     off_vals = I[off_mask]
-    assert np.allclose(off_vals, 0.0, atol=1e-12), (
-        f"Inactive samples are not zero-gated (max |I_off| = {np.max(np.abs(off_vals))})."
-    )
+    assert np.allclose(
+        off_vals, 0.0, atol=1e-12
+    ), f"Inactive samples are not zero-gated (max |I_off| = {np.max(np.abs(off_vals))})."
 
     # ON samples must show variance.
     on_vals = I[on_mask]
@@ -285,7 +278,7 @@ def test_ou_noise_generator_jump_continuity_across_gaps(prepare_kernel):
     section_ms = 400.0
     n_sections = 60
 
-    times, I = _run_ou_with_on_off(
+    times, currents = _run_ou_with_on_off(
         mean=mean,
         std=std,
         tau=tau,
@@ -305,7 +298,7 @@ def test_ou_noise_generator_jump_continuity_across_gaps(prepare_kernel):
 
     for s in range(sections.min(), sections.max() + 1):
         m = (sections == s) & on_mask
-        Is = I[m]
+        Is = currents[m]
         if Is.size == 0:
             continue
         first_vals.append(Is[0])

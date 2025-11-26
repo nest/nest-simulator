@@ -101,11 +101,6 @@ def have_threads():
     return nest.build_info["have_threads"]
 
 
-@pytest.fixture(scope="session")
-def report_dir() -> pathlib.Path:
-    return pathlib.Path(os.environ.get("REPORTDIR", ""))
-
-
 @pytest.fixture(autouse=True)
 def skipif_missing_threads(request, have_threads):
     """
@@ -159,22 +154,6 @@ def skipif_missing_hdf5(request, have_hdf5):
     """
     if not have_hdf5 and request.node.get_closest_marker("skipif_missing_hdf5"):
         pytest.skip("skipped because missing HDF5 support.")
-
-
-@pytest.fixture(scope="session")
-def have_plotting():
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")  # backend without window
-        import matplotlib.pyplot as plt
-
-        # make sure we can open a window; DISPLAY may not be set
-        fig = plt.figure()
-        plt.close(fig)
-        return True
-    except Exception:
-        return False
 
 
 @pytest.fixture(scope="session")

@@ -58,17 +58,6 @@ def test_set_individual_spike_trains_on_set_defaults(gen_model):
     assert not gen.individual_spike_trains
 
 
-@pytest.mark.skip(reason="PyNEST-NG Create() sets params on instances, instead of via Defaults")
-@pytest.mark.parametrize("gen_model", gen_models)
-def test_set_individual_spike_trains_on_creation(gen_model):
-    """
-    Test whether ``individual_spike_trains`` can be set on model creation.
-    """
-
-    gen = nest.Create(gen_model, params={"individual_spike_trains": False})
-    assert not gen.individual_spike_trains
-
-
 @pytest.mark.parametrize("gen_model", gen_models)
 def test_set_individual_spike_trains_on_copy_model(gen_model):
     """

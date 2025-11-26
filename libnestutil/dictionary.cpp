@@ -92,6 +92,24 @@ template <>
 std::vector< double >
 dictionary::cast_value_< std::vector< double > >( const boost::any& value, const std::string& key ) const
 {
+  return cast_vector_value_< double >( value, key );
+}
+
+
+template <>
+std::vector< double >
+dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const
+{
+  // PyNEST passes vector with element type any if and only if it needs to pass
+  // and empty vector, because the element type of empty lists cannot be inferred
+  // at the Python level. The assertion just double-checks that we never get a
+  // non-empty vector-of-any.
+  if ( value.type() == typeid( std::vector< boost::any > ) )
+  {
+    assert( boost::any_cast< std::vector< boost::any > >( value ).empty() );
+    return std::vector< double >();
+  }
+
   try
   {
     if ( is_type< std::vector< double > >( value ) )
@@ -116,7 +134,6 @@ dictionary::cast_value_< std::vector< double > >( const boost::any& value, const
 }
 
 
-// debug
 std::string
 debug_type( const boost::any& operand )
 {

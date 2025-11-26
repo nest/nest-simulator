@@ -375,11 +375,24 @@ public:
 
 std::ostream& operator<<( std::ostream& os, const dictionary& dict );
 
+//! Specialization that allows passing long where double is expected
 template <>
 double dictionary::cast_value_< double >( const boost::any& value, const std::string& key ) const;
 
+/**
+ * Specialization that allows passing long vectors where double vectors are expected.
+ *
+ * @note This specialization forwards to cast_vector_value_<double>, but is required explicitly,
+ *       because, e.g., get(), calls cast_value_() directly even if the argument is a vector.
+ */
 template <>
 std::vector< double > dictionary::cast_value_< std::vector< double > >( const boost::any& value,
   const std::string& key ) const;
+
+/**
+ * Specialization that allows passing long vectors where double vectors are expected and handles empty vectors.
+ */
+template <>
+std::vector< double > dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const;
 
 #endif /* DICTIONARY_H_ */

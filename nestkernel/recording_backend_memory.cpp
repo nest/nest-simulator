@@ -241,7 +241,6 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
     return boost::any_cast< std::vector< double >& >( events[ key ] );
   };
 
-  // TODO-PYNEST-NG: check that the vector in events is appended correctly
   auto& senders = init_intvector( names::senders );
   senders.insert( senders.end(), senders_.begin(), senders_.end() );
 

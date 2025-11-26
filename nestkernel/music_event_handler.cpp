@@ -31,6 +31,8 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "music_manager.h"
 #include "nest_types.h"
 
 namespace nest
@@ -93,7 +95,7 @@ MusicEventHandler::publish_port()
 {
   if ( not published_ )
   {
-    music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
+    music_port_ = kernel::manager< MUSICManager >.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;

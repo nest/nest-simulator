@@ -22,7 +22,6 @@
 
 #include "rate_connection_instantaneous.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

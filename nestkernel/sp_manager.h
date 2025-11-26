@@ -210,23 +210,17 @@ private:
   DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
 };
 
-inline GrowthCurve*
-SPManager::new_growth_curve( Name name )
-{
-  const long nc_id = ( *growthcurvedict_ )[ name ];
-  return growthcurve_factories_.at( nc_id )->create();
-}
 
-inline bool
-SPManager::is_structural_plasticity_enabled() const
+template < typename GrowthCurve >
+void
+SPManager::register_growth_curve( const std::string& name )
 {
-  return structural_plasticity_enabled_;
-}
-
-inline double
-SPManager::get_structural_plasticity_update_interval() const
-{
-  return structural_plasticity_update_interval_;
+  assert( not growthcurvedict_->known( name ) );
+  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
+  assert( nc );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( nc );
+  growthcurvedict_->insert( name, id );
 }
 
 } // namespace nest

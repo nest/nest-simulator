@@ -37,9 +37,9 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "booldatum.h"
@@ -250,7 +250,7 @@ nest::sinusoidal_gamma_generator::init_buffers_()
   StimulationDevice::init_buffers();
   B_.logger_.reset();
 
-  std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
+  std::vector< double >( P_.num_trains_, kernel::manager< SimulationManager >.get_time().get_ms() ).swap( B_.t0_ms_ );
   std::vector< double >( P_.num_trains_, 0.0 ).swap( B_.Lambda_t0_ );
   B_.P_prev_ = P_;
 }
@@ -286,7 +286,7 @@ nest::sinusoidal_gamma_generator::pre_run_hook()
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = get_vp_specific_rng( get_thread() );
 
-  const double t_ms = kernel().simulation_manager.get_time().get_ms();
+  const double t_ms = kernel::manager< SimulationManager >.get_time().get_ms();
 
   // if new connections were created during simulation break, resize accordingly
   // this is a no-op if no new connections were created
@@ -330,14 +330,14 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, c
       if ( P_.individual_spike_trains_ )
       {
         DSSpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
       else
       {
         if ( V_.rng_->drand() < hazard_( 0 ) )
         {
           SpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
           B_.t0_ms_[ 0 ] = V_.t_ms_;
           B_.Lambda_t0_[ 0 ] = 0;
         }

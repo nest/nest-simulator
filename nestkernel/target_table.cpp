@@ -23,20 +23,25 @@
 // Includes from nestkernel:
 #include "target_table.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
+#include "mpi_manager.h"
+#include "vp_manager.h"
 
 // Includes from libnestutil
 #include "vector_util.h"
 
+#include <node_manager.h>
+
 void
 nest::TargetTable::initialize()
 {
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
   targets_.resize( num_threads );
   secondary_send_buffer_pos_.resize( num_threads );
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     targets_[ tid ] = std::vector< std::vector< Target > >();
     secondary_send_buffer_pos_[ tid ] = std::vector< std::vector< std::vector< size_t > > >();
   } // of omp parallel
@@ -54,7 +59,7 @@ nest::TargetTable::prepare( const size_t tid )
 {
   // add one to max_num_local_nodes to avoid possible overflow in case
   // of rounding errors
-  const size_t num_local_nodes = kernel().node_manager.get_max_num_local_nodes() + 1;
+  const size_t num_local_nodes = kernel::manager< NodeManager >.get_max_num_local_nodes() + 1;
 
   targets_[ tid ].resize( num_local_nodes );
 
@@ -63,7 +68,7 @@ nest::TargetTable::prepare( const size_t tid )
   for ( size_t lid = 0; lid < num_local_nodes; ++lid )
   {
     // resize to maximal possible synapse-type index
-    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models() );
+    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel::manager< ModelManager >.get_num_connection_models() );
   }
 }
 
@@ -101,10 +106,32 @@ nest::TargetTable::add_target( const size_t tid, const size_t target_rank, const
   {
     const SecondaryTargetDataFields& secondary_fields = target_data.secondary_data;
     const size_t send_buffer_pos = secondary_fields.get_recv_buffer_pos()
-      + kernel().mpi_manager.get_send_displacement_secondary_events_in_int( target_rank );
+      + kernel::manager< MPIManager >.get_send_displacement_secondary_events_in_int( target_rank );
     const synindex syn_id = secondary_fields.get_syn_id();
 
     assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
     secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ].push_back( send_buffer_pos );
   }
+}
+
+const std::vector< nest::Target >&
+nest::TargetTable::get_targets( const size_t tid, const size_t lid ) const
+{
+  return targets_[ tid ][ lid ];
+}
+
+const std::vector< size_t >&
+nest::TargetTable::get_secondary_send_buffer_positions( const size_t tid,
+  const size_t lid,
+  const synindex syn_id ) const
+{
+  assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
+  return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
+}
+
+void
+nest::TargetTable::clear( const size_t tid )
+{
+  targets_[ tid ].clear();
+  secondary_send_buffer_pos_[ tid ].clear();
 }

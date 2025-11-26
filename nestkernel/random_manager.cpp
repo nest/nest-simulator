@@ -27,9 +27,12 @@
 #include <utility>
 
 // Includes from nestkernel:
+#include "dictutils.h"
 #include "kernel_manager.h"
+#include "mpi_manager.h"
+#include "nest_names.h"
 #include "random_generators.h"
-#include "vp_manager_impl.h"
+#include "vp_manager.h"
 
 // Includes from libnestutil:
 #ifdef HAVE_RANDOM123
@@ -84,13 +87,13 @@ nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only
   // Create new RNGs of the currently used RNG type.
   rank_synced_rng_ = rng_types_[ current_rng_type_ ]->create( { base_seed_, RANK_SYNCED_SEEDER_ } );
 
-  vp_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
-  vp_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
+  vp_synced_rngs_.resize( kernel::manager< VPManager >.get_num_threads() );
+  vp_specific_rngs_.resize( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const auto tid = kernel().vp_manager.get_thread_id();
-    const std::uint32_t vp = kernel().vp_manager.get_vp(); // type required for rng initializer
+    const auto tid = kernel::manager< VPManager >.get_thread_id();
+    const std::uint32_t vp = kernel::manager< VPManager >.get_vp(); // type required for rng initializer
     vp_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
     vp_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
   }
@@ -186,7 +189,7 @@ nest::RandomManager::check_rng_synchrony() const
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
     const auto r = rank_synced_rng_->drand();
-    if ( not kernel().mpi_manager.equal_cross_ranks( r ) )
+    if ( not kernel::manager< MPIManager >.equal_cross_ranks( r ) )
     {
       throw KernelException( "Rank-synchronized random number generators are out of sync." );
     }
@@ -195,7 +198,7 @@ nest::RandomManager::check_rng_synchrony() const
   // We check thread-synchrony under all circumstances to keep the code simple.
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
-    const size_t num_threads = kernel().vp_manager.get_num_threads();
+    const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
     double local_min = std::numeric_limits< double >::max();
     double local_max = std::numeric_limits< double >::min();
     for ( size_t t = 0; t < num_threads; ++t )
@@ -211,7 +214,7 @@ nest::RandomManager::check_rng_synchrony() const
       local_min = -std::numeric_limits< double >::infinity();
     }
 
-    if ( not kernel().mpi_manager.equal_cross_ranks( local_min ) )
+    if ( not kernel::manager< MPIManager >.equal_cross_ranks( local_min ) )
     {
       throw KernelException( "Thread-synchronized random number generators are out of sync." );
     }
@@ -223,4 +226,25 @@ void
 nest::RandomManager::register_rng_type( const std::string& name )
 {
   rng_types_.insert( std::make_pair( name, new RandomGeneratorFactory< RNG_TYPE >() ) );
+}
+
+
+nest::RngPtr
+nest::RandomManager::get_rank_synced_rng() const
+{
+  return rank_synced_rng_;
+}
+
+nest::RngPtr
+nest::RandomManager::get_vp_synced_rng( size_t tid ) const
+{
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
+  return vp_synced_rngs_[ tid ];
+}
+
+nest::RngPtr
+nest::RandomManager::get_vp_specific_rng( size_t tid ) const
+{
+  assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
+  return vp_specific_rngs_[ tid ];
 }

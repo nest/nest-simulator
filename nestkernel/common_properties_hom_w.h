@@ -25,6 +25,8 @@
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
+#include "dictutils.h"
+#include "nest_names.h"
 
 namespace nest
 {
@@ -35,34 +37,16 @@ namespace nest
 class CommonPropertiesHomW : public CommonSynapseProperties
 {
 public:
-  CommonPropertiesHomW()
-    : CommonSynapseProperties()
-    , weight_( 1.0 )
-  {
-  }
+  CommonPropertiesHomW();
 
-  void
-  get_status( DictionaryDatum& d ) const
-  {
-    CommonSynapseProperties::get_status( d );
-    def< double >( d, names::weight, weight_ );
-  }
+  void get_status( DictionaryDatum& d ) const;
 
-  double
-  get_weight() const
-  {
-    return weight_;
-  }
+  double get_weight() const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void
-  set_status( const DictionaryDatum& d, ConnectorModel& cm )
-  {
-    CommonSynapseProperties::set_status( d, cm );
-    updateValue< double >( d, names::weight, weight_ );
-  }
+  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
 private:
   // data members common to all connections

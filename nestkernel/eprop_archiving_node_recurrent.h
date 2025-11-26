@@ -24,13 +24,10 @@
 #define EPROP_ARCHIVING_NODE_RECURRENT_H
 
 // models
-#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 
 // nestkernel
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 
 // sli
 #include "dictdatum.h"
@@ -268,42 +265,6 @@ private:
    */
   static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::count_spike()
-{
-  ++n_spikes_;
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
-{
-  n_spikes_ = 0;
-}
-
-template < bool hist_shift_required >
-long
-EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shift_() const
-{
-  if constexpr ( hist_shift_required )
-  {
-    return get_shift();
-  }
-  else
-  {
-    return -delay_rec_out_;
-  }
-}
-
-template < bool hist_shift_required >
-bool
-EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
-{
-  return hist_shift_required;
-}
-
 
 }
 

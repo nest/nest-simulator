@@ -22,7 +22,6 @@
 
 #include "diffusion_connection.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

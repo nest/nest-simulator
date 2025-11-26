@@ -23,18 +23,12 @@
 #ifndef MODEL_MANAGER_IMPL_H
 #define MODEL_MANAGER_IMPL_H
 
+#include "connection_label_impl.h"
 #include "model_manager.h"
 
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "string_utils.h"
-
-// Includes from nestkernel:
-#include "connection_label.h"
-#include "kernel_manager.h"
-#include "nest.h"
+#include "connector_model_impl.h"
+#include "genericmodel.h"
 #include "target_identifier.h"
-
 
 namespace nest
 {
@@ -78,7 +72,7 @@ template < typename CompleteConnectionT >
 void
 ModelManager::register_specific_connection_model_( const std::string& name )
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel::manager< VPManager >.assert_single_threaded();
 
   if ( synapsedict_->known( name ) )
   {
@@ -106,21 +100,12 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     {
       conn_model->get_secondary_event()->add_syn_id( new_syn_id );
     }
-    connection_models_.at( kernel().vp_manager.get_thread_id() ).push_back( conn_model );
-    kernel().connection_manager.resize_connections();
+    connection_models_.at( kernel::manager< VPManager >.get_thread_id() ).push_back( conn_model );
+    kernel::manager< ConnectionManager >.resize_connections();
   } // end of parallel section
-}
-
-inline Node*
-ModelManager::get_proxy_node( size_t tid, size_t node_id )
-{
-  const int model_id = kernel().modelrange_manager.get_model_id( node_id );
-  Node* proxy = proxy_nodes_[ tid ].at( model_id );
-  proxy->set_node_id_( node_id );
-  proxy->set_vp( kernel().vp_manager.node_id_to_vp( node_id ) );
-  return proxy;
 }
 
 } // namespace nest
 
-#endif /* #ifndef MODEL_MANAGER_IMPL_H */
+
+#endif

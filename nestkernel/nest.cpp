@@ -258,7 +258,6 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
 void
 set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts )
 {
-  // PYNEST-NG: Access checks?
   if ( conns.size() != dicts.size() )
   {
     throw BadParameter( "List of dictionaries must contain one dictionary per connection" );

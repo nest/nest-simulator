@@ -197,7 +197,7 @@ cdef extern from "nest.h" namespace "nest":
     vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +custom_exception_handler
 
 
-# PYNEST-NG: Move these global functions to nest.h?
+# PYNEST-NG-FUTURE: Move these global functions to nest.h?
 cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] get_position( NodeCollectionPTR layer_nc ) except +custom_exception_handler
     vector[double] distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc ) except +custom_exception_handler

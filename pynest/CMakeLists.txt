@@ -37,8 +37,7 @@ if ( HAVE_PYTHON )
     message( FATAL_ERROR "Building PyNEST requires Cython." )
   endif ()
 
-  # TODO PYNEST NG: Add models, once the refactoring of the module system is done.
-  # PYNEST-NG: somehow it works without models being in here, but why?
+  # PYNEST-NG-FUTURE: somehow it works without models being in here, but why?
   target_link_libraries( nestkernel_api nestutil nestkernel )
 
   if ( APPLE )

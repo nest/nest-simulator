@@ -150,7 +150,7 @@ public:
    */
   ConstantParameter( const dictionary& d )
   {
-    value_ = d.get< double >( "value" ); // PYNEST-NG: Must be able to pass value as long and double
+    value_ = d.get< double >( "value" );
     returns_int_only_ = value_is_integer_( value_ );
   }
 

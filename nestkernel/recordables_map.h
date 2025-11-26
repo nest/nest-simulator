@@ -50,7 +50,8 @@ namespace nest
  *       initialization conflicts with the Name class. Thus,
  *       creation is deferred to the plain constructor of the host
  *       Node class, which is called only once to create the
- *       model prototype instance. TODO-PYNEST-NG: is this still the case?
+ *       model prototype instance.
+ *       PYNEST-NG-FUTURE: is this still the case?
  *
  * @see multimeter, UniversalDataLogger
  * @ingroup Devices

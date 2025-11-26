@@ -359,12 +359,10 @@ create_mask( const dictionary& mask_dict )
 {
   mask_dict.init_access_flags();
 
-  // TODO-PYNEST-NG: move
-
-  //   // The dictionary should contain one key which is the name of the
-  //   // mask type, and optionally the key 'anchor'. To find the unknown
-  //   // mask type key, we must loop through all keys. The value for the
-  //   // anchor key will be stored in the anchor_token variable.
+  // The dictionary should contain one key which is the name of the
+  // mask type, and optionally the key 'anchor'. To find the unknown
+  // mask type key, we must loop through all keys. The value for the
+  // anchor key will be stored in the anchor_token variable.
   bool has_anchor = false;
   MaskPTR mask;
 
@@ -382,7 +380,6 @@ create_mask( const dictionary& mask_dict )
 
   if ( has_anchor )
   {
-
     // The anchor may be an array of doubles (a spatial position).
     // For grid layers only, it is also possible to provide an array of longs.
     try

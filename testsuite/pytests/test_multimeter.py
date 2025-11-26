@@ -44,9 +44,6 @@ def test_connect_multimeter_twice():
     mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
-    # TODO: PyNEST-NG: This currently raises WrappedThreadException, so either
-    # make sure the correct exception is actually thrown, or catch NESTError and
-    # match by regex on "Each multimeter can only be connected once to a given node"
     with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(mm, nrn)
 

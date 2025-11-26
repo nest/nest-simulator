@@ -118,9 +118,6 @@ def test_rate_connection_instantaneous_set_delay_disallowed(supported_nrn_model)
 
     supported_nrn = nest.Create(supported_nrn_model)
 
-    # TODO: PyNEST-NG: This currently raises WrappedThreadException, so either
-    # make sure the correct exception is actually thrown, or catch NESTError and
-    # match by regex on "Each multimeter can only be connected once to a given node"
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             supported_nrn,
@@ -165,9 +162,6 @@ def test_illegal_diffusion_connection_connections(unsupported_nrn_model):
     supported_nrn = nest.Create("siegert_neuron")
     unsupported_nrn = nest.Create(unsupported_nrn_model)
 
-    # TODO: PyNEST-NG: This currently raises WrappedThreadException, so either
-    # make sure the correct exception is actually thrown, or catch NESTError and
-    # match by regex on "Each multimeter can only be connected once to a given node"
     with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(
             supported_nrn,
@@ -185,9 +179,6 @@ def test_diffusion_connection_set_weight_and_delay_disallowed(syn_param):
 
     supported_nrn = nest.Create("siegert_neuron")
 
-    # TODO: PyNEST-NG: This currently raises WrappedThreadException, so either
-    # make sure the correct exception is actually thrown, or catch NESTError and
-    # match by regex on "Each multimeter can only be connected once to a given node"
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             supported_nrn,

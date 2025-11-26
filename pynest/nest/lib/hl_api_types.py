@@ -576,9 +576,10 @@ class NodeCollection:
         """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
         return len(self) > 0
 
-    def __array__(self, dtype=None):
+    def __array__(self, dtype=None, copy=None):
         """Convert the NodeCollection to a NumPy array."""
-        return numpy.array(self.tolist(), dtype=dtype)
+
+        return numpy.array(self.tolist(), dtype=dtype, copy=copy)
 
     def __getattr__(self, attr):
         if not self:

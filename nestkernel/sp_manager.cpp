@@ -141,8 +141,6 @@ SPManager::set_status( const dictionary& d )
   d.update_value< dictionary >( names::structural_plasticity_synapses, syn_specs );
   for ( auto& [ key, entry ] : syn_specs )
   {
-    // PYNEST-NG: We could get the dictionary here directly by boost::any_cast< dictionary >(entry.item),
-    // but using the proper get() methods seems cleaner.
     const auto syn_spec = syn_specs.get< dictionary >( key );
     if ( syn_spec.known( names::allow_autapses ) )
     {

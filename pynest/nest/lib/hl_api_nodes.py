@@ -23,8 +23,6 @@
 Functions for node handling
 """
 
-import warnings
-
 import nest
 import numpy as np
 
@@ -138,20 +136,11 @@ def Create(model, n=1, params=None, positions=None):
         layer.set(params if params else {})
         return layer
 
-    # PYNEST-NG: This breaks some use cases, e.g., setting individual_spike_trains on sinusiodal generators
-    # Could we go back to initializing via Defaults?
     node_ids = nestkernel.llapi_create(model, n)
 
     if (isinstance(params, dict) and params) or isinstance(params, (list, tuple)):
         # if params is a dict and not empty or a list of dicts
-        try:
-            node_ids.set(params)
-        except Exception:
-            warnings.warn(
-                "Setting node parameters failed, but nodes have already been "
-                + f"created! The node IDs of the new nodes are: {node_ids}."
-            )
-            raise
+        node_ids.set(params)
 
     return node_ids
 

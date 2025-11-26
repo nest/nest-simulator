@@ -31,6 +31,7 @@ def build_net(num_neurons):
     """
 
     nest.ResetKernel()
+    nest.verbosity = nest.VerbosityLevel.WARNING
 
     nrns = nest.Create("iaf_psc_alpha", num_neurons, params={"I_e": 50.0})
     mm = nest.Create("multimeter", params={"interval": 0.5, "record_from": ["V_m"], "time_in_steps": True})
@@ -44,7 +45,7 @@ def simulate_freeze_thaw(num_neurons):
     """
     Build network and simulate with freeze and thaw cycles.
 
-    Only the first neuron in a NodeCollection will be freezed/thawed.
+    Only the first neuron in a NodeCollection will be frozen/thawed.
     """
 
     nrns, mm = build_net(num_neurons)

@@ -164,14 +164,15 @@ cdef object any_to_pyobj(any operand):
     if is_type[std_vector[std_vector[std_vector[long]]]](operand):
         return numpy.array(any_cast[std_vector[std_vector[std_vector[long]]]](operand))
     if is_type[std_vector[std_string]](operand):
-        # PYNEST-NG: Do we want to have this or are bytestrings fine?
+        # PYNEST-NG-FUTURE: Do we want to have this or are bytestrings fine?
         # return any_cast[std_vector[std_string]](operand)
         return list(map(lambda x: x.decode("utf-8"), any_cast[std_vector[std_string]](operand)))
     if is_type[std_vector[dictionary]](operand):
         return dict_vector_to_list(any_cast[std_vector[dictionary]](operand))
     if is_type[std_vector[any]](operand):
-        # PYNEST-NG: This will create a Python list first and then convert to
+        # PYNEST-NG-FUTURE: This will create a Python list first and then convert to
         # either tuple or numpy array, which will copy the data element-wise.
+        # Could we do this more effienctly?
         return make_tuple_or_ndarray(any_vector_to_list(any_cast[std_vector[any]](operand)))
     if is_type[dictionary](operand):
         return dictionary_to_pydict(any_cast[dictionary](operand))
@@ -278,8 +279,8 @@ cdef vector[any] empty_any_vec():
 
 cdef vector[dictionary] list_of_dict_to_vec(object pylist):
     cdef vector[dictionary] vec
-    # PYNEST-NG: reserve the correct size and use index-based
-    # assignments instead of pushing back
+    # PYNEST-NG-FUTURE: For efficiency, reserve the correct size and use index-based
+    # assignments instead of pushing back. Applies also to other vector conversions below.
     for pydict in pylist:
         vec.push_back(pydict_to_dictionary(pydict))
     return vec
@@ -392,19 +393,13 @@ def llapi_displacement(object from_arg, to_arg):
         raise TypeError("from_arg must be either a NodeCollection or a list/tuple of positions")
 
 
-def llapi_distance(object conn):  # PYNEST-NG: should there be a SynapseCollectionObject?
+def llapi_distance(object conn):  # PYNEST-NG-FUTURE: should there be a SynapseCollectionObject?
     cdef vector[ConnectionID] conn_vec
     for c in conn:
         conn_vec.push_back((<ConnectionObject>(c)).thisobj)
     cdef vector[double] result = distance(conn_vec)
     return result
 
-# PYNEST-NG:
-#
-# inside
-# or (aka union_mask)
-# and (aka intersect_mask)
-# sub (aka minus_mask)
 
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
@@ -438,11 +433,9 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
 
 def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post, NodeCollectionObject third,
                              object conn_params, object third_factor_conn_params, object synapse_params):
-    # PYNEST-NG: See if we should add some more checks as in llapi_connect above (rule)
-
-
+    # PYNEST-NG-FUTURE: See if we should add some more checks as in llapi_connect above (rule)
     # We are guaranteed that syn_param_vec is a dict {'primary': sc_p, 'third_in': sc_i, 'third_out': sc_o}
-    # where all sc_* are SynapseCollection objects
+    # where all sc_* are SynapseCollection objects (guaranteed by whom?)
 
     cdef std_map[string, vector[dictionary]] syn_param_map
     for k, colloc_syns in synapse_params.items():
@@ -596,7 +589,7 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
         if not statuses.known(pystr_to_string(key)):
             raise KeyError(key)
         value = any_to_pyobj(statuses[pystr_to_string(key)])
-        # PYNEST-NG: This is backwards-compatible, but makes it harder
+        # PYNEST-NG-FUTURE: This is backwards-compatible, but makes it harder
         # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value
     else:

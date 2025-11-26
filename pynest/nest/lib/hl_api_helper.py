@@ -48,7 +48,7 @@ __all__ = [
     "restructure_data",
     "show_deprecation_warning",
     "show_help_with_pager",
-    "stringify_path",  # TODO PYNEST-NG: remove?
+    "stringify_path",
     "SuppressedDeprecationWarning",
 ]
 

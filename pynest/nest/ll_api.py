@@ -69,7 +69,7 @@ def set_communicator(comm):
     if "mpi4py" not in sys.modules:
         raise ModuleNotFoundError("No module named 'mpi4py'.")
 
-    # TODO-PYNEST-NG: set_communicator
+    # TODO-PYNEST-NG: set_communicator — who needs this?
     # engine.set_communicator(comm)
 
 

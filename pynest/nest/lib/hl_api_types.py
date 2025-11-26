@@ -201,11 +201,10 @@ class NodeCollection:
             6 in new_nc
     """
 
-    _datum = None  # PYNEST-NG: Why defined at class level?
-
     def __init__(self, data=None):
         if data is None:
             data = []
+
         if isinstance(data, nestkernel.NodeCollectionObject):
             self._datum = data
         else:
@@ -406,10 +405,10 @@ class NodeCollection:
                 result = Receptors(self, result)
         else:
             # Hierarchical addressing
-            # TODO-PYNEST-NG: Drop this? Not sure anyone ever used it...
+            # PYNEST-NG-FUTURE: Drop this? Not sure anyone ever used it...
             result = get_parameters_hierarchical_addressing(self, params)
 
-        # TODO-PYNEST-NG: Decide if the behavior should be the same
+        # PYNEST-NG-FUTURE: Decide if the behavior should be the same
         # for single-node node collections or different.
         if isinstance(result, dict) and len(self) == 1:
             new_result = {}
@@ -1023,7 +1022,7 @@ class Mask:
             raise TypeError("Expected MaskObject.")
         self._datum = data
 
-    # TODO-PYNEST-NG: Convert operators
+    # TODO-PYNEST-NG: Convert operators — and add tests!
     # Generic binary operation
     def _binop(self, op, rhs):
         if not isinstance(rhs, Mask):
@@ -1056,7 +1055,7 @@ class Mask:
         return nestkernel.llapi_inside_mask(point, self._datum)
 
 
-# TODO-PYNEST-NG: We may consider moving the entire (or most of) Parameter class to the cython level.
+# PYNEST-NG-FUTURE: We may consider moving the entire (or most of) Parameter class to the cython level.
 class Parameter:
     """
     Class for parameters

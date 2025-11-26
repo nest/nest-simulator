@@ -231,7 +231,6 @@ void copy_model( const std::string& oldmodname, const std::string& newmodname, c
 void set_model_defaults( const std::string& model_name, const dictionary& );
 dictionary get_model_defaults( const std::string& model_name );
 
-// TODO-PYNEST-NG: static functions?
 ParameterPTR create_parameter( const boost::any& );
 ParameterPTR create_parameter( const double );
 ParameterPTR create_parameter( const long );

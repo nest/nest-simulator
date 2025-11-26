@@ -85,8 +85,17 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertEqual(delay, [11.0, 11.0, 11.0, 11.0])
         self.assertEqual(weight, [6.0, 6.0, 6.0, 6.0])
 
+        # property that cannot be set
         with self.assertRaises(nest.NESTError):
             get_conns.set(source=2)
+
+        # unknown parameter
+        with self.assertRaises(nest.NESTError):
+            get_conns.set({"foo": 1.0})
+
+        # unknown parameter in list of dicts
+        with self.assertRaises(nest.NESTError):
+            get_conns.set([{"foo": 1.0}, {"weight": 12.0}, {"weight": 13.0}, {"weight": 14.0}])
 
         nest.ResetKernel()
         nrns = nest.Create("iaf_psc_alpha", 2)

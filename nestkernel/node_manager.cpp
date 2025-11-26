@@ -578,9 +578,10 @@ NodeManager::set_status_single_node_( Node& target, const dictionary& d, bool cl
     }
     target.set_status_base( d );
 
-    // PYNEST-NG TODO: We need to check at the single-neuron level because otherwise we
-    // trigger a false error if an NC has no member on a given rank.
-    // Also has the advantage of triggering an error on the first node.
+    // PYNEST-NG-FUTURE: We currently check at the single-neuron level so
+    // we do not trigger a false error if an NC has no member on a given rank.
+    // This also has the advantage of triggering an error on the first node,
+    // but can have some execution time overhead.
     d.all_entries_accessed( "NodeManager::set_status", "params" );
   }
 }

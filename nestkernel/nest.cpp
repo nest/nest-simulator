@@ -202,7 +202,7 @@ void
 set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 {
   /*
-   PYNEST-NG TODO:
+   PYNEST-NG-FUTURE:
 
    The following does NOT work because the rank_local does not "see" the siblings of devices
 
@@ -215,28 +215,19 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 
   if ( params.size() == 1 )
   {
-    // PyNEST-NG TODO: Until we have solved the rank_local iteration problem, we need
-    // to do the access checking on the individual local node because we otherwise
-    // will falsely claim "non read" if a NC has no member on a given rank.
-
-    // params[ 0 ].init_access_flags();
-
     // We must iterate over all nodes here because we otherwise miss "siblings" of devices
     // May consider ways to fix this.
     for ( auto const& node : *nc )
     {
       kernel().node_manager.set_status( node.node_id, params[ 0 ] );
     }
-    // params[ 0 ].all_entries_accessed( "NodeCollection.set()", "params" );
   }
   else if ( nc->size() == params.size() )
   {
     size_t idx = 0;
     for ( auto const& node : *nc )
     {
-      // params[ idx ].init_access_flags();
       kernel().node_manager.set_status( node.node_id, params[ idx ] );
-      // params[ idx ].all_entries_accessed( "NodeCollection.set()", "params" );
       ++idx;
     }
   }
@@ -277,12 +268,14 @@ set_connection_status( const std::deque< ConnectionID >& conns, const std::vecto
   {
     const auto conn = conns[ i ];
     const auto dict = dicts[ i ];
+    dict.init_access_flags();
     kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
       conn.get_port(),
       dict );
+    dict.all_entries_accessed( "connection.set()", "params" );
   }
 }
 

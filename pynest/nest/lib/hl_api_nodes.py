@@ -88,17 +88,9 @@ def Create(model, n=1, params=None, positions=None):
 
     model_deprecation_warning(model)
 
-    # If any of the elements in the parameter dictionary is either an array-like object,
-    # or a NEST parameter, we create the nodes first, then set the given values. If not,
-    # we can pass the parameter specification to SLI when the nodes are created.
-    iterable_or_parameter_in_params = True
-
-    if not isinstance(n, (int, np.integer)):
-        raise TypeError("n must be an integer")
-
-    # PYNEST-NG: can we support the usecase above by passing the dict into ll_create?
-    if isinstance(params, dict) and params:  # if params is a dict and not empty
-        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
+    if int(n) != n:
+        raise TypeError("n must have an integer value")
+    n = int(n)
 
     if isinstance(params, (list, tuple)) and len(params) != n:
         raise TypeError("list of params must have one dictionary per node")
@@ -139,7 +131,7 @@ def Create(model, n=1, params=None, positions=None):
     node_ids = nestkernel.llapi_create(model, n)
 
     if (isinstance(params, dict) and params) or isinstance(params, (list, tuple)):
-        # if params is a dict and not empty or a list of dicts
+        # if params is a non-empty dict or a list of dicts
         node_ids.set(params)
 
     return node_ids

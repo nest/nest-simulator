@@ -108,9 +108,7 @@ def SetMaxBuffered(port_name, size):
 def SyncProcesses():
     """Synchronize all MPI processes."""
 
-    # TODO-PYNEST-NG
-    # sr("SyncProcesses")
-    raise NotImplementedError
+    nestkernel.llapi_synchronize()
 
 
 def GetLocalVPs():

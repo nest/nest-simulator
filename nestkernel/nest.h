@@ -219,6 +219,11 @@ void prepare();
 void cleanup();
 
 /**
+ * Force synchronization of MPI processes.
+ */
+void synchronize();
+
+/**
  * Create a new Mask object using the mask factory.
  * @param name Mask type to create.
  * @param d    Dictionary with parameters specific for this mask type.

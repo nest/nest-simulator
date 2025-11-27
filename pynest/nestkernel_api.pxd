@@ -183,6 +183,7 @@ cdef extern from "nest.h" namespace "nest":
     void prepare() except +custom_exception_handler
     void run( const double& t ) except +custom_exception_handler
     void cleanup() except +custom_exception_handler
+    void synchronize() except +custom_exception_handler
     void copy_model( const string&, const string&, const dictionary& ) except +custom_exception_handler
     ParameterPTR create_parameter( const dictionary& param_dict ) except +custom_exception_handler
     double get_value( const ParameterPTR param ) except +custom_exception_handler

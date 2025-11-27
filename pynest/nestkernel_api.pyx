@@ -575,6 +575,9 @@ def llapi_run(double t):
 def llapi_cleanup():
     cleanup()
 
+def llapi_synchronize():
+    synchronize()
+
 
 def llapi_copy_model(oldmodname, newmodname, object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)

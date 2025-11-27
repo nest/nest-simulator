@@ -529,6 +529,12 @@ cleanup()
 }
 
 void
+synchronize()
+{
+  kernel().mpi_manager.synchronize();
+}
+
+void
 copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );

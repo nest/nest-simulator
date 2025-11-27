@@ -71,6 +71,12 @@ dictionary and ``d_min`` is the minimal synaptic delay.
 
 The implementation is based on the framework presented in [1]_.
 
+Please note that the ``volume_transmitter`` property of a synapse can
+only be set by means of :py:func:`.CopyModel` or
+:py:func:`.SetDefaults`; setting the property inside of a
+:py:func:`.Connect` call is not supported for technical reasons.
+
+
 Parameters
 ++++++++++
 

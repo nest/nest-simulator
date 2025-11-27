@@ -19,14 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-
 import nest
+import pytest
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
-
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@pytest.mark.skipif_missing_threads
 def test_consistent_local_vps():
     """
     Test local_vps field of kernel status.

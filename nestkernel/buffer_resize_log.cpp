@@ -22,6 +22,9 @@
 
 #include "buffer_resize_log.h"
 
+// Includes from libnestutil
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_names.h"
@@ -55,25 +58,13 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 void
 BufferResizeLog::to_dict( dictionary& events ) const
 {
-  // TODO-PyNEST-NG: Make this lambda (which is also used in
-  // DeviceData::get_status() recording_backend_memory) available in
-  // libnestutil/dict_util.h
-  auto init_intvector = [ &events ]( std::string key ) -> std::vector< int >&
-  {
-    if ( not events.known( key ) )
-    {
-      events[ key ] = std::vector< int >();
-    }
-    return boost::any_cast< std::vector< int >& >( events[ key ] );
-  };
-
-  auto& times = init_intvector( names::times );
+  auto& times = events.get_vector< int >( names::times );
   times.insert( times.end(), time_steps_.begin(), time_steps_.end() );
 
-  auto& gmss = init_intvector( names::global_max_spikes_sent );
+  auto& gmss = events.get_vector< int >( names::global_max_spikes_sent );
   gmss.insert( gmss.end(), global_max_spikes_sent_.begin(), global_max_spikes_sent_.end() );
 
-  auto& nbs = init_intvector( names::new_buffer_size );
+  auto& nbs = events.get_vector< int >( names::new_buffer_size );
   nbs.insert( nbs.end(), new_buffer_size_.begin(), new_buffer_size_.end() );
 }
 

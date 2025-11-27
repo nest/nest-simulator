@@ -218,6 +218,25 @@ public:
   }
 
   /**
+   * Return reference to vector of type T stored under key.
+   *
+   * If key does not exist in dict, create empty vector<T> and return it.
+   */
+  template < typename T >
+  std::vector< T >&
+  get_vector( const std::string& key )
+  {
+    if ( not this->known( key ) )
+    {
+      // We need to insert empty vector explicitly. Relying on dict/map access
+      // to create a new element would result in an empty boost::any, not an
+      // empty vector<T>.
+      ( *this )[ key ] = std::vector< T >();
+    }
+    return boost::any_cast< std::vector< T >& >( ( *this )[ key ] );
+  };
+
+  /**
    * @brief Update the specified non-vector value if there exists a value at key.
    *
    * @param key key where the value may be located in the dictionary.

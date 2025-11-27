@@ -224,48 +224,31 @@ nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
     events = d.get< dictionary >( names::events );
   }
 
-  auto init_intvector = [ &events ]( std::string key ) -> std::vector< int >&
-  {
-    if ( not events.known( key ) )
-    {
-      events[ key ] = std::vector< int >();
-    }
-    return boost::any_cast< std::vector< int >& >( events[ key ] );
-  };
-  auto init_doublevector = [ &events ]( std::string key ) -> std::vector< double >&
-  {
-    if ( not events.known( key ) )
-    {
-      events[ key ] = std::vector< double >();
-    }
-    return boost::any_cast< std::vector< double >& >( events[ key ] );
-  };
-
-  auto& senders = init_intvector( names::senders );
+  auto& senders = events.get_vector< int >( names::senders );
   senders.insert( senders.end(), senders_.begin(), senders_.end() );
 
   if ( time_in_steps_ )
   {
-    auto& times = init_intvector( names::times );
+    auto& times = events.get_vector< int >( names::times );
     times.insert( times.end(), times_steps_.begin(), times_steps_.end() );
 
-    auto& offsets = init_doublevector( names::offsets );
+    auto& offsets = events.get_vector< double >( names::offsets );
     offsets.insert( offsets.end(), times_offset_.begin(), times_offset_.end() );
   }
   else
   {
-    auto& times = init_doublevector( names::times );
+    auto& times = events.get_vector< double >( names::times );
     times.insert( times.end(), times_ms_.begin(), times_ms_.end() );
   }
 
   for ( size_t i = 0; i < double_values_.size(); ++i )
   {
-    auto& double_name = init_doublevector( double_value_names_[ i ] );
+    auto& double_name = events.get_vector< double >( double_value_names_[ i ] );
     double_name.insert( double_name.end(), double_values_[ i ].begin(), double_values_[ i ].end() );
   }
   for ( size_t i = 0; i < long_values_.size(); ++i )
   {
-    auto& long_name = init_intvector( long_value_names_[ i ] );
+    auto& long_name = events.get_vector< int >( long_value_names_[ i ] );
     long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 

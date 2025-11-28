@@ -51,7 +51,7 @@ cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   ConnectionBase::get_status( d );
 
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::delay, Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_ );
+  def< double >( d, names::delay, get_delay_ms() - delay_offset_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 

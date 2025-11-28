@@ -232,9 +232,19 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
             raise ValueError("To specify weights, use 'weight' in syn_spec.")
         if "delays" in processed_syn_spec:
             raise ValueError("To specify delays, use 'delay' in syn_spec.")
+        if "dendritic_delays" in processed_syn_spec:
+            raise ValueError("To specify dendritic delays, use 'dendritic_delay' in syn_spec.")
+        if "axonal_delays" in processed_syn_spec:
+            raise ValueError("To specify axonal delays, use 'axonal_delay' in syn_spec.")
 
         weights = numpy.array(processed_syn_spec["weight"]) if "weight" in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec["delay"]) if "delay" in processed_syn_spec else None
+        dendritic_delays = (
+            numpy.array(processed_syn_spec["dendritic_delay"]) if "dendritic_delay" in processed_syn_spec else None
+        )
+        axonal_delays = (
+            numpy.array(processed_syn_spec["axonal_delay"]) if "axonal_delay" in processed_syn_spec else None
+        )
 
         try:
             synapse_model = processed_syn_spec["synapse_model"]
@@ -247,7 +257,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         # Split remaining syn_spec entries to key and value arrays
         reduced_processed_syn_spec = {
             k: processed_syn_spec[k]
-            for k in set(processed_syn_spec.keys()).difference(set(("weight", "delay", "synapse_model")))
+            for k in set(processed_syn_spec.keys()).difference(
+                set(("weight", "delay", "axonal_delay", "synapse_model"))
+            )
         }
 
         if len(reduced_processed_syn_spec) > 0:
@@ -257,7 +269,17 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         else:
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, reduced_processed_syn_spec.keys(), syn_param_values)
+        connect_arrays(
+            pre,
+            post,
+            weights,
+            delays,
+            dendritic_delays,
+            axonal_delays,
+            synapse_model,
+            reduced_processed_syn_spec.keys(),
+            syn_param_values,
+        )
 
         return
 

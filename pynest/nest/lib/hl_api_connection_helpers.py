@@ -173,7 +173,15 @@ def _process_spatial_projections(conn_spec, syn_spec):
         "use_on_source",
         "allow_oversized_mask",
     ]
-    allowed_syn_spec_keys = ["weight", "delay", "synapse_model", "synapse_label", "receptor_type"]
+    allowed_syn_spec_keys = [
+        "weight",
+        "delay",
+        "dendritic_delay",
+        "axonal_delay",
+        "synapse_model",
+        "synapse_label",
+        "receptor_type",
+    ]
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError("'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))

@@ -26,12 +26,9 @@
 // C++ includes:
 #include <algorithm>
 #include <cassert>
-#include <cstddef>
 #include <iostream>
-#include <iterator>
 #include <map>
 #include <set>
-#include <utility>
 #include <vector>
 
 // Includes from nestkernel:
@@ -299,15 +296,14 @@ public:
     std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
-   * Finds the first entry in sources_ at the given thread id and
-   * synapse type that is equal to snode_id.
+   * Finds the first non-disabled entry in sources_ at the given thread id and synapse type that has sender equal to
+   * snode_id.
+   *
+   * @returns local connection id (lcid) or `invalid_index`
+   *
+   * @note For compressed spikes, it uses binary search, otherwise linear search.
    */
   size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
-
-  size_t select_source_lcid_from_list( const size_t tid,
-    const size_t snode_id,
-    const size_t syn_id,
-    const std::vector< size_t >& lcids ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
@@ -475,22 +471,6 @@ SourceTable::no_targets_to_process( const size_t tid )
   current_positions_[ tid ].tid = -1;
   current_positions_[ tid ].syn_id = -1;
   current_positions_[ tid ].lcid = -1;
-}
-inline size_t
-SourceTable::select_source_lcid_from_list( const size_t tid,
-  const size_t snode_id,
-  const size_t syn_id,
-  const std::vector< size_t >& lcids ) const
-{
-  for ( const auto& lcid : lcids )
-  {
-    auto sources = sources_[ tid ][ syn_id ];
-    if ( lcid < sources.size() and sources[ lcid ].get_node_id() == snode_id )
-    {
-      return lcid;
-    }
-  }
-  return invalid_lcid;
 }
 
 inline void

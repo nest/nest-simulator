@@ -55,3 +55,26 @@ def test_mask_operators(op, inside_expected, two_masks):
     m1, m2 = two_masks
     for point, expected in zip(test_points, inside_expected):
         assert op(m1, m2).Inside(point) == expected
+
+
+@pytest.mark.parametrize(
+    "op,inside_expected",
+    [
+        [lambda l, r: l | r, [True, True, True, True, False]],
+        [lambda l, r: l & r, [False, False, True, False, False]],
+        [lambda l, r: l - r, [True, True, False, False, False]],
+        [lambda l, r: r - l, [False, False, False, True, False]],
+    ],
+    ids=["union", "intersection", "l - r", "r - l"],
+)
+def test_mask_operator_node_selection(op, inside_expected, two_masks):
+    """
+    Confirm that correct neurons are selected for combined mask.
+    """
+
+    assert len(test_points) == len(inside_expected)
+
+    nrns = nest.Create("parrot_neuron", positions=nest.spatial.free(pos=test_points))
+    m1, m2 = two_masks
+    selected = nest.SelectNodesByMask(nrns, anchor=(0, 0), mask_obj=op(m1, m2))
+    assert selected == nrns[inside_expected]

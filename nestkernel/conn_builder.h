@@ -340,8 +340,8 @@ public:
    * @param third_conn_spec is ignored by this builder but required to make base class happy
    * @param syn_specs Collection of synapse specification for connection from primary source to third factor
    *
-   * @todo Once DictionaryDatums are gone, see if we can remove `third_conn_spec` and just pass empty conn spec
-   * container to base-class constructor, since \class ThirdInBuilder has no connection rule properties to set.
+   * @PYNEST-NG-FUTURE Once DictionaryDatums are gone, see if we can remove `third_conn_spec` and just pass empty conn
+   * spec container to base-class constructor, since \class ThirdInBuilder has no connection rule properties to set.
    */
   ThirdInBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR third,

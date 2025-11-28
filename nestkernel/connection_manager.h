@@ -201,6 +201,11 @@ public:
     const DictionaryDatum& third_connectivity,
     const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
+  /**
+   * Find first non-disabled thread-local connection of given synapse type with given source and target node.
+   *
+   * @returns Local connection id (lcid) or `invalid_index`
+   */
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
@@ -389,11 +394,6 @@ public:
   void sort_connections( const size_t tid );
 
   /**
-   * Removes disabled connections (of structural plasticity)
-   */
-  void remove_disabled_connections( const size_t tid );
-
-  /**
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
@@ -495,6 +495,11 @@ private:
     const synindex syn_id,
     const size_t tnode_id,
     std::vector< size_t >& sources );
+
+  /**
+   * Removes disabled connections (of structural plasticity)
+   */
+  void remove_disabled_connections_( const size_t tid );
 
   /**
    * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and

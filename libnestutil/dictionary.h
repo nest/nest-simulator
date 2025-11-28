@@ -165,12 +165,19 @@ private:
    * @throws TypeMismatch if the value is not an integer.
    * @return value cast to an integer.
    */
-  size_t // TODO: or template?
+  long
   cast_to_integer_( const boost::any& value, const std::string& key ) const
   {
     if ( is_type< size_t >( value ) )
     {
-      return cast_value_< size_t >( value, key );
+      const size_t val = cast_value_< size_t >( value, key );
+      if ( val < std::numeric_limits< long >::min() or val > std::numeric_limits< long >::max() )
+      {
+        const std::string msg =
+          String::compose( "Failed to cast '%1' because %2 is too large to be stored as long.", key, val );
+        throw nest::BadProperty( msg );
+      }
+      return static_cast< long >( val );
     }
     else if ( is_type< long >( value ) )
     {
@@ -181,7 +188,7 @@ private:
       return cast_value_< int >( value, key );
     }
     // Not an integer type
-    std::string msg =
+    const std::string msg =
       std::string( "Failed to cast '" ) + key + "' from " + debug_type( at( key ) ) + " to an integer type ";
     throw nest::TypeMismatch( msg );
   }

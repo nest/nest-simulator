@@ -39,11 +39,6 @@ from .hl_api_helper import (
 from .hl_api_parallel_computing import Rank
 from .hl_api_simulation import GetKernelStatus
 
-
-def sli_func(*args, **kwargs):
-    raise RuntimeError(f"Called sli_func with\nargs: {args}\nkwargs: {kwargs}")
-
-
 try:
     import pandas
 
@@ -1013,8 +1008,6 @@ class Mask:
     the :py:func:`.CreateMask` command.
     """
 
-    _datum = None
-
     # The constructor should not be called by the user
     def __init__(self, data):
         """Masks must be created using the CreateMask command."""
@@ -1022,21 +1015,20 @@ class Mask:
             raise TypeError("Expected MaskObject.")
         self._datum = data
 
-    # TODO-PYNEST-NG: Convert operators — and add tests!
-    # Generic binary operation
-    def _binop(self, op, rhs):
-        if not isinstance(rhs, Mask):
-            raise NotImplementedError()
-        return sli_func(op, self._datum, rhs._datum)
-
     def __or__(self, rhs):
-        return self._binop("or", rhs)
+        if not isinstance(rhs, Mask):
+            raise NotImplementedError("Both operands of | must be masks.")
+        return nestkernel.llapi_union_mask(self._datum, rhs._datum)
 
     def __and__(self, rhs):
-        return self._binop("and", rhs)
+        if not isinstance(rhs, Mask):
+            raise NotImplementedError("Both operands of & must be masks.")
+        return nestkernel.llapi_intersect_mask(self._datum, rhs._datum)
 
     def __sub__(self, rhs):
-        return self._binop("sub", rhs)
+        if not isinstance(rhs, Mask):
+            raise NotImplementedError("Both operands of - must be masks.")
+        return nestkernel.llapi_minus_mask(self._datum, rhs._datum)
 
     def Inside(self, point):
         """

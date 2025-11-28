@@ -506,6 +506,30 @@ def llapi_inside_mask(vector[double] point, MaskObject mask):
     return inside(point, mask.thisptr)
 
 
+def llapi_intersect_mask(MaskObject first, MaskObject second):
+    cdef MaskPTR new_mask
+    new_mask = intersect_mask(first.thisptr, second.thisptr)
+    obj = MaskObject()
+    obj._set_mask(new_mask)
+    return nest.Mask(obj)
+
+
+def llapi_union_mask(MaskObject first, MaskObject second):
+    cdef MaskPTR new_mask
+    new_mask = union_mask(first.thisptr, second.thisptr)
+    obj = MaskObject()
+    obj._set_mask(new_mask)
+    return nest.Mask(obj)
+
+
+def llapi_minus_mask(MaskObject first, MaskObject second):
+    cdef MaskPTR new_mask
+    new_mask = minus_mask(first.thisptr, second.thisptr)
+    obj = MaskObject()
+    obj._set_mask(new_mask)
+    return nest.Mask(obj)
+
+
 def llapi_dump_layer_nodes(NodeCollectionObject layer, object filename):
     dump_layer_nodes(layer.thisptr, pystr_to_string(filename))
 

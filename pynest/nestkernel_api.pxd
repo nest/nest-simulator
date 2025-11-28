@@ -211,6 +211,9 @@ cdef extern from "spatial.h" namespace "nest":
     MaskPTR create_mask( const dictionary& mask_dict ) except +custom_exception_handler
     NodeCollectionPTR select_nodes_by_mask( const NodeCollectionPTR layer_nc, const vector[double]& anchor, const MaskPTR mask ) except +custom_exception_handler
     cbool inside(const vector[double]& point, const MaskPTR mask ) except +custom_exception_handler
+    MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 ) except +custom_exception_handler
+    MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 ) except +custom_exception_handler
+    MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 ) except +custom_exception_handler
 
     void dump_layer_nodes(const NodeCollectionPTR layer_nc, const string& filename)
     void dump_layer_connections(const NodeCollectionPTR source_layer,

@@ -34,17 +34,16 @@ def two_masks():
 
 test_points = [(0.0, 0.0), (0.5, 0.5), (2.0, 2.0), (2.5, 2.5), (0.5, 3.5)]  # m1  # m1  # m1, m2  # m2  # none mask
 
+cases = [
+    [lambda lhs, rhs: lhs | rhs, [True, True, True, True, False]],
+    [lambda lhs, rhs: lhs & rhs, [False, False, True, False, False]],
+    [lambda lhs, rhs: lhs - rhs, [True, True, False, False, False]],
+    [lambda lhs, rhs: rhs - lhs, [False, False, False, True, False]],
+]
+case_labels = ["union", "intersection", "l - r", "r - l"]
 
-@pytest.mark.parametrize(
-    "op,inside_expected",
-    [
-        [lambda l, r: l | r, [True, True, True, True, False]],
-        [lambda l, r: l & r, [False, False, True, False, False]],
-        [lambda l, r: l - r, [True, True, False, False, False]],
-        [lambda l, r: r - l, [False, False, False, True, False]],
-    ],
-    ids=["union", "intersection", "l - r", "r - l"],
-)
+
+@pytest.mark.parametrize("op,inside_expected", cases, ids=case_labels)
 def test_mask_operators(op, inside_expected, two_masks):
     """
     Confirm that correct inside results are obtained for combined masks.
@@ -57,16 +56,7 @@ def test_mask_operators(op, inside_expected, two_masks):
         assert op(m1, m2).Inside(point) == expected
 
 
-@pytest.mark.parametrize(
-    "op,inside_expected",
-    [
-        [lambda l, r: l | r, [True, True, True, True, False]],
-        [lambda l, r: l & r, [False, False, True, False, False]],
-        [lambda l, r: l - r, [True, True, False, False, False]],
-        [lambda l, r: r - l, [False, False, False, True, False]],
-    ],
-    ids=["union", "intersection", "l - r", "r - l"],
-)
+@pytest.mark.parametrize("op,inside_expected", cases, ids=case_labels)
 def test_mask_operator_node_selection(op, inside_expected, two_masks):
     """
     Confirm that correct neurons are selected for combined mask.

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DAEMON="${NEST_SERVER_DAEMON:-0}"
 HOST="${NEST_SERVER_HOST:-127.0.0.1}"

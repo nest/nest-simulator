@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # run_test.sh
 #
 # This file is part of NEST.

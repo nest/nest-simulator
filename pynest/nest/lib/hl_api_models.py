@@ -24,9 +24,14 @@ Functions for model handling
 """
 
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import deprecated, is_iterable, model_deprecation_warning
+from .hl_api_helper import (
+    deprecated,
+    is_iterable,
+    is_iterable_not_str,
+    model_deprecation_warning,
+)
 from .hl_api_simulation import GetKernelStatus
-from .hl_api_types import to_json
+from .hl_api_types import Parameter, to_json
 
 __all__ = [
     "ConnectionRules",
@@ -105,8 +110,13 @@ def ConnectionRules():
 def SetDefaults(model, params, val=None):
     """Set defaults for the given model or recording backend.
 
-    New default values are used for all subsequently created instances
-    of the model.
+    New default values are used for all subsequently created instances of the model.
+
+    Note
+    ----
+    For each default to be set, only a single explicit value can be given. Neither
+    arrays to apply to multiple nodes nor random or spatially dependent parameters
+    are permitted.
 
     Parameters
     ----------
@@ -119,9 +129,24 @@ def SetDefaults(model, params, val=None):
 
     """
 
-    if val is not None:
+    if val is None:
+        if not isinstance(params, dict):
+            raise TypeError("params must be dictionary unless val is given.")
+        if not params:
+            return  # empty dict, nothing to do, avoids corner cases below
+    else:
         if isinstance(params, str):
             params = {params: val}
+        else:
+            raise TypeError("If val is given, params must be string giving the parameter name.")
+
+    # Some models have parameters that are iterables in themselves, e.g., lists of spike times
+    # so we need to allow them.
+    defaults = nestkernel.llapi_get_defaults(model)
+    if any(
+        (is_iterable_not_str(v) and not is_iterable(defaults[k])) or isinstance(v, Parameter) for k, v in params.items()
+    ):
+        raise ValueError("SetDefaults() accepts only explicit, single parameter values.")
 
     nestkernel.llapi_set_defaults(model, params)
 

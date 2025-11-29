@@ -192,6 +192,23 @@ def is_iterable(seq):
     return True
 
 
+def is_iterable_not_str(seq):
+    """Return True if the given object is a non-string iterable, False otherwise.
+
+    Parameters
+    ----------
+    seq : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if object is an iterable
+    """
+
+    return not isinstance(seq, str) and is_iterable(seq)
+
+
 def broadcast(item, length, allowed_types, name="item"):
     """Broadcast item to given length.
 

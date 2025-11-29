@@ -3,21 +3,15 @@
 Spatially-structured networks
 =============================
 
-NEST provides  a convenient interface for creating neurons placed in
-space and connecting those neurons with probabilities and
-properties depending on the relative placement of neurons. This permits
-the creation of complex networks with spatial structure.
+NEST provides a convenient interface for creating neurons placed in
+space and connecting those neurons with probabilities and properties
+depending on the relative placement of neurons. This permits the
+creation of complex networks with spatial structure.
 
-This user manual provides an introduction to the functionalities provided for
-defining spatial networks in NEST. It is based exclusively on the PyNEST, the
-Python interface to NEST. NEST users using the SLI
-interface should be able to map instructions to corresponding SLI code.
-This manual is not meant as a comprehensive reference manual. Please
-consult the online documentation in PyNEST for details; where
-appropriate, that documentation also points to relevant SLI
-documentation.
-
-This manual describes the spatial functionalities included with NEST 3.0.
+This user manual provides an introduction to the functionalities for
+defining spatial networks in NEST. This manual is not meant as a
+comprehensive reference manual. Please consult the online
+documentation in PyNEST for details.
 
 In the next sections of this manual, we introduce the commands and
 concepts required to work with spatially distributed nodes. In
@@ -1525,12 +1519,12 @@ The ``Mask`` class has a few methods that must be overridden:
    class EllipticMask : public nest::Mask< 2 >
    {
    public:
-     EllipticMask( const DictionaryDatum& d )
+     EllipticMask( const dictionary& d )
        : rx_( 1.0 )
        , ry_( 1.0 )
      {
-       updateValue< double >( d, "r_x", rx_ );
-       updateValue< double >( d, "r_y", ry_ );
+       d.update_value( "r_x", rx_ );
+       d.update_value( "r_y", ry_ );
      }
 
      using Mask< 2 >::inside;

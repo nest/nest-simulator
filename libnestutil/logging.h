@@ -46,18 +46,19 @@ namespace nest
 class LoggingEvent;
 class LoggingDeliverer;
 
-enum severity_t
+//! Report only messages at levels higher than chosen level to user or logs. Default INFO.
+enum class VerbosityLevel
 {
-  M_ALL = 0,
-  M_DEBUG = 5,
-  M_STATUS = 7,
-  M_INFO = 10,
-  M_PROGRESS = 15,
-  M_DEPRECATED = 18,
-  M_WARNING = 20,
-  M_ERROR = 30,
-  M_FATAL = 40,
-  M_QUIET = 100
+  ALL = 0,
+  DEBUG = 5,
+  STATUS = 7,
+  INFO = 10,
+  PROGRESS = 15,
+  DEPRECATED = 18,
+  WARNING = 20,
+  ERROR = 30,
+  FATAL = 40,
+  QUIET = 100
 };
 
 typedef void ( *deliver_logging_event_ptr )( const LoggingEvent& e );

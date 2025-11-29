@@ -37,8 +37,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -51,8 +49,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const dictionary& ) override;
+  void get_status( dictionary& ) override;
 
   /**
    *  Check for errors in time before run

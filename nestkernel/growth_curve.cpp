@@ -29,8 +29,6 @@
 #include "nest_names.h"
 #include "nest_time.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * GrowthCurveLinear
@@ -43,16 +41,16 @@ nest::GrowthCurveLinear::GrowthCurveLinear()
 }
 
 void
-nest::GrowthCurveLinear::get( DictionaryDatum& d ) const
+nest::GrowthCurveLinear::get( dictionary& d ) const
 {
-  def< std::string >( d, names::growth_curve, name_.toString() );
-  def< double >( d, names::eps, eps_ );
+  d[ names::growth_curve ] = name_;
+  d[ names::eps ] = eps_;
 }
 
 void
-nest::GrowthCurveLinear::set( const DictionaryDatum& d )
+nest::GrowthCurveLinear::set( const dictionary& d )
 {
-  updateValue< double >( d, names::eps, eps_ );
+  d.update_value( names::eps, eps_ );
 }
 
 double
@@ -82,18 +80,18 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
 }
 
 void
-nest::GrowthCurveGaussian::get( DictionaryDatum& d ) const
+nest::GrowthCurveGaussian::get( dictionary& d ) const
 {
-  def< std::string >( d, names::growth_curve, name_.toString() );
-  def< double >( d, names::eps, eps_ );
-  def< double >( d, names::eta, eta_ );
+  d[ names::growth_curve ] = name_;
+  d[ names::eps ] = eps_;
+  d[ names::eta ] = eta_;
 }
 
 void
-nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
+nest::GrowthCurveGaussian::set( const dictionary& d )
 {
-  updateValue< double >( d, names::eps, eps_ );
-  updateValue< double >( d, names::eta, eta_ );
+  d.update_value( names::eps, eps_ );
+  d.update_value( names::eta, eta_ );
   compute_local_();
 }
 
@@ -142,18 +140,18 @@ nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
 }
 
 void
-nest::GrowthCurveSigmoid::get( DictionaryDatum& d ) const
+nest::GrowthCurveSigmoid::get( dictionary& d ) const
 {
-  def< std::string >( d, names::growth_curve, name_.toString() );
-  def< double >( d, names::eps, eps_ );
-  def< double >( d, names::psi, psi_ );
+  d[ names::growth_curve ] = name_;
+  d[ names::eps ] = eps_;
+  d[ names::psi ] = psi_;
 }
 
 void
-nest::GrowthCurveSigmoid::set( const DictionaryDatum& d )
+nest::GrowthCurveSigmoid::set( const dictionary& d )
 {
-  updateValue< double >( d, names::eps, eps_ );
-  updateValue< double >( d, names::psi, psi_ );
+  d.update_value( names::eps, eps_ );
+  d.update_value( names::psi, psi_ );
 
   // check that w is greater than 0
   if ( not( psi_ >= 0 ) )

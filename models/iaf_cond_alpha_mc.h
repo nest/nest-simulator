@@ -45,9 +45,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
 
 namespace nest
 {
@@ -209,8 +206,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -322,8 +319,8 @@ private:
     Parameters_( const Parameters_& );            //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
 
@@ -364,8 +361,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -468,10 +465,9 @@ private:
   Buffers_ B_;
 
   //! Table of compartment names
-  static std::vector< Name > comp_names_;
+  static std::vector< std::string > comp_names_;
 
-  //! Dictionary of receptor types, leads to seg fault on exit, see #328
-  // static DictionaryDatum receptor_dict_;
+  // Dictionary of receptor types, leads to seg fault on exit, see #328
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_cond_alpha_mc > recordablesMap_;
@@ -537,37 +533,37 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, size_t receptor_
 }
 
 inline void
-iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
+iaf_cond_alpha_mc::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
    * static member in default c'tor, but this leads to
    * a seg fault on exit, see #328
    */
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
-  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
-  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
+  dictionary receptor_dict_;
+  receptor_dict_[ names::soma_exc ] = static_cast< long >( SOMA_EXC );
+  receptor_dict_[ names::soma_inh ] = static_cast< long >( SOMA_INH );
+  receptor_dict_[ names::soma_curr ] = static_cast< long >( I_SOMA );
 
-  ( *receptor_dict_ )[ names::proximal_exc ] = PROX_EXC;
-  ( *receptor_dict_ )[ names::proximal_inh ] = PROX_INH;
-  ( *receptor_dict_ )[ names::proximal_curr ] = I_PROX;
+  receptor_dict_[ names::proximal_exc ] = static_cast< long >( PROX_EXC );
+  receptor_dict_[ names::proximal_inh ] = static_cast< long >( PROX_INH );
+  receptor_dict_[ names::proximal_curr ] = static_cast< long >( I_PROX );
 
-  ( *receptor_dict_ )[ names::distal_exc ] = DIST_EXC;
-  ( *receptor_dict_ )[ names::distal_inh ] = DIST_INH;
-  ( *receptor_dict_ )[ names::distal_curr ] = I_DIST;
+  receptor_dict_[ names::distal_exc ] = static_cast< long >( DIST_EXC );
+  receptor_dict_[ names::distal_inh ] = static_cast< long >( DIST_INH );
+  receptor_dict_[ names::distal_curr ] = static_cast< long >( I_DIST );
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void
-iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
+iaf_cond_alpha_mc::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

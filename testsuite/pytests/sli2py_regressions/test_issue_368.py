@@ -51,7 +51,7 @@ def test_linear_summation_of_input_ps_models(model):
     * Both n3 and n4 must have same V_m after simulation
     """
 
-    nest.set(resolution=0.25, tics_per_ms=1024.0)
+    nest.set(resolution=0.25, tics_per_ms=1024)
 
     if model == "iaf_psc_exp_ps":
         nest.SetDefaults("iaf_psc_exp_ps", {"tau_syn_ex": 2.0, "tau_syn_in": 2.0})
@@ -60,7 +60,7 @@ def test_linear_summation_of_input_ps_models(model):
     w1 = 5.0  # sufficiently small to avoid psc_delta spikes
     w2 = -10.0
 
-    sg = nest.Create("spike_generator", {"precise_times": True, "spike_times": [t_spike1]})
+    sg = nest.Create("spike_generator", params={"precise_times": True, "spike_times": [t_spike1]})
     n1 = nest.Create(model)
     n2 = nest.Create(model)
     n3 = nest.Create(model)
@@ -107,14 +107,14 @@ def test_linear_summation_of_input_ps_models_with_two_time_constants(model):
         ( V_1 - V_0 ) + ( V_2 - V_0 ) = V_3 - V_0
     """
 
-    nest.set(resolution=0.25, tics_per_ms=1024.0)
+    nest.set(resolution=0.25, tics_per_ms=1024)
 
     nest.SetDefaults(model, {"tau_syn_ex": 5.0, "tau_syn_in": 1.0})
 
     t_spike1 = 2.375  # 2.5 - 0.125 offset
     w1 = 1000.0
 
-    sg = nest.Create("spike_generator", {"precise_times": True, "spike_times": [t_spike1]})
+    sg = nest.Create("spike_generator", params={"precise_times": True, "spike_times": [t_spike1]})
     n1 = nest.Create(model)
     n2 = nest.Create(model)
     n3 = nest.Create(model)

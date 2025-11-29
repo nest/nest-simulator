@@ -25,8 +25,7 @@ Functions for connection handling
 
 import numpy
 
-from .. import pynestkernel as kernel
-from ..ll_api import check_stack, connect_arrays, spp, sps, sr
+from .. import nestkernel_api as nestkernel
 from .hl_api_connection_helpers import (
     _connect_layers_needed,
     _connect_spatial,
@@ -35,8 +34,15 @@ from .hl_api_connection_helpers import (
     _process_spatial_projections,
     _process_syn_spec,
 )
-from .hl_api_helper import is_string
-from .hl_api_types import CollocatedSynapses, NodeCollection, SynapseCollection
+from .hl_api_nodes import Create
+from .hl_api_parallel_computing import NumProcesses
+from .hl_api_types import (
+    CollocatedSynapses,
+    Mask,
+    NodeCollection,
+    Parameter,
+    SynapseCollection,
+)
 
 __all__ = [
     "Connect",
@@ -46,7 +52,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def GetConnections(source=None, target=None, synapse_model=None, synapse_label=None):
     """Return a `SynapseCollection` representing the connection identifiers.
 
@@ -97,23 +102,16 @@ def GetConnections(source=None, target=None, synapse_model=None, synapse_label=N
             raise TypeError("target must be NodeCollection.")
 
     if synapse_model is not None:
-        params["synapse_model"] = kernel.SLILiteral(synapse_model)
+        params["synapse_model"] = synapse_model
 
     if synapse_label is not None:
         params["synapse_label"] = synapse_label
 
-    sps(params)
-    sr("GetConnections")
-
-    conns = spp()
-
-    if isinstance(conns, tuple):
-        conns = SynapseCollection(None)
+    conns = nestkernel.llapi_get_connections(params)
 
     return conns
 
 
-@check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False):
     """
     Connect `pre` nodes to `post` nodes.
@@ -137,10 +135,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         Specifies synapse model, see below
     return_synapsecollection: bool
         Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
-
-    Raises
-    ------
-    kernel.NESTError
 
     Notes
     -----
@@ -250,19 +244,21 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
             for k in set(processed_syn_spec.keys()).difference(set(("weight", "delay", "synapse_model")))
         }
 
+        # This converts the values to a 2-dim matrix of doubles regardless of what type the
+        # parameters actually should be. This is to keep the interface generic. If needed,
+        # values are converted back to int around ConnectionManager:679 (checks for is_int).
         if len(reduced_processed_syn_spec) > 0:
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
             for i, value in enumerate(reduced_processed_syn_spec.values()):
                 syn_param_values[i] = value
+            syn_param_keys = numpy.asarray(list(reduced_processed_syn_spec.keys()))
         else:
             syn_param_values = None
+            syn_param_keys = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, reduced_processed_syn_spec.keys(), syn_param_values)
+        nestkernel.llapi_connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
 
         return
-
-    sps(pre)
-    sps(post)
 
     if not isinstance(pre, NodeCollection):
         raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
@@ -279,20 +275,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
         # Create the projection dictionary
         spatial_projections = _process_spatial_projections(processed_conn_spec, processed_syn_spec)
-
-        # Connect using ConnectLayers
-        _connect_spatial(pre, post, spatial_projections)
+        _connect_spatial(pre._datum, post._datum, spatial_projections)
     else:
-        sps(processed_conn_spec)
-        if processed_syn_spec is not None:
-            sps(processed_syn_spec)
-        sr("Connect")
+        nestkernel.llapi_connect(pre._datum, post._datum, processed_conn_spec, processed_syn_spec)
 
     if return_synapsecollection:
         return GetConnections(pre, post)
 
 
-@check_stack
 def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_specs=None):
     """
     Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
@@ -404,16 +394,11 @@ def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_s
                         f"but 'syn_specs[{key}][{entry}]' is a list or similar."
                     )
 
-    sps(pre)
-    sps(post)
-    sps(third)
-    sps(conn_spec)
-    sps(third_factor_conn_spec)
-    sps(syn_specs)
-    sr("ConnectTripartite_g_g_g_D_D_D")
+    nestkernel.llapi_connect_tripartite(
+        pre._datum, post._datum, third._datum, conn_spec, third_factor_conn_spec, syn_specs
+    )
 
 
-@check_stack
 def Disconnect(*args, conn_spec=None, syn_spec=None):
     """Disconnect connections in a SynapseCollection, or `pre` neurons from `post` neurons.
 
@@ -486,17 +471,13 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
         # Fill default values
         conn_spec = "one_to_one" if conn_spec is None else conn_spec
         syn_spec = "static_synapse" if syn_spec is None else syn_spec
-        if is_string(conn_spec):
+        if isinstance(conn_spec, str):
             conn_spec = {"rule": conn_spec}
-        if is_string(syn_spec):
+        if isinstance(syn_spec, str):
             syn_spec = {"synapse_model": syn_spec}
         pre, post = args
         if not isinstance(pre, NodeCollection) or not isinstance(post, NodeCollection):
             raise TypeError("Arguments must be either a SynapseCollection or two NodeCollections")
-        sps(pre)
-        sps(post)
-        sps(conn_spec)
-        sps(syn_spec)
-        sr("Disconnect_g_g_D_D")
+        nestkernel.llapi_disconnect(pre._datum, post._datum, conn_spec, syn_spec)
     else:
         raise TypeError("Arguments must be either a SynapseCollection or two NodeCollections")

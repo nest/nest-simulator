@@ -23,8 +23,7 @@
 Functions for parallel computing
 """
 
-from .. import pynestkernel as kernel
-from ..ll_api import check_stack, sli_func, spp, sps, sr
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     "NumProcesses",
@@ -36,7 +35,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def Rank():
     """Return the MPI rank of the local process.
 
@@ -56,11 +54,9 @@ def Rank():
     may complete but generate nonsensical results.
     """
 
-    sr("Rank")
-    return spp()
+    return nestkernel.llapi_get_kernel_status()["mpi_rank"]
 
 
-@check_stack
 def NumProcesses():
     """Return the overall number of MPI processes.
 
@@ -70,11 +66,9 @@ def NumProcesses():
         Number of overall MPI processes
     """
 
-    sr("NumProcesses")
-    return spp()
+    return nestkernel.llapi_get_kernel_status()["num_processes"]
 
 
-@check_stack
 def SetAcceptableLatency(port_name, latency):
     """Set the acceptable `latency` (in ms) for a MUSIC port.
 
@@ -86,12 +80,13 @@ def SetAcceptableLatency(port_name, latency):
         Latency in ms
     """
 
-    sps(kernel.SLILiteral(port_name))
-    sps(latency)
-    sr("SetAcceptableLatency")
+    # TODO-PYNEST-NG
+    # sps(kernel.SLILiteral(port_name))
+    # sps(latency)
+    # sr("SetAcceptableLatency")
+    raise NotImplementedError
 
 
-@check_stack
 def SetMaxBuffered(port_name, size):
     """Set the maximum buffer size for a MUSIC port.
 
@@ -103,24 +98,25 @@ def SetMaxBuffered(port_name, size):
         Buffer size
     """
 
-    sps(kernel.SLILiteral(port_name))
-    sps(size)
-    sr("SetMaxBuffered")
+    # TODO-PYNEST-NG
+    # sps(kernel.SLILiteral(port_name))
+    # sps(size)
+    # sr("SetMaxBuffered")
+    raise NotImplementedError
 
 
-@check_stack
 def SyncProcesses():
     """Synchronize all MPI processes."""
 
-    sr("SyncProcesses")
+    nestkernel.llapi_synchronize()
 
 
-@check_stack
 def GetLocalVPs():
     """Return iterable representing the VPs local to the MPI rank."""
 
     # Compute local VPs as range based on round-robin logic in
     # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
     # sync with the kernel.
-    n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
+
+    n_vp = nestkernel.llapi_get_kernel_status()["total_num_virtual_procs"]
     return range(Rank(), n_vp, NumProcesses())

@@ -581,8 +581,6 @@ jobs:
         # available use flags (all default to "OFF"):
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music, readline
         use:
-          - "optimize, warning"
-          - "boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
           - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
@@ -778,7 +776,6 @@ jobs:
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
-              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
@@ -910,7 +907,6 @@ jobs:
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
-              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \

@@ -266,7 +266,6 @@ wr = nest.Create("weight_recorder")
 # for recording the spiking of the soma
 sr_soma = nest.Create("spike_recorder")
 
-
 # create connections
 nest.Connect(sg_prox, prrt_nrns, {"rule": "one_to_one"})
 nest.CopyModel("urbanczik_synapse", "urbanczik_synapse_wr", {"weight_recorder": wr[0]})
@@ -284,7 +283,7 @@ nest.Connect(nrn, sr_soma)
 for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
     for sg, t_sp in zip(sg_prox, t_srs):
-        nest.SetStatus(sg, {"spike_times": np.array(t_sp) + i * pattern_duration})
+        sg.spike_times = np.array(t_sp) + i * pattern_duration
 
     nest.Simulate(pattern_duration)
 

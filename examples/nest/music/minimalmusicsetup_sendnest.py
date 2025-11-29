@@ -22,13 +22,13 @@
 
 import nest
 
-if not nest.ll_api.sli_func("statusdict/have_music ::"):
+if not nest.build_info["have_music"]:
     import sys
 
     print("NEST was not compiled with support for MUSIC, not running.")
     sys.exit(1)
 
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 sg = nest.Create("spike_generator")
 n = nest.Create("iaf_psc_alpha")

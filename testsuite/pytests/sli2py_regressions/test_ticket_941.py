@@ -24,8 +24,7 @@
 with different synapse models."""
 
 import nest
-import numpy as np
-import pytest
+import numpy.testing as nptest
 
 
 def check_connection(source, n_expected, expected):
@@ -38,10 +37,10 @@ def check_connection(source, n_expected, expected):
 
     assert len(conns) == n_expected
 
-    for node in conns:
-        assert node.get("source") == source.tolist()[0]
-        assert node.get("target") == target_expected.tolist()[0]
-        assert node.get("synapse_model") == syn_type_expected
+    for conn in conns:
+        assert conn.source == source.tolist()[0]
+        assert conn.target == target_expected.tolist()[0]
+        assert conn.synapse_model == syn_type_expected
 
 
 def test_different_connections():
@@ -50,9 +49,9 @@ def test_different_connections():
     via helper method.
     """
     nest.ResetKernel()
-    nest.set_verbosity("M_ERROR")
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
-    spike_generator = nest.Create("spike_generator", {"spike_times": [1.0]})
+    spike_generator = nest.Create("spike_generator", params={"spike_times": [1.0]})
     spike_recorder = nest.Create("spike_recorder")
 
     pn1 = nest.Create("parrot_neuron")
@@ -81,18 +80,11 @@ def test_different_connections():
     assert nest.num_connections == 5
 
     nest.Simulate(10.0)
-    spike_recs = spike_recorder.get("events", ["times"])
-    assert np.all(
-        spike_recs["times"]
-        == pytest.approx(
-            [
-                3.0,
-                4.0,
-                5.0,
-            ]
-        )
-    )
 
-    synapses = nest.GetConnections(source=pn1, target=pn2).get("synapse_model")
+    actual_spikes = spike_recorder.events["times"]
+    expected_spikes = [3.0, 4.0, 5.0]
+    nptest.assert_array_equal(actual_spikes, expected_spikes)
+
+    actual_synapses = nest.GetConnections(source=pn1, target=pn2).synapse_model
     expected_synapses = ["static_synapse", "static_synapse", "static_synapse_hom_w"]
-    assert np.all(np.in1d(expected_synapses, synapses))
+    assert actual_synapses == expected_synapses

@@ -128,8 +128,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -150,8 +150,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_& ); //!< Set values from dictionary
+    void get( dictionary& ) const;          //!< Store current values in dictionary
+    void set( const dictionary&, State_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -164,9 +164,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const dictionary&, const Parameters_& );
   };
 
   // ------------------------------------------------------------

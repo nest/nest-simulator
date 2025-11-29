@@ -347,8 +347,8 @@ public:
   size_t handles_test_event( LearningSignalConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -436,10 +436,10 @@ private:
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -455,7 +455,7 @@ private:
     double learning_signal_;
 
     //! Number of remaining refractory steps.
-    int r_;
+    long r_;
 
     //! Surrogate gradient / pseudo-derivative of the membrane voltage.
     double surrogate_gradient_;
@@ -476,10 +476,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -514,7 +514,7 @@ private:
     double P_adapt_;
 
     //! Total refractory steps.
-    int RefractoryCounts_;
+    long RefractoryCounts_;
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
@@ -644,15 +644,15 @@ eprop_iaf_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_ty
 }
 
 inline void
-eprop_iaf_adapt::get_status( DictionaryDatum& d ) const
+eprop_iaf_adapt::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-eprop_iaf_adapt::set_status( const DictionaryDatum& d )
+eprop_iaf_adapt::set_status( const dictionary& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;

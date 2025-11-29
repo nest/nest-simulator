@@ -93,7 +93,7 @@ def build_net(model):
     nest.ResetKernel()
     nrn = nest.Create(model)
     pg = nest.Create("poisson_generator", params={"rate": 1e4})
-    mm = nest.Create("multimeter", {"interval": nest.resolution, "record_from": nrn.recordables})
+    mm = nest.Create("multimeter", params={"interval": nest.resolution, "record_from": nrn.recordables})
 
     receptor_type = 0
     if model in extra_params.keys():

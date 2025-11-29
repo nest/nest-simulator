@@ -62,7 +62,7 @@ def test_set_illegal_values(params):
     Test that an error is raised if `sdev` or `activity` is set to negative value.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("pulsepacket_generator", params)
 
 
@@ -71,7 +71,7 @@ def test_valid_to_pass_empty_pulse_times():
     Assure that a `pulsepacket_generator` with empty `pulse_times` can be simulated.
     """
 
-    params = {"pulse_times": [], "activity": 0, "sdev": 0.0}
+    params = {"pulse_times": np.array([]), "activity": 0, "sdev": 0.0}
     ppg = nest.Create("pulsepacket_generator")
     ppg.set(params)
     nest.Simulate(1.0)
@@ -110,7 +110,7 @@ def test_number_of_spikes():
         "activity": nspk,
         "sdev": stddev,
     }
-    ppg = nest.Create("pulsepacket_generator", params)
+    ppg = nest.Create("pulsepacket_generator", params=params)
     sr = nest.Create("spike_recorder")
 
     nest.Connect(ppg, sr)
@@ -124,4 +124,4 @@ def test_number_of_spikes():
     assert np.max(actual_spikes) <= tstop
 
     # Check number of spikes
-    assert actual_spikes.size == npsktot
+    assert len(actual_spikes) == npsktot

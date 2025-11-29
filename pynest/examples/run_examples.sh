@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # run_examples.sh
 #
@@ -19,12 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if ! command -v nest; then
-    echo "ERROR: command 'nest' not found. Please make sure PATH is set correctly"
-    echo "       by sourcing the script nest_vars.sh from your NEST installation."
-    exit 1
-fi
+# NOTE: This script requires bash version 4 or later.
+#       On macOS, you need to brew install bash for this script to work.
 
+# TODO-PYNEST-NG: What do we do about nest_vars.sh?
 if ! python3 -c "import nest" >/dev/null 2>&1; then
     echo "ERROR: PyNEST is not available. Please make sure PYTHONPATH is set correctly"
     echo "       by sourcing the script nest_vars.sh from your NEST installation."
@@ -39,7 +37,7 @@ IFS=$' \n\t'
 # current directory where all results are save is "basedir"
 basedir="$PWD"
 # source tree where all input scripts/data can be found is "sourcedir"
-sourcedir="$(realpath "$(dirname "$0")/..")"
+sourcedir="$(realpath "$(dirname "$0")/../..")"
 
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
@@ -47,11 +45,6 @@ if [ "${#}" -eq 0 ]; then
     # The examples can be found in subdirectory nest and in the
     # examples installation path.
     EXAMPLELIST="$(mktemp examplelist.XXXXXXXXXX)"
-    if [ -d "nest/" ] ; then
-        grep -rl --include='*.sli' 'autorun=true' "${sourcedir}/nest/" >>"$EXAMPLELIST" || true
-    else
-        grep -rl --include='*.sli' 'autorun=true' "${sourcedir}/examples/" >>"$EXAMPLELIST" || true
-    fi
     find "${sourcedir}/pynest/examples" -name '*.py' >>"$EXAMPLELIST" || true
     readarray -t EXAMPLES <"$EXAMPLELIST"  # append each example found above
     rm "$EXAMPLELIST"
@@ -61,11 +54,14 @@ fi
 
 for i in $(seq 0 $(( ${#EXAMPLES[@]}-1))); do
     if echo "${EXAMPLES[$i]}" | grep -vE "${SKIP_LIST}" >/dev/null; then
+        echo "Skipping ${EXAMPLES[$i]}"
         unset "EXAMPLES['$i']"
     fi
 done
 
+# TODO-PYNEST-NG This does NOT turn of plotting
 # turn off plotting to the screen and waiting for input
+# And how about saving all the plots to file for inspection?
 MPLCONFIGDIR="$(pwd)/matplotlib/"
 export MPLCONFIGDIR
 
@@ -112,13 +108,7 @@ for i in "${EXAMPLES[@]}"; do
     workdir="$PWD"
     example="$(basename "$i")"
 
-    ext="$(echo "$example" | cut -d. -f2)"
-
-    if [ "${ext}" = "sli" ] ; then
-        runner="nest"
-    elif [ "${ext}" = "py" ] ; then
-        runner="python3"
-    fi
+    runner="python3"
 
     output_dir="$basedir/example_logs/$example"
     logfile="$output_dir/output.log"

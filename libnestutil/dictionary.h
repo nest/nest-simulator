@@ -218,7 +218,7 @@ public:
    * @throws TypeMismatch if the value is not an integer.
    * @return the value at key cast to the specified type.
    */
-  size_t // TODO: or template?
+  long
   get_integer( const std::string& key ) const
   {
     return cast_to_integer_( at( key ), key );

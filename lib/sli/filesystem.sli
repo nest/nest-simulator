@@ -62,7 +62,7 @@
  Remarks: Sorting of files done by :sort, a dummy UNIX sorter which
     is far from protable!
  SeeAlso: SetDirectory, Directory, ls, cd
-*/ 
+*/
 
 /FileNames trie
   [/stringtype] /FileNames_s load addtotrie
@@ -73,20 +73,20 @@ def
  Name: ls - print contents of current working directory
  Synopsis: ls -> -
  Description: Prints the contents of the working directory on stdout.
-    Don't mess it up with UNIX ls, this is POSIX. No parameters can 
+    Don't mess it up with UNIX ls, this is POSIX. No parameters can
     be set like -l, -a !
     Any files starting with a . are NOT shown by default.
     Use FileNames if you need them.
  Parameters: -
- Examples: There's only one usage: 
+ Examples: There's only one usage:
            ls -> see contents of current working directory
- Bugs: 
+ Bugs:
  Author: Hehl
  FirstVersion: Oct 12th 1999
  Remarks: This is in fact not much more than a wrapper to FileNames,
           in addition using a regex to filter out ".anything" files.
  SeeAlso: FileNames, SetDirectory, Directory, MakeDirectory, RemoveDirectory, cd
-*/ 
+*/
 
 /ls  {(^[^\\.]) FileNames {=} forall} def
 
@@ -97,16 +97,16 @@ def
     e.g. the value of '.' in the UNIX world.
  Parameters: string : The new working directory.
              boolean: A flag if operation succeded.
- Examples: (/home/MyName) SetDirectory -> Commands like ofstream, 
+ Examples: (/home/MyName) SetDirectory -> Commands like ofstream,
                                           FileNames etc. take
                                           /home/MyName as a default.
            (..) SetDirectory           -> Flip to parent directory.
  Bugs: -
  Author: Hehl
  FirstVersion: Oct 12th 1999
- Remarks: 
+ Remarks:
  SeeAlso: FileNames, Directory, MakeDirectory, RemoveDirectory, cd, ls
-*/ 
+*/
 
 /SetDirectory trie
   [/stringtype] /SetDirectory_ load addtotrie
@@ -120,13 +120,13 @@ def
  Parameters: string : The new working directory.
              boolean: A flag if operation succeded.
  Examples: (..) cd  -> Flip to parent directory.
- Diagnostics: Raises /UnknownDirectory, if SetDirectory fails. 
+ Diagnostics: Raises /UnknownDirectory, if SetDirectory fails.
  Bugs: -
  Author: Hehl
  FirstVersion: Oct 12th 1999
  Remarks: This is a wrapper to SetDirectory
  SeeAlso: FileNames, Directory, SetDirectory, MakeDirectory, RemoveDirectory, ls
-*/ 
+*/
 
 /cd {dup SetDirectory not {/cd /UnknownDirectory raiseerror} if pop} def
 
@@ -140,7 +140,7 @@ def
  Author: Schrader
  Remarks: This is a wrapper to Directory
  SeeAlso: Directory, SetDirectory, MakeDirectory, RemoveDirectory, ls
-*/ 
+*/
 
 /pwd {Directory =} def
 
@@ -166,7 +166,7 @@ def
      the old one!
      But that's exactly what rename() is supposed to do, no damage done...
  SeeAlso: CopyFile, ofstream, ifstream, DeleteFile, FileNames, MakeDirectory, RemoveDirectory
-*/ 
+*/
 
 /MoveFile trie
   [/stringtype /stringtype] /MoveFile_ load addtotrie
@@ -189,7 +189,7 @@ def
  Diagnostics: Issues informative message and
    raises /BadIO if file cannot be copied for any reason.
  SeeAlso: MoveFile, ofstream, ifstream, DeleteFile, FileNames, MakeDirectory, RemoveDirectory
-*/ 
+*/
 
 /CopyFile trie
   [/stringtype /stringtype] /CopyFile_ load addtotrie
@@ -201,11 +201,11 @@ def
  Synopsis: string DeleteFile -> boolean
  Description: Delete a file defined by it's filename. To be exact, it
     is unlinked, so if it link to another file, only the link and not
-    the file is removed. (This is at least what is supposed to happen 
+    the file is removed. (This is at least what is supposed to happen
     if your POSIX is really POSIX ...)
     Mind that regex arguments like (*) DeleteFile are NOT supported.
-    This was done for safety reasons because the regex flavour of 
-    POSIX is not exactly like what one might be used to from UNIX, 
+    This was done for safety reasons because the regex flavour of
+    POSIX is not exactly like what one might be used to from UNIX,
     which could easily end in a disaster.
  Parameters: string : Filename of file to be deleted.
              boolean : A flag if operation succeded.
@@ -218,7 +218,7 @@ def
  FirstVersion: Oct 12th 1999
  Remarks: -
  SeeAlso: CopyFile, ofstream, ifstream, MoveFile, FileNames, MakeDirectory, RemoveDirectory
-*/ 
+*/
 
 /DeleteFile trie
   [/stringtype] /DeleteFile_ load addtotrie
@@ -228,7 +228,7 @@ def
  Name: MakeDirectory - Create a new directory
  Synopsis: string MakeDirectory -> boolean
  Description: MakeDirectory creates the named subdirectory of your
-    current working directory. 
+    current working directory.
  Parameters: string : Name of new subdirectory
              boolean : A flag if operation succeded.
  Examples: (NewSubDir) MakeDirectory -> ./NewSubDir created
@@ -237,7 +237,7 @@ def
  FirstVersion: Oct 12th 1999
  Remarks: -
  SeeAlso: FileNames, MoveDirectory, RemoveDirectory
-*/ 
+*/
 
 /MakeDirectory trie
   [/stringtype] /MakeDirectory_ load addtotrie
@@ -258,7 +258,7 @@ def
  FirstVersion: Oct 12th 1999
  Remarks: -
  SeeAlso: FileNames, MoveDirectory, RemoveDirectory
-*/ 
+*/
 
 /RemoveDirectory trie
   [/stringtype] /RemoveDirectory_ load addtotrie
@@ -282,7 +282,7 @@ def
           POSIX statet this would be the same operator like renaming
           a file, but that did not work.
  SeeAlso: FileNames, MoveDirectory, RemoveDirectory, MoveFile
-*/ 
+*/
 
 /MoveDirectory trie
   [/stringtype /stringtype] {MakeDirectory pop RemoveDirectory pop} addtotrie

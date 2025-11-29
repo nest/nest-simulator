@@ -1,3 +1,4 @@
+#!/bin/bash
 # run_test.sh
 #
 # This file is part of NEST.
@@ -110,9 +111,9 @@ run_test ()
 
     chmod 700 "${TEST_RUNFILE}"
 
-    TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
-    TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
-    JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))
+    TIME_ELAPSED="$( time_cmd "${TEST_RUNFILE}" )"
+    TIME_TOTAL="$(( ${TIME_TOTAL:-0} + TIME_ELAPSED ))"
+    JUNIT_TESTS="$(( ${JUNIT_TESTS:-0} + 1 ))"
 
     rm -f "${TEST_RUNFILE}"
 
@@ -120,36 +121,36 @@ run_test ()
 
     sed 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
 
-    msg_dirty=${param_success##* ${exit_code} }
-    msg_dirty_skip=${param_skipped##* ${exit_code} }
-    msg_clean=${msg_dirty%%,*}
+    msg_dirty="${param_success##* "${exit_code}" }"
+    msg_dirty_skip="${param_skipped##* "${exit_code}" }"
+    msg_clean="${msg_dirty%%,*}"
     junit_failure=
     junit_status=
     if test "${msg_dirty}" != "${param_success}" ; then
         explanation="${msg_clean}"
-        junit_status=pass
+        junit_status="pass"
         junit_failure=
     elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
-        JUNIT_SKIPS=$(( ${JUNIT_SKIPS} + 1 ))
-        msg_dirty=${msg_dirty_skip}
-        msg_clean=${msg_dirty%%,*}
+        JUNIT_SKIPS="$(( JUNIT_SKIPS + 1 ))"
+        msg_dirty="${msg_dirty_skip}"
+        msg_clean="${msg_dirty%%,*}"
         explanation="${msg_clean}"
-        junit_status=skipped
+        junit_status="skipped"
         junit_failure="${explanation}"
     else
-        JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
+        JUNIT_FAILURES=$(( JUNIT_FAILURES + 1 ))
 
-        msg_dirty=${param_failure##* ${exit_code} }
-        msg_clean=${msg_dirty%%,*}
+        msg_dirty="${param_failure##* "${exit_code}" }"
+        msg_clean="${msg_dirty%%,*}"
         msg_error="$( cat "${TEST_OUTFILE}" )"
         if test "${msg_dirty}" != "${param_failure}" ; then
             explanation="${msg_clean}"
         else
             explanation="Failed: unexpected exit code ${exit_code}"
-            unexpected_exitcode=true
+            unexpected_exitcode="true"
         fi
 
-        junit_status=failure
+        junit_status="failure"
         junit_failure="${exit_code} (${explanation})"
     fi
 
@@ -172,7 +173,6 @@ run_test ()
     if test "x${unexpected_exitcode:-}" != x ; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
-        ask_results
         exit 2
     fi
 

@@ -234,8 +234,6 @@ Generic build configuration
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++17'].           |
-+------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |
 +------------------------------------------------------+------------------------------------------------------------------+

@@ -250,6 +250,9 @@ public:
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not the same type as the value argument.
    * @return Whether value was updated.
+   *
+   * @note Only use this where the user is not allowed to use random or spatial parameters.
+   *       Otherwise, use update_value_param().
    */
   template < typename T >
   bool

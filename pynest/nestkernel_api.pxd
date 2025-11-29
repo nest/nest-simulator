@@ -134,6 +134,7 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void shutdown_nest( int exitcode )
     void reset_kernel()
+    void install_module( const string& module_name ) except +custom_exception_handler
 
     void enable_structural_plasticity() except +custom_exception_handler
     void disable_structural_plasticity() except +custom_exception_handler

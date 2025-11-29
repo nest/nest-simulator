@@ -309,7 +309,7 @@ def Install(module_name):
 
     """
 
-    raise NotImplementedError
+    nestkernel.llapi_install_module(module_name)
 
 
 def EnableStructuralPlasticity():

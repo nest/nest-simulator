@@ -98,8 +98,9 @@ shutdown_nest( int exitcode )
 }
 
 void
-install_module( const std::string& )
+install_module( const std::string& module )
 {
+  kernel().module_manager.install( module );
 }
 
 void

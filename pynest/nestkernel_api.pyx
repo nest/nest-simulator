@@ -336,6 +336,9 @@ def llapi_reset_kernel():
     reset_kernel()
 
 
+def llapi_install_module( module_name ):
+    install_module( pystr_to_string(module_name) )
+
 def llapi_enable_structural_plasticity():
     enable_structural_plasticity()
 

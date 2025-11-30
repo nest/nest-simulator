@@ -898,9 +898,7 @@ BallMask< D >::BallMask( const dictionary& d )
   radius_ = d.get< double >( names::radius );
   if ( radius_ <= 0 )
   {
-    throw BadProperty(
-      "nest::BallMask<D>: "
-      "radius > 0 required." );
+    throw BadProperty( "nest::BallMask<D>: radius > 0 required." );
   }
 
   if ( d.known( names::anchor ) )

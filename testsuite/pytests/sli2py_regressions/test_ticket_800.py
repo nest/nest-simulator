@@ -151,7 +151,7 @@ def test_good_parameters(kind, params):
 # Test 2
 @pytest.mark.parametrize("kind, params", bad_parameters)
 def test_bad_parameters(kind, params):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.UnaccessedDictionaryEntry)):
         nest.CreateParameter(kind, params)
 
 
@@ -164,7 +164,7 @@ def test_good_masks(mask_type, maskdict):
 # Test 4
 @pytest.mark.parametrize("mask_type, maskdict", bad_masks)
 def test_bad_masks(mask_type, maskdict):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.UnaccessedDictionaryEntry, IndexError)):
         nest.CreateMask(mask_type, maskdict)
 
 
@@ -179,7 +179,7 @@ def test_good_positions(positions):
 @pytest.mark.parametrize("positions", bad_positions)
 def test_bad_positions(positions):
     # Use grid or free depending on positions
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|TypeMismatch"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.TypeMismatch)):
         nest.Create("parrot_neuron", positions=positions)
 
 
@@ -192,7 +192,7 @@ def test_good_kernels(p_name, p_spec, layer_2d):
 # Test 8
 @pytest.mark.parametrize("p_name, p_spec", bad_parameters)
 def test_bad_kernels(p_name, p_spec, layer_2d):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.UnaccessedDictionaryEntry)):
         nest.Connect(layer_2d, layer_2d, {"rule": "pairwise_bernoulli", "p": nest.CreateParameter(p_name, p_spec)})
 
 
@@ -207,7 +207,7 @@ def test_good_weights(p_name, p_spec, layer_2d):
 # Test 10
 @pytest.mark.parametrize("p_name, p_spec", bad_parameters)
 def test_bad_weights(p_name, p_spec, layer_2d):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.UnaccessedDictionaryEntry)):
         nest.Connect(
             layer_2d, layer_2d, {"rule": "pairwise_bernoulli", "p": 1}, {"weight": nest.CreateParameter(p_name, p_spec)}
         )
@@ -222,7 +222,7 @@ def test_good_masks_2d(mask_type, mask_dict, layer_2d):
 # Test 12
 @pytest.mark.parametrize("mask_type, mask_dict", bad_masks_2d)
 def test_bad_masks_2d(mask_type, mask_dict, layer_2d):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises((nest.NESTErrors.BadProperty, nest.NESTErrors.UnaccessedDictionaryEntry, IndexError)):
         nest.Connect(layer_2d, layer_2d, {"rule": "pairwise_bernoulli", "mask": {mask_type: mask_dict}})
 
 
@@ -235,7 +235,7 @@ def test_good_masks_3d(mask_type, mask_dict, layer_3d):
 # Test 14
 @pytest.mark.parametrize("mask_type, mask_dict", bad_masks_3d)
 def test_bad_masks_3d(mask_type, mask_dict, layer_3d):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|DictError"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(layer_3d, layer_3d, {"rule": "pairwise_bernoulli", "mask": {mask_type: mask_dict}})
 
 
@@ -248,5 +248,5 @@ def test_good_connspecs(connspec, layer_2d):
 # Test 16
 @pytest.mark.parametrize("connspec", bad_connspecs)
 def test_bad_connspecs(connspec, layer_2d):
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(layer_2d, layer_2d, connspec)

@@ -36,7 +36,7 @@ from .hl_api_helper import (
     is_iterable,
     restructure_data,
 )
-from .hl_api_parallel_computing import Rank
+from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_simulation import GetKernelStatus
 
 try:
@@ -940,13 +940,18 @@ class SynapseCollection:
             raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict):
-            node_params = self[0].get()
+            conn_params = self[0].get()
             contains_list = [
-                is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
+                is_iterable(vals) and key in conn_params and not is_iterable(conn_params[key])
                 for key, vals in params.items()
             ]
 
             if any(contains_list):
+                if NumProcesses() > 1:
+                    raise NotImplementedError(
+                        "Passing lists of synapse parameter values is not supported in MPI-parallel simulations."
+                    )
+
                 temp_param = [{} for _ in range(self.__len__())]
 
                 for key, vals in params.items():

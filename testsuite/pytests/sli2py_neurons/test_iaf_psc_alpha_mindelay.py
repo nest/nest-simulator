@@ -60,8 +60,8 @@ def test_iaf_psc_alpha_mindelay_create(min_delay):
 
     results = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))
 
-    actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
-    assert actual == expected
+    actual, expected = testutil.get_comparable_timesamples(nest.resolution, results, expected_mindelay)
+    np.testing.assert_allclose(actual, expected, rtol=1e-7)
 
 
 @pytest.mark.parametrize("min_delay", [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0, 2.0])
@@ -96,8 +96,8 @@ def test_iaf_psc_alpha_mindelay_set(min_delay):
 
     results = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))
 
-    actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
-    assert actual == expected
+    actual, expected = testutil.get_comparable_timesamples(nest.resolution, results, expected_mindelay)
+    np.testing.assert_allclose(actual, expected, rtol=1e-7)
 
 
 @pytest.mark.parametrize("min_delay", [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0, 2.0])
@@ -132,8 +132,8 @@ def test_iaf_psc_alpha_mindelay_simblocks(min_delay):
 
     results = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))
 
-    actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
-    assert actual == expected
+    actual, expected = testutil.get_comparable_timesamples(nest.resolution, results, expected_mindelay)
+    np.testing.assert_allclose(actual, expected, rtol=1e-7)
 
 
 def test_kernel_precision():

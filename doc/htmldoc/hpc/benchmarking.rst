@@ -33,18 +33,20 @@ For more details on the conceptual ideas behind beNNch, refer to Albers et al. (
     The left graph shows the absolute wall-clock time measured with Python-level timers for both network construction and state propagation.
     Error bars indicate variability across three simulation repeats with different random seeds.
     The top right graph displays the real-time factor defined as wall-clock time normalized by the model time.
-    Built-in timers resolve four different phases of the state propagation: update, collocation, communication, and delivery.
+    :ref:`Built-in timers <built_in_timers>` resolve four different phases of the state propagation: update, collocation, communication, and delivery.
     Pink error bars show the same variability of state propagation as the left graph.
     The lower right graph shows the relative contribution of these phases to the state-propagation time.
 
 
 .. seealso::
 
-    For further details, see the accompanying `beNNch GitHub Page <https://inm-6.github.io/beNNch>`_.
-    And for a detailed step-by-step walk though see `Walk through guide <https://inm-6.github.io/beNNch/walk-through.html>`_.
+    * For further details, see the accompanying `beNNch GitHub Page <https://inm-6.github.io/beNNch>`_.
 
-    Example PyNEST script: :doc:`../auto_examples/hpc_benchmark`
+    * For a detailed step-by-step walk though see `Walk through guide <https://inm-6.github.io/beNNch/walk-through.html>`_.
 
+    * Example PyNEST script: :doc:`../auto_examples/hpc_benchmark`
+
+    * Guide to :ref:`built_in_timers` and :ref:`running simulations <run_simulations>`.
 
 References
 ----------

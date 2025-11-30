@@ -74,7 +74,7 @@ def test_iaf_ps_dc_accuracy(model, resolution, duration, tolerance):
 
     expected_vm = params["I_e"] * params["tau_m"] / params["C_m"] * (1.0 - math.exp(-duration / params["tau_m"]))
 
-    assert neuron.V_m - pytest.approx(expected_vm, abs=tolerance)
+    assert neuron.V_m == pytest.approx(expected_vm, abs=tolerance)
 
 
 @pytest.mark.parametrize(

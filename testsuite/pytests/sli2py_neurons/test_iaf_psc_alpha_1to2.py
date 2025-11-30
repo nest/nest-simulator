@@ -45,13 +45,6 @@ def Vm_theory(t):
     return prefactor * (term1 - term2)
 
 
-@pytest.fixture
-def sim_results(request):
-    resolution, min_delay = request.param
-
-    yield resolution, spikes, voltages
-
-
 @pytest.mark.parametrize(
     "resolution, min_delay", [(0.1, 1.0), (0.2, 1.0), (0.5, 1.0), (1.0, 1.0), (0.1, 0.1), (0.1, 0.2), (0.1, 0.5)]
 )
@@ -80,6 +73,8 @@ def test_1to2(resolution, min_delay):
     initial condition is zero (see documentation of
     test_iaf_psp). Therefore, at the time of impact the PSP is only
     visible in other components of the state vector.
+
+    See end of file for commented table of expected output.
     """
 
     nest.ResetKernel()
@@ -117,3 +112,58 @@ def test_1to2(resolution, min_delay):
     Vm_expected = -70 + 100 * Vm_theory(v_test.times * resolution - 4.0)
 
     np.testing.assert_allclose(v_test.V_m, Vm_expected, rtol=1e-12)
+
+
+# ------------------------------------------------------------------------------------------
+#
+# Expected output of this simulation
+#
+# The output send to std::cout is a superposition of the output of
+# the voltmeter and the spike recorder. Both, voltmeter and spike
+# recorder are connected to the same neuron.
+#
+#
+#   h=   (in ms)
+# [ 0.1   0.2    0.5   1.0]
+#
+#   time                    voltage
+# [
+#   ...
+# [ 25           5           -70]%         <-- Voltage trace of the postsynaptic neuron
+# [ 26    13                 -70]%              (neuron2), at rest until a spike arrives.
+# [ 27                       -70]
+# [ 28    14                 -70]
+# [ 29                       -70]
+# [ 30    15     6     3     -70]
+#   1       30                   %         <-- The pre-synaptic neuron (neuron1) emits a
+# [ 31                       -70]%             spike at t=3.0 ms.
+# [ 32    16                 -70]
+# [ 33                       -70]
+# [ 34    17                 -70]
+# [ 35           7           -70]%         <--  Synaptic delay of 1.0 ms.
+# [ 36    18                 -70]
+# [ 37                       -70]
+# [ 38    19                 -70]
+# [ 39                       -70]
+# [ 40    20     8    4      -70]% <-----------  Spike arrives at the postsynaptic neuron
+# [ 41                       -69.9974]%    <-    (neuron2) and changes the state vector of
+# [ 42    21                 -69.9899]%      |   the neuron, not visible in voltage because
+# [ 43                       -69.9781]%      |   voltage of PSP initial condition is 0.
+# [ 44    22                 -69.9624]%      |
+# [ 45           9           -69.9434]%       -  Arbitrarily close to the time of impact
+# [ 46    23                 -69.9213]%          (t=4.0 ms) the effect of the spike (PSP)
+# [ 47                       -69.8967]%          is visible in the voltage trace.
+# [ 48    24                 -69.8699]
+# [ 49                       -69.8411]
+# [ 50    25    10     5     -69.8108]
+# [ 51                       -69.779 ]
+# [ 52    26                 -69.7463]%    <---  The voltage trace is independent
+# [ 53                       -69.7126]%          of the computation step size h.
+# [ 54    27                 -69.6783]%          Larger step sizes only have fewer
+# [ 55          11           -69.6435]%          sample points.
+# [ 56    28                 -69.6084]
+# [ 57                       -69.5732]
+#   ...
+# ]
+#
+# ------------------------------------------------------------------------------------------

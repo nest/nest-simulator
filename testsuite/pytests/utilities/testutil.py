@@ -21,7 +21,7 @@
 
 import sys
 
-import numpy as np
+import pandas as pd
 import pytest
 
 
@@ -42,8 +42,24 @@ def dict_is_subset_of(small, big):
     return big == big | small
 
 
-def get_comparable_timesamples(actual, expected):
-    simulated_points = isin_approx(actual[:, 0], expected[:, 0])
-    expected_points = isin_approx(expected[:, 0], actual[:, 0])
-    assert len(actual[simulated_points]) > 0, "The recorded data did not contain any relevant timesamples"
-    return actual[simulated_points], pytest.approx(expected[expected_points])
+def get_comparable_timesamples(resolution, actual, expected):
+    """
+    Return result of inner join on time stamps for actual and expected given resolution.
+
+    `actual` and `expected` must be arrays with columns representing times (in ms) and values.
+    Times will be converted to steps given the resolution and the data will then be inner-
+    joined on the steps, i.e., rows with equal steps will be extracted.
+
+    Returns two one-dimensional arrays containing the values at the joint points from
+    actual and expected, respectively.
+    """
+
+    actual = pd.DataFrame(actual, columns=["t", "val_a"])
+    expected = pd.DataFrame(expected, columns=["t", "val_e"])
+
+    actual["steps"] = (actual.t / resolution).round()
+    expected["steps"] = (expected.t / resolution).round()
+
+    common = pd.merge(actual, expected, how="inner", on="t")
+
+    return common.val_a.values, common.val_e.values

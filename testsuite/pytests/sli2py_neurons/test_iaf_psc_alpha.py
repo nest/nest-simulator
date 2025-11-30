@@ -75,7 +75,8 @@ def test_iaf_psc_alpha_basic():
     voltage = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))
 
     # Compare actual and expected spike times
-    results, approx_expected = testutil.get_comparable_timesamples(
+    actual, expected = testutil.get_comparable_timesamples(
+        resolution,
         voltage,
         np.array(
             [
@@ -128,8 +129,8 @@ def test_iaf_psc_alpha_basic():
         ),
     )
 
-    # Assert approximate equality
-    assert results == approx_expected
+    # Assert approximate equality, based on number of digits in reference data
+    np.testing.assert_allclose(actual, expected, rtol=1e-6)
 
 
 def test_iaf_psc_alpha_i0():
@@ -178,6 +179,7 @@ def test_iaf_psc_alpha_i0():
 
     # Compare voltmeter output to expected
     actual, expected = testutil.get_comparable_timesamples(
+        resolution,
         results,
         np.array(
             [
@@ -197,7 +199,7 @@ def test_iaf_psc_alpha_i0():
             ]
         ),
     )
-    assert actual == expected
+    np.testing.assert_allclose(actual, expected, rtol=1e-6)
 
     # Compare spike times
     assert spikes == pytest.approx(
@@ -251,6 +253,7 @@ def test_iaf_psc_alpha_i0_refractory(resolution):
     results = np.column_stack((times, V_m))
 
     actual, expected = testutil.get_comparable_timesamples(
+        resolution,
         results,
         np.array(
             [
@@ -326,4 +329,4 @@ def test_iaf_psc_alpha_i0_refractory(resolution):
             ]
         ),
     )
-    assert actual == expected
+    np.testing.assert_allclose(actual, expected, rtol=1e-6)

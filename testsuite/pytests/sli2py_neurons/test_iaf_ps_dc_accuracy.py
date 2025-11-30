@@ -34,7 +34,7 @@ import pytest
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2 ** i for i in range(0, -14, -1)])
+@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
 @pytest.mark.parametrize("duration, tolerance", [(5.0, 1e-13), (500.0, 1e-9)])
 def test_iaf_ps_dc_accuracy(model, resolution, duration, tolerance):
     """
@@ -58,7 +58,7 @@ def test_iaf_ps_dc_accuracy(model, resolution, duration, tolerance):
     to function print_details.
     """
     nest.ResetKernel()
-    nest.set(tics_per_ms=2 ** 14, resolution=resolution)
+    nest.set(tics_per_ms=2**14, resolution=resolution)
 
     params = {
         "E_L": 0.0,  # resting potential in mV
@@ -86,7 +86,7 @@ def test_iaf_ps_dc_accuracy(model, resolution, duration, tolerance):
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2 ** i for i in range(0, -14, -1)])
+@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
 @pytest.mark.parametrize("duration, tolerance", [(5.0, 1e-13)])
 def test_iaf_ps_dc_t_accuracy(model, resolution, duration, tolerance):
     """
@@ -106,7 +106,7 @@ def test_iaf_ps_dc_t_accuracy(model, resolution, duration, tolerance):
     call to function print_details.
     """
     nest.ResetKernel()
-    nest.set(tics_per_ms=2 ** 14, resolution=resolution)
+    nest.set(tics_per_ms=2**14, resolution=resolution)
 
     params = {
         "E_L": 0.0,  # resting potential in mV

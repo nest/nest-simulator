@@ -22,13 +22,40 @@
 
 import nest
 import numpy as np
+import pandas as pd
 import pytest
-import testutil
 
 
-@pytest.mark.parametrize("resolution", [0.1, 0.2, 0.5, 1.0])
-@pytest.mark.parametrize("delay", [1.0])
-def test_1to2(resolution, delay):
+def Vm_theory(t):
+    """
+    Returns the value of the membrane potential at time t, assuming
+    alpha-shaped post-synaptic currents and an incoming spike at t=0.
+    """
+
+    assert (t >= 0).all()
+
+    d = nest.GetDefaults("iaf_psc_alpha")
+    C_m = d["C_m"]
+    tau_m = d["tau_m"]
+    tau_syn = d["tau_syn_ex"]
+
+    prefactor = np.exp(1) / (tau_syn * C_m)
+    term1 = (np.exp(-t / tau_m) - np.exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
+    term2 = t * np.exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+    return prefactor * (term1 - term2)
+
+
+@pytest.fixture
+def sim_results(request):
+    resolution, min_delay = request.param
+
+    yield resolution, spikes, voltages
+
+
+@pytest.mark.parametrize(
+    "resolution, min_delay", [(0.1, 1.0), (0.2, 1.0), (0.5, 1.0), (1.0, 1.0), (0.1, 0.1), (0.1, 0.2), (0.1, 0.5)]
+)
+def test_1to2(resolution, min_delay):
     """
     Checks the spike interaction of two iaf_psc_alpha model neurons.
 
@@ -54,135 +81,39 @@ def test_1to2(resolution, delay):
     test_iaf_psp). Therefore, at the time of impact the PSP is only
     visible in other components of the state vector.
     """
+
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": resolution})
+    nest.set(resolution=resolution, min_delay=min_delay, max_delay=1)
 
     # Create neurons
     n1, n2 = nest.Create("iaf_psc_alpha", 2)
     n1.I_e = 1450.0
 
-    # Create and connect voltmeter to n2
-    vm = nest.Create("voltmeter", params={"interval": resolution})
+    # Spike recorder for neuron 1
+    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
+    nest.Connect(n1, sr)
+
+    # Voltmeter for n2
+    vm = nest.Create("voltmeter", params={"interval": resolution, "time_in_steps": True})
     nest.Connect(vm, n2)
 
-    # Connect neuron n1 to n2
-    nest.Connect(n1, n2, syn_spec={"weight": 100.0, "delay": delay})
+    nest.Connect(n1, n2, syn_spec={"weight": 100.0, "delay": 1.0})
 
     # Run the simulation
-    nest.Simulate(100.0)
+    nest.Simulate(8.0)
 
-    # Extract voltmeter data
-    events = nest.GetStatus(vm, "events")[0]
-    times = np.array(events["times"]).reshape(-1, 1)
-    V_m = np.array(events["V_m"]).reshape(-1, 1)
-    results = np.hstack((times, V_m))
+    spikes = sr.events["times"]
+    voltages = pd.DataFrame.from_records(vm.events)
 
-    actual, expected = testutil.get_comparable_timesamples(
-        results,
-        np.array(
-            [
-                [2.5, -70],
-                [2.6, -70],
-                [2.7, -70],
-                [2.8, -70],
-                [2.9, -70],
-                [3.0, -70],
-                [3.1, -70],
-                [3.2, -70],
-                [3.3, -70],
-                [3.4, -70],
-                [3.5, -70],
-                [3.6, -70],
-                [3.7, -70],
-                [3.8, -70],
-                [3.9, -70],
-                [4.0, -70],
-                [4.1, -69.9974],
-                [4.2, -69.9899],
-                [4.3, -69.9781],
-                [4.4, -69.9624],
-                [4.5, -69.9434],
-                [4.6, -69.9213],
-                [4.7, -69.8967],
-                [4.8, -69.8699],
-                [4.9, -69.8411],
-                [5.0, -69.8108],
-                [5.1, -69.779],
-                [5.2, -69.7463],
-                [5.3, -69.7126],
-                [5.4, -69.6783],
-                [5.5, -69.6435],
-                [5.6, -69.6084],
-                [5.7, -69.5732],
-            ]
-        ),
-    )
-    assert actual == expected
+    # Consistency check on output of first neuron
+    assert list(spikes) == [round(t / resolution) for t in [3, 8]]
 
+    # Membrane potential before effect of incoming spike must be -70, i.e. up to 4 ms
+    np.testing.assert_array_equal(voltages.loc[voltages.times <= round(4.0 / resolution)].V_m, -70)
 
-@pytest.mark.parametrize("delay,resolution", [(2.0, 0.1)])
-@pytest.mark.parametrize("min_delay", [0.1, 0.5, 2.0])
-def test_1to2_mindelay_invariance(delay, resolution, min_delay):
-    """
-    Same test with different mindelays.
-    """
-    nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": resolution})
+    # Explicitly calculate membrane potential for times from 4 ms onward
+    v_test = voltages.loc[voltages.times >= round(4.0 / resolution)]
 
-    assert min_delay <= delay
-    nest.set(min_delay=min_delay, max_delay=delay)
+    Vm_expected = -70 + 100 * Vm_theory(v_test.times * resolution - 4.0)
 
-    # Create neurons
-    n1, n2 = nest.Create("iaf_psc_alpha", 2)
-    n1.I_e = 1450.0
-
-    # Create and connect voltmeter to n2
-    vm = nest.Create("voltmeter", params={"interval": resolution})
-    nest.Connect(vm, n2, syn_spec={"delay": delay})
-
-    # Connect neuron n1 to n2
-    nest.Connect(n1, n2, syn_spec={"weight": 100.0, "delay": delay})
-
-    # Run the simulation
-    nest.Simulate(100.0)
-
-    # Extract voltmeter data
-    events = nest.GetStatus(vm, "events")[0]
-    times = np.array(events["times"]).reshape(-1, 1)
-    V_m = np.array(events["V_m"]).reshape(-1, 1)
-    results = np.hstack((times, V_m))
-
-    actual, expected = testutil.get_comparable_timesamples(
-        results,
-        np.array(
-            [
-                [0.1, -70],
-                [0.2, -70],
-                [0.3, -70],
-                [0.4, -70],
-                [0.5, -70],
-                [2.8, -70],
-                [2.9, -70],
-                [3.0, -70],
-                [3.1, -70],
-                [3.2, -70],
-                [3.3, -70],
-                [3.4, -70],
-                [3.5, -70],
-                [4.8, -70],
-                [4.9, -70],
-                [5.0, -70],
-                [5.1, -69.9974],
-                [5.2, -69.9899],
-                [5.3, -69.9781],
-                [5.4, -69.9624],
-                [5.5, -69.9434],
-                [5.6, -69.9213],
-                [5.7, -69.8967],
-                [5.8, -69.8699],
-                [5.9, -69.8411],
-                [6.0, -69.8108],
-            ]
-        ),
-    )
-    assert actual == expected
+    np.testing.assert_allclose(v_test.V_m, Vm_expected, rtol=1e-12)

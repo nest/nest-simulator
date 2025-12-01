@@ -26,7 +26,7 @@ import pandas as pd
 import pytest
 
 
-def Vm_theory(t):
+def Vm_theory(t, nrn_params, syn_weight):
     """
     Returns the value of the membrane potential at time t, assuming
     alpha-shaped post-synaptic currents and an incoming spike at t=0.
@@ -34,15 +34,15 @@ def Vm_theory(t):
 
     assert (t >= 0).all()
 
-    d = nest.GetDefaults("iaf_psc_alpha")
-    C_m = d["C_m"]
-    tau_m = d["tau_m"]
-    tau_syn = d["tau_syn_ex"]
+    C_m = nrn_params["C_m"]
+    tau_m = nrn_params["tau_m"]
+    tau_syn = nrn_params["tau_syn_ex"]
+    E_L = nrn_params["E_L"]
 
-    prefactor = np.exp(1) / (tau_syn * C_m)
+    prefactor = syn_weight * np.exp(1) / (tau_syn * C_m)
     term1 = (np.exp(-t / tau_m) - np.exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
     term2 = t * np.exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
-    return prefactor * (term1 - term2)
+    return E_L + prefactor * (term1 - term2)
 
 
 @pytest.mark.parametrize(
@@ -80,9 +80,15 @@ def test_1to2(resolution, min_delay):
     nest.ResetKernel()
     nest.set(resolution=resolution, min_delay=min_delay, max_delay=1)
 
+    # Parameters for network and some pre-calculated results
+    I_ext = 1450
+    time_to_threshold = 3  # for iaf_psc_alpha with default params driven by I_ext
+    delay = 1
+    weight = 100
+
     # Create neurons
     n1, n2 = nest.Create("iaf_psc_alpha", 2)
-    n1.I_e = 1450.0
+    n1.I_e = I_ext
 
     # Spike recorder for neuron 1
     sr = nest.Create("spike_recorder", params={"time_in_steps": True})
@@ -92,33 +98,41 @@ def test_1to2(resolution, min_delay):
     vm = nest.Create("voltmeter", params={"interval": resolution, "time_in_steps": True})
     nest.Connect(vm, n2)
 
-    nest.Connect(n1, n2, syn_spec={"weight": 100.0, "delay": 1.0})
+    nest.Connect(n1, n2, syn_spec={"weight": weight, "delay": delay})
 
-    # Run the simulation
-    nest.Simulate(8.0)
+    # Expected spike times of first neuron for default parameters
+    t_expected = [time_to_threshold, 2 * time_to_threshold + n1.t_ref]
+
+    # Run the simulation until time of second spike of n1, so it does not affect n2
+    nest.Simulate(t_expected[1])
 
     spikes = sr.events["times"]
     voltages = pd.DataFrame.from_records(vm.events)
 
-    # Consistency check on output of first neuron
-    assert list(spikes) == [round(t / resolution) for t in [3, 8]]
+    assert list(spikes) == [round(t / resolution) for t in t_expected]
 
-    # Membrane potential before effect of incoming spike must be -70, i.e. up to 4 ms
-    np.testing.assert_array_equal(voltages.loc[voltages.times <= round(4.0 / resolution)].V_m, -70)
+    # Effect of first spike on membrane potential of second. Begins with arrival of first spike of n1 at n2
+    t_arrive = t_expected[0] + delay
+    t_arrive_steps = round(t_arrive / resolution)
 
-    # Explicitly calculate membrane potential for times from 4 ms onward
-    v_test = voltages.loc[voltages.times >= round(4.0 / resolution)]
+    # Must have resting membrane potential up to spike arrival at n2
+    v_pre_spike = voltages.loc[voltages.times <= t_arrive_steps].V_m
+    np.testing.assert_array_equal(v_pre_spike, n2.E_L)
 
-    Vm_expected = -70 + 100 * Vm_theory(v_test.times * resolution - 4.0)
+    # Compare membrane potential from spike arrival onward to analytical solution
+    t_post_spike = voltages.loc[voltages.times >= t_arrive_steps].times * resolution - t_arrive
+    v_post_spike = voltages.loc[voltages.times >= t_arrive_steps].V_m
 
-    np.testing.assert_allclose(v_test.V_m, Vm_expected, rtol=1e-12)
+    v_expected = Vm_theory(t_post_spike, n2.get(), weight)
+
+    np.testing.assert_allclose(v_post_spike, v_expected, rtol=1e-12)
 
 
 # ------------------------------------------------------------------------------------------
 #
 # Expected output of this simulation
 #
-# The output send to std::cout is a superposition of the output of
+# The output sent to std::cout is a superposition of the output of
 # the voltmeter and the spike recorder. Both, voltmeter and spike
 # recorder are connected to the same neuron.
 #

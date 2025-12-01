@@ -38,6 +38,12 @@ def run_simulation(model, syn1, syn2, debugging=False):
     Returns:
         bool: True if the maximum voltage of both neurons exceeds Vref, False otherwise.
     """
+    
+    # Define time step for precise simulation
+    dt = 0.125  # ms
+    nest.ResetKernel()
+    nest.SetKernelStatus({"tics_per_ms": 1.0 / dt, "resolution": dt})
+
     Vref = -70.0
     # Create neurons with specified model and initial parameters
     n1 = nest.Create(model, params={"V_m": Vref, "E_L": Vref, "V_th": 1e10, "I_e": 0.0})
@@ -71,8 +77,6 @@ def run_simulation(model, syn1, syn2, debugging=False):
 
     # Return True if both neurons' voltages exceeded Vref
     return max_v1 > Vref and max_v2 > Vref
-
-
 def setup():
     """
     Set up the simulation kernel with specified resolution and time settings.

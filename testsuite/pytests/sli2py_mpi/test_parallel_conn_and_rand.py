@@ -33,9 +33,7 @@ from numpy import meshgrid
 @MPITestAssertEqual([1, 2, 4], debug=False)
 def test_parallel_cond_and_rand():
     """
-    Parallel Connect and Randomize Test Script
-
-    This script creates a neuron population to itself, randomizing
+    This test connects a neuron population to itself, randomizing
     weight, delay, receptor type and one synaptic parameter. It runs
     with a fixed number of virtual processes, and checks that connections
     are invariant on executing with a varying number of MPI processes.

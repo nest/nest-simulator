@@ -47,15 +47,25 @@ def _create_layer():
 @pytest.mark.parametrize(
     "conn_spec",
     (
+        # Test 1: pairwise_bernoulli_on_source (driver = source layer)
         {"rule": "pairwise_bernoulli", "p": 1.0, "allow_autapses": True},
-        {"rule": "pairwise_bernoulli", "p": 1.0, "allow_autapses": True},
+        # Test 2: pairwise_bernoulli_on_target (driver = target layer)
+        {"rule": "pairwise_bernoulli", "p": 1.0, "use_on_source": True, "allow_autapses": True},
+        # Test 3: pairwise_bernoulli_on_source with number_of_connections (fixed fan-out)
         {"rule": "fixed_outdegree", "outdegree": NUM_NODES, "allow_autapses": True},
+        # Test 4: pairwise_bernoulli_on_target with number_of_connections (fixed fan-in)
         {"rule": "fixed_indegree", "indegree": NUM_NODES, "allow_autapses": True},
     ),
 )
 def test_ticket_881_multithreaded_spatial_connectivity(conn_spec):
     """
     Ensure ConnectLayers establishes the full all-to-all connectivity for different configuration modes.
+
+    This test corresponds to the SLI regression test ticket-881.sli which tests:
+    1. pairwise_bernoulli_on_source (default pairwise_bernoulli, driver=source)
+    2. pairwise_bernoulli_on_target (pairwise_bernoulli with use_on_source=True, driver=target)
+    3. fixed_outdegree (prescribed fan-out, equivalent to pairwise_bernoulli_on_source with number_of_connections)
+    4. fixed_indegree (prescribed fan-in, equivalent to pairwise_bernoulli_on_target with number_of_connections)
     """
 
     nest.ResetKernel()

@@ -323,10 +323,13 @@ class NodeCollection:
 
         Notes
         -----
-        - It only works for nodes local to the current MPI process, if
-          used in a MPI-parallel simulation.
+        In an MPI-parallel simulation, this returns only positions for nodes on the current MPI rank.
         """
-        return sli_func("GetPosition", self)
+
+        if not self.spatial:
+            raise BadProperty("NodeCollection has no spatial positions.")
+            
+        return self.spatial['positions']
 
     def get(self, *params, **kwargs):
         """

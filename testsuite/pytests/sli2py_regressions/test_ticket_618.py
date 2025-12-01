@@ -72,7 +72,7 @@ def test_ticket_618_tau_parameters_raise_or_behave():
 
         try:
             neuron = nest.Create(model, params=tau_params)
-        except Exception:
+        except BadProperty:
             continue
 
         nest.Simulate(10.0)

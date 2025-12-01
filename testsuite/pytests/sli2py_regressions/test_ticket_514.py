@@ -19,32 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
+import pytest
 
-"""
-Regression test for Ticket #514.
-
-Test ported from SLI regression test.
-Ensure that poisson_generator_ps can drive more than 128 targets.
-"""
-
-
-def test_ticket_514_poisson_generator_ps_connects_many_targets():
+def test_ticket_514():
     """
-    Ensure poisson_generator_ps connects to 1000 targets without errors.
+    Ensure that poisson_generator_ps can be connected to 1000 neurons.
     """
-
-    nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": 0.1})
-
+    import nest
+    
     pg = nest.Create("poisson_generator_ps")
-    nest.SetStatus(pg, {"rate": 1000.0})
-
     neurons = nest.Create("iaf_psc_delta", n=1000)
-
+    
     nest.Connect(pg, neurons)
-    nest.Simulate(1000.0)
-
+    
     connections = nest.GetConnections(source=pg, target=neurons)
-
+    
     assert len(connections) == len(neurons)

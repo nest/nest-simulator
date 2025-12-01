@@ -110,7 +110,6 @@ class NestModule(types.ModuleType):
         type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
         type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
 
-        self.__version__ = "PYNEST-NG"
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))

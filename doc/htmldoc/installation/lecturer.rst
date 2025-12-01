@@ -47,9 +47,3 @@ They provide an image of many computational neuroscience tools including NEST!
   * :ref:`PyNEST tutorials <tutorials>`
 
   * For creating and modifying models, see :doc:`NESTML tutorials <nestml:tutorials/tutorials_list>`
-
-
-
-
-
-

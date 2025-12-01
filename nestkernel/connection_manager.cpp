@@ -443,6 +443,8 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  kernel().node_manager.update_thread_local_node_data();
+
   if ( sources->empty() )
   {
     throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
@@ -483,32 +485,6 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   set_connections_have_changed();
 
   cb.connect();
-}
-
-
-void
-nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
-{
-  // Get synapse id
-  size_t syn_id = 0;
-  auto synmodel = syn_spec->lookup( names::model );
-  if ( not synmodel.empty() )
-  {
-    const std::string synmodel_name = getValue< std::string >( synmodel );
-    // The following throws UnknownSynapseType for invalid synmodel_name
-    syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
-  }
-  // Connect all sources to all targets
-  for ( auto&& source : sources )
-  {
-    auto source_node = kernel().node_manager.get_node_or_proxy( source );
-    for ( auto&& target : targets )
-    {
-      auto target_node = kernel().node_manager.get_node_or_proxy( target );
-      auto target_thread = target_node->get_thread();
-      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
-    }
-  }
 }
 
 
@@ -644,6 +620,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
 {
   // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
   sw_construction_connect.start();
+
+  kernel().node_manager.update_thread_local_node_data();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   // The bool indicates whether the value is an integer or not, and is determined at a later point.
@@ -811,6 +789,8 @@ void
 nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
+  kernel().node_manager.update_thread_local_node_data();
+
   SonataConnector sonata_connector( graph_specs, hyberslab_size );
 
   // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
@@ -863,6 +843,8 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
   const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
   const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
+
+  kernel().node_manager.update_thread_local_node_data();
 
   ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 
@@ -1219,14 +1201,12 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const size_t tid,
 
 void
 nest::ConnectionManager::get_connections_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
-  NodeCollectionPTR source,
-  NodeCollectionPTR target,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
+  NodeCollectionPTR,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   ConnectorBase* connections = connections_[ tid ][ syn_id ];
   if ( connections )
   {
@@ -1240,26 +1220,16 @@ nest::ConnectionManager::get_connections_( const size_t tid,
   }
 
   target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
 nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
-  NodeCollectionPTR source,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR,
   NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   // Split targets into neuron- and device-vectors.
   std::vector< size_t > target_neuron_node_ids;
   std::vector< size_t > target_device_node_ids;
@@ -1289,26 +1259,16 @@ nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
   {
     target_table_devices_.get_connections_to_devices_( 0, t_device_id, tid, syn_id, synapse_label, conns_in_thread );
   }
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
 nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
-  std::deque< ConnectionID >& connectome,
+  std::deque< ConnectionID >& conns_in_thread,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
-  std::deque< ConnectionID > conns_in_thread;
-
   // Split targets into neuron- and device-vectors.
   std::vector< size_t > target_neuron_node_ids;
   std::vector< size_t > target_device_node_ids;
@@ -1370,14 +1330,6 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
       }
     }
   }
-
-  if ( conns_in_thread.size() > 0 )
-  {
-#pragma omp critical( get_connections )
-    {
-      extend_connectome( connectome, conns_in_thread );
-    }
-  }
 }
 
 void
@@ -1401,17 +1353,27 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
     size_t tid = kernel().vp_manager.get_thread_id();
 
+    std::deque< ConnectionID > conns_in_thread;
+
     if ( not source.get() and not target.get() )
     {
-      get_connections_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_( tid, conns_in_thread, source, target, syn_id, synapse_label );
     }
     else if ( not source.get() and target.get() )
     {
-      get_connections_to_targets_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_to_targets_( tid, conns_in_thread, source, target, syn_id, synapse_label );
     }
     else if ( source.get() )
     {
-      get_connections_from_sources_( tid, connectome, source, target, syn_id, synapse_label );
+      get_connections_from_sources_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+    }
+
+    if ( conns_in_thread.size() > 0 )
+    {
+#pragma omp critical( get_connections )
+      {
+        extend_connectome( connectome, conns_in_thread );
+      }
     }
   }
 }
@@ -1701,19 +1663,20 @@ nest::ConnectionManager::deliver_secondary_events( const size_t tid,
     {
       if ( positions_tid[ syn_id ].size() > 0 )
       {
-        SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
+        std::unique_ptr< SecondaryEvent > prototype =
+          kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
         size_t lcid = 0;
         const size_t lcid_end = positions_tid[ syn_id ].size();
         while ( lcid < lcid_end )
         {
           std::vector< unsigned int >::iterator readpos = recv_buffer.begin() + positions_tid[ syn_id ][ lcid ];
-          prototype << readpos;
-          prototype.set_stamp( stamp );
+          *prototype << readpos;
+          prototype->set_stamp( stamp );
 
           // send delivers event to all targets with the same source
           // and returns how many targets this event was delivered to
-          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, prototype );
+          lcid += connections_[ tid ][ syn_id ]->send( tid, lcid, cm, *prototype );
         }
       }
     }

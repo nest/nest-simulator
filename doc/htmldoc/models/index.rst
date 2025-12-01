@@ -5,7 +5,33 @@ Model directory
 ===============
 
 
+What type of model?
+-------------------
+
 NEST has over 100 models, choose an option for finding the one you need!
+
+
+.. grid::
+
+   .. grid-item-card::
+      :columns: 4
+      :link: network_models
+      :link-type: ref
+
+      **Network models**
+
+
+
+   .. grid-item-card::
+      :columns: 4
+      :link: model_selector
+      :link-type: ref
+
+      **Neurons, synapses, and devices**
+
+:ref:`What's the difference? <model_meaning>`
+
+
 
 .. _model_selector:
 
@@ -93,7 +119,6 @@ Learn more about . . .
       * :ref:`Model terminology <model_meaning>`
 
 
-
 ----
 
 .. _model_meaning:
@@ -111,14 +136,16 @@ The term `models` in the context of NEST (and the field of computational neurosc
    implementations of these conceptual entities. Most of the models in
    NEST are based on either peer-reviewed publications or text books
    like [1]_. This is what we mean for models in our model directory.
+   Note that **devices** are not models but are mechanisms to generate or read out
+   signals, like spikes. We list them together with neurons and synapses since they
+   are required to be able to produce and analyze neuron and synapse activity.
 
 2. **Network models**. These models are created from individual neuron
    and synapse models using the different commands provided by the
-   :ref:`PyNEST API <pynest_api>`. Examples for such network models
-   are the :doc:`microcircuit model
-   <../auto_examples/Potjans_2014/index>` or the `multi-area model
-   <https://inm-6.github.io/multi-area-model/>`_).
-   You can also explore :doc:`all our example networks </examples/index>`.
+   :ref:`PyNEST API <pynest_api>`. Network models have a defined population
+   and connectivity, with initial conditions, along with specific neuron and synapse models.
+   We have :doc:`a variety of examples for network models </examples/index>`  and specifically,
+   :doc:`large scale networks examples </networks/index>`.
 
 .. seealso::
 
@@ -153,3 +180,8 @@ References
     {% for keys in model_dict %}
     {{ keys | replace(".html", "") }}
     {% endfor %}
+
+.. toctree::
+   :hidden:
+
+   ../networks/index

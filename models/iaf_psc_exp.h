@@ -36,7 +36,7 @@ namespace nest
 {
 // Disable clang-formatting for documentation due to over-wide table.
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
 
 Short description
 +++++++++++++++++
@@ -101,7 +101,7 @@ where
 
 .. math::
 
-   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, X}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = \sum_{j} \sum_{k} i_{\text{syn, X}}(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
 or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
@@ -160,7 +160,7 @@ on the synaptic time constant according to
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
-:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
+`PyNEST Microcircuit: Helper Functions <https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
 
 Parameters
 ++++++++++

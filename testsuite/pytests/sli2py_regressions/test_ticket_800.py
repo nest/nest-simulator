@@ -197,7 +197,9 @@ def test_bad_kernels(p_name, p_spec, layer_2d):
 
 
 # Test 9
-@pytest.mark.parametrize("p_name, p_spec", good_parameters)
+@pytest.mark.parametrize(
+    "p_name, p_spec", (good_parameters + [["constant", {"value": 0.5}], ["constant", {"value": 1}]])
+)
 def test_good_weights(p_name, p_spec, layer_2d):
     nest.Connect(
         layer_2d, layer_2d, {"rule": "pairwise_bernoulli", "p": 1}, {"weight": nest.CreateParameter(p_name, p_spec)}

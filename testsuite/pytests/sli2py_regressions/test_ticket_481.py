@@ -22,6 +22,16 @@ import nest
 import pytest
 
 
+def setup():
+    """
+    Setup function that resets the kernel and sets kernel status.
+    This matches the SLI setup function which does both ResetKernel and SetKernelStatus.
+    """
+    dt = 0.125  # ms
+    nest.ResetKernel()
+    nest.SetKernelStatus({"tics_per_ms": 1.0 / dt, "resolution": dt})
+
+
 def run_simulation(model, syn1, syn2, debugging=False):
     """
     Helper function to simulate and check if neuron voltages exceed the reference.
@@ -40,8 +50,8 @@ def run_simulation(model, syn1, syn2, debugging=False):
     """
     # Define time step for precise simulation
     dt = 0.125  # ms
-    nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 1.0 / dt, "resolution": dt})
+    # Note: ResetKernel and SetKernelStatus are NOT called here
+    # They should be called via setup() in the test function before CopyModel
 
     Vref = -70.0
     # Create neurons with specified model and initial parameters
@@ -91,15 +101,20 @@ def test_ticket_481():
     Author: Hans Ekkehard Plesser, 2010-11-03; based on original reproducer by Peiran Gao
     """
     # Test 1: Both neurons connected with identical synapse models, should pass
+    setup()
     result = run_simulation("iaf_psc_delta_ps", "static_synapse", "static_synapse")
     assert result, "Both neurons should receive spikes with identical synapse models."
 
     # Test 2: Neurons connected with different named copies of the same synapse model
+    # setup() must be called before CopyModel, as ResetKernel (inside setup) clears all custom models
+    setup()
     nest.CopyModel("static_synapse", "hoo")
     result = run_simulation("iaf_psc_delta_ps", "hoo", "hoo")
     assert result, "Both neurons should receive spikes with identical synapse models, even if renamed."
 
     # Test 3: Neurons connected with different synapse models, expected to fail
+    # setup() must be called before CopyModel, as ResetKernel (inside setup) clears all custom models
+    setup()
     nest.CopyModel("static_synapse", "foo")
     nest.CopyModel("static_synapse", "goo")
     with pytest.raises(Exception):

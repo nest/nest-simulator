@@ -89,12 +89,7 @@ def test_issue_740_step_current_generator_time_checks(resolution, allow_offgrid,
     """
 
     if should_raise:
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore",
-                message="SetStatus\\(\\) call failed, but nodes have already been created!",
-            )
-            with pytest.raises(nest.kernel.NESTError, match="(increasing|representable)"):
-                _simulate(resolution, allow_offgrid)
+        with pytest.raises(nest.kernel.NESTError, match="(increasing|representable)"):
+            _simulate(resolution, allow_offgrid)
     else:
         _simulate(resolution, allow_offgrid)

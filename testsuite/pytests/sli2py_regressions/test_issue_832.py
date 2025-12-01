@@ -140,16 +140,19 @@ def test_issue_832_gap_junction_marker_stability():
     times = events["times"]
     voltages = events["V_m"]
 
-    reference_map = {time: value for time, value in REFERENCE_DATA}
-    mismatches = []
-    for ref_time, expected_value in reference_map.items():
-        matching_indices = [idx for idx, t in enumerate(times) if abs(t - ref_time) < 1e-6]
-        if not matching_indices:
-            mismatches.append((ref_time, "missing"))
-            continue
+    # Extract reference times (matching SLI: dup Transpose First /test_times Set)
+    reference_times = {time for time, _ in REFERENCE_DATA}
 
-        measured = voltages[matching_indices[0]]
-        if not pytest.approx(expected_value, abs=1e-3) == measured:
-            mismatches.append((ref_time, measured, expected_value))
+    # Create (time, voltage) pairs and round to 5 decimals (matching SLI: 5 ToUnitTestPrecision)
+    # Convert times to integers since time_in_steps=True
+    recorded_pairs = [(int(round(t)), round(v, 5)) for t, v in zip(times, voltages) if int(round(t)) in reference_times]
 
-    assert not mismatches, mismatches
+    # Compare with reference data (matching SLI: eq)
+    reference_pairs = [(time, round(value, 5)) for time, value in REFERENCE_DATA]
+    recorded_dict = dict(recorded_pairs)
+
+    for ref_time, expected_value in reference_pairs:
+        assert ref_time in recorded_dict, f"Missing time step {ref_time}"
+        assert (
+            recorded_dict[ref_time] == expected_value
+        ), f"Time {ref_time}: expected {expected_value}, got {recorded_dict[ref_time]}"

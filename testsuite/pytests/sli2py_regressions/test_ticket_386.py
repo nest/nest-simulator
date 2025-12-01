@@ -22,15 +22,6 @@
 import nest
 import pytest
 
-"""
-Regression test for Ticket #386.
-
-Test ported from SLI regression test.
-Ensure that all models exposing recordables can be sampled by a multimeter at kernel resolution.
-
-Author: Hans Ekkehard Plesser, 2010-10-03
-"""
-
 
 RESOLUTION = 0.1
 
@@ -46,7 +37,7 @@ def _models_supporting_recordables():
 
 
 @pytest.mark.parametrize("model,recordables,has_compartments", _models_supporting_recordables())
-def test_ticket_386_multimeter_at_resolution(model, recordables, has_compartments):
+def test_ticket_386(model, recordables, has_compartments):
     """
     Ensure multimeter recording at the kernel resolution works for models with recordables.
     """

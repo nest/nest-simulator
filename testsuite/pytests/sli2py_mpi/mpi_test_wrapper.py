@@ -398,3 +398,40 @@ class MPITestAssertCompletes(MPITestWrapper):
 
     def assert_correct_results(self, tmpdirpath):
         assert self._specific_assert is None, "MPITestAssertCompletes does not support specific_assert."
+
+
+class MPITestAssertEqualSums(MPITestWrapper):
+    """
+    Assert that data summed across VPs is equal independent of number of MPI ranks.
+
+    Applies to other data only.
+    """
+
+    def assert_correct_results(self, tmpdirpath):
+        self.collect_results(tmpdirpath)
+
+        all_res = []
+        if self._spike:
+            raise NotImplementedError("MPITestAssertEqualSum does not support SPIKE data.")
+
+        if self._multi:
+            raise NotImplementedError("MPITestAssertEqualSum does not support MULTI data.")
+
+        assert self._other, "No data collected"
+
+        # For each number of procs, combine across ranks or VPs (depends on what test has written) and
+        # sort by all columns so that if results for different proc numbers are equal up to a permutation
+        # of rows, the sorted frames will compare equal
+
+        # next(iter(...)) returns the first value in the _other dictionary
+        # [0] then picks the first DataFrame from that list
+        # columns need to be converted to list() to be passed to sort_values()
+        all_res.append([pd.concat(others, ignore_index=True).sum(axis=0) for others in self._other.values()])
+
+        assert all_res, "No test data collected"
+
+        for res in all_res:
+            assert len(res) == len(self._procs_lst), "Could not collect data for all procs"
+
+            for r in res[1:]:
+                pd.testing.assert_series_equal(res[0], r)

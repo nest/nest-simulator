@@ -22,7 +22,6 @@
 import nest
 import pytest
 
-
 RESOLUTION = 0.1
 
 

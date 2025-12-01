@@ -33,6 +33,7 @@ import os
 import sys
 
 import junitparser as jp
+from lxml.etree import XMLSyntaxError
 
 assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
@@ -60,15 +61,24 @@ expected_num_tests = {
 def parse_result_file(fname):
     try:
         results = jp.JUnitXml.fromfile(fname)
-    except Exception as err:
-        return {
-            "Tests": 1,
-            "Skipped": 0,
-            "Failures": 0,
-            "Errors": 1,
-            "Time": 0,
-            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
-        }
+    except XMLSyntaxError as err:
+        try:
+            # Try to handle the one problem that regularly occurs
+            # fromstring() below wants byte string
+            xml_text = open(fname, "rb").read()
+            if xml_text.endswith(b">>"):
+                results = jp.JUnitXml.fromstring(xml_text[:-1])
+            else:
+                raise err
+        except Exception as err:
+            return {
+                "Tests": 1,
+                "Skipped": 0,
+                "Failures": 0,
+                "Errors": 1,
+                "Time": 0,
+                "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+            }
 
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more

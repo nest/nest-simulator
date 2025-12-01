@@ -43,6 +43,10 @@ def test_ticket_573_copy_model_respects_synapse_limit():
     existing_synapse_models = len(nest.synapse_models)
     max_additional_models = max_synapse_models - existing_synapse_models
 
+    # Fill up all possible slots for synapse models
+    for idx in range(max_additional_models):
+        nest.CopyModel("static_synapse", f"ticket_573_syn_{idx}")
+
+    # make sure adding an extra does raise
     with pytest.raises(nest.kernel.NESTError, match="Synapse model count exceeded"):
-        for idx in range(max_additional_models + 1):
-            nest.CopyModel("static_synapse", f"ticket_573_syn_{idx}")
+        nest.CopyModel("static_synapse", f"ticket_573_syn_{max_additional_models}")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_self_get_conns_with_empty_ranks.py
+# test_ticket_955.py
 #
 # This file is part of NEST.
 #
@@ -19,25 +19,30 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import pytest
-from mpi_test_wrapper import MPITestAssertEqual
+from mpi_test_wrapper import MPITestAssertCompletes
 
 
-# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@MPITestAssertEqual([1, 2, 4], debug=False)
-def test_get_conns_with_empty_ranks():
+@pytest.mark.parametrize(
+    "spec",
+    [
+        {"pos": [[0, 0]], "extent": [1, 1]},
+        {"pos": [[0, 0, 0]], "extent": [1, 1, 1]},
+        {"shape": [1, 1]},
+        {"shape": [1, 1, 1]},
+    ],
+)
+@MPITestAssertCompletes([1, 2, 4])
+def test_ticket_955(spec):
     """
-    Confirm that connections can be gathered correctly even if some ranks have no neurons.
+    Confirm one can create a layer with just a single element also when running in parallel.
 
-    The test compares connection data written to OTHER_LABEL.
+    This test only confirms completion, no data is tested.
     """
 
     import nest
-    import pandas as pd
 
-    nrns = nest.Create("parrot_neuron", n=2)
-    nest.Connect(nrns, nrns)
-
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1, errors="ignore")
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821
+    geom = nest.spatial.free(**spec) if "pos" in spec else nest.spatial.grid(**spec)
+    nest.Create("parrot_neuron", positions=geom)

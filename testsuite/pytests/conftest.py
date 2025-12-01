@@ -152,7 +152,7 @@ def have_hdf5():
 
 @pytest.fixture(scope="session")
 def have_music():
-    return nest.ll_api.sli_func("statusdict/have_music ::")
+    return nest.build_info["have_music"]
 
 
 @pytest.fixture(autouse=True)

@@ -26,12 +26,12 @@ def test_ticket_514():
     Ensure that poisson_generator_ps can be connected to 1000 neurons.
     """
     import nest
-    
+
     pg = nest.Create("poisson_generator_ps")
     neurons = nest.Create("iaf_psc_delta", n=1000)
-    
+
     nest.Connect(pg, neurons)
-    
+
     connections = nest.GetConnections(source=pg, target=neurons)
-    
+
     assert len(connections) == len(neurons)

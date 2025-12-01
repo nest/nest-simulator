@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_consistent_local_vps.py
+# test_ticket_619.py
 #
 # This file is part of NEST.
 #
@@ -20,25 +20,21 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
+
+"""
+Regression test for Ticket #619.
+
+Test ported from SLI regression test.
+Ensure SetKernelStatus accepts zero biological time alongside other kernel parameters.
+
+Author: Hans Ekkehard Plesser, 2012-11-29
+"""
 
 
-@pytest.mark.skipif_missing_threads
-def test_consistent_local_vps():
+def test_ticket_619_set_kernel_status_with_zero_biological_time():
     """
-    Test local_vps field of kernel status.
-
-    This test ensures that the PyNEST-generated local_vps information
-    agrees with the thread-VP mappings in the kernel.
+    Ensure SetKernelStatus with biological_time 0.0 and rng_seed 1 succeeds.
     """
-    n_vp = 3 * nest.num_processes
-    nest.total_num_virtual_procs = n_vp
 
-    local_vps = list(nest.GetLocalVPs())
-
-    # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
-
-    vp_direct = list(nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
-    assert vp_direct == vp_indirect
+    nest.ResetKernel()
+    nest.SetKernelStatus({"biological_time": 0.0, "rng_seed": 1})

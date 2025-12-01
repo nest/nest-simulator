@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_self_get_conns_with_empty_ranks.py
+# test_connect_few_neurons.py
 #
 # This file is part of NEST.
 #
@@ -23,21 +23,20 @@ import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-# Parametrization over the number of nodes here only to show hat it works
 @pytest.mark.skipif_incompatible_mpi
-@MPITestAssertEqual([1, 2, 4], debug=False)
-def test_get_conns_with_empty_ranks():
+@pytest.mark.parametrize("connspec", ["all_to_all", "one_to_one", {"rule": "pairwise_bernoulli", "p": 1.0}])
+@MPITestAssertEqual([1, 4], debug=False)
+def test_connect_few_neurons(connspec):
     """
-    Confirm that connections can be gathered correctly even if some ranks have no neurons.
+    Confirm that connections created correctly for more targets than local nodes.
 
-    The test compares connection data written to OTHER_LABEL.
+    The test is performed on connection data written to OTHER_LABEL.
     """
 
     import nest
-    import pandas as pd
 
-    nrns = nest.Create("parrot_neuron", n=2)
-    nest.Connect(nrns, nrns)
+    nrns = nest.Create("parrot_neuron", n=4)
+    nest.Connect(nrns, nrns, connspec)
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1, errors="ignore")
+    conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
     conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821

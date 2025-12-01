@@ -4,6 +4,7 @@ markers = [
     "skipif_missing_hdf5: skip test if NEST was built without HDF5 support",
     "skipif_missing_mpi: skip test if NEST was built without MPI support",
     "skipif_missing_threads: skip test if NEST was built without multithreading support",
+    "skipif_incompatible_mpi: skip test if NEST was built with OpenMPI < 5.0.7",
     "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]
 

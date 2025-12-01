@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_consistent_local_vps.py
+# test_ticket_689.py
 #
 # This file is part of NEST.
 #
@@ -20,25 +20,30 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
+
+"""
+Regression test for Ticket #689.
+
+Test ported from SLI regression test.
+Ensure GetConnections works correctly with hpc synapses.
+
+Authors: Susanne Kunkel and Maximilian Schmidt, 2012-02-19
+"""
 
 
-@pytest.mark.skipif_missing_threads
-def test_consistent_local_vps():
+def test_ticket_689_getconnections_with_hpc_synapse():
     """
-    Test local_vps field of kernel status.
-
-    This test ensures that the PyNEST-generated local_vps information
-    agrees with the thread-VP mappings in the kernel.
+    Ensure retrieving connections with stdp_pl_synapse_hom_hpc succeeds.
     """
-    n_vp = 3 * nest.num_processes
-    nest.total_num_virtual_procs = n_vp
 
-    local_vps = list(nest.GetLocalVPs())
+    nest.ResetKernel()
+    nest.total_num_virtual_procs = 1
 
-    # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
+    n1 = nest.Create("iaf_psc_alpha")
+    n2 = nest.Create("iaf_psc_alpha")
 
-    vp_direct = list(nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
-    assert vp_direct == vp_indirect
+    nest.Connect(n1, n2, conn_spec={"rule": "all_to_all"}, syn_spec="stdp_pl_synapse_hom_hpc")
+
+    connections = nest.GetConnections(target=n2)
+
+    assert len(connections) == 1

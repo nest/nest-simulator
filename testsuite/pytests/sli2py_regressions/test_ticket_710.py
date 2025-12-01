@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_consistent_local_vps.py
+# test_ticket_710.py
 #
 # This file is part of NEST.
 #
@@ -23,22 +23,14 @@ import nest
 import pytest
 
 
-@pytest.mark.skipif_missing_threads
-def test_consistent_local_vps():
+def test_static_synapse_hpc_connects_to_spike_recorder():
     """
-    Test local_vps field of kernel status.
-
-    This test ensures that the PyNEST-generated local_vps information
-    agrees with the thread-VP mappings in the kernel.
+    Regression test for Ticket #710.
+    Test ported from SLI regression test
+    Ensure that static_synapse_hpc can be used to connect a neuron to a spike recorder.
     """
-    n_vp = 3 * nest.num_processes
-    nest.total_num_virtual_procs = n_vp
-
-    local_vps = list(nest.GetLocalVPs())
-
-    # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
-
-    vp_direct = list(nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
-    assert vp_direct == vp_indirect
+    nest.ResetKernel()
+    neuron = nest.Create("iaf_psc_alpha")
+    sr = nest.Create("spike_recorder")
+    nest.Connect(neuron, sr, syn_spec={"synapse_model": "static_synapse_hpc"})
+    # No assertion needed, test passes if no error is raised.

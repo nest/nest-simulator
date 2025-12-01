@@ -76,6 +76,8 @@ def test_ticket_618_tau_parameters_raise_or_behave():
             continue
         except nest.kernel.NESTErrors.TypeMismatch:
             continue
+        except nest.kernel.NESTErrors.BadParameter:
+            continue
 
         nest.Simulate(10.0)
 

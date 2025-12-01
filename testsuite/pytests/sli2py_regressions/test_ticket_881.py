@@ -39,10 +39,6 @@ NUM_NODES = len(NODE_POSITIONS)
 NUM_EXPECTED = NUM_NODES * NUM_NODES
 
 
-def _create_layer():
-    return nest.Create("iaf_psc_alpha", n=NUM_NODES, positions=spatial.free(NODE_POSITIONS))
-
-
 @pytest.mark.skipif_missing_threads
 @pytest.mark.parametrize(
     "conn_spec",
@@ -71,7 +67,7 @@ def test_ticket_881_multithreaded_spatial_connectivity(conn_spec):
     nest.ResetKernel()
     nest.local_num_threads = NUM_THREADS
 
-    layer = _create_layer()
+    layer = nest.Create("iaf_psc_alpha", n=NUM_NODES, positions=spatial.free(NODE_POSITIONS))
 
     nest.Connect(layer, layer, conn_spec=conn_spec)
 

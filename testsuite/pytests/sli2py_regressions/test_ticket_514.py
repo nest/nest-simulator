@@ -21,6 +21,7 @@
 
 import pytest
 
+
 def test_ticket_514():
     """
     Ensure that poisson_generator_ps can be connected to 1000 neurons.

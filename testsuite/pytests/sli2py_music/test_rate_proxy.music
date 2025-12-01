@@ -1,5 +1,5 @@
 /*
- *  test_event_proxies_receiver.sli
+ *  test_rate_proxy.music
  *
  *  This file is part of NEST.
  *
@@ -20,24 +20,14 @@
  *
  */
 
-(unittest) run
-/unittest using
+stoptime=5.0
 
-skip_if_without_music
+[from]
+    np=1
+    binary=./test_rate_proxy_sender.py
 
-M_ERROR setverbosity
+[to]
+    np=1
+    binary=./test_rate_proxy_receiver.py
 
-% create voltmeter first to ensure same GID in sender and receiver
-/voltmeter Create /vm Set
-vm << /label (receiver) /record_to /ascii >> SetStatus
-
-/music_event_in_proxy Create /meip Set
-meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
-
-/iaf_psc_alpha Create /n Set
-
-meip n /one_to_one << /weight 750.0 >> Connect
-
-vm n Connect
-
-10 Simulate
+from.rate_out -> to.rate_in [1]

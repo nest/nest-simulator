@@ -1,0 +1,12 @@
+
+stoptime=0.01
+
+[from]
+  binary=./test_event_proxies_sender.py
+  np=1
+
+[to]
+  binary=./test_event_proxies_receiver.py
+  np=1
+
+  from.spikes_out -> to.spikes_in [1]

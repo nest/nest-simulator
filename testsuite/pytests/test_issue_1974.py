@@ -20,31 +20,54 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import nest
 import pytest
-from mpi_test_wrapper import MPITestAssertEqual
+
+
+@pytest.fixture
+def network():
+    nrns = nest.Create("parrot_neuron", 2)
+
+    local_nrns = [n.global_id for n in nrns if n.local]
+
+    yield local_nrns, nrns
 
 
 @pytest.mark.skipif_missing_music
-@MPITestAssertEqual([1, 2, 4])
-def test_issue_1974():
+def test_issue_1974_in(network):
     """
     For each of the two parrot neurons, exactly one connection from/to the in/out MUSIC proxy must be created,
     specifically to the proxy on the rank on which the parrot neuron exists. Therefore, the pooled connections across
     ranks must be identical independent of number of ranks.
     """
 
-    import nest
-
-    if not nest.ll_api.sli_func("statusdict/have_music ::"):
-        return
-
-    nrns = nest.Create("parrot_neuron", 2)
+    local_nrns, nrns = network
 
     music_in = nest.Create("music_event_in_proxy", 1, {"port_name": "in_spikes"})
-    music_out = nest.Create("music_event_out_proxy", 1, {"port_name": "out_spikes"})
 
     nest.Connect(music_in, nrns)
+
+    in_targets = nest.GetConnections(source=music_in).get("target")
+    if isinstance(in_targets, int):
+        in_targets = [in_targets]
+    assert sorted(in_targets) == local_nrns
+
+
+@pytest.mark.skipif_missing_music
+def test_issue_1974_out(network):
+    """
+    For each of the two parrot neurons, exactly one connection from/to the in/out MUSIC proxy must be created,
+    specifically to the proxy on the rank on which the parrot neuron exists. Therefore, the pooled connections across
+    ranks must be identical independent of number of ranks.
+    """
+
+    local_nrns, nrns = network
+
+    music_out = nest.Create("music_event_out_proxy", 1, {"port_name": "out_spikes"})
+
     nest.Connect(nrns, music_out)
 
-    conns = nest.GetConnections().get(output="pandas").drop(labels=["port"], axis=1, errors="ignore")
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    out_targets = nest.GetConnections(target=music_out).get("source")
+    if isinstance(out_targets, int):
+        out_targets = [out_targets]
+    assert sorted(out_targets) == local_nrns

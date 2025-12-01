@@ -29,7 +29,7 @@ def setup():
     """
     dt = 0.125  # ms
     nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 1.0 / dt, "resolution": dt})
+    nest.SetKernelStatus({"tics_per_ms": int(round(1.0 / dt)), "resolution": dt})
 
 
 def run_simulation(model, syn1, syn2, debugging=False):
@@ -75,8 +75,8 @@ def run_simulation(model, syn1, syn2, debugging=False):
     nest.Simulate(1000.0)
 
     # Retrieve the maximum voltage recorded by each voltmeter
-    vm1_events = nest.GetStatus(vm1, "events")[0]
-    vm2_events = nest.GetStatus(vm2, "events")[0]
+    vm1_events = vm1.events
+    vm2_events = vm2.events
 
     max_v1 = max(vm1_events["V_m"])
     max_v2 = max(vm2_events["V_m"])

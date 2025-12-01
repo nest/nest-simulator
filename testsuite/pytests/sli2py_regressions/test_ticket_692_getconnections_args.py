@@ -39,7 +39,7 @@ INVALID_VALUES = (0, 0.0, "", {}, "foo")
 @pytest.mark.parametrize("value", INVALID_VALUES)
 def test_ticket_692_getconnections_rejects_non_collections(key, value):
     """
-    Ensure GetConnections raises when source/target is not a node collection or sequence.
+    Ensure GetConnections raises an error when source/target is not a node collection or sequence.
     """
 
     nest.ResetKernel()

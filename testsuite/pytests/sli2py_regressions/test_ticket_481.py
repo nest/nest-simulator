@@ -38,7 +38,6 @@ def run_simulation(model, syn1, syn2, debugging=False):
     Returns:
         bool: True if the maximum voltage of both neurons exceeds Vref, False otherwise.
     """
-    
     # Define time step for precise simulation
     dt = 0.125  # ms
     nest.ResetKernel()

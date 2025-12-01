@@ -40,7 +40,7 @@ AMPLITUDE_VALUES = [10.0, -20.0, 40.0, -80.0, 160.0, -320.0, 640.0]
 
 def _simulate(resolution: float, allow_offgrid: bool) -> None:
     nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 1024.0, "resolution": resolution})
+    nest.set(tics_per_ms=1024, resolution=resolution)
 
     scg = nest.Create(
         "step_current_generator",
@@ -89,7 +89,7 @@ def test_issue_740_step_current_generator_time_checks(resolution, allow_offgrid,
     """
 
     if should_raise:
-        with pytest.raises(nest.kernel.NESTError, match="(increasing|representable)"):
+        with pytest.raises(nest.NESTErrors.BadProperty, match="(increasing|representable)"):
             _simulate(resolution, allow_offgrid)
     else:
         _simulate(resolution, allow_offgrid)

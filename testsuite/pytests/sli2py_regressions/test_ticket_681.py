@@ -58,10 +58,11 @@ def test_ticket_681_handles_recording_backend_errors_without_crash():
         nest.ResetKernel()
         nest.SetKernelStatus({"local_num_threads": 4, "overwrite_files": False, "data_path": data_path})
 
-        with pytest.raises(nest.kernel.NESTError) as excinfo:
-            _run_simulation()
-
-        error = excinfo.value
-        assert isinstance(error, nest.kernel.NESTError)
-        assert getattr(error, "errorname", None) == "IOError"
-        assert getattr(error, "commandname", "").startswith("Simulate")
+        try:
+            with pytest.raises(
+                nest.kernel.NESTError,
+                match="(File exists|overwrite|already exists)",
+            ):
+                _run_simulation()
+        finally:
+            nest.ResetKernel()

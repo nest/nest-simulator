@@ -29,6 +29,9 @@ Test ported from SLI regression test.
 Ensure that NEST throws an exception if one tries to connect poisson_generator
 (sending DSSpikeEvents), noise_generator (sending DSCurrentEvents) or multimeter
 (sending DataLoggingRequest) to a neuron using a plastic synapse.
+spike_generator slips through this test, since it usually sends SpikeEvent. But it
+is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
+one DSSpikeEvent per spike.
 """
 
 import nest

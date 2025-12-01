@@ -47,6 +47,7 @@ def reset_kernel():
     [
         {"rule": "pairwise_bernoulli", "p": 1, "use_on_source": True},
         {"rule": "pairwise_bernoulli", "p": 1, "use_on_source": False},
+        {"rule": "fixed_indegree", "indegree": 1, "allow_multapses": False},
         {"rule": "fixed_outdegree", "outdegree": 4, "allow_multapses": False},
     ],
 )
@@ -62,9 +63,9 @@ def test_connect_generator_layer(connspec):
     nrn_layer = nest.Create("parrot_neuron", positions=nest.spatial.grid(shape=[2, 2]))
 
     nest.Connect(gen_layer, nrn_layer, connspec)
-    conns = nest.GetConnections(source=gen_layer).get("target")
+    targets = nest.GetConnections(source=gen_layer).get("target")
 
-    assert sorted(conns) == list(nrn_layer.global_id)
+    assert sorted(targets) == list(nrn_layer.global_id)
 
 
 @pytest.mark.parametrize(
@@ -73,6 +74,7 @@ def test_connect_generator_layer(connspec):
         [{"rule": "pairwise_bernoulli", "p": 1, "use_on_source": True}, True],
         [{"rule": "pairwise_bernoulli", "p": 1, "use_on_source": False}, False],
         [{"rule": "fixed_indegree", "indegree": 4, "allow_multapses": False}, False],
+        [{"rule": "fixed_outdegree", "outdegree": 1, "allow_multapses": False}, False],
     ],
 )
 def test_connect_recorder_layer(connspec, pass_expected):
@@ -89,8 +91,8 @@ def test_connect_recorder_layer(connspec, pass_expected):
 
     if pass_expected:
         nest.Connect(nrn_layer, rec_layer, connspec)
-        conns = nest.GetConnections(target=rec_layer).get("source")
-        assert sorted(conns) == list(nrn_layer.global_id)
+        sources = nest.GetConnections(target=rec_layer).get("source")
+        assert sorted(sources) == list(nrn_layer.global_id)
     else:
         with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
             nest.Connect(nrn_layer, rec_layer, connspec)

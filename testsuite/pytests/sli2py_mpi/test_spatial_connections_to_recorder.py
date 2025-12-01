@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_spatial_connections_to_generator.py
+# test_spatial_connections_to_recorder.py
 #
 # This file is part of NEST.
 #

@@ -38,31 +38,36 @@ Author: Hans Ekkehard Plesser, 2014-11-25
 def test_ticket_681_handles_recording_backend_errors_without_crash():
     """
     Ensure that running NEST twice with overwrite disabled raises an error but does not crash.
+
+    Test ported from SLI regression test.
+    Ensures that NEST handles errors during calibration gracefully when files already exist.
     """
 
     if nest.ll_api.sli_func("statusdict/have_mpi ::"):
         pytest.skip("Test requires a serial NEST build without MPI support.")
 
     with tempfile.TemporaryDirectory() as data_path:
+        try:
+            # First simulation: should succeed
+            nest.ResetKernel()
+            nest.SetKernelStatus({"local_num_threads": 4, "overwrite_files": False, "data_path": data_path})
 
-        def _run_simulation():
             neurons = nest.Create("iaf_psc_alpha", 4, params={"I_e": 1500.0})
             recorder = nest.Create("spike_recorder", params={"record_to": "ascii"})
             nest.Connect(neurons, recorder)
             nest.Simulate(1000.0)
 
-        nest.ResetKernel()
-        nest.SetKernelStatus({"local_num_threads": 4, "overwrite_files": False, "data_path": data_path})
-        _run_simulation()
+            # Second simulation: should fail because files exist and overwrite is disabled
+            nest.ResetKernel()
+            nest.SetKernelStatus({"local_num_threads": 4, "overwrite_files": False, "data_path": data_path})
 
-        nest.ResetKernel()
-        nest.SetKernelStatus({"local_num_threads": 4, "overwrite_files": False, "data_path": data_path})
+            neurons = nest.Create("iaf_psc_alpha", 4, params={"I_e": 1500.0})
+            recorder = nest.Create("spike_recorder", params={"record_to": "ascii"})
+            nest.Connect(neurons, recorder)
 
-        try:
-            with pytest.raises(
-                nest.kernel.NESTError,
-                match="(File exists|overwrite|already exists)",
-            ):
-                _run_simulation()
+            # Expect IOError when trying to simulate with existing files
+            with pytest.raises(nest.kernel.NESTErrors.IOError):
+                nest.Simulate(1000.0)
         finally:
+            # Always reset kernel to clean state, restoring defaults
             nest.ResetKernel()

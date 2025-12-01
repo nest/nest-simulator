@@ -77,17 +77,6 @@ def run_simulation(model, syn1, syn2, debugging=False):
 
     # Return True if both neurons' voltages exceeded Vref
     return max_v1 > Vref and max_v2 > Vref
-    """
-    Set up the simulation kernel with specified resolution and time settings.
-
-    This function resets the kernel and sets the resolution and ticks per millisecond for precise simulations.
-    """
-    nest.ResetKernel()
-    nest.SetKernelStatus({"tics_per_ms": 1.0 / dt, "resolution": dt})
-
-
-# Define time step
-dt = 0.125  # ms
 
 
 def test_ticket_481():

@@ -129,8 +129,9 @@ ModelManager::get_status( dictionary& dict )
   }
   dict[ names::synapse_models ] = synapse_models;
 
-  // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
-  dict[ names::max_num_syn_models ] = MAX_SYN_ID + 1;
+  // syn_ids start at 0. But because the maximal value is used as invalid_synindex,
+  // we only have MAX_SYN_ID possible models.
+  dict[ names::max_num_syn_models ] = MAX_SYN_ID;
 }
 
 void

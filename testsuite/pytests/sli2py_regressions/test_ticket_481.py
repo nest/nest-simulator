@@ -77,7 +77,6 @@ def run_simulation(model, syn1, syn2, debugging=False):
 
     # Return True if both neurons' voltages exceeded Vref
     return max_v1 > Vref and max_v2 > Vref
-def setup():
     """
     Set up the simulation kernel with specified resolution and time settings.
 

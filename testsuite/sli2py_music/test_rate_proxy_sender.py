@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# test_rate_proxies_sender.py
+# test_rate_proxy_sender.py
 #
 # This file is part of NEST.
 #

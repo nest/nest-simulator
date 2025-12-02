@@ -1,4 +1,4 @@
-# `musictests` folder
+# `sli2py_music` folder
 
 This directory contains tests for the MUSIC interface of NEST [1].
 

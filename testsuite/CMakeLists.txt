@@ -23,7 +23,7 @@ set( TESTSUBDIRS
     regressiontests
     mpitests
     mpi_selftests
-    musictests
+    sli2py_music
     cpptests
     pytests
 )
@@ -36,7 +36,7 @@ add_subdirectory( regressiontests/sli2py_ignore )
 add_subdirectory( mpi_selftests/fail )
 add_subdirectory( mpi_selftests/pass )
 add_subdirectory( mpitests )
-add_subdirectory( musictests )
+add_subdirectory( sli2py_music )
 add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}

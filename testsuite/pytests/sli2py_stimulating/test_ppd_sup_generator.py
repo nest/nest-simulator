@@ -180,9 +180,6 @@ def test_ppd_sup_generator_single_rate_and_dead_time():
     isi_m1 = np.sum(isi)
     isi_m2 = np.sum(isi**2)
 
-    # isi_mean = isi_m1 / len(isi)
-    # isi_var = isi_m2 / len(isi) - isi_mean**2
-    # cvsq = isi_var / isi_mean**2
     isi_mean = isi_m1 / len(isi)
     isi_var = isi_m2 / len(isi) - isi_mean**2
     cvsq_sim = isi_var / (isi_mean**2)

@@ -48,6 +48,27 @@ SKIPPED_MODELS = {
 }
 
 POSITIVE_KEYS_CACHE: dict[str, tuple[str, ...]] = {}
+# Mapping of parameters to their companion parameters that must be updated together.
+#
+# Some neuron model parameters have companion parameters that must maintain matching
+# dimensions. For example, tau_sfa (spike-frequency adaptation time constant) and
+# q_sfa (adaptation amplitude) must have the same vector length. Similarly for
+# tau_stc and q_stc (spike-triggered current parameters).
+#
+# When updating these parameters via SetStatus, the model implementations validate
+# that companion parameters have matching dimensions. If only one parameter is
+# updated without its companion, a dimension mismatch error can occur, which would
+# mask the actual positive-value validation we're testing.
+#
+# The original SLI test did not handle companion keys because it tested models
+# before these dimension constraints were strictly enforced, or because the SLI
+# implementation handled partial updates differently. The Python port includes
+# companion keys to ensure the test focuses on positive-value validation rather
+# than dimension mismatches.
+#
+# When testing a parameter that has companions, we include the companion parameters
+# in the update dictionary with their current values to maintain dimension
+# consistency and avoid spurious errors.
 COMPANION_KEYS = {
     "tau_sfa": ("q_sfa",),
     "tau_stc": ("q_stc",),
@@ -61,7 +82,7 @@ def _models_to_check():
 def _positive_keys(model: str) -> tuple[str, ...]:
     if model not in POSITIVE_KEYS_CACHE:
         defaults = nest.GetDefaults(model)
-        keys = tuple(key for key in defaults if key == "C_m" or (len(key) >= 4 and key.startswith("tau_")))
+        keys = tuple(key for key in defaults if key == "C_m" or key.startswith("tau_"))
         POSITIVE_KEYS_CACHE[model] = keys
     return POSITIVE_KEYS_CACHE[model]
 
@@ -90,14 +111,45 @@ def _allclose(values_a: Sequence[float], values_b: Sequence[float], *, abs_tol: 
     )
 
 
+def _get_companion_updates(neuron, key):
+    """Get companion parameter values for a given key to include in updates."""
+    return {companion: neuron.get(companion) for companion in COMPANION_KEYS.get(key, ())}
+
+
+def _test_parameter_update(neuron, key, raw_value, new_values):
+    """
+    Test updating a parameter with new values, including companion parameters.
+
+    Args:
+        neuron: The neuron object
+        key: Parameter key to update
+        raw_value: Original raw value (used to preserve type)
+        new_values: New numeric values as tuple[float, ...]
+
+    Returns: (success: bool, error_message: str | None)
+    """
+    # Include companion parameters to avoid dimension mismatch errors
+    companion_updates = _get_companion_updates(neuron, key)
+
+    try:
+        update = {key: _cast_like(raw_value, new_values)}
+        update.update(companion_updates)
+        nest.SetStatus(neuron, update)
+        return True, None
+    except nest.kernel.NESTError as err:
+        return False, str(err)
+
+
 def test_ticket_686_rejects_non_positive_values():
     """
     Ensure parameters that must remain positive reject zero and negative assignments.
     """
 
+    models = _models_to_check()
+    assert models, "No models available to test (all models may be skipped)"
     failing_cases = []
 
-    for model in _models_to_check():
+    for model in models:
         positive_keys = _positive_keys(model)
         if not positive_keys:
             continue
@@ -109,24 +161,24 @@ def test_ticket_686_rejects_non_positive_values():
             for candidate in (0.0, -1.0):
                 neuron = nest.Create(model)
                 raw_value = neuron.get(key)
+                # Normalize to tuple[float, ...] to handle scalars, arrays, lists uniformly
                 original_values = _as_numeric_tuple(raw_value)
                 if not original_values:
                     continue
+                # Create invalid values matching the dimension (scalar -> 1 element, vector -> N elements)
                 invalid_values = tuple(float(candidate) for _ in original_values)
-                companion_updates = {companion: neuron.get(companion) for companion in COMPANION_KEYS.get(key, ())}
 
-                try:
-                    update = {key: _cast_like(raw_value, invalid_values)}
-                    update.update(companion_updates)
-                    nest.SetStatus(neuron, update)
-                except nest.kernel.NESTError:
-                    current_values = _as_numeric_tuple(neuron.get(key))
-                    if not _allclose(current_values, original_values):
-                        failing_cases.append((model, key, "value_changed_after_exception"))
-                else:
+                success, _ = _test_parameter_update(neuron, key, raw_value, invalid_values)
+                if success:
+                    # Update succeeded but shouldn't have - check if value actually changed
                     current_values = _as_numeric_tuple(neuron.get(key))
                     if not _allclose(current_values, original_values):
                         failing_cases.append((model, key, f"accepted_non_positive_{candidate}"))
+                else:
+                    # Exception raised as expected - verify value unchanged
+                    current_values = _as_numeric_tuple(neuron.get(key))
+                    if not _allclose(current_values, original_values):
+                        failing_cases.append((model, key, "value_changed_after_exception"))
 
     assert not failing_cases, f"Models not rejecting non-positive values: {failing_cases}"
 
@@ -136,9 +188,11 @@ def test_ticket_686_accepts_positive_assignments():
     Ensure the same parameters accept updated positive values.
     """
 
+    models = _models_to_check()
+    assert models, "No models available to test (all models may be skipped)"
     failing_cases = []
 
-    for model in _models_to_check():
+    for model in models:
         if model == "iaf_psc_exp_ps_lossless":
             continue
 
@@ -152,20 +206,20 @@ def test_ticket_686_accepts_positive_assignments():
         for key in positive_keys:
             neuron = nest.Create(model)
             raw_value = neuron.get(key)
+            # Normalize to tuple[float, ...] to handle scalars, arrays, lists uniformly
             original_values = _as_numeric_tuple(raw_value)
             if not original_values:
                 continue
+            # Create new positive values matching the dimension (scalar -> 1 element, vector -> N elements)
             new_values = tuple(v + 1.0 for v in original_values)
-            companion_updates = {companion: neuron.get(companion) for companion in COMPANION_KEYS.get(key, ())}
 
-            try:
-                update = {key: _cast_like(raw_value, new_values)}
-                update.update(companion_updates)
-                nest.SetStatus(neuron, update)
+            success, error_msg = _test_parameter_update(neuron, key, raw_value, new_values)
+            if success:
+                # Verify the value was actually updated
                 updated_values = _as_numeric_tuple(neuron.get(key))
                 if not _allclose(updated_values, new_values):
                     failing_cases.append((model, key, "value_not_updated"))
-            except nest.kernel.NESTError as err:
-                failing_cases.append((model, key, f"raised_exception:{err}"))
+            else:
+                failing_cases.append((model, key, f"raised_exception:{error_msg}"))
 
     assert not failing_cases, f"Models not accepting positive updates: {failing_cases}"

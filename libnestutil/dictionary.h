@@ -1,5 +1,5 @@
 /*
- *  Dictionary.h
+ *  dictionary.h
  *
  *  This file is part of NEST.
  *

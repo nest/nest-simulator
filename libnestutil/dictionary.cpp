@@ -1,5 +1,5 @@
 /*
- *  Dictionary.cpp
+ *  dictionary.cpp
  *
  *  This file is part of NEST.
  *

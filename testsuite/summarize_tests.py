@@ -33,7 +33,6 @@ import os
 import sys
 
 import junitparser as jp
-from lxml.etree import XMLSyntaxError
 
 assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
@@ -60,25 +59,24 @@ expected_num_tests = {
 
 def parse_result_file(fname):
     try:
-        results = jp.JUnitXml.fromfile(fname)
-    except XMLSyntaxError as err:
-        try:
-            # Try to handle the one problem that regularly occurs
-            # fromstring() below wants byte string
-            xml_text = open(fname, "rb").read()
-            if xml_text.endswith(b">>"):
-                results = jp.JUnitXml.fromstring(xml_text[:-1])
-            else:
-                raise err
-        except Exception as err:
-            return {
-                "Tests": 1,
-                "Skipped": 0,
-                "Failures": 0,
-                "Errors": 1,
-                "Time": 0,
-                "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
-            }
+        # MPI-parallel execution of pytests from mpi/n occasionally leads to
+        # extraneous > at end of file xml file. No other corruption has ever
+        # been seen so far. So check and correct for that.
+        # fromstring() below requires bytes, so we read in binary mode.
+        xml_text = open(fname, "rb").read().rstrip()
+        print("Text: ", xml_text)
+        if xml_text.endswith(b">>"):
+            xml_text = xml_text[:-1]
+        results = jp.JUnitXml.fromstring(xml_text)
+    except Exception as err:
+        return {
+            "Tests": 1,
+            "Skipped": 0,
+            "Failures": 0,
+            "Errors": 1,
+            "Time": 0,
+            "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+        }
 
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more

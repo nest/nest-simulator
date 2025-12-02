@@ -212,19 +212,6 @@ public:
   }
 
   /**
-   * @brief Get the value at key as an integer.
-   *
-   * @param key key where the value is located in the Dictionary.
-   * @throws TypeMismatch if the value is not an integer.
-   * @return the value at key cast to the specified type.
-   */
-  long
-  get_integer( const std::string& key ) const
-  {
-    return cast_to_integer_( at( key ), key );
-  }
-
-  /**
    * Return reference to vector of type T stored under key.
    *
    * If key does not exist in dict, create empty vector<T> and return it.

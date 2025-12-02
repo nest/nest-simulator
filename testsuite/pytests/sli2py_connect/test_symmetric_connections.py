@@ -117,6 +117,9 @@ def test_make_symmetric_works_one_to_one(setup_nodes):
     fwd = nest.GetConnections(source=set1)
     bck = nest.GetConnections(source=set2)
 
+    # Check that connection counts match (ensures no extra connections)
+    assert len(fwd) == len(bck), f"Forward and backward connection counts must match: {len(fwd)} != {len(bck)}"
+
     # Check that connections are symmetric
     fwd_sources = fwd.get("source")
     fwd_targets = fwd.get("target")
@@ -190,6 +193,9 @@ def test_make_symmetric_works_with_array_parameters(setup_nodes):
     # Get forward and backward connections
     fwd = nest.GetConnections(source=set1)
     bck = nest.GetConnections(source=set2)
+
+    # Check that connection counts match (ensures no extra connections)
+    assert len(fwd) == len(bck), f"Forward and backward connection counts must match: {len(fwd)} != {len(bck)}"
 
     # Check that connections are symmetric
     fwd_sources = fwd.get("source")

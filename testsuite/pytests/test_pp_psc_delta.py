@@ -188,6 +188,86 @@ class PpPscDeltaTestCase(unittest.TestCase):
         self.assertLessEqual(-1.0, isi_corr)
         self.assertLessEqual(isi_corr, 0.0)
 
+    def test_compare_adaptation_and_self_inhibition(self):
+        """
+        Check if threshold adaptation with membrane time constant corresponds to an
+        inhibitory self-connection.
+        """
+
+        # test parameters
+        d = 0.001
+        lam = 10.0
+        T = 200000.0
+        tau_m = 25.0
+        J_self = 50.0
+        J_adapt = 0.1
+        err = 0.2
+
+        nest.ResetKernel()
+
+        # create a neuron where adaptation does the reset, and one where a
+        # synapse does.
+        nrn1 = nest.Create("pp_psc_delta")
+        nrn2 = nest.Create("pp_psc_delta")
+
+        params1 = {
+            "tau_m": tau_m,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": False,
+            "dead_time_shape": 1,
+            "with_reset": False,
+            "tau_sfa": [300.0, tau_m],
+            "q_sfa": [J_adapt, J_self],
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 1.0,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
+
+        params2 = {
+            "tau_m": tau_m,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": False,
+            "dead_time_shape": 1,
+            "with_reset": False,
+            "tau_sfa": 300.0,
+            "q_sfa": J_adapt,
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 1.0,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
+
+        nest.SetStatus(nrn1, params1)
+        nest.SetStatus(nrn2, params2)
+
+        sr1 = nest.Create("spike_recorder")
+        sr2 = nest.Create("spike_recorder")
+
+        nest.Connect(nrn1, sr1)
+        nest.Connect(nrn2, sr2)
+
+        # Set up self-inhibitory connection for nrn2
+        nest.SetDefaults("static_synapse", {"weight": -1.0 * J_self, "delay": 1.0})
+        nest.Connect(nrn2, nrn2)
+
+        nest.Simulate(T)
+
+        n1 = nest.GetStatus(sr1)[0]["n_events"]
+        n2 = nest.GetStatus(sr2)[0]["n_events"]
+
+        ratio = float(n1) / float(n2)
+
+        # This could fail due to bad luck. However, if it passes once,
+        # then it should always do so, since the random numbers are
+        # reproducible in NEST.
+        self.assertLess(1.0 - err, ratio)
+        self.assertLess(ratio, 1.0 + err)
+
 
 def suite():
     suite = unittest.makeSuite(PpPscDeltaTestCase, "test")

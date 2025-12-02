@@ -20,9 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_spike_poisson_ps_base2.sli
-
-Synopsis: (test_spike_poisson_ps_base2) run
 Name: test_spike_poisson_ps_base2.py
 Description:
 In NEST spike times are represented by an integer part in units of h

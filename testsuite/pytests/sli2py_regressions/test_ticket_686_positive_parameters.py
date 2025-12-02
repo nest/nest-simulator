@@ -170,10 +170,15 @@ def test_ticket_686_rejects_non_positive_values():
 
                 success, _ = _test_parameter_update(neuron, key, raw_value, invalid_values)
                 if success:
-                    # Update succeeded but shouldn't have - check if value actually changed
+                    # Update succeeded but shouldn't have - this is always a failure
+                    # because the user might think they've set the parameter when they haven't
                     current_values = _as_numeric_tuple(neuron.get(key))
                     if not _allclose(current_values, original_values):
+                        # Value actually changed - neuron accepted the invalid value
                         failing_cases.append((model, key, f"accepted_non_positive_{candidate}"))
+                    else:
+                        # Value didn't change - neuron silently ignored the invalid value
+                        failing_cases.append((model, key, f"silently_ignored_non_positive_{candidate}"))
                 else:
                     # Exception raised as expected - verify value unchanged
                     current_values = _as_numeric_tuple(neuron.get(key))

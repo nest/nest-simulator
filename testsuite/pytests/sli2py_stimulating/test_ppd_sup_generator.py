@@ -163,7 +163,6 @@ def test_ppd_sup_generator_single_rate_and_dead_time():
 
     rate_ana = rate * n_proc
 
-    # ratio = rate_sim / rate_ana
     ratio = rate_sim / rate_ana
 
     # Check that ratio is within error bounds

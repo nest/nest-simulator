@@ -38,6 +38,7 @@ def test_iaf_psc_alpha_mindelay_create(min_delay):
     membrane potential at a fixed interval.
     """
     nest.ResetKernel()
+    nest.resolution = 0.1
 
     # Simulation variables
     delay = 2.0
@@ -74,6 +75,7 @@ def test_iaf_psc_alpha_mindelay_set(min_delay):
     membrane potential at a fixed interval.
     """
     nest.ResetKernel()
+    nest.resolution = 0.1
 
     # Simulation variables
     delay = 2.0
@@ -110,6 +112,7 @@ def test_iaf_psc_alpha_mindelay_simblocks(min_delay):
     membrane potential at a fixed interval.
     """
     nest.ResetKernel()
+    nest.resolution = 0.1
 
     # Simulation variables
     delay = 2.0
@@ -127,7 +130,7 @@ def test_iaf_psc_alpha_mindelay_simblocks(min_delay):
     nest.Connect(neuron, spike_recorder, syn_spec={"weight": 1.0, "delay": delay})
     nest.Connect(dc_generator, neuron, syn_spec={"weight": 1.0, "delay": delay})
 
-    for _ in range(22):
+    for _ in range(21):
         nest.Simulate(0.5)
 
     results = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))

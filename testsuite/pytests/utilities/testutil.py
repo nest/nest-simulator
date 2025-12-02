@@ -21,6 +21,7 @@
 
 import sys
 
+import nest
 import pandas as pd
 import pytest
 
@@ -54,12 +55,14 @@ def get_comparable_timesamples(resolution, actual, expected):
     actual and expected, respectively.
     """
 
+    tics = nest.tics_per_ms
+
     actual = pd.DataFrame(actual, columns=["t", "val_a"])
     expected = pd.DataFrame(expected, columns=["t", "val_e"])
 
-    actual["steps"] = (actual.t / resolution).round().astype(int)
-    expected["steps"] = (expected.t / resolution).round().astype(int)
+    actual["tics"] = (actual.t * tics).round().astype(int)
+    expected["tics"] = (expected.t * tics).round().astype(int)
 
-    common = pd.merge(actual, expected, how="inner", on="steps")
+    common = pd.merge(actual, expected, how="inner", on="tics")
 
     return common.val_a.values, common.val_e.values

@@ -137,11 +137,11 @@ def test_inh_stdp_synapse():
     w = w_neuron / w_max  # normalized weight
 
     def update_K_plus():
-        nonlocal K_plus, last_pre
+        nonlocal K_plus
         K_plus = K_plus * np.exp((last_pre - pre_spike) / tau_plus) + 1.0
 
     def update_K_minus():
-        nonlocal K_minus, last_post
+        nonlocal K_minus
         K_minus = K_minus * np.exp((last_post - post_spike) / tau_minus) + 1.0
 
     def next_pre_spike():

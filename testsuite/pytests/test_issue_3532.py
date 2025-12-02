@@ -84,11 +84,13 @@ def test_disconnect_one_to_one(network):
 
     assert len(nest.GetConnections()) == n_nodes**2 - n_nodes
 
+
 def test_disconnect_all_at_once(network):
     n_nodes = len(network)
     nest.Disconnect(network, network, conn_spec="all_to_all")
 
     assert nest.num_connections == 0
+
 
 def test_disconnect_by_edge(network):
     n_nodes = len(network)

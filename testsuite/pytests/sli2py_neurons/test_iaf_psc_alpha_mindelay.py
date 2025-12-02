@@ -133,6 +133,8 @@ def test_iaf_psc_alpha_mindelay_simblocks(min_delay):
     results = np.column_stack((voltmeter.events["times"], voltmeter.events["V_m"]))
 
     actual, expected = testutil.get_comparable_timesamples(nest.resolution, results, expected_mindelay)
+
+    assert len(actual) == len(expected_mindelay)
     np.testing.assert_allclose(actual, expected, rtol=1e-7)
 
 

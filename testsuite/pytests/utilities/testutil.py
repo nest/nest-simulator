@@ -57,9 +57,9 @@ def get_comparable_timesamples(resolution, actual, expected):
     actual = pd.DataFrame(actual, columns=["t", "val_a"])
     expected = pd.DataFrame(expected, columns=["t", "val_e"])
 
-    actual["steps"] = (actual.t / resolution).round()
-    expected["steps"] = (expected.t / resolution).round()
+    actual["steps"] = (actual.t / resolution).round().astype(int)
+    expected["steps"] = (expected.t / resolution).round().astype(int)
 
-    common = pd.merge(actual, expected, how="inner", on="t")
+    common = pd.merge(actual, expected, how="inner", on="steps")
 
     return common.val_a.values, common.val_e.values

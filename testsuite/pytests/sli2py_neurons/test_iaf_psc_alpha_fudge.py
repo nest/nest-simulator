@@ -50,18 +50,20 @@ def test_iaf_psc_alpha_fudge():
     because a change of the time constants of the neuron model would
     invalidate the value of "fudge".
     """
+
     # Simulation variables
     resolution = 0.1
     delay = resolution
     duration = 20.0
 
+    nest.resolution = resolution
+
     # Create neuron and devices
     neuron = nest.Create("iaf_psc_alpha")
-    voltmeter = nest.Create("voltmeter")
-    voltmeter.interval = resolution
+    voltmeter = nest.Create("voltmeter", params={"interval": resolution})
 
     # Connect voltmeter
-    nest.Connect(voltmeter, neuron, syn_spec={"weight": 1.0, "delay": delay})
+    nest.Connect(voltmeter, neuron)
 
     # Biophysical parameters
     tau_m = 20.0
@@ -106,8 +108,14 @@ def test_iaf_psc_alpha_fudge():
     v_m = volt_data["V_m"]
     results = np.column_stack((times, v_m))
 
-    # Find time of peak voltage
-    actual_t_max = results[np.argmax(results[:, 1]), 0]
+    # Find time of peak voltage and peak voltage and thus height of PSP
+    max_vm_ix = np.argmax(results[:, 1])
+    actual_t_max = results[max_vm_ix, 0]
+    actual_vm_max = results[max_vm_ix, 1]
+    actual_psp_height = actual_vm_max - neuron.E_L
 
-    # Assert the peak is close to theoretical t_max + 0.2
-    assert actual_t_max == pytest.approx(t_max + 0.2, abs=0.05)
+    expected_psp_height = 1
+    expected_t_max = t_max + resolution + delay  # spike is sent at t=resolution and arrives with delay
+
+    assert actual_t_max == pytest.approx(expected_t_max, abs=resolution / 2)
+    assert actual_psp_height == pytest.approx(expected_psp_height, abs=1e-4)

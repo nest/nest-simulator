@@ -20,29 +20,29 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
- This is a collection of tests which require basic functionality of the generator.
- It tests
- 1) if the firing rate of a superposition is close to the preset one.
- 2) if the coefficient of variation of a superposition agrees with theory
- 3) if the coefficient of variation of a single process agrees with theory
- 4) if the spike trains generated for two different targets differ
+This is a collection of tests which require basic functionality of the generator.
+It tests
+1) if the firing rate of a superposition is close to the preset one.
+2) if the coefficient of variation of a superposition agrees with theory
+3) if the coefficient of variation of a single process agrees with theory
+4) if the spike trains generated for two different targets differ
 
- All of these tests are based on random number realizations, which is
- necessarily so  since the model is stochastic. There is thus a finite
- probability of test failure, even if everything is fine. The choice of the
- variable err, which is the allowed relative deviation from the reference value,
- can be used to make the test more or less strict. Increasing T inside the test
- functions can also help to get more reliable statistics and a reduced
- probability of false alarms.
+All of these tests are based on random number realizations, which is
+necessarily so  since the model is stochastic. There is thus a finite
+probability of test failure, even if everything is fine. The choice of the
+variable err, which is the allowed relative deviation from the reference value,
+can be used to make the test more or less strict. Increasing T inside the test
+functions can also help to get more reliable statistics and a reduced
+probability of false alarms.
 
- The values are chosen to have a reasonable execution time. False alarms were
- never observed yet. Since random numbers are preserved through repetitions of
- the simulations, the test should work for sure as long as the random number
- generation procedure of nest is not changed. If it is changed, failure of the
- test is still very unlikely.
+The values are chosen to have a reasonable execution time. False alarms were
+never observed yet. Since random numbers are preserved through repetitions of
+the simulations, the test should work for sure as long as the random number
+generation procedure of nest is not changed. If it is changed, failure of the
+test is still very unlikely.
 
- The intention of this script is to make sure that there are no gross errors in
- the main functions of the gamma_sup_generator.
+The intention of this script is to make sure that there are no gross errors in
+the main functions of the gamma_sup_generator.
 """
 
 import nest

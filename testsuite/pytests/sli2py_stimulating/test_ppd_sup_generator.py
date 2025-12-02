@@ -100,7 +100,6 @@ def test_ppd_sup_generator_sup_rate_and_cv():
     # rate_ana = rate * n_proc
     rate_ana = rate * n_proc
 
-    # ratio = rate_sim / rate_ana
     ratio = rate_sim / rate_ana
 
     # Check that ratio is within error bounds

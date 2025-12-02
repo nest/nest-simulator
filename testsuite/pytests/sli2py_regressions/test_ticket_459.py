@@ -44,7 +44,7 @@ def test_clean_EL_change(model):
     nrn = nest.Create(model)
     orig_params = nrn.get()
 
-    EL_orig = orig_params["E_L"][0]
+    EL_orig = orig_params["E_L"]
     EL_new = EL_orig + 0.7
     nrn.E_L = EL_new
 

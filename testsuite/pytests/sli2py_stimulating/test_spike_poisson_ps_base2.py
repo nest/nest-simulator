@@ -50,8 +50,6 @@ subthreshold integration with continuous spike times in discrete time
 neural network simulations. Neural Computation 19: 47-79
 
 Original Author: May 2010, adapted to NEST2, Diesmann
-Author: May 2010, adapted to NEST2, Diesmann
-SeeAlso: testsuite::test_spike_poisson_ps
 """
 
 import nest

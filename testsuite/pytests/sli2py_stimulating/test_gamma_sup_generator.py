@@ -20,14 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_gamma_sup_generator - sli script for test of gamma_sup_generator output
-
-Synopsis: (test_gamma_sup_generator) run -> compare spike train statistics with expectations
-
-Description:
-
- test_gamma_sup_generator is a collection of tests which require basic
- functionality of the generator. It tests
+ This is a collection of tests which require basic functionality of the generator.
+ It tests
  1) if the firing rate of a superposition is close to the preset one.
  2) if the coefficient of variation of a superposition agrees with theory
  3) if the coefficient of variation of a single process agrees with theory
@@ -49,14 +43,6 @@ Description:
 
  The intention of this script is to make sure that there are no gross errors in
  the main functions of the gamma_sup_generator.
-
-Remarks:
-  This test script was adapted from test_ppd_sup_generator.sli
-
-Test ported from SLI unittest.
-
-Author:  June 2011, Moritz Deger
-SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
 """
 
 import nest
@@ -90,13 +76,8 @@ def test_gamma_sup_generator_sup_rate_and_cv():
 
     spikes = sr.get("events", "times")
 
-    # rate_sim = size(spikes) / (T*1e-3)
     rate_sim = len(spikes) / (T * 1e-3)
-
-    # rate_ana = rate * n_proc
     rate_ana = rate * n_proc
-
-    # ratio = rate_sim / rate_ana
     ratio = rate_sim / rate_ana
 
     # Check that ratio is within error bounds
@@ -109,9 +90,6 @@ def test_gamma_sup_generator_sup_rate_and_cv():
     isi_m1 = np.sum(isi)
     isi_m2 = np.sum(isi**2)
 
-    # isi_mean = isi_m1 / len(isi)
-    # isi_var = isi_m2 / len(isi) - isi_mean**2
-    # cvsq = isi_var / isi_mean**2
     isi_mean = isi_m1 / len(isi)
     isi_var = isi_m2 / len(isi) - isi_mean**2
     cvsq_sim = isi_var / (isi_mean**2)
@@ -155,13 +133,8 @@ def test_gamma_sup_generator_single_rate_and_isi():
 
     spikes = sr.get("events", "times")
 
-    # rate_sim = size(spikes) / (T*1e-3)
     rate_sim = len(spikes) / (T * 1e-3)
-
-    # rate_ana = rate * n_proc
     rate_ana = rate * n_proc
-
-    # ratio = rate_sim / rate_ana
     ratio = rate_sim / rate_ana
 
     # Check that ratio is within error bounds
@@ -174,9 +147,6 @@ def test_gamma_sup_generator_single_rate_and_isi():
     isi_m1 = np.sum(isi)
     isi_m2 = np.sum(isi**2)
 
-    # isi_mean = isi_m1 / len(isi)
-    # isi_var = isi_m2 / len(isi) - isi_mean**2
-    # cvsq = isi_var / isi_mean**2
     isi_mean = isi_m1 / len(isi)
     isi_var = isi_m2 / len(isi) - isi_mean**2
     cvsq_sim = isi_var / (isi_mean**2)

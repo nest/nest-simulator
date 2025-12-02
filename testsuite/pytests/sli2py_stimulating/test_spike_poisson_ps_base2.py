@@ -43,15 +43,6 @@ A.2 of [1] for details.
 This script tests whether the accuracy of spike times is maintained
 independent of the choice of computation step size h.
 
-This assumes that also the poisson generator is capable of maintaining
-the accuracy independent of computation step size.
-If this test fails go back to
- test_spike_poisson_ps.sli
-to check whether poisson_generator_ps can emit spike times at double
-precision or whether spike times are limited to the precision of a
-tic.
-
-Test ported from SLI regression test.
 Test ported from SLI unittest
 References:
 [1] Morrison A, Straube S, Plesser H E, Diesmann M (2007) Exact

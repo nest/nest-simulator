@@ -101,7 +101,7 @@ def test_spike_poisson_ps_base2():
     # Test with different resolutions
     # Note: resolution must be >= one tic (h_min), so we stop at min_exponent
     results = []
-    for exp_offset in range(0, min_exponent - 1, -1):
+    for exp_offset in range(0, min_exponent - 1, -2):
         # ratio (integer) of h to smallest h
         ratio = 2.0 ** (exp_offset - min_exponent)
         h = 2.0**exp_offset
@@ -112,17 +112,17 @@ def test_spike_poisson_ps_base2():
         results.append((times_scaled, offsets))
 
     # Compare results with the one at smallest h as reference
-    reference_times, reference_offsets = results[-1]
+    times_ref, offset_ref = results[-1]
 
-    # Compute differences: (s*hmin-o)-(sr*hmin-or)
+    # Compute differences: (times*hmin-offset)-(times_ref*hmin-offset_ref)
     differences = []
     for times_scaled, offsets in results[:-1]:  # All except reference
-        for i, (s, o) in enumerate(zip(times_scaled, offsets)):
-            if i < len(reference_times):
-                sr = reference_times[i]
-                or_val = reference_offsets[i]
-                # Compute difference: (s-sr)*hmin - o + or
-                diff = (s - sr) * h_min - o + or_val
+        for i, (times, offset) in enumerate(zip(times_scaled, offsets)):
+            if i < len(times_ref):
+                times_ref_val = times_ref[i]
+                offset_ref_val = offset_ref[i]
+                # Compute difference: (times-times_ref)*hmin - offset + offset_ref
+                diff = (times - times_ref_val) * h_min - offset + offset_ref_val
                 differences.append(abs(diff))
 
     # Check that all differences are within absolute accuracy

@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_ppd_sup_generator - sli script for test of ppd_sup_generator output
+Name: testsuite::test_ppd_sup_generator - python script for test of ppd_sup_generator output
 
 Synopsis: (test_ppd_sup_generator) run -> compare spike train statistics with expectations
 
@@ -106,6 +106,8 @@ def test_ppd_sup_generator_sup_rate_and_cv():
     ratio = rate_sim / rate_ana
 
     # Check that ratio is within error bounds
+    # this could fail due to bad luck. However, if it passes once, then it should
+    # always do so, since the random numbers are reproducible in NEST.
     assert (1.0 - err) < ratio < (1.0 + err), f"Rate ratio {ratio} not within bounds [{1.0 - err}, {1.0 + err}]"
 
     # Compute ISI (inter-spike intervals)

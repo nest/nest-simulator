@@ -63,8 +63,8 @@ def parse_result_file(fname):
         # extraneous > at end of file xml file. No other corruption has ever
         # been seen so far. So check and correct for that.
         # fromstring() below requires bytes, so we read in binary mode.
+        # See also #3193.
         xml_text = open(fname, "rb").read().rstrip()
-        print("Text: ", xml_text)
         if xml_text.endswith(b">>"):
             xml_text = xml_text[:-1]
         results = jp.JUnitXml.fromstring(xml_text)

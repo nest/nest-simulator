@@ -400,16 +400,7 @@ class NodeCollection:
                 result = Receptors(self, result)
         else:
             # Hierarchical addressing
-            # PYNEST-NG-FUTURE: Drop this? Not sure anyone ever used it...
             result = get_parameters_hierarchical_addressing(self, params)
-
-        # PYNEST-NG-FUTURE: Decide if the behavior should be the same
-        # for single-node node collections or different.
-        if isinstance(result, dict) and len(self) == 1:
-            new_result = {}
-            for k, v in result.items():
-                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 and type(v) is not dict else v
-            result = new_result
 
         if output == "pandas":
             index = self.get("global_id")

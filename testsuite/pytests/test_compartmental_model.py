@@ -546,12 +546,12 @@ class CompartmentsTestCase(unittest.TestCase):
         # run the NEST model for 1 timestep
         nest.Simulate(2.0 * dt)
         events_neat = m_neat.events
-        v_neat = np.array([events_neat["v_comp%d" % ii] for ii in range(n_comp)])
+        v_neat = np.array([events_neat["v_comp%d" % ii][0] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
 
-        self.assertTrue(np.allclose(v_neat, v_sol))
+        np.testing.assert_allclose(v_neat, v_sol)
 
     def test_attenuation(self, model_name="1dend_1comp", dt=0.1, i_amp=1.0, t_max=2000.0):
         """

@@ -120,10 +120,16 @@ def help(obj=None, return_text=False):
     ),
 )
 def GetStatus(nodes_or_conns, keys=None, output=""):
+    if len(nodes_or_conns) == 0:
+        return "[]" if output == "json" else tuple()
+
     if keys:
-        return nodes_or_conns.get(keys, output=output)
+        result = nodes_or_conns.get(keys, output=output)
     else:
-        return nodes_or_conns.get(output=output)
+        result = nodes_or_conns.get(output=output)
+
+    # ensure consistency with SLI-based NEST
+    return result if len(nodes_or_conns) > 1 else (result,)
 
 
 @deprecated(

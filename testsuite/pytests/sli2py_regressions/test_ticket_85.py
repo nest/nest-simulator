@@ -57,7 +57,7 @@ def test_ticket_85_archiving_node_exposes_tau_minus(model):
 
     nest.ResetKernel()
     neuron = nest.Create(model)
-    status = nest.GetStatus(neuron)[0]
+    status = neuron.get()
 
     assert "tau_minus" in status
 
@@ -79,9 +79,10 @@ def test_ticket_85_archiving_node_tracks_last_spike(model):
 
     nest.Simulate(20.0)
 
-    events = nest.GetStatus(recorder, "events")[0]
+    events = recorder.events
+    print(events)
     last_recorded_time = events["times"][-1]
-    last_spike_time = neuron.get("t_spike")
+    last_spike_time = neuron.t_spike
 
     assert last_recorded_time == last_spike_time
 
@@ -109,6 +110,6 @@ def test_ticket_85_plasticity_changes_weight():
     nest.Simulate(100.0)
 
     connections = nest.GetConnections(source=source)
-    final_weight = nest.GetStatus(connections, "weight")[0]
+    final_weight = connections.weight
 
     assert final_weight != pytest.approx(initial_weight)

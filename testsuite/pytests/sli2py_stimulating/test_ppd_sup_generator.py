@@ -54,7 +54,7 @@ Description:
  hazard feature yet.
 
 Remarks:
-  This test script was adapted from test_pp_psc_delta.sli
+  This test script was adapted from test_pp_psc_delta.py
 
 Test ported from SLI unittest.
 

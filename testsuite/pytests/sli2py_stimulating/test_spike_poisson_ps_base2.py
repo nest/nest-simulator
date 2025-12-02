@@ -31,16 +31,16 @@ uniform absolute accuracy of spike times even for long simulation
 times.
 
 The user has access to the two components of the spike if the spike
-recorder is set to /time_in_steps true.
+recorder is set to `time_in_steps` true.
 In this case the spike_recorder returns events with the properties
-/times and /offsets, where /times are the integer parts s in units of h
-and offsets are the fractional parts o in milliseconds. According to
-NEST's definition of a grid-constrained spike as a spike occuring
-somewhere in (t-h,t], the precise spike time is
-   t = s*h - o
+`times` and `offsets`, where `times` are the integer parts `s` in units of `h`
+and offsets are the fractional parts `o` in milliseconds. According to
+NEST's definition of a grid-constrained spike as a spike occurring
+somewhere in `(t-h,t]`, the precise spike time is
+   `t = s*h - o`
 
-Access to spike times with a uniform absolute accuracy is benefitial
-when testing and comparing integrators for neuron models, see appendix
+Access to spike times with a uniform absolute accuracy is beneficial
+when testing and comparing integrators for neuron models, see the appendix
 A.2 of [1] for details.
 
 This script tests whether the accuracy of spike times is maintained
@@ -55,12 +55,13 @@ precision or whether spike times are limited to the precision of a
 tic.
 
 Test ported from SLI regression test.
-
+Test ported from SLI unittest
 References:
 [1] Morrison A, Straube S, Plesser H E, Diesmann M (2007) Exact
 subthreshold integration with continuous spike times in discrete time
 neural network simulations. Neural Computation 19: 47-79
 
+Original Author: May 2010, adapted to NEST2, Diesmann
 Author: May 2010, adapted to NEST2, Diesmann
 SeeAlso: testsuite::test_spike_poisson_ps
 """

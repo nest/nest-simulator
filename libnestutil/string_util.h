@@ -1,5 +1,5 @@
 /*
- *  string_utils.h
+ *  string_util.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STRING_UTILS_H
-#define STRING_UTILS_H
+#ifndef STRING_UTIL_H
+#define STRING_UTIL_H
 
 #include <algorithm>
 #include <string>
@@ -43,4 +43,4 @@ ends_with( std::string const& value, std::string const& ending )
   return std::equal( ending.rbegin(), ending.rend(), value.rbegin() );
 }
 
-#endif /* STRING_UTILS_H */
+#endif /* STRING_UTIL_H */

@@ -27,7 +27,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "string_utils.h"
+#include "string_util.h"
 
 // Includes from nestkernel:
 #include "connection_label.h"

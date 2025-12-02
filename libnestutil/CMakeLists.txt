@@ -32,7 +32,7 @@ set(nestutil_sources
     numerics.h numerics.cpp
     regula_falsi.h
     sort.h
-    string_utils.h
+    string_util.h
     vector_util.h
 )
 

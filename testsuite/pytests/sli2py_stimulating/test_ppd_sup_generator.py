@@ -161,7 +161,6 @@ def test_ppd_sup_generator_single_rate_and_dead_time():
 
     rate_sim = len(spikes) / (T * 1e-3)
 
-    # rate_ana = rate * n_proc
     rate_ana = rate * n_proc
 
     # ratio = rate_sim / rate_ana

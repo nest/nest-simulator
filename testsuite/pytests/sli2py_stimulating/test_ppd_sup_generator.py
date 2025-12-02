@@ -64,7 +64,6 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 
 import nest
 import numpy as np
-import pytest
 
 
 def test_ppd_sup_generator_sup_rate_and_cv():

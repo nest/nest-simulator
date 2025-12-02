@@ -43,7 +43,6 @@ SKIPPED_MODELS = {
     "correlation_detector",
     "correlomatrix_detector",
     "correlospinmatrix_detector",
-    "iaf_tum_2000",
     "siegert_neuron",
 }
 
@@ -159,6 +158,8 @@ def test_ticket_686_rejects_non_positive_values():
 
         for key in positive_keys:
             for candidate in (0.0, -1.0):
+                if model == "iaf_tum_2000" and candidate == 0.0:
+                    continue
                 neuron = nest.Create(model)
                 raw_value = neuron.get(key)
                 # Normalize to tuple[float, ...] to handle scalars, arrays, lists uniformly

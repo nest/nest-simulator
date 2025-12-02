@@ -38,7 +38,7 @@ register_ginzburg_neuron( const std::string& name )
 
 
 void
-gainfunction_ginzburg::get( dictionary& d ) const
+gainfunction_ginzburg::get( Dictionary& d ) const
 {
   d[ names::theta ] = theta_;
   d[ names::c_1 ] = c1_;
@@ -47,7 +47,7 @@ gainfunction_ginzburg::get( dictionary& d ) const
 }
 
 void
-gainfunction_ginzburg::set( const dictionary& d, Node* node )
+gainfunction_ginzburg::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::theta, theta_, node );
   update_value_param( d, names::c_1, c1_, node );

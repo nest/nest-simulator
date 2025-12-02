@@ -128,11 +128,11 @@ BoxMask< D >::clone() const
 }
 
 template < int D >
-dictionary
+Dictionary
 BoxMask< D >::get_dict() const
 {
-  dictionary d;
-  dictionary maskd;
+  Dictionary d;
+  Dictionary maskd;
   d[ get_name() ] = maskd;
   maskd[ names::lower_left ] = lower_left_.get_vector();
   maskd[ names::upper_right ] = upper_right_.get_vector();
@@ -204,11 +204,11 @@ BallMask< D >::clone() const
 }
 
 template < int D >
-dictionary
+Dictionary
 BallMask< D >::get_dict() const
 {
-  dictionary d;
-  dictionary maskd;
+  Dictionary d;
+  Dictionary maskd;
   maskd[ names::radius ] = radius_;
   maskd[ names::anchor ] = center_.get_vector();
   d[ get_name() ] = maskd;
@@ -282,11 +282,11 @@ EllipseMask< D >::clone() const
 }
 
 template < int D >
-dictionary
+Dictionary
 EllipseMask< D >::get_dict() const
 {
-  dictionary d;
-  dictionary maskd;
+  Dictionary d;
+  Dictionary maskd;
   maskd[ names::major_axis ] = major_axis_;
   maskd[ names::minor_axis ] = minor_axis_;
   maskd[ names::polar_axis ] = polar_axis_;
@@ -502,10 +502,10 @@ AnchoredMask< D >::clone() const
 }
 
 template < int D >
-dictionary
+Dictionary
 AnchoredMask< D >::get_dict() const
 {
-  dictionary d = m_->get_dict();
+  Dictionary d = m_->get_dict();
   d[ names::anchor ] = anchor_.get_vector();
   return d;
 }

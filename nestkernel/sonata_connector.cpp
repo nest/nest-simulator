@@ -45,7 +45,7 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-SonataConnector::SonataConnector( const dictionary& graph_specs, const long hyperslab_size )
+SonataConnector::SonataConnector( const Dictionary& graph_specs, const long hyperslab_size )
   : graph_specs_( graph_specs )
   , hyperslab_size_( hyperslab_size )
   , weight_dataset_exist_( false )
@@ -94,7 +94,7 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  auto edges_container = boost::any_cast< std::vector< dictionary > >( graph_specs_.at( "edges" ) );
+  auto edges_container = boost::any_cast< std::vector< Dictionary > >( graph_specs_.at( "edges" ) );
 
   // synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
@@ -112,7 +112,7 @@ SonataConnector::connect()
 
     // Create map of edge type ids to NEST synapse_model ids
     // cur_edge_params_ = edge_dict[ "syn_specs" ];
-    cur_edge_params_ = boost::any_cast< dictionary >( edge_dict.at( "syn_specs" ) );
+    cur_edge_params_ = boost::any_cast< Dictionary >( edge_dict.at( "syn_specs" ) );
 
     create_edge_type_id_2_syn_spec_( cur_edge_params_ );
 
@@ -411,7 +411,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
+  const auto nest_nodes = boost::any_cast< Dictionary >( graph_specs_.at( "nodes" ) );
   const auto src_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( source_attribute_value_ ) );
   const auto tgt_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( target_attribute_value_ ) );
 
@@ -444,7 +444,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = boost::any_cast< dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
+        const auto syn_spec = boost::any_cast< Dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
 
         const double weight =
           get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
@@ -545,12 +545,12 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
 }
 
 void
-SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
+SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
 {
   for ( auto& syn_kv_pair : edge_params )
   {
     const auto type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
-    auto d = boost::any_cast< dictionary >( syn_kv_pair.second.item );
+    auto d = boost::any_cast< Dictionary >( syn_kv_pair.second.item );
 
     const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
@@ -563,9 +563,9 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 }
 
 void
-SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_id, int type_id )
+SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_id, int type_id )
 {
-  dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
 
   for ( auto& syn_kv_pair : syn_defaults )
@@ -584,9 +584,9 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
   }
 
 
-  // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
+  // Now create Dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  // TODO: See if nullptr can be changed to dictionary
+  // TODO: See if nullptr can be changed to Dictionary
   edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
@@ -634,7 +634,7 @@ SonataConnector::get_synapse_params_( size_t snode_id,
 }
 
 double
-SonataConnector::get_syn_property_( const dictionary& syn_spec,
+SonataConnector::get_syn_property_( const Dictionary& syn_spec,
   hsize_t index,
   const bool dataset_exists,
   std::vector< double >& data,

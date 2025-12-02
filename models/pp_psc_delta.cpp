@@ -104,7 +104,7 @@ nest::pp_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::Parameters_::get( dictionary& d ) const
+nest::pp_psc_delta::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::C_m ] = c_m_;
@@ -140,7 +140,7 @@ nest::pp_psc_delta::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const dictionary& d, Node* node )
+nest::pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::C_m, c_m_, node );
@@ -220,14 +220,14 @@ nest::pp_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::pp_psc_delta::State_::get( dictionary& d, const Parameters_& ) const
+nest::pp_psc_delta::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = y3_;  // Membrane potential
   d[ names::E_sfa ] = q_; // Adaptive threshold potential
 }
 
 void
-nest::pp_psc_delta::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::pp_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y3_, node );
   update_value_param( d, names::E_sfa, q_, node );

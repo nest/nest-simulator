@@ -192,7 +192,7 @@ nest::iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::Parameters_::get( dictionary& d ) const
+nest::iaf_cond_beta::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::V_reset ] = V_reset;
@@ -210,7 +210,7 @@ nest::iaf_cond_beta::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_cond_beta::Parameters_::set( const dictionary& d, Node* node )
+nest::iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -249,7 +249,7 @@ nest::iaf_cond_beta::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_beta::State_::get( dictionary& d ) const
+nest::iaf_cond_beta::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y[ V_M ]; // Membrane potential
   d[ names::g_ex ] = y[ G_EXC ];
@@ -259,7 +259,7 @@ nest::iaf_cond_beta::State_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::iaf_cond_beta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y[ V_M ], node );
   update_value_param( d, names::g_ex, y[ G_EXC ], node );

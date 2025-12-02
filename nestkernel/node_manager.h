@@ -51,8 +51,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Get properties of a node.
@@ -60,7 +60,7 @@ public:
    * The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
-  dictionary get_status( size_t );
+  Dictionary get_status( size_t );
 
   /**
    * Set properties of a Node.
@@ -71,7 +71,7 @@ public:
    *                                          entry.
    * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
-  void set_status( size_t, const dictionary& );
+  void set_status( size_t, const Dictionary& );
 
   /**
    * Add a number of nodes to the network.
@@ -99,7 +99,7 @@ public:
    *
    * @returns NodeCollection as lock pointer
    */
-  NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const Dictionary& dict, const bool local_only );
 
   /**
    * Return total number of network nodes.
@@ -279,7 +279,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const dictionary&, bool clear_flags = true );
+  void set_status_single_node_( Node&, const Dictionary&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.

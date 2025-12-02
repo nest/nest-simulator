@@ -51,7 +51,7 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
 }
 
 void
-WeightOptimizerCommonProperties::get_status( dictionary& d ) const
+WeightOptimizerCommonProperties::get_status( Dictionary& d ) const
 {
   d[ names::optimizer ] = get_name();
   d[ names::batch_size ] = batch_size_;
@@ -62,7 +62,7 @@ WeightOptimizerCommonProperties::get_status( dictionary& d ) const
 }
 
 void
-WeightOptimizerCommonProperties::set_status( const dictionary& d )
+WeightOptimizerCommonProperties::set_status( const Dictionary& d )
 {
   long new_batch_size = batch_size_;
   d.update_value( names::batch_size, new_batch_size );
@@ -112,12 +112,12 @@ WeightOptimizer::WeightOptimizer()
 }
 
 void
-WeightOptimizer::get_status( dictionary& d ) const
+WeightOptimizer::get_status( Dictionary& d ) const
 {
 }
 
 void
-WeightOptimizer::set_status( const dictionary& d )
+WeightOptimizer::set_status( const Dictionary& d )
 {
 }
 
@@ -197,7 +197,7 @@ WeightOptimizerCommonPropertiesAdam::get_optimizer() const
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::get_status( dictionary& d ) const
+WeightOptimizerCommonPropertiesAdam::get_status( Dictionary& d ) const
 {
   WeightOptimizerCommonProperties::get_status( d );
 
@@ -207,7 +207,7 @@ WeightOptimizerCommonPropertiesAdam::get_status( dictionary& d ) const
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::set_status( const dictionary& d )
+WeightOptimizerCommonPropertiesAdam::set_status( const Dictionary& d )
 {
   WeightOptimizerCommonProperties::set_status( d );
 
@@ -241,7 +241,7 @@ WeightOptimizerAdam::WeightOptimizerAdam()
 }
 
 void
-WeightOptimizerAdam::get_status( dictionary& d ) const
+WeightOptimizerAdam::get_status( Dictionary& d ) const
 {
   WeightOptimizer::get_status( d );
   d[ names::m ] = m_;
@@ -249,7 +249,7 @@ WeightOptimizerAdam::get_status( dictionary& d ) const
 }
 
 void
-WeightOptimizerAdam::set_status( const dictionary& d )
+WeightOptimizerAdam::set_status( const Dictionary& d )
 {
   WeightOptimizer::set_status( d );
   d.update_value( names::m, m_ );

@@ -119,7 +119,7 @@ nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&, sinusoi
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::get( dictionary& d ) const
+nest::sinusoidal_poisson_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_ * 1000.0;
   d[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
@@ -129,14 +129,14 @@ nest::sinusoidal_poisson_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::sinusoidal_poisson_generator::State_::get( dictionary& d ) const
+nest::sinusoidal_poisson_generator::State_::get( Dictionary& d ) const
 {
   d[ names::y_0 ] = y_0_;
   d[ names::y_1 ] = y_1_;
 }
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::set( const dictionary& d,
+nest::sinusoidal_poisson_generator::Parameters_::set( const Dictionary& d,
   const sinusoidal_poisson_generator& n,
   Node* node )
 {
@@ -318,7 +318,7 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vect
         "The size of the data for the sinusoidal_gamma_generator needs to 5 "
         "[rate, frequency, phase, amplitude, individual_spike_trains]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::rate ] = input_param[ 0 ];
     d[ names::frequency ] = input_param[ 1 ];
     d[ names::phase ] = input_param[ 2 ];

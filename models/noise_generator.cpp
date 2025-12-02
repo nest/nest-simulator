@@ -129,7 +129,7 @@ nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::Parameters_::get( dictionary& d ) const
+nest::noise_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::mean ] = mean_;
   d[ names::std ] = std_;
@@ -140,14 +140,14 @@ nest::noise_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::noise_generator::State_::get( dictionary& d ) const
+nest::noise_generator::State_::get( Dictionary& d ) const
 {
   d[ names::y_0 ] = y_0_;
   d[ names::y_1 ] = y_1_;
 }
 
 void
-nest::noise_generator::Parameters_::set( const dictionary& d, const noise_generator& n, Node* node )
+nest::noise_generator::Parameters_::set( const Dictionary& d, const noise_generator& n, Node* node )
 {
   update_value_param( d, names::mean, mean_, node );
   update_value_param( d, names::std, std_, node );
@@ -378,7 +378,7 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
       throw BadParameterValue(
         "The size of the data for the noise_generator needs to be 5 [mean, std, std_mod, frequency, phase]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::mean ] = input_param[ 0 ];
     d[ names::std ] = input_param[ 1 ];
     d[ names::std_mod ] = input_param[ 2 ];

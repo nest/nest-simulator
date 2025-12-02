@@ -74,11 +74,11 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  set_status( const dictionary& ) override
+  set_status( const Dictionary& ) override
   {
   }
   void
-  get_status( dictionary& ) const override
+  get_status( Dictionary& ) const override
   {
   }
   void
@@ -133,7 +133,7 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
@@ -141,7 +141,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Check syn_spec dictionary for parameters that are not allowed with the
@@ -155,7 +155,7 @@ public:
    *
    * @see ConnectorModel::check_synapse_params
    */
-  void check_synapse_params( const dictionary& d ) const;
+  void check_synapse_params( const Dictionary& d ) const;
 
   /**
    * Calibrate the delay of this connection to the desired resolution.
@@ -344,7 +344,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::get_status( dictionary& d ) const
+Connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
   d[ names::delay ] = syn_id_delay_.get_delay_ms();
   target_.get_status( d );
@@ -352,7 +352,7 @@ Connection< targetidentifierT >::get_status( dictionary& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& )
 {
   double delay;
   if ( d.update_value( names::delay, delay ) )
@@ -365,7 +365,7 @@ Connection< targetidentifierT >::set_status( const dictionary& d, ConnectorModel
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_synapse_params( const dictionary& ) const
+Connection< targetidentifierT >::check_synapse_params( const Dictionary& ) const
 {
 }
 

@@ -114,8 +114,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -171,12 +171,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const dictionary&, Node* node );
+    double set( const Dictionary&, Node* node );
   }; // Parameters_
 
   // ----------------------------------------------------------------
@@ -218,14 +218,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( dictionary&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const dictionary&, const Parameters_&, const double, Node* );
+    void set( const Dictionary&, const Parameters_&, const double, Node* );
   }; // State_
 
   // ----------------------------------------------------------------
@@ -348,7 +348,7 @@ iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t 
 }
 
 inline void
-iaf_psc_alpha_multisynapse::get_status( dictionary& d ) const
+iaf_psc_alpha_multisynapse::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );

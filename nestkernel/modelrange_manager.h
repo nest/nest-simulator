@@ -47,8 +47,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Assign a range of node IDs for the given model
@@ -87,12 +87,12 @@ private:
 };
 
 inline void
-nest::ModelRangeManager::set_status( const dictionary& )
+nest::ModelRangeManager::set_status( const Dictionary& )
 {
 }
 
 inline void
-nest::ModelRangeManager::get_status( dictionary& )
+nest::ModelRangeManager::get_status( Dictionary& )
 {
 }
 

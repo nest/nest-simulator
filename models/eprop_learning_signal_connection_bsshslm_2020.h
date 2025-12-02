@@ -185,10 +185,10 @@ public:
   }
 
   //! Get the model attributes and their values.
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Set the values of the model attributes.
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! Set the synaptic weight to the provided value.
   void
@@ -207,7 +207,7 @@ constexpr ConnectionModelProperties eprop_learning_signal_connection_bsshslm_202
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( dictionary& d ) const
+eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
@@ -216,7 +216,7 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( 
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( const dictionary& d,
+eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( const Dictionary& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );

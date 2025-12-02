@@ -243,8 +243,8 @@ public:
   spike_generator( const spike_generator& );
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
@@ -308,7 +308,7 @@ private:
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -316,7 +316,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const dictionary&, State_&, const Time&, const Time&, Node* node );
+    void set( const Dictionary&, State_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.
@@ -354,14 +354,14 @@ spike_generator::send_test_event( Node& target, size_t receptor_type, synindex s
 }
 
 inline void
-spike_generator::get_status( dictionary& d ) const
+spike_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-nest::spike_generator::set_status( const dictionary& d )
+nest::spike_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

@@ -139,8 +139,8 @@ public:
   Type get_type() const override;
   SignalType receives_signal() const override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 

@@ -43,7 +43,7 @@ register_rate_transformer_gauss( const std::string& name )
 
 
 void
-nonlinearities_gauss_rate::get( dictionary& d ) const
+nonlinearities_gauss_rate::get( Dictionary& d ) const
 {
   d[ names::g ] = g_;
   d[ names::mu ] = mu_;
@@ -51,7 +51,7 @@ nonlinearities_gauss_rate::get( dictionary& d ) const
 }
 
 void
-nonlinearities_gauss_rate::set( const dictionary& d, Node* node )
+nonlinearities_gauss_rate::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g, g_, node );
   update_value_param( d, names::mu, mu_, node );

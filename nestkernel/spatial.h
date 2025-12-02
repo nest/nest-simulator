@@ -50,16 +50,16 @@ public:
   {
   }
 
-  void set_status( const dictionary&, bool ) override {};
+  void set_status( const Dictionary&, bool ) override {};
 
   void
-  get_status( dictionary& d, NodeCollection const* const nc ) const override
+  get_status( Dictionary& d, NodeCollection const* const nc ) const override
   {
     layer_->get_status( d, nc );
   }
 
   void
-  get_status( dictionary& d, const NodeCollectionPTR nc ) const override
+  get_status( Dictionary& d, const NodeCollectionPTR nc ) const override
   {
     get_status( d, nc.get() );
   }
@@ -99,8 +99,8 @@ public:
       return false;
     }
     // Compare status dictionaries of this layer and rhs layer
-    dictionary dict;
-    dictionary rhs_dict;
+    Dictionary dict;
+    Dictionary rhs_dict;
 
     // Since we do not have access to the node collection here, we
     // compare based on all metadata, irrespective of any slicing
@@ -115,7 +115,7 @@ private:
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
-NodeCollectionPTR create_layer( const dictionary& layer_dict );
+NodeCollectionPTR create_layer( const Dictionary& layer_dict );
 std::vector< std::vector< double > > get_position( NodeCollectionPTR layer_nc );
 std::vector< double > get_position( const size_t node_id );
 std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
@@ -124,20 +124,20 @@ std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc,
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
 std::vector< double > distance( const std::vector< ConnectionID >& conns );
-MaskPTR create_mask( const dictionary& mask_dict );
+MaskPTR create_mask( const Dictionary& mask_dict );
 NodeCollectionPTR
 select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask );
 bool inside( const std::vector< double >& point, const MaskPTR mask );
 MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
 MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
-void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
+void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& dict );
 void dump_layer_nodes( NodeCollectionPTR layer_nc, const std::string& filename );
 void dump_layer_connections( const NodeCollectionPTR source_layer,
   const NodeCollectionPTR target_layer,
   const std::string& synapse_model,
   const std::string& filename );
-dictionary get_layer_status( NodeCollectionPTR layer_nc );
+Dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 
 #endif /* SPATIAL_H */

@@ -109,7 +109,7 @@ nest::correlospinmatrix_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlospinmatrix_detector::Parameters_::get( dictionary& d ) const
+nest::correlospinmatrix_detector::Parameters_::get( Dictionary& d ) const
 {
   d[ names::delta_tau ] = delta_tau_.get_ms();
   d[ names::tau_max ] = tau_max_.get_ms();
@@ -119,13 +119,13 @@ nest::correlospinmatrix_detector::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::correlospinmatrix_detector::State_::get( dictionary& d ) const
+nest::correlospinmatrix_detector::State_::get( Dictionary& d ) const
 {
   d[ names::count_covariance ] = count_covariance_;
 }
 
 bool
-nest::correlospinmatrix_detector::Parameters_::set( const dictionary& d,
+nest::correlospinmatrix_detector::Parameters_::set( const Dictionary& d,
   const correlospinmatrix_detector& n,
   Node* node )
 {
@@ -199,7 +199,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const dictionary& d,
 }
 
 void
-nest::correlospinmatrix_detector::State_::set( const dictionary&, const Parameters_&, bool, Node* )
+nest::correlospinmatrix_detector::State_::set( const Dictionary&, const Parameters_&, bool, Node* )
 {
 }
 

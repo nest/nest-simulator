@@ -59,7 +59,7 @@ nest::spike_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::Parameters_::get( dictionary& d ) const
+nest::spike_generator::Parameters_::get( Dictionary& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   std::vector< double > times_ms( n_spikes );
@@ -147,7 +147,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 }
 
 void
-nest::spike_generator::Parameters_::set( const dictionary& d,
+nest::spike_generator::Parameters_::set( const Dictionary& d,
   State_& s,
   const Time& origin,
   const Time& now,
@@ -414,7 +414,7 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   if ( not input_spikes.empty() )
   {
 
-    dictionary d;
+    Dictionary d;
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();
     times_ms.reserve( n_spikes + input_spikes.size() );

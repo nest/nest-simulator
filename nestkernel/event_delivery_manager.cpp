@@ -140,7 +140,7 @@ EventDeliveryManager::finalize( const bool )
 
 
 void
-EventDeliveryManager::set_status( const dictionary& dict )
+EventDeliveryManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
 
@@ -176,7 +176,7 @@ EventDeliveryManager::set_status( const dictionary& dict )
 }
 
 void
-EventDeliveryManager::get_status( dictionary& dict )
+EventDeliveryManager::get_status( Dictionary& dict )
 {
   dict[ names::off_grid_spiking ] = off_grid_spiking_;
   dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
@@ -184,7 +184,7 @@ EventDeliveryManager::get_status( dictionary& dict )
   dict[ names::spike_buffer_shrink_spare ] = send_recv_buffer_shrink_spare_;
   dict[ names::spike_buffer_grow_extra ] = send_recv_buffer_grow_extra_;
 
-  dictionary log_events;
+  Dictionary log_events;
   dict[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
 

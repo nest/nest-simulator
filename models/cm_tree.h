@@ -88,7 +88,7 @@ public:
   CompartmentCurrents compartment_currents;
 
   Compartment( const long compartment_index, const long parent_index );
-  Compartment( const long compartment_index, const long parent_index, const dictionary& compartment_params );
+  Compartment( const long compartment_index, const long parent_index, const Dictionary& compartment_params );
   ~Compartment() {};
 
   // initialization
@@ -171,7 +171,7 @@ public:
 
   //! add a compartment to the tree structure
   void add_compartment( const long parent_index );
-  void add_compartment( const long parent_index, const dictionary& compartment_params );
+  void add_compartment( const long parent_index, const Dictionary& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
 
   //! initialize the tree for simulation

@@ -60,7 +60,7 @@ private:
 
 public:
   Na( double v_comp );
-  explicit Na( double v_comp, const dictionary& channel_params );
+  explicit Na( double v_comp, const Dictionary& channel_params );
   ~Na() {};
 
   void init_statevars( double v_init );
@@ -102,7 +102,7 @@ private:
 
 public:
   K( double v_comp );
-  explicit K( double v_comp, const dictionary& channel_params );
+  explicit K( double v_comp, const Dictionary& channel_params );
   ~K() {};
 
   void init_statevars( double v_init );
@@ -145,7 +145,7 @@ private:
 
 public:
   explicit AMPA( const long syn_index );
-  AMPA( const long syn_index, const dictionary& receptor_params );
+  AMPA( const long syn_index, const Dictionary& receptor_params );
   ~AMPA() {};
 
   long
@@ -208,7 +208,7 @@ private:
 
 public:
   explicit GABA( const long syn_index );
-  GABA( const long syn_index, const dictionary& receptor_params );
+  GABA( const long syn_index, const Dictionary& receptor_params );
   ~GABA() {};
 
   long
@@ -271,7 +271,7 @@ private:
 
 public:
   explicit NMDA( const long syn_index );
-  NMDA( const long syn_index, const dictionary& receptor_params );
+  NMDA( const long syn_index, const Dictionary& receptor_params );
   ~NMDA() {};
 
   long
@@ -353,7 +353,7 @@ private:
 public:
   // constructor, destructor
   explicit AMPA_NMDA( const long syn_index );
-  AMPA_NMDA( const long syn_index, const dictionary& receptor_params );
+  AMPA_NMDA( const long syn_index, const Dictionary& receptor_params );
   ~AMPA_NMDA() {};
 
   long
@@ -414,7 +414,7 @@ private:
 
 public:
   CompartmentCurrents( double v_comp );
-  CompartmentCurrents( double v_comp, const dictionary& channel_params );
+  CompartmentCurrents( double v_comp, const Dictionary& channel_params );
   ~CompartmentCurrents() {};
 
   void
@@ -475,7 +475,7 @@ public:
     }
   };
   void
-  add_synapse( const std::string& type, const long syn_idx, const dictionary& receptor_params )
+  add_synapse( const std::string& type, const long syn_idx, const Dictionary& receptor_params )
   {
     receptor_params.init_access_flags();
 
@@ -508,12 +508,12 @@ public:
   };
 
   void
-  add_receptor_info( std::vector< dictionary >& info, const long compartment_index )
+  add_receptor_info( std::vector< Dictionary >& info, const long compartment_index )
   {
     // receptor info for AMPA synapses
     for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
     {
-      dictionary dd;
+      Dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
       dd[ names::receptor_type ] = std::string( "AMPA" );
@@ -522,7 +522,7 @@ public:
     // receptor info for GABA synapses
     for ( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); ++syn_it )
     {
-      dictionary dd;
+      Dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
       dd[ names::receptor_type ] = std::string( "GABA" );
@@ -531,7 +531,7 @@ public:
     // receptor info for NMDA synapses
     for ( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); ++syn_it )
     {
-      dictionary dd;
+      Dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
       dd[ names::receptor_type ] = std::string( "NMDA" );
@@ -540,7 +540,7 @@ public:
     // receptor info for AMPA_NMDA synapses
     for ( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); ++syn_it )
     {
-      dictionary dd;
+      Dictionary dd;
       dd[ names::receptor_idx ] = syn_it->get_syn_idx();
       dd[ names::comp_idx ] = compartment_index;
       dd[ names::receptor_type ] = std::string( "AMPA_NMDA" );

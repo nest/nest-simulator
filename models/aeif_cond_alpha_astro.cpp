@@ -186,7 +186,7 @@ nest::aeif_cond_alpha_astro::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_astro::Parameters_::get( dictionary& d ) const
+nest::aeif_cond_alpha_astro::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th ] = V_th;
@@ -208,7 +208,7 @@ nest::aeif_cond_alpha_astro::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::aeif_cond_alpha_astro::Parameters_::set( const dictionary& d, Node* node )
+nest::aeif_cond_alpha_astro::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th, node );
   update_value_param( d, names::V_peak, V_peak_, node );
@@ -284,7 +284,7 @@ nest::aeif_cond_alpha_astro::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::aeif_cond_alpha_astro::State_::get( dictionary& d ) const
+nest::aeif_cond_alpha_astro::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::g_ex ] = y_[ G_EXC ];
@@ -295,7 +295,7 @@ nest::aeif_cond_alpha_astro::State_::get( dictionary& d ) const
 }
 
 void
-nest::aeif_cond_alpha_astro::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::aeif_cond_alpha_astro::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::g_ex, y_[ G_EXC ], node );

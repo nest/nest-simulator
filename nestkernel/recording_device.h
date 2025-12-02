@@ -169,8 +169,8 @@ public:
 
   const std::string& get_label() const;
 
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) const override;
 
 protected:
   void write( const Event&, const std::vector< double >&, const std::vector< long >& );
@@ -184,8 +184,8 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
-    void get( dictionary& ) const;
-    void set( const dictionary& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   } P_;
 
   struct State_
@@ -193,11 +193,11 @@ private:
     size_t n_events_; //!< The number of events recorded by the device.
 
     State_();
-    void get( dictionary& ) const;
-    void set( const dictionary& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   } S_;
 
-  dictionary backend_params_;
+  Dictionary backend_params_;
 };
 
 } // namespace

@@ -161,7 +161,7 @@ nest::astrocyte_lr_1994::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::astrocyte_lr_1994::Parameters_::get( dictionary& d ) const
+nest::astrocyte_lr_1994::Parameters_::get( Dictionary& d ) const
 {
   d[ names::Ca_tot ] = Ca_tot_;
   d[ names::IP3_0 ] = IP3_0_;
@@ -182,7 +182,7 @@ nest::astrocyte_lr_1994::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::astrocyte_lr_1994::Parameters_::set( const dictionary& d, Node* node )
+nest::astrocyte_lr_1994::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::Ca_tot, Ca_tot_, node );
   update_value_param( d, names::IP3_0, IP3_0_, node );
@@ -272,7 +272,7 @@ nest::astrocyte_lr_1994::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::astrocyte_lr_1994::State_::get( dictionary& d ) const
+nest::astrocyte_lr_1994::State_::get( Dictionary& d ) const
 {
   d[ names::IP3 ] = y_[ IP3 ];
   d[ names::Ca_astro ] = y_[ Ca_astro ];
@@ -280,7 +280,7 @@ nest::astrocyte_lr_1994::State_::get( dictionary& d ) const
 }
 
 void
-nest::astrocyte_lr_1994::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::astrocyte_lr_1994::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::IP3, y_[ IP3 ], node );
   update_value_param( d, names::Ca_astro, y_[ Ca_astro ], node );

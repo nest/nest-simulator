@@ -54,14 +54,14 @@ nest::mip_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::mip_generator::Parameters_::get( dictionary& d ) const
+nest::mip_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::p_copy ] = p_copy_;
 }
 
 void
-nest::mip_generator::Parameters_::set( const dictionary& d, Node* node )
+nest::mip_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::rate, rate_, node );
   update_value_param( d, names::p_copy, p_copy_, node );
@@ -199,7 +199,7 @@ nest::mip_generator::set_data_from_stimulation_backend( std::vector< double >& i
     }
     else
     {
-      dictionary d;
+      Dictionary d;
       d[ names::rate ] = input_param[ 0 ];
       d[ names::p_copy ] = input_param[ 1 ];
       ptmp.set( d, this );

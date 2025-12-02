@@ -50,8 +50,8 @@ class MUSICManager : public ManagerInterface
 public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   MUSICManager();
 

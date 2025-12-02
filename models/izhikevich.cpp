@@ -91,7 +91,7 @@ nest::izhikevich::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::izhikevich::Parameters_::get( dictionary& d ) const
+nest::izhikevich::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::V_th ] = V_th_; // threshold value
@@ -104,7 +104,7 @@ nest::izhikevich::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
+nest::izhikevich::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th_, node );
   update_value_param( d, names::V_min, V_min_, node );
@@ -124,14 +124,14 @@ nest::izhikevich::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::izhikevich::State_::get( dictionary& d, const Parameters_& ) const
+nest::izhikevich::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::U_m ] = u_; // Membrane potential recovery variable
   d[ names::V_m ] = v_; // Membrane potential
 }
 
 void
-nest::izhikevich::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::izhikevich::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::U_m, u_, node );
   update_value_param( d, names::V_m, v_, node );

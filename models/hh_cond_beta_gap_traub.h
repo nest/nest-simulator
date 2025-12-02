@@ -122,7 +122,7 @@ Gap Junctions are implemented by a gap current of the form
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ============ ======  =======================================================
 V_m          mV      Membrane potential
@@ -226,8 +226,8 @@ public:
   {
   }
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -280,8 +280,8 @@ private:
 
     Parameters_();
 
-    void get( dictionary& ) const;        //!< Store current values in dictionary
-    void set( const dictionary&, Node* ); //!< Set values from dicitonary
+    void get( Dictionary& ) const;        //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* ); //!< Set values from dicitonary
   };
 
 public:
@@ -316,8 +316,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( dictionary& ) const;
-    void set( const dictionary&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // Variables class -------------------------------------------------------
@@ -484,7 +484,7 @@ hh_cond_beta_gap_traub::handles_test_event( GapJunctionEvent&, size_t receptor_t
 }
 
 inline void
-hh_cond_beta_gap_traub::get_status( dictionary& d ) const
+hh_cond_beta_gap_traub::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -496,7 +496,7 @@ hh_cond_beta_gap_traub::get_status( dictionary& d ) const
 }
 
 inline void
-hh_cond_beta_gap_traub::set_status( const dictionary& d )
+hh_cond_beta_gap_traub::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

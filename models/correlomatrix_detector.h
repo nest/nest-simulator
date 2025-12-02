@@ -189,8 +189,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -249,14 +249,14 @@ private:
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const dictionary&, const correlomatrix_detector&, Node* node );
+    bool set( const Dictionary&, const correlomatrix_detector&, Node* node );
 
     Time get_default_delta_tau();
   };
@@ -287,12 +287,12 @@ private:
 
     State_(); //!< initialize default state
 
-    void get( dictionary& ) const;
+    void get( Dictionary& ) const;
 
     /**
      * @param bool if true, force state reset
      */
-    void set( const dictionary&, const Parameters_&, bool, Node* node );
+    void set( const Dictionary&, const Parameters_&, bool, Node* node );
 
     void reset( const Parameters_& );
   };
@@ -315,7 +315,7 @@ correlomatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-nest::correlomatrix_detector::get_status( dictionary& d ) const
+nest::correlomatrix_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -323,7 +323,7 @@ nest::correlomatrix_detector::get_status( dictionary& d ) const
 }
 
 inline void
-nest::correlomatrix_detector::set_status( const dictionary& d )
+nest::correlomatrix_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );

@@ -122,7 +122,7 @@ model, see the
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================
 **Dynamic state variables**
@@ -236,8 +236,8 @@ public:
   size_t handles_test_event( SICEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -283,8 +283,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
   };
 
 public:
@@ -321,8 +321,8 @@ public:
     State_( const State_& );
     State_& operator=( const State_& );
 
-    void get( dictionary& ) const;
-    void set( const dictionary&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -468,7 +468,7 @@ aeif_cond_alpha_astro::handles_test_event( DataLoggingRequest& dlr, size_t recep
 }
 
 inline void
-aeif_cond_alpha_astro::get_status( dictionary& d ) const
+aeif_cond_alpha_astro::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -478,7 +478,7 @@ aeif_cond_alpha_astro::get_status( dictionary& d ) const
 }
 
 inline void
-aeif_cond_alpha_astro::set_status( const dictionary& d )
+aeif_cond_alpha_astro::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

@@ -91,13 +91,13 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 }
 
 void
-parrot_neuron_ps::get_status( dictionary& d ) const
+parrot_neuron_ps::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron_ps::set_status( const dictionary& d )
+parrot_neuron_ps::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 }

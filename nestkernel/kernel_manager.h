@@ -199,7 +199,7 @@ private:
   KernelManager( KernelManager const& );  // do not implement
   void operator=( KernelManager const& ); // do not implement
 
-  dictionary get_build_info_();
+  Dictionary get_build_info_();
 
 public:
   /**
@@ -246,8 +246,8 @@ public:
    */
   void change_number_of_threads( size_t new_num_threads );
 
-  void set_status( const dictionary& );
-  void get_status( dictionary& );
+  void set_status( const Dictionary& );
+  void get_status( Dictionary& );
 
   void prepare();
   void cleanup();

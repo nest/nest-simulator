@@ -119,7 +119,7 @@ Node::get_model_() const
   return *kernel().model_manager.get_node_model( model_id_ );
 }
 
-dictionary
+Dictionary
 Node::get_status_dict_()
 {
   return {};
@@ -138,10 +138,10 @@ Node::get_local_device_id() const
   return invalid_index;
 }
 
-dictionary
+Dictionary
 Node::get_status_base()
 {
-  dictionary dict = get_status_dict_();
+  Dictionary dict = get_status_dict_();
 
   // add information available for all nodes
   dict[ names::local ] = kernel().node_manager.is_local_node( this );
@@ -167,7 +167,7 @@ Node::get_status_base()
 }
 
 void
-Node::set_status_base( const dictionary& dict )
+Node::set_status_base( const Dictionary& dict )
 {
   try
   {

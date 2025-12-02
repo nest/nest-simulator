@@ -156,7 +156,7 @@ public:
 
 
 /**
- * @brief Not all elements in a dictionary have been accessed.
+ * @brief Not all elements in a Dictionary have been accessed.
  *
  * @param what Which parameter triggers the error
  * @param where Which function the error occurs in

@@ -409,7 +409,7 @@ NodeCollection::valid() const
 }
 
 void
-NodeCollection::get_metadata_status( dictionary& d ) const
+NodeCollection::get_metadata_status( Dictionary& d ) const
 {
   NodeCollectionMetadataPTR meta = get_metadata();
   if ( not meta )

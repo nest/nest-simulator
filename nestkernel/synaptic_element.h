@@ -123,14 +123,14 @@ public:
    *
    * @param d to write data
    */
-  void get( dictionary& d ) const;
+  void get( Dictionary& d ) const;
 
   /**
    * Set values from a dictionary.
    *
    * @param d to take data from
    */
-  void set( const dictionary& d );
+  void set( const Dictionary& d );
 
 
   /**

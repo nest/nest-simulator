@@ -139,9 +139,9 @@ public:
     return true;
   }
 
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -158,7 +158,7 @@ constexpr ConnectionModelProperties rate_connection_delayed< targetidentifierT >
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::get_status( dictionary& d ) const
+rate_connection_delayed< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
@@ -167,7 +167,7 @@ rate_connection_delayed< targetidentifierT >::get_status( dictionary& d ) const
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+rate_connection_delayed< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   d.update_value( names::weight, weight_ );

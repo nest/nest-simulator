@@ -58,7 +58,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::get( dictionary& d ) const
+nest::inhomogeneous_poisson_generator::Parameters_::get( Dictionary& d ) const
 {
   const size_t n_rates = rate_times_.size();
   std::vector< double > times_ms;
@@ -110,7 +110,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::set( const dictionary& d, Buffers_& b, Node* )
+nest::inhomogeneous_poisson_generator::Parameters_::set( const Dictionary& d, Buffers_& b, Node* )
 {
   const bool times = d.known( names::rate_times );
   const bool rates = d.update_value( names::rate_values, rate_values_ );
@@ -299,7 +299,7 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
       throw BadParameterValue(
         "The size of the data for the inhomogeneous_poisson_generator needs to be even [(time,rate) pairs]" );
     }
-    dictionary d;
+    Dictionary d;
     std::vector< double > times_ms;
     std::vector< double > rate_values;
     const size_t n_spikes = P_.rate_times_.size();

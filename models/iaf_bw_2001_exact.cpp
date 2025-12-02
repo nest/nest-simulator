@@ -151,7 +151,7 @@ nest::iaf_bw_2001_exact::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001_exact&
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001_exact::Parameters_::get( dictionary& d ) const
+nest::iaf_bw_2001_exact::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L;
   d[ names::E_ex ] = E_ex;
@@ -171,7 +171,7 @@ nest::iaf_bw_2001_exact::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001_exact::Parameters_::set( const dictionary& d, Node* node )
+nest::iaf_bw_2001_exact::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -221,7 +221,7 @@ nest::iaf_bw_2001_exact::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::iaf_bw_2001_exact::State_::get( dictionary& d ) const
+nest::iaf_bw_2001_exact::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = ode_state_[ V_m ]; // Membrane potential
   d[ names::s_AMPA ] = ode_state_[ s_AMPA ];
@@ -229,7 +229,7 @@ nest::iaf_bw_2001_exact::State_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001_exact::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::iaf_bw_2001_exact::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, ode_state_[ V_m ], node );
   update_value_param( d, names::s_AMPA, ode_state_[ s_AMPA ], node );

@@ -74,7 +74,7 @@ nest::ClopathArchivingNode::init_clopath_buffers()
 }
 
 void
-nest::ClopathArchivingNode::get_status( dictionary& d ) const
+nest::ClopathArchivingNode::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 
@@ -88,7 +88,7 @@ nest::ClopathArchivingNode::get_status( dictionary& d ) const
 }
 
 void
-nest::ClopathArchivingNode::set_status( const dictionary& d )
+nest::ClopathArchivingNode::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 

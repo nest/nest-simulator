@@ -42,8 +42,8 @@
 nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : third_in_builder_( nullptr )
   , third_out_builder_( nullptr )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
@@ -60,26 +60,26 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const dictionary& conn_spec,
-  const dictionary& third_conn_spec,
-  const std::map< std::string, std::vector< dictionary > >& syn_specs )
+  const Dictionary& conn_spec,
+  const Dictionary& third_conn_spec,
+  const std::map< std::string, std::vector< Dictionary > >& syn_specs )
   : third_in_builder_( new ThirdInBuilder( sources,
     third,
     third_conn_spec,
-    const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::third_in ] ) )
+    const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
   , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
       targets,
       third_in_builder_,
       third_conn_spec,
       // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
-      const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::third_out ] ) )
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_out ] ) )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
       conn_spec,
-      const_cast< std::map< std::string, std::vector< dictionary > >& >( syn_specs )[ names::primary ] ) )
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::primary ] ) )
 {
 }
 
@@ -114,8 +114,8 @@ nest::ConnBuilder::disconnect()
 nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : sources_( sources )
   , targets_( targets )
   , third_out_( third_out )
@@ -162,7 +162,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
     set_synapse_model_( syn_params, synapse_indx );
     set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during connection setup
@@ -489,7 +489,7 @@ nest::BipartiteConnBuilder::loop_over_targets_() const
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_model_( const dictionary& syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, size_t synapse_indx )
 {
   const std::string syn_name = syn_params.known( names::synapse_model )
     ? syn_params.get< std::string >( names::synapse_model )
@@ -505,9 +505,9 @@ nest::BipartiteConnBuilder::set_synapse_model_( const dictionary& syn_params, si
 }
 
 void
-nest::BipartiteConnBuilder::set_default_weight_or_delay_( const dictionary& syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
 {
-  dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
@@ -540,8 +540,8 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( const dictionary& syn_
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_params( const dictionary& syn_defaults,
-  const dictionary& syn_params,
+nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
+  const Dictionary& syn_params,
   size_t synapse_indx )
 {
   for ( auto& syn_kv_pair : syn_defaults )
@@ -581,7 +581,7 @@ nest::BipartiteConnBuilder::set_synapse_params( const dictionary& syn_defaults,
 }
 
 void
-nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vector< dictionary >& syn_specs )
+nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs )
 {
   // We must check here if any syn_spec provided contains sp-related parameters
   bool have_structural_plasticity_parameters = false;
@@ -606,7 +606,7 @@ nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vec
   // We know now that we only have a single syn spec, so we extract that.
   // We must take a reference here, otherwise access registration will not work, because the
   // DictionaryAccessFlag scheme relies on the address of the dictionary.
-  const dictionary& syn_spec = syn_specs[ 0 ];
+  const Dictionary& syn_spec = syn_specs[ 0 ];
 
   if ( syn_spec.known( names::pre_synaptic_element ) xor syn_spec.known( names::post_synaptic_element ) )
   {
@@ -645,8 +645,8 @@ nest::BipartiteConnBuilder::reset_delays_()
 
 nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR third,
-  const dictionary& third_conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& third_conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, third, nullptr, third_conn_spec, syn_specs )
   , source_third_gids_( kernel().vp_manager.get_num_threads(), nullptr )
   , source_third_counts_( kernel().vp_manager.get_num_threads(), nullptr )
@@ -775,8 +775,8 @@ nest::ThirdInBuilder::connect_()
 nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
-  const dictionary& third_conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& third_conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( third, targets, nullptr, third_conn_spec, syn_specs )
   , third_in_( third_in )
 {
@@ -785,8 +785,8 @@ nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : ThirdOutBuilder( third, targets, third_in, conn_spec, syn_specs )
   , p_( 1.0 )
   , random_pool_( true )
@@ -945,8 +945,8 @@ nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // make sure that target and source population have the same size
@@ -1390,8 +1390,8 @@ nest::AllToAllBuilder::sp_disconnect_()
 nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // check for potential errors
@@ -1554,8 +1554,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // check for potential errors
@@ -1683,8 +1683,8 @@ nest::FixedOutDegreeBuilder::connect_()
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , N_( boost::any_cast< long >( conn_spec.at( names::N ) ) )
 {
@@ -1853,8 +1853,8 @@ nest::FixedTotalNumberBuilder::connect_()
 nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   auto p = conn_spec.at( names::p );
@@ -1968,8 +1968,8 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
 nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
 
@@ -2086,8 +2086,8 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , p_( conn_spec.get< double >( names::p ) )
 {
@@ -2213,8 +2213,8 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
@@ -2229,7 +2229,7 @@ nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
-    dictionary syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
     const double delay = syn_defaults.get< double >( "delay" );
     d = Time( Time::ms( delay ) ).get_steps();
   }

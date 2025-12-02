@@ -41,14 +41,14 @@ nest::GrowthCurveLinear::GrowthCurveLinear()
 }
 
 void
-nest::GrowthCurveLinear::get( dictionary& d ) const
+nest::GrowthCurveLinear::get( Dictionary& d ) const
 {
   d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
 }
 
 void
-nest::GrowthCurveLinear::set( const dictionary& d )
+nest::GrowthCurveLinear::set( const Dictionary& d )
 {
   d.update_value( names::eps, eps_ );
 }
@@ -80,7 +80,7 @@ nest::GrowthCurveGaussian::GrowthCurveGaussian()
 }
 
 void
-nest::GrowthCurveGaussian::get( dictionary& d ) const
+nest::GrowthCurveGaussian::get( Dictionary& d ) const
 {
   d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
@@ -88,7 +88,7 @@ nest::GrowthCurveGaussian::get( dictionary& d ) const
 }
 
 void
-nest::GrowthCurveGaussian::set( const dictionary& d )
+nest::GrowthCurveGaussian::set( const Dictionary& d )
 {
   d.update_value( names::eps, eps_ );
   d.update_value( names::eta, eta_ );
@@ -140,7 +140,7 @@ nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
 }
 
 void
-nest::GrowthCurveSigmoid::get( dictionary& d ) const
+nest::GrowthCurveSigmoid::get( Dictionary& d ) const
 {
   d[ names::growth_curve ] = name_;
   d[ names::eps ] = eps_;
@@ -148,7 +148,7 @@ nest::GrowthCurveSigmoid::get( dictionary& d ) const
 }
 
 void
-nest::GrowthCurveSigmoid::set( const dictionary& d )
+nest::GrowthCurveSigmoid::set( const Dictionary& d )
 {
   d.update_value( names::eps, eps_ );
   d.update_value( names::psi, psi_ );

@@ -100,7 +100,7 @@ nest::mat2_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::mat2_psc_exp::Parameters_::get( dictionary& d ) const
+nest::mat2_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_; // Resting potential
   d[ names::I_e ] = I_e_;
@@ -117,7 +117,7 @@ nest::mat2_psc_exp::Parameters_::get( dictionary& d ) const
 }
 
 double
-nest::mat2_psc_exp::Parameters_::set( const dictionary& d, Node* node )
+nest::mat2_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -163,7 +163,7 @@ nest::mat2_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::mat2_psc_exp::State_::get( dictionary& d, const Parameters_& p ) const
+nest::mat2_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = V_m_ + p.E_L_;                          // Membrane potential
   d[ names::V_th ] = p.E_L_ + p.omega_ + V_th_1_ + V_th_2_; // Adaptive threshold
@@ -172,7 +172,7 @@ nest::mat2_psc_exp::State_::get( dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::mat2_psc_exp::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+nest::mat2_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, V_m_, node ) )
   {

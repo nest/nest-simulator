@@ -151,8 +151,8 @@ public:
 
   Position< D, size_t > get_dims() const;
 
-  void set_status( const dictionary& d ) override;
-  void get_status( dictionary& d, NodeCollection const* const ) const override;
+  void set_status( const Dictionary& d ) override;
+  void get_status( Dictionary& d, NodeCollection const* const ) const override;
 
 protected:
   Position< D, size_t > dims_; ///< number of nodes in each direction.
@@ -173,7 +173,7 @@ GridLayer< D >::get_dims() const
 
 template < int D >
 void
-GridLayer< D >::set_status( const dictionary& d )
+GridLayer< D >::set_status( const Dictionary& d )
 {
   std::vector< long > new_dims( D );
 
@@ -209,7 +209,7 @@ GridLayer< D >::set_status( const dictionary& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( dictionary& d, NodeCollection const* const nc ) const
+GridLayer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
 {
   Layer< D >::get_status( d, nc );
 

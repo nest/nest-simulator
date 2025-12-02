@@ -87,14 +87,14 @@ NodeManager::finalize( const bool )
   clear_node_collection_container();
 }
 
-dictionary
+Dictionary
 NodeManager::get_status( size_t idx )
 {
   Node* target = get_mpi_local_node_or_device_head( idx );
 
   assert( target );
 
-  dictionary d = target->get_status_base();
+  Dictionary d = target->get_status_base();
 
   return d;
 }
@@ -335,7 +335,7 @@ NodeManager::clear_node_collection_container()
 }
 
 NodeCollectionPTR
-NodeManager::get_nodes( const dictionary& properties, const bool local_only )
+NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
 {
   std::vector< std::vector< size_t > > nodes_on_thread( kernel().vp_manager.get_num_threads() );
 
@@ -350,7 +350,7 @@ NodeManager::get_nodes( const dictionary& properties, const bool local_only )
       bool match = true;
       if ( not properties.empty() )
       {
-        const dictionary node_status = get_status( node_id );
+        const Dictionary node_status = get_status( node_id );
         for ( const auto& [ key, value ] : properties )
         {
           // Break once we find a property that then node does not have or that has a different value
@@ -567,7 +567,7 @@ NodeManager::destruct_nodes_()
 }
 
 void
-NodeManager::set_status_single_node_( Node& target, const dictionary& d, bool clear_flags )
+NodeManager::set_status_single_node_( Node& target, const Dictionary& d, bool clear_flags )
 {
   // proxies have no properties
   if ( not target.is_proxy() )
@@ -731,7 +731,7 @@ NodeManager::print( std::ostream& out ) const
 }
 
 void
-NodeManager::set_status( size_t node_id, const dictionary& d )
+NodeManager::set_status( size_t node_id, const Dictionary& d )
 {
   for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
@@ -744,14 +744,14 @@ NodeManager::set_status( size_t node_id, const dictionary& d )
 }
 
 void
-NodeManager::get_status( dictionary& d )
+NodeManager::get_status( Dictionary& d )
 {
   d[ names::network_size ] = size();
   sw_construction_create_.get_status( d, names::time_construction_create, names::time_construction_create_cpu );
 }
 
 void
-NodeManager::set_status( const dictionary& )
+NodeManager::set_status( const Dictionary& )
 {
 }
 

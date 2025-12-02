@@ -156,8 +156,8 @@ public:
    * @see class comment for details.
    */
   bool is_active( const Time& ) const override;
-  void get_status( dictionary& d ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& ) override;
 
   bool has_proxies() const override;
   std::string get_element_type() const override;
@@ -203,8 +203,8 @@ protected:
     Parameters_();
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
-    void get( dictionary& ) const;
-    void set( const dictionary& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   } P_;
 
 private:
@@ -217,7 +217,7 @@ private:
    */
   synindex first_syn_id_;
 
-  dictionary backend_params_;
+  Dictionary backend_params_;
 };
 
 inline std::string

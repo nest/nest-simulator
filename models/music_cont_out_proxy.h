@@ -85,7 +85,7 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 ============ ========  ========================================================
  interval    ms        Recording interval
@@ -149,8 +149,8 @@ public:
 
   SignalType sends_signal() const;
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 
@@ -183,8 +183,8 @@ private:
     std::vector< std::string > record_from_; //!< recordables to record from
     NodeCollectionPTR targets_;              //!< nodes to be observed
 
-    void get( dictionary& ) const;                                              //!< Store current values in dictionary
-    void set( const dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
+    void get( Dictionary& ) const;                                              //!< Store current values in Dictionary
+    void set( const Dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
@@ -196,7 +196,7 @@ private:
     bool published_;               //!< indicates whether this node has been published
                                    //!< already with MUSIC
     size_t port_width_;            //!< the width of the MUSIC port
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in Dictionary
   };
 
   // ------------------------------------------------------------

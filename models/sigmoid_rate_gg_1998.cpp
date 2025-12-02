@@ -43,13 +43,13 @@ register_rate_transformer_sigmoid_gg_1998( const std::string& name )
 
 
 void
-nonlinearities_sigmoid_rate_gg_1998::get( dictionary& d ) const
+nonlinearities_sigmoid_rate_gg_1998::get( Dictionary& d ) const
 {
   d[ names::g ] = g_;
 }
 
 void
-nonlinearities_sigmoid_rate_gg_1998::set( const dictionary& d, Node* node )
+nonlinearities_sigmoid_rate_gg_1998::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g, g_, node );
 }

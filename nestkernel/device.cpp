@@ -72,7 +72,7 @@ nest::Device::Parameters_::operator=( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::Parameters_::get( dictionary& d ) const
+nest::Device::Parameters_::get( Dictionary& d ) const
 {
   d[ names::origin ] = origin_.get_ms();
   d[ names::start ] = start_.get_ms();
@@ -80,7 +80,7 @@ nest::Device::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const dictionary& d, const std::string& name, Time& value )
+nest::Device::Parameters_::update_( const Dictionary& d, const std::string& name, Time& value )
 {
   // We cannot update the Time values directly, since updateValue()
   // doesn't support Time objects. We thus read the value in ms into
@@ -103,7 +103,7 @@ nest::Device::Parameters_::update_( const dictionary& d, const std::string& name
 }
 
 void
-nest::Device::Parameters_::set( const dictionary& d )
+nest::Device::Parameters_::set( const Dictionary& d )
 {
   update_( d, names::origin, origin_ );
   update_( d, names::start, start_ );

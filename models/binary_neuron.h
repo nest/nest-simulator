@@ -102,8 +102,8 @@ public:
   SignalType sends_signal() const override;
   SignalType receives_signal() const override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -134,8 +134,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -153,8 +153,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( dictionary&, const Parameters_& ) const;
-    void set( const dictionary&, const Parameters_&, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -283,7 +283,7 @@ binary_neuron< TGainfunction >::receives_signal() const
 
 template < class TGainfunction >
 inline void
-binary_neuron< TGainfunction >::get_status( dictionary& d ) const
+binary_neuron< TGainfunction >::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -295,7 +295,7 @@ binary_neuron< TGainfunction >::get_status( dictionary& d ) const
 
 template < class TGainfunction >
 inline void
-binary_neuron< TGainfunction >::set_status( const dictionary& d )
+binary_neuron< TGainfunction >::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -345,14 +345,14 @@ binary_neuron< TGainfunction >::State_::State_()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::get( dictionary& d ) const
+binary_neuron< TGainfunction >::Parameters_::get( Dictionary& d ) const
 {
   d[ names::tau_m ] = tau_m_;
 }
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::set( const dictionary& d, Node* node )
+binary_neuron< TGainfunction >::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
@@ -363,7 +363,7 @@ binary_neuron< TGainfunction >::Parameters_::set( const dictionary& d, Node* nod
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::get( dictionary& d, const Parameters_& ) const
+binary_neuron< TGainfunction >::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::h ] = h_; // summed input
   d[ names::S ] = y_; // binary_neuron output state
@@ -371,7 +371,7 @@ binary_neuron< TGainfunction >::State_::get( dictionary& d, const Parameters_& )
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const dictionary&, const Parameters_&, Node* )
+binary_neuron< TGainfunction >::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 

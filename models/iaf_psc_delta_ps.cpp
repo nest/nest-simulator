@@ -96,7 +96,7 @@ nest::iaf_psc_delta_ps::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_ps::Parameters_::get( dictionary& d ) const
+nest::iaf_psc_delta_ps::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;
   d[ names::I_e ] = I_e_;
@@ -109,7 +109,7 @@ nest::iaf_psc_delta_ps::Parameters_::get( dictionary& d ) const
 }
 
 double
-nest::iaf_psc_delta_ps::Parameters_::set( const dictionary& d, Node* node )
+nest::iaf_psc_delta_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -174,7 +174,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::iaf_psc_delta_ps::State_::get( dictionary& d, const Parameters_& p ) const
+nest::iaf_psc_delta_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = U_ + p.E_L_; // Membrane potential
   d[ names::is_refractory ] = is_refractory_;
@@ -182,7 +182,7 @@ nest::iaf_psc_delta_ps::State_::get( dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_psc_delta_ps::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_psc_delta_ps::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, U_, node ) )
   {

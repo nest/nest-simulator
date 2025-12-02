@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
 {
   nest::KernelManager::create_kernel_manager();
 
-  dictionary d;
+  Dictionary d;
   d[ nest::names::min ] = 0.0;
   d[ nest::names::max ] = 1.0;
   nest::ParameterPTR uniform_pd( new nest::UniformParameter( d ) );
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
   const int max = 100;
   const int num_iterations = 1000;
 
-  dictionary d;
+  Dictionary d;
   d[ nest::names::max ] = max;
   nest::ParameterPTR uniform_int_pd( new nest::UniformIntParameter( d ) );
 

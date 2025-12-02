@@ -37,7 +37,7 @@ public:
   ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( const ConnectionID& ) = default;
 
-  dictionary get_dict() const;
+  Dictionary get_dict() const;
   bool operator==( const ConnectionID& c ) const;
   void print_me( std::ostream& out ) const;
   long get_source_node_id() const;

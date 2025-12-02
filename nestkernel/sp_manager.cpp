@@ -87,13 +87,13 @@ SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 }
 
 void
-SPManager::get_status( dictionary& d )
+SPManager::get_status( Dictionary& d )
 {
-  dictionary sp_synapses;
+  Dictionary sp_synapses;
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
-    dictionary sp_synapse_params;
+    Dictionary sp_synapse_params;
     const std::string model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
     sp_synapse_params[ names::synapse_model ] = model;
     sp_synapse_params[ names::pre_synaptic_element ] = ( *i )->get_pre_synaptic_element_name();
@@ -116,7 +116,7 @@ SPManager::get_status( dictionary& d )
 }
 
 void
-SPManager::set_status( const dictionary& d )
+SPManager::set_status( const Dictionary& d )
 {
   d.update_value< double >( names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
 
@@ -125,9 +125,9 @@ SPManager::set_status( const dictionary& d )
     return;
   }
 
-  dictionary syn_specs;
-  dictionary syn_spec;
-  dictionary conn_spec;
+  Dictionary syn_specs;
+  Dictionary syn_spec;
+  Dictionary conn_spec;
 
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
@@ -138,10 +138,10 @@ SPManager::set_status( const dictionary& d )
   }
   sp_conn_builders_.clear();
 
-  d.update_value< dictionary >( names::structural_plasticity_synapses, syn_specs );
+  d.update_value< Dictionary >( names::structural_plasticity_synapses, syn_specs );
   for ( auto& [ key, entry ] : syn_specs )
   {
-    const auto syn_spec = syn_specs.get< dictionary >( key );
+    const auto syn_spec = syn_specs.get< Dictionary >( key );
     if ( syn_spec.known( names::allow_autapses ) )
     {
       conn_spec[ names::allow_autapses ] = syn_spec.get< bool >( names::allow_autapses );
@@ -238,8 +238,8 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
 void
 SPManager::disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
 {
   // probably not strictly necessarye here, but does nothing if all is up to date
   kernel().node_manager.update_thread_local_node_data();

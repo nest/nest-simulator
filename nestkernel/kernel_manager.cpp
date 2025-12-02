@@ -26,7 +26,7 @@
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 
 
-dictionary
+Dictionary
 nest::KernelManager::get_build_info_()
 {
   // Exit codes
@@ -45,7 +45,7 @@ nest::KernelManager::get_build_info_()
   constexpr unsigned int EXITCODE_SKIPPED_NO_GSL = 204;
   constexpr unsigned int EXITCODE_SKIPPED_NO_MUSIC = 205;
 
-  dictionary build_info;
+  Dictionary build_info;
 
   build_info[ "version" ] = std::string( NEST_VERSION );
   build_info[ "exitcode" ] = EXIT_SUCCESS;
@@ -118,7 +118,7 @@ nest::KernelManager::get_build_info_()
   build_info[ "ndebug" ] = false;
 #endif
 
-  dictionary exitcodes;
+  Dictionary exitcodes;
 
   exitcodes[ "success" ] = EXIT_SUCCESS;
   exitcodes[ "skipped" ] = EXITCODE_SKIPPED;
@@ -298,7 +298,7 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 }
 
 void
-nest::KernelManager::set_status( const dictionary& dict )
+nest::KernelManager::set_status( const Dictionary& dict )
 {
   assert( is_initialized() );
 
@@ -309,7 +309,7 @@ nest::KernelManager::set_status( const dictionary& dict )
 }
 
 void
-nest::KernelManager::get_status( dictionary& dict )
+nest::KernelManager::get_status( Dictionary& dict )
 {
   assert( is_initialized() );
 

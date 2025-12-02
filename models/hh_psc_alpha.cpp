@@ -186,7 +186,7 @@ nest::hh_psc_alpha::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha::Parameters_::get( dictionary& d ) const
+nest::hh_psc_alpha::Parameters_::get( Dictionary& d ) const
 {
   d[ names::t_ref ] = t_ref_;
   d[ names::g_Na ] = g_Na;
@@ -202,7 +202,7 @@ nest::hh_psc_alpha::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha::Parameters_::set( const dictionary& d, Node* node )
+nest::hh_psc_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::t_ref, t_ref_, node );
   update_value_param( d, names::C_m, C_m, node );
@@ -236,7 +236,7 @@ nest::hh_psc_alpha::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::hh_psc_alpha::State_::get( dictionary& d ) const
+nest::hh_psc_alpha::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::Act_m ] = y_[ HH_M ];
@@ -245,7 +245,7 @@ nest::hh_psc_alpha::State_::get( dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha::State_::set( const dictionary& d, Node* node )
+nest::hh_psc_alpha::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );

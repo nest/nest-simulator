@@ -52,8 +52,8 @@ cdef extern from "dictionary.h":
         cbool accessed
 
 cdef extern from "dictionary.h":
-    cppclass dictionary:
-        dictionary()
+    cppclass Dictionary:
+        Dictionary()
         any& operator[](const string&)
         cppclass const_iterator:
             pair[string, DictEntry_]& operator*()
@@ -64,7 +64,7 @@ cdef extern from "dictionary.h":
         const_iterator end()
         cbool known(const string&)
     string debug_type(const any&)
-    string debug_dict_types(const dictionary&)
+    string debug_dict_types(const Dictionary&)
     cbool is_type[T](const any&)
 
 
@@ -111,7 +111,7 @@ cdef extern from "parameter.h" namespace "nest":
     ParameterPTR divide_parameter(const ParameterPTR first, const ParameterPTR second) except +custom_exception_handler
     ParameterPTR add_parameter(const ParameterPTR first, const ParameterPTR second) except +custom_exception_handler
     ParameterPTR subtract_parameter(const ParameterPTR first, const ParameterPTR second) except +custom_exception_handler
-    ParameterPTR compare_parameter(const ParameterPTR first, const ParameterPTR second, const dictionary& d) except +custom_exception_handler
+    ParameterPTR compare_parameter(const ParameterPTR first, const ParameterPTR second, const Dictionary& d) except +custom_exception_handler
     ParameterPTR conditional_parameter(const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false) except +custom_exception_handler
     ParameterPTR min_parameter(const ParameterPTR parameter, const double other) except +custom_exception_handler
     ParameterPTR max_parameter(const ParameterPTR parameter, const double other) except +custom_exception_handler
@@ -140,53 +140,53 @@ cdef extern from "nest.h" namespace "nest":
     void disable_structural_plasticity() except +custom_exception_handler
 
     NodeCollectionPTR create( const string& model_name, const long n ) except +custom_exception_handler
-    NodeCollectionPTR create_spatial( const dictionary& ) except +custom_exception_handler
+    NodeCollectionPTR create_spatial( const Dictionary& ) except +custom_exception_handler
 
     NodeCollectionPTR make_nodecollection( const vector[size_t]& node_ids ) except +custom_exception_handler
 
     cbool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs ) except +custom_exception_handler
     cbool contains( const NodeCollectionPTR nc, const size_t node_id ) except +custom_exception_handler
     long find( const NodeCollectionPTR nc, size_t node_id ) except +custom_exception_handler
-    dictionary get_metadata( const NodeCollectionPTR nc ) except +custom_exception_handler
+    Dictionary get_metadata( const NodeCollectionPTR nc ) except +custom_exception_handler
 
     NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step ) except +custom_exception_handler
     void connect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
-                 const dictionary& connectivity,
-                 const vector[dictionary]& synapse_params ) except +custom_exception_handler
+                 const Dictionary& connectivity,
+                 const vector[Dictionary]& synapse_params ) except +custom_exception_handler
     void connect_tripartite(NodeCollectionPTR sources,
                             NodeCollectionPTR targets,
 			    NodeCollectionPTR third,
-                            const dictionary& connectivity,
-                            const dictionary& third_connectivity,
-                            const std_map[string, vector[dictionary]]& synapse_params ) except +custom_exception_handler
-    void connect_sonata( const dictionary& graph_specs, const long hyperslab_size ) except +custom_exception_handler
+                            const Dictionary& connectivity,
+                            const Dictionary& third_connectivity,
+                            const std_map[string, vector[Dictionary]]& synapse_params ) except +custom_exception_handler
+    void connect_sonata( const Dictionary& graph_specs, const long hyperslab_size ) except +custom_exception_handler
     void disconnect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
-                 const dictionary& connectivity,
-                 const vector[dictionary]& synapse_params) except +custom_exception_handler
+                 const Dictionary& connectivity,
+                 const vector[Dictionary]& synapse_params) except +custom_exception_handler
     void disconnect( const deque[ConnectionID]& conns ) except +custom_exception_handler
     string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc ) except +custom_exception_handler
     size_t nc_size( NodeCollectionPTR nc ) except +custom_exception_handler
-    dictionary get_kernel_status() except +custom_exception_handler
-    dictionary get_model_defaults( const string& ) except +custom_exception_handler
-    void set_model_defaults( const string&, const dictionary& ) except +custom_exception_handler
-    NodeCollectionPTR get_nodes( const dictionary& params, const cbool local_only ) except +custom_exception_handler
-    deque[ConnectionID] get_connections( const dictionary& dict ) except +custom_exception_handler
-    void set_kernel_status( const dictionary& ) except +custom_exception_handler
-    dictionary get_nc_status( NodeCollectionPTR nc ) except +custom_exception_handler
-    void set_nc_status( NodeCollectionPTR nc, vector[dictionary]& params ) except +custom_exception_handler
-    vector[dictionary] get_connection_status(const deque[ConnectionID]&) except +custom_exception_handler
-    void set_connection_status(const deque[ConnectionID]&, const dictionary&) except +custom_exception_handler
-    void set_connection_status(const deque[ConnectionID]&, const vector[dictionary]&) except +custom_exception_handler
+    Dictionary get_kernel_status() except +custom_exception_handler
+    Dictionary get_model_defaults( const string& ) except +custom_exception_handler
+    void set_model_defaults( const string&, const Dictionary& ) except +custom_exception_handler
+    NodeCollectionPTR get_nodes( const Dictionary& params, const cbool local_only ) except +custom_exception_handler
+    deque[ConnectionID] get_connections( const Dictionary& dict ) except +custom_exception_handler
+    void set_kernel_status( const Dictionary& ) except +custom_exception_handler
+    Dictionary get_nc_status( NodeCollectionPTR nc ) except +custom_exception_handler
+    void set_nc_status( NodeCollectionPTR nc, vector[Dictionary]& params ) except +custom_exception_handler
+    vector[Dictionary] get_connection_status(const deque[ConnectionID]&) except +custom_exception_handler
+    void set_connection_status(const deque[ConnectionID]&, const Dictionary&) except +custom_exception_handler
+    void set_connection_status(const deque[ConnectionID]&, const vector[Dictionary]&) except +custom_exception_handler
     void simulate( const double& t ) except +custom_exception_handler
     void prepare() except +custom_exception_handler
     void run( const double& t ) except +custom_exception_handler
     void cleanup() except +custom_exception_handler
     void synchronize() except +custom_exception_handler
-    void copy_model( const string&, const string&, const dictionary& ) except +custom_exception_handler
-    ParameterPTR create_parameter( const dictionary& param_dict ) except +custom_exception_handler
+    void copy_model( const string&, const string&, const Dictionary& ) except +custom_exception_handler
+    ParameterPTR create_parameter( const Dictionary& param_dict ) except +custom_exception_handler
     double get_value( const ParameterPTR param ) except +custom_exception_handler
     cbool is_spatial( const ParameterPTR param ) except +custom_exception_handler
     NodeCollectionPTR node_collection_array_index(NodeCollectionPTR node_collection, const long* array, unsigned long n) except +custom_exception_handler
@@ -196,7 +196,7 @@ cdef extern from "nest.h" namespace "nest":
 
     void connect_arrays( long* sources, long* targets, double* weights, double* delays, const vector[string]& p_keys, double* p_values, size_t n, const string& syn_model ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +custom_exception_handler
-    vector[double] apply( const ParameterPTR param, const dictionary& positions ) except +custom_exception_handler
+    vector[double] apply( const ParameterPTR param, const Dictionary& positions ) except +custom_exception_handler
 
 
 # PYNEST-NG-FUTURE: Move these global functions to nest.h?
@@ -208,8 +208,8 @@ cdef extern from "spatial.h" namespace "nest":
     vector[vector[double]] displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc ) except +custom_exception_handler
     vector[vector[double]] displacement( NodeCollectionPTR layer_nc, const vector[vector[double]]& point ) except +custom_exception_handler
 
-    void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict ) except +custom_exception_handler
-    MaskPTR create_mask( const dictionary& mask_dict ) except +custom_exception_handler
+    void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& dict ) except +custom_exception_handler
+    MaskPTR create_mask( const Dictionary& mask_dict ) except +custom_exception_handler
     NodeCollectionPTR select_nodes_by_mask( const NodeCollectionPTR layer_nc, const vector[double]& anchor, const MaskPTR mask ) except +custom_exception_handler
     cbool inside(const vector[double]& point, const MaskPTR mask ) except +custom_exception_handler
     MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 ) except +custom_exception_handler

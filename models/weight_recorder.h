@@ -130,8 +130,8 @@ public:
   Type get_type() const override;
   SignalType receives_signal() const override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void pre_run_hook() override;
@@ -145,8 +145,8 @@ private:
     Parameters_();
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
-    void get( dictionary& ) const;
-    void set( const dictionary& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   };
 
   Parameters_ P_;

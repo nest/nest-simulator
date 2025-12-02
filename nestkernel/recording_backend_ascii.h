@@ -159,7 +159,7 @@ public:
 
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const dictionary& params ) override;
+  void enroll( const RecordingDevice& device, const Dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
@@ -182,12 +182,12 @@ public:
 
   void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) const override;
 
-  void check_device_status( const dictionary& ) const override;
-  void get_device_defaults( dictionary& ) const override;
-  void get_device_status( const RecordingDevice& device, dictionary& ) const override;
+  void check_device_status( const Dictionary& ) const override;
+  void get_device_defaults( Dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, Dictionary& ) const override;
 
 private:
   const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
@@ -201,8 +201,8 @@ private:
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
     void flush_file();
     void close_file();
-    void get_status( dictionary& ) const;
-    void set_status( const dictionary& );
+    void get_status( Dictionary& ) const;
+    void set_status( const Dictionary& );
 
   private:
     long precision_;                                //!< Number of decimal places used when writing decimal values

@@ -141,12 +141,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual void get_status( dictionary& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  virtual void set_status( const dictionary& d, ConnectorModel& cm );
+  virtual void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -238,7 +238,7 @@ ht_synapse< targetidentifierT >::ht_synapse()
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::get_status( dictionary& d ) const
+ht_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
@@ -250,7 +250,7 @@ ht_synapse< targetidentifierT >::get_status( dictionary& d ) const
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+ht_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 

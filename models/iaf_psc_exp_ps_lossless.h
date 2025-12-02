@@ -169,8 +169,8 @@ public:
     return true;
   }
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -308,8 +308,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;               //!< Store current values in dictionary
-    double set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;               //!< Store current values in dictionary
+    double set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -330,8 +330,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( dictionary&, const Parameters_& ) const;
-    void set( const dictionary&, const Parameters_&, double delta_EL, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -488,7 +488,7 @@ iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, size_t rec
 }
 
 inline void
-iaf_psc_exp_ps_lossless::get_status( dictionary& d ) const
+iaf_psc_exp_ps_lossless::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -498,7 +498,7 @@ iaf_psc_exp_ps_lossless::get_status( dictionary& d ) const
 }
 
 inline void
-iaf_psc_exp_ps_lossless::set_status( const dictionary& d )
+iaf_psc_exp_ps_lossless::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                 // temporary copy in case of errors
   double delta_EL = ptmp.set( d, this ); // throws if BadProperty

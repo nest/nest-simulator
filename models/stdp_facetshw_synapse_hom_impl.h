@@ -124,7 +124,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::calc_readout_cycle_duratio
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( dictionary& d ) const
+STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
@@ -148,7 +148,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( dictionary& d 
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
@@ -287,7 +287,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::stdp_facetshw_synapse_hom()
 
 template < typename targetidentifierT >
 void
-stdp_facetshw_synapse_hom< targetidentifierT >::get_status( dictionary& d ) const
+stdp_facetshw_synapse_hom< targetidentifierT >::get_status( Dictionary& d ) const
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
@@ -311,7 +311,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::get_status( dictionary& d ) cons
 
 template < typename targetidentifierT >
 void
-stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );

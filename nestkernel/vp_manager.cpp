@@ -95,7 +95,7 @@ nest::VPManager::get_OMP_NUM_THREADS() const
 }
 
 void
-nest::VPManager::set_status( const dictionary& d )
+nest::VPManager::set_status( const Dictionary& d )
 {
   size_t n_threads = get_num_threads();
   size_t n_vps = get_num_virtual_processes();
@@ -175,7 +175,7 @@ nest::VPManager::set_status( const dictionary& d )
 }
 
 void
-nest::VPManager::get_status( dictionary& d )
+nest::VPManager::get_status( Dictionary& d )
 {
   d[ names::local_num_threads ] = get_num_threads();
   d[ names::total_num_virtual_procs ] = get_num_virtual_processes();

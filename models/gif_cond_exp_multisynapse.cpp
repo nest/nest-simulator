@@ -149,7 +149,7 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::get( dictionary& d ) const
+nest::gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -172,7 +172,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::set( const dictionary& d, Node* node )
+nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -289,7 +289,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const dictionary& d, Node* no
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::get( dictionary& d, const Parameters_& ) const
+nest::gif_cond_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = y_[ V_M ]; // Membrane potential
   d[ names::E_sfa ] = sfa_;    // Adaptive threshold potential
@@ -306,7 +306,7 @@ nest::gif_cond_exp_multisynapse::State_::get( dictionary& d, const Parameters_& 
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::set( const dictionary& d, const Parameters_& p, Node* node )
+nest::gif_cond_exp_multisynapse::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(), 0.0 );

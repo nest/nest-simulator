@@ -53,11 +53,11 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
-  void set_recording_backend_status( std::string, const dictionary& );
-  dictionary get_recording_backend_status( std::string );
+  void set_recording_backend_status( std::string, const Dictionary& );
+  Dictionary get_recording_backend_status( std::string );
 
   /**
    * The prefix for files written by devices.
@@ -135,20 +135,20 @@ public:
     const std::vector< double >&,
     const std::vector< long >& );
 
-  void enroll_recorder( const std::string&, const RecordingDevice&, const dictionary& );
-  void enroll_stimulator( const std::string&, StimulationDevice&, const dictionary& );
+  void enroll_recorder( const std::string&, const RecordingDevice&, const Dictionary& );
+  void enroll_stimulator( const std::string&, StimulationDevice&, const Dictionary& );
 
   void set_recording_value_names( const std::string& backend_name,
     const RecordingDevice& device,
     const std::vector< std::string >& double_value_names,
     const std::vector< std::string >& long_value_names );
 
-  void check_recording_backend_device_status( const std::string&, const dictionary& );
-  void get_recording_backend_device_defaults( const std::string&, dictionary& );
-  void get_recording_backend_device_status( const std::string&, const RecordingDevice&, dictionary& );
+  void check_recording_backend_device_status( const std::string&, const Dictionary& );
+  void get_recording_backend_device_defaults( const std::string&, Dictionary& );
+  void get_recording_backend_device_status( const std::string&, const RecordingDevice&, Dictionary& );
 
 private:
-  void set_data_path_prefix_( const dictionary& );
+  void set_data_path_prefix_( const Dictionary& );
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices

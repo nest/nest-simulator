@@ -104,7 +104,7 @@ nest::gif_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::Parameters_::get( dictionary& d ) const
+nest::gif_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -124,7 +124,7 @@ nest::gif_psc_exp::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::gif_psc_exp::Parameters_::set( const dictionary& d, Node* node )
+nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -208,7 +208,7 @@ nest::gif_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::gif_psc_exp::State_::get( dictionary& d, const Parameters_& ) const
+nest::gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = V_;     // Membrane potential
   d[ names::E_sfa ] = sfa_; // Adaptive threshold potential
@@ -216,7 +216,7 @@ nest::gif_psc_exp::State_::get( dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_psc_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::gif_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, V_, node );
 }

@@ -95,7 +95,7 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
-    const dictionary& d,
+    const Dictionary& d,
     const double delay = NAN,
     const double weight = NAN ) = 0;
 
@@ -103,8 +103,8 @@ public:
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
 
-  virtual void get_status( dictionary& ) const = 0;
-  virtual void set_status( const dictionary& ) = 0;
+  virtual void get_status( Dictionary& ) const = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
@@ -115,7 +115,7 @@ public:
    * Any further checks need to be implemented by the connection model class by overriding
    * Connection::check_synapse_params().
    */
-  virtual void check_synapse_params( const dictionary& ) const = 0;
+  virtual void check_synapse_params( const Dictionary& ) const = 0;
 
   virtual std::unique_ptr< SecondaryEvent > get_secondary_event() = 0;
 
@@ -175,7 +175,7 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
-    const dictionary& d,
+    const Dictionary& d,
     const double delay,
     const double weight ) override;
 
@@ -183,8 +183,8 @@ public:
 
   void calibrate( const TimeConverter& tc ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   typename ConnectionT::CommonPropertiesType const&
   get_common_properties() const override
@@ -195,7 +195,7 @@ public:
   size_t get_syn_id() const override;
   void set_syn_id( synindex syn_id ) override;
 
-  void check_synapse_params( const dictionary& syn_spec ) const override;
+  void check_synapse_params( const Dictionary& syn_spec ) const override;
 
   std::unique_ptr< SecondaryEvent >
   get_secondary_event() override

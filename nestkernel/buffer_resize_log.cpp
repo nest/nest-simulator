@@ -56,7 +56,7 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 }
 
 void
-BufferResizeLog::to_dict( dictionary& events ) const
+BufferResizeLog::to_dict( Dictionary& events ) const
 {
   auto& times = events.get_vector< int >( names::times );
   times.insert( times.end(), time_steps_.begin(), time_steps_.end() );

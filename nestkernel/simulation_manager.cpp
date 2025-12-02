@@ -132,7 +132,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 }
 
 void
-nest::SimulationManager::set_status( const dictionary& d )
+nest::SimulationManager::set_status( const Dictionary& d )
 {
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -451,7 +451,7 @@ nest::SimulationManager::set_status( const dictionary& d )
 }
 
 void
-nest::SimulationManager::get_status( dictionary& d )
+nest::SimulationManager::get_status( Dictionary& d )
 {
   d[ names::ms_per_tic ] = Time::get_ms_per_tic();
   d[ names::tics_per_ms ] = Time::get_tics_per_ms();

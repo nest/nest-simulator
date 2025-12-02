@@ -198,7 +198,7 @@ nest::gif_cond_exp::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp::Parameters_::get( dictionary& d ) const
+nest::gif_cond_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -221,7 +221,7 @@ nest::gif_cond_exp::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::gif_cond_exp::Parameters_::set( const dictionary& d, Node* node )
+nest::gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -308,7 +308,7 @@ nest::gif_cond_exp::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::gif_cond_exp::State_::get( dictionary& d, const Parameters_& ) const
+nest::gif_cond_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = neuron_state_[ V_M ]; // Membrane potential
   d[ names::g_ex ] = neuron_state_[ G_EXC ];
@@ -318,7 +318,7 @@ nest::gif_cond_exp::State_::get( dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_cond_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::gif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, neuron_state_[ V_M ], node );
   update_value_param( d, names::g_ex, neuron_state_[ G_EXC ], node );

@@ -182,10 +182,10 @@ public:
   ~EpropSynapseCommonProperties();
 
   //! Get parameter dictionary.
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Pointer to common properties object for weight optimizer.
@@ -266,10 +266,10 @@ public:
   using ConnectionBase::get_target;
 
   //! Get parameter dictionary.
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! Send the spike event.
   bool send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp );
@@ -515,13 +515,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::get_status( dictionary& d ) const
+eprop_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = sizeof( *this );
 
-  dictionary optimizer_dict;
+  Dictionary optimizer_dict;
 
   // The default_connection_ has no optimizer, therefore we need to protect it
   if ( optimizer_ )
@@ -533,7 +533,7 @@ eprop_synapse< targetidentifierT >::get_status( dictionary& d ) const
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+eprop_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   if ( d.known( names::optimizer ) )
@@ -542,7 +542,7 @@ eprop_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorMo
     // message because the parameters for the synapse-specific optimizer have not been accessed.
     if ( optimizer_ )
     {
-      optimizer_->set_status( d.get< dictionary >( names::optimizer ) );
+      optimizer_->set_status( d.get< Dictionary >( names::optimizer ) );
     }
   }
 

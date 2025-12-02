@@ -67,29 +67,29 @@ std::string pprint_to_string( NodeCollectionPTR nc );
 
 size_t nc_size( NodeCollectionPTR nc );
 
-void set_kernel_status( const dictionary& dict );
-dictionary get_kernel_status();
+void set_kernel_status( const Dictionary& dict );
+Dictionary get_kernel_status();
 
-dictionary get_nc_status( NodeCollectionPTR node_collection );
-void set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params );
+Dictionary get_nc_status( NodeCollectionPTR node_collection );
+void set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params );
 
-void set_node_status( const size_t node_id, const dictionary& dict );
-dictionary get_node_status( const size_t node_id );
+void set_node_status( const size_t node_id, const Dictionary& dict );
+Dictionary get_node_status( const size_t node_id );
 
-void set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict );
-void set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts );
-std::vector< dictionary > get_connection_status( const std::deque< ConnectionID >& conns );
+void set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary& dict );
+void set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< Dictionary >& dicts );
+std::vector< Dictionary > get_connection_status( const std::deque< ConnectionID >& conns );
 
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 
 NodeCollectionPTR create( const std::string& model_name, const size_t n );
-NodeCollectionPTR create_spatial( const dictionary& layer_dict );
+NodeCollectionPTR create_spatial( const Dictionary& layer_dict );
 
 NodeCollectionPTR make_nodecollection( const std::vector< size_t >& node_ids );
 
-NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
+NodeCollectionPTR get_nodes( const Dictionary& dict, const bool local_only );
 long find( const NodeCollectionPTR nc, size_t node_id );
-dictionary get_metadata( const NodeCollectionPTR nc );
+Dictionary get_metadata( const NodeCollectionPTR nc );
 
 bool equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs );
 bool contains( const NodeCollectionPTR nc, const size_t node_id );
@@ -106,16 +106,16 @@ RngPtr get_rank_synced_rng();
 RngPtr get_vp_synced_rng( size_t tid );
 RngPtr get_vp_specific_rng( size_t tid );
 
-void set_kernel_status( const dictionary& dict );
-dictionary get_kernel_status();
+void set_kernel_status( const Dictionary& dict );
+Dictionary get_kernel_status();
 
 /**
  * Create bipartite connections.
  */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& connectivity,
-  const std::vector< dictionary >& synapse_params );
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params );
 
 /**
  * Disconnect nodes.
@@ -126,8 +126,8 @@ void connect( NodeCollectionPTR sources,
  */
 void disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& connectivity,
-  const std::vector< dictionary >& synapse_params );
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params );
 
 /**
  * Create tripartite connections
@@ -138,9 +138,9 @@ void disconnect( NodeCollectionPTR sources,
 void connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const dictionary& connectivity,
-  const dictionary& third_connectivity,
-  const std::map< std::string, std::vector< dictionary > >& synapse_specs );
+  const Dictionary& connectivity,
+  const Dictionary& third_connectivity,
+  const std::map< std::string, std::vector< Dictionary > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -168,9 +168,9 @@ void connect_arrays( long* sources,
   const std::string& syn_model );
 
 
-void connect_sonata( const dictionary& graph_specs, const long hyperslab_size );
+void connect_sonata( const Dictionary& graph_specs, const long hyperslab_size );
 
-std::deque< ConnectionID > get_connections( const dictionary& dict );
+std::deque< ConnectionID > get_connections( const Dictionary& dict );
 
 void disconnect( const std::deque< ConnectionID >& conns );
 
@@ -229,18 +229,18 @@ void synchronize();
  * @param d    Dictionary with parameters specific for this mask type.
  * @returns dynamically allocated new Mask object.
  */
-MaskPTR create_mask( const std::string& name, const dictionary& d );
+MaskPTR create_mask( const std::string& name, const Dictionary& d );
 
-void copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict );
+void copy_model( const std::string& oldmodname, const std::string& newmodname, const Dictionary& dict );
 
-void set_model_defaults( const std::string& model_name, const dictionary& );
-dictionary get_model_defaults( const std::string& model_name );
+void set_model_defaults( const std::string& model_name, const Dictionary& );
+Dictionary get_model_defaults( const std::string& model_name );
 
 ParameterPTR create_parameter( const boost::any& );
 ParameterPTR create_parameter( const double );
 ParameterPTR create_parameter( const long );
-ParameterPTR create_parameter( const dictionary& param_dict );
-ParameterPTR create_parameter( const std::string& name, const dictionary& d );
+ParameterPTR create_parameter( const Dictionary& param_dict );
+ParameterPTR create_parameter( const std::string& name, const Dictionary& d );
 
 using ParameterFactory = GenericFactory< Parameter >;
 using MaskFactory = GenericFactory< AbstractMask >;
@@ -253,7 +253,7 @@ double get_value( const ParameterPTR param );
 bool is_spatial( const ParameterPTR param );
 
 std::vector< double > apply( const ParameterPTR param, const NodeCollectionPTR nc );
-std::vector< double > apply( const ParameterPTR param, const dictionary& positions );
+std::vector< double > apply( const ParameterPTR param, const Dictionary& positions );
 
 NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const long* array, unsigned long n );
 NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection, const bool* array, unsigned long n );
@@ -282,7 +282,7 @@ register_mask( const std::string& name, MaskCreatorFunction creator )
 }
 
 inline MaskPTR
-create_mask( const std::string& name, const dictionary& d )
+create_mask( const std::string& name, const Dictionary& d )
 {
   d.init_access_flags();
   auto mask = MaskPTR( mask_factory_().create( name, d ) );

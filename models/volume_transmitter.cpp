@@ -56,12 +56,12 @@ nest::volume_transmitter::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::volume_transmitter::Parameters_::get( dictionary& d ) const
+nest::volume_transmitter::Parameters_::get( Dictionary& d ) const
 {
   d[ names::deliver_interval ] = deliver_interval_;
 }
 
-void ::nest::volume_transmitter::Parameters_::set( const dictionary& d, Node* node )
+void ::nest::volume_transmitter::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::deliver_interval, deliver_interval_, node );
 }

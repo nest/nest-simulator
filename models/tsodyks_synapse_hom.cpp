@@ -50,7 +50,7 @@ TsodyksHomCommonProperties::TsodyksHomCommonProperties()
 }
 
 void
-TsodyksHomCommonProperties::get_status( dictionary& d ) const
+TsodyksHomCommonProperties::get_status( Dictionary& d ) const
 {
   CommonPropertiesHomW::get_status( d );
 
@@ -61,7 +61,7 @@ TsodyksHomCommonProperties::get_status( dictionary& d ) const
 }
 
 void
-TsodyksHomCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
+TsodyksHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonPropertiesHomW::set_status( d, cm );
 

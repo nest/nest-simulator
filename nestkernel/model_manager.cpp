@@ -108,12 +108,12 @@ ModelManager::get_num_connection_models() const
 }
 
 void
-ModelManager::set_status( const dictionary& )
+ModelManager::set_status( const Dictionary& )
 {
 }
 
 void
-ModelManager::get_status( dictionary& dict )
+ModelManager::get_status( Dictionary& dict )
 {
   std::vector< std::string > node_models;
   for ( auto const& element : modeldict_ )
@@ -135,7 +135,7 @@ ModelManager::get_status( dictionary& dict )
 }
 
 void
-ModelManager::copy_model( const std::string& old_name, const std::string& new_name, const dictionary& params )
+ModelManager::copy_model( const std::string& old_name, const std::string& new_name, const Dictionary& params )
 {
   if ( modeldict_.known( new_name ) or synapsedict_.known( new_name ) )
   {
@@ -183,7 +183,7 @@ ModelManager::register_node_model_( Model* model )
 }
 
 void
-ModelManager::copy_node_model_( const size_t old_id, const std::string& new_name, const dictionary& params )
+ModelManager::copy_node_model_( const size_t old_id, const std::string& new_name, const Dictionary& params )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
@@ -205,7 +205,7 @@ ModelManager::copy_node_model_( const size_t old_id, const std::string& new_name
 }
 
 void
-ModelManager::copy_connection_model_( const size_t old_id, const std::string& new_name, const dictionary& params )
+ModelManager::copy_connection_model_( const size_t old_id, const std::string& new_name, const Dictionary& params )
 {
   kernel().vp_manager.assert_single_threaded();
 
@@ -234,7 +234,7 @@ ModelManager::copy_connection_model_( const size_t old_id, const std::string& ne
 
 
 bool
-ModelManager::set_model_defaults( const std::string& name, const dictionary& params )
+ModelManager::set_model_defaults( const std::string& name, const Dictionary& params )
 {
   size_t id;
   if ( modeldict_.known( name ) )
@@ -257,7 +257,7 @@ ModelManager::set_model_defaults( const std::string& name, const dictionary& par
 
 
 void
-ModelManager::set_node_defaults_( size_t model_id, const dictionary& params )
+ModelManager::set_node_defaults_( size_t model_id, const Dictionary& params )
 {
   params.init_access_flags();
 
@@ -268,7 +268,7 @@ ModelManager::set_node_defaults_( size_t model_id, const dictionary& params )
 }
 
 void
-ModelManager::set_synapse_defaults_( size_t model_id, const dictionary& params )
+ModelManager::set_synapse_defaults_( size_t model_id, const Dictionary& params )
 {
   params.init_access_flags();
 
@@ -329,12 +329,12 @@ ModelManager::get_synapse_model_id( std::string model_name )
 }
 
 
-dictionary
+Dictionary
 ModelManager::get_connector_defaults( synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
-  dictionary dict;
+  Dictionary dict;
 
   for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {

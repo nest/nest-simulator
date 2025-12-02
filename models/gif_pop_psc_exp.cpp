@@ -117,7 +117,7 @@ nest::gif_pop_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::Parameters_::get( dictionary& d ) const
+nest::gif_pop_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::N ] = N_;
   d[ names::tau_m ] = tau_m_;
@@ -138,7 +138,7 @@ nest::gif_pop_psc_exp::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::gif_pop_psc_exp::Parameters_::set( const dictionary& d, Node* node )
+nest::gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::N, N_, node );
   update_value_param( d, names::tau_m, tau_m_, node );
@@ -213,7 +213,7 @@ nest::gif_pop_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::gif_pop_psc_exp::State_::get( dictionary& d, const Parameters_& ) const
+nest::gif_pop_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = V_m_;           // Filtered version of input
   d[ names::n_events ] = n_spikes_; // Number of generated spikes
@@ -224,7 +224,7 @@ nest::gif_pop_psc_exp::State_::get( dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_pop_psc_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::gif_pop_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, V_m_, node );
   update_value_param( d, names::I_syn_ex, I_syn_ex_, node );

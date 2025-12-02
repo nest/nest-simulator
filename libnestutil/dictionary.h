@@ -1,5 +1,5 @@
 /*
- *  dictionary.h
+ *  Dictionary.h
  *
  *  This file is part of NEST.
  *
@@ -30,7 +30,7 @@
 
 #include "exceptions.h"
 
-class dictionary;
+class Dictionary;
 
 /**
  * @brief Get the typename of the operand.
@@ -40,7 +40,7 @@ class dictionary;
  */
 std::string debug_type( const boost::any& operand );
 
-std::string debug_dict_types( const dictionary& dict );
+std::string debug_dict_types( const Dictionary& dict );
 
 template < typename T >
 bool
@@ -81,7 +81,7 @@ struct DictEntry_
   mutable bool accessed; //!< initally false, set to true once entry is accessed
 };
 
-class dictionary : public std::map< std::string, DictEntry_ >
+class Dictionary : public std::map< std::string, DictEntry_ >
 {
   // PYNEST-NG-FUTURE: Meta-information about entries:
   //                   * Value type (enum?)
@@ -99,7 +99,7 @@ private:
    *
    * @tparam T Type of element. If the value is not of the specified type, a TypeMismatch error is thrown.
    * @param value the any object to cast.
-   * @param key key where the value is located in the dictionary, for information upon cast errors.
+   * @param key key where the value is located in the Dictionary, for information upon cast errors.
    * @throws TypeMismatch if the value is not of specified type T.
    * @return value cast to the specified type.
    */
@@ -124,7 +124,7 @@ private:
    *
    * @tparam T Type of vector element. If the value is not of the specified type, a TypeMismatch error is thrown.
    * @param value the any object to cast.
-   * @param key key where the value is located in the dictionary, for information upon cast errors.
+   * @param key key where the value is located in the Dictionary, for information upon cast errors.
    * @throws TypeMismatch if the value is not of specified type T.
    * @return value cast to the specified type.
    *
@@ -161,7 +161,7 @@ private:
    * @brief Cast the specified value to an integer.
    *
    * @param value the any object to cast.
-   * @param key key where the value is located in the dictionary, for information upon cast errors.
+   * @param key key where the value is located in the Dictionary, for information upon cast errors.
    * @throws TypeMismatch if the value is not an integer.
    * @return value cast to an integer.
    */
@@ -200,7 +200,7 @@ public:
    * @brief Get the value at key in the specified type.
    *
    * @tparam T Type of the value. If the value is not of the specified type, a TypeMismatch error is thrown.
-   * @param key key where the value is located in the dictionary.
+   * @param key key where the value is located in the Dictionary.
    * @throws TypeMismatch if the value is not of specified type T.
    * @return the value at key cast to the specified type.
    */
@@ -214,7 +214,7 @@ public:
   /**
    * @brief Get the value at key as an integer.
    *
-   * @param key key where the value is located in the dictionary.
+   * @param key key where the value is located in the Dictionary.
    * @throws TypeMismatch if the value is not an integer.
    * @return the value at key cast to the specified type.
    */
@@ -246,7 +246,7 @@ public:
   /**
    * @brief Update the specified non-vector value if there exists a value at key.
    *
-   * @param key key where the value may be located in the dictionary.
+   * @param key key where the value may be located in the Dictionary.
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not the same type as the value argument.
    * @return Whether value was updated.
@@ -270,7 +270,7 @@ public:
   /**
    * @brief Update the specified vector value if there exists a value at key.
    *
-   * @param key key where the value may be located in the dictionary.
+   * @param key key where the value may be located in the Dictionary.
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not the same type as the value argument.
    * @return Whether value was updated.
@@ -293,7 +293,7 @@ public:
   /**
    * @brief Update the specified value if there exists an integer value at key.
    *
-   * @param key key where the value may be located in the dictionary.
+   * @param key key where the value may be located in the Dictionary.
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not an integer.
    * @return Whether the value was updated.
@@ -312,13 +312,13 @@ public:
   }
 
   /**
-   * @brief Check whether there exists a value with specified key in the dictionary.
+   * @brief Check whether there exists a value with specified key in the Dictionary.
    *
-   * @param key key where the value may be located in the dictionary.
+   * @param key key where the value may be located in the Dictionary.
    * @return true if there is a value with the specified key, false if not.
    *
    * @note This does **not** mark the entry, because we sometimes need to confirm
-   * that a certain key is not in a dictionary.
+   * that a certain key is not in a Dictionary.
    */
   bool
   known( const std::string& key ) const
@@ -346,47 +346,47 @@ public:
   }
 
   /**
-   * @brief Check whether the dictionary is equal to another dictionary.
+   * @brief Check whether the Dictionary is equal to another Dictionary.
    *
    * Two dictionaries are equal only if they contain the exact same entries with the same values.
    *
-   * @param other dictionary to check against.
-   * @return true if the dictionary is equal to the other dictionary, false if not.
+   * @param other Dictionary to check against.
+   * @return true if the Dictionary is equal to the other Dictionary, false if not.
    */
-  bool operator==( const dictionary& other ) const;
+  bool operator==( const Dictionary& other ) const;
 
   /**
-   * @brief Check whether the dictionary is unequal to another dictionary.
+   * @brief Check whether the Dictionary is unequal to another Dictionary.
    *
    * Two dictionaries are unequal if they do not contain the exact same entries with the same values.
    *
-   * @param other dictionary to check against.
-   * @return true if the dictionary is unequal to the other dictionary, false if not.
+   * @param other Dictionary to check against.
+   * @return true if the Dictionary is unequal to the other Dictionary, false if not.
    */
   bool
-  operator!=( const dictionary& other ) const
+  operator!=( const Dictionary& other ) const
   {
     return not( *this == other );
   }
 
   /**
-   * @brief Initializes or resets access flags for the current dictionary.
+   * @brief Initializes or resets access flags for the current Dictionary.
    *
-   * @note The method assumes that the dictionary was defined in global scope, whence it should
+   * @note The method assumes that the Dictionary was defined in global scope, whence it should
    * only be called from a serial context. If the dict is in thread-specific, pass `true` to
    * allow call in parallel context.
    */
   void init_access_flags( const bool thread_local_dict = false ) const;
 
   /**
-   * @brief Check that all elements in the dictionary have been accessed.
+   * @brief Check that all elements in the Dictionary have been accessed.
    *
    * @param where Which function the error occurs in.
    * @param what Which parameter triggers the error.
    * @param thread_local_dict See note below.
-   * @throws UnaccessedDictionaryEntry if there are unaccessed dictionary entries.
+   * @throws UnaccessedDictionaryEntry if there are unaccessed Dictionary entries.
    *
-   * @note The method assumes that the dictionary was defined in global scope, whence it should
+   * @note The method assumes that the Dictionary was defined in global scope, whence it should
    * only be called from a serial context. If the dict is in thread-specific, pass `true` to
    * allow call in parallel context.
    */
@@ -402,11 +402,11 @@ public:
   const_iterator find( const std::string& key ) const;
 };
 
-std::ostream& operator<<( std::ostream& os, const dictionary& dict );
+std::ostream& operator<<( std::ostream& os, const Dictionary& dict );
 
 //! Specialization that allows passing long where double is expected
 template <>
-double dictionary::cast_value_< double >( const boost::any& value, const std::string& key ) const;
+double Dictionary::cast_value_< double >( const boost::any& value, const std::string& key ) const;
 
 /**
  * Specialization that allows passing long vectors where double vectors are expected.
@@ -415,13 +415,13 @@ double dictionary::cast_value_< double >( const boost::any& value, const std::st
  *       because, e.g., get(), calls cast_value_() directly even if the argument is a vector.
  */
 template <>
-std::vector< double > dictionary::cast_value_< std::vector< double > >( const boost::any& value,
+std::vector< double > Dictionary::cast_value_< std::vector< double > >( const boost::any& value,
   const std::string& key ) const;
 
 /**
  * Specialization that allows passing long vectors where double vectors are expected and handles empty vectors.
  */
 template <>
-std::vector< double > dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const;
+std::vector< double > Dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const;
 
 #endif /* DICTIONARY_H_ */

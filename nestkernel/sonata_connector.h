@@ -52,7 +52,7 @@ namespace nest
  * used by `SonataNetwork` PyNEST class. The nodes must first be created
  * by `SonataNetwork` before any connections can be created. Connections
  * between sources and targets are explicitly tabulated in HDF5 files
- * specified in the `graph_specs` dictionary. The connections are created
+ * specified in the `graph_specs` Dictionary. The connections are created
  * with the `SonataConnector::connect()` function, which iterates the SONATA
  * edge files, extracts the connection data and creates the specified
  * one-to-one connections.
@@ -72,10 +72,10 @@ public:
   /**
    * @brief Constructor
    *
-   * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
+   * @param graph_specs Specification Dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
    * @param hyperslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
-  SonataConnector( const dictionary& graph_specs, const long hyperslab_size );
+  SonataConnector( const Dictionary& graph_specs, const long hyperslab_size );
 
   ~SonataConnector();
 
@@ -157,7 +157,7 @@ private:
    *
    * @param edge_dict Dictionary containing edge type ids and synapse parameters.
    */
-  void create_edge_type_id_2_syn_spec_( dictionary edge_dict );
+  void create_edge_type_id_2_syn_spec_( Dictionary edge_dict );
 
 
   /**
@@ -165,11 +165,11 @@ private:
    *
    * Set synapse parameters in edge_type_id_2_syn_spec_ and edge_type_id_2_param_dicts_.
    *
-   * @param syn_dict Synapse dictionary from which to set synapse params.
+   * @param syn_dict Synapse Dictionary from which to set synapse params.
    * @param synapse_model_id Model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters.
    */
-  void set_synapse_params_( dictionary syn_dict, size_t synapse_model_id, int type_id );
+  void set_synapse_params_( Dictionary syn_dict, size_t synapse_model_id, int type_id );
 
   /**
    * @brief Get synapse parameters.
@@ -190,14 +190,14 @@ private:
    * The synapse property, i.e., synaptic weight or delay, is either set
    * from a HDF5 dataset or CSV entry. Default value is NaN.
    *
-   * @param syn_spec synapse specification dictionary
+   * @param syn_spec synapse specification Dictionary
    * @param index the index to access in data
    * @param dataset_exists bool indicating whether dataset exists
    * @param data data from synaptic property HDF5 dataset
    * @param name name of the synaptic property
    * @return double
    */
-  double get_syn_property_( const dictionary& syn_spec,
+  double get_syn_property_( const Dictionary& syn_spec,
     hsize_t index,
     const bool dataset_exists,
     std::vector< double >& data,
@@ -270,7 +270,7 @@ private:
   std::set< std::string > skip_syn_params_;
 
   //! Dictionary containing SONATA graph specifications
-  dictionary graph_specs_;
+  Dictionary graph_specs_;
 
   //! Size of hyperslab that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
   hsize_t hyperslab_size_;
@@ -288,16 +288,16 @@ private:
   std::string target_attribute_value_;
 
   //! Current edge parameters
-  dictionary cur_edge_params_;
+  Dictionary cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model
   std::map< int, size_t > edge_type_id_2_syn_model_;
 
-  //! Map from edge type id (SONATA specification) to synapse dictionary with ConnParameter's
+  //! Map from edge type id (SONATA specification) to synapse Dictionary with ConnParameter's
   std::map< int, ConnParameterMap > edge_type_id_2_syn_spec_;
 
   //! Map from edge type id (SONATA specification) to param dictionaries (one per thread) used when creating connections
-  std::map< int, std::vector< dictionary > > edge_type_id_2_param_dicts_;
+  std::map< int, std::vector< Dictionary > > edge_type_id_2_param_dicts_;
 
   //! Datasets
   std::string cur_fname_;

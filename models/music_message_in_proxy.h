@@ -75,13 +75,13 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 ============ ======= =========================================================
  port_name   string  The name of the MUSIC input port to listen to (default:
                      message_in)
  port_width  integer The width of the MUSIC input port
- data        array   A sub-dictionary that contains the string messages
+ data        array   A sub-Dictionary that contains the string messages
                      in the form of two arrays:
                      messages      - The strings
                      message_times - The times the messages were sent (ms)
@@ -116,9 +116,9 @@ class MsgHandler : public MUSIC::MessageHandler
 
 public:
   void
-  get_status( dictionary& d ) const
+  get_status( Dictionary& d ) const
   {
-    dictionary dict;
+    Dictionary dict;
     dict[ names::messages ] = messages;
     dict[ names::message_times ] = std::vector< double >( message_times );
     d[ names::n_messages ] = messages.size();
@@ -156,8 +156,8 @@ public:
     return true;
   }
 
-  void get_status( dictionary& ) const;
-  void set_status( const dictionary& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -178,12 +178,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;
+    void get( Dictionary& ) const;
 
     /**
-     * Set values from dictionary.
+     * Set values from Dictionary.
      */
-    void set( const dictionary&, State_&, Node* );
+    void set( const Dictionary&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -196,9 +196,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
-    //! Set values from dictionary
-    void set( const dictionary&, const Parameters_&, Node* );
+    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    //! Set values from Dictionary
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -224,7 +224,7 @@ private:
 };
 
 inline void
-music_message_in_proxy::get_status( dictionary& d ) const
+music_message_in_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -233,7 +233,7 @@ music_message_in_proxy::get_status( dictionary& d ) const
 }
 
 inline void
-music_message_in_proxy::set_status( const dictionary& d )
+music_message_in_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, S_, this ); // throws if BadProperty

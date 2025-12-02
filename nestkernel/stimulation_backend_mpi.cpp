@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const dictionary& params )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dictionary& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();

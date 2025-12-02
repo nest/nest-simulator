@@ -52,23 +52,23 @@ EpropSynapseCommonProperties::~EpropSynapseCommonProperties()
 }
 
 void
-EpropSynapseCommonProperties::get_status( dictionary& d ) const
+EpropSynapseCommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
   d[ names::optimizer ] = optimizer_cp_->get_name();
-  dictionary optimizer_dict;
+  Dictionary optimizer_dict;
   optimizer_cp_->get_status( optimizer_dict );
   d[ names::optimizer ] = optimizer_dict;
 }
 
 void
-EpropSynapseCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
+EpropSynapseCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
   if ( d.known( names::optimizer ) )
   {
-    dictionary optimizer_dict = d.get< dictionary >( names::optimizer );
+    Dictionary optimizer_dict = d.get< Dictionary >( names::optimizer );
 
     std::string new_optimizer;
     const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );

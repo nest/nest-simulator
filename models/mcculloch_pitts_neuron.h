@@ -139,8 +139,8 @@ public:
   {
   }
 
-  void get( dictionary& ) const;             //!< Store current values in dictionary
-  void set( const dictionary&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;             //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node ); //!< Set values from dictionary
 
   bool operator()( RngPtr, double h );
 };

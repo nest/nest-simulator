@@ -140,8 +140,8 @@ public:
   size_t handles_test_event( SpikeEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -170,8 +170,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( dictionary& ) const;
-    void set( dictionary const&, Node* );
+    void get( Dictionary& ) const;
+    void set( Dictionary const&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -210,14 +210,14 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      * @note State is passed so that the position can be reset if the
      *       noise_ vector has been filled with new data.
      */
-    void set( const dictionary&, State_& s, Node* node );
+    void set( const Dictionary&, State_& s, Node* node );
   };
 
 
@@ -320,7 +320,7 @@ iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-iaf_chs_2007::get_status( dictionary& d ) const
+iaf_chs_2007::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -330,7 +330,7 @@ iaf_chs_2007::get_status( dictionary& d ) const
 }
 
 inline void
-iaf_chs_2007::set_status( const dictionary& d )
+iaf_chs_2007::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, S_, this );

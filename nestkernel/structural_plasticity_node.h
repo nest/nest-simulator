@@ -97,8 +97,8 @@ public:
    */
   void connect_synaptic_element( std::string name, int n ) override;
 
-  void get_status( dictionary& d ) const override;
-  void set_status( const dictionary& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   /**
    * Retrieve the current value of tau_Ca which defines the exponential decay

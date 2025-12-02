@@ -61,7 +61,7 @@ spike_train_injector::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-spike_train_injector::Parameters_::get( dictionary& d ) const
+spike_train_injector::Parameters_::get( Dictionary& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   std::vector< double > times_ms( n_spikes );
@@ -148,7 +148,7 @@ spike_train_injector::Parameters_::assert_valid_spike_time_and_insert_( double t
 }
 
 void
-spike_train_injector::Parameters_::set( const dictionary& d,
+spike_train_injector::Parameters_::set( const Dictionary& d,
   State_& s,
   const Time& origin,
   const Time& now,

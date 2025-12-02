@@ -49,14 +49,14 @@ register_rate_transformer_tanh( const std::string& name )
 
 
 void
-nonlinearities_tanh_rate::get( dictionary& d ) const
+nonlinearities_tanh_rate::get( Dictionary& d ) const
 {
   d[ names::g ] = g_;
   d[ names::theta ] = theta_;
 }
 
 void
-nonlinearities_tanh_rate::set( const dictionary& d, Node* node )
+nonlinearities_tanh_rate::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g, g_, node );
   update_value_param( d, names::theta, theta_, node );

@@ -49,19 +49,19 @@ nest::StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasti
 }
 
 void
-nest::StructuralPlasticityNode::get_status( dictionary& d ) const
+nest::StructuralPlasticityNode::get_status( Dictionary& d ) const
 {
 
   d[ names::Ca ] = Ca_minus_;
   d[ names::tau_Ca ] = tau_Ca_;
   d[ names::beta_Ca ] = beta_Ca_;
 
-  dictionary synaptic_elements_d;
+  Dictionary synaptic_elements_d;
   for ( std::map< std::string, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
-    dictionary synaptic_element_d;
+    Dictionary synaptic_element_d;
     it->second.get( synaptic_element_d );
     synaptic_elements_d[ it->first ] = synaptic_element_d;
   }
@@ -69,7 +69,7 @@ nest::StructuralPlasticityNode::get_status( dictionary& d ) const
 }
 
 void
-nest::StructuralPlasticityNode::set_status( const dictionary& d )
+nest::StructuralPlasticityNode::set_status( const Dictionary& d )
 {
   // We need to preserve values in case invalid values are set
   double new_Ca_ = Ca_minus_;
@@ -109,7 +109,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
 
   if ( d.known( names::synaptic_elements_param ) )
   {
-    const dictionary synaptic_elements_dict = d.get< dictionary >( names::synaptic_elements_param );
+    const Dictionary synaptic_elements_dict = d.get< Dictionary >( names::synaptic_elements_param );
 
     for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
           it != synaptic_elements_map_.end();
@@ -117,7 +117,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
     {
       if ( synaptic_elements_dict.known( it->first ) )
       {
-        const dictionary synaptic_elements_a = synaptic_elements_dict.get< dictionary >( it->first );
+        const Dictionary synaptic_elements_a = synaptic_elements_dict.get< Dictionary >( it->first );
         it->second.set( synaptic_elements_a );
       }
     }
@@ -127,16 +127,16 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
     return;
   }
   // we replace the existing synaptic_elements_map_ by the new one
-  dictionary synaptic_elements_d;
+  Dictionary synaptic_elements_d;
   std::pair< std::map< std::string, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< std::string, SynapticElement >();
-  synaptic_elements_d = d.get< dictionary >( names::synaptic_elements );
+  synaptic_elements_d = d.get< Dictionary >( names::synaptic_elements );
 
   for ( auto& syn_element : synaptic_elements_d )
   {
     SynapticElement se;
-    se.set( synaptic_elements_d.get< dictionary >( syn_element.first ) );
+    se.set( synaptic_elements_d.get< Dictionary >( syn_element.first ) );
     synaptic_elements_map_.insert( std::pair< std::string, SynapticElement >( syn_element.first, se ) );
   }
 }

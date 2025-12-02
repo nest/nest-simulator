@@ -62,7 +62,7 @@ public:
   /**
    * @returns a dictionary with the definition for this mask.
    */
-  virtual dictionary
+  virtual Dictionary
   get_dict() const
   {
     throw KernelException( "Can not convert mask to dict" );
@@ -216,7 +216,7 @@ public:
    * polar_angle   - Rotation angle in degrees from z-axis (double), the polar
    *                 angle does not apply in 2D, optional
    */
-  BoxMask( const dictionary& );
+  BoxMask( const Dictionary& );
 
   BoxMask( const Position< D >& lower_left,
     const Position< D >& upper_right,
@@ -246,7 +246,7 @@ public:
 
   Box< D > get_bbox() const override;
 
-  dictionary get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
@@ -322,7 +322,7 @@ public:
    * "radius" with a double value and optionally the key "anchor" (the
    * center position) with an array of doubles.
    */
-  BallMask( const dictionary& );
+  BallMask( const Dictionary& );
 
   ~BallMask() override
   {
@@ -347,7 +347,7 @@ public:
 
   Box< D > get_bbox() const override;
 
-  dictionary get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
@@ -427,7 +427,7 @@ public:
    * "polar_angle" with a double, an array of doubles, a double and a double,
    * respectively.
    */
-  EllipseMask( const dictionary& );
+  EllipseMask( const Dictionary& );
 
   ~EllipseMask() override
   {
@@ -452,7 +452,7 @@ public:
 
   Box< D > get_bbox() const override;
 
-  dictionary get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
@@ -708,7 +708,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  dictionary get_dict() const;
+  Dictionary get_dict() const;
 
   Mask< D >* clone() const;
 
@@ -732,7 +732,7 @@ BoxMask< 3 >::get_name()
 }
 
 template < int D >
-BoxMask< D >::BoxMask( const dictionary& d )
+BoxMask< D >::BoxMask( const Dictionary& d )
 {
   lower_left_ = d.get< std::vector< double > >( names::lower_left );
   upper_right_ = d.get< std::vector< double > >( names::upper_right );
@@ -893,7 +893,7 @@ BallMask< 3 >::get_name()
 }
 
 template < int D >
-BallMask< D >::BallMask( const dictionary& d )
+BallMask< D >::BallMask( const Dictionary& d )
 {
   radius_ = d.get< double >( names::radius );
   if ( radius_ <= 0 )
@@ -922,7 +922,7 @@ EllipseMask< 3 >::get_name()
 }
 
 template < int D >
-EllipseMask< D >::EllipseMask( const dictionary& d )
+EllipseMask< D >::EllipseMask( const Dictionary& d )
 {
   major_axis_ = d.get< double >( names::major_axis );
   minor_axis_ = d.get< double >( names::minor_axis );

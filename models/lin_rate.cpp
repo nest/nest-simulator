@@ -49,7 +49,7 @@ register_rate_transformer_lin( const std::string& name )
 
 
 void
-nonlinearities_lin_rate::get( dictionary& d ) const
+nonlinearities_lin_rate::get( Dictionary& d ) const
 {
   d[ names::g ] = g_;
   d[ names::g_ex ] = g_ex_;
@@ -59,7 +59,7 @@ nonlinearities_lin_rate::get( dictionary& d ) const
 }
 
 void
-nonlinearities_lin_rate::set( const dictionary& d, Node* node )
+nonlinearities_lin_rate::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g, g_, node );
   update_value_param( d, names::g_ex, g_ex_, node );

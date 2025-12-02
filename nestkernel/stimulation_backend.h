@@ -104,7 +104,7 @@ public:
    * @see disenroll()
    *
    */
-  virtual void enroll( StimulationDevice&, const dictionary& ) {};
+  virtual void enroll( StimulationDevice&, const Dictionary& ) {};
 
   /**
    * Disenroll a `StimulationDevice` from the `StimulationBackend`.

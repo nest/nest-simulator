@@ -56,12 +56,12 @@ MUSICManager::finalize( const bool )
 }
 
 void
-MUSICManager::set_status( const dictionary& )
+MUSICManager::set_status( const Dictionary& )
 {
 }
 
 void
-MUSICManager::get_status( dictionary& )
+MUSICManager::get_status( Dictionary& )
 {
 }
 

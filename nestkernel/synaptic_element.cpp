@@ -53,7 +53,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
   assert( growth_curve_ );
-  dictionary nc_parameters;
+  Dictionary nc_parameters;
   se.get( nc_parameters );
   growth_curve_->set( nc_parameters );
 }
@@ -65,7 +65,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
   {
     // 1: allocate new memory and copy the elements
     GrowthCurve* new_nc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
-    dictionary nc_parameters;
+    Dictionary nc_parameters;
 
     other.get( nc_parameters );
     new_nc->set( nc_parameters );
@@ -87,7 +87,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
  * get function to store current values in dictionary
  * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::get( dictionary& d ) const
+nest::SynapticElement::get( Dictionary& d ) const
 {
   // Store current values in the dictionary
   d[ names::growth_rate ] = growth_rate_;
@@ -104,7 +104,7 @@ nest::SynapticElement::get( dictionary& d ) const
  * set function to store dictionary values in the SynaticElement
  * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::set( const dictionary& d )
+nest::SynapticElement::set( const Dictionary& d )
 {
   double new_tau_vacant = tau_vacant_;
 

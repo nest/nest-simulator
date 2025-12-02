@@ -131,7 +131,7 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoi
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::Parameters_::get( dictionary& d ) const
+nest::sinusoidal_gamma_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_ * 1000.0;
   d[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
@@ -142,7 +142,7 @@ nest::sinusoidal_gamma_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::sinusoidal_gamma_generator::Parameters_::set( const dictionary& d,
+nest::sinusoidal_gamma_generator::Parameters_::set( const Dictionary& d,
   const sinusoidal_gamma_generator& n,
   Node* node )
 {
@@ -381,7 +381,7 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector
         "The size of the data for the sinusoidal_gamma_generator needs to 6 "
         "[frequency, phase, order, rate, amplitude, individual_spike_trains]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::frequency ] = input_param[ 0 ];
     d[ names::phase ] = input_param[ 1 ];
     d[ names::order ] = input_param[ 2 ];

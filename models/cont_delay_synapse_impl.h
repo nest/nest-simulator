@@ -44,7 +44,7 @@ cont_delay_synapse< targetidentifierT >::cont_delay_synapse()
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::get_status( dictionary& d ) const
+cont_delay_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
@@ -55,7 +55,7 @@ cont_delay_synapse< targetidentifierT >::get_status( dictionary& d ) const
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
+cont_delay_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
@@ -90,7 +90,7 @@ cont_delay_synapse< targetidentifierT >::set_status( const dictionary& d, Connec
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
+cont_delay_synapse< targetidentifierT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
   if ( syn_spec.known( names::delay ) )
   {

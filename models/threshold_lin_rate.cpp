@@ -49,7 +49,7 @@ register_rate_transformer_threshold_lin( const std::string& name )
 
 
 void
-nonlinearities_threshold_lin_rate::get( dictionary& d ) const
+nonlinearities_threshold_lin_rate::get( Dictionary& d ) const
 {
   d[ names::g ] = g_;
   d[ names::theta ] = theta_;
@@ -57,7 +57,7 @@ nonlinearities_threshold_lin_rate::get( dictionary& d ) const
 }
 
 void
-nonlinearities_threshold_lin_rate::set( const dictionary& d, Node* node )
+nonlinearities_threshold_lin_rate::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g, g_, node );
   update_value_param( d, names::theta, theta_, node );

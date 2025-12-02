@@ -107,7 +107,7 @@ nest::siegert_neuron::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::siegert_neuron::Parameters_::get( dictionary& d ) const
+nest::siegert_neuron::Parameters_::get( Dictionary& d ) const
 {
   d[ names::mean ] = mean_;
   d[ names::theta ] = theta_;
@@ -119,7 +119,7 @@ nest::siegert_neuron::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const dictionary& d, Node* node )
+nest::siegert_neuron::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::mean, mean_, node );
   update_value_param( d, names::theta, theta_, node );
@@ -156,13 +156,13 @@ nest::siegert_neuron::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::siegert_neuron::State_::get( dictionary& d ) const
+nest::siegert_neuron::State_::get( Dictionary& d ) const
 {
   d[ names::rate ] = r_; // Rate
 }
 
 void
-nest::siegert_neuron::State_::set( const dictionary& d, Node* node )
+nest::siegert_neuron::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::rate, r_, node ); // Rate
 }

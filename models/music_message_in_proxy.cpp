@@ -63,14 +63,14 @@ nest::music_message_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::Parameters_::get( dictionary& d ) const
+nest::music_message_in_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
   d[ names::acceptable_latency ] = acceptable_latency_;
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const dictionary& d, State_& s, Node* node )
+nest::music_message_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   if ( not s.published_ )
   {
@@ -80,14 +80,14 @@ nest::music_message_in_proxy::Parameters_::set( const dictionary& d, State_& s, 
 }
 
 void
-nest::music_message_in_proxy::State_::get( dictionary& d ) const
+nest::music_message_in_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_message_in_proxy::State_::set( const dictionary&, const Parameters_&, Node* )
+nest::music_message_in_proxy::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 

@@ -227,7 +227,7 @@ nest::hh_cond_beta_gap_traub::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
+nest::hh_cond_beta_gap_traub::Parameters_::get( Dictionary& d ) const
 {
   d[ names::g_Na ] = g_Na;
   d[ names::g_K ] = g_K;
@@ -248,7 +248,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node )
+nest::hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g_Na, g_Na, node );
   update_value_param( d, names::g_K, g_K, node );
@@ -289,7 +289,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d, Node* node 
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::get( dictionary& d ) const
+nest::hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ]; // Membrane potential
   d[ names::Act_m ] = y_[ HH_M ];
@@ -298,7 +298,7 @@ nest::hh_cond_beta_gap_traub::State_::get( dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::hh_cond_beta_gap_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );

@@ -339,7 +339,7 @@ nest::ht_neuron::State_::~State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::ht_neuron::Parameters_::get( dictionary& d ) const
+nest::ht_neuron::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_Na ] = E_Na;
   d[ names::E_K ] = E_K;
@@ -386,7 +386,7 @@ nest::ht_neuron::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::ht_neuron::Parameters_::set( const dictionary& d, Node* node )
+nest::ht_neuron::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::E_Na, E_Na, node );
   update_value_param( d, names::E_K, E_K, node );
@@ -561,14 +561,14 @@ nest::ht_neuron::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::ht_neuron::State_::get( dictionary& d ) const
+nest::ht_neuron::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];     // Membrane potential
   d[ names::theta ] = y_[ THETA ]; // Threshold
 }
 
 void
-nest::ht_neuron::State_::set( const dictionary& d, const ht_neuron& node, Node* nodeptr )
+nest::ht_neuron::State_::set( const Dictionary& d, const ht_neuron& node, Node* nodeptr )
 {
   update_value_param( d, names::V_m, y_[ V_M ], nodeptr );
   update_value_param( d, names::theta, y_[ THETA ], nodeptr );
@@ -734,13 +734,13 @@ nest::ht_neuron::pre_run_hook()
 }
 
 void
-nest::ht_neuron::get_status( dictionary& d ) const
+nest::ht_neuron::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  dictionary receptor_type;
+  Dictionary receptor_type;
 
   receptor_type[ names::AMPA ] = static_cast< long >( AMPA );
   receptor_type[ names::NMDA ] = static_cast< long >( NMDA );
@@ -752,7 +752,7 @@ nest::ht_neuron::get_status( dictionary& d ) const
 }
 
 void
-nest::ht_neuron::set_status( const dictionary& d )
+nest::ht_neuron::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;      // temporary copy in case of errors
   ptmp.set( d, this );        // throws if BadProperty

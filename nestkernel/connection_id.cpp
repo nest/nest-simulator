@@ -52,10 +52,10 @@ ConnectionID::ConnectionID( long source_node_id, long target_thread, long synaps
 {
 }
 
-dictionary
+Dictionary
 ConnectionID::get_dict() const
 {
-  dictionary dict;
+  Dictionary dict;
 
   // The node ID of the presynaptic node
   dict[ nest::names::source ] = source_node_id_;

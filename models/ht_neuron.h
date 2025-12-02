@@ -210,8 +210,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   /**
@@ -252,8 +252,8 @@ private:
   {
     Parameters_();
 
-    void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
 
     // Note: Conductances are unitless
     // Leaks
@@ -367,8 +367,8 @@ public:
 
     ~State_();
 
-    void get( dictionary& ) const;
-    void set( const dictionary&, const ht_neuron&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const ht_neuron&, Node* node );
   };
 
 private:

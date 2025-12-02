@@ -262,12 +262,12 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
-  void add_compartment_( const dictionary& dd );
-  void add_receptor_( const dictionary& dd );
+  void add_compartment_( const Dictionary& dd );
+  void add_receptor_( const Dictionary& dd );
 
   void init_recordables_pointers_();
   void pre_run_hook() override;

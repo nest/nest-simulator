@@ -60,13 +60,13 @@ nest::music_cont_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_in_proxy::Parameters_::get( dictionary& d ) const
+nest::music_cont_in_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const dictionary& d, State_& s, Node* node )
+nest::music_cont_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   if ( d.known( names::port_name ) and s.published_ )
   {
@@ -80,14 +80,14 @@ nest::music_cont_in_proxy::Parameters_::set( const dictionary& d, State_& s, Nod
 }
 
 void
-nest::music_cont_in_proxy::State_::get( dictionary& d ) const
+nest::music_cont_in_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_cont_in_proxy::State_::set( const dictionary&, const Parameters_& )
+nest::music_cont_in_proxy::State_::set( const Dictionary&, const Parameters_& )
 {
 }
 
@@ -158,7 +158,7 @@ nest::music_cont_in_proxy::pre_run_hook()
 }
 
 void
-nest::music_cont_in_proxy::get_status( dictionary& d ) const
+nest::music_cont_in_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -167,7 +167,7 @@ nest::music_cont_in_proxy::get_status( dictionary& d ) const
 }
 
 void
-nest::music_cont_in_proxy::set_status( const dictionary& d )
+nest::music_cont_in_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, S_, this ); // throws if BadProperty

@@ -135,7 +135,7 @@ nest::gamma_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::Parameters_::get( dictionary& d ) const
+nest::gamma_sup_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::gamma_shape ] = gamma_shape_;
@@ -143,7 +143,7 @@ nest::gamma_sup_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::gamma_sup_generator::Parameters_::set( const dictionary& d, Node* node )
+nest::gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
@@ -288,7 +288,7 @@ nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< doubl
       throw BadParameterValue(
         "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::gamma_shape ] = lround( input_param[ 0 ] );
     d[ names::rate ] = input_param[ 1 ];
     d[ names::n_proc ] = lround( input_param[ 2 ] );

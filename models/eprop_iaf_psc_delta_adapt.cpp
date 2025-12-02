@@ -119,7 +119,7 @@ eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_de
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta_adapt::Parameters_::get( dictionary& d ) const
+eprop_iaf_psc_delta_adapt::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;
   d[ names::I_e ] = I_e_;
@@ -143,7 +143,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( dictionary& d ) const
 }
 
 double
-eprop_iaf_psc_delta_adapt::Parameters_::set( const dictionary& d, Node* node )
+eprop_iaf_psc_delta_adapt::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -251,7 +251,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-eprop_iaf_psc_delta_adapt::State_::get( dictionary& d, const Parameters_& p ) const
+eprop_iaf_psc_delta_adapt::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = v_m_ + p.E_L_;
   d[ names::adaptation ] = adapt_;
@@ -261,7 +261,7 @@ eprop_iaf_psc_delta_adapt::State_::get( dictionary& d, const Parameters_& p ) co
 }
 
 void
-eprop_iaf_psc_delta_adapt::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_psc_delta_adapt::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 

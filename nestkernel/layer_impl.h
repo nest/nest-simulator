@@ -77,7 +77,7 @@ Layer< D >::compute_displacement( const std::vector< double >& from_pos,
 
 template < int D >
 void
-Layer< D >::set_status( const dictionary& d )
+Layer< D >::set_status( const Dictionary& d )
 {
   if ( d.known( names::edge_wrap ) )
   {
@@ -90,7 +90,7 @@ Layer< D >::set_status( const dictionary& d )
 
 template < int D >
 void
-Layer< D >::get_status( dictionary& d, NodeCollection const* const nc ) const
+Layer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
 {
   d[ names::extent ] = std::vector< double >( extent_.get_vector() );
   d[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
@@ -300,7 +300,7 @@ Layer< D >::dump_connections( std::ostream& out,
   const std::string& syn_model )
 {
   // Find all connections for given sources, targets and synapse model
-  dictionary conn_filter;
+  Dictionary conn_filter;
   conn_filter[ names::source ] = node_collection;
   conn_filter[ names::target ] = NodeCollectionPTR( target_layer->get_node_collection() );
   conn_filter[ names::synapse_model ] = syn_model;
@@ -329,7 +329,7 @@ Layer< D >::dump_connections( std::ostream& out,
       previous_source_node_id = source_node_id;
     }
 
-    const dictionary result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
+    const Dictionary result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),

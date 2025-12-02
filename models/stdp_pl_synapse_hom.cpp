@@ -52,7 +52,7 @@ STDPPLHomCommonProperties::STDPPLHomCommonProperties()
 }
 
 void
-STDPPLHomCommonProperties::get_status( dictionary& d ) const
+STDPPLHomCommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
@@ -63,7 +63,7 @@ STDPPLHomCommonProperties::get_status( dictionary& d ) const
 }
 
 void
-STDPPLHomCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
+STDPPLHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 

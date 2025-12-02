@@ -111,7 +111,7 @@ nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::Parameters_::get( dictionary& d ) const
+nest::ac_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::amplitude ] = amp_;
   d[ names::offset ] = offset_;
@@ -120,14 +120,14 @@ nest::ac_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::ac_generator::State_::get( dictionary& d ) const
+nest::ac_generator::State_::get( Dictionary& d ) const
 {
   d[ names::y_0 ] = y_0_;
   d[ names::y_1 ] = y_1_;
 }
 
 void
-nest::ac_generator::Parameters_::set( const dictionary& d, Node* node )
+nest::ac_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::amplitude, amp_, node );
   update_value_param( d, names::offset, offset_, node );
@@ -248,7 +248,7 @@ nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& in
       throw BadParameterValue(
         "The size of the data for the ac_generator needs to be 4 [amplitude, offset, frequency, phase]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::amplitude ] = input_param[ 0 ];
     d[ names::offset ] = input_param[ 1 ];
     d[ names::frequency ] = input_param[ 2 ];

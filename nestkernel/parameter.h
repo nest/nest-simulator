@@ -148,7 +148,7 @@ public:
    * The dictionary must include the following entry:
    * value - constant value of this parameter
    */
-  ConstantParameter( const dictionary& d )
+  ConstantParameter( const Dictionary& d )
   {
     value_ = d.get< double >( "value" );
     returns_int_only_ = value_is_integer_( value_ );
@@ -187,7 +187,7 @@ public:
    * min - minimum value
    * max - maximum value
    */
-  UniformParameter( const dictionary& d )
+  UniformParameter( const Dictionary& d )
     : lower_( 0.0 )
     , range_( 1.0 )
   {
@@ -229,7 +229,7 @@ public:
    * The dictionary can include the following entries:
    * max - maximum value
    */
-  UniformIntParameter( const dictionary& d )
+  UniformIntParameter( const Dictionary& d )
     : Parameter( false, true )
     , max_( 1.0 )
   {
@@ -268,7 +268,7 @@ public:
    * mean - mean value
    * std - standard deviation
    */
-  NormalParameter( const dictionary& d );
+  NormalParameter( const Dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -295,7 +295,7 @@ public:
    * mean - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
-  LognormalParameter( const dictionary& d );
+  LognormalParameter( const Dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -321,7 +321,7 @@ public:
    * The dictionary can include the following entries:
    * beta - the scale parameter
    */
-  ExponentialParameter( const dictionary& d )
+  ExponentialParameter( const Dictionary& d )
     : beta_( 1.0 )
   {
     d.update_value( names::beta, beta_ );
@@ -356,7 +356,7 @@ public:
    *                     from the presynaptic or postsynaptic node in a connection.
    *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
-  NodePosParameter( const dictionary& d )
+  NodePosParameter( const Dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
@@ -426,7 +426,7 @@ private:
 class SpatialDistanceParameter : public Parameter
 {
 public:
-  SpatialDistanceParameter( const dictionary& d )
+  SpatialDistanceParameter( const Dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
   {
@@ -673,7 +673,7 @@ public:
    *              1: >
    *
    */
-  ComparingParameter( ParameterPTR m1, ParameterPTR m2, const dictionary& d )
+  ComparingParameter( ParameterPTR m1, ParameterPTR m2, const Dictionary& d )
     : Parameter( m1->is_spatial() or m2->is_spatial(), true )
     , parameter1_( m1 )
     , parameter2_( m2 )
@@ -1234,7 +1234,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  ExpDistParameter( const dictionary& d );
+  ExpDistParameter( const Dictionary& d );
 
   ExpDistParameter( const ExpDistParameter& p )
     : Parameter( p )
@@ -1278,7 +1278,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GaussianParameter( const dictionary& d );
+  GaussianParameter( const Dictionary& d );
 
   GaussianParameter( const GaussianParameter& p )
     : Parameter( p )
@@ -1323,7 +1323,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  Gaussian2DParameter( const dictionary& d );
+  Gaussian2DParameter( const Dictionary& d );
 
   Gaussian2DParameter( const Gaussian2DParameter& p )
     : Parameter( p )
@@ -1370,7 +1370,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GaborParameter( const dictionary& d );
+  GaborParameter( const Dictionary& d );
 
   /**
    * Copy constructor.
@@ -1428,7 +1428,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GammaParameter( const dictionary& d );
+  GammaParameter( const Dictionary& d );
 
   GammaParameter( const GammaParameter& p )
     : Parameter( p )
@@ -1525,7 +1525,7 @@ ParameterPTR subtract_parameter( const ParameterPTR first, const ParameterPTR se
  *
  * @returns a new dynamically allocated parameter.
  */
-ParameterPTR compare_parameter( const ParameterPTR first, const ParameterPTR second, const dictionary& d );
+ParameterPTR compare_parameter( const ParameterPTR first, const ParameterPTR second, const Dictionary& d );
 
 /**
  * Create a parameter that chooses between two other parameters,

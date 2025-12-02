@@ -55,8 +55,8 @@ public:
   //! To be called after change of number of threads to re-register components provided by modules
   void reinitialize_dynamic_modules();
 
-  void get_status( dictionary& ) override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) override;
+  void set_status( const Dictionary& ) override;
 
   void install( const std::string& name );
 
@@ -109,11 +109,11 @@ public:
   }
 
   void
-  get_status( dictionary& ) override
+  get_status( Dictionary& ) override
   {
   }
   void
-  set_status( const dictionary& ) override
+  set_status( const Dictionary& ) override
   {
   }
 

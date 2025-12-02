@@ -61,14 +61,14 @@ nest::weight_recorder::Parameters_::Parameters_()
 }
 
 void
-nest::weight_recorder::Parameters_::get( dictionary& d ) const
+nest::weight_recorder::Parameters_::get( Dictionary& d ) const
 {
   d[ names::senders ] = senders_;
   d[ names::targets ] = targets_;
 }
 
 void
-nest::weight_recorder::Parameters_::set( const dictionary& d )
+nest::weight_recorder::Parameters_::set( const Dictionary& d )
 {
   auto get_or_create_nc = [ &d ]( NodeCollectionPTR& nc, const std::string& key )
   {
@@ -109,7 +109,7 @@ nest::weight_recorder::get_type() const
 }
 
 void
-nest::weight_recorder::get_status( dictionary& d ) const
+nest::weight_recorder::get_status( Dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -135,7 +135,7 @@ nest::weight_recorder::get_status( dictionary& d ) const
 }
 
 void
-nest::weight_recorder::set_status( const dictionary& d )
+nest::weight_recorder::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   ptmp.set( d );

@@ -120,7 +120,7 @@ nest::ppd_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::Parameters_::get( dictionary& d ) const
+nest::ppd_sup_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::dead_time ] = dead_time_;
@@ -130,7 +130,7 @@ nest::ppd_sup_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const dictionary& d, Node* node )
+nest::ppd_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
@@ -302,7 +302,7 @@ nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double 
         "The size of the data for the ppd_sup_generator needs to be 5 "
         "[dead_time, rate, n_proc, frequency, relative_amplitude]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::dead_time ] = input_param[ 0 ];
     d[ names::rate ] = input_param[ 1 ];
     d[ names::n_proc ] = input_param[ 2 ];

@@ -110,8 +110,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -161,8 +161,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -235,14 +235,14 @@ poisson_generator_ps::send_test_event( Node& target, size_t receptor_type, synin
 }
 
 inline void
-poisson_generator_ps::get_status( dictionary& d ) const
+poisson_generator_ps::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-poisson_generator_ps::set_status( const dictionary& d )
+poisson_generator_ps::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

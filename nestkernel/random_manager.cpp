@@ -125,7 +125,7 @@ nest::RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 }
 
 void
-nest::RandomManager::get_status( dictionary& d )
+nest::RandomManager::get_status( Dictionary& d )
 {
   std::vector< std::string > rng_types;
   for ( auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
@@ -139,7 +139,7 @@ nest::RandomManager::get_status( dictionary& d )
 }
 
 void
-nest::RandomManager::set_status( const dictionary& d )
+nest::RandomManager::set_status( const Dictionary& d )
 {
   long rng_seed;
   bool rng_seed_updated = d.update_value( names::rng_seed, rng_seed );

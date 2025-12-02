@@ -41,7 +41,7 @@ public:
   BufferResizeLog();
   void clear();
   void add_entry( size_t global_max_spikes_sent, size_t new_buffer_size );
-  void to_dict( dictionary& ) const;
+  void to_dict( Dictionary& ) const;
 
 private:
   std::vector< long > time_steps_;             //!< Time of resize event in steps

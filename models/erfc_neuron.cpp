@@ -38,14 +38,14 @@ register_erfc_neuron( const std::string& name )
 
 
 void
-gainfunction_erfc::get( dictionary& d ) const
+gainfunction_erfc::get( Dictionary& d ) const
 {
   d[ names::theta ] = theta_;
   d[ names::sigma ] = sigma_;
 }
 
 void
-gainfunction_erfc::set( const dictionary& d, Node* node )
+gainfunction_erfc::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::theta, theta_, node );
   update_value_param( d, names::sigma, sigma_, node );

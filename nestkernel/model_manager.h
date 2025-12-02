@@ -49,8 +49,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const dictionary& ) override;
-  void get_status( dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -121,7 +121,7 @@ public:
    * @param params default parameters of new model.
    * @see copy_node_model_, copy_connection_model_
    */
-  void copy_model( const std::string& old_name, const std::string& new_name, const dictionary& params );
+  void copy_model( const std::string& old_name, const std::string& new_name, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -131,7 +131,7 @@ public:
    * @return true if the operation succeeded, else false
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  bool set_model_defaults( const std::string& name, const dictionary& params );
+  bool set_model_defaults( const std::string& name, const Dictionary& params );
 
   /**
    * @return The model ID for a Model with a given name
@@ -150,9 +150,9 @@ public:
    */
   size_t get_synapse_model_id( std::string model_name );
 
-  dictionary get_connector_defaults( synindex syn_id ) const;
+  Dictionary get_connector_defaults( synindex syn_id ) const;
 
-  void set_connector_defaults( synindex syn_id, const dictionary& d );
+  void set_connector_defaults( synindex syn_id, const Dictionary& d );
 
   /**
    * Asserts validity of synapse index, otherwise throws exception.
@@ -195,7 +195,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_connection_model_()
    */
-  void copy_node_model_( const size_t old_id, const std::string& new_name, const dictionary& params );
+  void copy_node_model_( const size_t old_id, const std::string& new_name, const Dictionary& params );
 
   /**
    * Copy an existing synapse model and register it as a new model.
@@ -204,7 +204,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_node_model_()
    */
-  void copy_connection_model_( const size_t old_id, const std::string& new_name, const dictionary& params );
+  void copy_connection_model_( const size_t old_id, const std::string& new_name, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -213,7 +213,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_synapse_defaults_
    */
-  void set_node_defaults_( size_t model_id, const dictionary& params );
+  void set_node_defaults_( size_t model_id, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -222,7 +222,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_node_defaults_
    */
-  void set_synapse_defaults_( size_t model_id, const dictionary& params );
+  void set_synapse_defaults_( size_t model_id, const Dictionary& params );
 
   //! Compares model ids for sorting in memory_info
   static bool compare_model_by_id_( const int a, const int b );
@@ -265,8 +265,8 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  dictionary modeldict_;   //!< Dictionary of all node models
-  dictionary synapsedict_; //!< Dictionary of all synapse models
+  Dictionary modeldict_;   //!< Dictionary of all node models
+  Dictionary synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
 

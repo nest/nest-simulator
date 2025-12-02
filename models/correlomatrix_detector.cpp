@@ -109,7 +109,7 @@ nest::correlomatrix_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::Parameters_::get( dictionary& d ) const
+nest::correlomatrix_detector::Parameters_::get( Dictionary& d ) const
 {
   d[ names::delta_tau ] = delta_tau_.get_ms();
   d[ names::tau_max ] = tau_max_.get_ms();
@@ -119,7 +119,7 @@ nest::correlomatrix_detector::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::correlomatrix_detector::State_::get( dictionary& d ) const
+nest::correlomatrix_detector::State_::get( Dictionary& d ) const
 {
   d[ names::n_events ] = n_events_;
   d[ names::covariance ] = covariance_;
@@ -127,7 +127,7 @@ nest::correlomatrix_detector::State_::get( dictionary& d ) const
 }
 
 bool
-nest::correlomatrix_detector::Parameters_::set( const dictionary& d, const correlomatrix_detector& n, Node* node )
+nest::correlomatrix_detector::Parameters_::set( const Dictionary& d, const correlomatrix_detector& n, Node* node )
 {
   bool reset = false;
   double t;
@@ -189,7 +189,7 @@ nest::correlomatrix_detector::Parameters_::set( const dictionary& d, const corre
 }
 
 void
-nest::correlomatrix_detector::State_::set( const dictionary&, const Parameters_&, bool, Node* )
+nest::correlomatrix_detector::State_::set( const Dictionary&, const Parameters_&, bool, Node* )
 {
 }
 

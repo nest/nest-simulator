@@ -80,8 +80,8 @@ public:
   ConnectionGeneratorBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder*,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_();
@@ -104,7 +104,7 @@ protected:
 
 private:
   std::shared_ptr< ConnectionGenerator > cg_;
-  dictionary params_map_;
+  Dictionary params_map_;
 };
 
 } // namespace nest

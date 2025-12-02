@@ -104,7 +104,7 @@ nest::step_rate_generator::Buffers_::Buffers_( const Buffers_&, step_rate_genera
  * ---------------------------------------------------------------- */
 
 void
-nest::step_rate_generator::Parameters_::get( dictionary& d ) const
+nest::step_rate_generator::Parameters_::get( Dictionary& d ) const
 {
   std::vector< double > times_ms;
   times_ms.reserve( amp_time_stamps_.size() );
@@ -162,7 +162,7 @@ nest::step_rate_generator::Parameters_::validate_time_( double t, const Time& t_
 }
 
 void
-nest::step_rate_generator::Parameters_::set( const dictionary& d, Buffers_& b, Node* )
+nest::step_rate_generator::Parameters_::set( const Dictionary& d, Buffers_& b, Node* )
 {
   std::vector< double > new_times;
   const bool times_changed = d.update_value( names::amplitude_times, new_times );
@@ -351,7 +351,7 @@ nest::step_rate_generator::set_data_from_stimulation_backend( std::vector< doubl
       throw BadParameterValue(
         "The size of the data for the step_rate_generator needs to be even [(time,rate) pairs] " );
     }
-    dictionary d;
+    Dictionary d;
     std::vector< double > times_ms;
     std::vector< double > amplitudes_Hz;
     const size_t n_step = P_.amp_time_stamps_.size();

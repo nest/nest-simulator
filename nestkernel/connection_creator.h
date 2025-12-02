@@ -91,7 +91,7 @@ public:
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
    */
-  ConnectionCreator( const dictionary& dict );
+  ConnectionCreator( const Dictionary& dict );
 
   /**
    * Connect two layers.
@@ -131,7 +131,7 @@ private:
     std::vector< std::pair< Position< D >, size_t > >* positions_;
   };
 
-  void extract_params_( const dictionary&, std::vector< dictionary >& );
+  void extract_params_( const Dictionary&, std::vector< Dictionary >& );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
@@ -181,7 +181,7 @@ private:
   MaskPTR mask_;
   ParameterPTR kernel_;
   std::vector< size_t > synapse_model_;
-  std::vector< std::vector< dictionary > > param_dicts_;
+  std::vector< std::vector< Dictionary > > param_dicts_;
   std::vector< ParameterPTR > weight_;
   std::vector< ParameterPTR > delay_;
 };

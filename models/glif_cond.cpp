@@ -192,7 +192,7 @@ nest::glif_cond::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_cond::Parameters_::get( dictionary& d ) const
+nest::glif_cond::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = th_inf_ + E_L_;
   d[ names::g_m ] = G_;
@@ -222,7 +222,7 @@ nest::glif_cond::Parameters_::get( dictionary& d ) const
 }
 
 double
-nest::glif_cond::Parameters_::set( const dictionary& d, Node* node )
+nest::glif_cond::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -390,7 +390,7 @@ nest::glif_cond::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::glif_cond::State_::get( dictionary& d, const Parameters_& p ) const
+nest::glif_cond::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = y_[ V_M ] + p.E_L_;
   d[ names::ASCurrents ] = ASCurrents_;
@@ -413,7 +413,7 @@ nest::glif_cond::State_::get( dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+nest::glif_cond::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, y_[ V_M ], node ) )
   {

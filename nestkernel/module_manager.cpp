@@ -93,7 +93,7 @@ ModuleManager::reinitialize_dynamic_modules()
 }
 
 void
-ModuleManager::get_status( dictionary& d )
+ModuleManager::get_status( Dictionary& d )
 {
   std::vector< std::string > loaded;
   for ( const auto& [ name, module_info ] : modules_ )
@@ -104,7 +104,7 @@ ModuleManager::get_status( dictionary& d )
 }
 
 void
-ModuleManager::set_status( const dictionary& d )
+ModuleManager::set_status( const Dictionary& d )
 {
 }
 

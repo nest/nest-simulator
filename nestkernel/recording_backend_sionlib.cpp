@@ -68,7 +68,7 @@ nest::RecordingBackendSIONlib::finalize()
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const dictionary& )
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dictionary& )
 {
   const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -612,7 +612,7 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, dictionary& d ) const
+nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, Dictionary& d ) const
 {
   d[ names::filename ] = filename_;
   d[ names::buffer_size ] = buffer_size_;
@@ -622,7 +622,7 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&,
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const dictionary& d )
+nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const Dictionary& d )
 {
   d.update_value( names::filename, filename_ );
   d.update_value( names::buffer_size, buffer_size_ );
@@ -632,7 +632,7 @@ nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&,
 }
 
 void
-nest::RecordingBackendSIONlib::set_status( const dictionary& d )
+nest::RecordingBackendSIONlib::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty
@@ -642,7 +642,7 @@ nest::RecordingBackendSIONlib::set_status( const dictionary& d )
 }
 
 void
-nest::RecordingBackendSIONlib::get_status( dictionary& d ) const
+nest::RecordingBackendSIONlib::get_status( Dictionary& d ) const
 {
   P_.get( *this, d );
 
@@ -679,19 +679,19 @@ nest::RecordingBackendSIONlib::post_step_hook()
 }
 
 void
-nest::RecordingBackendSIONlib::check_device_status( const dictionary& ) const
+nest::RecordingBackendSIONlib::check_device_status( const Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_defaults( dictionary& ) const
+nest::RecordingBackendSIONlib::get_device_defaults( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, dictionary& ) const
+nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, Dictionary& ) const
 {
   // nothing to do
 }

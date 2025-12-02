@@ -173,8 +173,8 @@ public:
   SignalType sends_signal() const override;
 
   Type get_type() const override;
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -202,8 +202,8 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
-    void get( dictionary& ) const;
-    void set( const dictionary&, const Buffers_&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -229,7 +229,7 @@ private:
 
 
 inline void
-nest::multimeter::get_status( dictionary& d ) const
+nest::multimeter::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
@@ -253,7 +253,7 @@ nest::multimeter::get_status( dictionary& d ) const
 }
 
 inline void
-nest::multimeter::set_status( const dictionary& d )
+nest::multimeter::set_status( const Dictionary& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;

@@ -92,7 +92,7 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::get_status( dictionary& d ) const
+GenericConnectorModel< ConnectionT >::get_status( Dictionary& d ) const
 {
   // first get properties common to all synapses
   // these are stored only once (not within each Connection)
@@ -110,7 +110,7 @@ GenericConnectorModel< ConnectionT >::get_status( dictionary& d ) const
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
+GenericConnectorModel< ConnectionT >::set_status( const Dictionary& d )
 {
   d.update_integer_value( names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
@@ -138,11 +138,11 @@ GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::check_synapse_params( const dictionary& syn_spec ) const
+GenericConnectorModel< ConnectionT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
   // This is called just once per Connect() call, so we need not worry much about performance.
   // We get a dictionary with synapse default values and check if any of its keys are in syn_spec.
-  dictionary dummy;
+  Dictionary dummy;
   cp_.get_status( dummy );
 
   for ( [[maybe_unused]] const auto& [ key, val ] : syn_spec )
@@ -221,7 +221,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
-  const dictionary& p,
+  const Dictionary& p,
   const double delay,
   const double weight )
 {

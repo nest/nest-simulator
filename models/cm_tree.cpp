@@ -49,7 +49,7 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
 
 nest::Compartment::Compartment( const long compartment_index,
   const long parent_index,
-  const dictionary& compartment_params )
+  const Dictionary& compartment_params )
   : xx_( 0.0 )
   , yy_( 0.0 )
   , comp_index( compartment_index )
@@ -174,7 +174,7 @@ nest::CompTree::add_compartment( const long parent_index )
 }
 
 void
-nest::CompTree::add_compartment( const long parent_index, const dictionary& compartment_params )
+nest::CompTree::add_compartment( const long parent_index, const Dictionary& compartment_params )
 {
   Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );

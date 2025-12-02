@@ -58,7 +58,7 @@ nest::RecordingBackendASCII::finalize()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const dictionary& params )
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -183,33 +183,33 @@ nest::RecordingBackendASCII::prepare()
 }
 
 void
-nest::RecordingBackendASCII::set_status( const dictionary& )
+nest::RecordingBackendASCII::set_status( const Dictionary& )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::get_status( dictionary& ) const
+nest::RecordingBackendASCII::get_status( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::check_device_status( const dictionary& params ) const
+nest::RecordingBackendASCII::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendASCII::get_device_defaults( dictionary& params ) const
+nest::RecordingBackendASCII::get_device_defaults( Dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, dictionary& d ) const
+nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -325,7 +325,7 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::get_status( dictionary& d ) const
+nest::RecordingBackendASCII::DeviceData::get_status( Dictionary& d ) const
 {
   d[ names::file_extension ] = file_extension_;
   d[ names::precision ] = precision_;
@@ -336,7 +336,7 @@ nest::RecordingBackendASCII::DeviceData::get_status( dictionary& d ) const
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_status( const dictionary& d )
+nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
 {
   d.update_value( names::file_extension, file_extension_ );
   d.update_value( names::precision, precision_ );

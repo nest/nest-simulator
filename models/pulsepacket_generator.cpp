@@ -65,7 +65,7 @@ nest::pulsepacket_generator::Variables_::Variables_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::Parameters_::get( dictionary& d ) const
+nest::pulsepacket_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::pulse_times ] = pulse_times_;
   d[ names::activity ] = a_;
@@ -73,7 +73,7 @@ nest::pulsepacket_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::pulsepacket_generator::Parameters_::set( const dictionary& d, pulsepacket_generator& ppg, Node* node )
+nest::pulsepacket_generator::Parameters_::set( const Dictionary& d, pulsepacket_generator& ppg, Node* node )
 {
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
@@ -245,7 +245,7 @@ nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< dou
         "The size of the data for the pulse_generator needs to be higher than 3 "
         "[activity, sdev, all the pulse times]." );
     }
-    dictionary d;
+    Dictionary d;
 
     d[ names::activity ] = input_param[ 0 ];
     d[ names::sdev ] = input_param[ 1 ];

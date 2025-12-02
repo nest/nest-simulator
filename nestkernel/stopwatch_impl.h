@@ -161,7 +161,7 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
-Stopwatch< detailed_timer, threaded_timer >::get_status( dictionary& d,
+Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
   const std::string& walltime_name,
   const std::string& cputime_name ) const
 {

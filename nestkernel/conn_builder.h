@@ -87,8 +87,8 @@ public:
   BipartiteConnBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
   virtual ~BipartiteConnBuilder();
 
   size_t
@@ -247,7 +247,7 @@ protected:
    *
    * @note Each thread can independently modify its dictionary to pass parameters on
    */
-  std::vector< std::vector< dictionary > > param_dicts_;
+  std::vector< std::vector< Dictionary > > param_dicts_;
 
 private:
   typedef std::map< std::string, ConnParameter* > ConnParameterMap;
@@ -283,9 +283,9 @@ private:
   /**
    * Set synapse specific parameters.
    */
-  void set_synapse_model_( const dictionary& syn_params, const size_t indx );
-  void set_default_weight_or_delay_( const dictionary& syn_params, const size_t indx );
-  void set_synapse_params( const dictionary& syn_defaults, const dictionary& syn_params, const size_t indx );
+  void set_synapse_model_( const Dictionary& syn_params, const size_t indx );
+  void set_default_weight_or_delay_( const Dictionary& syn_params, const size_t indx );
+  void set_synapse_params( const Dictionary& syn_defaults, const Dictionary& syn_params, const size_t indx );
 
   /**
    * Set structural plasticity parameters (if provided)
@@ -302,7 +302,7 @@ private:
    * * multiple syn_specs are given and structural plasticity parameters
    *   are present
    */
-  void set_structural_plasticity_parameters( const std::vector< dictionary >& syn_specs );
+  void set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs );
 
   /**
    * Reset weight and delay pointers
@@ -345,8 +345,8 @@ public:
    */
   ThirdInBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR third,
-    const dictionary& third_conn_spec,
-    const std::vector< dictionary >& syn_specs );
+    const Dictionary& third_conn_spec,
+    const std::vector< Dictionary >& syn_specs );
   ~ThirdInBuilder();
 
   /**
@@ -419,8 +419,8 @@ public:
   ThirdOutBuilder( const NodeCollectionPTR third,
     const NodeCollectionPTR targets,
     ThirdInBuilder* third_in,
-    const dictionary& third_conn_spec,
-    const std::vector< dictionary >& syn_specs );
+    const Dictionary& third_conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   //! Only call third_connect() on ThirdOutBuilder
   void
@@ -463,8 +463,8 @@ public:
   ConnBuilder( const std::string& primary_rule,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   /**
    * Constructor for tripartite connection
@@ -484,9 +484,9 @@ public:
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
-    const dictionary& conn_spec,
-    const dictionary& third_conn_spec,
-    const std::map< std::string, std::vector< dictionary > >& syn_specs );
+    const Dictionary& conn_spec,
+    const Dictionary& third_conn_spec,
+    const std::map< std::string, std::vector< Dictionary > >& syn_specs );
 
   ~ConnBuilder();
 
@@ -513,8 +513,8 @@ public:
   ThirdBernoulliWithPoolBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdInBuilder*,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
   ~ThirdBernoulliWithPoolBuilder();
 
   void third_connect( size_t source_gid, Node& target ) override;
@@ -567,8 +567,8 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   bool
   supports_symmetric() const override
@@ -615,8 +615,8 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_specs )
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs )
     : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   {
   }
@@ -670,8 +670,8 @@ public:
   FixedInDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -687,8 +687,8 @@ public:
   FixedOutDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -703,8 +703,8 @@ public:
   FixedTotalNumberBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -719,8 +719,8 @@ public:
   BernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -736,8 +736,8 @@ public:
   PoissonBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -753,8 +753,8 @@ public:
   SymmetricBernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const dictionary&,
-    const std::vector< dictionary >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
   bool
   supports_symmetric() const override
@@ -784,8 +784,8 @@ public:
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_spec );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_spec );
 
   const std::string&
   get_pre_synaptic_element_name() const

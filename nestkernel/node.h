@@ -335,7 +335,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  virtual void set_status( const dictionary& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the node by setting
@@ -344,7 +344,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  virtual void get_status( dictionary& ) const = 0;
+  virtual void get_status( Dictionary& ) const = 0;
 
 public:
   /**
@@ -963,7 +963,7 @@ public:
    *  calls the custom function get_status(dictionary) with
    *  the created status dictionary as argument.
    */
-  dictionary get_status_base();
+  Dictionary get_status_base();
 
   /**
    * Set status dictionary of a node.
@@ -971,7 +971,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const dictionary& );
+  void set_status_base( const Dictionary& );
 
   /**
    * Returns true if node is model prototype.
@@ -1034,7 +1034,7 @@ private:
    * permanent status dictionary which is then returned by
    * get_status_dict_().
    */
-  virtual dictionary get_status_dict_();
+  virtual Dictionary get_status_dict_();
 
 protected:
   /**

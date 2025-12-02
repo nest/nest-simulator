@@ -66,7 +66,7 @@ get_layer( NodeCollectionPTR nc )
 }
 
 NodeCollectionPTR
-create_layer( const dictionary& layer_dict )
+create_layer( const Dictionary& layer_dict )
 {
   layer_dict.init_access_flags();
 
@@ -355,7 +355,7 @@ distance( const std::vector< ConnectionID >& conns )
 }
 
 MaskPTR
-create_mask( const dictionary& mask_dict )
+create_mask( const Dictionary& mask_dict )
 {
   mask_dict.init_access_flags();
 
@@ -374,7 +374,7 @@ create_mask( const dictionary& mask_dict )
     }
     else
     {
-      mask = create_mask( kv.first, mask_dict.get< dictionary >( kv.first ) );
+      mask = create_mask( kv.first, mask_dict.get< Dictionary >( kv.first ) );
     }
   }
 
@@ -519,7 +519,7 @@ minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
 }
 
 void
-connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& connection_dict )
+connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& connection_dict )
 {
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
@@ -565,7 +565,7 @@ dump_layer_connections( const NodeCollectionPTR source_layer_nc,
   out.close();
 }
 
-dictionary
+Dictionary
 get_layer_status( NodeCollectionPTR )
 {
   assert( false and "not implemented" );

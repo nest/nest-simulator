@@ -82,13 +82,13 @@ public:
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
-  virtual void get_synapse_status( const size_t tid, const size_t lcid, dictionary& dict ) const = 0;
+  virtual void get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const = 0;
 
   /**
    * Set status of the connection at position lcid according to the
    * dictionary dict.
    */
-  virtual void set_synapse_status( const size_t tid, const dictionary& dict, ConnectorModel& cm ) = 0;
+  virtual void set_synapse_status( const size_t tid, const Dictionary& dict, ConnectorModel& cm ) = 0;
 
   /**
    * Add ConnectionID with given source_node_id and lcid to conns. If
@@ -244,7 +244,7 @@ public:
   }
 
   void
-  get_synapse_status( const size_t tid, const size_t lcid, dictionary& dict ) const override
+  get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const override
   {
     assert( lcid < C_.size() );
 
@@ -256,7 +256,7 @@ public:
   }
 
   void
-  set_synapse_status( const size_t lcid, const dictionary& dict, ConnectorModel& cm ) override
+  set_synapse_status( const size_t lcid, const Dictionary& dict, ConnectorModel& cm ) override
   {
     assert( lcid < C_.size() );
 

@@ -59,7 +59,7 @@ public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
 
-  void get_status( dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Set status of synaptic plasticity variables: synaptic update interval,
@@ -67,7 +67,7 @@ public:
    *
    * @param d dictionary containing the values to be set
    */
-  void set_status( const dictionary& ) override;
+  void set_status( const Dictionary& ) override;
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
@@ -100,8 +100,8 @@ public:
    */
   void disconnect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const dictionary& conn_spec,
-    const std::vector< dictionary >& syn_spec );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_spec );
 
   /**
    * Disconnect two nodes.
@@ -204,7 +204,7 @@ private:
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 
-  dictionary growthcurvedict_; //!< Dictionary for growth rules.
+  Dictionary growthcurvedict_; //!< Dictionary for growth rules.
 };
 
 inline GrowthCurve*

@@ -115,7 +115,7 @@ eprop_iaf_adapt_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_ada
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_adapt_bsshslm_2020::Parameters_::get( dictionary& d ) const
+eprop_iaf_adapt_bsshslm_2020::Parameters_::get( Dictionary& d ) const
 {
   d[ names::adapt_beta ] = adapt_beta_;
   d[ names::adapt_tau ] = adapt_tau_;
@@ -135,7 +135,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( dictionary& d ) const
 }
 
 double
-eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const dictionary& d, Node* node )
+eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -213,7 +213,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const dictionary& d, Node* node 
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::State_::get( dictionary& d, const Parameters_& p ) const
+eprop_iaf_adapt_bsshslm_2020::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::adaptation ] = adapt_;
   d[ names::V_m ] = v_m_ + p.E_L_;
@@ -223,7 +223,7 @@ eprop_iaf_adapt_bsshslm_2020::State_::get( dictionary& d, const Parameters_& p )
 }
 
 void
-eprop_iaf_adapt_bsshslm_2020::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_adapt_bsshslm_2020::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 

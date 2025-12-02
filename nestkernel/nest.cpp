@@ -54,7 +54,7 @@ namespace nest
 {
 
 
-AbstractMask* create_doughnut( const dictionary& d );
+AbstractMask* create_doughnut( const Dictionary& d );
 
 void
 init_nest( int* argc, char** argv[] )
@@ -152,28 +152,28 @@ nc_size( NodeCollectionPTR nc )
 }
 
 void
-set_kernel_status( const dictionary& dict )
+set_kernel_status( const Dictionary& dict )
 {
   dict.init_access_flags();
   kernel().set_status( dict );
   dict.all_entries_accessed( "SetKernelStatus", "params" );
 }
 
-dictionary
+Dictionary
 get_kernel_status()
 {
   assert( kernel().is_initialized() );
 
-  dictionary d;
+  Dictionary d;
   kernel().get_status( d );
 
   return d;
 }
 
-dictionary
+Dictionary
 get_nc_status( NodeCollectionPTR nc )
 {
-  dictionary result;
+  Dictionary result;
   size_t node_index = 0;
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
@@ -200,7 +200,7 @@ get_nc_status( NodeCollectionPTR nc )
 }
 
 void
-set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
+set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
 {
   /*
    PYNEST-NG-FUTURE:
@@ -241,7 +241,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params )
 }
 
 void
-set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict )
+set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary& dict )
 {
   dict.init_access_flags();
   for ( auto& conn : conns )
@@ -257,7 +257,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const dictionary
 }
 
 void
-set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts )
+set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< Dictionary >& dicts )
 {
   if ( conns.size() != dicts.size() )
   {
@@ -279,10 +279,10 @@ set_connection_status( const std::deque< ConnectionID >& conns, const std::vecto
   }
 }
 
-std::vector< dictionary >
+std::vector< Dictionary >
 get_connection_status( const std::deque< ConnectionID >& conns )
 {
-  std::vector< dictionary > result;
+  std::vector< Dictionary > result;
   result.reserve( conns.size() );
 
   for ( auto& conn : conns )
@@ -298,18 +298,18 @@ get_connection_status( const std::deque< ConnectionID >& conns )
 }
 
 void
-set_node_status( const size_t node_id, const dictionary& dict )
+set_node_status( const size_t node_id, const Dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
-dictionary
+Dictionary
 get_node_status( const size_t node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
 
-dictionary
+Dictionary
 get_connection_status( const ConnectionID& conn )
 {
   return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
@@ -364,7 +364,7 @@ create( const std::string& model_name, const size_t n_nodes )
 }
 
 NodeCollectionPTR
-create_spatial( const dictionary& layer_dict )
+create_spatial( const Dictionary& layer_dict )
 {
   return create_layer( layer_dict );
 }
@@ -376,7 +376,7 @@ make_nodecollection( const std::vector< size_t >& node_ids )
 }
 
 NodeCollectionPTR
-get_nodes( const dictionary& params, const bool local_only )
+get_nodes( const Dictionary& params, const bool local_only )
 {
   return kernel().node_manager.get_nodes( params, local_only );
 }
@@ -399,10 +399,10 @@ find( const NodeCollectionPTR nc, size_t node_id )
   return nc->get_nc_index( node_id );
 }
 
-dictionary
+Dictionary
 get_metadata( const NodeCollectionPTR nc )
 {
-  dictionary status_dict;
+  Dictionary status_dict;
   const auto meta = nc->get_metadata();
   // Fill the status dictionary only if the NodeCollection has valid metadata.
   if ( meta.get() )
@@ -416,8 +416,8 @@ get_metadata( const NodeCollectionPTR nc )
 void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& connectivity,
-  const std::vector< dictionary >& synapse_params )
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
@@ -425,8 +425,8 @@ connect( NodeCollectionPTR sources,
 void
 disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const dictionary& connectivity,
-  const std::vector< dictionary >& synapse_params )
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params )
 {
   kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 }
@@ -435,9 +435,9 @@ void
 connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const dictionary& connectivity,
-  const dictionary& third_connectivity,
-  const std::map< std::string, std::vector< dictionary > >& synapse_specs )
+  const Dictionary& connectivity,
+  const Dictionary& third_connectivity,
+  const std::map< std::string, std::vector< Dictionary > >& synapse_specs )
 {
   kernel().connection_manager.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
@@ -457,13 +457,13 @@ connect_arrays( long* sources,
 }
 
 void
-connect_sonata( const dictionary& graph_specs, const long hyperslab_size )
+connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
 {
   kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
 }
 
 std::deque< ConnectionID >
-get_connections( const dictionary& dict )
+get_connections( const Dictionary& dict )
 {
   dict.init_access_flags();
 
@@ -536,13 +536,13 @@ synchronize()
 }
 
 void
-copy_model( const std::string& oldmodname, const std::string& newmodname, const dictionary& dict )
+copy_model( const std::string& oldmodname, const std::string& newmodname, const Dictionary& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
-set_model_defaults( const std::string& component, const dictionary& dict )
+set_model_defaults( const std::string& component, const Dictionary& dict )
 {
   if ( kernel().model_manager.set_model_defaults( component, dict ) )
   {
@@ -558,7 +558,7 @@ set_model_defaults( const std::string& component, const dictionary& dict )
   throw UnknownComponent( component );
 }
 
-dictionary
+Dictionary
 get_model_defaults( const std::string& component )
 {
   try
@@ -587,7 +587,7 @@ get_model_defaults( const std::string& component )
   }
 
   throw UnknownComponent( component );
-  return dictionary(); // supress missing return value warning; never reached
+  return Dictionary(); // supress missing return value warning; never reached
 }
 
 ParameterPTR
@@ -605,9 +605,9 @@ create_parameter( const boost::any& value )
   {
     return create_parameter( boost::any_cast< long >( value ) );
   }
-  else if ( is_type< dictionary >( value ) )
+  else if ( is_type< Dictionary >( value ) )
   {
-    return create_parameter( boost::any_cast< dictionary >( value ) );
+    return create_parameter( boost::any_cast< Dictionary >( value ) );
   }
   else if ( is_type< ParameterPTR >( value ) )
   {
@@ -632,7 +632,7 @@ create_parameter( const long value )
 }
 
 ParameterPTR
-create_parameter( const dictionary& param_dict )
+create_parameter( const Dictionary& param_dict )
 {
   // The dictionary should only have a single key, which is the name of
   // the parameter type to create.
@@ -641,7 +641,7 @@ create_parameter( const dictionary& param_dict )
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
   const auto n = param_dict.begin()->first;
-  const auto pdict = param_dict.get< dictionary >( n );
+  const auto pdict = param_dict.get< Dictionary >( n );
   pdict.init_access_flags();
   auto parameter = create_parameter( n, pdict );
   pdict.all_entries_accessed( "create_parameter", "param" );
@@ -649,7 +649,7 @@ create_parameter( const dictionary& param_dict )
 }
 
 ParameterPTR
-create_parameter( const std::string& name, const dictionary& d )
+create_parameter( const std::string& name, const Dictionary& d )
 {
   // The parameter factory will create the parameter
   return ParameterPTR( parameter_factory_().create( name, d ) );
@@ -697,7 +697,7 @@ apply( const ParameterPTR param, const NodeCollectionPTR nc )
 }
 
 std::vector< double >
-apply( const ParameterPTR param, const dictionary& positions )
+apply( const ParameterPTR param, const Dictionary& positions )
 {
   auto source_nc = positions.get< NodeCollectionPTR >( names::source );
   auto targets = positions.get< std::vector< std::vector< double > > >( names::targets );
@@ -743,7 +743,7 @@ node_collection_to_array( NodeCollectionPTR node_collection, const std::string& 
 }
 
 AbstractMask*
-create_doughnut( const dictionary& d )
+create_doughnut( const Dictionary& d )
 {
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );

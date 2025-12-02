@@ -58,7 +58,7 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
@@ -66,7 +66,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const dictionary& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   long get_label() const;
 
@@ -83,7 +83,7 @@ ConnectionLabel< ConnectionT >::ConnectionLabel()
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::get_status( dictionary& d ) const
+ConnectionLabel< ConnectionT >::get_status( Dictionary& d ) const
 {
   ConnectionT::get_status( d );
   d[ names::synapse_label ] = label_;
@@ -95,7 +95,7 @@ ConnectionLabel< ConnectionT >::get_status( dictionary& d ) const
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const dictionary& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   long lbl;
   if ( d.update_integer_value( names::synapse_label, lbl ) )

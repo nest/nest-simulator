@@ -49,7 +49,7 @@ AbstractLayer::~AbstractLayer()
 }
 
 NodeCollectionPTR
-AbstractLayer::create_layer( const dictionary& layer_dict )
+AbstractLayer::create_layer( const Dictionary& layer_dict )
 {
   size_t length = 0;
   AbstractLayer* layer_local = nullptr;

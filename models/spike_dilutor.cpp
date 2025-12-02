@@ -54,13 +54,13 @@ nest::spike_dilutor::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::Parameters_::get( dictionary& d ) const
+nest::spike_dilutor::Parameters_::get( Dictionary& d ) const
 {
   d[ names::p_copy ] = p_copy_;
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const dictionary& d, Node* node )
+nest::spike_dilutor::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 or p_copy_ > 1 )

@@ -39,7 +39,7 @@ namespace nest
  */
 template < typename T >
 bool
-update_value_param( dictionary const& d, const std::string& key, T& value, nest::Node* node )
+update_value_param( Dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
   assert( node != nullptr ); // PYNEST-NG-FUTURE: Receive node as const Node&, but that needs many changes throughout
   const auto it = d.find( key );

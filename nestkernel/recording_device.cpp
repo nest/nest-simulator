@@ -69,14 +69,14 @@ nest::RecordingDevice::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingDevice::Parameters_::get( dictionary& d ) const
+nest::RecordingDevice::Parameters_::get( Dictionary& d ) const
 {
   d[ names::label ] = label_;
   d[ names::record_to ] = record_to_;
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const dictionary& d )
+nest::RecordingDevice::Parameters_::set( const Dictionary& d )
 {
   d.update_value( names::label, label_ );
 
@@ -99,7 +99,7 @@ nest::RecordingDevice::State_::State_()
 }
 
 void
-nest::RecordingDevice::State_::get( dictionary& d ) const
+nest::RecordingDevice::State_::get( Dictionary& d ) const
 {
   size_t n_events = 0;
   d.update_value( names::n_events, n_events );
@@ -107,7 +107,7 @@ nest::RecordingDevice::State_::get( dictionary& d ) const
 }
 
 void
-nest::RecordingDevice::State_::set( const dictionary& d )
+nest::RecordingDevice::State_::set( const Dictionary& d )
 {
   long n_events = 0;
 
@@ -123,7 +123,7 @@ nest::RecordingDevice::State_::set( const dictionary& d )
 }
 
 void
-nest::RecordingDevice::set_status( const dictionary& d )
+nest::RecordingDevice::set_status( const Dictionary& d )
 {
   if ( kernel().simulation_manager.has_been_prepared() )
   {
@@ -140,7 +140,7 @@ nest::RecordingDevice::set_status( const dictionary& d )
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    dictionary backend_params;
+    Dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
     for ( auto& [ key, entry ] : d )
@@ -175,7 +175,7 @@ nest::RecordingDevice::set_status( const dictionary& d )
 }
 
 void
-nest::RecordingDevice::get_status( dictionary& d ) const
+nest::RecordingDevice::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );

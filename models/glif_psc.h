@@ -227,8 +227,8 @@ public:
   size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
   size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
@@ -282,8 +282,8 @@ private:
 
     Parameters_();
 
-    void get( dictionary& ) const;
-    double set( const dictionary&, Node* );
+    void get( Dictionary& ) const;
+    double set( const Dictionary&, Node* );
   };
 
   struct State_
@@ -302,8 +302,8 @@ private:
 
     State_( const Parameters_& );
 
-    void get( dictionary&, const Parameters_& ) const;
-    void set( const dictionary&, const Parameters_&, double, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -434,7 +434,7 @@ nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, size_t recept
 }
 
 inline void
-glif_psc::get_status( dictionary& d ) const
+glif_psc::get_status( Dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -447,7 +447,7 @@ glif_psc::get_status( dictionary& d ) const
 }
 
 inline void
-glif_psc::set_status( const dictionary& d )
+glif_psc::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

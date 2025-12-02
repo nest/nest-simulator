@@ -217,7 +217,7 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 }
 
 void
-nest::ArchivingNode::get_status( dictionary& d ) const
+nest::ArchivingNode::get_status( Dictionary& d ) const
 {
   d[ names::t_spike ] = get_spiketime_ms();
   d[ names::tau_minus ] = tau_minus_;
@@ -232,7 +232,7 @@ nest::ArchivingNode::get_status( dictionary& d ) const
 }
 
 void
-nest::ArchivingNode::set_status( const dictionary& d )
+nest::ArchivingNode::set_status( const Dictionary& d )
 {
   // We need to preserve values in case invalid values are set
   double new_tau_minus = tau_minus_;

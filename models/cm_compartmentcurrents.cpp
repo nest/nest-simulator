@@ -34,7 +34,7 @@ nest::Na::Na( double v_comp )
   // some default initialization
   init_statevars( v_comp );
 }
-nest::Na::Na( double v_comp, const dictionary& channel_params )
+nest::Na::Na( double v_comp, const Dictionary& channel_params )
   // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
@@ -197,7 +197,7 @@ nest::K::K( double v_comp )
   init_statevars( v_comp );
 }
 
-nest::K::K( double v_comp, const dictionary& channel_params )
+nest::K::K( double v_comp, const Dictionary& channel_params )
   // state variables
   : n_K_( 0.0 )
   // parameters
@@ -318,7 +318,7 @@ nest::AMPA::AMPA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::AMPA::AMPA( const long syn_index, const dictionary& receptor_params )
+nest::AMPA::AMPA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
@@ -405,7 +405,7 @@ nest::GABA::GABA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::GABA::GABA( const long syn_index, const dictionary& receptor_params )
+nest::GABA::GABA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
@@ -492,7 +492,7 @@ nest::NMDA::NMDA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::NMDA::NMDA( const long syn_index, const dictionary& receptor_params )
+nest::NMDA::NMDA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_NMDA_( 0.0 )
   , g_d_NMDA_( 0.0 )
@@ -594,7 +594,7 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
 }
 
-nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const dictionary& receptor_params )
+nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_AN_AMPA_( 0.0 )
   , g_d_AN_AMPA_( 0.0 )
@@ -705,7 +705,7 @@ nest::CompartmentCurrents::CompartmentCurrents( double v_comp )
 {
 }
 
-nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const dictionary& channel_params )
+nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const Dictionary& channel_params )
   : Na_chan_( v_comp, channel_params )
   , K_chan_( v_comp, channel_params )
 {

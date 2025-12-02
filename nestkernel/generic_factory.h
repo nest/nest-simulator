@@ -51,7 +51,7 @@ template < class BaseT >
 class GenericFactory
 {
 public:
-  typedef BaseT* ( *CreatorFunction )( const dictionary& d );
+  typedef BaseT* ( *CreatorFunction )( const Dictionary& d );
   typedef std::map< std::string, CreatorFunction > AssocMap;
 
   /**
@@ -60,7 +60,7 @@ public:
    * @param d    Dictionary containing parameters for this subtype.
    * @returns dynamically allocated new object.
    */
-  BaseT* create( const std::string& name, const dictionary& d ) const;
+  BaseT* create( const std::string& name, const Dictionary& d ) const;
 
   /**
    * Register a new subtype.
@@ -86,14 +86,14 @@ public:
 
 private:
   template < class T >
-  static BaseT* new_from_dict_( const dictionary& d );
+  static BaseT* new_from_dict_( const Dictionary& d );
 
   AssocMap associations_;
 };
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const std::string& name, const dictionary& d ) const
+GenericFactory< BaseT >::create( const std::string& name, const Dictionary& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
@@ -121,7 +121,7 @@ GenericFactory< BaseT >::register_subtype( const std::string& name, CreatorFunct
 template < class BaseT >
 template < class T >
 BaseT*
-GenericFactory< BaseT >::new_from_dict_( const dictionary& d )
+GenericFactory< BaseT >::new_from_dict_( const Dictionary& d )
 {
   return new T( d );
 }

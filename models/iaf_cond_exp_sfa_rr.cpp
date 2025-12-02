@@ -171,7 +171,7 @@ nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp_sfa_rr::Parameters_::get( dictionary& d ) const
+nest::iaf_cond_exp_sfa_rr::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th_;
   d[ names::V_reset ] = V_reset_;
@@ -194,7 +194,7 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::Parameters_::set( const dictionary& d, Node* node )
+nest::iaf_cond_exp_sfa_rr::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th_, node );
@@ -238,7 +238,7 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::get( dictionary& d ) const
+nest::iaf_cond_exp_sfa_rr::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ]; // Membrane potential
   d[ names::g_ex ] = y_[ G_EXC ];
@@ -248,7 +248,7 @@ nest::iaf_cond_exp_sfa_rr::State_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::iaf_cond_exp_sfa_rr::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::g_ex, y_[ G_EXC ], node );

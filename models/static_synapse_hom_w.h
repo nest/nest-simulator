@@ -137,7 +137,7 @@ public:
     }
   };
 
-  void get_status( dictionary& d ) const;
+  void get_status( Dictionary& d ) const;
 
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
@@ -150,7 +150,7 @@ public:
    * Checks to see if weight is given in syn_spec.
    */
   void
-  check_synapse_params( const dictionary& syn_spec ) const
+  check_synapse_params( const Dictionary& syn_spec ) const
   {
     if ( syn_spec.known( names::weight ) )
     {
@@ -193,7 +193,7 @@ constexpr ConnectionModelProperties static_synapse_hom_w< targetidentifierT >::p
 
 template < typename targetidentifierT >
 void
-static_synapse_hom_w< targetidentifierT >::get_status( dictionary& d ) const
+static_synapse_hom_w< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::size_of ] = sizeof( *this );

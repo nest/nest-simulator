@@ -84,7 +84,7 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( dictionary& d ) const
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( Dictionary& d ) const
 {
   d[ names::tau ] = tau_;
   d[ names::lambda ] = lambda_;
@@ -102,7 +102,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( dictionary& d ) cons
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const dictionary& d, Node* node )
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::tau, tau_, node );
   update_value_param( d, names::lambda, lambda_, node );
@@ -151,7 +151,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const dictionary& d,
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::get( dictionary& d ) const
+nest::rate_neuron_ipn< TNonlinearities >::State_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;   // Rate
   d[ names::noise ] = noise_; // Noise
@@ -159,7 +159,7 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::get( dictionary& d ) const
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::set( const dictionary& d, Node* node )
+nest::rate_neuron_ipn< TNonlinearities >::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::rate, rate_, node ); // Rate
 }

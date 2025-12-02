@@ -205,7 +205,7 @@ nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::get( dictionary& d ) const
+nest::aeif_psc_delta_clopath::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th_max ] = V_th_max;
@@ -232,7 +232,7 @@ nest::aeif_psc_delta_clopath::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::set( const dictionary& d, Node* node )
+nest::aeif_psc_delta_clopath::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th_max, V_th_max, node );
   update_value_param( d, names::V_th_rest, V_th_rest, node );
@@ -324,7 +324,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const dictionary& d, Node* node 
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::get( dictionary& d ) const
+nest::aeif_psc_delta_clopath::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::w ] = y_[ W ];
@@ -334,7 +334,7 @@ nest::aeif_psc_delta_clopath::State_::get( dictionary& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::aeif_psc_delta_clopath::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::w, y_[ W ], node );

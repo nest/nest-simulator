@@ -77,7 +77,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const std::vector< std::vector< d
   return result;
 }
 
-NormalParameter::NormalParameter( const dictionary& d )
+NormalParameter::NormalParameter( const Dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
@@ -103,7 +103,7 @@ NormalParameter::value( RngPtr rng, Node* node )
 }
 
 
-LognormalParameter::LognormalParameter( const dictionary& d )
+LognormalParameter::LognormalParameter( const Dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
@@ -254,7 +254,7 @@ RedrawParameter::value( RngPtr rng,
 }
 
 
-ExpDistParameter::ExpDistParameter( const dictionary& d )
+ExpDistParameter::ExpDistParameter( const Dictionary& d )
   : Parameter( true )
   , p_( d.get< ParameterPTR >( "x" ) )
   , inv_beta_( 1.0 / d.get< double >( "beta" ) )
@@ -276,7 +276,7 @@ ExpDistParameter::value( RngPtr rng,
   return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
 }
 
-GaussianParameter::GaussianParameter( const dictionary& d )
+GaussianParameter::GaussianParameter( const Dictionary& d )
   : Parameter( true )
   , p_( d.get< ParameterPTR >( "x" ) )
   , mean_( d.get< double >( "mean" ) )
@@ -301,7 +301,7 @@ GaussianParameter::value( RngPtr rng,
 }
 
 
-Gaussian2DParameter::Gaussian2DParameter( const dictionary& d )
+Gaussian2DParameter::Gaussian2DParameter( const Dictionary& d )
   : Parameter( true )
   , px_( d.get< ParameterPTR >( "x" ) )
   , py_( d.get< ParameterPTR >( "y" ) )
@@ -350,7 +350,7 @@ Gaussian2DParameter::value( RngPtr rng,
 }
 
 
-GaborParameter::GaborParameter( const dictionary& d )
+GaborParameter::GaborParameter( const Dictionary& d )
   : Parameter( true )
   , px_( d.get< ParameterPTR >( "x" ) )
   , py_( d.get< ParameterPTR >( "y" ) )
@@ -394,7 +394,7 @@ GaborParameter::value( RngPtr rng,
 }
 
 
-GammaParameter::GammaParameter( const dictionary& d )
+GammaParameter::GammaParameter( const Dictionary& d )
   : Parameter( true )
   , p_( d.get< ParameterPTR >( "x" ) )
   , kappa_( d.get< double >( "kappa" ) )
@@ -449,7 +449,7 @@ subtract_parameter( const ParameterPTR first, const ParameterPTR second )
 }
 
 ParameterPTR
-compare_parameter( const ParameterPTR first, const ParameterPTR second, const dictionary& d )
+compare_parameter( const ParameterPTR first, const ParameterPTR second, const Dictionary& d )
 {
   return ParameterPTR( new ComparingParameter( first, second, d ) );
 }

@@ -117,7 +117,7 @@ iaf_psc_alpha_multisynapse::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_alpha_multisynapse::Parameters_::get( dictionary& d ) const
+iaf_psc_alpha_multisynapse::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_; // resting potential
   d[ names::I_e ] = I_e_;
@@ -133,7 +133,7 @@ iaf_psc_alpha_multisynapse::Parameters_::get( dictionary& d ) const
 }
 
 double
-iaf_psc_alpha_multisynapse::Parameters_::set( const dictionary& d, Node* node )
+iaf_psc_alpha_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -210,13 +210,13 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-iaf_psc_alpha_multisynapse::State_::get( dictionary& d, const Parameters_& p ) const
+iaf_psc_alpha_multisynapse::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
 }
 
 void
-iaf_psc_alpha_multisynapse::State_::set( const dictionary& d, const Parameters_& p, const double delta_EL, Node* node )
+iaf_psc_alpha_multisynapse::State_::set( const Dictionary& d, const Parameters_& p, const double delta_EL, Node* node )
 {
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential
@@ -413,7 +413,7 @@ iaf_psc_alpha_multisynapse::handle( DataLoggingRequest& e )
 }
 
 void
-iaf_psc_alpha_multisynapse::set_status( const dictionary& d )
+iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

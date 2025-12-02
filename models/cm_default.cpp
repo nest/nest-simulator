@@ -76,7 +76,7 @@ nest::cm_default::cm_default( const cm_default& n )
  * ----------------------------------------------------------------
  */
 void
-cm_default::get_status( dictionary& statusdict ) const
+cm_default::get_status( Dictionary& statusdict ) const
 {
   statusdict[ names::V_th ] = V_th_;
   ArchivingNode::get_status( statusdict );
@@ -86,11 +86,11 @@ cm_default::get_status( dictionary& statusdict ) const
 
   // We add a list of dicts with compartment information and
   // a list of dicts with receptor information to the status dictionary
-  std::vector< dictionary > compartments;
-  std::vector< dictionary > receptors;
+  std::vector< Dictionary > compartments;
+  std::vector< Dictionary > receptors;
   for ( long comp_idx_ = 0; comp_idx_ != c_tree_.get_size(); comp_idx_++ )
   {
-    dictionary compartment_info;
+    Dictionary compartment_info;
     Compartment* compartment = c_tree_.get_compartment( comp_idx_ );
 
     // add compartment info
@@ -107,7 +107,7 @@ cm_default::get_status( dictionary& statusdict ) const
 }
 
 void
-nest::cm_default::set_status( const dictionary& statusdict )
+nest::cm_default::set_status( const Dictionary& statusdict )
 {
   statusdict.update_value( names::V_th, V_th_ );
   ArchivingNode::set_status( statusdict );
@@ -121,19 +121,19 @@ nest::cm_default::set_status( const dictionary& statusdict )
    */
   const auto add_compartments_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    if ( is_type< std::vector< dictionary > >( statusdict.at( name ) ) )
+    if ( is_type< std::vector< Dictionary > >( statusdict.at( name ) ) )
     {
-      const auto compartments = statusdict.get< std::vector< dictionary > >( name );
+      const auto compartments = statusdict.get< std::vector< Dictionary > >( name );
       // A list of compartments is provided, we add them all to the tree
       for ( const auto& compartment_dict : compartments )
       {
         add_compartment_( compartment_dict );
       }
     }
-    else if ( is_type< dictionary >( statusdict.at( name ) ) )
+    else if ( is_type< Dictionary >( statusdict.at( name ) ) )
     {
       // A single compartment is provided, we add add it to the tree
-      add_compartment_( statusdict.get< dictionary >( name ) );
+      add_compartment_( statusdict.get< Dictionary >( name ) );
     }
     else
     {
@@ -152,17 +152,17 @@ nest::cm_default::set_status( const dictionary& statusdict )
    */
   const auto add_receptors_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    if ( is_type< std::vector< dictionary > >( statusdict.at( name ) ) )
+    if ( is_type< std::vector< Dictionary > >( statusdict.at( name ) ) )
     {
-      const auto receptors = statusdict.get< std::vector< dictionary > >( name );
+      const auto receptors = statusdict.get< std::vector< Dictionary > >( name );
       for ( const auto& receptor_dict : receptors )
       {
         add_receptor_( receptor_dict );
       }
     }
-    else if ( is_type< dictionary >( statusdict.at( name ) ) )
+    else if ( is_type< Dictionary >( statusdict.at( name ) ) )
     {
-      add_receptor_( statusdict.get< dictionary >( name ) );
+      add_receptor_( statusdict.get< Dictionary >( name ) );
     }
     else
     {
@@ -212,13 +212,13 @@ nest::cm_default::set_status( const dictionary& statusdict )
 }
 
 void
-nest::cm_default::add_compartment_( const dictionary& dd )
+nest::cm_default::add_compartment_( const Dictionary& dd )
 {
   dd.init_access_flags();
 
   if ( dd.known( names::params ) )
   {
-    c_tree_.add_compartment( dd.get< long >( names::parent_idx ), dd.get< dictionary >( names::params ) );
+    c_tree_.add_compartment( dd.get< long >( names::parent_idx ), dd.get< Dictionary >( names::params ) );
   }
   else
   {
@@ -229,7 +229,7 @@ nest::cm_default::add_compartment_( const dictionary& dd )
 }
 
 void
-nest::cm_default::add_receptor_( const dictionary& dd )
+nest::cm_default::add_receptor_( const Dictionary& dd )
 {
   dd.init_access_flags();
 
@@ -247,7 +247,7 @@ nest::cm_default::add_receptor_( const dictionary& dd )
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
   if ( dd.known( names::params ) )
   {
-    compartment->compartment_currents.add_synapse( receptor_type, syn_idx, dd.get< dictionary >( names::params ) );
+    compartment->compartment_currents.add_synapse( receptor_type, syn_idx, dd.get< Dictionary >( names::params ) );
   }
   else
   {

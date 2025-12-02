@@ -116,11 +116,11 @@ cdef object any_vector_to_list(vector[any] cvec):
     return tmp
 
 
-cdef object dict_vector_to_list(vector[dictionary] cvec):
+cdef object dict_vector_to_list(vector[Dictionary] cvec):
     cdef tmp = []
-    cdef vector[dictionary].iterator it = cvec.begin()
+    cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
-        tmp.append(dictionary_to_pydict(deref(it)))
+        tmp.append(Dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
 
@@ -167,15 +167,15 @@ cdef object any_to_pyobj(any operand):
         # PYNEST-NG-FUTURE: Do we want to have this or are bytestrings fine?
         # return any_cast[std_vector[std_string]](operand)
         return list(map(lambda x: x.decode("utf-8"), any_cast[std_vector[std_string]](operand)))
-    if is_type[std_vector[dictionary]](operand):
-        return dict_vector_to_list(any_cast[std_vector[dictionary]](operand))
+    if is_type[std_vector[Dictionary]](operand):
+        return dict_vector_to_list(any_cast[std_vector[Dictionary]](operand))
     if is_type[std_vector[any]](operand):
         # PYNEST-NG-FUTURE: This will create a Python list first and then convert to
         # either tuple or numpy array, which will copy the data element-wise.
         # Could we do this more effienctly?
         return make_tuple_or_ndarray(any_vector_to_list(any_cast[std_vector[any]](operand)))
-    if is_type[dictionary](operand):
-        return dictionary_to_pydict(any_cast[dictionary](operand))
+    if is_type[Dictionary](operand):
+        return Dictionary_to_pydict(any_cast[Dictionary](operand))
     if is_type[NodeCollectionPTR](operand):
         obj = NodeCollectionObject()
         obj._set_nc(any_cast[NodeCollectionPTR](operand))
@@ -183,15 +183,15 @@ cdef object any_to_pyobj(any operand):
     if is_type[VerbosityLevel](operand):
         return any_cast[VerbosityLevel](operand)
 
-cdef object dictionary_to_pydict(dictionary cdict):
+cdef object Dictionary_to_pydict(Dictionary cdict):
     cdef tmp = {}
 
-    cdef dictionary.const_iterator it = cdict.begin()
+    cdef Dictionary.const_iterator it = cdict.begin()
     while it != cdict.end():
         key = string_to_pystr(deref(it).first)
         tmp[key] = any_to_pyobj(deref(it).second.item)
         if tmp[key] is None:
-            # If we end up here, the value in the dictionary is of a type that any_to_pyobj() cannot handle.
+            # If we end up here, the value in the Dictionary is of a type that any_to_pyobj() cannot handle.
             raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second.item)))
         inc(it)
     return tmp
@@ -211,8 +211,8 @@ cdef is_list_tuple_ndarray_of_int(v):
     return list_of_int or tuple_of_int or ndarray_of_int
 
 
-cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
-    cdef dictionary cdict = dictionary()
+cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
+    cdef Dictionary cdict = Dictionary()
     for key, value in py_dict.items():
         if type(value) is tuple:
             value = list(value)
@@ -244,7 +244,7 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         elif type(value) is list and len(value) > 0 and type(value[0]) is dict:
             cdict[pystr_to_string(key)] = pylist_to_dictvec(value)
         elif type(value) is dict:
-            cdict[pystr_to_string(key)] = pydict_to_dictionary(value)
+            cdict[pystr_to_string(key)] = pydict_to_Dictionary(value)
         elif type(value) is nest.NodeCollection:
             cdict[pystr_to_string(key)] = (<NodeCollectionObject>(value._datum)).thisptr
         elif isinstance(value, nest.Parameter):
@@ -258,16 +258,16 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             if type(value) is list:
                 assert len(value) > 0   # empty list should have been caught above
                 typename = f"list of {type(value[0])}"
-            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {typename}')
+            raise AttributeError(f'when converting Python Dictionary: value of key ({key}) is not a known type, got {typename}')
 
     return cdict
 
 
-cdef object vec_of_dict_to_list(vector[dictionary] cvec):
+cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
-    cdef vector[dictionary].iterator it = cvec.begin()
+    cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
-        tmp.append(dictionary_to_pydict(deref(it)))
+        tmp.append(Dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
 
@@ -277,12 +277,12 @@ cdef vector[any] empty_any_vec():
     return empty_vec
 
 
-cdef vector[dictionary] list_of_dict_to_vec(object pylist):
-    cdef vector[dictionary] vec
+cdef vector[Dictionary] list_of_dict_to_vec(object pylist):
+    cdef vector[Dictionary] vec
     # PYNEST-NG-FUTURE: For efficiency, reserve the correct size and use index-based
     # assignments instead of pushing back. Applies also to other vector conversions below.
     for pydict in pylist:
-        vec.push_back(pydict_to_dictionary(pydict))
+        vec.push_back(pydict_to_Dictionary(pydict))
     return vec
 
 
@@ -313,10 +313,10 @@ cdef vector[std_string] pylist_to_stringvec(object pylist):
     return vec
 
 
-cdef vector[dictionary] pylist_to_dictvec(object pylist):
-    cdef vector[dictionary] vec
+cdef vector[Dictionary] pylist_to_dictvec(object pylist):
+    cdef vector[Dictionary] vec
     for val in pylist:
-        vec.push_back(pydict_to_dictionary(val))
+        vec.push_back(pydict_to_Dictionary(val))
     return vec
 
 
@@ -357,7 +357,7 @@ def llapi_create(model, long n):
 
 def llapi_create_spatial(object layer_params):
     cdef NodeCollectionPTR gids
-    gids = create_spatial(pydict_to_dictionary(layer_params))
+    gids = create_spatial(pydict_to_Dictionary(layer_params))
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
@@ -423,14 +423,14 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
     if synapse_params is dict and "synapse_model" not in synapse_params:
         synapse_params["synapse_model"] = "static_synapse"
 
-    cdef vector[dictionary] syn_param_vec
+    cdef vector[Dictionary] syn_param_vec
     if isinstance(synapse_params, nest.CollocatedSynapses):
         syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
     elif synapse_params is not None:
-        syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
+        syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
 
     connect(pre.thisptr, post.thisptr,
-            pydict_to_dictionary(conn_params),
+            pydict_to_Dictionary(conn_params),
             syn_param_vec)
 
 
@@ -440,12 +440,12 @@ def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post
     # We are guaranteed that syn_param_vec is a dict {'primary': sc_p, 'third_in': sc_i, 'third_out': sc_o}
     # where all sc_* are SynapseCollection objects (guaranteed by whom?)
 
-    cdef std_map[string, vector[dictionary]] syn_param_map
+    cdef std_map[string, vector[Dictionary]] syn_param_map
     for k, colloc_syns in synapse_params.items():
         syn_param_map[pystr_to_string(k)] = pylist_to_dictvec(colloc_syns.syn_specs)
 
     connect_tripartite(pre.thisptr, post.thisptr, third.thisptr,
-    	               pydict_to_dictionary(conn_params), pydict_to_dictionary(third_factor_conn_params),
+    	               pydict_to_Dictionary(conn_params), pydict_to_Dictionary(third_factor_conn_params),
                        syn_param_map)
 
 
@@ -461,14 +461,14 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
 
     # Pass synapse specs as vector/collocated synapse for consistency with Connect().
     # This simplifies the C++ level because ConnBuilder() constructors expect vectors of synapse specs.
-    cdef vector[dictionary] syn_param_vec
+    cdef vector[Dictionary] syn_param_vec
     if isinstance(synapse_params, nest.CollocatedSynapses):
         syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
     elif synapse_params is not None:
-        syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
+        syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
 
     disconnect(pre.thisptr, post.thisptr,
-            pydict_to_dictionary(conn_params),
+            pydict_to_Dictionary(conn_params),
             syn_param_vec)
 
 
@@ -482,17 +482,17 @@ def llapi_disconnect_syncoll(object conns):
 
 
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
-    connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
+    connect_layers(pre.thisptr, post.thisptr, pydict_to_Dictionary(projections))
 
 
 def llapi_connect_sonata(object graph_specs, long hyperslab_size):
-    connect_sonata(pydict_to_dictionary(graph_specs), hyperslab_size)
+    connect_sonata(pydict_to_Dictionary(graph_specs), hyperslab_size)
 
 
 def llapi_create_mask(object specs):
-    cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
+    cdef Dictionary specs_Dictionary = pydict_to_Dictionary(specs)
     cdef MaskPTR mask
-    mask = create_mask(specs_dictionary)
+    mask = create_mask(specs_Dictionary)
     obj = MaskObject()
     obj._set_mask(mask)
     return nest.Mask(obj)
@@ -562,20 +562,20 @@ def llapi_to_string(NodeCollectionObject nc):
 
 
 def llapi_get_kernel_status():
-    cdef dictionary cdict = get_kernel_status()
-    return dictionary_to_pydict(cdict)
+    cdef Dictionary cdict = get_kernel_status()
+    return Dictionary_to_pydict(cdict)
 
 
 def llapi_get_defaults(object model_name):
-    return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
+    return Dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
 
 
 def llapi_set_defaults(object model_name, object params):
-    set_model_defaults(pystr_to_string(model_name), pydict_to_dictionary(params))
+    set_model_defaults(pystr_to_string(model_name), pydict_to_Dictionary(params))
 
 
 def llapi_get_nodes(object params, cbool local_only):
-    cdef dictionary params_dict = pydict_to_dictionary(params)
+    cdef Dictionary params_dict = pydict_to_Dictionary(params)
     cdef NodeCollectionPTR nc_ptr = get_nodes(params_dict, local_only)
     obj = NodeCollectionObject()
     obj._set_nc(nc_ptr)
@@ -583,7 +583,7 @@ def llapi_get_nodes(object params, cbool local_only):
 
 
 def llapi_set_kernel_status(object params):
-    cdef dictionary params_dict = pydict_to_dictionary(params)
+    cdef Dictionary params_dict = pydict_to_Dictionary(params)
     set_kernel_status(params_dict)
 
 
@@ -607,14 +607,14 @@ def llapi_synchronize():
 
 
 def llapi_copy_model(oldmodname, newmodname, object params):
-    cdef dictionary params_dict = pydict_to_dictionary(params)
+    cdef Dictionary params_dict = pydict_to_Dictionary(params)
     copy_model(pystr_to_string(oldmodname), pystr_to_string(newmodname), params_dict)
 
 
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
-    cdef dictionary statuses = get_nc_status(nc.thisptr)
+    cdef Dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:
-        return dictionary_to_pydict(statuses)
+        return Dictionary_to_pydict(statuses)
     elif isinstance(key, str):
         if not statuses.known(pystr_to_string(key)):
             raise KeyError(key)
@@ -627,7 +627,7 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
 
 
 def llapi_set_nc_status(NodeCollectionObject nc, object params_list):
-    cdef vector[dictionary] params = list_of_dict_to_vec(params_list)
+    cdef vector[Dictionary] params = list_of_dict_to_vec(params_list)
     set_nc_status(nc.thisptr, params)
 
 
@@ -653,7 +653,7 @@ def llapi_nc_find(NodeCollectionObject nc, long node_id):
 
 
 def llapi_get_nc_metadata(NodeCollectionObject nc):
-    return dictionary_to_pydict(get_metadata(nc.thisptr))
+    return Dictionary_to_pydict(get_metadata(nc.thisptr))
 
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):
@@ -688,9 +688,9 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
 
 
 def llapi_create_parameter(object specs):
-    cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
+    cdef Dictionary specs_Dictionary = pydict_to_Dictionary(specs)
     cdef ParameterPTR parameter
-    parameter = create_parameter(specs_dictionary)
+    parameter = create_parameter(specs_Dictionary)
     obj = ParameterObject()
     obj._set_parameter(parameter)
     return nest.Parameter(obj)
@@ -708,7 +708,7 @@ def llapi_apply_parameter(ParameterObject parameter, object pos_or_nc):
     if type(pos_or_nc) is nest.NodeCollection:
         return tuple(apply(parameter.thisptr, (<NodeCollectionObject>(pos_or_nc._datum)).thisptr))
     else:
-        return tuple(apply(parameter.thisptr, pydict_to_dictionary(pos_or_nc)))
+        return tuple(apply(parameter.thisptr, pydict_to_Dictionary(pos_or_nc)))
 
 
 def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
@@ -745,7 +745,7 @@ def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
 
 def llapi_compare_parameter(ParameterObject first, ParameterObject second, object pydict):
     cdef ParameterPTR new_parameter
-    cdef dictionary cdict = pydict_to_dictionary(pydict)
+    cdef Dictionary cdict = pydict_to_Dictionary(pydict)
     new_parameter = compare_parameter(first.thisptr, second.thisptr, cdict)
     obj = ParameterObject()
     obj._set_parameter(new_parameter)
@@ -831,10 +831,10 @@ def llapi_dimension_parameter(object list_of_pos_params):
 
 
 def llapi_get_connections(object params):
-    cdef dictionary params_dictionary = pydict_to_dictionary(params)
+    cdef Dictionary params_Dictionary = pydict_to_Dictionary(params)
     cdef std_deque[ConnectionID] connections
 
-    connections = get_connections(params_dictionary)
+    connections = get_connections(params_Dictionary)
 
     cdef connections_list = []
     cdef std_deque[ConnectionID].iterator it = connections.begin()
@@ -847,7 +847,7 @@ def llapi_get_connections(object params):
     return nest.SynapseCollection(connections_list)
 
 def llapi_get_connection_status(object conns):
-    cdef vector[dictionary] connection_statuses
+    cdef vector[Dictionary] connection_statuses
     # Convert the list of connections to a deque
     cdef std_deque[ConnectionID] conn_deque
     cdef ConnectionObject conn_object
@@ -866,9 +866,9 @@ def llapi_set_connection_status(object conns, object params):
     for conn_object in conns:
         conn_deque.push_back(conn_object.thisobj)
 
-    # params can be a dictionary or a list of dictionaries
+    # params can be a Dictionary or a list of dictionaries
     if isinstance(params, dict):
-        set_connection_status(conn_deque, pydict_to_dictionary(params))
+        set_connection_status(conn_deque, pydict_to_Dictionary(params))
     elif isinstance(params, (list, tuple)):
         if len(params) != len(conns):
             raise ValueError('params list length must be equal to number of connections')

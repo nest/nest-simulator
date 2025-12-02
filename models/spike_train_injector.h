@@ -250,8 +250,8 @@ public:
   spike_train_injector( const spike_train_injector& );
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
   bool is_active( const Time& ) const override;
 
   bool
@@ -305,7 +305,7 @@ private:
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 
-    void get( dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -313,7 +313,7 @@ private:
      *       spike_times_ vector has been filled with new data, or if
      *       the origin was reset.
      */
-    void set( const dictionary&, State_&, const Time&, const Time&, Node* node );
+    void set( const Dictionary&, State_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.
@@ -340,7 +340,7 @@ spike_train_injector::send_test_event( Node& target, size_t receptor_type, synin
 
 
 inline void
-spike_train_injector::get_status( dictionary& d ) const
+spike_train_injector::get_status( Dictionary& d ) const
 {
   P_.get( d );
   Device::get_status( d );
@@ -348,7 +348,7 @@ spike_train_injector::get_status( dictionary& d ) const
 
 
 inline void
-spike_train_injector::set_status( const dictionary& d )
+spike_train_injector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

@@ -28,7 +28,7 @@
 namespace nest
 {
 
-ConnectionCreator::ConnectionCreator( const dictionary& dict )
+ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
   , allow_oversized_( false )
@@ -66,7 +66,7 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
   }
   if ( dict.known( names::mask ) )
   {
-    mask_ = create_mask( dict.get< dictionary >( names::mask ) );
+    mask_ = create_mask( dict.get< Dictionary >( names::mask ) );
   }
   if ( dict.known( names::kernel ) )
   {
@@ -76,7 +76,7 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
   if ( dict.known( names::synapse_parameters ) )
   {
     // If synapse_parameters exists, we have collocated synapses.
-    std::vector< dictionary > syn_params_dvd;
+    std::vector< Dictionary > syn_params_dvd;
 
     try
     {
@@ -109,7 +109,7 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
   {
     synapse_model_ = { kernel().model_manager.get_synapse_model_id( "static_synapse" ) };
   }
-  dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
   if ( weight_.empty() )
   {
     weight_ = { create_parameter( syn_defaults[ names::weight ] ) };
@@ -159,7 +159,7 @@ ConnectionCreator::ConnectionCreator( const dictionary& dict )
 }
 
 void
-ConnectionCreator::extract_params_( const dictionary& dict, std::vector< dictionary >& params )
+ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Dictionary >& params )
 {
   const std::string syn_name = dict.known( names::synapse_model ) ? dict.get< std::string >( names::synapse_model )
                                                                   : std::string( "static_synapse" );
@@ -168,7 +168,7 @@ ConnectionCreator::extract_params_( const dictionary& dict, std::vector< diction
   const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
-  dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   if ( dict.known( names::weight ) )
   {
     weight_.push_back( create_parameter( dict.at( names::weight ) ) );
@@ -194,7 +194,7 @@ ConnectionCreator::extract_params_( const dictionary& dict, std::vector< diction
     }
   }
 
-  dictionary syn_dict;
+  Dictionary syn_dict;
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
   auto copy_long_if_known = [ &syn_dict, &dict ]( const std::string& name ) -> void

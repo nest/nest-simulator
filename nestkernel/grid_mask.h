@@ -44,7 +44,7 @@ public:
    * shape - size in grid coordinates
              (length 2 for 2D layers or length 3 for 3D layers)
    */
-  GridMask( const dictionary& d );
+  GridMask( const Dictionary& d );
 
   bool
   inside( const std::vector< double >& ) const override
@@ -54,7 +54,7 @@ public:
 
   void set_anchor( const Position< D, int >& );
 
-  dictionary get_dict() const override;
+  Dictionary get_dict() const override;
 
   GridMask< D >*
   clone() const
@@ -103,7 +103,7 @@ protected:
 };
 
 template < int D >
-GridMask< D >::GridMask( const dictionary& d )
+GridMask< D >::GridMask( const Dictionary& d )
 {
   std::vector< long > shape = d.get< std::vector< long > >( names::shape );
 
@@ -136,11 +136,11 @@ GridMask< 3 >::get_name()
 }
 
 template < int D >
-dictionary
+Dictionary
 GridMask< D >::get_dict() const
 {
-  dictionary d;
-  dictionary maskd;
+  Dictionary d;
+  Dictionary maskd;
   d[ get_name() ] = maskd;
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];

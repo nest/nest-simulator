@@ -63,7 +63,7 @@ public:
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  virtual void set_status( const dictionary& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the layer by setting
@@ -72,7 +72,7 @@ public:
    *
    * @note If passing nullptr-valued NodeCollectionPTR, full metadata irrespective of any slicing is returned.
    */
-  virtual void get_status( dictionary&, NodeCollection const* const ) const = 0;
+  virtual void get_status( Dictionary&, NodeCollection const* const ) const = 0;
 
   virtual unsigned int get_num_dimensions() const = 0;
 
@@ -131,7 +131,7 @@ public:
    * parameters.
    * @returns pointer to NodeCollection for new layer
    */
-  static NodeCollectionPTR create_layer( const dictionary& );
+  static NodeCollectionPTR create_layer( const Dictionary& );
 
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
@@ -232,10 +232,10 @@ public:
    *
    * @param d Dictionary with named parameter settings.
    */
-  void set_status( const dictionary& ) override;
+  void set_status( const Dictionary& ) override;
 
   //! Retrieve status, slice according to node collection if given
-  void get_status( dictionary&, NodeCollection const* const ) const override;
+  void get_status( Dictionary&, NodeCollection const* const ) const override;
 
   unsigned int
   get_num_dimensions() const override

@@ -56,14 +56,14 @@ nest::poisson_generator_ps::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator_ps::Parameters_::get( dictionary& d ) const
+nest::poisson_generator_ps::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::dead_time ] = dead_time_;
 }
 
 void
-nest::poisson_generator_ps::Parameters_::set( const dictionary& d, Node* node )
+nest::poisson_generator_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
@@ -289,7 +289,7 @@ nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< doub
     {
       throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::dead_time ] = input_param[ 0 ];
     d[ names::rate ] = input_param[ 1 ];
     ptmp.set( d, this );

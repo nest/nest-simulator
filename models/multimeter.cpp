@@ -105,7 +105,7 @@ nest::multimeter::Buffers_::Buffers_()
 }
 
 void
-nest::multimeter::Parameters_::get( dictionary& d ) const
+nest::multimeter::Parameters_::get( Dictionary& d ) const
 {
   d[ names::interval ] = interval_.get_ms();
   d[ names::offset ] = offset_.get_ms();
@@ -120,7 +120,7 @@ nest::multimeter::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const Dictionary& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_ and ( d.known( names::interval ) or d.known( names::offset ) or d.known( names::record_from ) ) )
   {
@@ -238,7 +238,7 @@ multimeter::get_type() const
 voltmeter::voltmeter()
   : multimeter()
 {
-  dictionary vmdict;
+  Dictionary vmdict;
   const std::vector< std::string > ad = { names::V_m };
   vmdict[ names::record_from ] = ad;
   set_status( vmdict );

@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const dictionary& params )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -301,19 +301,19 @@ nest::RecordingBackendMPI::cleanup()
 }
 
 void
-nest::RecordingBackendMPI::check_device_status( const dictionary& ) const
+nest::RecordingBackendMPI::check_device_status( const Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_defaults( dictionary& ) const
+nest::RecordingBackendMPI::get_device_defaults( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, dictionary& ) const
+nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, Dictionary& ) const
 {
   // nothing to do
 }
@@ -347,13 +347,13 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::RecordingBackendMPI::get_status( dictionary& ) const
+nest::RecordingBackendMPI::get_status( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::set_status( const dictionary& )
+nest::RecordingBackendMPI::set_status( const Dictionary& )
 {
   // nothing to do
 }

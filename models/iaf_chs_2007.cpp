@@ -90,7 +90,7 @@ nest::iaf_chs_2007::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::Parameters_::get( dictionary& d ) const
+nest::iaf_chs_2007::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_reset ] = U_reset_;
   d[ names::V_epsp ] = U_epsp_;
@@ -101,7 +101,7 @@ nest::iaf_chs_2007::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const dictionary& d, State_& s, Node* node )
+nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   update_value_param( d, names::V_reset, U_reset_, node );
   update_value_param( d, names::V_epsp, U_epsp_, node );
@@ -137,13 +137,13 @@ nest::iaf_chs_2007::Parameters_::set( const dictionary& d, State_& s, Node* node
 }
 
 void
-nest::iaf_chs_2007::State_::get( dictionary& d ) const
+nest::iaf_chs_2007::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = V_m_; // Membrane potential
 }
 
 void
-nest::iaf_chs_2007::State_::set( dictionary const& d, Node* node )
+nest::iaf_chs_2007::State_::set( Dictionary const& d, Node* node )
 {
   update_value_param( d, names::V_m, V_m_, node );
 }

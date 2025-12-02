@@ -57,8 +57,8 @@ public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
 
-  virtual void set_status( const dictionary& ) override;
-  virtual void get_status( dictionary& ) override;
+  virtual void set_status( const Dictionary& ) override;
+  virtual void get_status( Dictionary& ) override;
 
   /**
    * Gets ID of local thread.

@@ -52,13 +52,13 @@ nest::poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::Parameters_::get( dictionary& d ) const
+nest::poisson_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
 }
 
 void
-nest::poisson_generator::Parameters_::set( const dictionary& d, Node* node )
+nest::poisson_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0 )
@@ -164,7 +164,7 @@ nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double 
     {
       throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
     }
-    dictionary d;
+    Dictionary d;
     d[ names::rate ] = input_param[ 0 ];
     ptmp.set( d, this );
   }

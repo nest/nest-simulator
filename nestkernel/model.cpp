@@ -103,7 +103,7 @@ Model::mem_capacity()
 }
 
 void
-Model::set_status( const dictionary& d )
+Model::set_status( const Dictionary& d )
 {
   try
   {
@@ -115,10 +115,10 @@ Model::set_status( const dictionary& d )
   }
 }
 
-dictionary
+Dictionary
 Model::get_status()
 {
-  dictionary d = get_status_();
+  Dictionary d = get_status_();
 
   std::vector< long > tmp( memory_.size() );
   for ( size_t t = 0; t < tmp.size(); ++t )

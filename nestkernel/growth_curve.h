@@ -52,8 +52,8 @@ public:
   virtual ~GrowthCurve()
   {
   }
-  virtual void get( dictionary& d ) const = 0;
-  virtual void set( const dictionary& d ) = 0;
+  virtual void get( Dictionary& d ) const = 0;
+  virtual void set( const Dictionary& d ) = 0;
   virtual double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
@@ -132,8 +132,8 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( dictionary& d ) const override;
-  void set( const dictionary& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
 
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
@@ -222,8 +222,8 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( dictionary& d ) const override;
-  void set( const dictionary& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
 
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
@@ -300,8 +300,8 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( dictionary& d ) const override;
-  void set( const dictionary& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
 
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;

@@ -95,14 +95,14 @@ nest::StimulationDevice::Parameters_::Parameters_()
 }
 
 void
-nest::StimulationDevice::Parameters_::get( dictionary& d ) const
+nest::StimulationDevice::Parameters_::get( Dictionary& d ) const
 {
   d[ names::label ] = label_;
   d[ names::stimulus_source ] = stimulus_source_;
 }
 
 void
-nest::StimulationDevice::Parameters_::set( const dictionary& d )
+nest::StimulationDevice::Parameters_::set( const Dictionary& d )
 {
   d.update_value( names::label, label_ );
 
@@ -120,7 +120,7 @@ nest::StimulationDevice::Parameters_::set( const dictionary& d )
 }
 
 void
-nest::StimulationDevice::set_status( const dictionary& d )
+nest::StimulationDevice::set_status( const Dictionary& d )
 {
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
@@ -130,7 +130,7 @@ nest::StimulationDevice::set_status( const dictionary& d )
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    dictionary backend_params;
+    Dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
     for ( auto& [ key, entry ] : d )
@@ -163,7 +163,7 @@ nest::StimulationDevice::set_status( const dictionary& d )
 
 
 void
-nest::StimulationDevice::get_status( dictionary& d ) const
+nest::StimulationDevice::get_status( Dictionary& d ) const
 {
   P_.get( d );
 

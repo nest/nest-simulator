@@ -104,7 +104,7 @@ nest::correlation_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::Parameters_::get( dictionary& d ) const
+nest::correlation_detector::Parameters_::get( Dictionary& d ) const
 {
   d[ names::delta_tau ] = delta_tau_.get_ms();
   d[ names::tau_max ] = tau_max_.get_ms();
@@ -113,7 +113,7 @@ nest::correlation_detector::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::correlation_detector::State_::get( dictionary& d ) const
+nest::correlation_detector::State_::get( Dictionary& d ) const
 {
   d[ names::n_events ] = n_events_;
   d[ names::histogram ] = histogram_;
@@ -122,7 +122,7 @@ nest::correlation_detector::State_::get( dictionary& d ) const
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const dictionary& d, const correlation_detector& n, Node* node )
+nest::correlation_detector::Parameters_::set( const Dictionary& d, const correlation_detector& n, Node* node )
 {
   bool reset = false;
   double t;
@@ -164,7 +164,7 @@ nest::correlation_detector::Parameters_::set( const dictionary& d, const correla
 }
 
 void
-nest::correlation_detector::State_::set( const dictionary& d, const Parameters_& p, bool reset_required, Node* )
+nest::correlation_detector::State_::set( const Dictionary& d, const Parameters_& p, bool reset_required, Node* )
 {
   std::vector< long > nev;
   if ( d.update_value( names::n_events, nev ) )

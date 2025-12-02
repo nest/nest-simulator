@@ -60,7 +60,7 @@ public:
 
 
   void
-  get_status( dictionary& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ )
@@ -122,7 +122,7 @@ public:
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
   void
-  get_status( dictionary& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ != invalid_targetindex )

@@ -55,24 +55,24 @@ EpropSynapseBSSHSLM2020CommonProperties::~EpropSynapseBSSHSLM2020CommonPropertie
 }
 
 void
-EpropSynapseBSSHSLM2020CommonProperties::get_status( dictionary& d ) const
+EpropSynapseBSSHSLM2020CommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
   d[ names::average_gradient ] = average_gradient_;
-  dictionary optimizer_dict;
+  Dictionary optimizer_dict;
   optimizer_cp_->get_status( optimizer_dict );
   d[ names::optimizer ] = optimizer_dict;
 }
 
 void
-EpropSynapseBSSHSLM2020CommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
+EpropSynapseBSSHSLM2020CommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
   d.update_value( names::average_gradient, average_gradient_ );
 
   if ( d.known( names::optimizer ) )
   {
-    const dictionary& optimizer_dict = d.get< dictionary >( names::optimizer );
+    const Dictionary& optimizer_dict = d.get< Dictionary >( names::optimizer );
 
     std::string new_optimizer;
     const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );

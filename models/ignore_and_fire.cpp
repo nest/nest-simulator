@@ -76,14 +76,14 @@ ignore_and_fire::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-ignore_and_fire::Parameters_::get( dictionary& d ) const
+ignore_and_fire::Parameters_::get( Dictionary& d ) const
 {
   d[ names::phase ] = phase_;
   d[ names::rate ] = rate_;
 }
 
 void
-ignore_and_fire::Parameters_::set( const dictionary& d, Node* node )
+ignore_and_fire::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::phase, phase_, node );
   update_value_param( d, names::rate, rate_, node );
@@ -100,13 +100,13 @@ ignore_and_fire::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-ignore_and_fire::State_::get( dictionary& d, const Parameters_& p ) const
+ignore_and_fire::State_::get( Dictionary& d, const Parameters_& p ) const
 {
 }
 
 
 void
-ignore_and_fire::State_::set( const dictionary& d, const Parameters_& p, Node* node )
+ignore_and_fire::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
 {
 }
 

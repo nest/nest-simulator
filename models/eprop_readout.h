@@ -290,8 +290,8 @@ public:
   size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -345,10 +345,10 @@ private:
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( dictionary& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const dictionary&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -379,10 +379,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( dictionary&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const dictionary&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -548,13 +548,13 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-eprop_readout::get_status( dictionary& d ) const
+eprop_readout::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
 
-  dictionary receptor_dict;
+  Dictionary receptor_dict;
   receptor_dict[ names::eprop_learning_window ] = static_cast< long >( LEARNING_WINDOW_SIG );
   receptor_dict[ names::target_signal ] = static_cast< long >( TARGET_SIG );
 
@@ -562,7 +562,7 @@ eprop_readout::get_status( dictionary& d ) const
 }
 
 inline void
-eprop_readout::set_status( const dictionary& d )
+eprop_readout::set_status( const Dictionary& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;

@@ -181,7 +181,7 @@ aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-aeif_cond_beta_multisynapse::Parameters_::get( dictionary& d ) const
+aeif_cond_beta_multisynapse::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th ] = V_th;
@@ -204,7 +204,7 @@ aeif_cond_beta_multisynapse::Parameters_::get( dictionary& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::Parameters_::set( const dictionary& d, Node* node )
+aeif_cond_beta_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th, node );
   update_value_param( d, names::V_peak, V_peak_, node );
@@ -314,7 +314,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-aeif_cond_beta_multisynapse::State_::get( dictionary& d ) const
+aeif_cond_beta_multisynapse::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
 
@@ -336,7 +336,7 @@ aeif_cond_beta_multisynapse::State_::get( dictionary& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::State_::set( const dictionary& d, Node* node )
+aeif_cond_beta_multisynapse::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::w, y_[ W ], node );
@@ -622,7 +622,7 @@ aeif_cond_beta_multisynapse::handle( DataLoggingRequest& e )
 }
 
 void
-aeif_cond_beta_multisynapse::set_status( const dictionary& d )
+aeif_cond_beta_multisynapse::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

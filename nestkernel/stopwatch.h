@@ -305,7 +305,7 @@ public:
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const;
 
-  void get_status( dictionary& d, const std::string& walltime_name, const std::string& cputime_name ) const;
+  void get_status( Dictionary& d, const std::string& walltime_name, const std::string& cputime_name ) const;
 
 private:
   bool is_running_() const;

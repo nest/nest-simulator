@@ -105,8 +105,8 @@ public:
   void handle( SpikeEvent& ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;

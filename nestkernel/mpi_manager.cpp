@@ -219,7 +219,7 @@ nest::MPIManager::finalize( const bool )
 }
 
 void
-nest::MPIManager::set_status( const dictionary& dict )
+nest::MPIManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::adaptive_target_buffers, adaptive_target_buffers_ );
 
@@ -245,7 +245,7 @@ nest::MPIManager::set_status( const dictionary& dict )
 }
 
 void
-nest::MPIManager::get_status( dictionary& dict )
+nest::MPIManager::get_status( Dictionary& dict )
 {
   dict[ names::num_processes ] = num_processes_;
   dict[ names::mpi_rank ] = rank_;

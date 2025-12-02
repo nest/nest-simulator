@@ -193,7 +193,7 @@ nest::iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::Parameters_::get( dictionary& d ) const
+nest::iaf_chxk_2008::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::g_L ] = g_L;
@@ -211,7 +211,7 @@ nest::iaf_chxk_2008::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const dictionary& d, Node* node )
+nest::iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -238,13 +238,13 @@ nest::iaf_chxk_2008::Parameters_::set( const dictionary& d, Node* node )
 }
 
 void
-nest::iaf_chxk_2008::State_::get( dictionary& d ) const
+nest::iaf_chxk_2008::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y[ V_M ]; // Membrane potential
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const dictionary& d, const Parameters_&, Node* node )
+nest::iaf_chxk_2008::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y[ V_M ], node );
 }

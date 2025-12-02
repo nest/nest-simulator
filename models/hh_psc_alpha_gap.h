@@ -94,7 +94,7 @@ see :ref:`here <hh_details>`.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ===========  ====== ============================================================
 tau_ex       ms      Rise time of the excitatory synaptic alpha function
@@ -197,8 +197,8 @@ public:
   {
   }
 
-  void get_status( dictionary& ) const override;
-  void set_status( const dictionary& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -244,8 +244,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( dictionary& ) const;             //!< Store current values in dictionary
-    void set( const dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
   };
 
 public:
@@ -286,8 +286,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( dictionary& ) const;
-    void set( const dictionary&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -444,7 +444,7 @@ hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, size_t receptor_type )
 }
 
 inline void
-hh_psc_alpha_gap::get_status( dictionary& d ) const
+hh_psc_alpha_gap::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -454,7 +454,7 @@ hh_psc_alpha_gap::get_status( dictionary& d ) const
 }
 
 inline void
-hh_psc_alpha_gap::set_status( const dictionary& d )
+hh_psc_alpha_gap::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

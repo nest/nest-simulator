@@ -94,7 +94,7 @@ nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
+nest::music_cont_out_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
   d[ names::interval ] = interval_.get_ms();
@@ -111,7 +111,7 @@ nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
+nest::music_cont_out_proxy::Parameters_::set( const Dictionary& d,
   const Node& self,
   const State_& state,
   const Buffers_& buffers )
@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
 }
 
 void
-nest::music_cont_out_proxy::State_::get( dictionary& d ) const
+nest::music_cont_out_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
@@ -229,7 +229,7 @@ nest::music_cont_out_proxy::pre_run_hook()
     const size_t synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
-    dictionary dummy_params;
+    Dictionary dummy_params;
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
       const size_t tnode_id = ( *P_.targets_ )[ i ];
@@ -293,7 +293,7 @@ nest::music_cont_out_proxy::pre_run_hook()
 }
 
 void
-nest::music_cont_out_proxy::get_status( dictionary& d ) const
+nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -317,7 +317,7 @@ nest::music_cont_out_proxy::get_status( dictionary& d ) const
 }
 
 void
-nest::music_cont_out_proxy::set_status( const dictionary& d )
+nest::music_cont_out_proxy::set_status( const Dictionary& d )
 {
   P_.set( d, *this, S_, B_ ); // throws if BadProperty
 }

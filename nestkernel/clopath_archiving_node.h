@@ -103,8 +103,8 @@ protected:
    * into the buffer before we read from it, we have to add 1 to the size of the buffers.
    */
   void init_clopath_buffers();
-  void get_status( dictionary& d ) const override;
-  void set_status( const dictionary& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   std::vector< histentry_extended > ltd_history_;

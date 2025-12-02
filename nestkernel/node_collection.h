@@ -32,7 +32,6 @@
 
 // Includes from libnestuil:
 #include "dictionary.h"
-#include "lockptr.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"

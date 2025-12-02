@@ -402,6 +402,16 @@ class NodeCollection:
             # Hierarchical addressing
             result = get_parameters_hierarchical_addressing(self, params)
 
+        """
+        # PYNEST-NG-FUTURE: Decide if the behavior should be the same
+        # for single-node node collections or different.
+        if isinstance(result, dict) and len(self) == 1:
+            new_result = {}
+            for k, v in result.items():
+                new_result[k] = v[0] if is_iterable(v) and len(v) == 1 and type(v) is not dict else v
+            result = new_result
+        """
+
         if output == "pandas":
             index = self.get("global_id")
             if len(params) == 1 and isinstance(params[0], str):
@@ -454,6 +464,7 @@ class NodeCollection:
             raise TypeError("must either provide params or kwargs, but not both.")
 
         local_nodes = [self.local] if len(self) == 1 else self.local
+        print("LN:", local_nodes, all(local_nodes))
 
         if isinstance(params, dict) and "compartments" in params:
             if isinstance(params["compartments"], Compartments):
@@ -471,19 +482,23 @@ class NodeCollection:
 
         if isinstance(params, dict) and all(local_nodes):
             node_params = self[0].get()
+            print("NODE_PARAMS:", node_params)
             contains_list = [
                 is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
                 for key, vals in params.items()
             ]
 
             if any(contains_list):
+                print("converting")
                 temp_param = [{} for _ in range(self.__len__())]
 
                 for key, vals in params.items():
                     if not is_iterable(vals):
+                        print("IF for ", key)
                         for temp_dict in temp_param:
                             temp_dict[key] = vals
                     else:
+                        print("ELSE for ", key)
                         for i, temp_dict in enumerate(temp_param):
                             temp_dict[key] = vals[i]
                 params = temp_param
@@ -491,6 +506,7 @@ class NodeCollection:
         if isinstance(params, dict):
             params = [params]
 
+        print("PARAMS:", params)
         nestkernel.llapi_set_nc_status(self._datum, params)
 
     def tolist(self):

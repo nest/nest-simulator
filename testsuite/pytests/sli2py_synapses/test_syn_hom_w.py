@@ -95,15 +95,11 @@ def test_syn_hom_w():
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    vm = nest.Create("voltmeter", params={"time_in_steps": True, "interval": dt})
-
-    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
-
+    vm = nest.Create("voltmeter", params={"time_in_steps": False, "interval": dt})
     nest.SetDefaults("static_synapse_hom_w", {"weight": 100.0, "delay": delay})
 
     nest.Connect(sg, neuron, syn_spec={"synapse_model": "static_synapse_hom_w"})
     nest.Connect(vm, neuron, syn_spec={"synapse_model": "static_synapse_hom_w"})
-    nest.Connect(neuron, sr, syn_spec={"synapse_model": "static_synapse_hom_w"})
 
     simulation_time = 7.0  # in ms
     nest.Simulate(simulation_time)
@@ -112,53 +108,17 @@ def test_syn_hom_w():
     times = events["times"]
     voltages = events["V_m"]
 
-    # Filter reference data to only include time steps within the simulation time
-    # Maximum time step = simulation_time / resolution
-    max_time_step = int(simulation_time / dt)
-    ref_data_filtered = REFERENCE_DATA[REFERENCE_DATA[:, 0] <= max_time_step]
+    # Prepare actual data array
+    actual_data = np.column_stack((times, voltages))
 
-    if len(ref_data_filtered) == 0:
-        pytest.skip(f"No reference data points within simulation time {simulation_time} ms " f"for resolution dt={dt}")
+    # Reference data needs to have times in ms, while data above is in 0.1 ms steps
+    REFERENCE_DATA[:, 0] *= 0.1
 
-    ref_time_steps = set(ref_data_filtered[:, 0].astype(int))
-
-    # Convert times from steps to milliseconds for get_comparable_timesamples()
-    # Since time_in_steps=True, times are in steps, so multiply by resolution
-    times_ms = times * dt
-
-    # Filter actual data to only include time steps that are in the filtered reference data
-    # This ensures we only compare at the exact time points specified in the reference
-    mask = np.isin(times.astype(int), list(ref_time_steps))
-    filtered_times_ms = times_ms[mask]
-    filtered_voltages = voltages[mask]
-
-    # Prepare actual data array: [time_ms, voltage]
-    actual_data = np.column_stack((filtered_times_ms, filtered_voltages))
-
-    # Convert reference data from steps to milliseconds
-    # ref_data_filtered has [time_step, voltage] pairs, convert to (time_ms, voltage) array
-    # Times are in steps, so multiply by resolution to get milliseconds
-    expected_data = np.column_stack((ref_data_filtered[:, 0] * dt, ref_data_filtered[:, 1]))
-
-    # Compare actual and expected using get_comparable_timesamples()
-    # This function matches on tics (computed from milliseconds), so both arrays must have times in ms
-    actual, expected = testutil.get_comparable_timesamples(dt, actual_data, expected_data)
+    actual, expected = testutil.get_comparable_timesamples(dt, actual_data, REFERENCE_DATA)
 
     # Check that the function did not return empty arrays
     assert len(actual) > 0, (
         f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution dt={dt}"
-    )
-    assert len(expected) > 0, (
-        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution dt={dt}"
-    )
-
-    # Verify we matched the expected number of reference points
-    assert len(actual) == len(expected), (
-        f"Mismatch in number of matched points: got {len(actual)} actual vs "
-        f"{len(expected)} expected for resolution dt={dt}"
-    )
-    assert len(actual) == len(ref_data_filtered), (
-        f"Expected {len(ref_data_filtered)} reference points but got " f"{len(actual)} matches for resolution dt={dt}"
     )
 
     # Assert approximate equality

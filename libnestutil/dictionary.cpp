@@ -556,6 +556,11 @@ Dictionary::all_entries_accessed( const std::string& where,
   const std::string& what,
   const bool thread_local_dict ) const
 {
+  if ( not nest::kernel().logging_manager.dict_miss_is_error() )
+  {
+    return;
+  }
+
   if ( not thread_local_dict )
   {
     nest::kernel().vp_manager.assert_single_threaded();

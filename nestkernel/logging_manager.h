@@ -73,6 +73,12 @@ public:
   void
   publish_log( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t ) const;
 
+  /**
+   * Return true if missing access to dictionary should be considered an error.
+   *
+   * @note Located here for historic reasons.
+   */
+  bool dict_miss_is_error() const;
 
 private:
   /**
@@ -90,6 +96,12 @@ private:
   VerbosityLevel logging_level_;
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
+
+inline bool
+LoggingManager::dict_miss_is_error() const
+{
+  return dict_miss_is_error_;
+}
 
 } // namespace nest
 

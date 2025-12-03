@@ -106,8 +106,8 @@ def test_iaf_psp_peak():
             )
         )
 
-    # Numerical solution: find root of derivative
-    t0 = brentq(dpsp, 0.0, 5.0, xtol=1e-11)
+    # Numerical solution: find root of derivative for strictly positive t
+    t0 = brentq(dpsp, 0.1, 5.0, xtol=1e-11)
 
     # Closed form solution using Lambert W function
     a = tau_m / tau_syn

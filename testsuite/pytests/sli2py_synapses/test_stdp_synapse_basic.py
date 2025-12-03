@@ -20,9 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_stdp_synapse - basic test of stdp_synapse
-
-Synopsis: (test_stdp_synapse) run
+Name: test_stdp_synapse_basic - basic test of stdp_synapse
 
 Description:
   A parrot_neuron that repeats the spikes from a poisson generator is
@@ -91,7 +89,7 @@ def test_stdp_synapse_basic():
         "stdp_synapse",
         {
             "alpha": alpha,
-            "lambda": lambda_val,  # noqa: A001
+            "lambda": lambda_val,  # noqa: A001, flake8 warns shadowing a builtin keyword
             "tau_plus": tau_plus,
             "mu_plus": mu_plus,
             "mu_minus": mu_minus,
@@ -181,13 +179,18 @@ def test_stdp_synapse_basic():
                 facilitate()
             if last_pre != pre_spike:
                 depress()
+            # Advance pre-spike if available, and post-spike only if pre-spike advances
+            # Exit if no more pre-spikes (even if post-spikes remain, we can't form new STDP pairs)
             if j + 1 < len(pre_spikes):
                 update_K_plus()
                 next_pre_spike()
+                # Advance post-spike if we also advanced pre-spike
+                # next_post_spike() handles end-of-vector case internally, but only update_K_minus if more spikes exist
                 if i + 1 < len(post_spikes):
                     update_K_minus()
-                    next_post_spike()
+                next_post_spike()
             else:
+                # No more pre-spikes: exit even if post-spikes remain
                 break
         elif pre_spike < post_spike:
             # next spike is a pre-syn. spike
@@ -202,13 +205,9 @@ def test_stdp_synapse_basic():
             # next spike is a post-syn. spike
             facilitate()
             update_K_minus()
-            if i + 1 < len(post_spikes):
-                next_post_spike()
-            else:
-                # we DO consider the pre-syn. spikes after the last post-syn. spike
-                last_post = post_spike
-                # Set post_spike to a large value to make sure we don't come here again
-                post_spike = pre_spikes[-1] + resolution if len(pre_spikes) > 0 else float("inf")
+            # next_post_spike() handles end-of-vector case internally by setting post_spike to inf
+            # This ensures we continue processing pre-syn. spikes after the last post-syn. spike
+            next_post_spike()
 
     # Compare final weight
     w_final = w * w_max

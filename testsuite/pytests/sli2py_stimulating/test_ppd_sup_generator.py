@@ -240,7 +240,7 @@ def test_ppd_sup_generator_different_outputs():
     rate_sim1 = len(spikes1) / (T * 1e-3)
     rate_sim2 = len(spikes2) / (T * 1e-3)
 
-# rate_ana = 1./(1./lam + d*1e-3)
+    # rate_ana = 1./(1./lam + d*1e-3)
     rate_ana = rate * n_proc
 
     ratio1 = rate_sim1 / rate_ana

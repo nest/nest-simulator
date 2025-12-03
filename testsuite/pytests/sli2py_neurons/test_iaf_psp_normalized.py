@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized
+Name: test_iaf_psp_normalized - check if PSP can be normalized
 
-Synopsis: (test_iaf_psp_normalized) run -> compare response with desired outcome
+
 
 Description:
 
@@ -55,7 +55,7 @@ References:
       Network Theory Limited.
 
 Author:  July 2009, Diesmann
-SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_lambertw, LambertWm1
+
 """
 
 import nest
@@ -129,7 +129,7 @@ def test_iaf_psp_normalized():
         )
 
     # Find peak time using numerical root finding (more reliable than Lambert W)
-    # The SLI code uses Lambert W if GSL is available, otherwise uses FindRoot
+
     # We'll use numerical root finding to match the SLI behavior more closely
     tau_m = P["tau_m"]
     tau_syn = P["tau_syn"]

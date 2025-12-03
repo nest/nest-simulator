@@ -20,14 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
-from collections.abc import Sequence
-
-try:
-    import numpy as np
-except ImportError:  # pragma: no cover - numpy is available in the test environment
-    np = None
 
 import nest
+import numpy as np
 
 """
 Regression test for Ticket #686.
@@ -47,28 +42,9 @@ SKIPPED_MODELS = {
 }
 
 POSITIVE_KEYS_CACHE: dict[str, tuple[str, ...]] = {}
-# Mapping of parameters to their companion parameters that must be updated together.
-#
-# Some neuron model parameters have companion parameters that must maintain matching
-# dimensions. For example, tau_sfa (spike-frequency adaptation time constant) and
-# q_sfa (adaptation amplitude) must have the same vector length. Similarly for
-# tau_stc and q_stc (spike-triggered current parameters).
-#
-# When updating these parameters via SetStatus, the model implementations validate
-# that companion parameters have matching dimensions. If only one parameter is
-# updated without its companion, a dimension mismatch error can occur, which would
-# mask the actual positive-value validation we're testing.
-#
-# The original SLI test did not handle companion keys because it tested models
-# before these dimension constraints were strictly enforced, or because the SLI
-# implementation handled partial updates differently. The Python port includes
-# companion keys to ensure the test focuses on positive-value validation rather
-# than dimension mismatches.
-#
-# When testing a parameter that has companions, we include the companion parameters
-# in the update dictionary with their current values to maintain dimension
-# consistency and avoid spurious errors.
-COMPANION_KEYS = {
+
+# Parameters that must be updated together to maintain matching dimensions
+DIMENSION_PAIRS = {
     "tau_sfa": ("q_sfa",),
     "tau_stc": ("q_stc",),
 }
@@ -87,52 +63,42 @@ def _positive_keys(model: str) -> tuple[str, ...]:
 
 
 def _as_numeric_tuple(value) -> tuple[float, ...]:
-    if np is not None and isinstance(value, np.ndarray):
+    """Convert value to tuple of floats, handling scalars, lists, and arrays."""
+    if isinstance(value, np.ndarray):
         return tuple(float(v) for v in value.tolist())
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+    if isinstance(value, (list, tuple)):
         return tuple(float(v) for v in value)
     return (float(value),)
 
 
-def _cast_like(reference, numeric_values: Sequence[float]):
-    if np is not None and isinstance(reference, np.ndarray):
+def _cast_like(reference, numeric_values: tuple[float, ...]):
+    """Cast numeric values to match the type of reference value."""
+    if isinstance(reference, np.ndarray):
         return np.array(numeric_values, dtype=reference.dtype)
     if isinstance(reference, tuple):
         return tuple(numeric_values)
     if isinstance(reference, list):
         return list(numeric_values)
-    return numeric_values[0]
+    return numeric_values[0] if len(numeric_values) == 1 else numeric_values
 
 
-def _allclose(values_a: Sequence[float], values_b: Sequence[float], *, abs_tol: float = 1e-12) -> bool:
+def _allclose(values_a: tuple[float, ...], values_b: tuple[float, ...], *, abs_tol: float = 1e-12) -> bool:
     return len(values_a) == len(values_b) and all(
         math.isclose(a, b, rel_tol=0.0, abs_tol=abs_tol) for a, b in zip(values_a, values_b)
     )
 
 
-def _get_companion_updates(neuron, key):
-    """Get companion parameter values for a given key to include in updates."""
-    return {companion: neuron.get(companion) for companion in COMPANION_KEYS.get(key, ())}
+def _get_dimension_pairs(neuron, key):
+    """Get dimension-paired parameter values to include in updates."""
+    return {pair: neuron.get(pair) for pair in DIMENSION_PAIRS.get(key, ())}
 
 
 def _test_parameter_update(neuron, key, raw_value, new_values):
-    """
-    Test updating a parameter with new values, including companion parameters.
-
-    Args:
-        neuron: The neuron object
-        key: Parameter key to update
-        raw_value: Original raw value (used to preserve type)
-        new_values: New numeric values as tuple[float, ...]
-
-    Returns: (success: bool, error_message: str | None)
-    """
-    # Include companion parameters to avoid dimension mismatch errors
-    companion_updates = _get_companion_updates(neuron, key)
-
+    """Test updating a parameter with new values, including dimension-paired parameters."""
+    dimension_pairs = _get_dimension_pairs(neuron, key)
     try:
         update = {key: _cast_like(raw_value, new_values)}
-        update.update(companion_updates)
+        update.update(dimension_pairs)
         nest.SetStatus(neuron, update)
         return True, None
     except nest.kernel.NESTError as err:
@@ -162,26 +128,19 @@ def test_ticket_686_rejects_non_positive_values():
                     continue
                 neuron = nest.Create(model)
                 raw_value = neuron.get(key)
-                # Normalize to tuple[float, ...] to handle scalars, arrays, lists uniformly
                 original_values = _as_numeric_tuple(raw_value)
                 if not original_values:
                     continue
-                # Create invalid values matching the dimension (scalar -> 1 element, vector -> N elements)
                 invalid_values = tuple(float(candidate) for _ in original_values)
 
                 success, _ = _test_parameter_update(neuron, key, raw_value, invalid_values)
                 if success:
-                    # Update succeeded but shouldn't have - this is always a failure
-                    # because the user might think they've set the parameter when they haven't
                     current_values = _as_numeric_tuple(neuron.get(key))
                     if not _allclose(current_values, original_values):
-                        # Value actually changed - neuron accepted the invalid value
                         failing_cases.append((model, key, f"accepted_non_positive_{candidate}"))
                     else:
-                        # Value didn't change - neuron silently ignored the invalid value
                         failing_cases.append((model, key, f"silently_ignored_non_positive_{candidate}"))
                 else:
-                    # Exception raised as expected - verify value unchanged
                     current_values = _as_numeric_tuple(neuron.get(key))
                     if not _allclose(current_values, original_values):
                         failing_cases.append((model, key, "value_changed_after_exception"))
@@ -212,16 +171,13 @@ def test_ticket_686_accepts_positive_assignments():
         for key in positive_keys:
             neuron = nest.Create(model)
             raw_value = neuron.get(key)
-            # Normalize to tuple[float, ...] to handle scalars, arrays, lists uniformly
             original_values = _as_numeric_tuple(raw_value)
             if not original_values:
                 continue
-            # Create new positive values matching the dimension (scalar -> 1 element, vector -> N elements)
             new_values = tuple(v + 1.0 for v in original_values)
 
             success, error_msg = _test_parameter_update(neuron, key, raw_value, new_values)
             if success:
-                # Verify the value was actually updated
                 updated_values = _as_numeric_tuple(neuron.get(key))
                 if not _allclose(updated_values, new_values):
                     failing_cases.append((model, key, "value_not_updated"))

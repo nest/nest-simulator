@@ -84,11 +84,6 @@ def test_iaf_psp_normalized():
         "V_m": 0.0,
     }
 
-    # E is the PSC amplitude - for unit amplitude, E=1.0
-    # In SLI, E is used but not explicitly defined, suggesting it's a global constant
-    # We set it to 1.0 for unit PSC amplitude
-    E = 1.0  # unit amplitude (pA)
-
     def psp(t):
         """
         Postsynaptic potential function for alpha-shaped PSC.
@@ -100,11 +95,9 @@ def test_iaf_psp_normalized():
         tau_m = P["tau_m"]
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
-        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn
-        # - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
         denom = 1.0 / tau_syn - 1.0 / tau_m
         return (
-            E
+            np.e
             / tau_syn
             * 1.0
             / C_m
@@ -117,7 +110,7 @@ def test_iaf_psp_normalized():
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
         return (
-            E
+            np.e
             / tau_syn
             * 1.0
             / C_m
@@ -147,7 +140,7 @@ def test_iaf_psp_normalized():
     # Verify that dpsp(t_peak) is close to zero
     assert abs(dpsp(t_peak)) < 1e-6, f"dpsp(t_peak)={dpsp(t_peak)} should be close to zero"
 
-    # Compute peak value for unit PSC amplitude (E=1.0)
+    # Compute peak value for unit PSC amplitude
     # Debug: check PSP values at different times
     psp_at_01 = psp(0.1)
     psp_at_1 = psp(1.0)
@@ -160,21 +153,18 @@ def test_iaf_psp_normalized():
         raise AssertionError(
             f"psp_peak_unit={psp_peak_unit} should be positive, "
             f"t_peak={t_peak}, psp(0.1)={psp_at_01}, psp(1.0)={psp_at_1}, "
-            f"E={E}, tau_m={P['tau_m']}, tau_syn={P['tau_syn']}, C_m={P['C_m']}"
+            f"tau_m={P['tau_m']}, tau_syn={P['tau_syn']}, C_m={P['C_m']}"
         )
 
     # f is the weight required for a PSP with unit amplitude (1.0 mV)
     # Since PSP scales linearly with weight, we need: w * psp_peak_unit = u
     # Therefore: w = u / psp_peak_unit
     # This matches SLI: t psp inv -> f, then u f mul -> w
-    # Note: In SLI, E is used in the PSP formula but not explicitly defined.
-    # The PSP formula assumes E=1.0 for unit PSC amplitude.
-    # However, there might be a scaling factor between the analytical PSP and NEST's simulation.
     f = 1.0 / psp_peak_unit  # weight per unit PSP amplitude
     w = u * f  # weight for desired PSP amplitude u
 
     # Debug: print intermediate values
-    print(f"DEBUG: t_peak={t_peak}, psp_peak_unit={psp_peak_unit}, f={f}, w={w}, E={E}")
+    print(f"DEBUG: t_peak={t_peak}, psp_peak_unit={psp_peak_unit}, f={f}, w={w}")
 
     # Ensure weight is positive and reasonable
     assert (

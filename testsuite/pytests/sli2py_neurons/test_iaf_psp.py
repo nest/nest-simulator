@@ -243,7 +243,7 @@ def test_iaf_psp_aligned_impact(h):
     ref_data_filtered = ref_data[ref_data[:, 0] <= max_time_step]
 
     if len(ref_data_filtered) == 0:
-        pytest.skip(f"No reference data points within simulation time {simulation_time} ms for resolution h={h}")
+        pytest.skip(f"No reference data points within simulation time {simulation_time} ms " f"for resolution h={h}")
 
     ref_time_steps = set(ref_data_filtered[:, 0].astype(int))
 
@@ -270,20 +270,21 @@ def test_iaf_psp_aligned_impact(h):
     actual, expected = testutil.get_comparable_timesamples(h, actual_data, expected_data)
 
     # Check that the function did not return empty arrays
-    assert (
-        len(actual) > 0
-    ), f"get_comparable_timesamples() returned empty arrays - no matching time points found for resolution h={h}"
-    assert (
-        len(expected) > 0
-    ), f"get_comparable_timesamples() returned empty arrays - no matching time points found for resolution h={h}"
+    assert len(actual) > 0, (
+        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution h={h}"
+    )
+    assert len(expected) > 0, (
+        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution h={h}"
+    )
 
     # Verify we matched the expected number of reference points
-    assert len(actual) == len(
-        expected
-    ), f"Mismatch in number of matched points: got {len(actual)} actual vs {len(expected)} expected for resolution h={h}"
-    assert len(actual) == len(
-        ref_data_filtered
-    ), f"Expected {len(ref_data_filtered)} reference points but got {len(actual)} matches for resolution h={h}"
+    assert len(actual) == len(expected), (
+        f"Mismatch in number of matched points: got {len(actual)} actual vs "
+        f"{len(expected)} expected for resolution h={h}"
+    )
+    assert len(actual) == len(ref_data_filtered), (
+        f"Expected {len(ref_data_filtered)} reference points but got " f"{len(actual)} matches for resolution h={h}"
+    )
 
     # Assert approximate equality
     # Reference data has 4-6 decimal places, so use appropriate tolerance

@@ -28,4 +28,3 @@ mypy >= 0.8
 junitparser >= 2
 clang-format == 17.0.4
 attrs
-lxml

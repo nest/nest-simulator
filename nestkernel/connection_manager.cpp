@@ -55,6 +55,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
+#include "nest_types.h"
 #include "node.h"
 #include "sonata_connector.h"
 #include "stopwatch_impl.h"
@@ -976,23 +977,25 @@ nest::ConnectionManager::find_connection( const size_t tid,
   const size_t snode_id,
   const size_t tnode_id )
 {
-  // lcid will hold the position of the /first/ connection from node
-  // snode_id to any local node, or be invalid
-  size_t lcid = source_table_.find_first_source( tid, syn_id, snode_id );
-  if ( lcid == invalid_index )
+  if ( use_compressed_spikes_ )
   {
-    return invalid_index;
-  }
+    const size_t source_index = source_table_.find_first_source( tid, syn_id, snode_id );
+    if ( source_index == invalid_index )
+    {
+      return invalid_index;
+    }
 
-  // lcid will hold the position of the /first/ connection from node
-  // snode_id to node tnode_id, or be invalid
-  lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, lcid, tnode_id );
-  if ( lcid != invalid_index )
-  {
+    // lcid will hold the position of the /first/ enabled connection from node
+    // snode_id to node tnode_id, or be invalid
+    const size_t lcid = connections_[ tid ][ syn_id ]->find_first_target( tid, source_index, tnode_id );
+
     return lcid;
   }
-
-  return lcid;
+  else
+  {
+    return connections_[ tid ][ syn_id ]->find_enabled_connection( tid, syn_id, snode_id, tnode_id, source_table_ );
+  }
+  return invalid_index;
 }
 
 void
@@ -1003,7 +1006,7 @@ nest::ConnectionManager::disconnect( const size_t tid,
 {
   assert( syn_id != invalid_synindex );
 
-  const size_t lcid = find_connection( tid, syn_id, snode_id, tnode_id );
+  const auto lcid = find_connection( tid, syn_id, snode_id, tnode_id );
 
   if ( lcid == invalid_index ) // this function should only be called
                                // with a valid connection
@@ -1450,7 +1453,7 @@ nest::ConnectionManager::sort_connections( const size_t tid )
         connections_[ tid ][ syn_id ]->sort_connections( source_table_.get_thread_local_sources( tid )[ syn_id ] );
       }
     }
-    remove_disabled_connections( tid );
+    remove_disabled_connections_( tid );
   }
 }
 
@@ -1700,8 +1703,10 @@ nest::ConnectionManager::compress_secondary_send_buffer_pos( const size_t tid )
 }
 
 void
-nest::ConnectionManager::remove_disabled_connections( const size_t tid )
+nest::ConnectionManager::remove_disabled_connections_( const size_t tid )
 {
+  assert( use_compressed_spikes_ );
+
   std::vector< ConnectorBase* >& connectors = connections_[ tid ];
 
   for ( synindex syn_id = 0; syn_id < connectors.size(); ++syn_id )

@@ -20,9 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
-
-Synopsis: (test_psp_amplitude_consistency) run ->
+Name: test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
 
 Description:
 
@@ -64,12 +62,12 @@ def compute_psp(model, params, tau_syn):
 
     vm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1})
 
-    # Create neuron first (like SLI code does), then set parameters
+    # Create neuron first, then set parameters
     # This allows dict_miss_is_error=False to work properly
     neuron = nest.Create(model)
 
     neuron_params = params.copy()
-    # Add tau_syn_ex to params (matching SLI: params /tau_syn_ex tau_syn put)
+    # Add tau_syn_ex to params
     neuron_params["tau_syn_ex"] = tau_syn
     # Set all parameters - dict_miss_is_error=False will ignore invalid ones
     neuron.set(neuron_params)
@@ -120,7 +118,8 @@ def test_psp_amplitude_consistency():
 
     # Testing conductance based alpha response models
     node_models = nest.GetKernelStatus("node_models")
-    if "aeif_cond_alpha" in node_models:
+    # Check for all models used in this test block
+    if all(model in node_models for model in ["aeif_cond_alpha", "iaf_cond_alpha", "aeif_cond_exp", "iaf_cond_exp"]):
         # Test aeif_cond_alpha vs iaf_cond_alpha
         psp_aeif = [compute_psp("aeif_cond_alpha", P_cond, tau_syn) for tau_syn in tau_syns]
         psp_iaf = [compute_psp("iaf_cond_alpha", P_cond, tau_syn) for tau_syn in tau_syns]
@@ -139,7 +138,8 @@ def test_psp_amplitude_consistency():
             mean_squared_diff_exp < 1e-4
         ), f"PSP mismatch between aeif_cond_exp and iaf_cond_exp: {mean_squared_diff_exp}"
 
-    if "iaf_cond_exp_sfa_rr" in node_models:
+    # Check for all models used in this test block
+    if all(model in node_models for model in ["iaf_cond_exp_sfa_rr", "iaf_cond_exp"]):
         # Test iaf_cond_exp_sfa_rr vs iaf_cond_exp
         psp_sfa_rr = [compute_psp("iaf_cond_exp_sfa_rr", P_cond, tau_syn) for tau_syn in tau_syns]
         psp_iaf_exp = [compute_psp("iaf_cond_exp", P_cond, tau_syn) for tau_syn in tau_syns]
@@ -149,3 +149,7 @@ def test_psp_amplitude_consistency():
         assert (
             mean_squared_diff_sfa < 1e-4
         ), f"PSP mismatch between iaf_cond_exp_sfa_rr and iaf_cond_exp: {mean_squared_diff_sfa}"
+
+    # Note: The original SLI test includes commented-out code for hh_psc_alpha with the note:
+    # "This test fails due to inappropriate parametrization of the hh model"
+    # Therefore, hh_psc_alpha is intentionally not tested here.

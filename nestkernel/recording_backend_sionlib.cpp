@@ -201,7 +201,7 @@ nest::RecordingBackendSIONlib::open_files_()
           "Please change data_path, or data_prefix, or set /overwrite_files "
           "to true in the root node.",
           filename );
-        LOG( nest::VerbosityLevel::ERROR, "RecordingBackendSIONlib::open_files_()", msg );
+        LOG( VerbosityLevel::ERROR, "RecordingBackendSIONlib::open_files_()", msg );
         throw IOError();
       }
       test.close();
@@ -584,7 +584,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
   else
   {
     std::string msg = String::compose( "SIONBuffer: buffer overflow: ptr=%1, n=%2, max_size=%3.", ptr_, n, max_size_ );
-    LOG( nest::VerbosityLevel::ERROR, "RecordingBackendSIONlib::write()", msg );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendSIONlib::write()", msg );
 
     throw IOError();
   }

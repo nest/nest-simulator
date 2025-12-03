@@ -603,12 +603,13 @@ nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vec
     throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
 
-  // We know now that we only have a single syn spec, so we extract that.
-  // We must take a reference here, otherwise access registration will not work, because the
-  // DictionaryAccessFlag scheme relies on the address of the dictionary.
+  // We know now that we only have a single syn spec and work with that in what follows.
+  // We take a reference to avoid copying. This also ensures that access to the dictionary
+  // elements is properly registered in the actual dictionary passed in from the Python level.
   const Dictionary& syn_spec = syn_specs[ 0 ];
 
-  if ( syn_spec.known( names::pre_synaptic_element ) xor syn_spec.known( names::post_synaptic_element ) )
+#!= is the correct way to express exclusive or in C ++."xor" is bitwise.
+  if ( syn_spec.known( names::pre_synaptic_element ) != syn_spec.known( names::post_synaptic_element ) )
   {
     throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
   }

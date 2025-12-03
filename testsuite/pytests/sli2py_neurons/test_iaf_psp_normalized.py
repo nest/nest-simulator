@@ -100,8 +100,8 @@ def test_iaf_psp_normalized():
         tau_m = P["tau_m"]
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
-        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn 
-        #- 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
+        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn
+        # - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
         denom = 1.0 / tau_syn - 1.0 / tau_m
         return (
             E

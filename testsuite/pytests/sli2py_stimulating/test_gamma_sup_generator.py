@@ -166,22 +166,7 @@ def test_gamma_sup_generator_single_rate_and_isi():
     # Verify lam is positive (should be, since dead_time < mu for valid process)
     assert lam > 0, f"lam={lam} should be positive (mu={mu}, dead_time_s={dead_time_s})"
 
-    # SLI: 1.0 lam div mu div 2 pow
-    #      The SLI postfix notation: 1.0 lam div mu div 2 pow
-    #      = ((1.0 / lam) / mu) ** 2 = (1.0 / (lam * mu)) ** 2
-    #      However, this gives unreasonably large CV² values.
-    #      Re-examining: maybe "2 pow" applies only to the last division?
-    #      Actually, postfix evaluation: 1.0 -> lam div -> mu div -> 2 pow
-    #      = ((1.0 / lam) / mu) ** 2
-    #      But this seems wrong. Let's check if maybe it's (lam/mu)**2 or lam/(mu**2)
-    #      Based on the error showing cvsq_theo is way too large, let's try (lam/mu)**2:
-    #      This would give: (lam/mu)**2 which is more reasonable for CV²
-    #      But to match SLI exactly, let's verify the parsing:
-    #      Stack: [1.0] -> [1.0/lam] -> [(1.0/lam)/mu] -> [((1.0/lam)/mu)**2]
-    #      So it IS (1.0/(lam*mu))**2. But this is wrong for CV².
-    #      Maybe the SLI code has a bug? Or maybe the formula interpretation is different?
-    #      Let's try the alternative interpretation that gives reasonable values:
-    cvsq_theo = (lam / mu) ** 2
+    cvsq_theo = ((1.0 / lam) / mu) ** 2
 
     ratio_cvsq = cvsq_sim / cvsq_theo
     assert (

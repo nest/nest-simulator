@@ -108,7 +108,7 @@ def test_inh_stdp_synapse():
     nest.Connect(neuron, sr_post)
 
     # Simulate and get data
-    nest.Simulate(10000.0)
+    nest.Simulate(T)
 
     pre_spikes = np.array(sr_pre.get("events", "times")) + axonal_delay
     post_spikes = np.array(sr_post.get("events", "times")) + backpr_delay
@@ -161,15 +161,13 @@ def test_inh_stdp_synapse():
 
     def facilitate():
         nonlocal w
-        w = w + lambda_val * ((1.0 - w) ** mu_plus) * K_plus * np.exp((last_pre - post_spike) / tau_plus)
-        if w >= 1.0:
-            w = 1.0
+        w = w + lambda_val * (1.0 - w) ** mu_plus * K_plus * np.exp((last_pre - post_spike) / tau_plus)
+        w = min(w, 1.0)
 
     def depress():
         nonlocal w
-        w = w - lambda_val * alpha * (w**mu_minus) * K_minus * np.exp((last_post - pre_spike) / tau_minus)
-        if w <= 0.0:
-            w = 0.0
+        w = w - lambda_val * alpha * w ** mu_minus * K_minus * np.exp((last_post - pre_spike) / tau_minus)
+        w = max(w, 0.0)
 
     # Process spikes
     while j < len(pre_spikes) or i < len(post_spikes):

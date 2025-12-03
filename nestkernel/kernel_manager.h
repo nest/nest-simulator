@@ -206,7 +206,6 @@ public:
    * Create/destroy and access the KernelManager singleton.
    */
   static void create_kernel_manager();
-  static void destroy_kernel_manager();
   static KernelManager& get_kernel_manager();
 
   /**

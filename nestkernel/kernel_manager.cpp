@@ -140,25 +140,13 @@ nest::KernelManager::get_build_info_()
   return build_info;
 }
 
-void
-nest::KernelManager::create_kernel_manager()
-{
+void nest::KernelManager::create_kernel_manager() {
 #pragma omp master
-  {
-    if ( not kernel_manager_instance_ )
-    {
-      kernel_manager_instance_ = new KernelManager();
-      assert( kernel_manager_instance_ );
-    }
-  }
-#pragma omp barrier
+  { if ( not kernel_manager_instance_ ) { kernel_manager_instance_ = new KernelManager();
+assert( kernel_manager_instance_ );
 }
-
-void
-nest::KernelManager::destroy_kernel_manager()
-{
-  assert( false ); // Just to check if this ever gets called
-  delete kernel_manager_instance_;
+}
+#pragma omp barrier
 }
 
 nest::KernelManager::KernelManager()

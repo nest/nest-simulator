@@ -41,7 +41,7 @@ automatically replaces the GSL function if required. This removes the
 need to specify the derivative of the function of interest, here the
 PSP, in application code.  A further alternative is used in
 test_lambertw where knowledge of the range of values of the
-non-principal branch of the Lambert-W function [-1,-\infty) is
+non-principal branch of the Lambert-W function [-1,-\\infty) is
 exploited to find the inverse of x*exp(x) by bisectioning.
 
 Test ported from SLI unittest.
@@ -100,7 +100,8 @@ def test_iaf_psp_normalized():
         tau_m = P["tau_m"]
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
-        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
+        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn 
+        #- 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
         denom = 1.0 / tau_syn - 1.0 / tau_m
         return (
             E

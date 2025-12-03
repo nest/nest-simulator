@@ -20,9 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_syn_hom_w - sli script for test synapse with homogeneous weight and delay.
-
-Synopsis: (test_syn_hom_w) run -> compare response with reference data
+Name: test_syn_hom_w - sli script for test synapse with homogeneous weight and delay.
 
 Description:
 Test of the overall function of static_synapse_hom_w.
@@ -120,7 +118,7 @@ def test_syn_hom_w():
     ref_data_filtered = REFERENCE_DATA[REFERENCE_DATA[:, 0] <= max_time_step]
 
     if len(ref_data_filtered) == 0:
-        pytest.skip(f"No reference data points within simulation time {simulation_time} ms for resolution dt={dt}")
+        pytest.skip(f"No reference data points within simulation time {simulation_time} ms " f"for resolution dt={dt}")
 
     ref_time_steps = set(ref_data_filtered[:, 0].astype(int))
 
@@ -147,20 +145,21 @@ def test_syn_hom_w():
     actual, expected = testutil.get_comparable_timesamples(dt, actual_data, expected_data)
 
     # Check that the function did not return empty arrays
-    assert (
-        len(actual) > 0
-    ), f"get_comparable_timesamples() returned empty arrays - no matching time points found for resolution dt={dt}"
-    assert (
-        len(expected) > 0
-    ), f"get_comparable_timesamples() returned empty arrays - no matching time points found for resolution dt={dt}"
+    assert len(actual) > 0, (
+        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution dt={dt}"
+    )
+    assert len(expected) > 0, (
+        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution dt={dt}"
+    )
 
     # Verify we matched the expected number of reference points
-    assert len(actual) == len(
-        expected
-    ), f"Mismatch in number of matched points: got {len(actual)} actual vs {len(expected)} expected for resolution dt={dt}"
-    assert len(actual) == len(
-        ref_data_filtered
-    ), f"Expected {len(ref_data_filtered)} reference points but got {len(actual)} matches for resolution dt={dt}"
+    assert len(actual) == len(expected), (
+        f"Mismatch in number of matched points: got {len(actual)} actual vs "
+        f"{len(expected)} expected for resolution dt={dt}"
+    )
+    assert len(actual) == len(ref_data_filtered), (
+        f"Expected {len(ref_data_filtered)} reference points but got " f"{len(actual)} matches for resolution dt={dt}"
+    )
 
     # Assert approximate equality
     # Reference data has 6 decimal places (scientific notation), so use appropriate tolerance

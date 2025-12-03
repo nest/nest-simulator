@@ -74,123 +74,69 @@ import pytest
 import testutil
 
 # Reference data extracted from SLI test comments
-# Format: {resolution: numpy array of [time_step, voltage] pairs}
 # Times are in steps and will be converted to milliseconds by multiplying by resolution
-REFERENCE_DATA = {
-    0.1: np.array(
-        [
-            [1, -70.0],
-            [2, -70.0],
-            [3, -70.0],
-            [4, -70.0],
-            [5, -70.0],
-            [6, -70.0],
-            [7, -70.0],
-            [8, -70.0],
-            [9, -70.0],
-            [10, -70.0],
-            [11, -70.0],
-            [12, -70.0],
-            [13, -70.0],
-            [14, -70.0],
-            [15, -70.0],
-            [16, -70.0],
-            [17, -70.0],
-            [18, -70.0],
-            [19, -70.0],
-            [20, -70.0],
-            [21, -70.0],
-            [22, -70.0],
-            [23, -70.0],
-            [24, -70.0],
-            [25, -70.0],
-            [26, -70.0],
-            [27, -70.0],
-            [28, -70.0],
-            [29, -70.0],
-            [30, -70.0],
-            [31, -69.9974],
-            [32, -69.9899],
-            [33, -69.9781],
-            [34, -69.9624],
-            [35, -69.9434],
-            [36, -69.9213],
-            [37, -69.8967],
-            [38, -69.8699],
-            [39, -69.8411],
-            [40, -69.8108],
-            [41, -69.779],
-            [42, -69.7463],
-            [43, -69.7126],
-            [44, -69.6783],
-            [45, -69.6435],
-            [46, -69.6084],
-            [47, -69.5732],
-            [48, -69.538],
-            [49, -69.5029],
-            [50, -69.4681],
-            [51, -69.4336],
-            [52, -69.3995],
-            [53, -69.366],
-            [54, -69.333],
-            [55, -69.3008],
-            [56, -69.2692],
-            [57, -69.2383],
-        ]
-    ),
-    0.2: np.array(
-        [
-            [1, -70.0],
-            [2, -70.0],
-            [3, -70.0],
-            [4, -70.0],
-            [5, -70.0],
-            [6, -70.0],
-            [7, -70.0],
-            [8, -70.0],
-            [9, -70.0],
-            [10, -70.0],
-            [15, -70.0],
-            [20, -70.0],
-            [30, -70.0],
-            [40, -69.8108],
-            [50, -69.4681],
-        ]
-    ),
-    0.5: np.array(
-        [
-            [1, -70.0],
-            [3, -70.0],
-            [5, -70.0],
-            [7, -70.0],
-            [9, -70.0],
-            [15, -70.0],
-            [20, -70.0],
-            [30, -70.0],
-            [40, -69.8108],
-            [50, -69.4681],
-        ]
-    ),
-    1.0: np.array(
-        [
-            [1, -70.0],
-            [2, -70.0],
-            [3, -70.0],
-            [4, -70.0],
-            [5, -70.0],
-            [6, -70.0],
-            [7, -70.0],
-            [8, -70.0],
-            [9, -70.0],
-            [10, -70.0],
-            [15, -70.0],
-            [20, -70.0],
-            [30, -70.0],
-            [40, -69.8108],
-            [50, -69.4681],
-        ]
-    ),
-}
+REFERENCE_DATA = np.array(
+    [
+        [1, -70.0],
+        [2, -70.0],
+        [3, -70.0],
+        [4, -70.0],
+        [5, -70.0],
+        [6, -70.0],
+        [7, -70.0],
+        [8, -70.0],
+        [9, -70.0],
+        [10, -70.0],
+        [11, -70.0],
+        [12, -70.0],
+        [13, -70.0],
+        [14, -70.0],
+        [15, -70.0],
+        [16, -70.0],
+        [17, -70.0],
+        [18, -70.0],
+        [19, -70.0],
+        [20, -70.0],
+        [21, -70.0],
+        [22, -70.0],
+        [23, -70.0],
+        [24, -70.0],
+        [25, -70.0],
+        [26, -70.0],
+        [27, -70.0],
+        [28, -70.0],
+        [29, -70.0],
+        [30, -70.0],
+        [31, -69.9974],
+        [32, -69.9899],
+        [33, -69.9781],
+        [34, -69.9624],
+        [35, -69.9434],
+        [36, -69.9213],
+        [37, -69.8967],
+        [38, -69.8699],
+        [39, -69.8411],
+        [40, -69.8108],
+        [41, -69.779],
+        [42, -69.7463],
+        [43, -69.7126],
+        [44, -69.6783],
+        [45, -69.6435],
+        [46, -69.6084],
+        [47, -69.5732],
+        [48, -69.538],
+        [49, -69.5029],
+        [50, -69.4681],
+        [51, -69.4336],
+        [52, -69.3995],
+        [53, -69.366],
+        [54, -69.333],
+        [55, -69.3008],
+        [56, -69.2692],
+        [57, -69.2383],
+    ]
+)
+REFERENCE_DATA[:, 0] *= 0.1  # Reference data is based on 0.1ms time steps
 
 
 @pytest.mark.parametrize("h", [0.1, 0.2, 0.5, 1.0])
@@ -217,13 +163,10 @@ def test_iaf_psp_aligned_impact(h):
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    vm = nest.Create("voltmeter", params={"time_in_steps": True, "interval": h})
-
-    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
+    vm = nest.Create("voltmeter", params={"time_in_steps": False, "interval": h})
 
     nest.Connect(sg, neuron, syn_spec={"weight": 100.0, "delay": delay})
     nest.Connect(vm, neuron)
-    nest.Connect(neuron, sr)
 
     simulation_time = 7.0  # in ms
     nest.Simulate(simulation_time)
@@ -233,57 +176,13 @@ def test_iaf_psp_aligned_impact(h):
     times = events["times"]
     voltages = events["V_m"]
 
-    # Get reference data for this resolution
-    # REFERENCE_DATA[h] is a numpy array with [time_step, voltage] pairs
-    ref_data = REFERENCE_DATA[h]
+    actual_data = np.column_stack([times, voltages])
 
-    # Filter reference data to only include time steps within the simulation time
-    # Maximum time step = simulation_time / resolution
-    max_time_step = int(simulation_time / h)
-    ref_data_filtered = ref_data[ref_data[:, 0] <= max_time_step]
-
-    if len(ref_data_filtered) == 0:
-        pytest.skip(f"No reference data points within simulation time {simulation_time} ms " f"for resolution h={h}")
-
-    ref_time_steps = set(ref_data_filtered[:, 0].astype(int))
-
-    # Convert times from steps to milliseconds for get_comparable_timesamples()
-    # Since time_in_steps=True, times are in steps, so multiply by resolution
-    times_ms = times * h
-
-    # Filter actual data to only include time steps that are in the filtered reference data
-    # This ensures we only compare at the exact time points specified in the reference
-    mask = np.isin(times.astype(int), list(ref_time_steps))
-    filtered_times_ms = times_ms[mask]
-    filtered_voltages = voltages[mask]
-
-    # Prepare actual data array: [time_ms, voltage]
-    actual_data = np.column_stack((filtered_times_ms, filtered_voltages))
-
-    # Convert reference data from steps to milliseconds
-    # ref_data_filtered has [time_step, voltage] pairs, convert to (time_ms, voltage) array
-    # Times are in steps, so multiply by resolution to get milliseconds
-    expected_data = np.column_stack((ref_data_filtered[:, 0] * h, ref_data_filtered[:, 1]))
-
-    # Compare actual and expected using get_comparable_timesamples()
-    # This function matches on tics (computed from milliseconds), so both arrays must have times in ms
-    actual, expected = testutil.get_comparable_timesamples(h, actual_data, expected_data)
+    actual, expected = testutil.get_comparable_timesamples(h, actual_data, REFERENCE_DATA)
 
     # Check that the function did not return empty arrays
     assert len(actual) > 0, (
         f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution h={h}"
-    )
-    assert len(expected) > 0, (
-        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution h={h}"
-    )
-
-    # Verify we matched the expected number of reference points
-    assert len(actual) == len(expected), (
-        f"Mismatch in number of matched points: got {len(actual)} actual vs "
-        f"{len(expected)} expected for resolution h={h}"
-    )
-    assert len(actual) == len(ref_data_filtered), (
-        f"Expected {len(ref_data_filtered)} reference points but got " f"{len(actual)} matches for resolution h={h}"
     )
 
     # Assert approximate equality

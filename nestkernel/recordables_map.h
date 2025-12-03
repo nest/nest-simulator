@@ -79,7 +79,7 @@ public:
   void create();
 
   /**
-   * Obtain SLI list of all recordables, for use by get_status().
+   * Obtain list of all recordables, for use by get_status().
    *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just
@@ -109,17 +109,17 @@ private:
 
     // Line below leads to seg-fault if nest is quit right after start,
     // see comment on get_list()
-    // recordables_.push_back(LiteralDatum(n));
+    // recordables_.push_back(n);
   }
 
   /**
-   * SLI list of names of recordables
+   * List of names of recordables
    *
    * @todo Once the segfault-on-exit issue mentioned in the comment on
    * get_list() is resolved, the next code line should be activated again.
    *
    */
-  // ArrayDatum recordables_;
+  // std::vector< std::string > recordables_;
 };
 
 template < typename HostNode >
@@ -188,7 +188,7 @@ public:
   void create( HostNode& n );
 
   /**
-   * Obtain SLI list of all recordables, for use by get_status().
+   * Obtain list of all recordables, for use by get_status().
    *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just

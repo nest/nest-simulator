@@ -429,7 +429,7 @@ if test "${MUSIC}"; then
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of Python files from the '.music' file.
-        py_files="$(grep '\.py' "${music_file}" | sed -e "s#args=#${TESTDIR}#g")"
+        py_files="$(grep '\.py' "${music_file}" | sed -e "s#binary=#${TESTDIR}#g")"
         py_files="$(for f in ${py_files}; do if test -f "${f}"; then echo "${f}"; fi; done)"
         py_files="${py_files//$'\n'/ }"
 
@@ -443,7 +443,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np="$(($(sed -n 's/np=//p' "${music_file}" | paste -sd'+' -)))"
-        test_command="mpiexec -np ${np} ${MUSIC} ${test_name}"
+        test_command="${MPI_LAUNCHER} ${SLI_MPIEXEC_PREFLAGS} -np ${np} ${MUSIC} ${test_name}"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi

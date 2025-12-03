@@ -1,7 +1,37 @@
 .. _install_nest:
 
-Install NEST
-============
+Install and run NEST
+====================
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item-card:: Install on your laptop
+
+     ``pip install nest-simulator``
+
+     :ref:`Further instructions`
+     :ref:`Alternative installation instructions (Docker, Mamba)
+
+   .. grid-item-card:: Do development wtih NEST
+
+      Source installation
+
+      * :ref:`dev_install`
+
+   .. grid-item-card:: |launch| Try NEST installation-free
+      With the JupyterHub service from EBRAINS, you can
+      try out NEST (and many other tools) directly in your browser.
+
+      .. rst-class:: imgbutton
+
+         .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
+            :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Fone_neuron.ipynb&branch=main
+
+
+      * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
+
+   .. grid-item-card:: |launch| Use NEST on HPC system
 
 
 .. grid:: 2
@@ -41,6 +71,7 @@ Install NEST
 
 
       * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
+
 
 Install related tools
 ~~~~~~~~~~~~~~~~~~~~~

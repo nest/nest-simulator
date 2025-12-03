@@ -361,8 +361,7 @@ create_mask( const Dictionary& mask_dict )
 
   // The dictionary should contain one key which is the name of the
   // mask type, and optionally the key 'anchor'. To find the unknown
-  // mask type key, we must loop through all keys. The value for the
-  // anchor key will be stored in the anchor_token variable.
+  // mask type key, we must loop through all keys.
   bool has_anchor = false;
   MaskPTR mask;
 

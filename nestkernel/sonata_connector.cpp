@@ -101,7 +101,6 @@ SonataConnector::connect()
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
-
   // Iterate edge files
   for ( auto edge_dict : edges_container )
   {
@@ -111,7 +110,6 @@ SonataConnector::connect()
     const auto edges_top_level_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    // cur_edge_params_ = edge_dict[ "syn_specs" ];
     cur_edge_params_ = boost::any_cast< Dictionary >( edge_dict.at( "syn_specs" ) );
 
     create_edge_type_id_2_syn_spec_( cur_edge_params_ );

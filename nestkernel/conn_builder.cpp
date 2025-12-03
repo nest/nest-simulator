@@ -608,7 +608,7 @@ nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vec
   // elements is properly registered in the actual dictionary passed in from the Python level.
   const Dictionary& syn_spec = syn_specs[ 0 ];
 
-#!= is the correct way to express exclusive or in C ++."xor" is bitwise.
+  // != is the correct way to express exclusive or in C ++."xor" is bitwise.
   if ( syn_spec.known( names::pre_synaptic_element ) != syn_spec.known( names::post_synaptic_element ) )
   {
     throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );

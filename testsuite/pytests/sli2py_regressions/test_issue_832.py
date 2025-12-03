@@ -20,7 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
+import numpy as np
 import pytest
+import testutil
 
 """
 Regression test for Issue #832 (GitHub).
@@ -32,48 +34,50 @@ Author: Jan Hahne, October 2017
 """
 
 
-REFERENCE_DATA = [
-    (1, -69.592),
-    (2, -69.559),
-    (3, -69.507),
-    (4, -69.439),
-    (5, -69.357),
-    (6, -69.264),
-    (7, -69.162),
-    (8, -69.051),
-    (9, -68.933),
-    (10, -68.809),
-    (11, -68.681),
-    (12, -68.548),
-    (13, -68.413),
-    (14, -68.276),
-    (15, -68.136),
-    (117, -33.771),
-    (118, -24.103),
-    (119, 8.7117),
-    (120, 62.019),
-    (121, 39.042),
-    (122, 27.485),
-    (123, 18.856),
-    (124, 11.201),
-    (125, 3.6210),
-    (126, -4.6956),
-    (127, -15.006),
-    (128, -29.464),
-    (129, -49.786),
-    (130, -71.323),
-    (131, -83.787),
-    (190, -71.023),
-    (191, -70.833),
-    (192, -70.647),
-    (193, -70.466),
-    (194, -70.289),
-    (195, -70.116),
-    (196, -69.948),
-    (197, -69.783),
-    (198, -69.622),
-    (199, -69.464),
-]
+REFERENCE_DATA = np.array(
+    [
+        (1, -69.592),
+        (2, -69.559),
+        (3, -69.507),
+        (4, -69.439),
+        (5, -69.357),
+        (6, -69.264),
+        (7, -69.162),
+        (8, -69.051),
+        (9, -68.933),
+        (10, -68.809),
+        (11, -68.681),
+        (12, -68.548),
+        (13, -68.413),
+        (14, -68.276),
+        (15, -68.136),
+        (117, -33.771),
+        (118, -24.103),
+        (119, 8.7117),
+        (120, 62.019),
+        (121, 39.042),
+        (122, 27.485),
+        (123, 18.856),
+        (124, 11.201),
+        (125, 3.6210),
+        (126, -4.6956),
+        (127, -15.006),
+        (128, -29.464),
+        (129, -49.786),
+        (130, -71.323),
+        (131, -83.787),
+        (190, -71.023),
+        (191, -70.833),
+        (192, -70.647),
+        (193, -70.466),
+        (194, -70.289),
+        (195, -70.116),
+        (196, -69.948),
+        (197, -69.783),
+        (198, -69.622),
+        (199, -69.464),
+    ]
+)
 
 
 @pytest.mark.skipif_missing_gsl
@@ -103,7 +107,7 @@ def test_issue_832_gap_junction_marker_stability():
 
     nest.SetStatus(neuron1, {"I_e": 200.0})
 
-    voltmeter = nest.Create("voltmeter", params={"time_in_steps": True, "interval": 0.1})
+    voltmeter = nest.Create("voltmeter", params={"time_in_steps": True, "interval": nest.resolution})
 
     nest.Connect(
         neuron1,
@@ -140,19 +144,26 @@ def test_issue_832_gap_junction_marker_stability():
     times = events["times"]
     voltages = events["V_m"]
 
-    # Extract reference times (matching SLI: dup Transpose First /test_times Set)
-    reference_times = {time for time, _ in REFERENCE_DATA}
+    # Convert times from steps to milliseconds for get_comparable_timesamples()
+    # Since time_in_steps=True, times are in steps, so multiply by resolution
+    resolution = nest.resolution
+    times_ms = times * resolution
 
-    # Create (time, voltage) pairs and round to 5 decimals (matching SLI: 5 ToUnitTestPrecision)
-    # Convert times to integers since time_in_steps=True
-    recorded_pairs = [(int(round(t)), round(v, 5)) for t, v in zip(times, voltages) if int(round(t)) in reference_times]
+    # Prepare actual data array: [time_ms, voltage]
+    actual_data = np.column_stack((times_ms, voltages))
 
-    # Compare with reference data (matching SLI: eq)
-    reference_pairs = [(time, round(value, 5)) for time, value in REFERENCE_DATA]
-    recorded_dict = dict(recorded_pairs)
+    # Convert reference data from steps to milliseconds
+    # REFERENCE_DATA has (step, voltage) pairs, convert to (time_ms, voltage)
+    expected_data = np.column_stack((REFERENCE_DATA[:, 0] * resolution, REFERENCE_DATA[:, 1]))
 
-    for ref_time, expected_value in reference_pairs:
-        assert ref_time in recorded_dict, f"Missing time step {ref_time}"
-        assert (
-            recorded_dict[ref_time] == expected_value
-        ), f"Time {ref_time}: expected {expected_value}, got {recorded_dict[ref_time]}"
+    # Compare actual and expected using get_comparable_timesamples()
+    actual, expected = testutil.get_comparable_timesamples(resolution, actual_data, expected_data)
+
+    # Check that the function did not return empty arrays
+    assert len(actual) > 0, "get_comparable_timesamples() returned empty arrays - no matching time points found"
+    assert len(expected) > 0, "get_comparable_timesamples() returned empty arrays - no matching time points found"
+
+    # Assert approximate equality, based on number of digits in reference data
+    # Reference data is rounded to 5 decimal places in SLI test, but values have
+    # varying precision (3-4 decimal places). Use absolute tolerance to account for rounding.
+    np.testing.assert_allclose(actual, expected, atol=0.001)

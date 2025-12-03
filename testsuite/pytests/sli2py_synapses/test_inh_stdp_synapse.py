@@ -20,17 +20,14 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_inh_stdp_synapse - basic test of stdp_synapse
+Basic test of stdp_synapse using test_inh_stdp_synapse.
 
-Synopsis: (test_inh_stdp_synapse) run
-
-Description:
-  A parrot_neuron that repeats the spikes from a poisson generator is
-  connected to an iaf_psc_alpha that is driven by inh. and exc. poisson input.
-  The synapse is an stdp_synapse. After the simulation, we go through the pre-
-  and postsyn. spike-trains spike by spike and try to reproduce the STDP
-  results. The final weight obtained after simulation is compared to the final
-  weight obtained from the test.
+A parrot_neuron that repeats the spikes from a poisson generator is connected to
+an iaf_psc_alpha that is driven by inh. and exc. poisson input.  The synapse is
+an stdp_synapse. After the simulation, we go through the pre- and postsyn.
+spike-trains spike by spike and try to reproduce the STDP results. The final
+weight obtained after simulation is compared to the final weight obtained from
+the test.
 
 Test ported from SLI unittest.
 

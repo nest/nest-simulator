@@ -38,22 +38,26 @@ construct your networks slightly faster.
 
 If you have implemented your models using PyNEST, the only change you will need to make is to replace
 
-.. code-block::
+.. code-block:: python
+
    nest.set_verbosity("M_WARNING")
 
 with
 
 .. code-block::
+
    nest.verbosity = nest.VerbosityLevel.WARNING
 
 We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
 
 .. code-block::
+
    nest.GetStatus(node_coll)
 
 with
 
 .. code-block::
+
    node_coll.get()
 
 and correspondingly for connection collections and use `nest.get()/set()` for kernel status parameters.
@@ -82,11 +86,13 @@ likely be limited to slightly different notation in the ``set()/get()`` methods 
 To test whether certain errors are raised when writing tests, instead of
 
 .. code-block::
+
    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
 
 you now have
 
 .. code-block::
+
    with pytest.raises(nest.NESTErrors.IllegalConnection):
 
 

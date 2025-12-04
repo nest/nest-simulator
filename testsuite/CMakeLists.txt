@@ -41,6 +41,7 @@ add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
+    USE_SOURCE_PERMISSIONS
 )
 
 install( PROGRAMS

@@ -460,7 +460,7 @@ if test "${MUSIC}"; then
         # Create the runner script in TMPDIR_MUSIC.
         cd "${TMPDIR_MUSIC}"
         {
-            echo "#!/bin/sh"
+            echo "#!/usr/bin/env sh"
             echo "set +e"
             echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\""
             echo "${test_command} > ${TEST_OUTFILE} 2>&1"

@@ -91,7 +91,7 @@ constexpr uint8_t NUM_BITS_LCID = 27U;
 constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
-constexpr uint8_t NUM_BITS_NODE_ID = 62U;
+constexpr uint8_t NUM_BITS_NODE_ID = 61U;
 
 // These types are used in delay_types.h and denote the space available for the dendritic and axonal portions of the
 // total transmission delay. The delay is only split into two parts for selected synapse types.

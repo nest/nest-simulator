@@ -33,7 +33,7 @@ constrained to the discrete time grid. The model is based on the Vogels & Abbott
 network model [1]_.
 
 This is Benchmark 4 of the FACETS simulator review (Brette et al., 2007) [2]_:
-- Neuron model: integrate-and-fire (i&f)
+- Neuron model: integrate-and-fire (``iaf_psc_delta``)
 - Synapse model: current-based (CUBA)
 - Synapse time course: delta (voltage jump)
 - Spike times: off-grid (precise spiking)

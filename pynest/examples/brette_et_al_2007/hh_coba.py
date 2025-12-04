@@ -32,7 +32,7 @@ Hodgkin-Huxley neurons with conductance-based synapses (exponential functions).
 The model is based on the Vogels & Abbott network model [1]_.
 
 This is Benchmark 3 of the FACETS simulator review (Brette et al., 2007) [2]_:
-- Neuron model: Hodgkin-Huxley (HH)
+- Neuron model: Hodgkin-Huxley (``hh_cond_exp_traub``)
 - Synapse model: conductance-based (COBA)
 - Synapse time course: exponential
 - Spike times: grid-constrained

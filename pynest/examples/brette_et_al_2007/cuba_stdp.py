@@ -31,8 +31,8 @@ input. The spike output of 500 neurons are recorded. Neurons are modeled as
 leaky integrate-and-fire neurons with current-injecting synapses (exponential
 functions). Excitatory-excitatory synapses implement multiplicative STDP.
 
-This is Benchmark 5 of the FACETS simulator review (Brette et al. 2007):
-- Neuron model: integrate-and-fire (i&f)
+This is Benchmark 5 of the FACETS simulator review (Brette et al., 2007) [2]_:
+- Neuron model: integrate-and-fire (``iaf_psc_exp``)
 - Synapse model: STDP-current (excitatory-excitatory), static-current (others)
 - Synapse time course: exponential
 - Spike times: grid-constrained
@@ -127,28 +127,22 @@ nest.SetKernelStatus(
 # Set default neuron parameters
 nest.SetDefaults(model, model_params)
 
-print("Creating excitatory population...")
+print("Creating excitatory population ...")
 E_neurons = nest.Create(model, NE)
 
-print("Creating inhibitory population...")
+print("Creating inhibitory population ...")
 I_neurons = nest.Create(model, NI)
 
-print("Creating stimulus generators...")
-E_stimulus = nest.Create("poisson_generator")
-E_stimulus.set(stimulus_params)
+print("Creating stimulus generators ...")
+E_stimulus = nest.Create("poisson_generator", stimulus_params)
+I_stimulus = nest.Create("poisson_generator", stimulus_params)
 
-I_stimulus = nest.Create("poisson_generator")
-I_stimulus.set(stimulus_params)
-
-print("Creating spike recorders...")
-E_recorder = nest.Create("spike_recorder")
-E_recorder.set(recorder_params)
-
-I_recorder = nest.Create("spike_recorder")
-I_recorder.set(recorder_params)
+print("Creating spike recorders ...")
+E_recorder = nest.Create("spike_recorder", recorder_params)
+I_recorder = nest.Create("spike_recorder", recorder_params)
 
 # Set initial membrane potentials (randomly distributed)
-print("Configuring neuron parameters...")
+print("Configuring neuron parameters ...")
 all_neurons = E_neurons + I_neurons
 V_m_values = np.random.normal(mean_potential, sigma_potential, len(all_neurons))
 # Ensure values are below threshold
@@ -174,11 +168,11 @@ if plastic_synapses:
 else:
     synapse_model = "syn_ex"
 
-print("Connecting stimulus generators...")
+print("Connecting stimulus generators ...")
 nest.Connect(E_stimulus, E_neurons, conn_spec="all_to_all", syn_spec="syn_ex")
 nest.Connect(I_stimulus, I_neurons, conn_spec="all_to_all", syn_spec="syn_ex")
 
-print("Connecting excitatory -> excitatory population...")
+print("Connecting excitatory -> excitatory population ...")
 # E->E with STDP and random initial weights
 nest.Connect(
     E_neurons,
@@ -187,7 +181,7 @@ nest.Connect(
     syn_spec={"synapse_model": synapse_model, "weight": nest.random.normal(JE, sigma_w)},
 )
 
-print("Connecting excitatory -> inhibitory population...")
+print("Connecting excitatory -> inhibitory population ...")
 nest.Connect(
     E_neurons,
     I_neurons,
@@ -195,7 +189,7 @@ nest.Connect(
     syn_spec="syn_ex",
 )
 
-print("Connecting inhibitory -> excitatory population...")
+print("Connecting inhibitory -> excitatory population ...")
 nest.Connect(
     I_neurons,
     E_neurons,
@@ -203,7 +197,7 @@ nest.Connect(
     syn_spec="syn_in",
 )
 
-print("Connecting inhibitory -> inhibitory population...")
+print("Connecting inhibitory -> inhibitory population ...")
 nest.Connect(
     I_neurons,
     I_neurons,
@@ -211,14 +205,14 @@ nest.Connect(
     syn_spec="syn_in",
 )
 
-print("Connecting spike recorders...")
+print("Connecting spike recorders ...")
 nest.Connect(E_neurons[:Nrec], E_recorder)
 nest.Connect(I_neurons[:Nrec], I_recorder)
 
 ###############################################################################
 # Run simulation
 
-print("Simulating...")
+print("Simulating ...")
 nest.Simulate(simtime)
 
 # Get timing from kernel status

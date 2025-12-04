@@ -44,9 +44,6 @@ References
        https://doi.org/10.1523/JNEUROSCI.3508-05.2005
 """
 
-
-import time
-
 import nest
 
 
@@ -91,7 +88,6 @@ def build_network(params):
     tuple
         (E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder, build_time)
     """
-    start_time = time.time()
 
     # Set kernel parameters
     nest.SetKernelStatus(
@@ -114,15 +110,12 @@ def build_network(params):
 
     # Create stimulus generator
     print("Creating excitatory stimulus generator ...")
-    E_stimulus = nest.Create(params["stimulus"])
-    E_stimulus.set(params["stimulus_params"])
+    E_stimulus = nest.Create(params["stimulus"], params["stimulus_params"])
 
     # Create spike recorders
-    print("Creating spike recorders...")
+    print("Creating spike recorders ...")
     E_recorder = nest.Create(params["recorder"], params["recorder_params"])
-
-    I_recorder = nest.Create(params["recorder"])
-    I_recorder.set(params["recorder_params"])
+    I_recorder = nest.Create(params["recorder"], params["recorder_params"])
 
     # Calculate connection counts
     CE = int(params["NE"] * params["epsilon"])  # excitatory connections per neuron
@@ -134,8 +127,8 @@ def build_network(params):
     nest.SetDefaults("syn_ex", {"delay": params["delay"]})
     nest.SetDefaults("syn_in", {"delay": params["delay"]})
 
-    # Connect populations
-    print("Connecting excitatory population...")
+    # Connect nodes
+    print("Connecting excitatory population ...")
     nest.Connect(
         E_neurons,
         E_neurons,
@@ -143,7 +136,6 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # I -> E
     nest.Connect(
         I_neurons,
         E_neurons,
@@ -151,8 +143,7 @@ def build_network(params):
         syn_spec="syn_in",
     )
 
-    print("Connecting inhibitory population...")
-    # E -> I
+    print("Connecting inhibitory population ...")
     nest.Connect(
         E_neurons,
         I_neurons,
@@ -160,7 +151,6 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # I -> I
     nest.Connect(
         I_neurons,
         I_neurons,
@@ -168,8 +158,7 @@ def build_network(params):
         syn_spec="syn_in",
     )
 
-    # Connect stimulus
-    print("Connecting Poisson stimulus...")
+    print("Connecting Poisson stimulus ...")
     nest.Connect(
         E_stimulus,
         E_neurons[: params["Nstim"]],
@@ -177,14 +166,11 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # Connect spike recorders
-    print("Connecting spike recorders...")
+    print("Connecting spike recorders ...")
     nest.Connect(E_neurons[: params["Nrec"]], E_recorder)
     nest.Connect(I_neurons[: params["Nrec"]], I_recorder)
 
-    build_time = time.time() - start_time
-
-    return E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder, build_time
+    return E_neurons, I_neurons, E_recorder, I_recorder
 
 
 def run_simulation(params):
@@ -204,13 +190,16 @@ def run_simulation(params):
     nest.ResetKernel()
 
     # Build network
-    E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder, build_time = build_network(params)
+    E_neurons, I_neurons, E_recorder, I_recorder = build_network(params)
 
     # Run simulation
-    print("Simulating...")
-    start_sim = time.time()
+    print("Simulating ...")
     nest.Simulate(params["simtime"])
-    sim_time = time.time() - start_sim
+
+    # Get timing from kernel status
+    kernel_status = nest.GetKernelStatus()
+    build_time = kernel_status["network_build_time"]
+    sim_time = kernel_status["simulation_time"]
 
     # Calculate number of synapses
     N = len(E_neurons) + len(I_neurons)

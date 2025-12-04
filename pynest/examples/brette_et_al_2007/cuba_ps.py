@@ -29,17 +29,11 @@ Connections within and across both populations are created at random. Both
 neuron populations receive Poissonian background input. The spike output of
 500 neurons from each population are recorded. Neurons are modeled as leaky
 integrate-and-fire neurons with voltage jump synapses. Spike times are not
-constrained to the discrete time grid.
+constrained to the discrete time grid. The model is based on the Vogels & Abbott
+network model [1]_.
 
-The model is based on:
-
-    T.P. Vogels & L.F. Abbott
-    Signal Propagation and Logic Gating in Networks of
-    Integrate-and-Fire Neurons
-    Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
-
-This is Benchmark 4 of the FACETS simulator review (Brette et al. 2007):
-- Neuron model: integrate-and-fire (i&f)
+This is Benchmark 4 of the FACETS simulator review (Brette et al., 2007) [2]_:
+- Neuron model: integrate-and-fire (``iaf_psc_delta``)
 - Synapse model: current-based (CUBA)
 - Synapse time course: delta (voltage jump)
 - Spike times: off-grid (precise spiking)
@@ -86,7 +80,7 @@ params = {
     },
     "stimulus": "poisson_generator",
     "stimulus_params": {
-        "rate": 300.0,  # rate of initial poisson stimulus [spikes/s]
+        "rate": 300.0,  # rate of initial Poisson stimulus [spikes/s]
         "start": 1.0,  # start of Poisson generator [ms]
         "stop": 51.0,  # stop of Poisson generator [ms]
         "origin": 0.0,  # origin of time [ms]

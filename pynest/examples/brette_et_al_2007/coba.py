@@ -29,12 +29,10 @@ Connections within and across both populations are created at random. Both
 neuron populations receive Poissonian background input. The spike output of
 500 neurons from each population are recorded. Neurons are modeled as leaky
 integrate-and-fire neurons with conductance-based synapses (exponential
-functions).
+functions). The model is based on the Vogels & Abbott network model [1]_.
 
-The model is based on the Vogels & Abbott network model [1]_.
-
-This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007) [2]_:
-- Neuron model: integrate-and-fire (`iaf_cond_exp`)
+This is Benchmark 1 of the FACETS simulator review (Brette et al., 2007) [2]_:
+- Neuron model: integrate-and-fire (``iaf_cond_exp``)
 - Synapse model: conductance-based (COBA)
 - Synapse time course: exponential
 - Spike times: grid-constrained
@@ -83,7 +81,7 @@ params = {
     },
     "stimulus": "poisson_generator",
     "stimulus_params": {
-        "rate": 300.0,  # rate of initial poisson stimulus [spikes/s]
+        "rate": 300.0,  # rate of initial Poisson stimulus [spikes/s]
         "start": 1.0,  # start of Poisson generator [ms]
         "stop": 51.0,  # stop of Poisson generator [ms]
         "origin": 0.0,  # origin of time [ms]

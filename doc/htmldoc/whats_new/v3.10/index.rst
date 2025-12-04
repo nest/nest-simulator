@@ -44,7 +44,7 @@ If you have implemented your models using PyNEST, the only change you will need 
 
 with
 
-.. code-block::
+.. code-block:: python
 
    nest.verbosity = nest.VerbosityLevel.WARNING
 
@@ -56,7 +56,7 @@ We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over t
 
 with
 
-.. code-block::
+.. code-block:: python
 
    node_coll.get()
 
@@ -85,13 +85,13 @@ likely be limited to slightly different notation in the ``set()/get()`` methods 
 
 To test whether certain errors are raised when writing tests, instead of
 
-.. code-block::
+.. code-block:: python
 
    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
 
 you now have
 
-.. code-block::
+.. code-block:: python
 
    with pytest.raises(nest.NESTErrors.IllegalConnection):
 

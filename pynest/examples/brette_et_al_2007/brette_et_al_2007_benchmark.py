@@ -44,8 +44,10 @@ References
        https://doi.org/10.1523/JNEUROSCI.3508-05.2005
 """
 
-import nest
+
 import time
+
+import nest
 
 
 def compute_rate(spike_recorder, n_rec, simtime, num_processes=1):

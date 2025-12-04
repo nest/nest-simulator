@@ -94,8 +94,6 @@ def test_iaf_psp_normalized():
         tau_m = P["tau_m"]
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
-        # PSP formula from SLI: E/tau_syn * 1/C_m * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn
-        # - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
         denom = 1.0 / tau_syn - 1.0 / tau_m
         return (
             np.e
@@ -141,7 +139,7 @@ def test_iaf_psp_normalized():
     # Verify that dpsp(t_peak) is close to zero
     assert abs(dpsp(t_peak)) < 1e-6, f"dpsp(t_peak)={dpsp(t_peak)} should be close to zero"
 
-    # Compute peak value for unit PSC amplitude (E=1.0)
+    # Compute peak value for unit PSC amplitude
     # Debug: check PSP values at different times
     psp_at_01 = psp(0.1)
     psp_at_1 = psp(1.0)

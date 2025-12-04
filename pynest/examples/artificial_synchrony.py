@@ -306,7 +306,7 @@ for sim_type in ["precise", "grid"]:
         # Set initial membrane potentials (Morrison et al. 2007)
         V_0_values = []
         for i in range(nr):
-            V_0 = (R * I_e) * (1.0 - np.exp(-gamma * i / nr * T / tau_m))
+            V_0 = R * I_e * (1.0 - np.exp(-gamma * i / nr * T / tau_m))
             V_0_values.append(V_0)
         neurons.V_m = V_0_values
 

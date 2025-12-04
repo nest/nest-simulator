@@ -364,7 +364,3 @@ plt.ylim([0, 1])
 
 plt.tight_layout()
 plt.show()
-
-print("\n" + "=" * 80)
-print("Simulation completed!")
-print("=" * 80)

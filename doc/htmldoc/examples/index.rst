@@ -267,6 +267,13 @@ PyNEST examples
 
            * :doc:`../auto_examples/hpc_benchmark`
 
+    .. grid-item-card:: Brette et al. 2007 Benchmarks
+           :img-top: ../static/img/nest_logo-faded.png
+
+           :doc:`../auto_examples/brette_et_al_2007/index`
+
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Connection set algebra
            :img-top: ../static/img/nest_logo-faded.png
@@ -341,6 +348,7 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/brette_et_al_2007/index
    ../auto_examples/astrocytes/index
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index

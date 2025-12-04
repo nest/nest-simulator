@@ -251,7 +251,8 @@ for sim_type in ["precise", "grid"]:
         nest.ResetKernel()
 
         # Set kernel parameters
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
+
         # Set tics_per_ms first, then resolution (resolution must be multiple of tic length)
         nest.SetKernelStatus(
             {

@@ -69,8 +69,10 @@ class TestSTDPPlSynapse:
         # While the random sequences, would supposedly reveal small differences in the weight change between NEST and
         # ours, some low-probability events (say, coinciding spikes) can well not have occurred. To generate and test
         # every possible combination of pre/post order, we append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12      13      14.5      16.1 21          25 26 27    29    31 32 33      34.5      36.1      37. 37.5     40. 40.5 41.     43. 43. 44.     45. 45.5 46.
-        # post:  2 3 4       8 9 10    12 12.2    14.1      15.4         22 23 24          28 29 30    32    33.2      35.1      36.4 37.      38. 40.          42. 43.     44. 44.              47.2 47.7
+        # pre: 1       5 6 7   9    11 12      13      14.5      16.1 21          25 26 27    29    31 32 33      34.5
+        #           36.1      37. 37.5     40. 40.5 41.     43. 43. 44.     45. 45.5 46.
+        # post:  2 3 4       8 9 10    12 12.2    14.1      15.4         22 23 24          28 29 30    32    33.2
+        #      35.1      36.4 37.      38. 40.          42. 43.     44. 44.              47.2 47.7
         self.hardcoded_pre_times = np.array(
             [
                 1.0,

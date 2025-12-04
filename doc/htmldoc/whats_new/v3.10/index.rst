@@ -38,7 +38,7 @@ construct your networks slightly faster.
 
 If you have implemented your models using PyNEST, the only change you will need to make is to replace
 
-.code::
+.. code-block::
   nest.set_verbosity("M_WARNING")
 
 with
@@ -46,20 +46,20 @@ with
 .. code-block::
   nest.verbosity = nest.VerbosityLevel.WARNING
 
-We have also deprecated `nest.GetStatus()` and `nest.SetStatus()`, so over time you may want to replace
+We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
 
-.code::
+.. code-block::
   nest.GetStatus(node_coll)
 
 with
 
-.code::
+.. code-block::
   node_coll.get()
 
 and correspondingly for connection collections and use `nest.get()/set()` for kernel status parameters.
 
-If you have used direct interaction with SLI from the Python level through `sli_func()`, `sli_run()`
-or `sr()` you will need to now use the direct interface. Please get in touch via the NEST User
+If you have used direct interaction with SLI from the Python level through ``sli_func()``, ``sli_run()``
+or ``sr()`` you will need to now use the direct interface. Please get in touch via the NEST User
 mailing list for advice.
 
 If you still have your models implemented in SLI, it is time now to migrate to PyNEST.
@@ -71,22 +71,22 @@ What does this mean for you as a developer?
 ...........................................
 
 The key change from a developer perspective are that the entire SLI interpreter code has been
-removed, noticeably reducing compile times. We therefore no longer have the `SLIModule`` concept.
+removed, noticeably reducing compile times. We therefore no longer have the ``SLIModule`` concept.
 Also, `Dictionary`, `Datum`, and `Token` are a matter of the past. Instead, we now
-have class `dictionary` based directly on `std::map` using `boost::any` to store entries of
-arbitrary type. Instead of our own `lockPTR`, we now use `std::unique_ptr` to manage objects with
+have class ``Dictionary`` based directly on ``std::map`` using ``boost::any`` to store entries of
+arbitrary type. Instead of our own ``lockPTR``, we now use ``std::unique_ptr`` to manage objects with
 reference counting. Where changes are necessary in code for neuron or synapse models, they will
-likely be limited to slightly different notation in the `set()/get()` methods to support the new
-`dictionary` class.
+likely be limited to slightly different notation in the ``set()/get()`` methods to support the new
+``Dictionary`` class.
 
 To test whether certain errors are raised when writing tests, instead of
 
-.code::
+.. code-block::
   with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
 
 you now have
 
-.code::
+.. code-block::
   with pytest.raises(nest.NESTErrors.IllegalConnection):
 
 When

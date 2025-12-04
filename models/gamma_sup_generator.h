@@ -146,9 +146,9 @@ private:
    */
   struct Parameters_
   {
-    double rate_;               //!< rate of component gamma process [Hz]
-    unsigned long gamma_shape_; //!< gamma shape parameter [1]
-    unsigned long n_proc_;      //!< number of component processes
+    double rate_;      //!< rate of component gamma process [Hz]
+    long gamma_shape_; //!< gamma shape parameter [1]
+    long n_proc_;      //!< number of component processes
 
     /**
      * Number of targets.

@@ -157,15 +157,10 @@ nest::gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
     throw BadProperty( "The rate must be larger than 0." );
   }
 
-  long n_proc_l = n_proc_;
-  update_value_param( d, names::n_proc, n_proc_l, node );
-  if ( n_proc_l < 1 )
+  update_value_param( d, names::n_proc, n_proc_, node );
+  if ( n_proc_ < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
-  }
-  else
-  {
-    n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 }
 

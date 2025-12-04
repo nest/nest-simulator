@@ -31,7 +31,7 @@ neuron populations receive Poissonian background input. The spike output of
 Hodgkin-Huxley neurons with conductance-based synapses (exponential functions).
 The model is based on the Vogels & Abbott network model [1]_.
 
-This is Benchmark 3 of the FACETS simulator review (Brette et al. 2007):
+This is Benchmark 3 of the FACETS simulator review (Brette et al., 2007) [2]_:
 - Neuron model: Hodgkin-Huxley (HH)
 - Synapse model: conductance-based (COBA)
 - Synapse time course: exponential

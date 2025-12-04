@@ -31,7 +31,7 @@ neuron populations receive Poissonian background input. The spike output of
 integrate-and-fire neurons with conductance-based synapses (exponential
 functions). The model is based on the Vogels & Abbott network model [1]_.
 
-This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007) [2]_:
+This is Benchmark 1 of the FACETS simulator review (Brette et al., 2007) [2]_:
 - Neuron model: integrate-and-fire (`iaf_cond_exp`)
 - Synapse model: conductance-based (COBA)
 - Synapse time course: exponential

@@ -31,7 +31,7 @@ input. The spike output of 500 neurons are recorded. Neurons are modeled as
 leaky integrate-and-fire neurons with current-injecting synapses (exponential
 functions). Excitatory-excitatory synapses implement multiplicative STDP.
 
-This is Benchmark 5 of the FACETS simulator review (Brette et al. 2007):
+This is Benchmark 5 of the FACETS simulator review (Brette et al., 2007) [2]_:
 - Neuron model: integrate-and-fire (i&f)
 - Synapse model: STDP-current (excitatory-excitatory), static-current (others)
 - Synapse time course: exponential

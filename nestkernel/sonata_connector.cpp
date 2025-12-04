@@ -26,7 +26,7 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
-#include <boost/any.hpp> // TODO: probably not needed if boost::any_cast goes away
+#include <boost/any.hpp> // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
 #include <cstdlib>       // for div()
 #include <string>
 #include <vector>
@@ -94,7 +94,7 @@ SonataConnector::connect()
   */
   // clang-format on
 
-  auto edges_container = boost::any_cast< std::vector< Dictionary > >( graph_specs_.at( "edges" ) );
+  const auto& edges_container = graph_specs_.get< std::vector< Dictionary > >( "edges" );
 
   // synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
@@ -102,15 +102,15 @@ SonataConnector::connect()
   };
 
   // Iterate edge files
-  for ( auto edge_dict : edges_container )
+  for ( const auto& edge_dict : edges_container )
   {
-    cur_fname_ = boost::any_cast< std::string >( edge_dict.at( "edges_file" ) );
+    edge_dict.update_value( "edges_file", cur_fname_ );
 
     const auto file = open_file_( cur_fname_ );
     const auto edges_top_level_grp = open_group_( file, "edges" );
 
     // Create map of edge type ids to NEST synapse_model ids
-    cur_edge_params_ = boost::any_cast< Dictionary >( edge_dict.at( "syn_specs" ) );
+    edge_dict.update_value( "syn_specs", cur_edge_params_ );
 
     create_edge_type_id_2_syn_spec_( cur_edge_params_ );
 
@@ -409,9 +409,9 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  const auto nest_nodes = boost::any_cast< Dictionary >( graph_specs_.at( "nodes" ) );
-  const auto src_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( source_attribute_value_ ) );
-  const auto tgt_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( target_attribute_value_ ) );
+  const auto nest_nodes = graph_specs_.get< Dictionary >( "nodes" );
+  const auto src_nc = nest_nodes.get< NodeCollectionPTR >( source_attribute_value_ );
+  const auto tgt_nc = nest_nodes.get< NodeCollectionPTR >( target_attribute_value_ );
 
   const auto snode_begin = src_nc->begin();
   const auto tnode_begin = tgt_nc->begin();
@@ -442,7 +442,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
-        const auto syn_spec = boost::any_cast< Dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
+        const auto syn_spec = cur_edge_params_.get< Dictionary >( std::to_string( edge_type_id ) );
 
         const double weight =
           get_syn_property_( syn_spec, i, weight_dataset_exist_, syn_weight_data_subset, names::weight );
@@ -545,12 +545,14 @@ SonataConnector::read_subset_( const H5::DataSet& dataset,
 void
 SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
 {
-  for ( auto& syn_kv_pair : edge_params )
+  for ( const auto& [ syn_k, syn_v ] : edge_params )
   {
-    const auto type_id = std::stoi( boost::any_cast< std::string >( syn_kv_pair.first ) );
-    auto d = boost::any_cast< Dictionary >( syn_kv_pair.second.item );
+    const int type_id = std::stoi( syn_k );
 
-    const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
+    // PYNEST-NG-FUTURE: Could avoid explicit any_cast here by adding extraction method to DictEntry_
+    const auto& d = boost::any_cast< Dictionary >( syn_v.item );
+
+    const auto& syn_name = d.get< std::string >( "synapse_model" );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
     const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
@@ -566,9 +568,8 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
   Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
 
-  for ( auto& syn_kv_pair : syn_defaults )
+  for ( [[maybe_unused]] const auto& [ param_name, v_unused ] : syn_defaults )
   {
-    const std::string param_name = syn_kv_pair.first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
       continue; // weight, delay or other not-settable parameter
@@ -644,7 +645,7 @@ SonataConnector::get_syn_property_( const Dictionary& syn_spec,
   }
   else if ( syn_spec.known( name ) )
   {
-    return boost::any_cast< double >( syn_spec.at( name ) );
+    return syn_spec.get< double >( name );
   }
   // default value is NaN
   return numerics::nan;

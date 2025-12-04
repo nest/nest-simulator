@@ -544,9 +544,8 @@ nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
   const Dictionary& syn_params,
   size_t synapse_indx )
 {
-  for ( auto& syn_kv_pair : syn_defaults )
+  for ( [[maybe_unused]] const auto& [ param_name, unused ] : syn_defaults )
   {
-    const std::string param_name = syn_kv_pair.first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
       continue; // weight, delay or other not-settable parameter
@@ -1687,7 +1686,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   const Dictionary& conn_spec,
   const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
-  , N_( boost::any_cast< long >( conn_spec.at( names::N ) ) )
+  , N_( conn_spec.get< long >( names::N ) )
 {
 
   // check for potential errors

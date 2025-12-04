@@ -174,9 +174,9 @@ nest::StimulationDevice::get_status( Dictionary& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // overwrite with cached parameters
-    for ( auto& kv_pair : backend_params_ )
+    for ( const auto& [ param_name, param_value ] : backend_params_ )
     {
-      d[ kv_pair.first ] = kv_pair.second;
+      d[ param_name ] = param_value;
     }
   }
 }

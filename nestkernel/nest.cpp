@@ -178,21 +178,21 @@ get_nc_status( NodeCollectionPTR nc )
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
-    for ( auto& kv_pair : node_status )
+    for ( const auto& [ key, entry ] : node_status )
     {
-      auto p = result.find( kv_pair.first );
+      const auto p = result.find( key );
       if ( p != result.end() )
       {
         // key exists
         auto& v = boost::any_cast< std::vector< boost::any >& >( p->second.item );
-        v[ node_index ] = kv_pair.second.item;
+        v[ node_index ] = entry.item;
       }
       else
       {
         // key does not exist yet
         auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
-        new_entry[ node_index ] = kv_pair.second.item;
-        result[ kv_pair.first ] = new_entry;
+        new_entry[ node_index ] = entry.item;
+        result[ key ] = new_entry;
       }
     }
   }

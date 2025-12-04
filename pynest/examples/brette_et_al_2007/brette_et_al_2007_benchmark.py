@@ -114,7 +114,7 @@ def build_network(params):
     E_stimulus.set(params["stimulus_params"])
 
     # Create spike recorders
-    print("Creating spike recorders...")
+    print("Creating spike recorders ...")
     E_recorder = nest.Create(params["recorder"], params["recorder_params"])
 
     I_recorder = nest.Create(params["recorder"])
@@ -131,7 +131,7 @@ def build_network(params):
     nest.SetDefaults("syn_in", {"delay": params["delay"]})
 
     # Connect populations
-    print("Connecting excitatory population...")
+    print("Connecting excitatory population ...")
     nest.Connect(
         E_neurons,
         E_neurons,
@@ -147,7 +147,7 @@ def build_network(params):
         syn_spec="syn_in",
     )
 
-    print("Connecting inhibitory population...")
+    print("Connecting inhibitory population ...")
     # E -> I
     nest.Connect(
         E_neurons,
@@ -165,7 +165,7 @@ def build_network(params):
     )
 
     # Connect stimulus
-    print("Connecting Poisson stimulus...")
+    print("Connecting Poisson stimulus ...")
     nest.Connect(
         E_stimulus,
         E_neurons[: params["Nstim"]],
@@ -174,7 +174,7 @@ def build_network(params):
     )
 
     # Connect spike recorders
-    print("Connecting spike recorders...")
+    print("Connecting spike recorders ...")
     nest.Connect(E_neurons[: params["Nrec"]], E_recorder)
     nest.Connect(I_neurons[: params["Nrec"]], I_recorder)
 
@@ -201,7 +201,7 @@ def run_simulation(params):
     E_neurons, I_neurons, E_recorder, I_recorder = build_network(params)
 
     # Run simulation
-    print("Simulating...")
+    print("Simulating ...")
     nest.Simulate(params["simtime"])
 
     # Get timing from kernel status

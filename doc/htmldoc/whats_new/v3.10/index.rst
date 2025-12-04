@@ -89,8 +89,6 @@ you now have
 .code::
   with pytest.raises(nest.NESTErrors.IllegalConnection):
 
-When
-
 
 Model improvements
 ------------------

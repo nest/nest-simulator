@@ -23,20 +23,11 @@
 stoptime=5.0
 
 [from]
-<<<<<<<< HEAD:testsuite/pytests/sli2py_music/test_cont_proxy.music
-    binary=./test_cont_proxy_sender.py
-    np=2
-
-[to]
-    binary=./test_cont_proxy_receiver.py
-    np=1
-========
-    np=1
     binary=./test_rate_proxy_sender.py
+    np=1
 
 [to]
-    np=1
     binary=./test_rate_proxy_receiver.py
->>>>>>>> sli2py-music-event-proxies:testsuite/sli2py_music/test_rate_proxy.music
+    np=1
 
 from.rate_out -> to.rate_in [1]

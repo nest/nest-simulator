@@ -104,6 +104,9 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
     extract_params_( dict, param_dicts_[ 0 ] );
   }
 
+  // We check if dict has been read out completely to stop the process early in case of errors
+  dict.all_entries_accessed( "synapse_specs", "ConnectionCreator" );
+
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {

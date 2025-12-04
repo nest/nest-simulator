@@ -48,6 +48,9 @@ def Create(model, n=1, params=None, positions=None):
 
     Note
     ----
+    If `Create()` is called with two arguments and the second argument (`n`) is a dictionary,
+    this dictionary will be intepreted as `params` for backward compatibility.
+
     During network construction, create all nodes representing model neurons first, then all nodes
     representing devices (generators, recorders, or detectors), or all devices first and then all neurons.
     Otherwise, network connection can be slow, especially in parallel simulations of networks
@@ -87,6 +90,14 @@ def Create(model, n=1, params=None, positions=None):
     """
 
     model_deprecation_warning(model)
+
+    if isinstance(n, dict):
+        if not (params is None and positions is None):
+            raise ValueError(
+                "A parameter dictionary can be passed as second argument only of Create() is called with two arguments."
+            )
+        params = n
+        n = 1
 
     if int(n) != n:
         raise TypeError("n must have an integer value")

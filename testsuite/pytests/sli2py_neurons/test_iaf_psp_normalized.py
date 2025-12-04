@@ -84,18 +84,12 @@ def test_iaf_psp_normalized():
         "V_m": 0.0,
     }
 
-    # E is the PSC amplitude - for unit amplitude, E=1.0
-    # In SLI, E is used but not explicitly defined, suggesting it's a global constant
-    # We set it to 1.0 for unit PSC amplitude
-    E = 1.0  # unit amplitude (pA)
-
     def psp(t):
         """
         Postsynaptic potential function for alpha-shaped PSC.
 
-        For an alpha-shaped PSC with amplitude E and time constant tau_syn,
+        For an alpha-shaped PSC with amplitude e = 2.781... and time constant tau_syn,
         the PSP response of an LIF neuron is computed.
-        This matches the SLI formula exactly.
         """
         tau_m = P["tau_m"]
         tau_syn = P["tau_syn"]
@@ -104,7 +98,7 @@ def test_iaf_psp_normalized():
         # - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) )
         denom = 1.0 / tau_syn - 1.0 / tau_m
         return (
-            E
+            np.e
             / tau_syn
             * 1.0
             / C_m
@@ -117,7 +111,7 @@ def test_iaf_psp_normalized():
         tau_syn = P["tau_syn"]
         C_m = P["C_m"]
         return (
-            E
+            np.e
             / tau_syn
             * 1.0
             / C_m
@@ -160,25 +154,21 @@ def test_iaf_psp_normalized():
         raise AssertionError(
             f"psp_peak_unit={psp_peak_unit} should be positive, "
             f"t_peak={t_peak}, psp(0.1)={psp_at_01}, psp(1.0)={psp_at_1}, "
-            f"E={E}, tau_m={P['tau_m']}, tau_syn={P['tau_syn']}, C_m={P['C_m']}"
+            f"tau_m={P['tau_m']}, tau_syn={P['tau_syn']}, C_m={P['C_m']}"
         )
 
     # f is the weight required for a PSP with unit amplitude (1.0 mV)
     # Since PSP scales linearly with weight, we need: w * psp_peak_unit = u
     # Therefore: w = u / psp_peak_unit
-    # This matches SLI: t psp inv -> f, then u f mul -> w
-    # Note: In SLI, E is used in the PSP formula but not explicitly defined.
-    # The PSP formula assumes E=1.0 for unit PSC amplitude.
-    # However, there might be a scaling factor between the analytical PSP and NEST's simulation.
     f = 1.0 / psp_peak_unit  # weight per unit PSP amplitude
     w = u * f  # weight for desired PSP amplitude u
 
     # Debug: print intermediate values
-    print(f"DEBUG: t_peak={t_peak}, psp_peak_unit={psp_peak_unit}, f={f}, w={w}, E={E}")
+    print(f"DEBUG: t_peak={t_peak}, psp_peak_unit={psp_peak_unit}, f={f}, w={w}")
 
     # Ensure weight is positive and reasonable
     assert (
-        w > 0 and w < 1e10
+        0 < w < 1e10
     ), f"Weight w={w} should be positive and reasonable, psp_peak_unit={psp_peak_unit}, t_peak={t_peak}, f={f}"
 
     # Now simulate and verify
@@ -196,9 +186,6 @@ def test_iaf_psp_normalized():
         }
     )
 
-    # Verify spike generator is set up correctly
-    assert sg.get("spike_times") == [2.0]
-
     # Create neuron with parameters
     neuron_params = P.copy()
     neuron_params["tau_syn_ex"] = P["tau_syn"]
@@ -212,7 +199,6 @@ def test_iaf_psp_normalized():
 
     # Connect spike generator to neuron with weight and delay
     nest.Connect(sg, neuron, syn_spec={"synapse_model": "static_synapse", "weight": w, "delay": delay})
-    # Connect voltmeter to neuron - match SLI code which connects without syn_spec
     nest.Connect(vm, neuron)
 
     nest.Simulate(7.0)
@@ -220,8 +206,7 @@ def test_iaf_psp_normalized():
     # Get maximum voltage from voltmeter events
     # Use the same pattern as other tests
     V_m_values = vm.get("events", "V_m")
-    assert len(V_m_values) > 0, "Voltmeter should have recorded some data"
-    V_max = np.max(V_m_values)
+    V_max = max(V_m_values)
 
     # Debug: print values to understand the discrepancy
     # If V_max is approximately e (2.718...), there might be a scaling issue
@@ -231,6 +216,6 @@ def test_iaf_psp_normalized():
     # The SLI test uses 1e-6 tolerance
     # Note: V_max is measured from E_L (which is 0.0), so it should equal the PSP peak
     # If V_max/u is approximately e, we might need to adjust the weight calculation
-    assert (
-        abs(V_max - u) < 1e-6
+    assert V_max == pytest.approx(
+        u, abs=1e-6
     ), f"V_max={V_max}, expected={u}, difference={abs(V_max - u)}, psp_peak_unit={psp_peak_unit}, w={w}"

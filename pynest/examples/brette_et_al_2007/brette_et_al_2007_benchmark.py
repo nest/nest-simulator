@@ -178,7 +178,7 @@ def build_network(params):
     nest.Connect(E_neurons[: params["Nrec"]], E_recorder)
     nest.Connect(I_neurons[: params["Nrec"]], I_recorder)
 
-    return E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder
+    return E_neurons, I_neurons, E_recorder, I_recorder
 
 
 def run_simulation(params):
@@ -198,7 +198,7 @@ def run_simulation(params):
     nest.ResetKernel()
 
     # Build network
-    E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder = build_network(params)
+    E_neurons, I_neurons, E_recorder, I_recorder = build_network(params)
 
     # Run simulation
     print("Simulating...")

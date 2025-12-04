@@ -151,22 +151,9 @@ def test_gamma_sup_generator_single_rate_and_isi():
     isi_var = isi_m2 / len(isi) - isi_mean**2
     cvsq_sim = isi_var / (isi_mean**2)
 
-    # Theoretical CV**2, see Deger et al 2011, JCNS
-    # here we first match the equivalent PPD and then compute its CV**2
-    # this is done because formulas are simpler to remember and code can
-    # be reused.
-    dbar = 1.0 - 1.0 / np.sqrt(gamma_shape)
-    mu_ms = (1.0 / rate) * 1e3  # mean ISI in ms
-    dead_time_ms = mu_ms * dbar  # dead_time in ms
-
-    mu = 1.0 / rate  # mean ISI in seconds (rate is in Hz)
-    dead_time_s = dead_time_ms / 1000.0  # convert dead_time from ms to seconds
-    lam = mu - dead_time_s  # both in seconds
-
-    # Verify lam is positive (should be, since dead_time < mu for valid process)
-    assert lam > 0, f"lam={lam} should be positive (mu={mu}, dead_time_s={dead_time_s})"
-
-    cvsq_theo = ((1.0 / lam) / mu) ** 2
+    # Since we have a single gamma process, the CV**2 is given directly
+    # by the shape parameter of the process, see Deger et al 2011, JCNS, App. A.
+    cvsq_theo = 1 / gamma_shape
 
     ratio_cvsq = cvsq_sim / cvsq_theo
     assert (

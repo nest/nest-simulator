@@ -6,20 +6,55 @@ Install and run NEST
 .. grid::
    :gutter: 1
 
-   .. grid-item-card:: Install on your laptop
 
-     ``pip install nest-simulator``
+   .. grid-item-card:: |user| I want to run NEST on my laptop
+       :class-title: sd-d-flex-row sd-align-minor-center
 
-     :ref:`Further instructions`
-     :ref:`Alternative installation instructions (Docker, Mamba)
+       * You can ``pip install nest-simulator``
 
-   .. grid-item-card:: Do development wtih NEST
+         See our :ref`detailed instructions` including installing NEST with
+         |nestml| and |desktop|.
 
-      Source installation
+       .. dropdown:: Other options for pre-packaged NEST
+          :class-title: sd-font-weight-light sd-fs-7 sd-text-muted
+          :class-container: sd-align-major-center
+          :color: light
+
+          * :ref:`Docker (cross-platform) <docker>`
+            (Includes NESTML)
+          * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
+          * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
+          * :ref:`Homebrew (macOS) <macos_install>`
+          * :ref:`Options for Windows users <windows_install>`
+
+
+
+   .. grid-item-card:: |teach| I want to use NEST in the classroom/for a workshop
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+
+      |desktop|
+      A graphical user interface, ideal for learning and teaching concepts
+      regarding neural networks in classrooms and workshops.
+
+      * EBRAINS?
+      * Tutorials?
+
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item-card:: |dev| I want to do development with NEST
+      :class-title: sd-d-flex-row sd-align-minor-center
 
       * :ref:`dev_install`
 
-   .. grid-item-card:: |launch| Try NEST installation-free
+
+   .. grid-item-card:: |launch| I want to test out NEST without installing anything
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+
+
       With the JupyterHub service from EBRAINS, you can
       try out NEST (and many other tools) directly in your browser.
 
@@ -31,7 +66,56 @@ Install and run NEST
 
       * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
 
-   .. grid-item-card:: |launch| Use NEST on HPC system
+
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item-card:: |hpc| I want to run NEST on an HPC system
+     :class-title: sd-d-flex-row sd-align-minor-center
+     :columns: 6
+
+      * :ref:`optimize_performance`
+      * :ref:`parallel_computing`
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item-card:: |user| Install on your laptop
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+      :ref:`pip install nest-simulator`
+
+      :ref:`Alternative installation instructions (Docker, conda-forge, brew, Ubuntu ppa)
+
+   .. grid-item-card:: |dev| Do development wtih NEST
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+      Source installation
+
+      * :ref:`dev_install`
+
+   .. grid-item-card:: |launch| Try NEST installation-free
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+      With the JupyterHub service from EBRAINS, you can
+      try out NEST (and many other tools) directly in your browser.
+
+      .. rst-class:: imgbutton
+
+         .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
+            :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Fone_neuron.ipynb&branch=main
+
+
+      * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
+
+   .. grid-item-card:: |hpc| Use NEST on HPC systems
+      :class-title: sd-d-flex-row sd-align-minor-center
+
+      Find out how to set up and optimize HPC systems for NEST
+
+      * :ref:`optimize_performance`
+
 
 
 .. grid:: 2
@@ -132,5 +216,10 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |launch| image:: ../static/img/001-shuttle.svg
 .. |dev| image:: ../static/img/dev_orange.svg
 .. |desktop| image:: ../static/img/nestdesktop022023.svg
+   :width: 120px
+   :target: https://nest-desktop.readthedocs.io/en/latest/
 .. |nestml| image:: ../static/img/nestml022023.svg
+   :width: 100px
+   :target: https://nestml.readthedocs.io/en/latest/
 .. |hpc| image:: ../static/img/hpc_orange128.svg
+.. |teach| image:: ../static/img/014-teacher.svg

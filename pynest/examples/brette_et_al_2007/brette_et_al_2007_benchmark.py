@@ -127,7 +127,7 @@ def build_network(params):
     nest.SetDefaults("syn_ex", {"delay": params["delay"]})
     nest.SetDefaults("syn_in", {"delay": params["delay"]})
 
-    # Connect populations
+    # Connect nodes
     print("Connecting excitatory population ...")
     nest.Connect(
         E_neurons,
@@ -136,7 +136,6 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # I -> E
     nest.Connect(
         I_neurons,
         E_neurons,
@@ -145,7 +144,6 @@ def build_network(params):
     )
 
     print("Connecting inhibitory population ...")
-    # E -> I
     nest.Connect(
         E_neurons,
         I_neurons,
@@ -153,7 +151,6 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # I -> I
     nest.Connect(
         I_neurons,
         I_neurons,
@@ -161,7 +158,6 @@ def build_network(params):
         syn_spec="syn_in",
     )
 
-    # Connect stimulus
     print("Connecting Poisson stimulus ...")
     nest.Connect(
         E_stimulus,
@@ -170,7 +166,6 @@ def build_network(params):
         syn_spec="syn_ex",
     )
 
-    # Connect spike recorders
     print("Connecting spike recorders ...")
     nest.Connect(E_neurons[: params["Nrec"]], E_recorder)
     nest.Connect(I_neurons[: params["Nrec"]], I_recorder)

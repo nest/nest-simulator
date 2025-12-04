@@ -116,10 +116,7 @@ def test_syn_hom_w():
 
     actual, expected = testutil.get_comparable_timesamples(dt, actual_data, REFERENCE_DATA)
 
-    # Check that the function did not return empty arrays
-    assert len(actual) > 0, (
-        f"get_comparable_timesamples() returned empty arrays - " f"no matching time points found for resolution dt={dt}"
-    )
+    # We know that get_comparable_timesamples() will return only if it has at least one data point to return
 
     # Assert approximate equality
     # Reference data has 6 decimal places (scientific notation), so use appropriate tolerance

@@ -150,6 +150,7 @@ PyNEST examples
            :img-top: ../static/img/pynest/precisespiking.png
 
            * :doc:`../auto_examples/precise_spiking`
+           * :doc:`../auto_examples/artificial_synchrony`
 
     .. grid-item-card:: Campbell Siegert
            :img-top: ../static/img/nest_logo-faded.png
@@ -300,6 +301,7 @@ PyNEST examples
    ../auto_examples/glif_psc_neuron
    ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
+   ../auto_examples/artificial_synchrony
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example
    ../auto_examples/recording_demo

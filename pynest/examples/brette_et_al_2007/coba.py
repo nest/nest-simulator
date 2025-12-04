@@ -38,8 +38,8 @@ The model is based on:
     Integrate-and-Fire Neurons
     Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
 
-This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007):
-- Neuron model: integrate-and-fire (i&f)
+This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007) [2]_:
+- Neuron model: integrate-and-fire (`iaf_cond_exp`)
 - Synapse model: conductance-based (COBA)
 - Synapse time course: exponential
 - Spike times: grid-constrained
@@ -88,7 +88,7 @@ params = {
     },
     "stimulus": "poisson_generator",
     "stimulus_params": {
-        "rate": 300.0,  # rate of initial poisson stimulus [Hz]
+        "rate": 300.0,  # rate of initial poisson stimulus [spikes/s]
         "start": 1.0,  # start of Poisson generator [ms]
         "stop": 51.0,  # stop of Poisson generator [ms]
         "origin": 0.0,  # origin of time [ms]

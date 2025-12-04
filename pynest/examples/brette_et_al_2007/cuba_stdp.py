@@ -26,7 +26,7 @@ Benchmark 5 of the simulator review (CUBA-STDP)
 The fifth simulator review benchmark is implemented as a variation of the
 Brunel Network. This script creates a sparsely coupled network of excitatory
 and inhibitory neurons. Connections within and across both populations are
-created at random. Both neuron populations receive Poissonian background
+created at random. Both neuron populations receive Poisson background
 input. The spike output of 500 neurons are recorded. Neurons are modeled as
 leaky integrate-and-fire neurons with current-injecting synapses (exponential
 functions). Excitatory-excitatory synapses implement multiplicative STDP.
@@ -55,10 +55,9 @@ References
 
 """
 
-import time
-
 import nest
 import numpy as np
+from brette_et_al_2007_benchmark import compute_rate
 
 ###############################################################################
 # Set benchmark parameters
@@ -99,7 +98,7 @@ stdp_params = {
 sigma_w = 3.0  # initial standard deviation of E->E synapses [pA]
 
 stimulus_params = {
-    "rate": 900.0 * 4.5,  # rate of initial poisson stimulus [Hz]
+    "rate": 900.0 * 4.5,  # rate of initial Poisson stimulus [spikes/s]
 }
 
 recorder_params = {
@@ -108,18 +107,6 @@ recorder_params = {
 }
 
 Nrec = 500  # number of neurons per population to record from
-
-###############################################################################
-# Compute rate function
-
-
-def compute_rate(spike_recorder, n_rec, simtime, num_processes=1):
-    """Compute average firing rate per neuron from spike recorder."""
-    n_spikes = spike_recorder.n_events
-    n_neurons = n_rec / num_processes
-    rate = n_spikes / (n_neurons * simtime) * 1000.0  # convert to Hz
-    return rate
-
 
 ###############################################################################
 # Build and run simulation
@@ -193,12 +180,11 @@ nest.Connect(I_stimulus, I_neurons, conn_spec="all_to_all", syn_spec="syn_ex")
 
 print("Connecting excitatory -> excitatory population...")
 # E->E with STDP and random initial weights
-weight_dist = nest.CreateParameter("normal", {"mean": JE, "std": sigma_w})
 nest.Connect(
     E_neurons,
     E_neurons,
     conn_spec={"rule": "fixed_indegree", "indegree": CE},
-    syn_spec={"synapse_model": synapse_model, "weight": weight_dist},
+    syn_spec={"synapse_model": synapse_model, "weight": nest.random.normal(JE, sigma_w)},
 )
 
 print("Connecting excitatory -> inhibitory population...")
@@ -229,16 +215,16 @@ print("Connecting spike recorders...")
 nest.Connect(E_neurons[:Nrec], E_recorder)
 nest.Connect(I_neurons[:Nrec], I_recorder)
 
-build_time = time.time()
-
 ###############################################################################
 # Run simulation
 
 print("Simulating...")
-start_sim = time.time()
 nest.Simulate(simtime)
-sim_time = time.time() - start_sim
-build_time = time.time() - build_time
+
+# Get timing from kernel status
+kernel_status = nest.GetKernelStatus()
+build_time = kernel_status["network_build_time"]
+sim_time = kernel_status["simulation_time"]
 
 # Calculate number of synapses
 N = NE + NI
@@ -257,6 +243,6 @@ print(f"Building time     : {build_time:.2f} s")
 print(f"Simulation time   : {sim_time:.2f} s")
 print(f"Number of Neurons : {N}")
 print(f"Number of Synapses: {Nsyn}")
-print(f"Excitatory rate   : {E_rate:.2f} Hz")
-print(f"Inhibitory rate   : {I_rate:.2f} Hz")
+print(f"Excitatory rate   : {E_rate:.2f} spikes/s")
+print(f"Inhibitory rate   : {I_rate:.2f} spikes/s")
 print("=" * 60 + "\n")

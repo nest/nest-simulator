@@ -26,20 +26,13 @@ Brette et al. 2007 Benchmark Framework
 This module provides a common framework for running the Brette et al. 2007
 simulator review benchmarks. The benchmarks create sparsely coupled networks
 of excitatory and inhibitory neurons which exhibit self-sustained activity
-after an initial stimulus.
-
-The model is based on:
-
-    T.P. Vogels & L.F. Abbott
-    Signal Propagation and Logic Gating in Networks of
-    Integrate-and-Fire Neurons
-    Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
+after an initial stimulus. The model is based on the Vogels & Abbott network model [1]_.
 
 This framework is used by the individual benchmark scripts:
-- coba.py (Benchmark 1: Conductance-based synapses)
-- cuba.py (Benchmark 2: Current-based synapses)
-- hh_coba.py (Benchmark 3: Hodgkin-Huxley neurons)
-- cuba_ps.py (Benchmark 4: Precise spiking)
+- ``coba.py`` (Benchmark 1: Conductance-based synapses)
+- ``cuba.py`` (Benchmark 2: Current-based synapses)
+- ``hh_coba.py`` (Benchmark 3: Hodgkin-Huxley neurons)
+- ``cuba_ps.py`` (Benchmark 4: Precise spiking)
 
 """
 
@@ -66,11 +59,12 @@ def compute_rate(spike_recorder, n_rec, simtime, num_processes=1):
     Returns
     -------
     float
-        Average firing rate per neuron [Hz]
+        Average firing rate per neuron [spikes/s]
     """
+    # Assume evenly distributed neurons across processes, which is valid here but not in general.
     n_spikes = spike_recorder.n_events
     n_neurons = n_rec / num_processes
-    rate = n_spikes / (n_neurons * simtime) * 1000.0  # convert to Hz
+    rate = n_spikes / (n_neurons * simtime) * 1000.0  # convert to spikes/s
     return rate
 
 
@@ -116,8 +110,7 @@ def build_network(params):
 
     # Create spike recorders
     print("Creating spike recorders...")
-    E_recorder = nest.Create(params["recorder"])
-    E_recorder.set(params["recorder_params"])
+    E_recorder = nest.Create(params["recorder"], params["recorder_params"])
 
     I_recorder = nest.Create(params["recorder"])
     I_recorder.set(params["recorder_params"])
@@ -134,7 +127,6 @@ def build_network(params):
 
     # Connect populations
     print("Connecting excitatory population...")
-    # E -> E
     nest.Connect(
         E_neurons,
         E_neurons,
@@ -183,7 +175,7 @@ def build_network(params):
 
     build_time = time.time() - start_time
 
-    return (E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder, build_time)
+    return E_neurons, I_neurons, E_stimulus, E_recorder, I_recorder, build_time
 
 
 def run_simulation(params):
@@ -228,8 +220,8 @@ def run_simulation(params):
     print("=" * 60)
     print(f"Number of Neurons : {N}")
     print(f"Number of Synapses: {Nsyn}")
-    print(f"Excitatory rate   : {E_rate:.2f} Hz")
-    print(f"Inhibitory rate   : {I_rate:.2f} Hz")
+    print(f"Excitatory rate   : {E_rate:.2f} spikes/s")
+    print(f"Inhibitory rate   : {I_rate:.2f} spikes/s")
     print(f"Building time     : {build_time:.2f} s")
     print(f"Simulation time   : {sim_time:.2f} s")
     print("=" * 60 + "\n")

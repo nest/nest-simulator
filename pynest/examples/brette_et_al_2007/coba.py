@@ -81,7 +81,7 @@ params = {
     },
     "stimulus": "poisson_generator",
     "stimulus_params": {
-        "rate": 300.0,  # rate of initial poisson stimulus [spikes/s]
+        "rate": 300.0,  # rate of initial Poisson stimulus [spikes/s]
         "start": 1.0,  # start of Poisson generator [ms]
         "stop": 51.0,  # stop of Poisson generator [ms]
         "origin": 0.0,  # origin of time [ms]

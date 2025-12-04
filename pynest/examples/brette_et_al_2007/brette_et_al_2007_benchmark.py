@@ -34,11 +34,18 @@ This framework is used by the individual benchmark scripts:
 - ``hh_coba.py`` (Benchmark 3: Hodgkin-Huxley neurons)
 - ``cuba_ps.py`` (Benchmark 4: Precise spiking)
 
+
+References
+----------
+
+.. [1] Vogels TP, Abbott LF. 2005. Signal propagation and logic gating in
+       networks of integrate-and-fire neurons. Journal of Neuroscience.
+       25(46):10786-10795.
+       https://doi.org/10.1523/JNEUROSCI.3508-05.2005
 """
 
-import time
-
 import nest
+import time
 
 
 def compute_rate(spike_recorder, n_rec, simtime, num_processes=1):
@@ -97,14 +104,14 @@ def build_network(params):
     nest.SetDefaults(params["model"], params["model_params"])
 
     # Create populations
-    print("Creating excitatory population...")
+    print("Creating excitatory population ...")
     E_neurons = nest.Create(params["model"], params["NE"])
 
-    print("Creating inhibitory population...")
+    print("Creating inhibitory population ...")
     I_neurons = nest.Create(params["model"], params["NI"])
 
     # Create stimulus generator
-    print("Creating excitatory stimulus generator...")
+    print("Creating excitatory stimulus generator ...")
     E_stimulus = nest.Create(params["stimulus"])
     E_stimulus.set(params["stimulus_params"])
 

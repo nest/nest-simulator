@@ -31,12 +31,7 @@ neuron populations receive Poissonian background input. The spike output of
 integrate-and-fire neurons with conductance-based synapses (exponential
 functions).
 
-The model is based on:
-
-    T.P. Vogels & L.F. Abbott
-    Signal Propagation and Logic Gating in Networks of
-    Integrate-and-Fire Neurons
-    Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
+The model is based on the Vogels & Abbott network model [1]_.
 
 This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007) [2]_:
 - Neuron model: integrate-and-fire (`iaf_cond_exp`)

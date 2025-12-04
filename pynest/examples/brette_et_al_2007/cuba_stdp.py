@@ -134,18 +134,12 @@ print("Creating inhibitory population ...")
 I_neurons = nest.Create(model, NI)
 
 print("Creating stimulus generators ...")
-E_stimulus = nest.Create("poisson_generator")
-E_stimulus.set(stimulus_params)
-
-I_stimulus = nest.Create("poisson_generator")
-I_stimulus.set(stimulus_params)
+E_stimulus = nest.Create("poisson_generator", stimulus_params)
+I_stimulus = nest.Create("poisson_generator", stimulus_params)
 
 print("Creating spike recorders ...")
-E_recorder = nest.Create("spike_recorder")
-E_recorder.set(recorder_params)
-
-I_recorder = nest.Create("spike_recorder")
-I_recorder.set(recorder_params)
+E_recorder = nest.Create("spike_recorder", recorder_params)
+I_recorder = nest.Create("spike_recorder", recorder_params)
 
 # Set initial membrane potentials (randomly distributed)
 print("Configuring neuron parameters ...")

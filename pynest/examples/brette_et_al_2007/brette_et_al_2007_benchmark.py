@@ -110,15 +110,12 @@ def build_network(params):
 
     # Create stimulus generator
     print("Creating excitatory stimulus generator ...")
-    E_stimulus = nest.Create(params["stimulus"])
-    E_stimulus.set(params["stimulus_params"])
+    E_stimulus = nest.Create(params["stimulus"], params["stimulus_params"])
 
     # Create spike recorders
     print("Creating spike recorders ...")
     E_recorder = nest.Create(params["recorder"], params["recorder_params"])
-
-    I_recorder = nest.Create(params["recorder"])
-    I_recorder.set(params["recorder_params"])
+    I_recorder = nest.Create(params["recorder"], params["recorder_params"])
 
     # Calculate connection counts
     CE = int(params["NE"] * params["epsilon"])  # excitatory connections per neuron

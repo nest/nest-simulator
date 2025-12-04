@@ -43,7 +43,7 @@ If you have implemented your models using PyNEST, the only change you will need 
 
 with
 
-.code::
+.. code-block::
   nest.verbosity = nest.VerbosityLevel.WARNING
 
 We have also deprecated `nest.GetStatus()` and `nest.SetStatus()`, so over time you may want to replace

@@ -29,13 +29,7 @@ Connections within and across both populations are created at random. Both
 neuron populations receive Poissonian background input. The spike output of
 500 neurons from each population are recorded. Neurons are modeled as
 Hodgkin-Huxley neurons with conductance-based synapses (exponential functions).
-
-The model is based on:
-
-    T.P. Vogels & L.F. Abbott
-    Signal Propagation and Logic Gating in Networks of
-    Integrate-and-Fire Neurons
-    Journal of Neuroscience, 2005, vol 25, pp 10786-10795.
+The model is based on the Vogels & Abbott network model [1]_.
 
 This is Benchmark 3 of the FACETS simulator review (Brette et al. 2007):
 - Neuron model: Hodgkin-Huxley (HH)

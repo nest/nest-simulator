@@ -29,9 +29,7 @@ Connections within and across both populations are created at random. Both
 neuron populations receive Poissonian background input. The spike output of
 500 neurons from each population are recorded. Neurons are modeled as leaky
 integrate-and-fire neurons with conductance-based synapses (exponential
-functions).
-
-The model is based on the Vogels & Abbott network model [1]_.
+functions). The model is based on the Vogels & Abbott network model [1]_.
 
 This is Benchmark 1 of the FACETS simulator review (Brette et al. 2007) [2]_:
 - Neuron model: integrate-and-fire (`iaf_cond_exp`)

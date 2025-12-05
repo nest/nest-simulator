@@ -412,7 +412,7 @@ jobs:
 
       - name: "Run pylint..."
         run: |
-          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
+          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py
 
   isort:
     runs-on: "ubuntu-22.04"

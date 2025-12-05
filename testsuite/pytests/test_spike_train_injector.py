@@ -55,7 +55,7 @@ def test_set_spike_times(reset_kernel, in_spike_times, expected_spike_times, pre
     (step size) of 0.1 ms and default tic length of 0.001 ms.
     """
 
-    nest.set(resolution=0.1, tics_per_ms=1000.0)
+    nest.set(resolution=0.1, tics_per_ms=1000)
 
     inj_nrn = nest.Create(
         "spike_train_injector",
@@ -66,7 +66,7 @@ def test_set_spike_times(reset_kernel, in_spike_times, expected_spike_times, pre
         },
     )
 
-    out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
+    out_spike_times = inj_nrn.spike_times
     assert out_spike_times == pytest.approx(expected_spike_times)
 
 

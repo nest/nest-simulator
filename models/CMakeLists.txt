@@ -31,19 +31,19 @@ set(models_sources
 )
 
 add_library(models STATIC ${models_sources})
-set_target_properties(models
-    PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
-)
 
-target_link_libraries(models nestutil sli_lib nestkernel)
+if(APPLE)
+    set_target_properties(models PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup")
+endif()
+
+set_target_properties(models PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+target_link_libraries(models nestutil nestkernel)
 
 target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/models
-    ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/models
     ${PROJECT_SOURCE_DIR}/nestkernel
 )

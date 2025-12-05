@@ -46,7 +46,7 @@ class FacetsTestCase(unittest.TestCase):
         # configuration
         lut_0 = [2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 15]
         lut_1 = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13]
-        lut_2 = range(16)  # identity
+        lut_2 = list(range(16))  # identity
         config_0 = [0, 0, 1, 0]
         config_1 = [0, 1, 0, 0]
         reset_pattern = 6 * [1]  # reset all
@@ -82,10 +82,9 @@ class FacetsTestCase(unittest.TestCase):
         }
 
         # build network
-        stim = nest.Create("spike_generator")
+        stim = nest.Create("spike_generator", params={"spike_times": spikesIn})
         neuronA = nest.Create("parrot_neuron")
         neuronB = nest.Create("parrot_neuron")
-        nest.SetStatus(stim, [{"spike_times": spikesIn}])
 
         nest.SetDefaults(modelName, synapseDict)
 

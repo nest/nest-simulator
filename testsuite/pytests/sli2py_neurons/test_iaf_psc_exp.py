@@ -59,9 +59,9 @@ def test_iaf_psc_exp_dc_input():
     nest.ResetKernel()
     nest.set(resolution=dt, local_num_threads=1)
 
-    dc_gen = nest.Create("dc_generator", {"amplitude": dc_amp})
+    dc_gen = nest.Create("dc_generator", params={"amplitude": dc_amp})
     nrn = nest.Create("iaf_psc_exp", 1)
-    vm = nest.Create("voltmeter", {"interval": 0.1})
+    vm = nest.Create("voltmeter", params={"interval": 0.1})
 
     syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": dt}
     nest.Connect(dc_gen, nrn, syn_spec=syn_spec)

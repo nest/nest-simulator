@@ -38,8 +38,6 @@
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -140,13 +138,14 @@ EventDeliveryManager::finalize( const bool )
   recv_buffer_off_grid_spike_data_.clear();
 }
 
+
 void
-EventDeliveryManager::set_status( const DictionaryDatum& dict )
+EventDeliveryManager::set_status( const Dictionary& dict )
 {
-  updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
+  dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
 
   double bsl = send_recv_buffer_shrink_limit_;
-  if ( updateValue< double >( dict, names::spike_buffer_shrink_limit, bsl ) )
+  if ( dict.update_value( names::spike_buffer_shrink_limit, bsl ) )
   {
     if ( bsl < 0 )
     {
@@ -156,7 +155,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bss = send_recv_buffer_shrink_spare_;
-  if ( updateValue< double >( dict, names::spike_buffer_shrink_spare, bss ) )
+  if ( dict.update_value( names::spike_buffer_shrink_spare, bss ) )
   {
     if ( bss < 0 or bss > 1 )
     {
@@ -166,7 +165,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bge = send_recv_buffer_grow_extra_;
-  if ( updateValue< double >( dict, names::spike_buffer_grow_extra, bge ) )
+  if ( dict.update_value( names::spike_buffer_grow_extra, bge ) )
   {
     if ( bge < 0 )
     {
@@ -177,17 +176,16 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-EventDeliveryManager::get_status( DictionaryDatum& dict )
+EventDeliveryManager::get_status( Dictionary& dict )
 {
-  def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< unsigned long >(
-    dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
-  def< double >( dict, names::spike_buffer_shrink_limit, send_recv_buffer_shrink_limit_ );
-  def< double >( dict, names::spike_buffer_shrink_spare, send_recv_buffer_shrink_spare_ );
-  def< double >( dict, names::spike_buffer_grow_extra, send_recv_buffer_grow_extra_ );
+  dict[ names::off_grid_spiking ] = off_grid_spiking_;
+  dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
+  dict[ names::spike_buffer_shrink_limit ] = send_recv_buffer_shrink_limit_;
+  dict[ names::spike_buffer_shrink_spare ] = send_recv_buffer_shrink_spare_;
+  dict[ names::spike_buffer_grow_extra ] = send_recv_buffer_grow_extra_;
 
-  DictionaryDatum log_events = DictionaryDatum( new Dictionary );
-  ( *dict )[ names::spike_buffer_resize_log ] = log_events;
+  Dictionary log_events;
+  dict[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
 
   sw_collocate_spike_data_.get_status( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );

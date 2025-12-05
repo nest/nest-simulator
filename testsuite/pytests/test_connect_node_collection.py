@@ -60,11 +60,11 @@ def test_connect_empty_node_collection_raises(empty_nc):
 
     nc = nest.Create("iaf_psc_alpha", 5)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(nc, empty_nc)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(empty_nc, nc)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(empty_nc, empty_nc)

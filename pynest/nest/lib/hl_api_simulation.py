@@ -26,8 +26,8 @@ Functions for simulation control
 import warnings
 from contextlib import contextmanager
 
-from ..ll_api import check_stack, spp, sps, sr
-from .hl_api_helper import is_iterable, is_literal
+from .. import nestkernel_api as nestkernel
+from .hl_api_helper import is_iterable
 
 __all__ = [
     "Cleanup",
@@ -44,7 +44,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
 
@@ -61,11 +60,9 @@ def Simulate(t):
 
     """
 
-    sps(float(t))
-    sr("ms Simulate")
+    nestkernel.llapi_simulate(t)
 
 
-@check_stack
 def Run(t):
     """Simulate the network for `t` milliseconds.
 
@@ -87,10 +84,10 @@ def Run(t):
 
     Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
     calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
-    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
-    weights (but not delays!) will in most cases work as expected, while changing
-    membrane or synaptic times constants will not work correctly. If in doubt, assume
-    that changes may cause undefined behavior and check these thoroughly.
+    Changing the membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    will in most cases work as expected, while changing membrane or synaptic times
+    constants will not work correctly. If in doubt, assume that changes may cause
+    undefined behavior and check these thoroughly.
 
     Also note that `local_spike_counter` is reset each time you call `Run`.
 
@@ -99,30 +96,22 @@ def Run(t):
     Prepare, Cleanup, RunManager, Simulate
 
     """
-
-    sps(float(t))
-    sr("ms Run")
+    nestkernel.llapi_run(t)
 
 
-@check_stack
 def Prepare():
     """Calibrate the system before a `Run` call.
 
     `Prepare` is automatically called by `Simulate` and `RunManager`.
-
-    Call before the first `Run` call, or before calling `Run` after changing
-    the system, calling `SetStatus` or `Cleanup`.
 
     See Also
     --------
     Run, Cleanup, Simulate, RunManager
 
     """
+    nestkernel.llapi_prepare()
 
-    sr("Prepare")
 
-
-@check_stack
 def Cleanup():
     """Cleans up resources after a `Run` calls.
 
@@ -136,7 +125,7 @@ def Cleanup():
     Run, Prepare, Simulate, RunManager
 
     """
-    sr("Cleanup")
+    nestkernel.llapi_cleanup()
 
 
 @contextmanager
@@ -156,10 +145,9 @@ def RunManager():
 
     Notes
     -----
-
-    Be careful about modifying the network or neurons inside the `RunManager` context.
-    In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
-    to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
+    Changing the membrane potential `V_m` of neurons or synaptic weights (but not delays!)
     will in most cases work as expected, while changing membrane or synaptic times
     constants will not work correctly. If in doubt, assume that changes may cause
     undefined behavior and check these thoroughly.
@@ -177,7 +165,6 @@ def RunManager():
         Cleanup()
 
 
-@check_stack
 def ResetKernel():
     """Reset the simulation kernel.
 
@@ -198,11 +185,9 @@ def ResetKernel():
     are reset. All dynamically loaded modules (via :py:func:`.Install()`) are unloaded.
 
     """
+    nestkernel.llapi_reset_kernel()
 
-    sr("ResetKernel")
 
-
-@check_stack
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
@@ -248,11 +233,9 @@ def SetKernelStatus(params):
                 warnings.warn(msg + f" \n`{key}` has been ignored")
                 del params[key]
 
-    sps(params)
-    sr("SetKernelStatus")
+    nestkernel.llapi_set_kernel_status(params)
 
 
-@check_stack
 def GetKernelStatus(keys=None):
     """Obtain parameters of the simulation kernel.
 
@@ -288,12 +271,11 @@ def GetKernelStatus(keys=None):
 
     """
 
-    sr("GetKernelStatus")
-    status_root = spp()
+    status_root = nestkernel.llapi_get_kernel_status()
 
     if keys is None:
         return status_root
-    elif is_literal(keys):
+    elif isinstance(keys, str):
         return status_root[keys]
     elif is_iterable(keys):
         return tuple(status_root[k] for k in keys)
@@ -301,7 +283,6 @@ def GetKernelStatus(keys=None):
         raise TypeError("keys should be either a string or an iterable")
 
 
-@check_stack
 def Install(module_name):
     """Load a dynamically linked NEST module.
 
@@ -328,10 +309,9 @@ def Install(module_name):
 
     """
 
-    return sr("(%s) Install" % module_name)
+    nestkernel.llapi_install_module(module_name)
 
 
-@check_stack
 def EnableStructuralPlasticity():
     """Enable structural plasticity for the network simulation
 
@@ -341,10 +321,9 @@ def EnableStructuralPlasticity():
 
     """
 
-    sr("EnableStructuralPlasticity")
+    nestkernel.llapi_enable_structural_plasticity()
 
 
-@check_stack
 def DisableStructuralPlasticity():
     """Disable structural plasticity for the network simulation
 
@@ -353,4 +332,4 @@ def DisableStructuralPlasticity():
     EnableStructuralPlasticity
 
     """
-    sr("DisableStructuralPlasticity")
+    nestkernel.llapi_disable_structural_plasticity()

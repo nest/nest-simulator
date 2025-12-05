@@ -26,7 +26,7 @@
 #include <cassert>
 #include <ctime>
 
-nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
+nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   const std::string& fctn,
   const std::string& msg,
   const std::string& file,
@@ -38,8 +38,8 @@ nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
   , file_name( file )
   , line_number( line )
 {
-  assert( severity > M_ALL );
-  assert( severity < M_QUIET );
+  assert( severity > VerbosityLevel::ALL );
+  assert( severity < VerbosityLevel::QUIET );
   time( const_cast< time_t* >( &time_stamp ) );
 }
 
@@ -52,38 +52,38 @@ operator<<( std::ostream& out, const LoggingEvent& e )
   struct tm* ptm = localtime( &e.time_stamp );
   switch ( e.severity )
   {
-  case M_ALL:
+  case VerbosityLevel::ALL:
     out << "[ALL] ";
     break;
-  case M_DEBUG:
+  case VerbosityLevel::DEBUG:
     out << "[DEBUG] ";
     break;
-  case M_STATUS:
+  case VerbosityLevel::STATUS:
     out << "[STATUS] ";
     break;
-  case M_INFO:
+  case VerbosityLevel::INFO:
     out << "[INFO] ";
     break;
-  case M_PROGRESS:
+  case VerbosityLevel::PROGRESS:
     out << "[PROGRESS] ";
     break;
-  case M_DEPRECATED:
+  case VerbosityLevel::DEPRECATED:
     out << "[DEPRECATED] ";
     break;
-  case M_WARNING:
+  case VerbosityLevel::WARNING:
     out << "[WARNING] ";
     break;
-  case M_ERROR:
+  case VerbosityLevel::ERROR:
     out << "[ERROR] ";
     break;
-  case M_FATAL:
+  case VerbosityLevel::FATAL:
     out << "[FATAL] ";
     break;
-  case M_QUIET:
+  case VerbosityLevel::QUIET:
     out << "[QUIET] ";
     break;
   default:
-    out << "[" << e.severity << "] ";
+    out << "[Undefined (" << static_cast< int >( e.severity ) << ")] ";
     break;
   }
   // print time and day

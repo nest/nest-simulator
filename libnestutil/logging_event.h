@@ -37,7 +37,7 @@ namespace nest
 class LoggingEvent
 {
 public:
-  LoggingEvent( const severity_t s,
+  LoggingEvent( const VerbosityLevel s,
     const std::string& fctn,
     const std::string& msg,
     const std::string& file = "none",
@@ -48,7 +48,7 @@ public:
 public:
   const std::string& message;
   const std::string& function;
-  const severity_t severity;
+  const VerbosityLevel severity;
   const time_t time_stamp;
   const std::string& file_name;
   const size_t line_number;

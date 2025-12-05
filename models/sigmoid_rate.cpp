@@ -43,19 +43,19 @@ register_rate_transformer_sigmoid( const std::string& name )
 
 
 void
-nonlinearities_sigmoid_rate::get( DictionaryDatum& d ) const
+nonlinearities_sigmoid_rate::get( Dictionary& d ) const
 {
-  def< double >( d, names::g, g_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::theta, theta_ );
+  d[ names::g ] = g_;
+  d[ names::beta ] = beta_;
+  d[ names::theta ] = theta_;
 }
 
 void
-nonlinearities_sigmoid_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_sigmoid_rate::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g, g_, node );
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::theta, theta_, node );
 }
 
 /*

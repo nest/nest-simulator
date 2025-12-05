@@ -87,7 +87,8 @@ def test_psp_amplitude_consistency():
     """
     Test that PSP amplitudes are consistent across different neuron models.
     """
-    nest.set_verbosity("M_ERROR")
+
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
     tau_syns = [0.5, 1.0, 2.0, 5.0, 15.0]  # synaptic time constants to test
 

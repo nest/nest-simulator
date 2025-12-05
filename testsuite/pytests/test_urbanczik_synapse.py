@@ -28,10 +28,9 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
 class UrbanczikSynapseTestCase(unittest.TestCase):
     """Test Urbanczik synapse"""
@@ -39,7 +38,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
     def test_ConnectNeuronsWithUrbanczikSynapse(self):
         """Ensures that the restriction to supported neuron models works."""
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
 
         mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"]  # Multi-compartment models
         supported_models = ["pp_cond_exp_mc_urbanczik"]
@@ -70,7 +69,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             # try to connect with urbanczik synapse
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(nest.NESTError):
                 nest.Connect(
                     n, n, {"rule": "all_to_all"}, {"synapse_model": "urbanczik_synapse", "receptor_type": r_type}
                 )
@@ -78,15 +77,13 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         resolution = 0.1
         nest.resolution = resolution
 
-        """
-        neuron parameters
-        """
+        # neuron parameters
         nrn_model = "pp_cond_exp_mc_urbanczik"
         nrn_params = {
             "t_ref": 3.0,  # refractory period
@@ -116,9 +113,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             "theta": -55.0,
         }
 
-        """
-        synapse params
-        """
+        # synapse params
         syns = nest.GetDefaults(nrn_model)["receptor_types"]
         init_w = 100.0
         syn_params = {
@@ -131,9 +126,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             "delay": resolution,
         }
 
-        """
-        neuron and devices
-        """
+        # neuron and devices
         nest.SetDefaults(nrn_model, nrn_params)
         nrn = nest.Create(nrn_model)
 
@@ -147,9 +140,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         # excitatory input to the soma
         spike_times_soma_inp = np.arange(10.0, 50.0, resolution)
         spike_weights_soma = 10.0 * np.ones_like(spike_times_soma_inp)
-        sg_soma_exc = nest.Create(
-            "spike_generator", params={"spike_times": spike_times_soma_inp, "spike_weights": spike_weights_soma}
-        )
+        sg_params = {"spike_times": spike_times_soma_inp, "spike_weights": spike_weights_soma}
+        sg_soma_exc = nest.Create("spike_generator", params=sg_params)
 
         # for recording all parameters of the Urbanczik neuron
         rqs = nest.GetDefaults(nrn_model)["recordables"]
@@ -161,30 +153,19 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         # for recording the spiking of the soma
         sr_soma = nest.Create("spike_recorder")
 
-        """
-        create connections
-        """
+        # create connections
         nest.Connect(sg_prox, prrt_nrn, syn_spec={"delay": resolution})
-        nest.CopyModel("urbanczik_synapse", "urbanczik_synapse_wr", {"weight_recorder": wr[0]})
+        nest.CopyModel("urbanczik_synapse", "urbanczik_synapse_wr", {"weight_recorder": wr})
         nest.Connect(prrt_nrn, nrn, syn_spec=syn_params)
-        nest.Connect(
-            sg_soma_exc,
-            nrn,
-            syn_spec={"receptor_type": syns["soma_exc"], "weight": 10.0 * resolution, "delay": resolution},
-        )
+        syn_spec_exc = {"receptor_type": syns["soma_exc"], "weight": 10.0 * resolution, "delay": resolution}
+        nest.Connect(sg_soma_exc, nrn, syn_spec=syn_spec_exc)
         nest.Connect(mm, nrn, syn_spec={"delay": resolution})
         nest.Connect(nrn, sr_soma, syn_spec={"delay": resolution})
 
-        """
-        simulation
-        """
         nest.Simulate(100.0)
 
-        """
-        read out devices
-        """
         # multimeter
-        rec = nest.GetStatus(mm)[0]["events"]
+        rec = mm.events
         t = rec["times"]
         V_w = rec["V_m.p"]
 
@@ -195,11 +176,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         V_w_star = (g_L * E_L + g_D * V_w) / (g_L + g_D)
 
         # weight recorder
-        data = nest.GetStatus(wr)
-        weights = data[0]["events"]["weights"]
+        data = wr.events
+        senders = data["senders"]
+        targets = data["targets"]
+        weights = data["weights"]
+        times = data["times"]
 
         # spike recorder
-        data = nest.GetStatus(sr_soma)[0]["events"]
+        data = sr_soma.events
         spike_times_soma = data["times"]
 
         # compute predicted rate
@@ -229,7 +213,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         if len(spike_times_soma) > 0:
             t = np.around(t, 4)
             spike_times_soma = np.around(spike_times_soma + 0.2, 4)
-            idx = np.nonzero(np.in1d(t, spike_times_soma))[0]
+            idx = np.nonzero(np.isin(t, spike_times_soma))[0]
             rate[idx] -= 1.0 / resolution
 
         w_change_raw = -15.0 * C_m_prox * rate * h * alpha_response
@@ -247,10 +231,9 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         comparison between Nest and python implementation
         """
         # extract the weight computed in python at the times of the presynaptic spikes
-        idx = np.nonzero(np.in1d(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
+        idx = np.nonzero(np.isin(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
         syn_w_comp_at_spike_times = syn_weight_comp[idx]
         realtive_error = (weights[-1] - syn_w_comp_at_spike_times[-1]) / (weights[-1] - init_w)
-
         self.assertTrue(abs(realtive_error) < 0.001)
 
 

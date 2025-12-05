@@ -33,7 +33,7 @@ When writing tests, please adhere to the following guidelines:
 
   For tests using PyNEST, define
 
-      HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+      HAVE_GSL = nest.build_info["have_gsl"]
 
   and then apply the following decorator to all pertaining test classes
 

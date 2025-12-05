@@ -54,7 +54,7 @@ class TestSettingCommonProps:
         nest.SetDefaults(synapse, expected_values)
 
         actual_values = nest.GetDefaults(synapse, keys=expected_values.keys())
-        assert actual_values == tuple(expected_values.values())
+        assert actual_values == list(expected_values.values())
 
     def test_setting_common_props_on_copy(self, synapse):
         copied_syn = f"{synapse}_copy"
@@ -62,7 +62,7 @@ class TestSettingCommonProps:
         nest.CopyModel(synapse, copied_syn, expected_values)
 
         actual_values = nest.GetDefaults(copied_syn, keys=expected_values.keys())
-        assert actual_values == tuple(expected_values.values())
+        assert actual_values == list(expected_values.values())
 
     def test_setting_non_common_props_on_instance(self, synapse):
         neuron = nest.Create("iaf_psc_alpha")

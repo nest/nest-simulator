@@ -40,8 +40,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -194,44 +192,44 @@ nest::iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_cond_beta::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::V_reset, V_reset );
-  def< double >( d, names::t_ref, t_ref );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_rise_ex, tau_rise_ex );
-  def< double >( d, names::tau_decay_ex, tau_decay_ex );
-  def< double >( d, names::tau_rise_in, tau_rise_in );
-  def< double >( d, names::tau_decay_in, tau_decay_in );
-  def< double >( d, names::I_e, I_e );
+  d[ names::V_th ] = V_th;
+  d[ names::V_reset ] = V_reset;
+  d[ names::t_ref ] = t_ref;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_rise_ex ] = tau_rise_ex;
+  d[ names::tau_decay_ex ] = tau_decay_ex;
+  d[ names::tau_rise_in ] = tau_rise_in;
+  d[ names::tau_decay_in ] = tau_decay_in;
+  d[ names::I_e ] = I_e;
 }
 
 void
-nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_reset, V_reset, node );
-  updateValueParam< double >( d, names::t_ref, t_ref, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_reset, V_reset, node );
+  update_value_param( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  updateValueParam< double >( d, names::tau_rise_ex, tau_rise_ex, node );
-  updateValueParam< double >( d, names::tau_decay_ex, tau_decay_ex, node );
-  updateValueParam< double >( d, names::tau_rise_in, tau_rise_in, node );
-  updateValueParam< double >( d, names::tau_decay_in, tau_decay_in, node );
+  update_value_param( d, names::tau_rise_ex, tau_rise_ex, node );
+  update_value_param( d, names::tau_decay_ex, tau_decay_ex, node );
+  update_value_param( d, names::tau_rise_in, tau_rise_in, node );
+  update_value_param( d, names::tau_decay_in, tau_decay_in, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -251,23 +249,23 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_cond_beta::State_::get( DictionaryDatum& d ) const
+nest::iaf_cond_beta::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y[ V_M ] ); // Membrane potential
-  def< double >( d, names::g_ex, y[ G_EXC ] );
-  def< double >( d, names::dg_ex, y[ DG_EXC ] );
-  def< double >( d, names::g_in, y[ G_INH ] );
-  def< double >( d, names::dg_in, y[ DG_INH ] );
+  d[ names::V_m ] = y[ V_M ]; // Membrane potential
+  d[ names::g_ex ] = y[ G_EXC ];
+  d[ names::dg_ex ] = y[ DG_EXC ];
+  d[ names::g_in ] = y[ G_INH ];
+  d[ names::dg_in ] = y[ DG_INH ];
 }
 
 void
-nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_beta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
-  updateValueParam< double >( d, names::g_ex, y[ G_EXC ], node );
-  updateValueParam< double >( d, names::dg_ex, y[ DG_EXC ], node );
-  updateValueParam< double >( d, names::g_in, y[ G_INH ], node );
-  updateValueParam< double >( d, names::dg_in, y[ DG_INH ], node );
+  update_value_param( d, names::V_m, y[ V_M ], node );
+  update_value_param( d, names::g_ex, y[ G_EXC ], node );
+  update_value_param( d, names::dg_ex, y[ DG_EXC ], node );
+  update_value_param( d, names::g_in, y[ G_INH ], node );
+  update_value_param( d, names::dg_in, y[ DG_INH ], node );
 }
 
 

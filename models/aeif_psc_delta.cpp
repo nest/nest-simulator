@@ -41,8 +41,6 @@
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -173,44 +171,44 @@ nest::aeif_psc_delta::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
-  def< bool >( d, names::refractory_input, with_refr_input_ );
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::refractory_input ] = with_refr_input_;
 }
 
 void
-nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -261,21 +259,21 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 
-  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
+  update_value_param( d, names::refractory_input, with_refr_input_, node );
 }
 
 void
-nest::aeif_psc_delta::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::w, y_[ W ] );
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::w ] = y_[ W ];
 }
 
 void
-nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
 }
 
 

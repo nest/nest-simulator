@@ -90,25 +90,16 @@ Developer guides
 
 .. grid:: 1 1 2 2
 
-    .. grid-item-card:: SLI documentation
-        :link: sli_doc
-        :link-type: ref
+    .. grid-item-card:: Helpful guides
 
+       Here are a few miscellaneous guides that you might find useful:
+
+       * :ref:`Developing NEST with IDEs <nest_ides>`
 
     .. grid-item-card:: C++ documentation
 
         * see :ref:`devdoc_workflow`
 
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: Helpful guides
-
-       Here are a few miscellaneous guides that you might find useful:
-
-
-       * :ref:`Developing NEST with IDEs <nest_ides>`
-
-       * :ref:`vim_sli`
 
 .. toctree::
    :maxdepth: 1
@@ -119,7 +110,5 @@ Developer guides
    workflows/documentation_workflow/index
    guidelines/*
    guidelines/styleguide/styleguide
-   guidelines/styleguide/vim_support_sli
    templates/*
-   sli_docs/index
    cppcomments

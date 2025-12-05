@@ -27,10 +27,9 @@ import unittest
 
 import nest
 
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
-@nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -45,24 +44,22 @@ class GetConnectionsTestCase(unittest.TestCase):
         c2 = nest.GetConnections(a, synapse_model="static_synapse")
         self.assertEqual(c1, c2)
 
-        weights = (2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+        weights = [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
         d1 = tuple({"weight": w} for w in weights)
 
         c3 = nest.GetConnections(a, a)
-        nest.SetStatus(c3, d1)
-        s1 = nest.GetStatus(c3, "weight")
-        self.assertEqual(s1, weights)
+        c3.set(d1)
+        self.assertEqual(c3.weight, weights)
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
 
-        weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        weights = [11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0]
         d1 = tuple({"weight": w} for w in weights)
 
         c5 = nest.GetConnections(a, a)
         c5.set(d1)
-        s2 = c5.get("weight")
-        self.assertEqual(s2, list(weights))
+        self.assertEqual(c5.get("weight"), weights)
 
         c6 = nest.GetConnections()
         self.assertEqual(c1, c6)
@@ -75,7 +72,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(alpha, other)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -97,7 +94,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 other = nest.Create(model)
                 nest.Connect(other, alpha)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
@@ -129,7 +126,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={"synapse_model": synapse_model})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
@@ -169,7 +166,7 @@ class GetConnectionsTestCase(unittest.TestCase):
             try:
                 # Connect with specified synapse
                 nest.Connect(src, tgt, syn_spec={"synapse_model": synapse_model, "synapse_label": label})
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 

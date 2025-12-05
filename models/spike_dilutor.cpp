@@ -32,9 +32,6 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_spike_dilutor( const std::string& name )
@@ -57,15 +54,15 @@ nest::spike_dilutor::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
+nest::spike_dilutor::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::p_copy ] = p_copy_;
+  d[ names::p_copy ] = p_copy_;
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::spike_dilutor::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::p_copy, p_copy_, node );
+  update_value_param( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 or p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );

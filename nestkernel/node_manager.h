@@ -36,9 +36,6 @@
 #include "node_collection.h"
 #include "sparse_node_array.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -54,8 +51,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Get properties of a node.
@@ -63,7 +60,7 @@ public:
    * The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
-  DictionaryDatum get_status( size_t );
+  Dictionary get_status( size_t );
 
   /**
    * Set properties of a Node.
@@ -74,7 +71,7 @@ public:
    *                                          entry.
    * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
-  void set_status( size_t, const DictionaryDatum& );
+  void set_status( size_t, const Dictionary& );
 
   /**
    * Add a number of nodes to the network.
@@ -102,7 +99,7 @@ public:
    *
    * @returns NodeCollection as lock pointer
    */
-  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const Dictionary& dict, const bool local_only );
 
   /**
    * Return total number of network nodes.
@@ -282,7 +279,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( Node&, const Dictionary&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -363,7 +360,7 @@ private:
                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::exception_ptr > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;

@@ -31,12 +31,30 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
-// Includes from sli:
-#include "sliexceptions.h"
-#include "token.h"
+#include "sp_manager.h"
+#include "sp_manager_impl.h"
+
+#include "connector_model_impl.h"
+
+#include "conn_builder_conngen.h"
+
+#include "grid_mask.h"
+#include "spatial.h"
+
+#include "connection_manager_impl.h"
+
+#include "genericmodel_impl.h"
+#include "model_manager.h"
+#include "model_manager_impl.h"
+
+#include "config.h"
+#include "dictionary.h"
 
 namespace nest
 {
+
+
+AbstractMask* create_doughnut( const Dictionary& d );
 
 void
 init_nest( int* argc, char** argv[] )
@@ -44,16 +62,45 @@ init_nest( int* argc, char** argv[] )
   KernelManager::create_kernel_manager();
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
+
+  // TODO: register_parameter() and register_mask() should be moved, see #3149
+  register_parameter< ConstantParameter >( "constant" );
+  register_parameter< UniformParameter >( "uniform" );
+  register_parameter< UniformIntParameter >( "uniform_int" );
+  register_parameter< NormalParameter >( "normal" );
+  register_parameter< LognormalParameter >( "lognormal" );
+  register_parameter< ExponentialParameter >( "exponential" );
+  register_parameter< NodePosParameter >( "position" );
+  register_parameter< SpatialDistanceParameter >( "distance" );
+  register_parameter< GaussianParameter >( "gaussian" );
+  register_parameter< Gaussian2DParameter >( "gaussian2d" );
+  register_parameter< GammaParameter >( "gamma" );
+  register_parameter< ExpDistParameter >( "exp_distribution" );
+  register_parameter< GaborParameter >( "gabor" );
+
+  register_mask< BallMask< 2 > >();
+  register_mask< BallMask< 3 > >();
+  register_mask< EllipseMask< 2 > >();
+  register_mask< EllipseMask< 3 > >();
+  register_mask< BoxMask< 2 > >();
+  register_mask< BoxMask< 3 > >();
+  register_mask( "doughnut", create_doughnut );
+  register_mask< GridMask< 2 > >();
 }
 
 void
-fail_exit( int )
+shutdown_nest( int exitcode )
 {
+  // We must MPI_Finalize before the KernelManager() destructor runs, because
+  // both MusicManager and MPIManager may be involved, with mpi_finalize()
+  // delegating to MusicManager, which is deleted long before MPIManager.
+  kernel().mpi_manager.mpi_finalize( exitcode );
 }
 
 void
-install_module( const std::string& )
+install_module( const std::string& module )
 {
+  kernel().module_manager.install( module );
 }
 
 void
@@ -63,89 +110,207 @@ reset_kernel()
 }
 
 void
+enable_structural_plasticity()
+{
+  kernel().sp_manager.enable_structural_plasticity();
+}
+
+void
+disable_structural_plasticity()
+{
+  kernel().sp_manager.disable_structural_plasticity();
+}
+
+void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
   kernel().logging_manager.register_logging_client( client_callback );
 }
 
+std::string
+print_nodes_to_string()
+{
+  std::stringstream string_stream;
+  kernel().node_manager.print( string_stream );
+  return string_stream.str();
+}
+
+std::string
+pprint_to_string( NodeCollectionPTR nc )
+{
+  assert( nc );
+  std::stringstream stream;
+  nc->print_me( stream );
+  return stream.str();
+}
+
+size_t
+nc_size( NodeCollectionPTR nc )
+{
+  assert( nc && "NodeCollectionPTR must be initialized." );
+  return nc->size();
+}
+
 void
-print_nodes_to_stream( std::ostream& ostr )
+set_kernel_status( const Dictionary& dict )
 {
-  kernel().node_manager.print( ostr );
-}
-
-RngPtr
-get_rank_synced_rng()
-{
-  return kernel().random_manager.get_rank_synced_rng();
-}
-
-RngPtr
-get_vp_synced_rng( size_t tid )
-{
-  return kernel().random_manager.get_vp_synced_rng( tid );
-}
-
-RngPtr
-get_vp_specific_rng( size_t tid )
-{
-  return kernel().random_manager.get_vp_specific_rng( tid );
-}
-
-void
-set_kernel_status( const DictionaryDatum& dict )
-{
-  dict->clear_access_flags();
+  dict.init_access_flags();
   kernel().set_status( dict );
-  ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
+  dict.all_entries_accessed( "SetKernelStatus", "params" );
 }
 
-DictionaryDatum
+Dictionary
 get_kernel_status()
 {
   assert( kernel().is_initialized() );
 
-  DictionaryDatum d( new Dictionary );
+  Dictionary d;
   kernel().get_status( d );
 
   return d;
 }
 
+Dictionary
+get_nc_status( NodeCollectionPTR nc )
+{
+  Dictionary result;
+  size_t node_index = 0;
+  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
+  {
+    const auto node_status = get_node_status( ( *it ).node_id );
+    for ( const auto& [ key, entry ] : node_status )
+    {
+      const auto p = result.find( key );
+      if ( p != result.end() )
+      {
+        // key exists
+        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second.item );
+        v[ node_index ] = entry.item;
+      }
+      else
+      {
+        // key does not exist yet
+        auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
+        new_entry[ node_index ] = entry.item;
+        result[ key ] = new_entry;
+      }
+    }
+  }
+  return result;
+}
+
 void
-set_node_status( const size_t node_id, const DictionaryDatum& dict )
+set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
+{
+  /*
+   PYNEST-NG-FUTURE:
+
+   The following does NOT work because the rank_local does not "see" the siblings of devices
+
+  const auto rank_local_begin = nc->rank_local_begin();
+  if ( rank_local_begin == nc->end() )
+  {
+    return; // no local nodes, nothing to do --- more efficient and avoids params access check problems
+  }
+  */
+
+  if ( params.size() == 1 )
+  {
+    // We must iterate over all nodes here because we otherwise miss "siblings" of devices
+    // May consider ways to fix this.
+    for ( auto const& node : *nc )
+    {
+      kernel().node_manager.set_status( node.node_id, params[ 0 ] );
+    }
+  }
+  else if ( nc->size() == params.size() )
+  {
+    size_t idx = 0;
+    for ( auto const& node : *nc )
+    {
+      kernel().node_manager.set_status( node.node_id, params[ idx ] );
+      ++idx;
+    }
+  }
+  else
+  {
+    std::string msg = String::compose(
+      "List of dictionaries must be the same size as the NodeCollection (%1), %2 given.", nc->size(), params.size() );
+    throw BadParameter( msg );
+  }
+}
+
+void
+set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary& dict )
+{
+  dict.init_access_flags();
+  for ( auto& conn : conns )
+  {
+    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port(),
+      dict );
+  }
+  dict.all_entries_accessed( "connection.set()", "params" );
+}
+
+void
+set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< Dictionary >& dicts )
+{
+  if ( conns.size() != dicts.size() )
+  {
+    throw BadParameter( "List of dictionaries must contain one dictionary per connection" );
+  }
+
+  for ( size_t i = 0; i < conns.size(); ++i )
+  {
+    const auto conn = conns[ i ];
+    const auto dict = dicts[ i ];
+    dict.init_access_flags();
+    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port(),
+      dict );
+    dict.all_entries_accessed( "connection.set()", "params" );
+  }
+}
+
+std::vector< Dictionary >
+get_connection_status( const std::deque< ConnectionID >& conns )
+{
+  std::vector< Dictionary > result;
+  result.reserve( conns.size() );
+
+  for ( auto& conn : conns )
+  {
+    const auto d = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+      conn.get_target_node_id(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port() );
+    result.push_back( d );
+  }
+  return result;
+}
+
+void
+set_node_status( const size_t node_id, const Dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
-DictionaryDatum
+Dictionary
 get_node_status( const size_t node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
 
-void
-set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
-{
-  DictionaryDatum conn_dict = conn.get_dict();
-  const size_t source_node_id = getValue< long >( conn_dict, nest::names::source );
-  const size_t target_node_id = getValue< long >( conn_dict, nest::names::target );
-  const size_t tid = getValue< long >( conn_dict, nest::names::target_thread );
-  const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  const size_t p = getValue< long >( conn_dict, nest::names::port );
-
-  dict->clear_access_flags();
-
-  kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
-
-  ALL_ENTRIES_ACCESSED2( *dict,
-    "SetStatus",
-    "Unread dictionary entries: ",
-    "Maybe you tried to set common synapse properties through an individual "
-    "synapse?" );
-}
-
-DictionaryDatum
-get_connection_status( const ConnectionDatum& conn )
+Dictionary
+get_connection_status( const ConnectionID& conn )
 {
   return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
     conn.get_target_node_id(),
@@ -155,11 +320,43 @@ get_connection_status( const ConnectionDatum& conn )
 }
 
 NodeCollectionPTR
-create( const Name& model_name, const size_t n_nodes )
+slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
+{
+  const size_t g_size = nc->size();
+
+  if ( step < 1 )
+  {
+    throw BadParameterValue( "Slicing step must be strictly positive." );
+  }
+
+  if ( start >= 0 )
+  {
+    start -= 1; // adjust from 1-based to 0-based indexing
+  }
+  else
+  {
+    start += g_size; // automatically correct for 0-based indexing
+  }
+
+  if ( stop >= 0 )
+  {
+    // no adjustment necessary: adjustment from 1- to 0- based indexing
+    // and adjustment from last- to stop-based logic cancel
+  }
+  else
+  {
+    stop += g_size + 1; // adjust from 0- to 1- based indexin
+  }
+
+  return nc->slice( start, stop, step );
+}
+
+NodeCollectionPTR
+create( const std::string& model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
-    throw RangeCheck();
+    throw BadParameterValue( "n_nodes > 0 expected" );
   }
 
   const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
@@ -167,27 +364,80 @@ create( const Name& model_name, const size_t n_nodes )
 }
 
 NodeCollectionPTR
-get_nodes( const DictionaryDatum& params, const bool local_only )
+create_spatial( const Dictionary& layer_dict )
+{
+  return create_layer( layer_dict );
+}
+
+NodeCollectionPTR
+make_nodecollection( const std::vector< size_t >& node_ids )
+{
+  return NodeCollection::create( node_ids );
+}
+
+NodeCollectionPTR
+get_nodes( const Dictionary& params, const bool local_only )
 {
   return kernel().node_manager.get_nodes( params, local_only );
+}
+
+bool
+equal( const NodeCollectionPTR lhs, const NodeCollectionPTR rhs )
+{
+  return lhs->operator==( rhs );
+}
+
+bool
+contains( const NodeCollectionPTR nc, const size_t node_id )
+{
+  return nc->contains( node_id );
+}
+
+long
+find( const NodeCollectionPTR nc, size_t node_id )
+{
+  return nc->get_nc_index( node_id );
+}
+
+Dictionary
+get_metadata( const NodeCollectionPTR nc )
+{
+  Dictionary status_dict;
+  const auto meta = nc->get_metadata();
+  // Fill the status dictionary only if the NodeCollection has valid metadata.
+  if ( meta.get() )
+  {
+    meta->get_status( status_dict, nc );
+    status_dict[ names::network_size ] = nc->size();
+  }
+  return status_dict;
 }
 
 void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& connectivity,
-  const std::vector< DictionaryDatum >& synapse_params )
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+}
+
+void
+disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const Dictionary& connectivity,
+  const std::vector< Dictionary >& synapse_params )
+{
+  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 }
 
 void
 connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& connectivity,
-  const DictionaryDatum& third_connectivity,
-  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
+  const Dictionary& connectivity,
+  const Dictionary& third_connectivity,
+  const std::map< std::string, std::vector< Dictionary > >& synapse_specs )
 {
   kernel().connection_manager.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
@@ -198,43 +448,48 @@ connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
-  std::vector< std::string >& p_keys,
+  const std::vector< std::string >& p_keys,
   double* p_values,
   size_t n,
-  std::string syn_model )
+  const std::string& syn_model )
 {
   kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }
 
-ArrayDatum
-get_connections( const DictionaryDatum& dict )
+void
+connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
 {
-  dict->clear_access_flags();
+  kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
+}
 
-  ArrayDatum array = kernel().connection_manager.get_connections( dict );
+std::deque< ConnectionID >
+get_connections( const Dictionary& dict )
+{
+  dict.init_access_flags();
 
-  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
+  const auto& connectome = kernel().connection_manager.get_connections( dict );
 
-  return array;
+  dict.all_entries_accessed( "GetConnections", "params" );
+
+  return connectome;
 }
 
 void
-disconnect( const ArrayDatum& conns )
+disconnect( const std::deque< ConnectionID >& conns )
 {
   // probably not strictly necessary here, but does nothing if all is up to date
   kernel().node_manager.update_thread_local_node_data();
 
-  for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
+  for ( auto& conn : conns )
   {
-    const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
-    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
+    const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
     kernel().sp_manager.disconnect(
-      conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
+      conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
   }
 }
 
 void
-simulate( const double& t )
+simulate( const double t )
 {
   prepare();
   run( t );
@@ -242,7 +497,7 @@ simulate( const double& t )
 }
 
 void
-run( const double& time )
+run( const double time )
 {
   const Time t_sim = Time::ms( time );
 
@@ -256,9 +511,7 @@ run( const double& time )
   }
   if ( not t_sim.is_grid_time() )
   {
-    throw BadParameter(
-      "The simulation time must be a multiple "
-      "of the simulation resolution." );
+    throw BadParameter( "The simulation time must be a multiple of the simulation resolution." );
   }
 
   kernel().simulation_manager.run( t_sim );
@@ -277,13 +530,19 @@ cleanup()
 }
 
 void
-copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
+synchronize()
+{
+  kernel().mpi_manager.synchronize();
+}
+
+void
+copy_model( const std::string& oldmodname, const std::string& newmodname, const Dictionary& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
-set_model_defaults( const std::string component, const DictionaryDatum& dict )
+set_model_defaults( const std::string& component, const Dictionary& dict )
 {
   if ( kernel().model_manager.set_model_defaults( component, dict ) )
   {
@@ -299,8 +558,8 @@ set_model_defaults( const std::string component, const DictionaryDatum& dict )
   throw UnknownComponent( component );
 }
 
-DictionaryDatum
-get_model_defaults( const std::string component )
+Dictionary
+get_model_defaults( const std::string& component )
 {
   try
   {
@@ -328,36 +587,103 @@ get_model_defaults( const std::string component )
   }
 
   throw UnknownComponent( component );
-  return DictionaryDatum(); // supress missing return value warning; never reached
+  return Dictionary(); // supress missing return value warning; never reached
 }
 
-ParameterDatum
-create_parameter( const DictionaryDatum& param_dict )
+ParameterPTR
+create_parameter( const boost::any& value )
 {
-  param_dict->clear_access_flags();
+  if ( is_type< double >( value ) )
+  {
+    return create_parameter( boost::any_cast< double >( value ) );
+  }
+  else if ( is_type< int >( value ) )
+  {
+    return create_parameter( static_cast< long >( boost::any_cast< int >( value ) ) );
+  }
+  else if ( is_type< long >( value ) )
+  {
+    return create_parameter( boost::any_cast< long >( value ) );
+  }
+  else if ( is_type< Dictionary >( value ) )
+  {
+    return create_parameter( boost::any_cast< Dictionary >( value ) );
+  }
+  else if ( is_type< ParameterPTR >( value ) )
+  {
+    return boost::any_cast< ParameterPTR >( value );
+  }
+  throw BadProperty(
+    std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+}
 
-  ParameterDatum datum( NestModule::create_parameter( param_dict ) );
+ParameterPTR
+create_parameter( const double value )
+{
+  const auto param = new ConstantParameter( value );
+  return ParameterPTR( param );
+}
 
-  ALL_ENTRIES_ACCESSED( *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
+ParameterPTR
+create_parameter( const long value )
+{
+  const auto param = new ConstantParameter( value );
+  return ParameterPTR( param );
+}
 
-  return datum;
+ParameterPTR
+create_parameter( const Dictionary& param_dict )
+{
+  // The dictionary should only have a single key, which is the name of
+  // the parameter type to create.
+  if ( param_dict.size() != 1 )
+  {
+    throw BadProperty( "Parameter definition dictionary must contain one single key only." );
+  }
+  const auto n = param_dict.begin()->first;
+  const auto pdict = param_dict.get< Dictionary >( n );
+  pdict.init_access_flags();
+  auto parameter = create_parameter( n, pdict );
+  pdict.all_entries_accessed( "create_parameter", "param" );
+  return parameter;
+}
+
+ParameterPTR
+create_parameter( const std::string& name, const Dictionary& d )
+{
+  // The parameter factory will create the parameter
+  return ParameterPTR( parameter_factory_().create( name, d ) );
+}
+
+ParameterFactory&
+parameter_factory_( void )
+{
+  static ParameterFactory factory;
+  return factory;
+}
+
+MaskFactory&
+mask_factory_( void )
+{
+  static MaskFactory factory;
+  return factory;
 }
 
 double
-get_value( const ParameterDatum& param )
+get_value( const ParameterPTR param )
 {
   RngPtr rng = get_rank_synced_rng();
   return param->value( rng, nullptr );
 }
 
 bool
-is_spatial( const ParameterDatum& param )
+is_spatial( const ParameterPTR param )
 {
   return param->is_spatial();
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
+apply( const ParameterPTR param, const NodeCollectionPTR nc )
 {
   std::vector< double > result;
   result.reserve( nc->size() );
@@ -371,40 +697,35 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const DictionaryDatum& positions )
+apply( const ParameterPTR param, const Dictionary& positions )
 {
-  auto source_tkn = positions->lookup( names::source );
-  auto source_nc = getValue< NodeCollectionPTR >( source_tkn );
-
-  auto targets_tkn = positions->lookup( names::targets );
-  TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
-  return param->apply( source_nc, target_tkns );
+  auto source_nc = positions.get< NodeCollectionPTR >( names::source );
+  auto targets = positions.get< std::vector< std::vector< double > > >( names::targets );
+  return param->apply( source_nc, targets );
 }
 
-Datum*
-node_collection_array_index( const Datum* datum, const long* array, unsigned long n )
+NodeCollectionPTR
+node_collection_array_index( NodeCollectionPTR nc, const long* array, unsigned long n )
 {
-  const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
-  assert( node_collection->size() >= n );
+  assert( nc->size() >= n );
   std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
   {
-    node_ids.push_back( node_collection->operator[]( *node_ptr ) );
+    node_ids.push_back( nc->operator[]( *node_ptr ) );
   }
-  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+  return NodeCollection::create( node_ids );
 }
 
-Datum*
-node_collection_array_index( const Datum* datum, const bool* array, unsigned long n )
+NodeCollectionPTR
+node_collection_array_index( NodeCollectionPTR nc, const bool* array, unsigned long n )
 {
-  const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
-  assert( node_collection->size() == n );
+  assert( nc->size() == n );
   std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
-  auto nc_it = node_collection->begin();
+  auto nc_it = nc->begin();
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr, ++nc_it )
   {
     if ( *node_ptr )
@@ -412,7 +733,38 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
       node_ids.push_back( ( *nc_it ).node_id );
     }
   }
-  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+  return NodeCollection::create( node_ids );
+}
+
+std::vector< size_t >
+node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection )
+{
+  return node_collection->to_array( selection );
+}
+
+AbstractMask*
+create_doughnut( const Dictionary& d )
+{
+  // The doughnut (actually an annulus) is created using a DifferenceMask
+  Position< 2 > center( 0, 0 );
+  if ( d.known( names::anchor ) )
+  {
+    center = d.get< std::vector< double > >( names::anchor );
+  }
+
+  const double outer = d.get< double >( names::outer_radius );
+  const double inner = d.get< double >( names::inner_radius );
+  if ( inner >= outer )
+  {
+    throw BadProperty(
+      "nest::create_doughnut: "
+      "inner_radius < outer_radius required." );
+  }
+
+  BallMask< 2 > outer_circle( center, outer );
+  BallMask< 2 > inner_circle( center, inner );
+
+  return new DifferenceMask< 2 >( outer_circle, inner_circle );
 }
 
 } // namespace nest

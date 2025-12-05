@@ -37,8 +37,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -51,8 +49,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -65,10 +63,7 @@ public:
    */
   void calibrate( const TimeConverter& );
 
-
   /**
-   * Return a proxynode configured for thread tid and the given
-   * node_id.
    */
   Node* get_proxy_node( size_t tid, size_t node_id );
 
@@ -98,7 +93,7 @@ public:
    * @see register_connection_model
    */
   template < class ModelT >
-  size_t register_node_model( const Name& name, std::string deprecation_info = std::string() );
+  size_t register_node_model( const std::string& name, std::string deprecation_info = std::string() );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -126,7 +121,7 @@ public:
    * @param params default parameters of new model.
    * @see copy_node_model_, copy_connection_model_
    */
-  void copy_model( Name old_name, Name new_name, DictionaryDatum params );
+  void copy_model( const std::string& old_name, const std::string& new_name, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -136,13 +131,13 @@ public:
    * @return true if the operation succeeded, else false
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  bool set_model_defaults( Name name, DictionaryDatum params );
+  bool set_model_defaults( const std::string& name, const Dictionary& params );
 
   /**
    * @return The model ID for a Model with a given name
    * @throws UnknownModelName if the model is not available
    */
-  size_t get_node_model_id( const Name ) const;
+  size_t get_node_model_id( const std::string ) const;
 
   /**
    * @return The Model registered with the given model ID
@@ -155,9 +150,9 @@ public:
    */
   size_t get_synapse_model_id( std::string model_name );
 
-  DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+  Dictionary get_connector_defaults( synindex syn_id ) const;
 
-  void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
+  void set_connector_defaults( synindex syn_id, const Dictionary& d );
 
   /**
    * Asserts validity of synapse index, otherwise throws exception.
@@ -200,7 +195,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_connection_model_()
    */
-  void copy_node_model_( const size_t old_id, Name new_name, DictionaryDatum params );
+  void copy_node_model_( const size_t old_id, const std::string& new_name, const Dictionary& params );
 
   /**
    * Copy an existing synapse model and register it as a new model.
@@ -209,7 +204,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_node_model_()
    */
-  void copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params );
+  void copy_connection_model_( const size_t old_id, const std::string& new_name, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -218,7 +213,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_synapse_defaults_
    */
-  void set_node_defaults_( size_t model_id, const DictionaryDatum& params );
+  void set_node_defaults_( size_t model_id, const Dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -227,7 +222,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_node_defaults_
    */
-  void set_synapse_defaults_( size_t model_id, const DictionaryDatum& params );
+  void set_synapse_defaults_( size_t model_id, const Dictionary& params );
 
   //! Compares model ids for sorting in memory_info
   static bool compare_model_by_id_( const int a, const int b );
@@ -270,8 +265,8 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  DictionaryDatum modeldict_;   //!< Dictionary of all node models
-  DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
+  Dictionary modeldict_;   //!< Dictionary of all node models
+  Dictionary synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
 

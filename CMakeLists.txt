@@ -23,6 +23,11 @@ cmake_minimum_required( VERSION 3.19 )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
+
+set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_STANDARD_REQUIRED True )
+set( CMAKE_CXX_EXTENSIONS OFF )          # -std=c++17 instead of gnu++17
+
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
 include( ColorMessages )
@@ -50,7 +55,7 @@ option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON].
 
 # select parallelization scheme
 set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
-set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
+set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]." )
 
 # external libraries
 set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )
@@ -58,7 +63,6 @@ set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally giv
 set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
 set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
 set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
-set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
@@ -77,7 +81,6 @@ option( static-libraries "Build static executable and libraries [default=OFF]" O
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
-set( with-cpp-std "c++17" CACHE STRING "C++ standard to use for compilation [default='c++17']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
@@ -130,7 +133,6 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 nest_process_with_python()
 include( GNUInstallDirs )
 nest_post_process_with_python()
-nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()
@@ -140,7 +142,6 @@ nest_process_static_libraries()
 nest_process_tics_per_ms()
 nest_process_tics_per_step()
 nest_process_with_libltdl()
-nest_process_with_readline()
 nest_process_with_gsl()
 nest_process_with_openmp()
 nest_process_with_mpi()
@@ -222,13 +223,9 @@ add_custom_target( installcheck
 
 add_subdirectory( doc )
 add_subdirectory( bin )
-add_subdirectory( examples )
 add_subdirectory( build_support )
-add_subdirectory( lib )
 add_subdirectory( libnestutil )
 add_subdirectory( models )
-add_subdirectory( sli )
-add_subdirectory( nest )
 add_subdirectory( nestkernel )
 add_subdirectory( thirdparty )
 add_subdirectory( testsuite )
@@ -275,10 +272,7 @@ endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
-  "-lnest"
-  "-lsli"
   "${LTDL_LIBRARIES}"
-  "${READLINE_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
@@ -302,10 +296,10 @@ set( ALL_LIBS
 set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
-  "${READLINE_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
+  "${OpenMP_CXX_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_PATH}"
   "${BOOST_INCLUDE_DIR}" )
 set( ALL_INCLUDES "" )
@@ -357,6 +351,10 @@ configure_file(
 
 install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+)
+
+install( DIRECTORY examples/
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
+)
 
 nest_print_config_summary()

@@ -45,11 +45,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -107,8 +102,8 @@ public:
   SignalType sends_signal() const override;
   SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -139,8 +134,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -158,8 +153,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -288,19 +283,19 @@ binary_neuron< TGainfunction >::receives_signal() const
 
 template < class TGainfunction >
 inline void
-binary_neuron< TGainfunction >::get_status( DictionaryDatum& d ) const
+binary_neuron< TGainfunction >::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   gain_.get( d );
 }
 
 template < class TGainfunction >
 inline void
-binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
+binary_neuron< TGainfunction >::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -350,16 +345,16 @@ binary_neuron< TGainfunction >::State_::State_()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::get( DictionaryDatum& d ) const
+binary_neuron< TGainfunction >::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::tau_m, tau_m_ );
+  d[ names::tau_m ] = tau_m_;
 }
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, Node* node )
+binary_neuron< TGainfunction >::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -368,15 +363,15 @@ binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, Node
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameters_& ) const
+binary_neuron< TGainfunction >::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  def< double >( d, names::h, h_ ); // summed input
-  def< double >( d, names::S, y_ ); // binary_neuron output state
+  d[ names::h ] = h_; // summed input
+  d[ names::S ] = y_; // binary_neuron output state
 }
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+binary_neuron< TGainfunction >::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 

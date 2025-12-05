@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -86,7 +86,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
 
-    updateValue< std::string >( params, names::mpi_address, mpi_address_ );
+    params.update_value( names::mpi_address, mpi_address_ );
   }
   else
   {
@@ -109,8 +109,8 @@ nest::RecordingBackendMPI::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendMPI::set_value_names( const RecordingDevice&,
-  const std::vector< Name >&,
-  const std::vector< Name >& )
+  const std::vector< std::string >&,
+  const std::vector< std::string >& )
 {
   // nothing to do
 }
@@ -185,7 +185,7 @@ nest::RecordingBackendMPI::prepare()
     }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Record connect", msg.str() );
+    LOG( VerbosityLevel::INFO, "MPI Record connect", msg.str() );
   }
 #pragma omp parallel default( none ) shared( thread_id_master )
   {
@@ -301,19 +301,19 @@ nest::RecordingBackendMPI::cleanup()
 }
 
 void
-nest::RecordingBackendMPI::check_device_status( const DictionaryDatum& ) const
+nest::RecordingBackendMPI::check_device_status( const Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_defaults( DictionaryDatum& ) const
+nest::RecordingBackendMPI::get_device_defaults( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, DictionaryDatum& ) const
+nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, Dictionary& ) const
 {
   // nothing to do
 }
@@ -347,13 +347,13 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::RecordingBackendMPI::get_status( DictionaryDatum& ) const
+nest::RecordingBackendMPI::get_status( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
+nest::RecordingBackendMPI::set_status( const Dictionary& )
 {
   // nothing to do
 }

@@ -17,38 +17,45 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( nestutil_sources
+set(nestutil_sources
+    allocator.h allocator.cpp
     beta_normalization_factor.h
     block_vector.h
+    dictionary.h dictionary.cpp
     dict_util.h
     enum_bitfield.h
     iaf_propagator.h iaf_propagator.cpp
     iterator_pair.h
-    lockptr.h
     logging_event.h logging_event.cpp
     logging.h
     nest_types.h
     numerics.h numerics.cpp
     regula_falsi.h
     sort.h
-    string_utils.h
+    string_util.h
     vector_util.h
-    )
+)
 
-add_library( nestutil STATIC ${nestutil_sources} )
+add_library(nestutil STATIC ${nestutil_sources})
 
-set_target_properties( nestutil
-    PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
-    )
+if(APPLE)
+    set_target_properties(nestutil PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup")
+endif()
 
-target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
+set_target_properties(nestutil PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories( nestutil PRIVATE
+target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} OpenMP::OpenMP_CXX)
+
+target_include_directories(nestutil PRIVATE
+    ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/nestkernel
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${Boost_INCLUDE_DIRS}
-    )
+)
 
-FILTER_HEADERS("${nestutil_sources}" install_headers )
-install( FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+FILTER_HEADERS("${nestutil_sources}" install_headers)
+
+install(FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
+)

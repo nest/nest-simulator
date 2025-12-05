@@ -31,17 +31,11 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 void
 nest::register_poisson_generator( const std::string& name )
 {
   register_node_model< poisson_generator >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -58,15 +52,15 @@ nest::poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::poisson_generator::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ );
+  d[ names::rate ] = rate_;
 }
 
 void
-nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::poisson_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "The rate cannot be negative." );
@@ -170,8 +164,8 @@ nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double 
     {
       throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    Dictionary d;
+    d[ names::rate ] = input_param[ 0 ];
     ptmp.set( d, this );
   }
 

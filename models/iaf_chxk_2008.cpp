@@ -37,8 +37,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -195,40 +193,40 @@ nest::iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_chxk_2008::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::tau_ahp, tau_ahp );
-  def< double >( d, names::E_ahp, E_ahp );
-  def< double >( d, names::g_ahp, g_ahp );
-  def< bool >( d, names::ahp_bug, ahp_bug );
+  d[ names::V_th ] = V_th;
+  d[ names::g_L ] = g_L;
+  d[ names::C_m ] = C_m;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::E_L ] = E_L;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
+  d[ names::tau_ahp ] = tau_ahp;
+  d[ names::E_ahp ] = E_ahp;
+  d[ names::g_ahp ] = g_ahp;
+  d[ names::ahp_bug ] = ahp_bug;
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
-  updateValueParam< double >( d, names::I_e, I_e, node );
-  updateValueParam< double >( d, names::tau_ahp, tau_ahp, node );
-  updateValueParam< double >( d, names::E_ahp, E_ahp, node );
-  updateValueParam< double >( d, names::g_ahp, g_ahp, node );
-  updateValueParam< bool >( d, names::ahp_bug, ahp_bug, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
+  update_value_param( d, names::I_e, I_e, node );
+  update_value_param( d, names::tau_ahp, tau_ahp, node );
+  update_value_param( d, names::E_ahp, E_ahp, node );
+  update_value_param( d, names::g_ahp, g_ahp, node );
+  update_value_param( d, names::ahp_bug, ahp_bug, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -240,15 +238,15 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_chxk_2008::State_::get( DictionaryDatum& d ) const
+nest::iaf_chxk_2008::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y[ V_M ] ); // Membrane potential
+  d[ names::V_m ] = y[ V_M ]; // Membrane potential
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_chxk_2008::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
+  update_value_param( d, names::V_m, y[ V_M ], node );
 }
 
 /* ----------------------------------------------------------------

@@ -39,7 +39,7 @@ Debugging and quality control
 -----------------------------
 
 Use the ``assert`` macro intensively to check program invariants.
-Create expressive unit-tests using one of the supplied SLI and Python unit-testing
+Create expressive unit-tests using the Python unit-testing
 infrastructure or the C++ testing framework based on Boost.
 
 Compiler

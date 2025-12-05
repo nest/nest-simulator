@@ -109,4 +109,4 @@ def test_issue_connect_array_mpi(connspec):
             assert set(actual_weights) <= set(expected_weights)
             assert set(actual_delays) <= set(expected_delays)
 
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False)  # noqa: F821
+    conns.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821

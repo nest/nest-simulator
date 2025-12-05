@@ -110,7 +110,6 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( cons
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 template <>
@@ -119,7 +118,6 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const s
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 
@@ -138,7 +136,10 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
 {
   for ( auto& c : C_ )
   {
-    c.delete_optimizer();
+    if ( not c.is_disabled() )
+    {
+      c.delete_optimizer();
+    }
   }
   C_.clear();
 }

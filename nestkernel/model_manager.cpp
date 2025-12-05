@@ -129,7 +129,9 @@ ModelManager::get_status( DictionaryDatum& dict )
   def< ArrayDatum >( dict, names::synapse_models, synapse_models );
 
   // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
-  def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
+  // the last ID is however used as "invalid_synindex", so the final array
+  // position will always be empty in the `connections` and `source_table`.
+  def< int >( dict, names::max_num_syn_models, MAX_SYN_ID );
 }
 
 void

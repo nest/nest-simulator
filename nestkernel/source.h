@@ -43,16 +43,12 @@ private:
   uint64_t node_id_ : NUM_BITS_NODE_ID; //!< node ID of source
   bool processed_ : 1;                  //!< whether this target has already been moved
                                         //!< to the MPI buffer
-  bool primary_ : 1;
+  bool primary_ : 1;                    //!< source of primary connection
+  bool disabled_ : 1;                   //!< connection has been disabled
 
 public:
   Source();
   explicit Source( const uint64_t node_id, const bool primary );
-
-  /**
-   * Sets node_id_ to the specified value.
-   */
-  void set_node_id( const uint64_t node_id );
 
   /**
    * Returns this Source's node ID.

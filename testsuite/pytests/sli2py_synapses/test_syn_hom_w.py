@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+#
+# test_syn_hom_w.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Name: test_syn_hom_w - sli script for test synapse with homogeneous weight and delay.
+
+Description:
+Test of the overall function of static_synapse_hom_w.
+A simple integrate-and-fire neuron is created. It is connected to a spike
+generator and a voltmeter by static synapses with homogeneous weight.
+
+Test ported from SLI regression test.
+
+FirstVersion: April 2008
+
+Author: Moritz Helias, Susanne Kunkel
+"""
+
+import nest
+import numpy as np
+import pytest
+import testutil
+
+# Reference data: numpy array with [time_step, voltage] pairs
+# Times are in steps and will be converted to milliseconds by multiplying by resolution
+REFERENCE_DATA = np.array(
+    [
+        [1, -70],
+        [2, -70],
+        [3, -70],
+        [4, -70],
+        [27, -70],
+        [28, -70],
+        [29, -70],
+        [30, -70],
+        [31, -6.999740e01],
+        [32, -6.998990e01],
+        [33, -6.997810e01],
+        [34, -6.996240e01],
+        [35, -6.994340e01],
+        [45, -6.964350e01],
+        [46, -6.960840e01],
+        [47, -6.957320e01],
+        [48, -6.953800e01],
+        [49, -6.950290e01],
+        [50, -6.946810e01],
+        [51, -6.943360e01],
+        [52, -6.939950e01],
+        [53, -6.936600e01],
+        [54, -6.933300e01],
+        [55, -6.930080e01],
+        [60, -6.915080e01],
+    ]
+)
+
+
+def test_syn_hom_w():
+    """
+    Test static_synapse_hom_w with homogeneous weight and delay.
+    """
+    delay = 1.0  # in ms
+    dt = 0.1  # resolution in ms
+
+    nest.ResetKernel()
+    nest.set(resolution=dt, local_num_threads=1)
+
+    sg = nest.Create("spike_generator")
+    sg.set(
+        {
+            "precise_times": False,
+            "origin": 0.0,  # in ms
+            "spike_times": [2.0],  # in ms
+            "start": 1.0,  # in ms
+            "stop": 3.0,  # in ms
+        }
+    )
+
+    neuron = nest.Create("iaf_psc_alpha")
+
+    vm = nest.Create("voltmeter", params={"time_in_steps": False, "interval": dt})
+    nest.SetDefaults("static_synapse_hom_w", {"weight": 100.0, "delay": delay})
+
+    nest.Connect(sg, neuron, syn_spec={"synapse_model": "static_synapse_hom_w"})
+    nest.Connect(vm, neuron, syn_spec={"synapse_model": "static_synapse_hom_w"})
+
+    simulation_time = 7.0  # in ms
+    nest.Simulate(simulation_time)
+
+    events = vm.get("events")
+    times = events["times"]
+    voltages = events["V_m"]
+
+    # Prepare actual data array
+    actual_data = np.column_stack((times, voltages))
+
+    # Reference data needs to have times in ms, while data above is in 0.1 ms steps
+    REFERENCE_DATA[:, 0] *= 0.1
+
+    actual, expected = testutil.get_comparable_timesamples(dt, actual_data, REFERENCE_DATA)
+
+    # We know that get_comparable_timesamples() will return only if it has at least one data point to return
+
+    # Assert approximate equality
+    # Reference data has 6 decimal places (scientific notation), so use appropriate tolerance
+    np.testing.assert_allclose(actual, expected, rtol=1e-6)

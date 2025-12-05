@@ -43,6 +43,7 @@
 #include "event.h"
 #include "node.h"
 #include "source.h"
+#include "source_table.h"
 #include "spikecounter.h"
 
 #include "block_vector.h"
@@ -193,14 +194,16 @@ public:
   virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
 
   /**
-   * Return lcid of first connection where the node ID of the target
-   * matches target_node_id; consider only the connections with lcids
-   * given in matching_lcids. If there is no match, the function returns
-   * invalid_index.
+   * Return lcid of first connection matching source and target node id and that
+   * is not disabled.
+   *
+   * Intended for use with unsorted (uncompressed) connections.
    */
-  virtual size_t find_matching_target( const size_t tid,
-    const std::vector< size_t >& matching_lcids,
-    const size_t target_node_id ) const = 0;
+  virtual size_t find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const = 0;
 
   /**
    * Disable the transfer of events through the connection at position

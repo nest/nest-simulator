@@ -324,6 +324,8 @@ Connector< ConnectionT >::find_first_target( const size_t tid,
   const size_t start_lcid,
   const size_t target_node_id ) const
 {
+  assert( kernel::manager< ConnectionManager >.use_compressed_spikes() );
+
   size_t lcid = start_lcid;
   while ( true )
   {
@@ -339,6 +341,26 @@ Connector< ConnectionT >::find_first_target( const size_t tid,
 
     ++lcid;
   }
+}
+
+template < typename ConnectionT >
+size_t
+Connector< ConnectionT >::find_enabled_connection( const size_t tid,
+  const size_t syn_id,
+  const size_t source_node_id,
+  const size_t target_node_id,
+  const SourceTable& source_table ) const
+{
+  for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
+  {
+    if ( source_table.get_node_id( tid, syn_id, lcid ) == source_node_id
+      and C_[ lcid ].get_target( tid )->get_node_id() == target_node_id and not C_[ lcid ].is_disabled() )
+    {
+      return lcid;
+    }
+  }
+
+  return invalid_index;
 }
 
 template < typename ConnectionT >

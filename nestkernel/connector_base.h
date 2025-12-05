@@ -291,6 +291,12 @@ public:
 
   size_t find_first_target( size_t tid, size_t start_lcid, size_t target_node_id ) const override;
 
+  size_t find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const override;
+
   size_t
   find_matching_target( size_t tid, const std::vector< size_t >& matching_lcids, size_t target_node_id ) const override;
 

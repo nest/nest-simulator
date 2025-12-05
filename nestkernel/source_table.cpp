@@ -168,7 +168,7 @@ nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, c
   const auto source_end = sources_[ tid ][ syn_id ].end();
 
   auto first_source_match = source_begin;
-  if ( kernel().connection_manager.use_compressed_spikes() )
+  if ( kernel::manager< ConnectionManager >.use_compressed_spikes() )
   {
     // Binary search for first entry matching snode_id; is_primary is ignored
     const Source requested_source { snode_id, /* is_primary */ true };
@@ -194,7 +194,7 @@ nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, c
 size_t
 nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn_id )
 {
-  assert( kernel().connection_manager.use_compressed_spikes() );
+  assert( kernel::manager< ConnectionManager >.use_compressed_spikes() );
 
   if ( sources_[ tid ].size() <= syn_id )
   {
@@ -692,31 +692,6 @@ nest::SourceTable::disable_connection( const size_t tid, const synindex syn_id, 
   // source here
   assert( not sources_[ tid ][ syn_id ][ lcid ].is_disabled() );
   sources_[ tid ][ syn_id ][ lcid ].disable();
-}
-
-size_t
-nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
-{
-
-  // binary search in sorted sources
-  const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
-  const BlockVector< Source >::const_iterator end = sources_[ tid ][ syn_id ].end();
-  BlockVector< Source >::const_iterator it = std::lower_bound( begin, end, Source( snode_id, true ) );
-
-  // source found by binary search could be disabled, iterate through
-  // sources until a valid one is found
-  while ( it != end )
-  {
-    if ( it->get_node_id() == snode_id and not it->is_disabled() )
-    {
-      const size_t lcid = it - begin;
-      return lcid;
-    }
-    ++it;
-  }
-
-  // no enabled entry with this snode ID found
-  return invalid_index;
 }
 
 void

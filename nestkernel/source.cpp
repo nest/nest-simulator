@@ -31,6 +31,7 @@ Source::Source()
   : node_id_( 0 )
   , processed_( false )
   , primary_( true )
+  , disabled_( false )
 {
 }
 
@@ -38,15 +39,9 @@ Source::Source( const std::uint64_t node_id, const bool primary )
   : node_id_( node_id )
   , processed_( false )
   , primary_( primary )
+  , disabled_( false )
 {
   assert( node_id <= MAX_NODE_ID );
-}
-
-void
-Source::set_node_id( const std::uint64_t node_id )
-{
-  assert( node_id <= MAX_NODE_ID );
-  node_id_ = node_id;
 }
 
 std::uint64_t
@@ -82,13 +77,13 @@ Source::is_primary() const
 void
 Source::disable()
 {
-  node_id_ = DISABLED_NODE_ID;
+  disabled_ = true;
 }
 
 bool
 Source::is_disabled() const
 {
-  return node_id_ == DISABLED_NODE_ID;
+  return disabled_;
 }
 
 bool

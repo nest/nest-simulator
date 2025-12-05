@@ -55,55 +55,6 @@ protected:
   long synapse_modelid_;
   long port_;
 };
-
-inline ConnectionID::ConnectionID()
-  : source_node_id_( -1 )
-  , target_node_id_( -1 )
-  , target_thread_( -1 )
-  , synapse_modelid_( -1 )
-  , port_( -1 )
-{
-}
-
-inline ConnectionID::ConnectionID( const ConnectionID& cid )
-  : source_node_id_( cid.source_node_id_ )
-  , target_node_id_( cid.target_node_id_ )
-  , target_thread_( cid.target_thread_ )
-  , synapse_modelid_( cid.synapse_modelid_ )
-  , port_( cid.port_ )
-{
-}
-
-inline long
-ConnectionID::get_source_node_id() const
-{
-  return source_node_id_;
-}
-
-inline long
-ConnectionID::get_target_node_id() const
-{
-  return target_node_id_;
-}
-
-inline long
-ConnectionID::get_target_thread() const
-{
-  return target_thread_;
-}
-
-inline long
-ConnectionID::get_synapse_model_id() const
-{
-  return synapse_modelid_;
-}
-
-inline long
-ConnectionID::get_port() const
-{
-  return port_;
-}
-
 } // namespace
 
 #endif /* #ifndef CONNECTION_ID_H */

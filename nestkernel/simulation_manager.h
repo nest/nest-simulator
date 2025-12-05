@@ -31,7 +31,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -189,6 +189,16 @@ public:
   Time get_eprop_learning_window() const;
   bool get_eprop_reset_neurons_on_update() const;
 
+  //! Get the stopwatch to measure the time each thread is idle during network construction.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_construction_stopwatch();
+
+  //! Get the stopwatch to measure the time each thread is idle during simulation.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_simulation_stopwatch();
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >& get_mpi_synchronization_stopwatch();
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -238,121 +248,15 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_secondary_data_;
 
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
+
   double eprop_update_interval_;
   double eprop_learning_window_;
   bool eprop_reset_neurons_on_update_;
 };
 
-inline Time const&
-SimulationManager::get_slice_origin() const
-{
-  return clock_;
-}
-
-inline Time const
-SimulationManager::get_time() const
-{
-  assert( not simulating_ );
-  return clock_ + Time::step( from_step_ );
-}
-
-inline bool
-SimulationManager::has_been_simulated() const
-{
-  return simulated_;
-}
-
-inline bool
-SimulationManager::has_been_prepared() const
-{
-  return prepared_;
-}
-
-inline size_t
-SimulationManager::get_slice() const
-{
-  return slice_;
-}
-
-inline Time const&
-SimulationManager::get_clock() const
-{
-  return clock_;
-}
-
-inline Time
-SimulationManager::run_duration() const
-{
-  return to_do_total_ * Time::get_resolution();
-}
-
-inline Time
-SimulationManager::run_start_time() const
-{
-  assert( not simulating_ ); // implicit due to using get_time()
-  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
-}
-
-inline Time
-SimulationManager::run_end_time() const
-{
-  assert( not simulating_ ); // implicit due to using get_time()
-  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
-}
-
-inline long
-SimulationManager::get_from_step() const
-{
-  return from_step_;
-}
-
-inline long
-SimulationManager::get_to_step() const
-{
-  return to_step_;
-}
-
-inline bool
-SimulationManager::use_wfr() const
-{
-  return use_wfr_;
-}
-
-inline double
-SimulationManager::get_wfr_comm_interval() const
-{
-  return wfr_comm_interval_;
-}
-
-inline double
-SimulationManager::get_wfr_tol() const
-{
-  return wfr_tol_;
-}
-
-inline size_t
-SimulationManager::get_wfr_interpolation_order() const
-{
-  return wfr_interpolation_order_;
-}
-
-inline Time
-SimulationManager::get_eprop_update_interval() const
-{
-  return Time::ms( eprop_update_interval_ );
-}
-
-inline Time
-SimulationManager::get_eprop_learning_window() const
-{
-  return Time::ms( eprop_learning_window_ );
-}
-
-inline bool
-SimulationManager::get_eprop_reset_neurons_on_update() const
-{
-  return eprop_reset_neurons_on_update_;
-}
 
 }
 

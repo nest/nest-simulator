@@ -23,13 +23,15 @@
 #include "spike_generator.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -388,7 +390,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      kernel().event_delivery_manager.send( *this, *se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, *se, lag );
       delete se;
     }
 

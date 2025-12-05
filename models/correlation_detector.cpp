@@ -29,16 +29,15 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "genericmodel_impl.h"
 #include "logging.h"
-
-// Includes from nestkernel:
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlation_detector( const std::string& name )

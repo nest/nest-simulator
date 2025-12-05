@@ -24,8 +24,6 @@
 #define TARGET_TABLE_DEVICES_H
 
 // C++ includes:
-#include <cassert>
-#include <map>
 #include <vector>
 
 // Includes from nestkernel:
@@ -35,7 +33,6 @@
 #include "nest_types.h"
 
 // Includes from SLI:
-#include "arraydatum.h"
 #include "dictdatum.h"
 
 namespace nest
@@ -207,63 +204,6 @@ public:
    */
   bool is_device_connected( size_t tid, size_t lcid ) const;
 };
-
-inline void
-TargetTableDevices::get_synapse_status_from_device( const size_t tid,
-  const size_t ldid,
-  const synindex syn_id,
-  DictionaryDatum& dict,
-  const size_t lcid ) const
-{
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
-}
-
-inline void
-TargetTableDevices::set_synapse_status_from_device( const size_t tid,
-  const size_t ldid,
-  const synindex syn_id,
-  ConnectorModel& cm,
-  const DictionaryDatum& dict,
-  const size_t lcid )
-{
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
-}
-
-inline void
-TargetTableDevices::send_from_device( const size_t tid,
-  const size_t ldid,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
-        it != target_from_devices_[ tid ][ ldid ].end();
-        ++it )
-  {
-    if ( *it )
-    {
-      ( *it )->send_to_all( tid, cm, e );
-    }
-  }
-}
-
-inline bool
-TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) const
-{
-  for ( auto& synapse : target_from_devices_[ tid ][ lcid ] )
-  {
-    if ( synapse )
-    {
-      std::deque< ConnectionID > conns;
-      synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );
-      if ( not conns.empty() )
-      {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 
 } // namespace nest
 

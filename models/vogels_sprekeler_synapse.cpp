@@ -22,7 +22,6 @@
 
 #include "vogels_sprekeler_synapse.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

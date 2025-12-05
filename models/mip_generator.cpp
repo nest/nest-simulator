@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
@@ -142,7 +143,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_parent_spikes );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
   }
 }

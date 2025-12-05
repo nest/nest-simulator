@@ -1,5 +1,5 @@
 /*
- *  conn_builder_impl.h
+ *  ntree.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,32 +20,21 @@
  *
  */
 
-#ifndef CONN_BUILDER_IMPL_H
-#define CONN_BUILDER_IMPL_H
-
-#include "conn_builder.h"
-
-// Includes from nestkernel:
-#include "kernel_manager.h"
-#include "nest_names.h"
+#include "ntree.h"
+#include <cmath>
 
 namespace nest
 {
 
-inline void
-BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t target_thread )
+double
+mod( double x, double p )
 {
-  // index tnode_id = target.get_node_id();
-  // This is the most simple case in which only the synapse_model_ has been
-  // defined. TODO: Add functionality to delete synapses with a given weight
-  // or a given delay
-  if ( synapse_model_id_.size() > 1 )
+  x = std::fmod( x, p );
+  if ( x < 0 )
   {
-    throw KernelException( "Can only disconnect when single element syn_spec has been used." );
+    x += p;
   }
-  kernel().sp_manager.disconnect( snode_id, &target, target_thread, synapse_model_id_[ 0 ] );
+  return x;
 }
 
 } // namespace nest
-
-#endif /* CONN_BUILDER_IMPL_H */

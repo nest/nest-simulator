@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "connection_manager.h"
 
 namespace nest
 {
@@ -316,7 +317,7 @@ stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCo
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
+    assert( minus_dt < -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }
 

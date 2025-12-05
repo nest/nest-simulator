@@ -35,6 +35,8 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
+#include <nest_names.h>
+
 namespace nest
 {
 

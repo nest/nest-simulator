@@ -22,8 +22,9 @@
 
 #include "eprop_learning_signal_connection_bsshslm_2020.h"
 
-// nestkernel
 #include "nest_impl.h"
+
+// nestkernel
 
 void
 nest::register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name )

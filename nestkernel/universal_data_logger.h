@@ -29,8 +29,8 @@
 
 // Includes from nestkernel:
 #include "event.h"
+#include "event_delivery_manager.h"
 #include "nest_time.h"
-#include "nest_types.h"
 #include "recordables_map.h"
 
 namespace nest
@@ -84,26 +84,20 @@ namespace nest
  *
  * ...
  *
- * nest::iaf_cond_alpha::Buffers_::Buffers_(iaf_cond_alpha& n)
+ * iaf_cond_alpha::Buffers_::Buffers_(iaf_cond_alpha& n)
  * : logger_(n), ... {}
  *
- * nest::iaf_cond_alpha::Buffers_::Buffers_(const Buffers_&, iaf_cond_alpha& n)
+ * iaf_cond_alpha::Buffers_::Buffers_(const Buffers_&, iaf_cond_alpha& n)
  * : logger_(n), ... {}
  *
- * nest::iaf_cond_alpha::iaf_cond_alpha()
+ * iaf_cond_alpha::iaf_cond_alpha()
  * : ..., B_(*this) {}
  *
- * nest::iaf_cond_alpha::iaf_cond_alpha(const iaf_cond_alpha& n)
+ * iaf_cond_alpha::iaf_cond_alpha(const iaf_cond_alpha& n)
  * : ..., B_(n.B_, *this) {}
  * @code
  *
  * @todo Could HostNode be passed as const& to handle() and record_data()?
- *
- * @note To avoid inclusion problems and code-bloat, the class
- *       interface is defined in this file, while most of the
- *       implementation is in the companion universal_data_logger_impl.h.
- *       As a consequence, calls to UniversalDataLogger members should
- *       only come from cpp files---do not inline them.
  *
  * @addtogroup Devices
  */
@@ -231,83 +225,6 @@ private:
   UniversalDataLogger const& operator=( const UniversalDataLogger& );
 };
 
-// must be defined in this file, since it is required by check_connection(),
-// which typically is in h-files.
-template < typename HostNode >
-size_t
-nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
-  const RecordablesMap< HostNode >& rmap )
-{
-  // rports are assigned consecutively, the caller may not request specific
-  // rports.
-  if ( req.get_rport() != 0 )
-  {
-    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
-  }
-
-  // ensure that we have not connected this multimeter before
-  const size_t mm_node_id = req.get_sender().get_node_id();
-
-  const auto item = std::find_if( data_loggers_.begin(),
-    data_loggers_.end(),
-    [ & ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
-
-  if ( item != data_loggers_.end() )
-  {
-    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
-  }
-
-  // we now know that we have no DataLogger_ for the given multimeter, so we
-  // create one and push it
-  data_loggers_.push_back( DataLogger_( req, rmap ) );
-
-  // rport is index plus one, i.e., size
-  return data_loggers_.size();
-}
-
-template < typename HostNode >
-nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
-  const RecordablesMap< HostNode >& rmap )
-  : multimeter_( req.get_sender().get_node_id() )
-  , num_vars_( 0 )
-  , recording_interval_( Time::neg_inf() )
-  , recording_offset_( Time::ms( 0. ) )
-  , rec_int_steps_( 0 )
-  , next_rec_step_( -1 )
-  , // flag as uninitialized
-  node_access_()
-  , data_()
-  , next_rec_( 2, 0 )
-{
-  const std::vector< Name >& recvars = req.record_from();
-  for ( size_t j = 0; j < recvars.size(); ++j )
-  {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
-
-    if ( rec == rmap.end() )
-    {
-      // delete all access information again: the connect either succeeds
-      // for all entries in recvars, or it fails, leaving the logger untouched
-      node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
-    }
-
-    node_access_.push_back( rec->second );
-  }
-
-  num_vars_ = node_access_.size();
-
-  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
-  {
-    throw IllegalConnection( "Recording interval must be >= resolution." );
-  }
-
-  recording_interval_ = req.get_recording_interval();
-  recording_offset_ = req.get_recording_offset();
-}
-
-
 /**
  * Dynamic Universal data-logging plug-in for multisynapse neuron models.
  *
@@ -342,29 +259,23 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
  *
  * ...
  *
- * nest::aeif_cond_beta_multisynapse::Buffers_::Buffers_(aeif_cond_beta_multisynapse&
+ * aeif_cond_beta_multisynapse::Buffers_::Buffers_(aeif_cond_beta_multisynapse&
  * n)
  * : logger_(n), ... {}
  *
- * nest::aeif_cond_beta_multisynapse::Buffers_::Buffers_(const Buffers_&,
+ * aeif_cond_beta_multisynapse::Buffers_::Buffers_(const Buffers_&,
  * aeif_cond_beta_multisynapse& n)
  * : logger_(n), ... {}
  *
- * nest::aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse()
+ * aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse()
  * : ..., B_(*this) {}
  *
- * nest::aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(const
+ * aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(const
  * aeif_cond_beta_multisynapse& n)
  * : ..., B_(n.B_, *this) {}
  * @code
  *
  * @todo Could HostNode be passed as const& to handle() and record_data()?
- *
- * @note To avoid inclusion problems and code-bloat, the class
- *       interface is defined in this file, while most of the
- *       implementation is in the companion universal_data_logger_impl.h.
- *       As a consequence, calls to UniversalDataLogger members should
- *       only come from cpp files---do not inline them.
  *
  * @addtogroup Devices
  */
@@ -491,84 +402,6 @@ private:
   //! Should not be assigned
   DynamicUniversalDataLogger const& operator=( const DynamicUniversalDataLogger& );
 };
-
-
-// must be defined in this file, since it is required by check_connection(),
-// which typically is in h-files.
-template < typename HostNode >
-size_t
-nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
-  const DynamicRecordablesMap< HostNode >& rmap )
-{
-  // rports are assigned consecutively, the caller may not request specific
-  // rports.
-  if ( req.get_rport() != 0 )
-  {
-    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
-  }
-
-  // ensure that we have not connected this multimeter before
-  const size_t mm_node_id = req.get_sender().get_node_id();
-  const size_t n_loggers = data_loggers_.size();
-  size_t j = 0;
-  while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )
-  {
-    ++j;
-  }
-  if ( j < n_loggers )
-  {
-    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
-  }
-
-  // we now know that we have no DataLogger_ for the given multimeter, so we
-  // create one and push it
-  data_loggers_.push_back( DataLogger_( req, rmap ) );
-
-  // rport is index plus one, i.e., size
-  return data_loggers_.size();
-}
-
-template < typename HostNode >
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
-  const DynamicRecordablesMap< HostNode >& rmap )
-  : multimeter_( req.get_sender().get_node_id() )
-  , num_vars_( 0 )
-  , recording_interval_( Time::neg_inf() )
-  , recording_offset_( Time::ms( 0. ) )
-  , rec_int_steps_( 0 )
-  , next_rec_step_( -1 )
-  , // flag as uninitialized
-  node_access_()
-  , data_()
-  , next_rec_( 2, 0 )
-{
-  const std::vector< Name >& recvars = req.record_from();
-  for ( size_t j = 0; j < recvars.size(); ++j )
-  {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
-
-    if ( rec == rmap.end() )
-    {
-      // delete all access information again: the connect either succeeds
-      // for all entries in recvars, or it fails, leaving the logger untouched
-      node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
-    }
-
-    node_access_.push_back( &( rec->second ) );
-  }
-
-  num_vars_ = node_access_.size();
-
-  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
-  {
-    throw IllegalConnection( "Recording interval must be >= resolution." );
-  }
-
-  recording_interval_ = req.get_recording_interval();
-  recording_offset_ = req.get_recording_offset();
-}
 
 } // namespace nest
 

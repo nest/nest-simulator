@@ -22,9 +22,6 @@
 
 #include "bernoulli_synapse.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_bernoulli_synapse( const std::string& name )
 {

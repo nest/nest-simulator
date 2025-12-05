@@ -30,7 +30,10 @@
 #endif
 
 // Includes from nestkernel:
+#include "compose.hpp"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"

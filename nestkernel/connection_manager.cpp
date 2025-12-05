@@ -1028,7 +1028,7 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const size_t tid = kernel().vp_manager.get_thread_id();
 
   for ( std::vector< ConnectorBase* >::iterator it = connections_[ tid ].begin(); it != connections_[ tid ].end();
-        ++it )
+    ++it )
   {
     if ( *it )
     {
@@ -1315,8 +1315,8 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
     else
     {
       for ( std::vector< size_t >::const_iterator t_node_id = target_neuron_node_ids.begin();
-            t_node_id != target_neuron_node_ids.end();
-            ++t_node_id )
+        t_node_id != target_neuron_node_ids.end();
+        ++t_node_id )
       {
         // target_table_devices_ contains connections both to and from
         // devices. First we get connections from devices.
@@ -1324,8 +1324,8 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
           source_node_id, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }
       for ( std::vector< size_t >::const_iterator t_node_id = target_device_node_ids.begin();
-            t_node_id != target_device_node_ids.end();
-            ++t_node_id )
+        t_node_id != target_device_node_ids.end();
+        ++t_node_id )
       {
         // Then, we get connections to devices.
         target_table_devices_.get_connections_to_devices_(

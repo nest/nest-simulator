@@ -543,7 +543,7 @@ NodeCollection::to_array( const std::string& selection ) const
           node_ids.push_back( ( *it ).node_id );
         }
       } // end critical
-    }   // end parallel
+    } // end parallel
   }
   else
   {

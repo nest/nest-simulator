@@ -14,3 +14,41 @@ known_third_party = "nest"
 
 [tool.black]
 line-length = 120
+
+
+[tool.mypy]
+# For configuation details see
+# <https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml>
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+exclude = [
+    '.git/',
+    '.snakemake/',
+    '.pytest_cache/',
+    '^sync-test-env/',
+    '^conda/',
+    '^env/',
+    '^doc/htmldoc/developer_space/templates/pynest_example_template\.py$',
+    # '.*pytests/mpi/./'
+]
+exclude_gitignore = true
+explicit_package_bases = true
+
+# Check explanations of error codes
+# https://mypy.readthedocs.io/en/stable/error_code_list.html
+disable_error_code = [
+    "attr-defined",
+    "index",
+    "import",
+    "call-arg",
+    "misc",
+    "dict-item",
+    "arg-type",
+    "operator",
+    "call-overload",
+    "assignment",
+    "list-item",
+    "var-annotated",
+    "valid-type",
+]

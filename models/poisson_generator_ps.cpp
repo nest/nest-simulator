@@ -155,8 +155,8 @@ nest::poisson_generator_ps::pre_run_hook()
     Time min_time = B_.next_spike_.begin()->first;
 
     for ( std::vector< Buffers_::SpikeTime >::const_iterator it = B_.next_spike_.begin() + 1;
-          it != B_.next_spike_.end();
-          ++it )
+      it != B_.next_spike_.end();
+      ++it )
     {
       min_time = std::min( min_time, it->first );
     }

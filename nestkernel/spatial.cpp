@@ -23,6 +23,8 @@
 #include "spatial.h"
 
 // C++ includes:
+#include <fstream>
+#include <memory>
 #include <ostream>
 #include <string>
 
@@ -33,11 +35,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
-#include "nestmodule.h"
 #include "node.h"
-
-// Includes from sli:
-#include "sliexceptions.h"
 
 // Includes from spatial:
 #include "grid_layer.h"
@@ -68,25 +66,25 @@ get_layer( NodeCollectionPTR nc )
 }
 
 NodeCollectionPTR
-create_layer( const DictionaryDatum& layer_dict )
+create_layer( const Dictionary& layer_dict )
 {
-  layer_dict->clear_access_flags();
+  layer_dict.init_access_flags();
 
   NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED( *layer_dict, "nest::CreateLayer", "Unread dictionary entries: " );
+  layer_dict.all_entries_accessed( "CreateLayer", "params" );
 
   return layer;
 }
 
-ArrayDatum
+std::vector< std::vector< double > >
 get_position( NodeCollectionPTR layer_nc )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
   size_t first_node_id = meta->get_first_node_id();
 
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
   result.reserve( layer_nc->size() );
 
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
@@ -99,7 +97,7 @@ get_position( NodeCollectionPTR layer_nc )
     }
 
     const long lid = node_id - first_node_id;
-    Token arr = layer->get_position_vector( lid );
+    const auto arr = layer->get_position_vector( lid );
 
     result.push_back( arr );
   }
@@ -133,17 +131,17 @@ get_position( const size_t node_id )
   return pos_vec;
 }
 
-ArrayDatum
+std::vector< std::vector< double > >
 displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_nc );
+  auto layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
   size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
 
   // If layer_from has size equal to one, but layer_to do not, we want the displacement between every node
   // in layer_to against the one in layer_from. Likewise if layer_to has size 1 and layer_from do not.
@@ -157,11 +155,9 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    for ( auto& pos : layer_to_positions )
     {
-      std::vector< double > pos = getValue< std::vector< double > >( *it );
-      Token disp = layer_from->compute_displacement( pos, lid );
-      result.push_back( disp );
+      result.push_back( layer_from->compute_displacement( pos, lid ) );
     }
   }
   else
@@ -175,10 +171,8 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
       }
 
       const long lid = node_id - first_node_id;
-
-      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
-      Token disp = layer_from->compute_displacement( pos, lid );
-      result.push_back( disp );
+      const auto pos = layer_to_positions[ counter ];
+      result.push_back( layer_from->compute_displacement( pos, lid ) );
 
       // We only iterate the layer_to positions vector if it has more than one
       // element.
@@ -192,15 +186,15 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   return result;
 }
 
-ArrayDatum
-displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
+std::vector< std::vector< double > >
+displacement( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
   size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
-  ArrayDatum result;
+  std::vector< std::vector< double > > result;
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
     size_t node_id = ( *it ).node_id;
@@ -211,9 +205,8 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
 
     const long lid = node_id - first_node_id;
 
-    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
-    Token disp = layer->compute_displacement( pos, lid );
-    result.push_back( disp );
+    const auto pos = point[ counter ];
+    result.push_back( layer->compute_displacement( pos, lid ) );
 
     // We only iterate the positions vector if it has more than one
     // element.
@@ -228,7 +221,12 @@ displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
 std::vector< double >
 distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_nc );
+  if ( layer_to_nc->size() != 1 and layer_from_nc->size() != 1 and not( layer_to_nc->size() == layer_from_nc->size() ) )
+  {
+    throw BadProperty( "NodeCollections must have equal length or one must have size 1." );
+  }
+
+  auto layer_to_positions = get_position( layer_to_nc );
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
@@ -249,11 +247,9 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    for ( auto& pos : layer_to_positions )
     {
-      std::vector< double > pos = getValue< std::vector< double > >( *it );
-      double disp = layer_from->compute_distance( pos, lid );
-      result.push_back( disp );
+      result.push_back( layer_from->compute_distance( pos, lid ) );
     }
   }
   else
@@ -268,8 +264,8 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 
       const long lid = node_id - first_node_id;
 
-      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
-      double disp = layer_from->compute_distance( pos, lid );
+      const auto pos = layer_to_positions[ counter ];
+      const double disp = layer_from->compute_distance( pos, lid );
       result.push_back( disp );
 
       // We only iterate the layer_to positions vector if it has more than one
@@ -285,7 +281,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 }
 
 std::vector< double >
-distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
+distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
@@ -303,7 +299,7 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 
     const long lid = node_id - first_node_id;
 
-    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
+    const auto pos = point[ counter ];
     double disp = layer->compute_distance( pos, lid );
     result.push_back( disp );
 
@@ -318,17 +314,15 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 }
 
 std::vector< double >
-distance( const ArrayDatum conns )
+distance( const std::vector< ConnectionID >& conns )
 {
   std::vector< double > result;
 
   size_t num_conns = conns.size();
   result.reserve( num_conns );
 
-  for ( size_t conn_indx = 0; conn_indx < num_conns; ++conn_indx )
+  for ( auto& conn_id : conns )
   {
-    ConnectionDatum conn_id = getValue< ConnectionDatum >( conns.get( conn_indx ) );
-
     size_t src = conn_id.get_source_node_id();
     auto src_position = get_position( src );
 
@@ -360,92 +354,222 @@ distance( const ArrayDatum conns )
   return result;
 }
 
-MaskDatum
-create_mask( const DictionaryDatum& mask_dict )
+MaskPTR
+create_mask( const Dictionary& mask_dict )
 {
-  mask_dict->clear_access_flags();
+  mask_dict.init_access_flags();
 
-  MaskDatum datum( NestModule::create_mask( mask_dict ) );
+  // The dictionary should contain one key which is the name of the
+  // mask type, and optionally the key 'anchor'. To find the unknown
+  // mask type key, we must loop through all keys.
+  bool has_anchor = false;
+  MaskPTR mask;
 
-  ALL_ENTRIES_ACCESSED( *mask_dict, "nest::CreateMask", "Unread dictionary entries: " );
+  for ( auto& kv : mask_dict )
+  {
+    if ( kv.first == names::anchor )
+    {
+      has_anchor = true;
+    }
+    else
+    {
+      mask = create_mask( kv.first, mask_dict.get< Dictionary >( kv.first ) );
+    }
+  }
 
-  return datum;
+  if ( has_anchor )
+  {
+    // The anchor may be an array of doubles (a spatial position).
+    // For grid layers only, it is also possible to provide an array of longs.
+    try
+    {
+      const std::vector< long >& anchor = mask_dict.get< std::vector< long > >( names::anchor );
+
+      switch ( anchor.size() )
+      {
+      case 2:
+        try
+        {
+          auto& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
+          grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
+        }
+        catch ( std::bad_cast& e )
+        {
+          throw BadProperty( "Mask must be 2-dimensional grid mask." );
+        }
+        break;
+      case 3:
+        try
+        {
+          auto& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
+          grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+        }
+        catch ( std::bad_cast& e )
+        {
+          throw BadProperty( "Mask must be 3-dimensional grid mask." );
+        }
+        break;
+      default:
+        throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+      }
+    }
+    catch ( TypeMismatch& e )
+    {
+      std::vector< double > double_anchor = mask_dict.get< std::vector< double > >( names::anchor );
+      std::shared_ptr< AbstractMask > amask;
+
+      switch ( double_anchor.size() )
+      {
+      case 2:
+        amask = std::shared_ptr< AbstractMask >(
+          new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), double_anchor ) );
+        break;
+      case 3:
+        amask = std::shared_ptr< AbstractMask >(
+          new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), double_anchor ) );
+        break;
+      default:
+        throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+      }
+
+      mask = amask;
+    }
+  }
+  mask_dict.all_entries_accessed( "CreateMask", "mask_dict" );
+
+  return mask;
 }
 
-BoolDatum
-inside( const std::vector< double >& point, const MaskDatum& mask )
+NodeCollectionPTR
+select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask )
+{
+  std::vector< size_t > mask_node_ids;
+
+  const auto dim = anchor.size();
+
+  if ( dim != 2 and dim != 3 )
+  {
+    throw BadProperty( "Center must be 2- or 3-dimensional." );
+  }
+
+  AbstractLayerPTR abstract_layer = get_layer( layer_nc );
+
+  if ( dim == 2 )
+  {
+    auto layer = dynamic_cast< Layer< 2 >* >( abstract_layer.get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "2D layer", "other type" );
+    }
+
+    auto ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
+
+    for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
+      it != ml.end();
+      ++it )
+    {
+      mask_node_ids.push_back( it->second );
+    }
+  }
+  else
+  {
+    auto layer = dynamic_cast< Layer< 3 >* >( abstract_layer.get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "3D layer", "other type" );
+    }
+
+    auto ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
+
+    for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+      it != ml.end();
+      ++it )
+    {
+      mask_node_ids.push_back( it->second );
+    }
+  }
+  // Nodes must be sorted when creating a NodeCollection
+  std::sort( mask_node_ids.begin(), mask_node_ids.end() );
+  return NodeCollection::create( mask_node_ids );
+}
+
+bool
+inside( const std::vector< double >& point, const MaskPTR mask )
 {
   return mask->inside( point );
 }
 
-MaskDatum
-intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+intersect_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->intersect_mask( *mask2 );
+  return MaskPTR( mask1->intersect_mask( *mask2 ) );
 }
 
-MaskDatum
-union_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+union_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->union_mask( *mask2 );
+  return MaskPTR( mask1->union_mask( *mask2 ) );
 }
 
-MaskDatum
-minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
+MaskPTR
+minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
 {
-  return mask1->minus_mask( *mask2 );
+  return MaskPTR( mask1->minus_mask( *mask2 ) );
 }
 
 void
-connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
+connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& connection_dict )
 {
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
 
-  connection_dict->clear_access_flags();
+  connection_dict.init_access_flags();
   ConnectionCreator connector( connection_dict );
-  ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
+  connection_dict.all_entries_accessed( "ConnectLayers", "connection_dict" );
 
   kernel().node_manager.update_thread_local_node_data();
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
-
   source->connect( source_nc, target, target_nc, connector );
 }
 
 void
-dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out )
+dump_layer_nodes( const NodeCollectionPTR layer_nc, const std::string& filename )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
 
-  if ( out->good() )
+  std::ofstream out( filename );
+  if ( out.good() )
   {
-    layer->dump_nodes( *out );
+    layer->dump_nodes( out );
   }
+  out.close();
 }
 
 void
-dump_layer_connections( const Token& syn_model,
-  NodeCollectionPTR source_layer_nc,
-  NodeCollectionPTR target_layer_nc,
-  OstreamDatum& out )
+dump_layer_connections( const NodeCollectionPTR source_layer_nc,
+  const NodeCollectionPTR target_layer_nc,
+  const std::string& syn_model,
+  const std::string& filename )
 {
   AbstractLayerPTR source_layer = get_layer( source_layer_nc );
   AbstractLayerPTR target_layer = get_layer( target_layer_nc );
 
-  if ( out->good() )
+  std::ofstream out( filename );
+  if ( out.good() )
   {
-    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
+    source_layer->dump_connections( out, source_layer_nc, target_layer, syn_model );
   }
+  out.close();
 }
 
-DictionaryDatum
+Dictionary
 get_layer_status( NodeCollectionPTR )
 {
   assert( false and "not implemented" );
 
-  return DictionaryDatum();
+  return {};
 }
 
 } // namespace nest

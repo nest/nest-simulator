@@ -592,7 +592,7 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
       const double ompl = ( 1. - P_lambda_ );
       V_.v_[ k ] = ompl * ompl * V_.v_[ k ] + P_lambda_ * V_.m_[ k ];
       V_.m_[ k ] = ompl * V_.m_[ k ]; // line 26 of [1]
-    }                                 // line 27 of [1]
+    } // line 27 of [1]
 
     double P_Lambda_;
     if ( ( Z_ + V_.z_ ) > 0.0 )

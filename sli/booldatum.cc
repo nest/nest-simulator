@@ -35,12 +35,14 @@ BoolDatum::BoolDatum( const Name& val )
   d = ( val == Name( true_string ) );
 }
 
-BoolDatum::operator Name() const
+BoolDatum::
+operator Name() const
 {
   return ( d ? Name( true_string ) : Name( false_string ) );
 }
 
-BoolDatum::operator std::string() const
+BoolDatum::
+operator std::string() const
 {
   return ( d ? std::string( true_string ) : std::string( false_string ) );
 }

@@ -405,9 +405,9 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
 
-  for ( size_t i = 0; i
-        < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
-        ++i )
+  for ( size_t i = 0;
+    i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+    ++i )
   {
     dg->push_back( y_[ State_::DG_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS
       + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );

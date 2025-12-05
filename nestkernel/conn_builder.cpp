@@ -35,11 +35,6 @@
 #include "node.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "fdstream.h"
-#include "name.h"
-
 // Includes from C++:
 #include <algorithm>
 
@@ -47,8 +42,8 @@
 nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : third_in_builder_( nullptr )
   , third_out_builder_( nullptr )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
@@ -65,26 +60,26 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
-  const DictionaryDatum& conn_spec,
-  const DictionaryDatum& third_conn_spec,
-  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  const Dictionary& conn_spec,
+  const Dictionary& third_conn_spec,
+  const std::map< std::string, std::vector< Dictionary > >& syn_specs )
   : third_in_builder_( new ThirdInBuilder( sources,
-    third,
-    third_conn_spec,
-    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] ) )
+      third,
+      third_conn_spec,
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
   , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
       targets,
       third_in_builder_,
       third_conn_spec,
       // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
-      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] ) )
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_out ] ) )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
       conn_spec,
-      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] ) )
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::primary ] ) )
 {
 }
 
@@ -119,8 +114,8 @@ nest::ConnBuilder::disconnect()
 nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : sources_( sources )
   , targets_( targets )
   , third_out_( third_out )
@@ -136,9 +131,9 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   // We only read a subset of rule-related parameters here. The property 'rule'
   // has already been taken care of in ConnectionManager::get_conn_builder() and
   // rule-specific parameters are handled by the subclass constructors.
-  updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
-  updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
-  updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
+  conn_spec.update_value< bool >( names::allow_autapses, allow_autapses_ );
+  conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
+  conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
 
   if ( make_symmetric_ and third_out_ )
   {
@@ -157,22 +152,21 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
-    auto syn_params = syn_specs[ synapse_indx ];
+    auto& syn_params = syn_specs[ synapse_indx ];
 
     set_synapse_model_( syn_params, synapse_indx );
     set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during connection setup
-    ( *syn_defaults )[ names::music_channel ] = 0;
+    syn_defaults[ names::music_channel ] = 0;
 #endif
 
     set_synapse_params( syn_defaults, syn_params, synapse_indx );
@@ -326,11 +320,11 @@ nest::BipartiteConnBuilder::connect()
     }
   }
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -348,11 +342,11 @@ nest::BipartiteConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -370,17 +364,13 @@ nest::BipartiteConnBuilder::update_param_dict_( size_t snode_id,
   {
     if ( synapse_parameter.second->provides_long() )
     {
-      // change value of dictionary entry without allocating new datum
-      IntegerDatum* id = static_cast< IntegerDatum* >(
-        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
+      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first ] =
+        synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
-      // change value of dictionary entry without allocating new datum
-      DoubleDatum* dd = static_cast< DoubleDatum* >(
-        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+      param_dicts_[ synapse_indx ][ target_thread ][ synapse_parameter.first ] =
+        synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
     }
   }
 }
@@ -499,13 +489,11 @@ nest::BipartiteConnBuilder::loop_over_targets_() const
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, size_t synapse_indx )
 {
-  if ( not syn_params->known( names::synapse_model ) )
-  {
-    throw BadProperty( "Synapse spec must contain synapse model." );
-  }
-  const std::string syn_name = ( *syn_params )[ names::synapse_model ];
+  const std::string syn_name = syn_params.known( names::synapse_model )
+    ? syn_params.get< std::string >( names::synapse_model )
+    : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
@@ -517,15 +505,14 @@ nest::BipartiteConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size
 }
 
 void
-nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
-  default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
-
-  default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
+  default_weight_[ synapse_indx ] = not syn_params.known( names::weight );
+  default_delay_[ synapse_indx ] = not syn_params.known( names::delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for
   // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
@@ -534,41 +521,40 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_pa
 
   if ( not default_weight_and_delay_[ synapse_indx ] )
   {
-    weights_[ synapse_indx ] = syn_params->known( names::weight )
-      ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
+    weights_[ synapse_indx ] = syn_params.known( names::weight )
+      ? ConnParameter::create( syn_params.at( names::weight ), kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::weight ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
-    delays_[ synapse_indx ] = syn_params->known( names::delay )
-      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    delays_[ synapse_indx ] = syn_params.known( names::delay )
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   else if ( default_weight_[ synapse_indx ] )
   {
-    delays_[ synapse_indx ] = syn_params->known( names::delay )
-      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    delays_[ synapse_indx ] = syn_params.known( names::delay )
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_params( DictionaryDatum syn_defaults,
-  DictionaryDatum syn_params,
+nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
+  const Dictionary& syn_params,
   size_t synapse_indx )
 {
-  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+  for ( [[maybe_unused]] const auto& [ param_name, unused ] : syn_defaults )
   {
-    const Name param_name = default_it->first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
       continue; // weight, delay or other not-settable parameter
     }
 
-    if ( syn_params->known( param_name ) )
+    if ( syn_params.known( param_name ) )
     {
       synapse_params_[ synapse_indx ][ param_name ] =
-        ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
+        ConnParameter::create( syn_params.at( param_name ), kernel().vp_manager.get_num_threads() );
       register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
@@ -577,52 +563,59 @@ nest::BipartiteConnBuilder::set_synapse_params( DictionaryDatum syn_defaults,
   // create it here once to avoid re-creating the object over and over again.
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    param_dicts_[ synapse_indx ].push_back( new Dictionary() );
+    param_dicts_[ synapse_indx ].emplace_back();
 
     for ( auto param : synapse_params_[ synapse_indx ] )
     {
       if ( param.second->provides_long() )
       {
-        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+        param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0;
       }
       else
       {
-        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+        param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0.0;
       }
     }
   }
 }
 
 void
-nest::BipartiteConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
+nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs )
 {
+  // We must check here if any syn_spec provided contains sp-related parameters
   bool have_structural_plasticity_parameters = false;
   for ( auto& syn_spec : syn_specs )
   {
-    if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
+    if ( syn_spec.known( names::pre_synaptic_element ) or syn_spec.known( names::post_synaptic_element ) )
     {
       have_structural_plasticity_parameters = true;
     }
   }
-
   if ( not have_structural_plasticity_parameters )
   {
     return;
   }
 
+  // We now know that we have SP-parameters and can perform SP-specific checks and operations
   if ( syn_specs.size() > 1 )
   {
     throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
 
-  const DictionaryDatum syn_spec = syn_specs[ 0 ];
-  if ( syn_spec->known( names::pre_synaptic_element ) xor syn_spec->known( names::post_synaptic_element ) )
+  // We know now that we only have a single syn spec and work with that in what follows.
+  // We take a reference to avoid copying. This also ensures that access to the dictionary
+  // elements is properly registered in the actual dictionary passed in from the Python level.
+  const Dictionary& syn_spec = syn_specs[ 0 ];
+
+  // != is the correct way to express exclusive or in C ++."xor" is bitwise.
+  if ( syn_spec.known( names::pre_synaptic_element ) != syn_spec.known( names::post_synaptic_element ) )
   {
     throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
   }
 
-  pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
-  post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
+  pre_synaptic_element_name_ = syn_spec.get< std::string >( names::pre_synaptic_element );
+  post_synaptic_element_name_ = syn_spec.get< std::string >( names::post_synaptic_element );
+
   use_structural_plasticity_ = true;
 }
 
@@ -652,8 +645,8 @@ nest::BipartiteConnBuilder::reset_delays_()
 
 nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR third,
-  const DictionaryDatum& third_conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& third_conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, third, nullptr, third_conn_spec, syn_specs )
   , source_third_gids_( kernel().vp_manager.get_num_threads(), nullptr )
   , source_third_counts_( kernel().vp_manager.get_num_threads(), nullptr )
@@ -782,8 +775,8 @@ nest::ThirdInBuilder::connect_()
 nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
-  const DictionaryDatum& third_conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& third_conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( third, targets, nullptr, third_conn_spec, syn_specs )
   , third_in_( third_in )
 {
@@ -792,8 +785,8 @@ nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : ThirdOutBuilder( third, targets, third_in, conn_spec, syn_specs )
   , p_( 1.0 )
   , random_pool_( true )
@@ -801,10 +794,19 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   , targets_per_third_( targets->size() / third->size() )
   , pools_( kernel().vp_manager.get_num_threads(), nullptr )
 {
-  updateValue< double >( conn_spec, names::p, p_ );
-  updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  conn_spec.update_value( names::p, p_ );
+
+  // PYTEST-NG: Consider cleaner scheme for handling size_t vs long
+  long pool_size_tmp = static_cast< long >( pool_size_ );
+  conn_spec.update_value( names::pool_size, pool_size_tmp );
+  if ( pool_size_tmp < 1 or third->size() < pool_size_tmp )
+  {
+    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
+  }
+  pool_size_ = static_cast< size_t >( pool_size_tmp );
+
   std::string pool_type;
-  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
+  if ( conn_spec.update_value( names::pool_type, pool_type ) )
   {
     if ( pool_type == "random" )
     {
@@ -823,11 +825,6 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   if ( p_ < 0 or 1 < p_ )
   {
     throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_third_if_primary ≤ 1 required" );
-  }
-
-  if ( pool_size_ < 1 or third->size() < pool_size_ )
-  {
-    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
   }
 
   if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )
@@ -948,8 +945,8 @@ nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // make sure that target and source population have the same size
@@ -1029,11 +1026,10 @@ nest::OneToOneBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1077,11 +1073,10 @@ nest::OneToOneBuilder::disconnect_()
         single_disconnect_( snode_id, *target, target_thread );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1124,11 +1119,10 @@ nest::OneToOneBuilder::sp_connect_()
         single_connect_( snode_id, *target, target_thread, rng );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1164,11 +1158,10 @@ nest::OneToOneBuilder::sp_disconnect_()
         single_disconnect_( snode_id, *target, target_thread );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1220,11 +1213,10 @@ nest::AllToAllBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1299,11 +1291,10 @@ nest::AllToAllBuilder::sp_connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1349,11 +1340,10 @@ nest::AllToAllBuilder::disconnect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1389,11 +1379,10 @@ nest::AllToAllBuilder::sp_disconnect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1401,27 +1390,27 @@ nest::AllToAllBuilder::sp_disconnect_()
 nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // check for potential errors
-  long n_sources = static_cast< long >( sources_->size() );
+  const size_t n_sources = sources_->size();
   if ( n_sources == 0 )
   {
     throw BadProperty( "Source array must not be empty." );
   }
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::indegree ].datum() );
-  if ( pd )
+  auto indegree = conn_spec.at( names::indegree );
+  if ( is_type< std::shared_ptr< nest::Parameter > >( indegree ) )
   {
-    indegree_ = *pd;
+    indegree_ = boost::any_cast< ParameterPTR >( indegree );
     // TODO: Checks of parameter range
   }
   else
   {
     // Assume indegree is a scalar
-    const long value = ( *conn_spec )[ names::indegree ];
-    indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    const long value = conn_spec.get< long >( names::indegree );
+    indegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
     if ( not allow_multapses_ )
@@ -1432,7 +1421,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
       }
       else if ( value == n_sources and not allow_autapses_ )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
           "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
@@ -1441,7 +1430,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
 
       if ( value > 0.9 * n_sources )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
@@ -1506,11 +1495,10 @@ nest::FixedInDegreeBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1566,8 +1554,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // check for potential errors
@@ -1576,18 +1564,17 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   {
     throw BadProperty( "Target array must not be empty." );
   }
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
-  if ( pd )
+  auto outdegree = conn_spec.at( names::outdegree );
+  if ( is_type< std::shared_ptr< nest::Parameter > >( outdegree ) )
   {
-    outdegree_ = *pd;
+    outdegree_ = boost::any_cast< ParameterPTR >( outdegree );
     // TODO: Checks of parameter range
   }
   else
   {
     // Assume outdegree is a scalar
-    const long value = ( *conn_spec )[ names::outdegree ];
-
-    outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    const long value = conn_spec.get< long >( names::outdegree );
+    outdegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that outdegree is not larger than target population if multapses
     // are disabled
@@ -1599,7 +1586,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
       }
       else if ( value == n_targets and not allow_autapses_ )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedOutDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
           "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
@@ -1608,7 +1595,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 
       if ( value > 0.9 * n_targets )
       {
-        LOG( M_WARNING,
+        LOG( VerbosityLevel::WARNING,
           "FixedOutDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
@@ -1684,11 +1671,10 @@ nest::FixedOutDegreeBuilder::connect_()
           single_connect_( snode_id, *target, tid, rng );
         }
       }
-      catch ( std::exception& err )
+      catch ( ... )
       {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+        // Capture the current exception object and create an std::exception_ptr
+        exceptions_raised_.at( tid ) = std::current_exception();
       }
     }
   }
@@ -1697,10 +1683,10 @@ nest::FixedOutDegreeBuilder::connect_()
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
-  , N_( ( *conn_spec )[ names::N ] )
+  , N_( conn_spec.get< long >( names::N ) )
 {
 
   // check for potential errors
@@ -1855,11 +1841,10 @@ nest::FixedTotalNumberBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1868,25 +1853,25 @@ nest::FixedTotalNumberBuilder::connect_()
 nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
-  if ( pd )
+  auto p = conn_spec.at( names::p );
+  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    p_ = *pd;
+    p_ = boost::any_cast< ParameterPTR >( p );
     // TODO: Checks of parameter range
   }
   else
   {
     // Assume p is a scalar
-    const double value = ( *conn_spec )[ names::p ];
+    const double value = conn_spec.get< double >( names::p );
     if ( value < 0 or 1 < value )
     {
       throw BadProperty( "Connection probability 0 <= p <= 1 required." );
     }
-    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    p_ = ParameterPTR( new ConstantParameter( value ) );
   }
 }
 
@@ -1939,11 +1924,10 @@ nest::BernoulliBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 }
@@ -1984,28 +1968,30 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
 nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
-  if ( pd )
+
+  auto p = conn_spec.at( names::pairwise_avg_num_conns );
+  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    pairwise_avg_num_conns_ = *pd;
+    pairwise_avg_num_conns_ = boost::any_cast< ParameterPTR >( p );
   }
   else
   {
     // Assume pairwise_avg_num_conns is a scalar
-    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
+    const double value = conn_spec.get< double >( names::pairwise_avg_num_conns );
     if ( value < 0 )
     {
       throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
     }
-    if ( not allow_multapses_ )
-    {
-      throw BadProperty( "Multapses must be allowed for this connection rule." );
-    }
-    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    pairwise_avg_num_conns_ = ParameterPTR( new ConstantParameter( value ) );
+  }
+
+  if ( not allow_multapses_ )
+  {
+    throw BadProperty( "Multapses must be allowed for this connection rule." );
   }
 }
 
@@ -2055,11 +2041,9 @@ nest::PoissonBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 }
@@ -2102,10 +2086,10 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
-  , p_( ( *conn_spec )[ names::p ] )
+  , p_( conn_spec.get< double >( names::p ) )
 {
   // This connector takes care of symmetric connections on its own
   creates_symmetric_connections_ = true;
@@ -2217,11 +2201,10 @@ nest::SymmetricBernoulliBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -2230,8 +2213,8 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
@@ -2246,8 +2229,8 @@ nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
-    const double delay = getValue< double >( syn_defaults, "delay" );
+    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    const double delay = syn_defaults.get< double >( "delay" );
     d = Time( Time::ms( delay ) ).get_steps();
   }
 }
@@ -2258,11 +2241,11 @@ nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::ve
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -2322,11 +2305,10 @@ nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vect
         single_connect_( *snode_id_it, *target, tid, rng );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }

@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This script ensures that importing NEST after mpi4py does not lead
-to a segmentation fault when simulating.
+Ensures that importing NEST after mpi4py does not lead to a segmentation fault
+when simulating.
 
 This is a regression test for GitHub issue 1703.
 """

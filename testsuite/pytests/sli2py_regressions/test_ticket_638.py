@@ -43,7 +43,7 @@ def _run_simulation(model: str, t_ref: float) -> int:
     nest.Connect(neuron, spike_recorder)
     nest.Simulate(100.0)
 
-    n_events = spike_recorder.get("n_events")
+    n_events: int = spike_recorder.get("n_events")
     return n_events
 
 

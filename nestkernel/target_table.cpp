@@ -71,8 +71,8 @@ void
 nest::TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
 {
   for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = secondary_send_buffer_pos_[ tid ].begin();
-        it != secondary_send_buffer_pos_[ tid ].end();
-        ++it )
+    it != secondary_send_buffer_pos_[ tid ].end();
+    ++it )
   {
     for ( std::vector< std::vector< size_t > >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {

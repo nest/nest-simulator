@@ -30,7 +30,7 @@
 #include "logging_event.h"
 
 // Includes from thirdparty:
-#include "compose.hpp"
+#include <format>
 
 
 nest::LoggingManager::LoggingManager()

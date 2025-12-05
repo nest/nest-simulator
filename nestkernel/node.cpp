@@ -24,7 +24,7 @@
 #include "node.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -176,7 +176,7 @@ Node::set_status_base( const Dictionary& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.what() ) );
+      std::format( "Setting status of a '{}' with node ID {}: {}", get_name(), get_node_id(), e.what() ) );
   }
 
   dict.update_value( names::frozen, frozen_ );

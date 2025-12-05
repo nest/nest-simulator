@@ -78,7 +78,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   assert( element_idx_ <= collection.size() ); // allow == for end()
 
   FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NCIT Prim ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
+    kernel().write_to_dump( std::format( "NCIT Prim ctor rk {}, thr {}, pix {}, eix {}, step {}, kind {}, rvp {}",
       kernel().mpi_manager.get_rank(),
       kernel().vp_manager.get_thread_id(),
       part_idx_,
@@ -114,7 +114,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   assert( ( part < collection.parts_.size() and offset <= collection.parts_[ part ].size() ) );
 
   FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NCIT Comp ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
+    kernel().write_to_dump( std::format( "NCIT Comp ctor rk {}, thr {}, pix {}, eix {}, step {}, kind {}, rvp {}",
       kernel().mpi_manager.get_rank(),
       kernel().vp_manager.get_thread_id(),
       part_idx_,
@@ -232,7 +232,7 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
           num_ranks, current_rank, part_idx_, element_idx_, NodeCollectionComposite::gid_to_rank_ );
 
         FULL_LOGGING_ONLY( kernel().write_to_dump(
-          String::compose( "ACIL rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
+          std::format( "ACIL rk {}, pix {}, eix {}", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
         break;
       }
       case NCIteratorKind::THREAD_LOCAL:
@@ -291,7 +291,7 @@ nc_const_iterator::operator*() const
     if ( not composite_collection_->valid_idx_( part_idx_, element_idx_ ) )
     {
       FULL_LOGGING_ONLY( kernel().write_to_dump(
-        String::compose( "nci::op* comp err rk %1, lp %2, le %3, pix %4, eix %5, end_pix %6, end_eix %7",
+        std::format( "nci::op* comp err rk {}, lp {}, le {}, pix {}, eix {}, end_pix {}, end_eix {}",
           kernel().mpi_manager.get_rank(),
           composite_collection_->last_part_,
           composite_collection_->last_elem_,
@@ -523,8 +523,7 @@ NodeCollection::to_array( const std::string& selection ) const
     }
     else
     {
-      throw BadParameter(
-        String::compose( "to_array() accepts only 'all', 'rank', 'thread', but got '%1'.", selection ) );
+      throw BadParameter( std::format( "to_array() accepts only 'all', 'rank', 'thread', but got '{}'.", selection ) );
     }
   }
 
@@ -1033,7 +1032,7 @@ NodeCollectionComposite::operator[]( const size_t i ) const
       }
     }
     // throw exception if outside of NodeCollection
-    throw std::out_of_range( String::compose( "pos %1 points outside of the NodeCollection", i ) );
+    throw std::out_of_range( std::format( "pos {} points outside of the NodeCollection", i ) );
   }
 }
 
@@ -1089,8 +1088,8 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
     }
 
     FULL_LOGGING_ONLY(
-      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, phase_first %3, offs %4, stp %5, sto %6,"
-                                               " pix %7, lp %8, le %9, primsz %10, nprts: %11, this: %12",
+      kernel().write_to_dump( std::format( "SPLB rk {}, thr {}, phase_first {}, offs {}, stp {}, sto {},"
+                                           " pix {}, lp {}, le {}, primsz {}, nprts: {}, this: {}",
         kernel().mpi_manager.get_rank(),
         kernel().vp_manager.get_thread_id(),
         phase_first_node,
@@ -1220,14 +1219,13 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
       new_composite.first_elem_, new_composite.last_elem_ + 1 );
   }
 
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
-      new_composite.first_part_,
-      new_composite.first_elem_,
-      new_composite.last_part_,
-      new_composite.last_elem_,
-      new_composite.size_,
-      new_composite.stride_ ) ); )
+  FULL_LOGGING_ONLY( kernel().write_to_dump( std::format( "NewComposite: fp {}, fe {}, lp {}, le {}, sz {}, strd {}",
+    new_composite.first_part_,
+    new_composite.first_elem_,
+    new_composite.last_part_,
+    new_composite.last_elem_,
+    new_composite.size_,
+    new_composite.stride_ ) ); )
 
   return std::make_shared< NodeCollectionComposite >( new_composite );
 }

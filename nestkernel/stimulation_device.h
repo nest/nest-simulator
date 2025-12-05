@@ -29,7 +29,7 @@
 #include "nest_types.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // From standard library:
 #include <string>

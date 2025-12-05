@@ -35,7 +35,7 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -445,7 +445,7 @@ inline Position< D, T >::Position( const std::vector< T >& y )
 {
   if ( y.size() != D )
   {
-    throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
+    throw BadProperty( std::format( "Expected a {}-dimensional position.", D ) );
   }
   std::copy( y.begin(), y.end(), x_.begin() );
 }
@@ -475,7 +475,7 @@ Position< D, T >::operator=( const std::vector< T >& y )
 {
   if ( y.size() != D )
   {
-    throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
+    throw BadProperty( std::format( "Expected a {}-dimensional position.", D ) );
   }
   std::copy( y.begin(), y.end(), x_.begin() );
 

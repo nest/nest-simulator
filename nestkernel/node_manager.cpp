@@ -28,8 +28,8 @@
 #include <set>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"

@@ -26,8 +26,8 @@
 #include "model_manager.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "string_util.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "connection_label.h"
@@ -46,8 +46,7 @@ ModelManager::register_node_model( const std::string& name, std::string deprecat
 {
   if ( modeldict_.known( name ) )
   {
-    const std::string msg =
-      String::compose( "A model called '%1' already exists. Please choose a different name!", name );
+    const std::string msg = std::format( "A model called '%1' already exists. Please choose a different name!", name );
     throw NamingConflict( msg );
   }
 
@@ -85,14 +84,14 @@ ModelManager::register_specific_connection_model_( const std::string& name )
   if ( synapsedict_.known( name ) )
   {
     std::string msg =
-      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
+      std::format( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
     throw NamingConflict( msg );
   }
 
   const auto new_syn_id = get_num_connection_models();
   if ( new_syn_id >= invalid_synindex )
   {
-    const std::string msg = String::compose(
+    const std::string msg = std::format(
       "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
     LOG( VerbosityLevel::ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );

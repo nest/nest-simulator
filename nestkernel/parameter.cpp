@@ -67,7 +67,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const std::vector< std::vector< d
     if ( target_pos.size() != source_pos.size() )
     {
       throw BadProperty(
-        String::compose( "Parameter apply: Target position has %1 dimensions, but source position has %2 dimensions.",
+        std::format( "Parameter apply: Target position has {} dimensions, but source position has {} dimensions.",
           target_pos.size(),
           source_pos.size() ) );
     }
@@ -192,8 +192,8 @@ SpatialDistanceParameter::value( RngPtr,
     return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
     throw KernelException(
-      String::compose( "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-                       " or 1-3 for x-z. Got ",
+      std::format( "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+                   " or 1-3 for x-z. Got ",
         dimension_ ) );
     break;
   }
@@ -225,7 +225,7 @@ RedrawParameter::value( RngPtr rng, Node* node )
   {
     if ( num_redraws++ == max_redraws_ )
     {
-      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+      throw KernelException( std::format( "Number of redraws exceeded limit of {}", max_redraws_ ) );
     }
     value = p_->value( rng, node );
   } while ( value < min_ or value > max_ );
@@ -245,7 +245,7 @@ RedrawParameter::value( RngPtr rng,
   {
     if ( num_redraws++ == max_redraws_ )
     {
-      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+      throw KernelException( std::format( "Number of redraws exceeded limit of {}", max_redraws_ ) );
     }
     value = p_->value( rng, source_pos, target_pos, layer, node );
   } while ( value < min_ or value > max_ );
@@ -365,11 +365,11 @@ GaborParameter::GaborParameter( const Dictionary& d )
   const auto std = d.get< double >( "std" );
   if ( std <= 0 )
   {
-    throw BadProperty( String::compose( "std > 0 required for gabor function parameter, got std=%1", std ) );
+    throw BadProperty( std::format( "std > 0 required for gabor function parameter, got std={}", std ) );
   }
   if ( gamma <= 0 )
   {
-    throw BadProperty( String::compose( "gamma > 0 required for gabor function parameter, got gamma=%1", gamma ) );
+    throw BadProperty( std::format( "gamma > 0 required for gabor function parameter, got gamma={}", gamma ) );
   }
 }
 

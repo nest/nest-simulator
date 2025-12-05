@@ -28,8 +28,8 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "compose.hpp"
 #include "kernel_manager.h"
+#include <format>
 
 namespace nest
 {
@@ -172,8 +172,8 @@ TargetIdentifierIndex::set_target( Node* target )
   if ( target_lid > max_targetindex )
   {
     throw IllegalConnection(
-      String::compose( "HPC synapses support at most %1 nodes per thread. "
-                       "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
+      std::format( "HPC synapses support at most {} nodes per thread. "
+                   "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
         max_targetindex ) );
   }
   target_ = target_lid;

@@ -509,7 +509,7 @@ nest::SourceTable::dump_sources() const
     {
       for ( size_t lcid = 0; lcid < sources_[ tid ][ syn_id ].size(); ++lcid )
       {
-        kernel().write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
+        kernel().write_to_dump( std::format( "src  : r{} t{} s{} tg{} l{} tt{}",
           kernel().mpi_manager.get_rank(),
           kernel().vp_manager.get_thread_id(),
           sources_[ tid ][ syn_id ][ lcid ].get_node_id(),
@@ -530,7 +530,7 @@ nest::SourceTable::dump_compressible_sources() const
     {
       for ( const auto& entry : compressible_sources_[ tid ][ syn_id ] )
       {
-        kernel().write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
+        kernel().write_to_dump( std::format( "csrc : r{} t{} s{} l{} tt{}",
           kernel().mpi_manager.get_rank(),
           kernel().vp_manager.get_thread_id(),
           entry.first,
@@ -602,7 +602,7 @@ nest::SourceTable::dump_compressed_spike_data(
           : compressed_spike_data_map_ ) {
       for ( const auto& entry : tab )
       {
-        kernel().write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
+        kernel().write_to_dump( std::format( "csdm : r{} t{} s{} sx{} tt{}",
           kernel().mpi_manager.get_rank(),
           kernel().vp_manager.get_thread_id(),
           entry.first,
@@ -617,7 +617,7 @@ nest::SourceTable::dump_compressed_spike_data(
       {
         for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )
         {
-          kernel().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
+          kernel().write_to_dump( std::format( "csd  : r{} t{} six{} tx{} l{} tt{}",
             kernel().mpi_manager.get_rank(),
             kernel().vp_manager.get_thread_id(),
             six,

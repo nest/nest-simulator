@@ -26,7 +26,7 @@
 #include <algorithm>
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -111,7 +111,7 @@ Model::set_status( const Dictionary& d )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.what() ) );
+    throw BadProperty( std::format( "Setting status of model '{}': {}", get_name(), e.what() ) );
   }
 }
 

@@ -34,8 +34,8 @@
 #include "nest_impl.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 void
 nest::register_music_cont_out_proxy( const std::string& name )
@@ -287,7 +287,7 @@ nest::music_cont_out_proxy::pre_run_hook()
     S_.published_ = true;
 
     std::string msg =
-      String::compose( "Mapping MUSIC continuous output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
+      std::format( "Mapping MUSIC continuous output port '{}' with width={}.", P_.port_name_, S_.port_width_ );
     LOG( VerbosityLevel::INFO, "music_cont_out_proxy::pre_run_hook()", msg.c_str() );
   }
 }

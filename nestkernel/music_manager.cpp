@@ -78,7 +78,7 @@ void
 MUSICManager::enter_runtime( double h_min_delay )
 {
   publish_music_in_ports_();
-  std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
+  std::string msg = std::format( "Entering MUSIC runtime with tick = {} ms", h_min_delay );
   LOG( VerbosityLevel::INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds

@@ -42,7 +42,7 @@
 #include "sp_manager.h"
 #include "vp_manager.h"
 
-#include "compose.hpp"
+#include <format>
 #include <fstream>
 
 /** @BeginDocumentation

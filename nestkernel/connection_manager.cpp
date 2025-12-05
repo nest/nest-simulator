@@ -35,8 +35,8 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
@@ -319,13 +319,12 @@ nest::ConnectionManager::set_synapse_status( const size_t source_node_id,
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty(
-      String::compose( "Setting status of '%1' connecting from node ID %2 to node ID %3 via port %4: %5",
-        kernel().model_manager.get_connection_model( syn_id, tid ).get_name(),
-        source_node_id,
-        target_node_id,
-        lcid,
-        e.what() ) );
+    throw BadProperty( std::format( "Setting status of '{}' connecting from node ID {} to node ID {} via port {}: {}",
+      kernel().model_manager.get_connection_model( syn_id, tid ).get_name(),
+      source_node_id,
+      target_node_id,
+      lcid,
+      e.what() ) );
   }
 }
 
@@ -393,7 +392,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
 {
   if ( not connruledict_.known( name ) )
   {
-    throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
+    throw IllegalConnection( std::format( "Unknown connection rule '{}'.", name ) );
   }
 
   const size_t rule_id = connruledict_.get< size_t >( name );
@@ -413,7 +412,7 @@ nest::ConnectionManager::get_third_conn_builder( const std::string& name,
 {
   if ( not thirdconnruledict_.known( name ) )
   {
-    throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
+    throw IllegalConnection( std::format( "Unknown third-factor connection rule '{}'.", name ) );
   }
 
   const size_t rule_id = thirdconnruledict_.get< size_t >( name );
@@ -464,7 +463,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   if ( not connruledict_.known( rule_name ) )
   {
-    throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
+    throw BadProperty( std::format( "Unknown connectivity rule: {}", rule_name ) );
   }
 
   ConnBuilder cb( rule_name, sources, targets, conn_spec, syn_specs );
@@ -741,7 +740,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
               const std::string msg =
-                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first );
+                std::format( "Expected integer value for {}, but got double.", param_pointer_pair.first );
               throw BadParameter( msg );
             }
 
@@ -956,8 +955,8 @@ nest::ConnectionManager::increase_connection_count( const size_t tid, const syni
   {
     // MAX_LCID is used as invalid marker an can therefore not be used as a proper value
     throw KernelException(
-      String::compose( "Too many connections: at most %1 connections supported per virtual "
-                       "process and synapse model.",
+      std::format( "Too many connections: at most {} connections supported per virtual "
+                   "process and synapse model.",
         MAX_LCID - 1 ) );
   }
 }

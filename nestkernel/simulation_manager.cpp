@@ -31,8 +31,8 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "numerics.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -234,7 +234,7 @@ nest::SimulationManager::set_status( const Dictionary& d )
         kernel().model_manager.calibrate( time_converter );
 
         std::string msg =
-          String::compose( "Tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
+          std::format( "Tics per ms and resolution changed from {} tics and {} ms to {} tics and {} ms.",
             old_tpms,
             old_res,
             tics_per_ms,
@@ -270,7 +270,7 @@ nest::SimulationManager::set_status( const Dictionary& d )
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
 
-        std::string msg = String::compose( "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
+        std::string msg = std::format( "Temporal resolution changed from {} to {} ms.", old_res, resd );
         LOG( VerbosityLevel::INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
@@ -571,7 +571,7 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
   {
     LOG( VerbosityLevel::ERROR,
       "SimulationManager::run",
-      String::compose( "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
+      std::format( "Simulation time must be >= {} ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
   }
 
@@ -580,8 +580,8 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
     Time time1 = clock_ + t;
     if ( not time1.is_finite() )
     {
-      std::string msg = String::compose(
-        "A clock overflow will occur after %1 of %2 ms. Please reset network "
+      std::string msg = std::format(
+        "A clock overflow will occur after {} of {} ms. Please reset network "
         "clock first!",
         ( Time::max() - clock_ ).get_ms(),
         t.get_ms() );
@@ -591,9 +591,9 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
   }
   else
   {
-    std::string msg = String::compose(
+    std::string msg = std::format(
       "The requested simulation time exceeds the largest time NEST can handle "
-      "(T_max = %1 ms). Please use a shorter time!",
+      "(T_max = {} ms). Please use a shorter time!",
       Time::max().get_ms() );
     LOG( VerbosityLevel::ERROR, "SimulationManager::run", msg );
     throw KernelException();
@@ -996,7 +996,7 @@ nest::SimulationManager::update_()
             to_step_ = old_to_step;
             if ( max_iterations_reached )
             {
-              std::string msg = String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
+              std::string msg = std::format( "Maximum number of iterations reached at interval {}-{} ms",
                 clock_.get_ms(),
                 clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
               LOG( VerbosityLevel::WARNING, "SimulationManager::wfr_update", msg );

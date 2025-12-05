@@ -21,8 +21,8 @@
  */
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "kernel_manager.h"
+#include <format>
 
 #include "recording_device.h"
 
@@ -85,7 +85,7 @@ nest::RecordingDevice::Parameters_::set( const Dictionary& d )
   {
     if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
-      std::string msg = String::compose( "Unknown recording backend '%1'", record_to );
+      std::string msg = std::format( "Unknown recording backend '{}'", record_to );
       throw BadProperty( msg );
     }
 

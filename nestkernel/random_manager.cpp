@@ -162,8 +162,7 @@ nest::RandomManager::set_status( const Dictionary& d )
     auto rng = rng_types_.find( rng_type );
     if ( rng == rng_types_.end() )
     {
-      std::string msg = "'%1' is not a known RNG type. See /rng_types for available types";
-      throw BadProperty( String::compose( msg, rng_type ) );
+      throw BadProperty( std::format( "'{}' is not a known RNG type. See /rng_types for available types", rng_type ) );
     }
 
     current_rng_type_ = rng_type;

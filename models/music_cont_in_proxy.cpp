@@ -25,9 +25,9 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -152,7 +152,7 @@ nest::music_cont_in_proxy::pre_run_hook()
     V_.MP_->map( &data_map );
     S_.published_ = true;
 
-    std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
+    std::string msg = std::format( "Mapping MUSIC input port '{}' with width={}.", P_.port_name_, S_.port_width_ );
     LOG( VerbosityLevel::INFO, "music_cont_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }

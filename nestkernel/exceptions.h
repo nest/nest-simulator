@@ -32,7 +32,7 @@
 #include "nest_time.h"
 
 // Includes from thirdparty:
-#include "compose.hpp"
+#include <format>
 
 // Include MPI for MPI error string
 #ifdef HAVE_MPI
@@ -562,7 +562,7 @@ public:
   UnknownThread( int id )
     : KernelException( "UnknownThread" )
   {
-    msg_ = String::compose( "Thread with id %1 is outside of range.", id );
+    msg_ = std::format( "Thread with id {} is outside of range.", id );
   }
 
   const char*
@@ -592,7 +592,7 @@ public:
   BadDelay( double delay, const std::string& msg )
     : KernelException( "BadDelay" )
   {
-    msg_ = String::compose( "Delay value %1 is invalid: %2", delay, msg );
+    msg_ = std::format( "Delay value {} is invalid: {}", delay, msg );
   }
 
   const char*
@@ -802,7 +802,7 @@ public:
   DimensionMismatch( int expected, int provided )
     : KernelException( "DimensionMismatch" )
   {
-    msg_ = String::compose( "Expected dimension size: %1 Provided dimension size: %2.", expected, provided );
+    msg_ = std::format( "Expected dimension size: {} Provided dimension size: {}.", expected, provided );
   }
 
   DimensionMismatch( const std::string& msg )
@@ -1039,8 +1039,8 @@ public:
   GSLSolverFailure( const std::string& model, const int status )
     : KernelException( "GSLSolverFailure" )
   {
-    msg_ = String::compose(
-      "In model %1 the GSL solver returned with exit status %2.\n"
+    msg_ = std::format(
+      "In model {} the GSL solver returned with exit status {}.\n"
       "Please make sure you have installed a recent GSL version (> gsl-1.10).",
       model,
       status );
@@ -1077,7 +1077,7 @@ public:
   NumericalInstability( const std::string& model )
     : KernelException( "NumericalInstability" )
   {
-    msg_ = String::compose( "NEST detected a numerical instability while updating %1.", model );
+    msg_ = std::format( "NEST detected a numerical instability while updating {}.", model );
   }
 
   const char*
@@ -1136,7 +1136,7 @@ private:
 public:
   RangeCheck( const size_t expected_size )
     : KernelException( "RangeCheck" )
-    , msg_( String::compose( "Array with length %1 expected.", expected_size ) )
+    , msg_( std::format( "Array with length {} expected.", expected_size ) )
   {
   }
 
@@ -1196,11 +1196,11 @@ public:
   KeyError( const std::string& key, const std::string& map_type, const std::string& map_op )
     : KernelException( "KeyError" )
   {
-    msg_ = String::compose(
-      "Key '%1' not found in map. Error encountered with map type: '%2' when applying operation: '%3'.",
-      key,
-      map_type,
-      map_op );
+    msg_ =
+      std::format( "Key '{}' not found in map. Error encountered with map type: '{}' when applying operation: '{}'.",
+        key,
+        map_type,
+        map_op );
   }
 
   const char*
@@ -1272,9 +1272,9 @@ public:
   MUSICPortUnconnected( const std::string& model, const std::string& portname )
     : KernelException( "MUSICPortUnconnected" )
   {
-    msg_ = String::compose(
-      "Cannot use instance of model %1 because the MUSIC "
-      "port %2 is unconnected.",
+    msg_ = std::format(
+      "Cannot use instance of model {} because the MUSIC "
+      "port {} is unconnected.",
       model,
       portname );
   }
@@ -1313,9 +1313,9 @@ public:
   MUSICPortHasNoWidth( const std::string& model, const std::string& portname )
     : KernelException( "MUSICPortHasNoWidth" )
   {
-    msg_ = String::compose(
-      "Cannot use instance of model %1 because the MUSIC "
-      "port %2 has no width specified in configuration file.",
+    msg_ = std::format(
+      "Cannot use instance of model {} because the MUSIC "
+      "port {} has no width specified in configuration file.",
       model,
       portname );
   }
@@ -1353,9 +1353,9 @@ public:
   MUSICPortAlreadyPublished( const std::string& model, const std::string& portname )
     : KernelException( "MUSICPortAlreadyPublished" )
   {
-    msg_ = String::compose(
-      "The instance of model %1 cannot change the MUSIC "
-      "port / establish connections %2 since it is already published.",
+    msg_ = std::format(
+      "The instance of model {} cannot change the MUSIC "
+      "port / establish connections {} since it is already published.",
       model,
       portname );
   }
@@ -1392,8 +1392,8 @@ public:
   MUSICSimulationHasRun( const std::string& model )
     : KernelException( "MUSICSimulationHasRun" )
   {
-    msg_ = String::compose(
-      "The instance of model %1 won't work, since the simulation "
+    msg_ = std::format(
+      "The instance of model {} won't work, since the simulation "
       "has already been running",
       model );
   }
@@ -1432,8 +1432,8 @@ public:
   MUSICChannelUnknown( const std::string& model, const std::string& portname, int channel )
     : KernelException( "MUSICChannelUnknown" )
   {
-    msg_ = String::compose(
-      "The port %1 cannot be mapped in %2 because the channel %3 "
+    msg_ = std::format(
+      "The port {} cannot be mapped in {} because the channel {} "
       "does not exist.",
       portname,
       model,
@@ -1470,7 +1470,7 @@ public:
   MUSICPortUnknown( const std::string& portname )
     : KernelException( "MUSICPortUnknown" )
   {
-    msg_ = String::compose( "The port %1 does not exist.", portname );
+    msg_ = std::format( "The port {} does not exist.", portname );
   }
 
   const char*
@@ -1507,9 +1507,9 @@ public:
   MUSICChannelAlreadyMapped( const std::string& model, const std::string& portname, int channel )
     : KernelException( "MUSICChannelAlreadyMapped" )
   {
-    msg_ = String::compose(
-      "The channel %1 of port %2 has already be mapped "
-      "to another proxy in %3.",
+    msg_ = std::format(
+      "The channel {} of port {} has already be mapped "
+      "to another proxy in {}.",
       channel,
       portname,
       model );
@@ -1538,7 +1538,7 @@ private:
 public:
   explicit MPIPortsFileUnknown( const size_t node_id )
   {
-    msg_ = String::compose(
+    msg_ = std::format(
       "The node with ID %1 requires a label, which specifies the "
       "folder with files containing the MPI ports.",
       node_id );
@@ -1565,8 +1565,8 @@ private:
 public:
   explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
   {
-    msg_ = String::compose(
-      "The node with ID %1 expects a file with the MPI address at location %2. "
+    msg_ = std::format(
+      "The node with ID %1 expects a file with the MPI address at location {}. "
       "The file does not seem to exist.",
       node_id,
       path );
@@ -1598,7 +1598,7 @@ public:
   {
     MPI_Error_string( error_code, errmsg_, &len_ );
     error_.assign( errmsg_, len_ );
-    msg_ = String::compose( "MPI Error: %1", error_ );
+    msg_ = std::format( "MPI Error: %1", error_ );
   }
 
   const char*
@@ -1624,9 +1624,9 @@ public:
   UnmatchedSteps( int steps_left, int total_steps )
     : KernelException( "UnmatchedSteps" )
   {
-    msg_ = String::compose(
+    msg_ = std::format(
       "Steps for backend device don't match NEST steps: "
-      "steps expected: %1 steps executed: %2.",
+      "steps expected: %1 steps executed: {}.",
       total_steps,
       total_steps - steps_left );
   }
@@ -1655,14 +1655,14 @@ public:
     : KernelException( "BackendPrepared" )
     , backend_( backend )
   {
-    msg_ = String::compose( "Backend %1 may not be prepare()'d multiple times.", backend_ );
+    msg_ = std::format( "Backend %1 may not be prepare()'d multiple times.", backend_ );
   }
 
   BackendPrepared( std::string&& backend )
     : KernelException( "BackendPrepared" )
     , backend_( std::move( backend ) )
   {
-    msg_ = String::compose( "Backend %1 may not be prepare()'d multiple times.", backend_ );
+    msg_ = std::format( "Backend %1 may not be prepare()'d multiple times.", backend_ );
   }
 
   const char*
@@ -1689,14 +1689,14 @@ public:
     : KernelException( "BackendPrepared" )
     , backend_( backend )
   {
-    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+    msg_ = std::format( "Backend %1 has already been registered.", backend_ );
   }
 
   BackendAlreadyRegistered( std::string&& backend )
     : KernelException( "BackendPrepared" )
     , backend_( std::move( backend ) )
   {
-    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+    msg_ = std::format( "Backend %1 has already been registered.", backend_ );
   }
 
   const char*
@@ -1724,7 +1724,7 @@ public:
     : KernelException( "BackendNotPrepared" )
     , backend_( backend )
   {
-    msg_ = String::compose(
+    msg_ = std::format(
       "Backend %1 may not be cleanup()'d "
       "without preparation (multiple cleanups?).",
       backend_ );
@@ -1734,7 +1734,7 @@ public:
     : KernelException( "BackendNotPrepared" )
     , backend_( std::move( backend ) )
   {
-    msg_ = String::compose(
+    msg_ = std::format(
       "Backend %1 may not be cleanup()'d "
       "without preparation (multiple cleanups?).",
       backend_ );
@@ -1792,7 +1792,7 @@ public:
   UndefinedName( std::string name )
     : KernelException( "UndefinedName" )
   {
-    msg_ = String::compose( "The name %1 is not defined.", name );
+    msg_ = std::format( "The name %1 is not defined.", name );
   }
 
   const char*

@@ -174,7 +174,7 @@ private:
       if ( val < std::numeric_limits< long >::min() or val > std::numeric_limits< long >::max() )
       {
         const std::string msg =
-          String::compose( "Failed to cast '%1' because %2 is too large to be stored as long.", key, val );
+          std::format( "Failed to cast '%1' because {} is too large to be stored as long.", key, val );
         throw nest::BadProperty( msg );
       }
       return static_cast< long >( val );

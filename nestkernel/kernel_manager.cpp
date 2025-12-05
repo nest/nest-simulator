@@ -49,7 +49,7 @@ nest::KernelManager::get_build_info_()
 
   build_info[ "version" ] = std::string( NEST_VERSION );
   build_info[ "exitcode" ] = EXIT_SUCCESS;
-  build_info[ "built" ] = std::string( String::compose( "%1 %2", __DATE__, __TIME__ ) );
+  build_info[ "built" ] = std::string( std::format( "{} {}", __DATE__, __TIME__ ) );
   build_info[ "datadir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
   build_info[ "docdir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR );
   build_info[ "prefix" ] = std::string( NEST_INSTALL_PREFIX );
@@ -201,8 +201,8 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
-  FULL_LOGGING_ONLY( dump_.open(
-    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
+  FULL_LOGGING_ONLY(
+    dump_.open( std::format( "dump_{}_{}.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
 }
 
 void

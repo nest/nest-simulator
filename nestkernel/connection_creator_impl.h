@@ -537,7 +537,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
           or ( not allow_multapses_ and ( positions.size() < target_number_connections ) ) )
         {
-          std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
+          std::string msg = std::format( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
         }
 
@@ -587,7 +587,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
           or ( not allow_multapses_ and ( positions.size() < target_number_connections ) ) )
         {
-          std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
+          std::string msg = std::format( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
         }
 
@@ -643,7 +643,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         or ( not allow_autapses_ and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
         or ( not allow_multapses_ and ( positions->size() < target_number_connections ) ) )
       {
-        std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
+        std::string msg = std::format( "Global target ID %1: Not enough sources found", target_id );
         throw KernelException( msg.c_str() );
       }
 
@@ -830,7 +830,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     if ( target_pos_node_id_pairs.empty()
       or ( not allow_multapses_ and target_pos_node_id_pairs.size() < number_of_connections ) )
     {
-      std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
+      std::string msg = std::format( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
     }
 

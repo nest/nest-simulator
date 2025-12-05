@@ -32,7 +32,7 @@
 #include "nest_extension_interface.h"
 
 // Includes from thirdparty:
-#include "compose.hpp"
+#include <format>
 
 
 namespace nest
@@ -52,7 +52,7 @@ ModuleManager::ModuleManager()
   {
     LOG( VerbosityLevel::ERROR,
       "ModuleManager::ModuleManager",
-      String::compose( "Could not add dynamic module search directory '%1'.", module_dir ) );
+      std::format( "Could not add dynamic module search directory '{}'.", module_dir ) );
   }
 }
 

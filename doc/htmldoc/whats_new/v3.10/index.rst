@@ -30,11 +30,17 @@ new interface was done by Jochen Eppler and Håkon Mørk. Many developers throug
 contributed to porting all SLI-based tests to Python to ensure we did not break anything in
 the process.
 
+This has been a huge change for us and we would be very interested in hearing about your experiences!
+
+
 What does this mean for you as a NEST user?
 ...........................................
 
 Fortunately, almost nothing, except that you can now `pip install nest-simulator` and that scripts might
 construct your networks slightly faster.
+
+Verbosity settings
+++++++++++++++++++
 
 If you have implemented your models using PyNEST, the only change you will need to make is to replace
 
@@ -48,9 +54,61 @@ with
 
    nest.verbosity = nest.VerbosityLevel.WARNING
 
-We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
+Configuration information
++++++++++++++++++++++++++
+
+Various information about NEST capabilities and properties that were previously accessible
+in varied ways are now collected in the `nest.build_info` dictionary:
 
 .. code-block::
+
+   {'built':    'Dec  4 2025 05:31:32',
+    'datadir':    '<path>',
+    'docdir':    '<path>',
+    'exitcode': 0,
+    'have_boost': True,
+    'have_gsl': True,
+    'have_hdf5': True,
+    'have_libneurosim': False,
+    'have_mpi': True,
+    'have_music': False,
+    'have_sionlib': False,
+    'have_threads': True,
+    'host':    'arm64-apple-darwin',
+    'hostcpu':    'arm64',
+    'hostos':    'darwin',
+    'hostvendor':    'apple',
+    'mpiexec':    '/opt/homebrew/bin/mpiexec',
+    'mpiexec_max_numprocs':    '12',
+    'mpiexec_numproc_flag':    '-n',
+    'mpiexec_postflags':    '',
+    'mpiexec_preflags':    '',
+    'ndebug': False,
+    'prefix':    '<path>',
+    'test_exitcodes': {'abort': 134,
+     'exception': 125,
+     'fatal': 127,
+     'scripterror': 126,
+     'segfault': 139,
+     'skipped': 200,
+     'skipped_have_mpi': 202,
+     'skipped_no_gsl': 204,
+     'skipped_no_mpi': 201,
+     'skipped_no_music': 205,
+     'skipped_no_threading': 203,
+     'success': 0,
+     'unknownerror': 10,
+     'userabort': 15},
+    'threads_model':    'openmp',
+    'version':    '3.9.0-post0.dev0'}
+
+
+Deprecated functions
+++++++++++++++++++++
+
+We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
+
+.. code-block:: python
 
    nest.GetStatus(node_coll)
 
@@ -62,13 +120,15 @@ with
 
 and correspondingly for connection collections and use `nest.get()/set()` for kernel status parameters.
 
+No more SLI functions
++++++++++++++++++++++
+
 If you have used direct interaction with SLI from the Python level through ``sli_func()``, ``sli_run()``
 or ``sr()`` you will need to now use the direct interface. Please get in touch via the NEST User
 mailing list for advice.
 
-If you still have your models implemented in SLI, it is time now to migrate to PyNEST.
+If you still have your network models implemented in SLI, it is time now to migrate to PyNEST.
 
-This has been a huge change for us and we would be very interested in hearing about your experiences!
 
 
 What does this mean for you as a developer?

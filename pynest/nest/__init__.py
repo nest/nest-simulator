@@ -58,15 +58,14 @@ _original_module_attrs = globals().copy()
 
 import builtins  # noqa
 import importlib  # noqa
+import json  # noqa
 import sys  # noqa
 import types  # noqa
 
-from .ll_api_kernel_attributes import KernelAttribute  # noqa
+import numpy as np
 
-try:
-    import versionchecker  # noqa: F401
-except ImportError:
-    pass
+from .config import config, setup, status  # noqa
+from .ll_api_kernel_attributes import KernelAttribute  # noqa
 
 
 class NestModule(types.ModuleType):
@@ -108,6 +107,9 @@ class NestModule(types.ModuleType):
         type(self).spatial = _lazy_module_property("spatial")  # noqa: F821
         type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
         type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
+        type(self).setup = setup
+        type(self).config = config
+        type(self).status = status
 
         self.__version__ = ll_api.sli_func("statusdict /version get")  # noqa: F821
         # Finalize the nest module with a public API.
@@ -117,6 +119,19 @@ class NestModule(types.ModuleType):
 
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error
+
+    def __del__(self):
+        "Report last kernelstatus when closing the nest module."
+
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+
+        print("// BEGIN NEST KERNELSTATUS //")
+        json.dump(self.GetKernelStatus(), sys.stdout, indent=2, cls=NumpyEncoder)
+        print("// END NEST KERNELSTATUS //")
 
     def set(self, **kwargs):
         "Forward kernel attribute setting to `SetKernelStatus()`."

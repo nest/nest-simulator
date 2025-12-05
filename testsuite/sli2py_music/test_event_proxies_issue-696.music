@@ -21,13 +21,11 @@
  */
 
 [sender]
-  binary=nest
   np=1
-  args=test_event_proxies_issue-696_sender.sli
+  binary=./test_event_proxies_issue-696_sender.py
 
 [receiver]
-  binary=nest
   np=1
-  args=test_event_proxies_issue-696_receiver.sli
+  binary=./test_event_proxies_issue-696_receiver.py
 
 sender.out -> receiver.in [11]

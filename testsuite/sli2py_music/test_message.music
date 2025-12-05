@@ -1,5 +1,5 @@
 /*
- *  test_cont_proxies.music
+ *  test_message.music
  *
  *  This file is part of NEST.
  *
@@ -20,17 +20,18 @@
  *
  */
 
-stoptime=0.2
-timestep=0.01
+stoptime=0.1
+
+# Name of the input file needs to be listed here for the testsuite to find it.
+# input file: test_message0.dat
 
 [from]
-    binary=nest
-    np=2
-    args=test_cont_proxy_sender.sli
+    binary=messagesource
+    np=1
+    args=test_message
 
 [to]
-    binary=nest
     np=1
-    args=test_cont_proxy_receiver.sli
+    binary=./test_message_receiver.py
 
-from.voltage_out -> to.voltage_in [2]
+from.out -> to.msgdata [0]

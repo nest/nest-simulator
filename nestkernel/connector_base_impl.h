@@ -364,23 +364,6 @@ Connector< ConnectionT >::find_enabled_connection( const size_t tid,
 }
 
 template < typename ConnectionT >
-size_t
-Connector< ConnectionT >::find_matching_target( const size_t tid,
-  const std::vector< size_t >& matching_lcids,
-  const size_t target_node_id ) const
-{
-  for ( size_t i = 0; i < matching_lcids.size(); ++i )
-  {
-    if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_node_id() == target_node_id )
-    {
-      return matching_lcids[ i ];
-    }
-  }
-
-  return invalid_index;
-}
-
-template < typename ConnectionT >
 void
 Connector< ConnectionT >::disable_connection( const size_t lcid )
 {

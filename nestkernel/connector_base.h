@@ -297,9 +297,6 @@ public:
     const size_t target_node_id,
     const SourceTable& source_table ) const override;
 
-  size_t
-  find_matching_target( size_t tid, const std::vector< size_t >& matching_lcids, size_t target_node_id ) const override;
-
   void disable_connection( size_t lcid ) override;
   void remove_disabled_connections( size_t first_disabled_index ) override;
 };

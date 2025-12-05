@@ -39,34 +39,36 @@
 #include "dict.h"
 #include "dictutils.h"
 
+namespace nest
+{
+
 void
-nest::register_weight_recorder( const std::string& name )
+register_weight_recorder( const std::string& name )
 {
   register_node_model< weight_recorder >( name );
 }
 
-
 // record time, node ID, weight and receiver node ID
-nest::weight_recorder::weight_recorder()
+weight_recorder::weight_recorder()
   : RecordingDevice()
   , P_()
 {
 }
 
-nest::weight_recorder::weight_recorder( const weight_recorder& n )
+weight_recorder::weight_recorder( const weight_recorder& n )
   : RecordingDevice( n )
   , P_( n.P_ )
 {
 }
 
-nest::weight_recorder::Parameters_::Parameters_()
+weight_recorder::Parameters_::Parameters_()
   : senders_()
   , targets_()
 {
 }
 
 void
-nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
+weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
   if ( senders_.get() )
   {
@@ -89,7 +91,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
+weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
   if ( d->known( names::senders ) )
   {
@@ -137,25 +139,24 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::weight_recorder::pre_run_hook()
+weight_recorder::pre_run_hook()
 {
-  RecordingDevice::pre_run_hook(
-    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  RecordingDevice::pre_run_hook( { names::weights }, { names::targets, names::receptors, names::ports } );
 }
 
 void
-nest::weight_recorder::update( Time const&, const long, const long )
+weight_recorder::update( Time const&, const long, const long )
 {
 }
 
-nest::RecordingDevice::Type
-nest::weight_recorder::get_type() const
+RecordingDevice::Type
+weight_recorder::get_type() const
 {
   return RecordingDevice::WEIGHT_RECORDER;
 }
 
 void
-nest::weight_recorder::get_status( DictionaryDatum& d ) const
+weight_recorder::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -181,7 +182,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::set_status( const DictionaryDatum& d )
+weight_recorder::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   ptmp.set( d );
@@ -192,7 +193,7 @@ nest::weight_recorder::set_status( const DictionaryDatum& d )
 
 
 void
-nest::weight_recorder::handle( WeightRecorderEvent& e )
+weight_recorder::handle( WeightRecorderEvent& e )
 {
   // accept spikes only if recorder was active when spike was emitted
   if ( is_active( e.get_stamp() ) )
@@ -212,3 +213,5 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
         static_cast< long >( e.get_port() ) } );
   }
 }
+
+} // namespace nest

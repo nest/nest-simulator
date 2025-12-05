@@ -607,8 +607,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
     }
     target.set_status_base( d );
 
-    // TODO: Not sure this check should be at single neuron level; advantage is
-    // it stops after first failure.
+    // TODO: Not sure this check should be at single neuron level; advantage is it stops after first failure.
     ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
   }
 }

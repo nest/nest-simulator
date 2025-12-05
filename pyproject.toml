@@ -30,7 +30,6 @@ exclude = [
     '^conda/',
     '^env/',
     '^doc/htmldoc/developer_space/templates/pynest_example_template\.py$',
-    # '.*pytests/mpi/./'
 ]
 exclude_gitignore = true
 explicit_package_bases = true

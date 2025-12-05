@@ -236,8 +236,8 @@ TargetTableDevices::send_from_device( const size_t tid,
   const std::vector< ConnectorModel* >& cm )
 {
   for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
-        it != target_from_devices_[ tid ][ ldid ].end();
-        ++it )
+    it != target_from_devices_[ tid ][ ldid ].end();
+    ++it )
   {
     if ( *it )
     {

@@ -28,7 +28,7 @@
 template < unsigned int num_channels >
 nest::MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(),
-    std::array< double, num_channels >() )
+      std::array< double, num_channels >() )
 {
 }
 

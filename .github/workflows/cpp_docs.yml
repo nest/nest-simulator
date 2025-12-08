@@ -3,6 +3,8 @@ name: Build and Deploy C++ Documentation
 on:
   # workflow only triggers when C++ file, the doxygen config, or css are changed
   pull_request:
+    branches:
+      - master
     paths:
       - '**/*.cpp'
       - '**/*.h'
@@ -211,13 +213,44 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to compare with base branch
 
-      - name: Get master config files
+      - name: Check which config files changed
+        id: check-changes
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          # Check if Doxyfile or CSS changed in this PR
+          DOXYFILE_CHANGED=false
+          CSS_CHANGED=false
+
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^doc/fulldoc.conf.in$"; then
+            DOXYFILE_CHANGED=true
+            echo "Doxyfile changed in this PR"
+          fi
+
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^doc/htmldoc/static/css/doxygen-awesome.css$"; then
+            CSS_CHANGED=true
+            echo "CSS file changed in this PR"
+          fi
+
+          echo "doxyfile_changed=$DOXYFILE_CHANGED" >> $GITHUB_OUTPUT
+          echo "css_changed=$CSS_CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Get master config files (if not changed in PR)
+        if: steps.check-changes.outputs.doxyfile_changed != 'true' || steps.check-changes.outputs.css_changed != 'true'
         run: |
           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1
-          # Get master config files for consistent output of documentation
-          git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
-          git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
+          # Get master config files only if they weren't changed in the PR
+          # This ensures consistent output when config files are unchanged
+          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ]; then
+            git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
+            echo "Using master Doxyfile (not changed in PR)"
+          fi
+          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ]; then
+            git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
+            echo "Using master CSS (not changed in PR)"
+          fi
 
       - name: Install dependencies
         run: |
@@ -228,9 +261,20 @@ jobs:
         run: |
           mkdir -p build-${{ github.run_id }}
           cd build-${{ github.run_id }}
-          # Use master config files for non-master versions before CMake
-          cp $RUNNER_TEMP/fulldoc.conf.in.master ../doc/fulldoc.conf.in
-          cp $RUNNER_TEMP/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
+          # Use master config files only if they weren't changed in the PR
+          # If they changed, use the PR version to preview the changes
+          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ]; then
+            cp $RUNNER_TEMP/fulldoc.conf.in.master ../doc/fulldoc.conf.in
+            echo "Copied master Doxyfile"
+          else
+            echo "Using PR version of Doxyfile for preview"
+          fi
+          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ]; then
+            cp $RUNNER_TEMP/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
+            echo "Copied master CSS"
+          else
+            echo "Using PR version of CSS for preview"
+          fi
           cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
 
       - name: Generate Doxygen documentation

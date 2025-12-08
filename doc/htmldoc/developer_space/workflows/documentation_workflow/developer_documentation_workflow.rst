@@ -35,7 +35,7 @@ If you create a pull request against the nest/nest-simulator repository and have
 
   * any C++ file (``*.cpp, *.h``),
   * the doxygen config file (``doc/fulldoc.conf.in``), or
-  * the doxygen css file (``doc/htmldoc/static/css/doxygen-aweseme.css``),
+  * the doxygen css file (``doc/htmldoc/static/css/doxygen-awesome.css``),
 
 then GitHub will build the C++ documentation and upload it as an artifact. You can
 download and view the HTML pages that it generated locally on your computer.
@@ -43,9 +43,25 @@ download and view the HTML pages that it generated locally on your computer.
 Where to find the artifact
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At the bottom of the main pull request page (tab "Conversation"), you will see a list of
-CI workflows. If you click on "Build and Deploy C++ Documenation", you will see the progress page of
-that workflow. You will find the downloadable artifact on the bottom of that page.
+To download and view the generated documentation:
+
+1. Navigate to your pull request page on GitHub and select the "Checks" tab.
+
+2. On the left column you will see a list of CI workflow checks. Select the "Build and Deploy C++ Documentation" workflow
+   (or wait for it to complete if it's still running).
+
+3. This will take you to the workflow "Summary" page. In the "Artifacts" section at the bottom, you will find a
+   downloadable archive named ``docs-<run_id>``.
+
+4. Click the artifact name to download it as a ZIP file.
+
+5. Extract the ZIP file and open ``index.html`` in your web browser to view the generated documentation.
+
+.. note::
+
+   If you modified the Doxyfile (``doc/fulldoc.conf.in``) or CSS file (``doc/htmldoc/static/css/doxygen-awesome.css``)
+   in your PR, the artifact will contain the documentation built with your modified configuration files,
+   allowing you to preview how the changes affect the documentation appearance.
 
 Local build
 ------------

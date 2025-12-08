@@ -20,14 +20,15 @@
  *
  */
 
-stoptime=5.0
+stoptime=0.2
+timestep=0.01
 
 [from]
-    np=1
-    binary=./test_rate_proxy_sender.py
+    np=2
+    binary=./test_cont_proxy_sender.py
 
 [to]
     np=1
-    binary=./test_rate_proxy_receiver.py
+    binary=./test_cont_proxy_receiver.py
 
-from.rate_out -> to.rate_in [1]
+from.voltage_out -> to.voltage_in [2]

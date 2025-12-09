@@ -429,7 +429,7 @@ if test "${MUSIC}"; then
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of Python files from the '.music' file.
-        py_files="$(grep '\.py' "${music_file}" | sed -e "s#binary=#${TESTDIR}#g")"
+        py_files="$(grep '\.py' "${music_file}" | sed -e "s#binary=#${TESTDIR}#g" || true)"
         py_files="$(for f in ${py_files}; do if test -f "${f}"; then echo "${f}"; fi; done)"
         py_files="${py_files//$'\n'/ }"
 

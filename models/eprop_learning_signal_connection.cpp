@@ -22,8 +22,9 @@
 
 #include "eprop_learning_signal_connection.h"
 
-// nestkernel
 #include "nest_impl.h"
+
+// nestkernel
 
 void
 nest::register_eprop_learning_signal_connection( const std::string& name )

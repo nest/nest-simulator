@@ -29,11 +29,11 @@
 
 // C++ includes:
 #include <map>
+#include <set>
 #include <vector>
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
-#include "kernel_manager.h"
 #include "nest_datums.h"
 
 #include "H5Cpp.h"

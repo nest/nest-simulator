@@ -29,17 +29,19 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "genericmodel_impl.h"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlospinmatrix_detector( const std::string& name )
@@ -392,7 +394,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       // yet every impulse in the queue that is further in the past than
       // this minimum - tau_max cannot contribute to the count covariance
       long t_min_on = t_i_on;
-      for ( auto n = 0; n < P_.N_channels_; n++ )
+      for ( size_t n = 0; n < P_.N_channels_; n++ )
       {
         if ( S_.curr_state_[ n ] )
         {
@@ -404,7 +406,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       }
       const double tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const long min_delay = kernel().connection_manager.get_min_delay();
+      const long min_delay = kernel::manager< ConnectionManager >.get_min_delay();
       while ( not otherPulses.empty() and ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
       {
         otherPulses.pop_front();

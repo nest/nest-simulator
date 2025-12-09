@@ -25,7 +25,7 @@
 
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "nest.h"
+#include "exceptions.h"
 #include "nest_names.h"
 
 namespace nest
@@ -40,90 +40,6 @@ class ConnectorModel;
  */
 const static long UNLABELED_CONNECTION = -1;
 
-/**
- * The class ConnectionLabel enables synapse model to be labeled by a positive
- * integer.
- *
- * The label can be set / retrieved with the `names::synapse_label`
- * property in the parameter dictionary of `Set/GetStatus` or `Connect`.
- * Using the `GetConnections` function, synapses with the same label can be
- * specified.
- *
- * The name of synapse models, which can be labeled, end with '_lbl'.
- * @see nest::ConnectionManager::get_connections
- */
-template < typename ConnectionT >
-class ConnectionLabel : public ConnectionT
-{
-public:
-  ConnectionLabel();
-
-  /**
-   * Get all properties of this connection and put them into a dictionary.
-   */
-  void get_status( DictionaryDatum& d ) const;
-
-  /**
-   * Set properties of this connection from the values given in dictionary.
-   *
-   * @note Target and Rport cannot be changed after a connection has been
-   * created.
-   */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-  long get_label() const;
-
-private:
-  long label_;
-};
-
-template < typename ConnectionT >
-ConnectionLabel< ConnectionT >::ConnectionLabel()
-  : ConnectionT()
-  , label_( UNLABELED_CONNECTION )
-{
-}
-
-template < typename ConnectionT >
-void
-ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
-{
-  ConnectionT::get_status( d );
-  def< long >( d, names::synapse_label, label_ );
-  // override names::size_of from ConnectionT,
-  // as the size from ConnectionLabel< ConnectionT > is
-  // one long larger
-  def< long >( d, names::size_of, sizeof( *this ) );
-}
-
-template < typename ConnectionT >
-void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
-{
-  long lbl;
-  if ( updateValue< long >( d, names::synapse_label, lbl ) )
-  {
-    if ( lbl >= 0 )
-    {
-      label_ = lbl;
-    }
-    else
-    {
-      throw BadProperty( "Connection label must not be negative." );
-    }
-  }
-  ConnectionT::set_status( d, cm );
-}
-
-template < typename ConnectionT >
-inline long
-ConnectionLabel< ConnectionT >::get_label() const
-{
-  return label_;
-}
-
-
 } // namespace nest
-
 
 #endif /* CONNECTION_LABEL_H */

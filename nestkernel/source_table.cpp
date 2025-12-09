@@ -25,12 +25,11 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
-#include "connection_manager_impl.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "model_manager.h"
 #include "source_table.h"
-#include "stopwatch_impl.h"
-#include "vp_manager_impl.h"
+
+#include "connector_model.h"
 
 nest::SourceTable::SourceTable()
 {
@@ -44,7 +43,7 @@ void
 nest::SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
   sources_.resize( num_threads );
   is_cleared_.initialize( num_threads, false );
   saved_entry_point_.initialize( num_threads, false );
@@ -54,7 +53,7 @@ nest::SourceTable::initialize()
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     sources_.at( tid ).resize( 0 );
     resize_sources();
     compressible_sources_.at( tid ).resize( 0 );
@@ -96,7 +95,7 @@ nest::SourceTablePosition
 nest::SourceTable::find_maximal_position() const
 {
   SourceTablePosition max_position( -1, -1, -1 );
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >.get_num_threads(); ++tid )
   {
     if ( max_position < saved_positions_[ tid ] )
     {
@@ -155,7 +154,7 @@ nest::SourceTable::clean( const size_t tid )
 size_t
 nest::SourceTable::get_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
 {
-  if ( not kernel().connection_manager.get_keep_source_table() )
+  if ( not kernel::manager< ConnectionManager >.get_keep_source_table() )
   {
     throw KernelException( "Cannot use SourceTable::get_node_id when get_keep_source_table is false" );
   }
@@ -169,7 +168,7 @@ nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, c
   const auto source_end = sources_[ tid ][ syn_id ].end();
 
   auto first_source_match = source_begin;
-  if ( kernel().connection_manager.use_compressed_spikes() )
+  if ( kernel::manager< ConnectionManager >.use_compressed_spikes() )
   {
     // Binary search for first entry matching snode_id; is_primary is ignored
     const Source requested_source { snode_id, /* is_primary */ true };
@@ -195,7 +194,7 @@ nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, c
 size_t
 nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn_id )
 {
-  assert( kernel().connection_manager.use_compressed_spikes() );
+  assert( kernel::manager< ConnectionManager >.use_compressed_spikes() );
 
   if ( sources_[ tid ].size() <= syn_id )
   {
@@ -246,7 +245,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
   // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+    const ConnectorModel& conn_model = kernel::manager< ModelManager >.get_connection_model( syn_id, tid );
     const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
     if ( not is_primary )
@@ -262,23 +261,25 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       }
     }
   }
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {
     // compute receive buffer positions for all unique pairs of source
     // node ID and synapse-type id on this MPI rank
-    std::vector< int > recv_counts_secondary_events_in_int_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
+    std::vector< int > recv_counts_secondary_events_in_int_per_rank(
+      kernel::manager< MPIManager >.get_num_processes(), 0 );
 
     for ( std::set< std::pair< size_t, size_t > >::const_iterator cit =
             ( *unique_secondary_source_node_id_syn_id ).begin();
           cit != ( *unique_secondary_source_node_id_syn_id ).end();
           ++cit )
     {
-      const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
-      const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid )->size();
+      const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( cit->first );
+      const size_t event_size =
+        kernel::manager< ModelManager >.get_secondary_event_prototype( cit->second, tid )->size();
 
       buffer_pos_of_source_node_id_syn_id.insert(
         std::make_pair( pack_source_node_id_and_syn_id( cit->first, cit->second ),
@@ -294,7 +295,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
       ++recv_count;
     }
 
-    kernel().mpi_manager.set_recv_counts_secondary_events_in_int_per_rank(
+    kernel::manager< MPIManager >.set_recv_counts_secondary_events_in_int_per_rank(
       recv_counts_secondary_events_in_int_per_rank );
     delete unique_secondary_source_node_id_syn_id;
   } // of omp single
@@ -303,8 +304,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 void
 nest::SourceTable::resize_sources()
 {
-  kernel().vp_manager.assert_thread_parallel();
-  sources_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
+  kernel::manager< VPManager >.assert_thread_parallel();
+  sources_.at( kernel::manager< VPManager >.get_thread_id() )
+    .resize( kernel::manager< ModelManager >.get_num_connection_models() );
 }
 
 bool
@@ -312,7 +314,7 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
   const size_t rank_end,
   const Source& source ) const
 {
-  const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
+  const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( source.get_node_id() );
 
   return not( source.is_processed()
     or source.is_disabled()
@@ -353,13 +355,14 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
   const size_t source_rank,
   TargetData& next_target_data ) const
 {
-  assert( not kernel().connection_manager.use_compressed_spikes() ); // handled elsewhere
+  assert( not kernel::manager< ConnectionManager >.use_compressed_spikes() ); // handled elsewhere
 
   const auto node_id = current_source.get_node_id();
 
   // set values of next_target_data
-  next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( node_id ) );
-  next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) ) );
+  next_target_data.set_source_lid( kernel::manager< VPManager >.node_id_to_lid( node_id ) );
+  next_target_data.set_source_tid(
+    kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node_id ) ) );
   next_target_data.reset_marker();
 
   if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
@@ -380,9 +383,9 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     // the source rank will write to the buffer position relative to
     // the first position from the absolute position in the receive
     // buffer
-    const size_t relative_recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
+    const size_t relative_recv_buffer_pos = kernel::manager< ConnectionManager >.get_secondary_recv_buffer_position(
                                               current_position.tid, current_position.syn_id, current_position.lcid )
-      - kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
+      - kernel::manager< MPIManager >.get_recv_displacement_secondary_events_in_int( source_rank );
 
     SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
     secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
@@ -427,7 +430,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
 
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source
-    kernel().connection_manager.set_source_has_more_targets( current_position.tid,
+    kernel::manager< ConnectionManager >.set_source_has_more_targets( current_position.tid,
       current_position.syn_id,
       current_position.lcid,
       next_entry_has_same_source_( current_position, current_source ) );
@@ -444,7 +447,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     // communicated via MPI, so we prepare to return the relevant data
 
     // set the source rank
-    source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
+    source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( current_source.get_node_id() );
 
     if ( not populate_target_data_fields_( current_position, current_source, source_rank, next_target_data ) )
     {
@@ -467,7 +470,7 @@ nest::SourceTable::resize_compressible_sources()
   {
     compressible_sources_[ tid ].clear();
     compressible_sources_[ tid ].resize(
-      kernel().model_manager.get_num_connection_models(), std::map< size_t, SpikeData >() );
+      kernel::manager< ModelManager >.get_num_connection_models(), std::map< size_t, SpikeData >() );
   }
 }
 
@@ -490,13 +493,13 @@ nest::SourceTable::collect_compressible_sources( const size_t tid )
       ++lcid;
       while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
       {
-        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
+        kernel::manager< ConnectionManager >.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
         ++lcid;
       }
       // Mark last connection in sequence as not having successor. This is essential if connections are
       // delete, e.g., by structural plasticity, because we do not globally reset the more_targets flag.
       assert( lcid - 1 < syn_sources.size() );
-      kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
+      kernel::manager< ConnectionManager >.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
     }
   }
 }
@@ -509,11 +512,11 @@ nest::SourceTable::dump_sources() const
     {
       for ( size_t lcid = 0; lcid < sources_[ tid ][ syn_id ].size(); ++lcid )
       {
-        kernel().write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
-          kernel().mpi_manager.get_rank(),
-          kernel().vp_manager.get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "src  : r%1 t%2 s%3 tg%4 l%5 tt%6",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           sources_[ tid ][ syn_id ][ lcid ].get_node_id(),
-          kernel().connection_manager.get_target_node_id( tid, syn_id, lcid ),
+          kernel::manager< ConnectionManager >.get_target_node_id( tid, syn_id, lcid ),
           lcid,
           tid ) );
       }
@@ -530,9 +533,9 @@ nest::SourceTable::dump_compressible_sources() const
     {
       for ( const auto& entry : compressible_sources_[ tid ][ syn_id ] )
       {
-        kernel().write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
-          kernel().mpi_manager.get_rank(),
-          kernel().vp_manager.get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "csrc : r%1 t%2 s%3 l%4 tt%5",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           entry.first,
           entry.second.get_lcid(),
           entry.second.get_tid() ) );
@@ -545,7 +548,7 @@ void
 nest::SourceTable::fill_compressed_spike_data(
   std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
-  const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
+  const size_t num_synapse_models = kernel::manager< ModelManager >.get_num_connection_models();
   compressed_spike_data.clear();
   compressed_spike_data.resize( num_synapse_models );
   compressed_spike_data_map_.clear();
@@ -558,7 +561,7 @@ nest::SourceTable::fill_compressed_spike_data(
 
   // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
   //       Maybe one can exploit that to avoid searching with find() below.
-  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
+  for ( synindex syn_id = 0; syn_id < kernel::manager< ModelManager >.get_num_connection_models(); ++syn_id )
   {
     for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
           ++target_thread )
@@ -572,7 +575,7 @@ nest::SourceTable::fill_compressed_spike_data(
           // Set up entry for new source
           const auto new_source_index = compressed_spike_data[ syn_id ].size();
 
-          compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
+          compressed_spike_data[ syn_id ].emplace_back( kernel::manager< VPManager >.get_num_threads(),
             SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
 
           compressed_spike_data_map_[ syn_id ].insert(
@@ -602,9 +605,9 @@ nest::SourceTable::dump_compressed_spike_data(
           : compressed_spike_data_map_ ) {
       for ( const auto& entry : tab )
       {
-        kernel().write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
-          kernel().mpi_manager.get_rank(),
-          kernel().vp_manager.get_thread_id(),
+        kernel::manager< KernelManager >.write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
+          kernel::manager< MPIManager >.get_rank(),
+          kernel::manager< VPManager >.get_thread_id(),
           entry.first,
           entry.second.get_source_index(),
           entry.second.get_target_thread() ) );
@@ -617,9 +620,9 @@ nest::SourceTable::dump_compressed_spike_data(
       {
         for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )
         {
-          kernel().write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
-            kernel().mpi_manager.get_rank(),
-            kernel().vp_manager.get_thread_id(),
+          kernel::manager< KernelManager >.write_to_dump( String::compose( "csd  : r%1 t%2 six%3 tx%4 l%5 tt%6",
+            kernel::manager< MPIManager >.get_rank(),
+            kernel::manager< VPManager >.get_thread_id(),
             six,
             tx,
             tab[ six ][ tx ].get_lcid(),
@@ -627,4 +630,201 @@ nest::SourceTable::dump_compressed_spike_data(
         }
       }
     } )
+}
+void
+nest::SourceTable::clear_compressed_spike_data_map()
+{
+
+  for ( auto& source_index_map : compressed_spike_data_map_ )
+  {
+    source_index_map.clear();
+  }
+}
+
+size_t
+nest::SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const
+{
+
+  assert( source_node_id < 72057594037927936 );
+  assert( syn_id < invalid_synindex );
+  // syn_id is maximally 256, so shifting node ID by 8 bits and storing
+  // syn_id in the lowest 8 leads to a unique number
+  return ( source_node_id << 8 ) + syn_id;
+}
+
+size_t
+nest::SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
+{
+
+  size_t n = 0;
+  size_t last_source = 0;
+  for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
+        cit != sources_[ tid ][ syn_id ].end();
+        ++cit )
+  {
+    if ( last_source != ( *cit ).get_node_id() )
+    {
+      last_source = ( *cit ).get_node_id();
+      ++n;
+    }
+  }
+  return n;
+}
+
+void
+nest::SourceTable::get_source_node_ids( const size_t tid,
+  const synindex syn_id,
+  const std::vector< size_t >& source_lcids,
+  std::vector< size_t >& sources )
+{
+
+  for ( std::vector< size_t >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
+  {
+    sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_node_id() );
+  }
+}
+
+void
+nest::SourceTable::disable_connection( const size_t tid, const synindex syn_id, const size_t lcid )
+{
+
+  // disabling a source changes its node ID to 2^62 -1
+  // source here
+  assert( not sources_[ tid ][ syn_id ][ lcid ].is_disabled() );
+  sources_[ tid ][ syn_id ][ lcid ].disable();
+}
+
+void
+nest::SourceTable::no_targets_to_process( const size_t tid )
+{
+
+  current_positions_[ tid ].tid = -1;
+  current_positions_[ tid ].syn_id = -1;
+  current_positions_[ tid ].lcid = -1;
+}
+
+void
+nest::SourceTable::reset_processed_flags( const size_t tid )
+{
+
+  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
+  {
+    for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end(); ++iit )
+    {
+      iit->set_processed( false );
+    }
+  }
+}
+
+void
+nest::SourceTable::reset_entry_point( const size_t tid )
+{
+
+  // Since we read the source table backwards, we need to set saved
+  // values to the biggest possible value. These will be used to
+  // initialize current_positions_ correctly upon calling
+  // restore_entry_point. However, this can only be done if other
+  // values have valid values.
+  saved_positions_[ tid ].tid = sources_.size() - 1;
+  if ( saved_positions_[ tid ].tid > -1 )
+  {
+    saved_positions_[ tid ].syn_id = sources_[ saved_positions_[ tid ].tid ].size() - 1;
+  }
+  else
+  {
+    saved_positions_[ tid ].syn_id = -1;
+  }
+  if ( saved_positions_[ tid ].syn_id > -1 )
+  {
+    saved_positions_[ tid ].lcid = sources_[ saved_positions_[ tid ].tid ][ saved_positions_[ tid ].syn_id ].size() - 1;
+  }
+  else
+  {
+    saved_positions_[ tid ].lcid = -1;
+  }
+}
+
+void
+nest::SourceTable::restore_entry_point( const size_t tid )
+{
+
+  current_positions_[ tid ] = saved_positions_[ tid ];
+  saved_entry_point_.set_false( tid );
+}
+
+void
+nest::SourceTable::save_entry_point( const size_t tid )
+{
+
+  if ( saved_entry_point_[ tid ].is_false() )
+  {
+    saved_positions_[ tid ].tid = current_positions_[ tid ].tid;
+    saved_positions_[ tid ].syn_id = current_positions_[ tid ].syn_id;
+
+    // if tid and syn_id are valid entries, also store valid entry for lcid
+    if ( current_positions_[ tid ].tid > -1 and current_positions_[ tid ].syn_id > -1 )
+    {
+      // either store current_position.lcid + 1, since this can
+      // contain non-processed entry (see reject_last_target_data()) or
+      // store maximal value for lcid.
+      saved_positions_[ tid ].lcid = std::min( current_positions_[ tid ].lcid + 1,
+        static_cast< long >(
+          sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ].size() - 1 ) );
+    }
+    else
+    {
+      assert( current_positions_[ tid ].lcid == -1 );
+      saved_positions_[ tid ].lcid = -1;
+    }
+    saved_entry_point_.set_true( tid );
+  }
+}
+
+void
+nest::SourceTable::reject_last_target_data( const size_t tid )
+{
+
+  // The last target data returned by get_next_target_data() could not
+  // be inserted into MPI buffer due to overflow. We hence need to
+  // correct the processed flag of the last entry (see
+  // source_table.cpp)
+  assert( current_positions_[ tid ].lcid + 1
+    < static_cast< long >( sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ].size() ) );
+
+  sources_[ current_positions_[ tid ].tid ][ current_positions_[ tid ].syn_id ][ current_positions_[ tid ].lcid + 1 ]
+    .set_processed( false );
+}
+
+void
+nest::SourceTable::clear( const size_t tid )
+{
+
+  for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
+  {
+    it->clear();
+  }
+  sources_[ tid ].clear();
+  is_cleared_.set_true( tid );
+}
+
+void
+nest::SourceTable::add_source( const size_t tid, const synindex syn_id, const size_t node_id, const bool is_primary )
+{
+
+  const Source src( node_id, is_primary );
+  sources_[ tid ][ syn_id ].push_back( src );
+}
+
+size_t
+nest::CSDMapEntry::get_target_thread() const
+{
+
+  return target_thread_;
+}
+
+size_t
+nest::CSDMapEntry::get_source_index() const
+{
+
+  return source_index_;
 }

@@ -23,16 +23,168 @@
 #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H
 #define UNIVERSAL_DATA_LOGGER_IMPL_H
 
+#include "simulation_manager.h"
 #include "universal_data_logger.h"
 
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "kernel_manager.h"
-#include "nest_time.h"
-#include "node.h"
+namespace nest
+{
+
+// must be defined in this file, since it is required by check_connection(),
+// which typically is in h-files.
+template < typename HostNode >
+size_t
+UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
+  const RecordablesMap< HostNode >& rmap )
+{
+  // rports are assigned consecutively, the caller may not request specific
+  // rports.
+  if ( req.get_rport() != 0 )
+  {
+    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
+  }
+
+  // ensure that we have not connected this multimeter before
+  const size_t mm_node_id = req.get_sender().get_node_id();
+
+  const auto item = std::find_if( data_loggers_.begin(),
+    data_loggers_.end(),
+    [ & ]( const DataLogger_& dl ) { return dl.get_mm_node_id() == mm_node_id; } );
+
+  if ( item != data_loggers_.end() )
+  {
+    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
+  }
+
+  // we now know that we have no DataLogger_ for the given multimeter, so we
+  // create one and push it
+  data_loggers_.push_back( DataLogger_( req, rmap ) );
+
+  // rport is index plus one, i.e., size
+  return data_loggers_.size();
+}
 
 template < typename HostNode >
-nest::DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
+UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
+  const RecordablesMap< HostNode >& rmap )
+  : multimeter_( req.get_sender().get_node_id() )
+  , num_vars_( 0 )
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , rec_int_steps_( 0 )
+  , next_rec_step_( -1 )
+  , // flag as uninitialized
+  node_access_()
+  , data_()
+  , next_rec_( 2, 0 )
+{
+  const std::vector< Name >& recvars = req.record_from();
+  for ( size_t j = 0; j < recvars.size(); ++j )
+  {
+    // .toString() required as work-around for #339, remove when #348 is solved.
+    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+
+    if ( rec == rmap.end() )
+    {
+      // delete all access information again: the connect either succeeds
+      // for all entries in recvars, or it fails, leaving the logger untouched
+      node_access_.clear();
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+    }
+
+    node_access_.push_back( rec->second );
+  }
+
+  num_vars_ = node_access_.size();
+
+  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
+  {
+    throw IllegalConnection( "Recording interval must be >= resolution." );
+  }
+
+  recording_interval_ = req.get_recording_interval();
+  recording_offset_ = req.get_recording_offset();
+}
+
+
+// must be defined in this file, since it is required by check_connection(),
+// which typically is in h-files.
+template < typename HostNode >
+size_t
+DynamicUniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
+  const DynamicRecordablesMap< HostNode >& rmap )
+{
+  // rports are assigned consecutively, the caller may not request specific
+  // rports.
+  if ( req.get_rport() != 0 )
+  {
+    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
+  }
+
+  // ensure that we have not connected this multimeter before
+  const size_t mm_node_id = req.get_sender().get_node_id();
+  const size_t n_loggers = data_loggers_.size();
+  size_t j = 0;
+  while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )
+  {
+    ++j;
+  }
+  if ( j < n_loggers )
+  {
+    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
+  }
+
+  // we now know that we have no DataLogger_ for the given multimeter, so we
+  // create one and push it
+  data_loggers_.push_back( DataLogger_( req, rmap ) );
+
+  // rport is index plus one, i.e., size
+  return data_loggers_.size();
+}
+
+template < typename HostNode >
+DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
+  const DynamicRecordablesMap< HostNode >& rmap )
+  : multimeter_( req.get_sender().get_node_id() )
+  , num_vars_( 0 )
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , rec_int_steps_( 0 )
+  , next_rec_step_( -1 )
+  , // flag as uninitialized
+  node_access_()
+  , data_()
+  , next_rec_( 2, 0 )
+{
+  const std::vector< Name >& recvars = req.record_from();
+  for ( size_t j = 0; j < recvars.size(); ++j )
+  {
+    // .toString() required as work-around for #339, remove when #348 is solved.
+    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+
+    if ( rec == rmap.end() )
+    {
+      // delete all access information again: the connect either succeeds
+      // for all entries in recvars, or it fails, leaving the logger untouched
+      node_access_.clear();
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+    }
+
+    node_access_.push_back( &( rec->second ) );
+  }
+
+  num_vars_ = node_access_.size();
+
+  if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
+  {
+    throw IllegalConnection( "Recording interval must be >= resolution." );
+  }
+
+  recording_interval_ = req.get_recording_interval();
+  recording_offset_ = req.get_recording_offset();
+}
+
+template < typename HostNode >
+DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
   : host_( host )
   , data_loggers_()
 {
@@ -40,7 +192,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNo
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::reset()
+DynamicUniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -50,7 +202,7 @@ nest::DynamicUniversalDataLogger< HostNode >::reset()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::init()
+DynamicUniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -60,7 +212,7 @@ nest::DynamicUniversalDataLogger< HostNode >::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::record_data( long step )
+DynamicUniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -70,7 +222,7 @@ nest::DynamicUniversalDataLogger< HostNode >::record_data( long step )
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
+DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
   const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
@@ -80,7 +232,7 @@ nest::DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& 
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
+DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
   next_rec_step_ = -1; // flag as uninitialized
@@ -88,7 +240,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
+DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
@@ -97,7 +249,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel::manager< SimulationManager >.get_slice_origin().get_steps() )
   {
     return;
   }
@@ -114,14 +266,15 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval. Need to add
   // +1 because the division result is rounded down.
-  next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+  next_rec_step_ =
+    ( kernel::manager< SimulationManager >.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
   // If offset is not 0, adjust next recording step to account for it by first setting next recording
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
-    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
     }
@@ -129,7 +282,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   // number of data points per slice
   const long recs_per_slice = static_cast< long >(
-    std::ceil( kernel().connection_manager.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+    std::ceil( kernel::manager< ConnectionManager >.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
@@ -139,14 +292,14 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
+DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
 {
   if ( num_vars_ < 1 or step < next_rec_step_ )
   {
     return;
   }
 
-  const size_t wt = kernel().event_delivery_manager.write_toggle();
+  const size_t wt = kernel::manager< EventDeliveryManager >.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -181,7 +334,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const Ho
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
+DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
   {
@@ -194,13 +347,13 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = kernel().event_delivery_manager.read_toggle();
+  const size_t rt = kernel::manager< EventDeliveryManager >.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next round.
-  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel::manager< SimulationManager >.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
@@ -228,11 +381,11 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
   reply.set_port( request.get_port() );
 
   // send it off
-  kernel().event_delivery_manager.send_to_node( reply );
+  kernel::manager< EventDeliveryManager >.send_to_node( reply );
 }
 
 template < typename HostNode >
-nest::UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
+UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
   : host_( host )
   , data_loggers_()
 {
@@ -240,7 +393,7 @@ nest::UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::reset()
+UniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -250,7 +403,7 @@ nest::UniversalDataLogger< HostNode >::reset()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::init()
+UniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -260,7 +413,7 @@ nest::UniversalDataLogger< HostNode >::init()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::record_data( long step )
+UniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -270,7 +423,7 @@ nest::UniversalDataLogger< HostNode >::record_data( long step )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
+UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
   const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
@@ -280,7 +433,7 @@ nest::UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::reset()
+UniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
   next_rec_step_ = -1; // flag as uninitialized
@@ -288,7 +441,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::reset()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::init()
+UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
@@ -298,7 +451,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel::manager< SimulationManager >.get_slice_origin().get_steps() )
   {
     return;
   }
@@ -315,14 +468,15 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval. Need to add
   // +1 because the division result is rounded down.
-  next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+  next_rec_step_ =
+    ( kernel::manager< SimulationManager >.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
   // If offset is not 0, adjust next recording step to account for it by first setting next recording
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
-    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
     }
@@ -330,7 +484,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // number of data points per slice
   const long recs_per_slice = static_cast< long >(
-    std::ceil( kernel().connection_manager.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+    std::ceil( kernel::manager< ConnectionManager >.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
@@ -340,14 +494,14 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host, long step )
+UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host, long step )
 {
   if ( num_vars_ < 1 or step < next_rec_step_ )
   {
     return;
   }
 
-  const size_t wt = kernel().event_delivery_manager.write_toggle();
+  const size_t wt = kernel::manager< EventDeliveryManager >.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -382,7 +536,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
+UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
   {
@@ -396,13 +550,13 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = kernel().event_delivery_manager.read_toggle();
+  const size_t rt = kernel::manager< EventDeliveryManager >.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next round.
-  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel::manager< SimulationManager >.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
@@ -430,7 +584,10 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   reply.set_port( request.get_port() );
 
   // send it off
-  kernel().event_delivery_manager.send_to_node( reply );
+  kernel::manager< EventDeliveryManager >.send_to_node( reply );
 }
 
-#endif /* #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H */
+}
+
+
+#endif

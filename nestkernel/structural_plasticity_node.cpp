@@ -28,6 +28,8 @@
 // Includes from sli:
 #include "dictutils.h"
 
+#include <nest_names.h>
+
 namespace nest
 {
 
@@ -267,6 +269,18 @@ nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
   const double t_sp_ms = t_sp.get_ms() - offset;
   update_synaptic_elements( t_sp_ms );
   Ca_minus_ += beta_Ca_;
+}
+
+double
+StructuralPlasticityNode::get_tau_Ca() const
+{
+  return tau_Ca_;
+}
+
+double
+StructuralPlasticityNode::get_Ca_minus() const
+{
+  return Ca_minus_;
 }
 
 } // of namespace nest

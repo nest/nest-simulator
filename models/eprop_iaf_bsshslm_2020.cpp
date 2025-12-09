@@ -32,10 +32,11 @@
 
 // nestkernel
 #include "eprop_archiving_node_recurrent_impl.h"
+#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // sli
 #include "dictutils.h"
@@ -267,8 +268,8 @@ eprop_iaf_bsshslm_2020::pre_run_hook()
 void
 eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long to )
 {
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
+  const bool with_reset = kernel::manager< SimulationManager >.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
 
   for ( long lag = from; lag < to; ++lag )
@@ -309,7 +310,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
       count_spike();
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
       S_.z_ = 1.0;
       S_.r_ = V_.RefractoryCounts_;
@@ -341,8 +342,8 @@ eprop_iaf_bsshslm_2020::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -350,8 +351,8 @@ eprop_iaf_bsshslm_2020::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void
@@ -415,8 +416,8 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   }
   presyn_isis.clear();
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
+  const long learning_window = kernel::manager< SimulationManager >.get_eprop_learning_window().get_steps();
   const auto firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
 
   grad += firing_rate_reg * sum_e;

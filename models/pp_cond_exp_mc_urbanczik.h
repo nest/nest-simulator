@@ -43,9 +43,8 @@
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 #include "urbanczik_archiving_node.h"
-#include "urbanczik_archiving_node_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"

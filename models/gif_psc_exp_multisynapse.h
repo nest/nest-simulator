@@ -28,9 +28,9 @@
 #include "connection.h"
 #include "event.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 namespace nest
 {

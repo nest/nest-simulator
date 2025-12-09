@@ -132,21 +132,14 @@ public:
   using ConnectionBase::get_target;
 
   /**
-   * Default Destructor.
-   */
-  virtual ~ht_synapse()
-  {
-  }
-
-  /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual void get_status( DictionaryDatum& d ) const;
+  void get_status( DictionaryDatum& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  virtual void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.

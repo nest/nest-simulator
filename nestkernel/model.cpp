@@ -31,6 +31,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -48,7 +49,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( kernel().vp_manager.get_num_threads() );
+  set_threads_( kernel::manager< VPManager >.get_num_threads() );
 }
 
 void
@@ -129,7 +130,7 @@ Model::get_status()
   }
 
   ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_node_model( type_id_ )->get_name() );
+  ( *d )[ names::type_id ] = LiteralDatum( kernel::manager< ModelManager >.get_node_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
@@ -147,6 +148,37 @@ Model::get_status()
 
   ( *d )[ names::model ] = LiteralDatum( get_name() );
   return d;
+}
+
+std::string
+Model::get_name() const
+{
+
+  return name_;
+}
+
+Node*
+Model::create( size_t t )
+{
+
+  assert( t < memory_.size() );
+  Node* n = create_();
+  memory_[ t ].emplace_back( n );
+  return n;
+}
+
+size_t
+Model::get_type_id() const
+{
+
+  return type_id_;
+}
+
+void
+Model::set_type_id( size_t id )
+{
+
+  type_id_ = id;
 }
 
 } // namespace

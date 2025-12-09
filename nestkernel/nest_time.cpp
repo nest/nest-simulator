@@ -36,6 +36,9 @@
 #include "integerdatum.h"
 #include "token.h"
 
+// Includes from nestkernel:
+#include "exceptions.h"
+
 using namespace nest;
 
 const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
@@ -203,4 +206,24 @@ operator<<( std::ostream& strm, const Time& t )
   }
 
   return strm;
+}
+
+double
+Time::delay_steps_to_ms( long steps )
+{
+  if ( steps < 0 )
+  {
+    throw BadDelay( steps * Range::MS_PER_STEP, "Delay value must be greater than or equal to zero." );
+  }
+  return steps * Range::MS_PER_STEP;
+}
+
+long
+Time::delay_ms_to_steps( double ms )
+{
+  if ( ms < 0 )
+  {
+    throw BadDelay( ms, "Delay value must be greater than or equal to zero." );
+  }
+  return ld_round( ms * Range::STEPS_PER_MS );
 }

@@ -473,6 +473,138 @@ jobs:
         run: |
           flake8 .
 
+  pr-authors:
+    runs-on: "ubuntu-22.04"
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: "Checkout repository content"
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.10"
+
+      - name: "Install dependencies"
+        run: |
+          pip install requests
+
+      - name: "Check PR authors"
+        id: check_authors
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          PRIVATE_REPO_OWNER: ${{ secrets.PRIVATE_REPO_OWNER }}
+          PRIVATE_REPO_NAME: ${{ secrets.PRIVATE_REPO_NAME }}
+          FAIL_ON_UNKNOWN_AUTHORS: ${{ vars.FAIL_ON_UNKNOWN_AUTHORS || 'true' }}
+        run: |
+          # Run the script and capture outputs
+          echo "Running PR authors check script..."
+          python build_support/check_pr_authors.py \
+            --pr-number ${{ github.event.pull_request.number }} \
+            --repo-owner ${{ github.repository_owner }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --github-token ${{ github.token }} \
+            --private-repo-owner "${{ secrets.PRIVATE_REPO_OWNER }}" \
+            --private-repo-name "${{ secrets.PRIVATE_REPO_NAME }}" \
+            --private-repo-token "${{ secrets.PRIVATE_REPO_TOKEN }}" \
+            --authors-file-path "${{ vars.VALIDATED_AUTHORS_FILE_PATH || 'data/gitlognames.yaml' }}" \
+            ${{ vars.FAIL_ON_UNKNOWN_AUTHORS == 'true' && '--fail-on-unknown' || '' }} 2>&1 | tee /tmp/script_output.txt
+
+          # Check if script failed
+          SCRIPT_EXIT_CODE=${PIPESTATUS[0]}
+          if [ $SCRIPT_EXIT_CODE -ne 0 ]; then
+            echo "Script failed with exit code $SCRIPT_EXIT_CODE"
+            echo "Script output:"
+            cat /tmp/script_output.txt
+            exit $SCRIPT_EXIT_CODE
+          fi
+
+          # Extract outputs for GitHub Actions
+          if [ -f /tmp/script_output.txt ]; then
+            # Extract key=value pairs and set as GitHub outputs
+            grep "^[a-zA-Z_][a-zA-Z0-9_]*=" /tmp/script_output.txt | while IFS='=' read -r key value; do
+              echo "${key}=${value}" >> $GITHUB_OUTPUT
+            done
+
+            # Handle formatted authors list for GitHub Actions step summary
+            if grep -q "authors_formatted<<EOF" /tmp/script_output.txt; then
+              # Extract authors between EOF markers
+              sed -n '/authors_formatted<<EOF/,/^EOF$/p' /tmp/script_output.txt | \
+                sed '1d;$d' > /tmp/authors_formatted.txt
+              echo "authors_formatted<<EOF" >> $GITHUB_OUTPUT
+              cat /tmp/authors_formatted.txt >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: "Display PR authors summary"
+        run: |
+          # Create summary content
+          echo "## PR Authors Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total unique authors:** ${{ steps.check_authors.outputs.author_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Authors:**" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.check_authors.outputs.authors_formatted }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Add validation check results if available
+          if [ "${{ steps.check_authors.outputs.validation_status }}" = "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Author Validation Check" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **SUCCESS: All PR authors are validated**" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_authors.outputs.validation_status }}" = "failure" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Author Validation Check" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **FAILURE:** ${{ steps.check_authors.outputs.unknown_count }} unknown author(s) found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The authors of this PR may be contributing for the first time or may have modified their author information. Author information requires review." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ **Note:** Author validation check skipped (private repository access not configured)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Also display in build logs for visibility
+          echo "=== PR AUTHORS SUMMARY ==="
+          echo "## PR Authors Summary"
+          echo ""
+          echo "**Total unique authors:** ${{ steps.check_authors.outputs.author_count }}"
+          echo ""
+          echo "**Authors:**"
+          echo '```'
+          echo "${{ steps.check_authors.outputs.authors_formatted }}"
+          echo '```'
+
+          if [ "${{ steps.check_authors.outputs.validation_status }}" = "success" ]; then
+            echo ""
+            echo "## Author Validation Check"
+            echo ""
+            echo "✅ **SUCCESS: All PR authors are validated**"
+          elif [ "${{ steps.check_authors.outputs.validation_status }}" = "failure" ]; then
+            echo ""
+            echo "## Author Validation Check"
+            echo ""
+            echo "❌ **FAILURE:** ${{ steps.check_authors.outputs.unknown_count }} unknown author(s) found"
+            echo ""
+            echo "The authors of this PR may be contributing for the first time or may have modified their author information. Author information requires review."
+          else
+            echo ""
+            echo "ℹ️ **Note:** Author validation check skipped (private repository access not configured)"
+          fi
+          echo "========================="
+
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-22.04"

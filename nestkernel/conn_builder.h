@@ -853,8 +853,8 @@ inline void
 BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
+    it != parameters_requiring_skipping_.end();
+    ++it )
   {
     ( *it )->skip( target_thread, n_skip );
   }

@@ -197,8 +197,8 @@ Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
     typename std::insert_iterator< Ntree< D, size_t > > to = std::inserter( *cached_ntree_, cached_ntree_->end() );
 
     for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator from = cached_vector_->begin();
-          from != cached_vector_->end();
-          ++from )
+      from != cached_vector_->end();
+      ++from )
     {
       *to = *from;
     }
@@ -265,7 +265,7 @@ Layer< D >::get_global_positions_vector( const MaskDatum& mask,
   std::vector< std::pair< Position< D >, size_t > > positions;
 
   for ( typename Ntree< D, size_t >::masked_iterator iter = masked_layer.begin( anchor ); iter != masked_layer.end();
-        ++iter )
+    ++iter )
   {
     positions.push_back( *iter );
   }
@@ -294,8 +294,8 @@ void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
   for ( NodeCollection::const_iterator it = this->node_collection_->rank_local_begin();
-        it < this->node_collection_->end();
-        ++it )
+    it < this->node_collection_->end();
+    ++it )
   {
     out << ( *it ).node_id << ' ';
     get_position( ( *it ).nc_index ).print( out );

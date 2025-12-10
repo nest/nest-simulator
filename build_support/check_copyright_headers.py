@@ -118,6 +118,9 @@ for dirpath, _, fnames in os.walk(source_dir):
         if any([exclude_file in tested_file for exclude_file in exclude_files]):
             continue
 
+        if os.stat(tested_file).st_size == 0:
+            continue
+
         with open(tested_file, encoding="utf-8") as source_file:
             total_files += 1
             for template_line in template_contents[extension]:

@@ -940,8 +940,8 @@ nest::SimulationManager::update_()
             // this loop may be empty for those threads
             // that do not have any nodes requiring wfr_update
             for ( std::vector< Node* >::const_iterator i = thread_local_wfr_nodes.begin();
-                  i != thread_local_wfr_nodes.end();
-                  ++i )
+              i != thread_local_wfr_nodes.end();
+              ++i )
             {
               done_p = wfr_update_( *i ) and done_p;
             }
@@ -1008,8 +1008,8 @@ nest::SimulationManager::update_()
         {
 #pragma omp barrier
           for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
+            i != kernel().node_manager.get_local_nodes( tid ).end();
+            ++i )
           {
             Node* node = i->get_node();
             node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
@@ -1023,8 +1023,8 @@ nest::SimulationManager::update_()
           }
           // Remove 10% of the vacant elements
           for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
+            i != kernel().node_manager.get_local_nodes( tid ).end();
+            ++i )
           {
             Node* node = i->get_node();
             node->decay_synaptic_elements_vacant();
@@ -1122,8 +1122,8 @@ nest::SimulationManager::update_()
 
       // End of the slice, we update the number of synaptic elements
       for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-            i != kernel().node_manager.get_local_nodes( tid ).end();
-            ++i )
+        i != kernel().node_manager.get_local_nodes( tid ).end();
+        ++i )
       {
         Node* node = i->get_node();
         node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );

@@ -531,8 +531,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator iter = positions.begin();
-              iter != positions.end();
-              ++iter )
+          iter != positions.end();
+          ++iter )
         {
           iter->first.get_vector( source_pos_vector );
           probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
@@ -664,8 +664,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator iter = positions->begin();
-              iter != positions->end();
-              ++iter )
+          iter != positions->end();
+          ++iter )
         {
           iter->first.get_vector( source_pos_vector );
           probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );

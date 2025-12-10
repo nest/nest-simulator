@@ -256,15 +256,15 @@ void
 MUSICManager::publish_music_in_ports_()
 {
   for ( std::map< std::string, MusicEventHandler >::iterator it = music_event_in_portmap_.begin();
-        it != music_event_in_portmap_.end();
-        ++it )
+    it != music_event_in_portmap_.end();
+    ++it )
   {
     it->second.publish_port();
   }
 
   for ( std::map< std::string, MusicRateInHandler >::iterator it = music_rate_in_portmap_.begin();
-        it != music_rate_in_portmap_.end();
-        ++it )
+    it != music_rate_in_portmap_.end();
+    ++it )
   {
     it->second.publish_port();
   }
@@ -274,15 +274,15 @@ void
 MUSICManager::update_music_event_handlers( Time const& origin, const long from, const long to )
 {
   for ( std::map< std::string, MusicEventHandler >::iterator it = music_event_in_portmap_.begin();
-        it != music_event_in_portmap_.end();
-        ++it )
+    it != music_event_in_portmap_.end();
+    ++it )
   {
     it->second.update( origin, from, to );
   }
 
   for ( std::map< std::string, MusicRateInHandler >::iterator it = music_rate_in_portmap_.begin();
-        it != music_rate_in_portmap_.end();
-        ++it )
+    it != music_rate_in_portmap_.end();
+    ++it )
   {
     it->second.update( origin, from, to );
   }

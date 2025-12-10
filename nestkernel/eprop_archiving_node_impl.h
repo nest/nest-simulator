@@ -140,8 +140,8 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
   auto it_update_hist = update_history_.begin();
 
   for ( long t = update_history_.begin()->t_;
-        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
-        t += update_interval )
+    t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
+    t += update_interval )
   {
     if ( it_update_hist->t_ == t )
     {

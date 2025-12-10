@@ -200,73 +200,37 @@ before-all = """
     # Uses dynamic path detection with brew --prefix for robustness.
 
     echo "=== macOS ARM64 Setup ==="
-    echo "Build OS: $OSTYPE"
-    echo "Architecture: $(arch)"
+    echo "Architecture: $(arch) | OS: $OSTYPE"
 
-    # Verify we're on ARM64
-    if [[ "$(arch)" != "arm64" ]]; then
-      echo "❌ Only ARM64 (Apple Silicon) is supported for macOS builds"
-      echo "Detected architecture: $(arch)"
+    # ARM64 architecture check (redundant check removed since we already verified above)
+    [[ "$(arch)" == "arm64" ]] || {
+      echo "❌ Only ARM64 (Apple Silicon) supported, detected: $(arch)"
       exit 1
-    fi
+    }
+
+    # Install dependencies and configure OpenMP
     brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses cmake hdf5
     brew link --force libomp
-    # Enable Sonata on macOS where HDF5 is available
-    export NEST_ENABLE_SONATA=ON
-    if [[ $(arch) == 'arm64' ]]; then
-      export LDFLAGS="-L/opt/homebrew/lib"
-      export CPPFLAGS="-I/opt/homebrew/include"
-    else
-      export LDFLAGS="-L/usr/local/lib"
-      export CPPFLAGS="-I/usr/local/include"
-    fi
 
+    # Configure build environment with dynamic paths
+    HOMEBREW_PREFIX=$(brew --prefix)
+    export LDFLAGS="-L$HOMEBREW_PREFIX/lib"
+    export CPPFLAGS="-I$HOMEBREW_PREFIX/include"
 
-    # # Install dependencies
-    # echo "Installing ARM64 dependencies..."
-    # brew update || echo "Warning: brew update failed, continuing..."
-    # brew install llvm libomp boost gsl cmake hdf5 || {
-    #   echo "❌ Failed to install macOS dependencies"
-    #   exit 1
-    # }
-
-    # Configure paths dynamically
+    # Dynamic path configuration for specific packages
     export LIBOMP_PATH=$(brew --prefix libomp)
     export LLVM_PATH=$(brew --prefix llvm)
     export BOOST_ROOT=$(brew --prefix boost)
     export HDF5_ROOT=$(brew --prefix hdf5)
 
-    # Verify OpenMP and configure build
-    echo "Verifying OpenMP: $LIBOMP_PATH/lib/libomp.dylib"
+    # Verify OpenMP installation
     [[ -f "$LIBOMP_PATH/lib/libomp.dylib" ]] || {
-      echo "❌ OpenMP not found"
+      echo "❌ OpenMP not found at $LIBOMP_PATH/lib/libomp.dylib"
       exit 1
     }
 
-    # # Configure build environment with Homebrew tools
-    # export PATH="$LLVM_PATH/bin:$(brew --prefix)/bin:$PATH"
-    # export CC="$LLVM_PATH/bin/clang"
-    # export CXX="$LLVM_PATH/bin/clang++"
-    # export DYLD_LIBRARY_PATH="$LIBOMP_PATH/lib"
-
-    # # Build CMake arguments with complete OpenMP configuration
-    # export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$LIBOMP_PATH:$LLVM_PATH:$BOOST_ROOT:$HDF5_ROOT"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_COMPILER=$CC -DCMAKE_CXX_COMPILER=$CXX"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_EXE_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_SHARED_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_ROOT='$LIBOMP_PATH'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_FLAGS='-Xpreprocessor -fopenmp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIB_NAMES='omp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_FLAGS='-Xpreprocessor -fopenmp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIB_NAMES='omp'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_omp_LIBRARY='$LIBOMP_PATH/lib/libomp.dylib'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_INCLUDE_DIR='$LIBOMP_PATH/include'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_FIND_LIBRARY_SUFFIXES='.dylib;.so;.a'"
-    # export CMAKE_ARGS="$CMAKE_ARGS -DBOOST_ROOT=$BOOST_ROOT -DHDF5_ROOT=$HDF5_ROOT -Dwith-hdf5=ON"
+    # Configure CMake arguments for macOS build with HDF5 support
+    export CMAKE_ARGS="${CMAKE_ARGS} -Dwith-hdf5=ON -DHDF5_ROOT=$HDF5_ROOT"
 
     echo "macOS ARM64 setup complete"
 

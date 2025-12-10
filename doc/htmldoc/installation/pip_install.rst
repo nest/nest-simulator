@@ -1,52 +1,34 @@
-NEST Simulator pip Installation Guide
-=====================================
+.. _pip_install:
 
-.. contents::
-   :local:
-
-Introduction
-============
-
-NEST is a neural network simulator with Python bindings. This guide covers installation of the ``nest-simulator`` package from PyPI.
+Install NEST with ``pip``
+=========================
 
 Prerequisites
-=============
+-------------
 
 - **Python**: 3.9 to 3.13
 - **Operating System**: Linux, macOS
 - **Architecture**: x86_64 (64-bit)
 
-Installation
-============
 
-Basic Installation
+Installation steps
 ------------------
+
+First set up your virtual environent (recommended):
 
 .. code-block:: bash
 
-   # Create virtual environment (recommended)
    python3 -m venv nest-env
    source nest-env/bin/activate
-
-   # Install NEST
    pip install --upgrade pip
+
+You can either install the basic package of NEST:
+
+.. code-block:: bash
+
    pip install nest-simulator
 
-   # Verify installation
-   python -c "import nest; print('NEST version:', nest.__version__)"
-
-.. note::
-   The package name is ``nest-simulator`` but you import it as ``nest`` in Python.
-
-Optional Features
------------------
-
-Available options:
-
-- **sonata**: HDF5-based network file format support
-- **server**: REST API server dependencies
-- **examples**: Additional packages for running examples
-- **full**: All optional features
+Or install NEST with one of the following options:
 
 .. code-block:: bash
 
@@ -59,18 +41,56 @@ Available options:
    # Install with example dependencies
    pip install nest-simulator[examples]
 
-   # Install everything
+   # Install all options
    pip install nest-simulator[full]
 
    # Combine multiple options
    pip install nest-simulator[sonata,server]
    pip install nest-simulator[examples,server]
 
-Verification
-============
+Install other desired packages (e.g., you may also want to use NEST in a Jupyter instance):
 
-Simple Example
---------------
+.. code-block:: bash
+
+   # Optional packages
+   pip install jupyterlab
+
+Verify that NEST installed successfully:
+
+.. code-block:: bash
+
+   python -c "import nest; print('NEST version:', nest.__version__)"
+
+.. note::
+
+   The package name is ``nest-simulator`` but you import it as ``nest`` in Python.
+
+Package contents
+----------------
+
+
+**Core Features (always included):**
+
+- NEST simulator with Python bindings
+- Standard neuron and synapse models
+- GSL (GNU Scientific Library)
+- Boost libraries
+- OpenMP parallelization
+- Basic dependencies: numpy, matplotlib, cython
+
+**Optional Features:**
+
+- **Sonata support**: HDF5-based network format (macOS, Alpine Linux, Debian/Ubuntu)
+- **Server mode**: REST API for remote access
+- **Examples**: Additional tools needed by some examples (including `ipython`, `imageio`, `seaborn`, `networkX`, `cycler`)
+
+
+A small test example
+--------------------
+
+Once installed, you can open your preferred platform for editing and running Python code (like Jupyter notebook, ipython etc.).
+Then, run this example:
+
 
 .. code-block:: python
 
@@ -99,29 +119,21 @@ Simple Example
    plt.ylabel("Membrane potential [mV]")
    plt.show()
 
-Package Contents
-================
+Next Steps
+-----------
 
-**Core Features (always included):**
+Now that you have NEST installed, you can
 
-- NEST simulator with Python bindings
-- Standard neuron and synapse models
-- GSL (GNU Scientific Library)
-- Boost libraries
-- OpenMP parallelization
-- Basic dependencies: numpy, matplotlib, cython
+* Learn how to use NEST with our :ref:`tutorials_guides` or
 
-**Optional Features:**
-
-- **Sonata support**: HDF5-based network format (macOS, Alpine Linux, Debian/Ubuntu)
-- **Server mode**: REST API for remote control
-- **Examples**: Additional visualization and analysis tools
+* Explore our :ref:`example gallery <pynest_examples>`.
 
 Troubleshooting
-===============
+----------------
+
 
 Common Issues
--------------
+~~~~~~~~~~~~~~
 
 **Import Error**
 
@@ -148,16 +160,8 @@ Common Issues
    source clean-env/bin/activate
    pip install nest-simulator
 
-Getting Help
-============
+Get Help
+--------
 
-- **Documentation**: https://nest-simulator.readthedocs.io/
-- **Issues**: https://github.com/nest/nest-simulator/issues
-- **Mailing List**: users@nest-simulator.org
-- **System Info**: ``python -c "import nest; nest.sysinfo()"``
-
-Next Steps
-==========
-
-1. Read the `NEST tutorials <https://nest-simulator.readthedocs.io/en/stable/tutorials/>`_
-2. Explore the `model gallery <https://nest-simulator.readthedocs.io/en/stable/models/>`_
+- We have extensive :doc:`Documentation <index>` on various aspects of NEST.
+- You can :ref:`contact us via the mailing list or create issues on GitHub <community>`

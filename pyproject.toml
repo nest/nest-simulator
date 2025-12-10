@@ -185,97 +185,200 @@ before-all =  """
   # Clean up any existing build artifacts
   rm -rf build/ *.so *.c 2>/dev/null || true
 
-  # Install system dependencies
+  # =============================================================================
+  # PLATFORM-SPECIFIC DEPENDENCY INSTALLATION AND CONFIGURATION
+  # =============================================================================
+  # This section handles the installation of system dependencies based on the
+  # detected platform. Each platform has specific requirements and paths that
+  # need to be configured correctly for NEST to build successfully.
+
   if [[ "$OSTYPE" == "darwin"* ]]; then
+    # =========================================================================
+    # macOS SETUP - Completely separate handling for ARM64 and Intel x86_64
+    # =========================================================================
+    # Background: macOS has two different architectures with different Homebrew
+    # installation paths. ARM64 Macs use /opt/homebrew while Intel Macs use
+    # /usr/local. This separation ensures each architecture gets the correct
+    # configuration without conflicts.
+
     echo "=== macOS Build Setup ==="
     echo "Build OS: $OSTYPE"
     echo "Architecture: $(arch)"
     echo "Homebrew path: $(which brew)"
 
-    # Determine Homebrew prefix based on architecture
+    # Detect architecture and branch into completely separate setup paths
     if [[ "$(arch)" == "arm64" ]]; then
+      # =====================================================================
+      # ARM64 (Apple Silicon) macOS Setup - /opt/homebrew path
+      # =====================================================================
+      # ARM64 Macs (M1, M2, M3 series) use /opt/homebrew as the base path.
+      # All dependencies including OpenMP, Boost, and HDF5 are installed here.
+
+      echo "=== ARM64 (Apple Silicon) Setup ==="
       HOMEBREW_PREFIX="/opt/homebrew"
-      echo "ARM64 detected - using $HOMEBREW_PREFIX"
-    else
-      HOMEBREW_PREFIX="/usr/local"
-      echo "Intel detected - using $HOMEBREW_PREFIX"
-    fi
+      echo "ARM64 detected - using Homebrew prefix: $HOMEBREW_PREFIX"
 
-    # Install dependencies with proper error handling
-    echo "Installing dependencies with Homebrew..."
-    brew update || echo "Warning: brew update failed, continuing..."
+      # Update Homebrew package database
+      echo "Updating Homebrew package database..."
+      brew update || echo "Warning: brew update failed, continuing with cached packages"
 
-    # Install packages individually to handle already-installed packages
-    for pkg in llvm libomp boost gsl libtool cmake hdf5; do
-      if brew list "$pkg" >/dev/null 2>&1; then
-        echo "✓ $pkg already installed"
+      # Install ARM64-specific dependencies
+      echo "Installing ARM64-optimized dependencies..."
+      ARM_PACKAGES="llvm libomp boost gsl libtool cmake hdf5"
+      for pkg in $ARM_PACKAGES; do
+        if brew list "$pkg" >/dev/null 2>&1; then
+          echo "✓ $pkg already installed for ARM64"
+        else
+          echo "Installing $pkg for ARM64..."
+          brew install "$pkg" || {
+            echo "❌ Failed to install $pkg for ARM64"
+            exit 1
+          }
+        fi
+      done
+
+      # ARM64-specific path configuration
+      export LIBOMP_PATH="$HOMEBREW_PREFIX/opt/libomp"
+      export LLVM_PATH="$HOMEBREW_PREFIX/opt/llvm"
+
+      echo "=== ARM64 OpenMP Verification ==="
+      echo "Checking OpenMP at: $LIBOMP_PATH/lib/libomp.dylib"
+      if [[ -f "$LIBOMP_PATH/lib/libomp.dylib" ]]; then
+        echo "✅ ARM64 OpenMP found: $LIBOMP_PATH/lib/libomp.dylib"
+        ls -la "$LIBOMP_PATH/lib/libomp*"
       else
-        echo "Installing $pkg..."
-        brew install "$pkg" || {
-          echo "❌ Failed to install $pkg"
-          exit 1
-        }
+        echo "❌ ARM64 OpenMP NOT found at: $LIBOMP_PATH/lib/"
+        echo "Searching for OpenMP in ARM64 Homebrew..."
+        find $HOMEBREW_PREFIX -name "*libomp*" 2>/dev/null || echo "No libomp found in ARM64 Homebrew"
+        exit 1
       fi
-    done
 
-    # Set up OpenMP paths
-    export LIBOMP_PATH="$HOMEBREW_PREFIX/opt/libomp"
-    export LLVM_PATH="$HOMEBREW_PREFIX/opt/llvm"
+      # ARM64-specific environment setup
+      echo "=== Configuring ARM64 Build Environment ==="
+      export CMAKE_PREFIX_PATH="$HOMEBREW_PREFIX:$LIBOMP_PATH:$LLVM_PATH"
+      export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/lib/pkgconfig"
+      export CPPFLAGS="-I$HOMEBREW_PREFIX/include -I$LIBOMP_PATH/include"
+      export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$LIBOMP_PATH/lib"
+      export DYLD_LIBRARY_PATH="$LIBOMP_PATH/lib"
 
-    # Verify OpenMP installation specifically
-    echo "=== Verifying OpenMP installation ==="
-    if [[ -f "$LIBOMP_PATH/lib/libomp.dylib" ]]; then
-      echo "✅ OpenMP found: $LIBOMP_PATH/lib/libomp.dylib"
-      ls -la "$LIBOMP_PATH/lib/libomp*"
+      # Use Homebrew LLVM for ARM64 to ensure OpenMP compatibility
+      export CC="$LLVM_PATH/bin/clang"
+      export CXX="$LLVM_PATH/bin/clang++"
+
+      # ARM64-specific CMake configuration for OpenMP
+      echo "=== Building ARM64 CMake Arguments ==="
+      export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_COMPILER=$CC"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_COMPILER=$CXX"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_EXE_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_SHARED_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_FLAGS='-Xpreprocessor -fopenmp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIB_NAMES='omp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_FLAGS='-Xpreprocessor -fopenmp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIB_NAMES='omp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
+      export CMAKE_ARGS="$CMAKE_ARGS -Dwith-hdf5=ON"
+
+      echo "=== ARM64 Environment Summary ==="
+      echo "HOMEBREW_PREFIX: $HOMEBREW_PREFIX"
+      echo "LIBOMP_PATH: $LIBOMP_PATH"
+      echo "LLVM_PATH: $LLVM_PATH"
+      echo "CC: $CC"
+      echo "CXX: $CXX"
+
     else
-      echo "❌ OpenMP NOT found at expected path: $LIBOMP_PATH/lib/"
-      echo "Checking alternative locations..."
-      find $HOMEBREW_PREFIX -name "*libomp*" 2>/dev/null || echo "No libomp found anywhere"
-      exit 1
+      # =====================================================================
+      # Intel x86_64 macOS Setup - /usr/local path
+      # =====================================================================
+      # Intel Macs use /usr/local as the Homebrew base path. This section
+      # handles the different path structure and potential compatibility
+      # issues with older macOS versions on Intel hardware.
+
+      echo "=== Intel x86_64 Setup ==="
+      HOMEBREW_PREFIX="/usr/local"
+      echo "Intel x86_64 detected - using Homebrew prefix: $HOMEBREW_PREFIX"
+
+      # Update Homebrew package database
+      echo "Updating Homebrew package database..."
+      brew update || echo "Warning: brew update failed, continuing with cached packages"
+
+      # Install Intel-specific dependencies
+      echo "Installing Intel x86_64-optimized dependencies..."
+      INTEL_PACKAGES="llvm libomp boost gsl libtool cmake hdf5"
+      for pkg in $INTEL_PACKAGES; do
+        if brew list "$pkg" >/dev/null 2>&1; then
+          echo "✓ $pkg already installed for Intel x86_64"
+        else
+          echo "Installing $pkg for Intel x86_64..."
+          brew install "$pkg" || {
+            echo "❌ Failed to install $pkg for Intel x86_64"
+            exit 1
+          }
+        fi
+      done
+
+      # Intel-specific path configuration
+      export LIBOMP_PATH="$HOMEBREW_PREFIX/opt/libomp"
+      export LLVM_PATH="$HOMEBREW_PREFIX/opt/llvm"
+
+      echo "=== Intel OpenMP Verification ==="
+      echo "Checking OpenMP at: $LIBOMP_PATH/lib/libomp.dylib"
+      if [[ -f "$LIBOMP_PATH/lib/libomp.dylib" ]]; then
+        echo "✅ Intel OpenMP found: $LIBOMP_PATH/lib/libomp.dylib"
+        ls -la "$LIBOMP_PATH/lib/libomp*"
+      else
+        echo "❌ Intel OpenMP NOT found at: $LIBOMP_PATH/lib/"
+        echo "Searching for OpenMP in Intel Homebrew..."
+        find $HOMEBREW_PREFIX -name "*libomp*" 2>/dev/null || echo "No libomp found in Intel Homebrew"
+        exit 1
+      fi
+
+      # Intel-specific environment setup
+      echo "=== Configuring Intel Build Environment ==="
+      export CMAKE_PREFIX_PATH="$HOMEBREW_PREFIX:$LIBOMP_PATH:$LLVM_PATH"
+      export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/lib/pkgconfig"
+      export CPPFLAGS="-I$HOMEBREW_PREFIX/include -I$LIBOMP_PATH/include"
+      export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$LIBOMP_PATH/lib"
+      export DYLD_LIBRARY_PATH="$LIBOMP_PATH/lib"
+
+      # Use Homebrew LLVM for Intel to ensure OpenMP compatibility
+      export CC="$LLVM_PATH/bin/clang"
+      export CXX="$LLVM_PATH/bin/clang++"
+
+      # Intel-specific CMake configuration for OpenMP
+      echo "=== Building Intel CMake Arguments ==="
+      export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_COMPILER=$CC"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_COMPILER=$CXX"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_EXE_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_SHARED_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_FLAGS='-Xpreprocessor -fopenmp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIB_NAMES='omp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_FLAGS='-Xpreprocessor -fopenmp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIB_NAMES='omp'"
+      export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
+      export CMAKE_ARGS="$CMAKE_ARGS -Dwith-hdf5=ON"
+
+      echo "=== Intel Environment Summary ==="
+      echo "HOMEBREW_PREFIX: $HOMEBREW_PREFIX"
+      echo "LIBOMP_PATH: $LIBOMP_PATH"
+      echo "LLVM_PATH: $LLVM_PATH"
+      echo "CC: $CC"
+      echo "CXX: $CXX"
     fi
 
-    # Verify other dependencies
-    echo "=== Verifying other dependencies ==="
-    ls -la $HOMEBREW_PREFIX/lib/libboost* | head -3 || echo "WARNING: boost not found"
-    ls -la $HOMEBREW_PREFIX/lib/libhdf5* | head -3 || echo "WARNING: HDF5 not found"
+    # Common verification for both architectures
+    echo "=== Verifying Additional macOS Dependencies ==="
+    ls -la $HOMEBREW_PREFIX/lib/libboost* | head -3 || echo "WARNING: Boost libraries not found"
+    ls -la $HOMEBREW_PREFIX/lib/libhdf5* | head -3 || echo "WARNING: HDF5 libraries not found"
 
-    # Set up environment for OpenMP and other libraries
-    export CMAKE_PREFIX_PATH="$HOMEBREW_PREFIX:$LIBOMP_PATH:$LLVM_PATH:${CMAKE_PREFIX_PATH:-}"
-    export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
-
-    # OpenMP specific flags for Apple Clang
-    export CPPFLAGS="-I$HOMEBREW_PREFIX/include -I$LIBOMP_PATH/include"
-    export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$LIBOMP_PATH/lib"
-    export DYLD_LIBRARY_PATH="$LIBOMP_PATH/lib:${DYLD_LIBRARY_PATH:-}"
-
-    # Use LLVM clang for better OpenMP support
-    export CC="$LLVM_PATH/bin/clang"
-    export CXX="$LLVM_PATH/bin/clang++"
-
-    # CMake arguments for OpenMP detection
-    export CMAKE_ARGS="-DCMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_COMPILER=$CC"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_COMPILER=$CXX"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_C_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_CXX_FLAGS='-Xpreprocessor -fopenmp -I$LIBOMP_PATH/include'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_EXE_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_SHARED_LINKER_FLAGS='-L$LIBOMP_PATH/lib -lomp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_FLAGS='-Xpreprocessor -fopenmp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIB_NAMES='omp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_C_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_FLAGS='-Xpreprocessor -fopenmp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIB_NAMES='omp'"
-    export CMAKE_ARGS="$CMAKE_ARGS -DOpenMP_CXX_LIBRARIES='$LIBOMP_PATH/lib/libomp.dylib'"
-    export CMAKE_ARGS="$CMAKE_ARGS -Dwith-hdf5=ON"
-
-    echo "=== macOS Environment Summary ==="
-    echo "HOMEBREW_PREFIX: $HOMEBREW_PREFIX"
-    echo "LIBOMP_PATH: $LIBOMP_PATH"
-    echo "LLVM_PATH: $LLVM_PATH"
-    echo "CC: $CC"
-    echo "CXX: $CXX"
-    echo "CMAKE_PREFIX_PATH: $CMAKE_PREFIX_PATH"
-    echo "CMAKE_ARGS: $CMAKE_ARGS"
+    echo "Final macOS CMAKE_ARGS: $CMAKE_ARGS"
 
   elif [ "${AUDITWHEEL_POLICY:-}" = "musllinux_1_2" ]; then
     apk add --no-cache git libc6-compat gsl gsl-dev wget bzip2 cmake boost-dev hdf5-dev

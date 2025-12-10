@@ -170,7 +170,7 @@ struct rightshift_iterator_pair
   }
 
   template < typename T >
-  inline int
+  inline uint64_t
   operator()( boost::tuples::tuple< nest::Source&, T& > s, unsigned offset )
   {
     return boost::get< 0 >( s ).get_node_id() >> offset;

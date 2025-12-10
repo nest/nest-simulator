@@ -1,5 +1,5 @@
 /*
- *  test_event_proxies_sender.sli
+ *  test_event_proxies_issue-696.music
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,12 @@
  *
  */
 
-(unittest) run
-/unittest using
+[sender]
+  np=1
+  binary=./test_event_proxies_issue-696_sender.py
 
-skip_if_without_music
+[receiver]
+  np=1
+  binary=./test_event_proxies_issue-696_receiver.py
 
-M_ERROR setverbosity
-
-% create voltmeter first to ensure same GID in sender and receiver
-/voltmeter Create /vm Set
-vm << /label (sender) /record_to /ascii >> SetStatus
-
-/spike_generator Create /sg Set
-sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
-
-/iaf_psc_alpha Create /n Set
-
-% create last to ensure same GID for neuron as in receiver
-/parrot_neuron Create /pn Set
-
-sg pn Connect
-pn n /one_to_one << /weight 750.0 >> Connect
-
-vm n Connect
-
-/music_event_out_proxy Create /meop Set
-meop << /port_name (spikes_out) >> SetStatus
-
-pn meop /one_to_one << /music_channel 0 >> Connect
-
-10 Simulate
+sender.out -> receiver.in [11]

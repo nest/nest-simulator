@@ -1,5 +1,5 @@
 /*
- *  test_event_proxies_issue-696.music
+ *  test_message.music
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,18 @@
  *
  */
 
-[sender]
-  binary=nest
-  np=1
-  args=test_event_proxies_issue-696_sender.sli
+stoptime=0.1
 
-[receiver]
-  binary=nest
-  np=1
-  args=test_event_proxies_issue-696_receiver.sli
+# Name of the input file needs to be listed here for the testsuite to find it.
+# input file: test_message0.dat
 
-sender.out -> receiver.in [11]
+[from]
+    binary=messagesource
+    np=1
+    args=test_message
+
+[to]
+    np=1
+    binary=./test_message_receiver.py
+
+from.out -> to.msgdata [0]

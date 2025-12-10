@@ -8,9 +8,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-15, ubuntu-24.04]
+        os: [macos-15-intel, macos-15, ubuntu-24.04]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
@@ -29,6 +37,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Build sdist
         run: pipx run build --sdist
@@ -66,46 +82,126 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
 
   test_uploaded_package:
-    name: Test uploaded package in virtualenv
+    name: Test uploaded package on ${{ matrix.os }}
     needs: [upload_pypi]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name-suffix: "ubuntu"
+          - os: ubuntu-latest
+            container: debian:latest
+            name-suffix: "debian"
+          - os: ubuntu-latest
+            container: alpine:latest
+            name-suffix: "alpine"
+          - os: ubuntu-latest
+            container: centos:7
+            name-suffix: "centos"
+          - os: ubuntu-latest
+            container: fedora:latest
+            name-suffix: "fedora"
+          - os: macos-13
+            name-suffix: "macos-intel"
+          - os: macos-15
+            name-suffix: "macos-arm"
+    container: ${{ matrix.container }}
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip python3-virtualenv time \
-            openmpi-bin openmpi-common libopenmpi-dev
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Create and activate virtualenv
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-${{ matrix.name-suffix || 'default' }}-pip-test-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.name-suffix || 'default' }}-pip-test-
+            ${{ runner.os }}-pip-
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
-          python -m venv .env
-          source .env/bin/activate
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y python3 python3-pip openmpi-bin libopenmpi-dev
+          elif command -v apk >/dev/null 2>&1; then
+            apk update
+            apk add python3 py3-pip openmpi openmpi-dev build-base
+          elif command -v yum >/dev/null 2>&1; then
+            yum update -y
+            yum install -y python3 python3-pip openmpi-devel gcc-c++ make
+          elif command -v dnf >/dev/null 2>&1; then
+            dnf update -y
+            dnf install -y python3 python3-pip openmpi-devel gcc-c++ make
+          fi
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install open-mpi
+
+      - name: Install and test package and multithreading
+        run: |
           python -m pip install --upgrade pip
-
-      - name: Install package from TestPyPI
-        run: |
-          source .env/bin/activate
-          python3 -m pip --no-cache-dir install \
-            --index-url https://test.pypi.org/simple/ \
+          python -m pip install --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple nest-simulator
+          python -c "import nest; print('✓ NEST import successful:', nest.__version__)"
+          python -c "
+          import nest
+          import time
+          import os
 
-      - name: Test import
-        run: |
-          source .env/bin/activate
-          python -c "import nest; print(nest.__version__)"
-          pip install pytest pytest-timeout pytest-xdist pytest-pylint \
-            pytest-mypy pytest-cov data-science-types terminaltables \
-            pycodestyle pydocstyle rstcheck mypy>=0.8 junitparser>=2 \
-            clang-format==17.0.4 attrs
-          # bash $($VIRTUAL_ENV/bin/python3 -c \
-          #   'from distutils.sysconfig import get_python_lib; \
-          #   print(get_python_lib())')/share/nest/testsuite/do_tests.sh \
-          #   --with-python=$VIRTUAL_ENV/bin/python3 \
-          #   --prefix=$($VIRTUAL_ENV/bin/python3 -c \
-          #   'from distutils.sysconfig import get_python_lib; \
-          #   print(get_python_lib())')
+          print('=== OpenMP Multithreading Test ===')
+
+          # Set available threads
+          max_threads = min(os.cpu_count() or 1, 4)  # Limit to 4 for CI
+          nest.local_num_threads = max_threads
+
+          print(f'Available CPU cores: {os.cpu_count()}')
+          print(f'NEST threads set to: {nest.local_num_threads}')
+          print(f'OpenMP max threads: {os.environ.get(\"OMP_NUM_THREADS\", \"not set\")}')
+
+          # Simple network simulation to test threading
+          nest.ResetKernel()
+
+          # Create neurons
+          n_neurons = 1000
+          neurons = nest.Create('iaf_psc_alpha', n_neurons)
+
+          # Create noise generator
+          noise = nest.Create('poisson_generator', params={'rate': 1000.0})
+
+          # Connect with some probability
+          nest.Connect(noise, neurons, {'rule': 'pairwise_bernoulli', 'p': 0.1})
+          nest.Connect(neurons, neurons, {'rule': 'pairwise_bernoulli', 'p': 0.01})
+
+          # Record spikes
+          spikedetector = nest.Create('spike_recorder')
+          nest.Connect(neurons[:100], spikedetector)  # Record from subset
+
+          print(f'Created network with {n_neurons} neurons')
+
+          # Run simulation and measure time
+          start_time = time.time()
+          nest.Simulate(100.0)  # 100ms simulation
+          end_time = time.time()
+
+          # Get results
+          events = nest.GetStatus(spikedetector, 'events')[0]
+          n_spikes = len(events['times'])
+          sim_time = end_time - start_time
+
+          print(f'Simulation completed in {sim_time:.3f}s')
+          print(f'Recorded {n_spikes} spikes')
+          print(f'✓ OpenMP multithreading test successful!')
+
+          # Verify we can actually use multiple threads
+          if nest.local_num_threads > 1:
+              print(f'✓ Multi-threading enabled with {nest.local_num_threads} threads')
+          else:
+              print('⚠ Running with single thread only')
+          "

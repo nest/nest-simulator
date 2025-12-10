@@ -178,7 +178,7 @@ config-settings = {}
 dependency-versions = "pinned"
 environment-pass = ["CIBW_BUILD_VERBOSITY"]
 build-verbosity = 1
-before-all =  """
+before-all = """
   set -e
   export MAKEFLAGS="-j2"
   NEST_SRC_DIR=${PWD}
@@ -340,7 +340,7 @@ before-all =  """
   echo "Final CMAKE_ARGS: $CMAKE_ARGS"
   """
 
-# Und das macOS Deployment Target korrigieren:
+# macOS deployment target configuration for better compatibility
 [[tool.cibuildwheel.overrides]]
 select = "*-macos*"
 inherit.environment = "append"

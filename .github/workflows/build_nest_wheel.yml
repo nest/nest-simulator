@@ -125,18 +125,24 @@ jobs:
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
+          # Check if we're in a container (root user) or native runner (needs sudo)
+          SUDO_CMD=""
+          if [ "$EUID" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+            SUDO_CMD="sudo"
+          fi
+
           if command -v apt-get >/dev/null 2>&1; then
-            apt-get update
-            apt-get install -y python3 python3-pip openmpi-bin libopenmpi-dev
+            $SUDO_CMD apt-get update
+            $SUDO_CMD apt-get install -y python3 python3-pip openmpi-bin libopenmpi-dev
           elif command -v apk >/dev/null 2>&1; then
-            apk update
-            apk add python3 py3-pip openmpi openmpi-dev build-base
+            $SUDO_CMD apk update
+            $SUDO_CMD apk add python3 py3-pip openmpi openmpi-dev build-base
           elif command -v yum >/dev/null 2>&1; then
-            yum update -y
-            yum install -y python3 python3-pip openmpi-devel gcc-c++ make
+            $SUDO_CMD yum update -y
+            $SUDO_CMD yum install -y python3 python3-pip openmpi-devel gcc-c++ make
           elif command -v dnf >/dev/null 2>&1; then
-            dnf update -y
-            dnf install -y python3 python3-pip openmpi-devel gcc-c++ make
+            $SUDO_CMD dnf update -y
+            $SUDO_CMD dnf install -y python3 python3-pip openmpi-devel gcc-c++ make
           fi
 
       - name: Install system dependencies (macOS)

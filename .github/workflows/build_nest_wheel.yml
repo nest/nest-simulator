@@ -1,14 +1,23 @@
 name: Build NEST simulator wheels
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master, hep_pynest-ng]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
-        os: [macos-15-intel, macos-15, ubuntu-24.04]
+        # Todo: Conditional matrix: fewer builds for PRs, full builds for releases/pushes
+        # os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-24.04"]') || fromJSON('["macos-15-intel", "macos-15", "ubuntu-24.04"]') }}
+        os: ["macos-15-intel", "macos-15", "ubuntu-24.04"]
     steps:
       - uses: actions/checkout@v4
 
@@ -81,11 +90,51 @@ jobs:
           # only for test pypi
           repository-url: https://test.pypi.org/legacy/
 
+  test_local_wheels:
+    name: Test local wheels on ${{ matrix.os }}
+    needs: [build_wheels]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # Continue testing all platforms even if one fails
+      matrix:
+        # Test only on key platforms for speed
+        include:
+          - os: ubuntu-latest
+            name-suffix: "ubuntu"
+            artifact-os: "ubuntu-24.04"
+          - os: macos-15
+            name-suffix: "macos-arm"
+            artifact-os: "macos-15"
+    steps:
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-${{ matrix.artifact-os }}-*
+          path: wheelhouse
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install local wheel and test
+        run: |
+          python -m pip install --upgrade pip
+          # Find the wheel file
+          wheel_file=$(find wheelhouse -name "nest_simulator-*.whl" | head -1)
+          echo "Installing wheel: $wheel_file"
+          python -m pip install "$wheel_file"
+          python -c "import nest; print('✓ Local wheel test successful:', nest.__version__)"
+
   test_uploaded_package:
     name: Test uploaded package on ${{ matrix.os }}
     needs: [upload_pypi]
     runs-on: ${{ matrix.os }}
+    # Todo: Only run comprehensive tests on releases or manual dispatch
+    # if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest

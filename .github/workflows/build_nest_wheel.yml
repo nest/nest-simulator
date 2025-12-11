@@ -102,7 +102,7 @@ jobs:
           - os: ubuntu-latest
             container: fedora:latest
             name-suffix: "fedora"
-          - os: macos-13
+          - os: macos-15-intel
             name-suffix: "macos-intel"
           - os: macos-15
             name-suffix: "macos-arm"

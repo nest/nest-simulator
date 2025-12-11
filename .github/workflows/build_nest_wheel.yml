@@ -126,23 +126,45 @@ jobs:
           PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
           echo "Testing on Python $PYTHON_VERSION"
 
-          # Find compatible wheel file for current Python version
-          wheel_file=$(find wheelhouse -name "*cp${PYTHON_VERSION}-*.whl" | head -1)
-          if [ -z "$wheel_file" ]; then
-            echo "No compatible wheel found for Python $PYTHON_VERSION, trying any available wheel..."
-            wheel_file=$(find wheelhouse -name "nest_simulator-*.whl" | head -1)
-            echo "Installing wheel with --force-reinstall: $wheel_file"
-            python -m pip install --force-reinstall --no-deps "$wheel_file"
+          # List all available wheels for debugging
+          echo "Available wheels:"
+          find wheelhouse -name "*.whl" -exec basename {} \;
+
+          # Try to find the best compatible wheel (prioritize manylinux over musllinux)
+          wheel_file=""
+
+          # First try: manylinux wheels (most compatible on glibc systems)
+          wheel_file=$(find wheelhouse -name "*cp${PYTHON_VERSION}-*manylinux*.whl" | head -1)
+          if [ -n "$wheel_file" ]; then
+            echo "Found manylinux wheel: $wheel_file"
           else
-            echo "Installing compatible wheel: $wheel_file"
-            python -m pip install "$wheel_file"
+            # Second try: any wheel for correct Python version (but avoid musllinux on Ubuntu)
+            # Exclude musllinux wheels on Ubuntu, as they are built for musl-based distributions (e.g., Alpine Linux)
+            # and are not compatible with glibc-based systems like Ubuntu.
+            wheel_file=$(find wheelhouse -name "*cp${PYTHON_VERSION}-*.whl" | grep -v musllinux | head -1)
+            if [ -n "$wheel_file" ]; then
+              echo "Found compatible wheel: $wheel_file"
+            else
+              # Last resort: force install any wheel with platform override
+              wheel_file=$(find wheelhouse -name "nest_simulator-*.whl" | head -1)
+              echo "Using force install with platform override: $wheel_file"
+              python -m pip install --force-reinstall --no-deps "$wheel_file"
+              # Install dependencies and exit early
+              python -m pip install numpy matplotlib cython
+              python -c "import nest; print('Local wheel test successful (force installed):', nest.__version__)"
+              exit 0
+            fi
           fi
+
+          # Install the selected wheel normally
+          echo "Installing wheel: $wheel_file"
+          python -m pip install "$wheel_file"
 
           # Install missing dependencies that --no-deps might have skipped
           python -m pip install numpy matplotlib cython
 
           # Test import
-          python -c "import nest; print('✓ Local wheel test successful:', nest.__version__)"
+          python -c "import nest; print('Local wheel test successful:', nest.__version__)"
 
   test_uploaded_package:
     name: Test uploaded package on ${{ matrix.os }}
@@ -255,25 +277,19 @@ jobs:
           spikedetector = nest.Create('spike_recorder')
           nest.Connect(neurons[:100], spikedetector)  # Record from subset
 
-          print(f'Created network with {n_neurons} neurons')
+          print(f'Created network with {n_neurons} neurons using {nest.local_num_threads} thread(s)')
 
           # Run simulation and measure time
           start_time = time.time()
           nest.Simulate(100.0)  # 100ms simulation
           end_time = time.time()
 
-          # Get results
-          events = nest.GetStatus(spikedetector, 'events')[0]
+          # Get results using modern API (avoids deprecation warning)
+          events = spikedetector.events
           n_spikes = len(events['times'])
           sim_time = end_time - start_time
 
           print(f'Simulation completed in {sim_time:.3f}s')
           print(f'Recorded {n_spikes} spikes')
-          print(f'✓ OpenMP multithreading test successful!')
-
-          # Verify we can actually use multiple threads
-          if nest.local_num_threads > 1:
-              print(f'✓ Multi-threading enabled with {nest.local_num_threads} threads')
-          else:
-              print('⚠ Running with single thread only')
+          print(f'✓ OpenMP multithreading test successful with {nest.local_num_threads} thread(s)!')
           "

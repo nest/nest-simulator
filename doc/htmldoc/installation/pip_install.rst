@@ -10,6 +10,16 @@ Prerequisites
 - **Operating System**: Linux, macOS
 - **Architecture**: x86_64 (64-bit)
 
+**macOS Additional Requirements:**
+
+For macOS users, OpenMP support requires installing the OpenMP runtime library:
+
+.. code-block:: bash
+
+   brew install libomp
+
+This is necessary for NEST's multithreading capabilities to work correctly on macOS.
+
 
 Installation steps
 ------------------

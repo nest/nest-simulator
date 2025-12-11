@@ -50,6 +50,25 @@ NEST is ideal for networks of spiking neurons of any size, for example:
 * NEST employs continuous integration workflows in order to maintain high code quality standards for correct and reproducible simulations
 
 
+## Installation
+
+### Quick Install
+
+```bash
+pip install nest-simulator
+```
+
+### macOS Requirements
+
+For macOS users, OpenMP support requires installing the OpenMP runtime library:
+
+```bash
+brew install libomp
+pip install nest-simulator
+```
+
+This is necessary for NEST's multithreading capabilities to work correctly on macOS.
+
 ## Documentation
 
 Please visit our [online documentation](https://nest-simulator.org/documentation) for details on installing and using NEST.

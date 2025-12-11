@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # Todo: Conditional matrix: fewer builds for PRs, full builds for releases/pushes
+        # TODO: Conditional matrix: fewer builds for PRs, full builds for releases/pushes
         # os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-24.04"]') || fromJSON('["macos-15-intel", "macos-15", "ubuntu-24.04"]') }}
         os: ["macos-15-intel", "macos-15", "ubuntu-24.04"]
     steps:
@@ -70,7 +70,7 @@ jobs:
     environment: testpypi
     permissions:
       id-token: write
-    # if: github.event_name == 'release' && github.event.action == 'published'
+    # TODO: if: github.event_name == 'release' && github.event.action == 'published'
     # or, alternatively, upload to PyPI on every tag starting with 'v'
     # (remove on: release above to use this)
     # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
@@ -131,7 +131,7 @@ jobs:
     name: Test uploaded package on ${{ matrix.os }}
     needs: [upload_pypi]
     runs-on: ${{ matrix.os }}
-    # Todo: Only run comprehensive tests on releases or manual dispatch
+    # TODO: Only run comprehensive tests on releases or manual dispatch
     # if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false

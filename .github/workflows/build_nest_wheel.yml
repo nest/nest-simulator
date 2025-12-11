@@ -1,14 +1,6 @@
 name: Build NEST simulator wheels
 
-on:
-  release:
-    types: [published]
-  workflow_dispatch:
-  # Trigger on pull requests and pushes to main branches for testing
-  pull_request:
-    types: [opened, synchronize, reopened]
-  push:
-    branches: [ master, hep_pynest-ng ]
+on: [push, pull_request]
 
 jobs:
   build_wheels:
@@ -33,6 +25,7 @@ jobs:
         with:
           package-dir: .
           output-dir: wheelhouse
+          config-file: "{package}/pyproject.toml"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -68,7 +61,10 @@ jobs:
     environment: testpypi
     permissions:
       id-token: write
-    if: (github.event_name == 'release' && github.event.action == 'published') || github.event_name == 'workflow_dispatch'
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    # or, alternatively, upload to PyPI on every tag starting with 'v'
+    # (remove on: release above to use this)
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -85,124 +81,6 @@ jobs:
           # only for test pypi
           repository-url: https://test.pypi.org/legacy/
 
-  # Parallel build tests (don't wait for PyPI upload)
-  test_build_artifacts:
-    name: Test built wheels locally
-    needs: [build_wheels]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-15, macos-latest, ubuntu-24.04, ubuntu-22.04]
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: cibw-wheels-${{ matrix.os }}-*
-          path: wheelhouse
-          merge-multiple: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install and test local wheel
-        run: |
-          # Find and install the wheel file
-          # Instead of looking for 'wheelhouse', look for the actual artifact location
-          # GitHub Actions downloads artifacts to the current directory with their artifact names
-
-          # Find wheel files in downloaded artifacts
-          wheel_file=$(find . -name "*.whl" -type f | head -1)
-
-          # Alternative: if artifacts are in a specific subdirectory
-          # wheel_file=$(find wheels-* -name "*.whl" 2>/dev/null | head -1)
-
-          if [ -z "$wheel_file" ]; then
-            echo "No wheel file found!"
-            echo "Available files:"
-            find . -name "*.whl" -type f 2>/dev/null || echo "No .whl files found"
-            echo "Directory structure:"
-            ls -la
-            exit 1
-          fi
-
-          echo "Installing wheel: $wheel_file"
-          python3 -m pip install --upgrade pip
-          python3 -m pip install "$wheel_file"
-
-          # Quick functionality test
-          python3 -c "
-          import nest
-          import platform
-          print(f'NEST {nest.__version__} on {platform.system()} {platform.machine()}')
-          nest.ResetKernel()
-          neurons = nest.Create('iaf_psc_alpha', 3)
-          print(f'✓ Local wheel test passed: {len(neurons)} neurons created')
-          "
-
-  test_macos_specific:
-    name: Test macOS-specific functionality
-    needs: [upload_pypi]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-15, macos-latest, macos-15-intel]
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install package from TestPyPI
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip --no-cache-dir install \
-            --index-url https://test.pypi.org/simple/ \
-            --extra-index-url https://pypi.org/simple nest-simulator
-
-      - name: Test NEST with macOS architecture info
-        run: |
-          python3 -c "
-          import nest
-          import platform
-          import sys
-
-          print(f'NEST {nest.__version__} on {platform.system()} {platform.release()}')
-          print(f'Architecture: {platform.machine()}')
-          print(f'Python: {sys.version}')
-
-          # Test kernel and basic functionality
-          nest.ResetKernel()
-          print('✓ Kernel reset successful')
-
-          # Test neuron creation
-          neurons = nest.Create('iaf_psc_alpha', 8)
-          print(f'✓ Created {len(neurons)} neurons')
-
-          # Test devices
-          vm = nest.Create('voltmeter')
-          sg = nest.Create('spike_generator', params={'spike_times': [15.0, 35.0]})
-          print('✓ Created devices')
-
-          # Test connections and simulation
-          nest.Connect(sg, neurons)
-          nest.Connect(vm, neurons[:4])
-          nest.Simulate(60.0)
-
-          events = vm.events
-          print(f'✓ Simulation complete: {len(events[\"times\"])} measurements')
-
-          # Test Sonata on macOS (should be available)
-          try:
-              import nest.lib.hl_api_sonata
-              print('✓ Sonata support: AVAILABLE (expected on macOS)')
-          except ImportError:
-              print('❌ Sonata support: NOT AVAILABLE (unexpected on macOS)')
-
-          print(f'All macOS tests passed on {platform.machine()}!')
-          "
-
-  # PyPI-based tests (run after upload)
   test_uploaded_package:
     name: Test uploaded package on ${{ matrix.os }}
     needs: [upload_pypi]

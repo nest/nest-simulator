@@ -180,8 +180,8 @@ jobs:
             container: alpine:latest
             name-suffix: "alpine"
           - os: ubuntu-latest
-            container: centos:7
-            name-suffix: "centos"
+            container: rockylinux:8
+            name-suffix: "rocky8"
           - os: ubuntu-latest
             container: fedora:latest
             name-suffix: "fedora"

@@ -120,48 +120,43 @@ jobs:
 
       - name: Install local wheel and test
         run: |
+          # Create and activate virtual environment
+          python -m venv test_venv
+          source test_venv/bin/activate
           python -m pip install --upgrade pip
 
-          # Get Python version info
+          # Get system info for wheel selection
           PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
-          echo "Testing on Python $PYTHON_VERSION"
+          ARCH=$(uname -m)
+          OS=$(uname -s)
+          echo "Testing on Python $PYTHON_VERSION, OS: $OS, Architecture: $ARCH"
 
-          # List all available wheels for debugging
-          echo "Available wheels:"
-          find wheelhouse -name "*.whl" -exec basename {} \;
+          # Find compatible wheel with fallback chain
+          wheel_file=$(
+            find wheelhouse -name "*.whl" | {
+              if [ "$OS" = "Darwin" ]; then
+                # macOS: prefer architecture-specific, fallback to any macOS
+                grep "cp${PYTHON_VERSION}.*macosx.*${ARCH}" | head -1 || \
+                grep "cp${PYTHON_VERSION}.*macosx" | head -1
+              else
+                # Linux: prefer manylinux, avoid musllinux on glibc systems
+                grep "cp${PYTHON_VERSION}.*manylinux" | head -1 || \
+                grep -v musllinux | grep "cp${PYTHON_VERSION}" | head -1
+              fi
+            } || find wheelhouse -name "nest_simulator-*.whl" | head -1
+          )
 
-          # Try to find the best compatible wheel (prioritize manylinux over musllinux)
-          wheel_file=""
-
-          # First try: manylinux wheels (most compatible on glibc systems)
-          wheel_file=$(find wheelhouse -name "*cp${PYTHON_VERSION}-*manylinux*.whl" | head -1)
-          if [ -n "$wheel_file" ]; then
-            echo "Found manylinux wheel: $wheel_file"
-          else
-            # Second try: any wheel for correct Python version (but avoid musllinux on Ubuntu)
-            # Exclude musllinux wheels on Ubuntu, as they are built for musl-based distributions (e.g., Alpine Linux)
-            # and are not compatible with glibc-based systems like Ubuntu.
-            wheel_file=$(find wheelhouse -name "*cp${PYTHON_VERSION}-*.whl" | grep -v musllinux | head -1)
-            if [ -n "$wheel_file" ]; then
-              echo "Found compatible wheel: $wheel_file"
-            else
-              # Last resort: force install any wheel with platform override
-              wheel_file=$(find wheelhouse -name "nest_simulator-*.whl" | head -1)
-              echo "Using force install with platform override: $wheel_file"
-              python -m pip install --force-reinstall --no-deps "$wheel_file"
-              # Install dependencies and exit early
-              python -m pip install numpy matplotlib cython
-              python -c "import nest; print('Local wheel test successful (force installed):', nest.__version__)"
-              exit 0
-            fi
+          # Validate that the wheel file exists before installing
+          if [ -z "$wheel_file" ] || [ ! -f "$wheel_file" ]; then
+            echo "::error::No compatible wheel file found for this platform (Python $PYTHON_VERSION, OS: $OS, ARCH: $ARCH)."
+            echo "Available wheels:"
+            find wheelhouse -name "*.whl" || echo "None found"
+            exit 1
           fi
+          echo "Selected wheel: $(basename "$wheel_file")"
 
-          # Install the selected wheel normally
-          echo "Installing wheel: $wheel_file"
-          python -m pip install "$wheel_file"
-
-          # Install missing dependencies that --no-deps might have skipped
-          python -m pip install numpy matplotlib cython
+          # Install wheel and dependencies
+          python -m pip install "$wheel_file" numpy matplotlib cython
 
           # Test import
           python -c "import nest; print('Local wheel test successful:', nest.__version__)"
@@ -240,10 +235,13 @@ jobs:
 
       - name: Install and test package and multithreading
         run: |
+          # Create and activate virtual environment
+          python -m venv test_venv
+          source test_venv/bin/activate
           python -m pip install --upgrade pip
           python -m pip install --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple nest-simulator
-          python -c "import nest; print('✓ NEST import successful:', nest.__version__)"
+          python -c "import nest; print('NEST import successful:', nest.__version__)"
           python -c "
           import nest
           import time
@@ -291,5 +289,5 @@ jobs:
 
           print(f'Simulation completed in {sim_time:.3f}s')
           print(f'Recorded {n_spikes} spikes')
-          print(f'✓ OpenMP multithreading test successful with {nest.local_num_threads} thread(s)!')
+          print(f'OpenMP multithreading test successful with {nest.local_num_threads} thread(s)!')
           "

@@ -65,7 +65,7 @@ jobs:
 
   upload_pypi:
     name: Upload wheels to pypi
-    needs: [build_wheels, build_sdist]
+    needs: [test_local_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: testpypi
     permissions:

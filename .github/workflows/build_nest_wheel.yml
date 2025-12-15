@@ -122,7 +122,7 @@ jobs:
         run: |
           # Create and activate virtual environment
           python -m venv test_venv
-          source test_venv/bin/activate
+          . test_venv/bin/activate
           python -m pip install --upgrade pip
 
           # Get system info for wheel selection
@@ -245,13 +245,14 @@ jobs:
         run: |
           # Create and activate virtual environment
           python -m venv test_venv
-          source test_venv/bin/activate
+          . test_venv/bin/activate
           python -m pip install --upgrade pip
 
           # For Alpine (musl), try to install and handle glibc incompatibility gracefully
           if [ "${{ matrix.container }}" = "alpine:latest" ]; then
             echo "Installing on Alpine Linux (musl libc)..."
             TMP_ERR=$(mktemp)
+            # TODO: use pip install nest_simulator after pypi upload
             if ! python -m pip install --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple nest-simulator 2> "$TMP_ERR"; then
               echo "::warning::Package installation failed on Alpine - likely due to glibc/musl incompatibility"
@@ -262,6 +263,7 @@ jobs:
               exit 0
             fi
           else
+            # TODO: use pip install nest_simulator after pypi upload
             python -m pip install --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple nest-simulator
           fi
@@ -306,7 +308,7 @@ jobs:
           nest.Simulate(100.0)  # 100ms simulation
           end_time = time.time()
 
-          # Get results using modern API (avoids deprecation warning)
+          # Get results and print summary
           events = spikedetector.events
           n_spikes = len(events['times'])
           sim_time = end_time - start_time

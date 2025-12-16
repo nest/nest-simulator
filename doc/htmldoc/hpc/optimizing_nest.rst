@@ -58,4 +58,4 @@ Although there will be some variation between scripts and HPC systems, in genera
 
    or see our performance results:
 
-   * :ref:`nest_benchmark_results`
+   * :doc:`NEST performance benchmarks <benchmarks:index>`

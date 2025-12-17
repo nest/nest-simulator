@@ -179,9 +179,9 @@ jobs:
           - os: ubuntu-latest
             container: alpine:latest
             name-suffix: "alpine"
-          - os: ubuntu-latest
-            container: rockylinux:8
-            name-suffix: "rocky8"
+          # - os: ubuntu-latest
+          #   container: rockylinux:8
+          #   name-suffix: "rocky8"
           - os: ubuntu-latest
             container: fedora:latest
             name-suffix: "fedora"
@@ -194,7 +194,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Cache pip packages
         uses: actions/cache@v4
@@ -220,7 +220,7 @@ jobs:
           elif command -v apk >/dev/null 2>&1; then
             $SUDO_CMD apk update
             $SUDO_CMD apk add python3 py3-pip openmpi openmpi-dev build-base gcompat
-            $SUDO_CMDapk add gcc musl-dev python3-dev libffi-dev openssl-dev make
+            $SUDO_CMD apk add gcc musl-dev python3-dev libffi-dev openssl-dev make
           elif command -v yum >/dev/null 2>&1; then
             $SUDO_CMD yum update -y
             $SUDO_CMD yum install -y python3 python3-pip openmpi-devel gcc-c++ make

@@ -176,9 +176,9 @@ jobs:
           - os: ubuntu-latest
             container: debian:latest
             name-suffix: "debian"
-          - os: ubuntu-latest
-            container: alpine:latest
-            name-suffix: "alpine"
+          # - os: ubuntu-latest
+          #  container: alpine:latest
+          #  name-suffix: "alpine"
           # - os: ubuntu-latest
           #   container: rockylinux:8
           #   name-suffix: "rocky8"

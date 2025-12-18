@@ -3,6 +3,7 @@ Image >= 1.5.30
 PyYAML >= 4.2b1
 RestrictedPython>=6.2
 csvkit >= 1.1.1
+cython>=0.29.14
 docutils >= 0.19
 example >= 0.1.0
 flask>=2.3.2

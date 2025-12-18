@@ -192,20 +192,20 @@ def do_exec(args, kwargs):
     source_code = kwargs.get("source", "")
     source_cleaned = clean_code(source_code)
 
-    locals_ = dict()
+    locals_ = globals()
     response = dict()
     if RESTRICTION_DISABLED:
         with Capturing() as stdout:
             globals_ = globals().copy()
             globals_.update(get_modules_from_env())
-            get_or_error(exec)(source_cleaned, globals_)
+            get_or_error(exec)(source_cleaned, globals_, locals_)
         if len(stdout) > 0:
             response["stdout"] = "\n".join(stdout)
     else:
         code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
         globals_ = get_restricted_globals()
         globals_.update(get_modules_from_env())
-        get_or_error(exec)(code, globals_)
+        get_or_error(exec)(code, globals_, locals_)
         if "_print" in locals_:
             response["stdout"] = "".join(locals_["_print"].txt)
 

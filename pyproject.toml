@@ -220,8 +220,8 @@ before-all = """
 
     # Install dependencies and configure OpenMP
     brew install llvm libomp gsl libtool open-mpi graphviz ncurses cmake hdf5
-    brew install boost@1.88 # Ensure compatible boost version
-    brew link boost@1.88 --force
+    brew install boost@1.85 # Ensure compatible boost version
+    brew link boost@1.85 --force
     brew link --force libomp
 
     # Get actual Homebrew prefix and verify it matches expected

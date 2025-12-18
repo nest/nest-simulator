@@ -104,6 +104,7 @@ ModelRangeManager::get_model_id( size_t node_id ) const
       range_idx -= ( range_idx - left ) / 2;
     }
     assert( left + 1 < right );
+    assert( range_idx >= 0 );
     assert( static_cast< size_t >( range_idx ) < modelranges_.size() );
   }
   return modelranges_[ range_idx ].get_model_id();

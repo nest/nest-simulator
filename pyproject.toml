@@ -220,7 +220,7 @@ before-all = """
 
     # Install dependencies and configure OpenMP
     brew install llvm libomp boost@1.85 gsl libtool open-mpi graphviz ncurses cmake hdf5
-    brew link libomp
+    brew link --force libomp
     # Get actual Homebrew prefix and verify it matches expected
     HOMEBREW_PREFIX=$(brew --prefix)
     echo "Homebrew prefix: $HOMEBREW_PREFIX (expected: $EXPECTED_BREW_PREFIX)"

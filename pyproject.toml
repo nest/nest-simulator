@@ -219,8 +219,9 @@ before-all = """
     fi
 
     # Install dependencies and configure OpenMP
-    brew install llvm libomp boost@1.85 gsl libtool open-mpi graphviz ncurses cmake hdf5
+    brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses cmake hdf5
     brew link --force libomp
+
     # Get actual Homebrew prefix and verify it matches expected
     HOMEBREW_PREFIX=$(brew --prefix)
     echo "Homebrew prefix: $HOMEBREW_PREFIX (expected: $EXPECTED_BREW_PREFIX)"
@@ -259,13 +260,13 @@ before-all = """
   elif command -v yum >/dev/null 2>&1; then
     yum install -y git glibc glibc-devel gsl gsl-devel wget bzip2 cmake make gcc gcc-c++
     # Install boost from source on manylinux
-    wget -q https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.bz2
-    tar --bzip2 -xf boost_1_88_0.tar.bz2
-    cd boost_1_88_0
+    wget -q https://archives.boost.io/release/1.90.0/source/boost_1_90_0.tar.bz2
+    tar --bzip2 -xf boost_1_90_0.tar.bz2
+    cd boost_1_90_0
     ./bootstrap.sh --with-libraries=system,filesystem,program_options
     ./b2 -j2 --prefix=/usr/local install
     cd ..
-    rm -rf boost_1_88_0*
+    rm -rf boost_1_90_0*
     export CMAKE_ARGS="${CMAKE_ARGS} -Dwith-hdf5=OFF"
 
   elif command -v apt-get >/dev/null 2>&1; then

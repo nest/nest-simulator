@@ -219,9 +219,10 @@ before-all = """
     fi
 
     # Install dependencies and configure OpenMP
-    brew install llvm libomp boost gsl libtool open-mpi graphviz ncurses cmake hdf5
+    brew install llvm libomp gsl libtool open-mpi graphviz ncurses cmake hdf5
+    brew install boost
+    brew link boost || { echo "Normal boost linking failed; forcing relink (may overwrite existing symlinks)"; brew link --force boost; }
     brew link --force libomp
-
     # Get actual Homebrew prefix and verify it matches expected
     HOMEBREW_PREFIX=$(brew --prefix)
     echo "Homebrew prefix: $HOMEBREW_PREFIX (expected: $EXPECTED_BREW_PREFIX)"

@@ -31,7 +31,7 @@
 #include "connection.h"
 #include "connector_model.h"
 #include "event.h"
-#include "nest.h"
+#include "nest_impl.h"
 #include "ring_buffer.h"
 
 // Includes from sli:

@@ -395,7 +395,7 @@ void
 stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   // Setting of parameter c and n not thread safe.
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     if ( syn_spec->known( names::c ) )
     {
@@ -457,7 +457,8 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_
+      > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() ) )
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
@@ -471,7 +472,8 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // process remaining dopa spikes in (t0, t1]
     double cd;
     while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_
+        > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but
@@ -553,7 +555,7 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDP
     minus_dt = t_last_update_ - t0;
     // facilitate only in case of post- after presyn. spike
     // skip facilitation if pre- and postsyn. spike occur at the same time
-    if ( t_spike - start->t_ > kernel().connection_manager.get_stdp_eps() )
+    if ( t_spike - start->t_ > kernel::manager< ConnectionManager >.get_stdp_eps() )
     {
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
     }

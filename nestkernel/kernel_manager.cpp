@@ -21,80 +21,61 @@
  */
 
 #include "kernel_manager.h"
-#include "stopwatch_impl.h"
 
-nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
+// Include concrete manager headers only in the implementation.
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "io_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
+#include "module_manager.h"
+#include "mpi_manager.h"
+#include "music_manager.h"
+#include "node_manager.h"
+#include "random_manager.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
+#include "vp_manager.h"
 
-void
-nest::KernelManager::create_kernel_manager()
+namespace nest
 {
-#pragma omp master
-  {
-    if ( not kernel_manager_instance_ )
-    {
-      kernel_manager_instance_ = new KernelManager();
-      assert( kernel_manager_instance_ );
-    }
-  }
-#pragma omp barrier
-}
 
-void
-nest::KernelManager::destroy_kernel_manager()
-{
-  kernel_manager_instance_->logging_manager.set_logging_level( M_QUIET );
-  delete kernel_manager_instance_;
-}
-
-nest::KernelManager::KernelManager()
+KernelManager::KernelManager()
   : fingerprint_( 0 )
-  , logging_manager()
-  , mpi_manager()
-  , vp_manager()
-  , module_manager()
-  , random_manager()
-  , simulation_manager()
-  , modelrange_manager()
-  , connection_manager()
-  , sp_manager()
-  , event_delivery_manager()
-  , io_manager()
-  , model_manager()
-  , music_manager()
-  , node_manager()
-  , managers( { &logging_manager,
-      &mpi_manager,
-      &vp_manager,
-      &module_manager,
-      &random_manager,
-      &simulation_manager,
-      &modelrange_manager,
-      &connection_manager,
-      &sp_manager,
-      &event_delivery_manager,
-      &io_manager,
-      &model_manager,
-      &music_manager,
-      &node_manager } )
+  , managers( { &kernel::manager< LoggingManager >,
+      &kernel::manager< MPIManager >,
+      &kernel::manager< VPManager >,
+      &kernel::manager< ModuleManager >,
+      &kernel::manager< RandomManager >,
+      &kernel::manager< SimulationManager >,
+      &kernel::manager< ModelRangeManager >,
+      &kernel::manager< ConnectionManager >,
+      &kernel::manager< SPManager >,
+      &kernel::manager< EventDeliveryManager >,
+      &kernel::manager< IOManager >,
+      &kernel::manager< ModelManager >,
+      &kernel::manager< MUSICManager >,
+      &kernel::manager< NodeManager > } )
   , initialized_( false )
 {
 }
 
-nest::KernelManager::~KernelManager()
+KernelManager::~KernelManager()
 {
+  if ( initialized_ )
+  {
+    KernelManager::finalize();
+  }
 }
 
 void
-nest::KernelManager::initialize()
+KernelManager::initialize( const bool )
 {
   for ( auto& manager : managers )
   {
     manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
-
-  sw_omp_synchronization_construction_.reset();
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
 
   ++fingerprint_;
   initialized_ = true;
@@ -103,62 +84,58 @@ nest::KernelManager::initialize()
 }
 
 void
-nest::KernelManager::prepare()
+KernelManager::prepare()
 {
-  for ( auto& manager : managers )
+  for ( auto manager : managers )
   {
     manager->prepare();
   }
-
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
 }
 
 void
-nest::KernelManager::cleanup()
+KernelManager::cleanup()
 {
-  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *m_it )->cleanup();
+    ( *it )->cleanup();
   }
 }
 
 void
-nest::KernelManager::finalize()
+KernelManager::finalize( const bool )
 {
   FULL_LOGGING_ONLY( dump_.close(); )
 
-  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *m_it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
+    ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
   }
   initialized_ = false;
 }
 
 void
-nest::KernelManager::reset()
+KernelManager::reset()
 {
   finalize();
   initialize();
 }
 
 void
-nest::KernelManager::change_number_of_threads( size_t new_num_threads )
+KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.
-  assert( node_manager.size() == 0 );
-  assert( not connection_manager.get_user_set_delay_extrema() );
-  assert( not simulation_manager.has_been_simulated() );
-  assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
+  assert( kernel::manager< NodeManager >.size() == 0 );
+  assert( not kernel::manager< ConnectionManager >.get_user_set_delay_extrema() );
+  assert( not kernel::manager< SimulationManager >.has_been_simulated() );
+  assert( not kernel::manager< SPManager >.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
-  // Finalize in reverse order of initialization with old thread number set
-  for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
+    ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
-  vp_manager.set_num_threads( new_num_threads );
+  kernel::manager< VPManager >.set_num_threads( new_num_threads );
 
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
@@ -169,21 +146,17 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalizing deleted all register components. Now that all infrastructure
   // is in place again, we can tell modules to re-register the components
   // they provide.
-  module_manager.reinitialize_dynamic_modules();
+  kernel::manager< ModuleManager >.reinitialize_dynamic_modules();
 
   // Prepare timers and set the number of threads for multi-threaded timers
-  kernel().simulation_manager.reset_timers_for_preparation();
-  kernel().simulation_manager.reset_timers_for_dynamics();
-  kernel().event_delivery_manager.reset_timers_for_preparation();
-  kernel().event_delivery_manager.reset_timers_for_dynamics();
-
-  sw_omp_synchronization_construction_.reset();
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
+  kernel::manager< SimulationManager >.reset_timers_for_preparation();
+  kernel::manager< SimulationManager >.reset_timers_for_dynamics();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_preparation();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_dynamics();
 }
 
 void
-nest::KernelManager::set_status( const DictionaryDatum& dict )
+KernelManager::set_status( const DictionaryDatum& dict )
 {
   assert( is_initialized() );
 
@@ -194,7 +167,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-nest::KernelManager::get_status( DictionaryDatum& dict )
+KernelManager::get_status( DictionaryDatum& dict )
 {
   assert( is_initialized() );
 
@@ -202,16 +175,10 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   {
     manager->get_status( dict );
   }
-
-  sw_omp_synchronization_construction_.get_status(
-    dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
-  sw_omp_synchronization_simulation_.get_status(
-    dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
-  sw_mpi_synchronization_.get_status( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void
-nest::KernelManager::write_to_dump( const std::string& msg )
+KernelManager::write_to_dump( const std::string& msg )
 {
 #pragma omp critical
   // In critical section to avoid any garbling of output.
@@ -219,3 +186,17 @@ nest::KernelManager::write_to_dump( const std::string& msg )
     dump_ << msg << std::endl << std::flush;
   }
 }
+
+bool
+KernelManager::is_initialized() const
+{
+  return initialized_;
+}
+
+unsigned long
+KernelManager::get_fingerprint() const
+{
+  return fingerprint_;
+}
+
+} // namespace nest

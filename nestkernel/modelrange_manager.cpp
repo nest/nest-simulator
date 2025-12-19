@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model.h"
+#include "model_manager.h"
 
 
 namespace nest
@@ -113,7 +114,7 @@ ModelRangeManager::get_model_id( size_t node_id ) const
 nest::Model*
 nest::ModelRangeManager::get_model_of_node_id( size_t node_id )
 {
-  return kernel().model_manager.get_node_model( get_model_id( node_id ) );
+  return kernel::manager< ModelManager >.get_node_model( get_model_id( node_id ) );
 }
 
 const modelrange&
@@ -133,6 +134,37 @@ ModelRangeManager::get_contiguous_node_id_range( size_t node_id ) const
   }
 
   throw UnknownNode( node_id );
+}
+
+std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::end() const
+{
+
+  return modelranges_.end();
+}
+
+std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::begin() const
+{
+
+  return modelranges_.begin();
+}
+
+bool
+nest::ModelRangeManager::is_in_range( size_t node_id ) const
+{
+
+  return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
+}
+
+void
+nest::ModelRangeManager::get_status( DictionaryDatum& )
+{
+}
+
+void
+nest::ModelRangeManager::set_status( const DictionaryDatum& )
+{
 }
 
 } // namespace nest

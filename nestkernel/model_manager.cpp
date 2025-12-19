@@ -31,16 +31,17 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "connector_model_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "proxynode.h"
-#include "vp_manager_impl.h"
 
 // Includes from models:
 #include "models.h"
 
+#include "modelrange_manager.h"
 
 namespace nest
 {
@@ -70,7 +71,7 @@ ModelManager::initialize( const bool )
   proxynode_model_->set_type_id( 1 );
   proxynode_model_->set_threads();
 
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
 
   // Make space for one vector of connection models per thread
   connection_models_.resize( num_threads );
@@ -102,7 +103,7 @@ ModelManager::get_num_connection_models() const
     return 0;
   }
 
-  return connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
+  return connection_models_.at( kernel::manager< VPManager >.get_thread_id() ).size();
 }
 
 void
@@ -177,7 +178,7 @@ ModelManager::register_node_model_( Model* model )
 
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel::manager< VPManager >.get_thread_id();
     proxy_nodes_.at( t ).push_back( create_proxynode_( t, id ) );
   }
 
@@ -201,7 +202,7 @@ ModelManager::copy_node_model_( const size_t old_id, Name new_name, DictionaryDa
 
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel::manager< VPManager >.get_thread_id();
     proxy_nodes_.at( t ).push_back( create_proxynode_( t, new_id ) );
   }
 }
@@ -209,9 +210,9 @@ ModelManager::copy_node_model_( const size_t old_id, Name new_name, DictionaryDa
 void
 ModelManager::copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params )
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel::manager< VPManager >.assert_single_threaded();
 
-  const size_t new_id = connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
+  const size_t new_id = connection_models_.at( kernel::manager< VPManager >.get_thread_id() ).size();
 
   if ( new_id == invalid_synindex )
   {
@@ -225,11 +226,11 @@ ModelManager::copy_connection_model_( const size_t old_id, Name new_name, Dictio
 
 #pragma omp parallel
   {
-    const size_t thread_id = kernel().vp_manager.get_thread_id();
+    const size_t thread_id = kernel::manager< VPManager >.get_thread_id();
     connection_models_.at( thread_id )
       .push_back( get_connection_model( old_id, thread_id ).clone( new_name.toString(), new_id ) );
 
-    kernel().connection_manager.resize_connections();
+    kernel::manager< ConnectionManager >.resize_connections();
   }
 
   set_synapse_defaults_( new_id, params ); // handles parallelism internally
@@ -277,15 +278,16 @@ void
 ModelManager::set_synapse_defaults_( size_t model_id, const DictionaryDatum& params )
 {
   params->clear_access_flags();
-  assert_valid_syn_id( model_id, kernel().vp_manager.get_thread_id() );
+  assert_valid_syn_id( model_id, kernel::manager< VPManager >.get_thread_id() );
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
+    kernel::manager< VPManager >.get_num_threads() );
 
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
 #pragma omp parallel
   {
-    size_t tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     try
     {
@@ -299,7 +301,7 @@ ModelManager::set_synapse_defaults_( size_t model_id, const DictionaryDatum& par
     }
   }
 
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -342,17 +344,17 @@ ModelManager::get_synapse_model_id( std::string model_name )
 DictionaryDatum
 ModelManager::get_connector_defaults( synindex syn_id ) const
 {
-  assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
+  assert_valid_syn_id( syn_id, kernel::manager< VPManager >.get_thread_id() );
 
   DictionaryDatum dict( new Dictionary() );
 
-  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel::manager< VPManager >.get_num_threads() ); ++t )
   {
     // each call adds to num_connections
     connection_models_[ t ][ syn_id ]->get_status( dict );
   }
 
-  ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  ( *dict )[ names::num_connections ] = kernel::manager< ConnectionManager >.get_num_connections( syn_id );
   ( *dict )[ names::element_type ] = "synapse";
 
   return dict;
@@ -420,7 +422,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     model->calibrate_time( tc );
   }
-  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel::manager< VPManager >.get_num_threads() ); ++t )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
@@ -436,8 +438,8 @@ ModelManager::calibrate( const TimeConverter& tc )
 bool
 ModelManager::compare_model_by_id_( const int a, const int b )
 {
-  return kernel().model_manager.get_node_model( a )->get_name()
-    < kernel().model_manager.get_node_model( b )->get_name();
+  return kernel::manager< ModelManager >.get_node_model( a )->get_name()
+    < kernel::manager< ModelManager >.get_node_model( b )->get_name();
 }
 
 void
@@ -482,6 +484,64 @@ ModelManager::create_proxynode_( size_t t, int model_id )
   Node* proxy = proxynode_model_->create( t );
   proxy->set_model_id( model_id );
   return proxy;
+}
+
+Node*
+ModelManager::get_proxy_node( size_t tid, size_t node_id )
+{
+
+  const int model_id = kernel::manager< ModelRangeManager >.get_model_id( node_id );
+  Node* proxy = proxy_nodes_[ tid ].at( model_id );
+  proxy->set_node_id_( node_id );
+  proxy->set_vp( kernel::manager< VPManager >.node_id_to_vp( node_id ) );
+  return proxy;
+}
+
+std::unique_ptr< SecondaryEvent >
+ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
+{
+  assert_valid_syn_id( syn_id, tid );
+  return get_connection_model( syn_id, tid ).get_secondary_event();
+}
+
+void
+ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
+{
+
+  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
+  {
+    throw UnknownSynapseType( syn_id );
+  }
+}
+
+const std::vector< ConnectorModel* >&
+ModelManager::get_connection_models( size_t tid )
+{
+
+  return connection_models_[ tid ];
+}
+
+ConnectorModel&
+ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
+{
+
+  assert_valid_syn_id( syn_id, thread_id );
+  return *( connection_models_[ thread_id ][ syn_id ] );
+}
+
+bool
+ModelManager::are_model_defaults_modified() const
+{
+
+  return model_defaults_modified_;
+}
+
+Model*
+ModelManager::get_node_model( size_t m ) const
+{
+
+  assert( m < node_models_.size() );
+  return node_models_[ m ];
 }
 
 } // namespace nest

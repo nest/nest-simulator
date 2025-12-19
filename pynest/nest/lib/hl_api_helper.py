@@ -301,7 +301,7 @@ def get_help_fname(obj):
         File name of the help text for obj
     """
 
-    docdir = nestkernel.ll_api_get_kernel_status()["docdir"]
+    docdir = nestkernel.llapi_get_kernel_status()["build_info"]["docdir"]
     help_fname = os.path.join(docdir, "html", "models", f"{obj}.rst")
 
     if os.path.isfile(help_fname):

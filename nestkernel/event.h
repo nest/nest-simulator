@@ -322,6 +322,21 @@ public:
    */
   void set_stamp( Time const& );
 
+  /**
+   * Sets the activation flag.
+   */
+  void set_activation();
+
+  /**
+   * Unsets the activation flag.
+   */
+  void unset_activation();
+
+  /**
+   * Returns whether the activation flag is set.
+   */
+  bool get_activation();
+
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
@@ -974,6 +989,24 @@ Event::set_stamp( Time const& s )
                     // stamp_steps needs to be recalculated from
                     // stamp_ next time it is needed (e.g., in
                     // get_rel_delivery_steps)
+}
+
+inline void
+Event::set_activation()
+{
+  sender_spike_data_.set_activation_marker();
+}
+
+inline void
+Event::unset_activation()
+{
+  sender_spike_data_.unset_activation_marker();
+}
+
+inline bool
+Event::get_activation()
+{
+  return sender_spike_data_.is_activation_marker();
 }
 
 inline long

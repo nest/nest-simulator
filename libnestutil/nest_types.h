@@ -90,6 +90,7 @@ constexpr uint8_t NUM_BITS_SYN_ID = 6U;
 constexpr uint8_t NUM_BITS_LCID = 27U;
 constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
+constexpr uint8_t NUM_BITS_MARKER_ACTIVATION = 1U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
 constexpr uint8_t NUM_BITS_NODE_ID = 61U;

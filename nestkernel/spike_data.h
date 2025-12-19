@@ -85,6 +85,12 @@ enum enum_status_spike_data_id
   SPIKE_DATA_ID_INVALID
 };
 
+enum enum_activation_id
+{
+  SPIKE_DATA_ID_ACTIVATION_DEFAULT,
+  SPIKE_DATA_ID_ACTIVATION
+};
+
 /**
  * Used to communicate spikes. These are the elements of the MPI
  * buffers.
@@ -96,16 +102,17 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                      //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                                 //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;            //!< status flag
+  unsigned int activation_marker_ : NUM_BITS_MARKER_ACTIVATION; //!< activation flag
+  unsigned int lag_ : NUM_BITS_LAG;                             //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                             //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                           //!< synapse-type index
 
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const Target& target, const size_t lag );
+  SpikeData( const Target& target, const size_t lag, const bool activation );
   SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
@@ -184,9 +191,24 @@ public:
   bool is_invalid_marker() const;
 
   /**
+   * Returns whether the marker is the default marker.
+   */
+  bool is_activation_marker() const;
+
+  /**
    * Returns offset.
    */
   double get_offset() const;
+
+  /**
+   * Sets the activation marker.
+   */
+  void set_activation_marker();
+
+  /**
+   * Unsets the activation marker.
+   */
+  void unset_activation_marker();
 };
 
 //! check legal size
@@ -195,6 +217,7 @@ using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::succes
 inline SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -204,24 +227,31 @@ inline SpikeData::SpikeData()
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
   , marker_( rhs.marker_ )
+  , activation_marker_( rhs.activation_marker_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
 {
 }
 
-inline SpikeData::SpikeData( const Target& target, const size_t lag )
+inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool activation )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
+  if ( activation )
+  {
+    activation_marker_ = SPIKE_DATA_ID_ACTIVATION;
+  }
 }
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -233,6 +263,7 @@ SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
+  activation_marker_ = rhs.activation_marker_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;
@@ -249,6 +280,7 @@ SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, cons
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
+  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -263,6 +295,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;
+  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
   lag_ = lag;
   tid_ = target.get_tid();
   syn_id_ = target.get_syn_id();
@@ -347,10 +380,28 @@ SpikeData::is_invalid_marker() const
   return marker_ == SPIKE_DATA_ID_INVALID;
 }
 
+inline bool
+SpikeData::is_activation_marker() const
+{
+  return activation_marker_ == SPIKE_DATA_ID_ACTIVATION;
+}
+
 inline double
 SpikeData::get_offset() const
 {
   return 0;
+}
+
+inline void
+SpikeData::set_activation_marker()
+{
+  activation_marker_ = SPIKE_DATA_ID_ACTIVATION;
+}
+
+inline void
+SpikeData::unset_activation_marker()
+{
+  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
 }
 
 class OffGridSpikeData : public SpikeData
@@ -386,7 +437,7 @@ inline OffGridSpikeData::OffGridSpikeData()
 }
 
 inline OffGridSpikeData::OffGridSpikeData( const Target& target, const size_t lag, const double offset )
-  : SpikeData( target, lag )
+  : SpikeData( target, lag, false )
   , offset_( offset )
 {
 }
@@ -447,6 +498,7 @@ OffGridSpikeData::set( const size_t tid,
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
+  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -476,15 +528,15 @@ OffGridSpikeData::get_offset() const
  */
 struct SpikeDataWithRank
 {
-  SpikeDataWithRank( const Target& target, const size_t lag );
+  SpikeDataWithRank( const Target& target, const size_t lag, const bool activation );
 
   const size_t rank;          //!< rank of target neuron
   const SpikeData spike_data; //! data on spike transmitted
 };
 
-inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
+inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag, const bool activation )
   : rank( target.get_rank() )
-  , spike_data( target, lag )
+  , spike_data( target, lag, activation )
 {
 }
 

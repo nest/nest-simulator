@@ -352,7 +352,7 @@ correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-nest::correlation_detector::get_status( Dictionary& d ) const
+correlation_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -360,7 +360,7 @@ nest::correlation_detector::get_status( Dictionary& d ) const
 }
 
 inline void
-nest::correlation_detector::set_status( const Dictionary& d )
+correlation_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );

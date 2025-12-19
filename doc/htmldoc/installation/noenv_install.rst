@@ -24,7 +24,6 @@ further adjust settings for your system.
     libgsl-dev \
     libboost-dev \
     cython3 \
-    libreadline-dev \
     python3-all-dev \
     python3-numpy \
     python3-scipy \
@@ -36,13 +35,22 @@ further adjust settings for your system.
     openmpi-bin \
     libopenmpi-dev \
     python3-mpi4py \
-    libmusic-dev \
-    music-bin \
     python3-pip \
     python3-pytest \
     python3-pytest-timeout \
     python3-pytest-xdist \
-    python3-pandas
+    python3-pandas \
+    pandoc
+
+* Optional packages
+
+.. code-block:: bash
+
+     # for SONATA compatiblity
+     libhdf5-dev
+     # for MUSIC compatibility
+     libmusic-dev \
+     music-bin
 
 * Create an install directory
 

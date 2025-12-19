@@ -24,6 +24,7 @@
 #define DICTIONARY_H
 
 #include <boost/any.hpp>
+#include <boost/core/demangle.hpp>
 #include <map>
 #include <string>
 #include <vector>

@@ -135,7 +135,7 @@ def skipif_missing_mpi(request, have_mpi):
 
 @pytest.fixture(scope="session")
 def have_mpi4py():
-    return importlib.util.find_spec("mpi4py") is not None and nest.ll_api.sli_func("statusdict/have_mpi ::")
+    return importlib.util.find_spec("mpi4py") is not None and nest.build_info["have_mpi"]
 
 
 @pytest.fixture(autouse=True)

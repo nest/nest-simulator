@@ -111,8 +111,7 @@ class KernelAttribute:
 
     def __set__(self, instance, value):
         if self._readonly:
-            msg = f"`{self._name}` is a read only kernel attribute."
-            raise AttributeError(msg)
+            raise AttributeError(f"`{self._name}` is a read only kernel attribute.")
         nestkernel.llapi_set_kernel_status({self._name: value})
 
 

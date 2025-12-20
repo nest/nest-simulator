@@ -31,6 +31,7 @@ Fixtures available to the entire testsuite directory.
         pass
 """
 
+import importlib.util
 import os
 import pathlib
 import subprocess
@@ -81,6 +82,10 @@ def pytest_configure(config):
         "markers",
         "skipif_missing_music: mark tests requiring MUSIC",
     )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_mpi4py: mark tests requiring MPI4Py",
+    )
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -126,6 +131,21 @@ def skipif_missing_mpi(request, have_mpi):
     """
     if not have_mpi and request.node.get_closest_marker("skipif_missing_mpi"):
         pytest.skip("skipped because missing MPI support.")
+
+
+@pytest.fixture(scope="session")
+def have_mpi4py():
+    return importlib.util.find_spec("mpi4py") is not None and nest.ll_api.sli_func("statusdict/have_mpi ::")
+
+
+@pytest.fixture(autouse=True)
+def skipif_missing_mpi4py(request, have_mpi4py):
+    """
+    Globally applied fixture that skips tests marked to be skipped when MPI
+    support is missing.
+    """
+    if not have_mpi4py and request.node.get_closest_marker("skipif_missing_mpi4py"):
+        pytest.skip("skipped because missing MPI4Py support.")
 
 
 @pytest.fixture(scope="session")

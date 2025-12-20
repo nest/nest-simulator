@@ -98,14 +98,6 @@ nest::music_cont_out_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
   d[ names::interval ] = interval_.get_ms();
-
-  ///  std::vector< std::string > record_from;
-  ///
-  ///  for ( size_t j = 0; j < record_from_.size(); ++j )
-  ///  {
-  ///    record_from.push_back( record_from_[ j ] );
-  ///  }
-
   d[ names::record_from ] = record_from_;
   d[ names::targets ] = targets_;
 }

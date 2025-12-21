@@ -517,9 +517,12 @@ minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
   return MaskPTR( mask1->minus_mask( *mask2 ) );
 }
 
+// PyNEST-NG-FUTURE: This needs a wrapper in nest.{h,cpp} and the wrapper should then handle stopwatches
 void
 connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& connection_dict )
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
 
@@ -532,6 +535,8 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
   source->connect( source_nc, target, target_nc, connector );
+
+  kernel().connection_manager.sw_construction_connect.start();
 }
 
 void

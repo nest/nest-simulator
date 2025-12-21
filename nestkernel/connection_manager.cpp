@@ -612,9 +612,6 @@ nest::ConnectionManager::connect_arrays( long* sources,
   size_t n,
   const std::string& syn_model )
 {
-  // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
-  sw_construction_connect.start();
-
   kernel().node_manager.update_thread_local_node_data();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
@@ -773,8 +770,6 @@ nest::ConnectionManager::connect_arrays( long* sources,
       std::rethrow_exception( eptr );
     }
   }
-
-  sw_construction_connect.stop();
 }
 
 void

@@ -30,6 +30,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "parameter.h"
+#include "stopwatch_impl.h"
 
 #include "sp_manager.h"
 #include "sp_manager_impl.h"

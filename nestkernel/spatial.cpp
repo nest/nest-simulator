@@ -37,6 +37,7 @@
 #include "kernel_manager.h"
 #include "nest.h"
 #include "node.h"
+#include "stopwatch_impl.h"
 
 // Includes from spatial:
 #include "grid_layer.h"

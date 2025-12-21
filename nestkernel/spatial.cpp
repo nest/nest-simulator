@@ -32,6 +32,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
@@ -536,7 +537,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   kernel().connection_manager.set_connections_have_changed();
   source->connect( source_nc, target, target_nc, connector );
 
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void

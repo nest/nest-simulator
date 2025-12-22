@@ -519,7 +519,7 @@ minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
   return MaskPTR( mask1->minus_mask( *mask2 ) );
 }
 
-// PyNEST-NG-FUTURE: This needs a wrapper in nest.{h,cpp} and the wrapper should then handle stopwatches
+// PyNEST-NG-FUTURE: This needs a wrapper in nest.{h,cpp}
 void
 connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& connection_dict )
 {

@@ -438,6 +438,8 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const Dictionary& conn_spec,
   const std::vector< Dictionary >& syn_specs )
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   kernel().node_manager.update_thread_local_node_data();
 
   if ( sources->empty() )
@@ -480,6 +482,8 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   set_connections_have_changed();
 
   cb.connect();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
@@ -612,6 +616,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
   size_t n,
   const std::string& syn_model )
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   kernel().node_manager.update_thread_local_node_data();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
@@ -770,12 +776,16 @@ nest::ConnectionManager::connect_arrays( long* sources,
       std::rethrow_exception( eptr );
     }
   }
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
 nest::ConnectionManager::connect_sonata( const Dictionary& graph_specs, const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
+  kernel().connection_manager.sw_construction_connect.start();
+
   kernel().node_manager.update_thread_local_node_data();
 
   SonataConnector sonata_connector( graph_specs, hyberslab_size );
@@ -784,6 +794,8 @@ nest::ConnectionManager::connect_sonata( const Dictionary& graph_specs, const lo
   // created.
   set_connections_have_changed();
   sonata_connector.connect();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 #else
   throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
 #endif
@@ -797,6 +809,8 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   const Dictionary& third_conn_spec,
   const std::map< std::string, std::vector< Dictionary > >& syn_specs )
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   if ( sources->empty() )
   {
     throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
@@ -849,6 +863,8 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   set_connections_have_changed();
 
   cb.connect();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 

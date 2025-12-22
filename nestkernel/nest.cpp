@@ -30,7 +30,6 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "parameter.h"
-#include "stopwatch_impl.h"
 
 #include "sp_manager.h"
 #include "sp_manager_impl.h"
@@ -420,9 +419,7 @@ connect( NodeCollectionPTR sources,
   const Dictionary& connectivity,
   const std::vector< Dictionary >& synapse_params )
 {
-  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
-  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
@@ -442,10 +439,8 @@ connect_tripartite( NodeCollectionPTR sources,
   const Dictionary& third_connectivity,
   const std::map< std::string, std::vector< Dictionary > >& synapse_specs )
 {
-  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
-  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
@@ -458,17 +453,13 @@ connect_arrays( long* sources,
   size_t n,
   const std::string& syn_model )
 {
-  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
-  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
 connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
 {
-  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
-  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 std::deque< ConnectionID >

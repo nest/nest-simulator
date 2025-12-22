@@ -172,7 +172,8 @@ private:
     if ( is_type< size_t >( value ) )
     {
       const size_t val = cast_value_< size_t >( value, key );
-      if ( val < std::numeric_limits< long >::min() or val > std::numeric_limits< long >::max() )
+      // cast to size_t here is safe because max() must be positive
+      if ( val > static_cast< size_t >( std::numeric_limits< long >::max() ) )
       {
         const std::string msg =
           String::compose( "Failed to cast '%1' because %2 is too large to be stored as long.", key, val );

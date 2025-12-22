@@ -117,27 +117,32 @@ Token::operator Datum* () const
 }
 */
 
-Token::operator long() const
+Token::
+operator long() const
 {
   return getValue< long >( *this );
 }
 
-Token::operator size_t() const
+Token::
+operator size_t() const
 {
   return getValue< long >( *this );
 }
 
-Token::operator double() const
+Token::
+operator double() const
 {
   return getValue< double >( *this );
 }
 
-Token::operator bool() const
+Token::
+operator bool() const
 {
   return getValue< bool >( *this );
 }
 
-Token::operator std::string() const
+Token::
+operator std::string() const
 {
   return getValue< std::string >( *this );
 }

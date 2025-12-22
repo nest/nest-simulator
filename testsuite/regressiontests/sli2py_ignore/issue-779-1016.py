@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This script ensures that NEST parses commandline arguments correctly
-and makes all of them available in the argv array in the statusdict.
+Ensures that NEST parses commandline arguments correctly and makes all of them
+available in the argv array in the statusdict.
 
 This is a regression test for GitHub issues 779 and 1016.
 """

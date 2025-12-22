@@ -1,6 +1,8 @@
+fail_fast: true
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -10,24 +12,34 @@ repos:
       - id: fix-byte-order-marker
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.16.3
+    rev: v8.10.0
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 7.0.0
     hooks:
       - id: isort
         args: ["--profile", "black", "--thirdparty", "nest"]
 
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 25.11.0
     hooks:
       - id: black
         language_version: python3
 
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         # explicitly add input files that are not "*.sh"
@@ -35,18 +47,60 @@ repos:
           #
           # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
           # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
-          "bin/nest_vars.sh.in",   # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
-          "testsuite/run_test.sh",
-          "testsuite/do_tests.sh",
-          "testsuite/junit_xml.sh",
-          "examples/run_examples.sh",
-          "examples/list_examples.sh",
+          "./testsuite/junit_xml.sh",
+          "./testsuite/do_tests.sh",
+          "./testsuite/run_test.sh",
+          "./bin/nest_vars.sh.in",   # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
+          "./cmake/CheckFiles/check_return_val.sh",
+          "./examples/run_examples.sh",
+          "./examples/list_examples.sh",
+          "./build_support/version_info.sh",
+          "./build_support/install_csa-libneurosim.sh",
+          "./build_support/install_music.sh",
+          "./build_support/check_forbidden_types.sh",
+          "./build_support/format_all_c_c++_files.sh",
+          "./build_support/install_sionlib.sh",
         ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.4
+    rev: v21.1.7
     hooks:
       - id: clang-format
         types_or: [c++]
+
+  # ref https://pylint.pycqa.org/en/latest/user_guide/installation/pre-commit-integration.html
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        require_serial: true
+        types: ["python"]
+        args:
+            - "-rn"  # Only display messages
+            - "-sn"  # Don't display the score
+            - "--rcfile=.pylintrc"  # Link to your config file
+            - "--load-plugins=pylint.extensions.docparams"  # Load an extension
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.0
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+          - 'jinja2'
+          - 'python-dateutil'
+          - 'pytest'
+          - 'semver'
+          - 'types-python-dateutil'
+          - 'types-requests'
+          - 'matplotlib-stubs'
+          - 'pandas-stubs'
+        args:
+          - --show-error-codes
+          - --config-file
+          - pyproject.toml
+          - .
+        pass_filenames: false
 
 exclude: 'build/.*|thirdparty/.*'

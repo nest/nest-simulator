@@ -26,15 +26,15 @@ import pytest
 import scipy.stats
 
 # Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
-    import mpi4py
-
-    HAVE_MPI4PY = nest.ll_api.sli_func("statusdict/have_mpi ::")
-except ImportError:
-    HAVE_MPI4PY = False
-
-if HAVE_MPI4PY:
     from mpi4py import MPI
+
+    HAVE_MPI4PY = True
+except (ImportError, RuntimeError):
+    HAVE_MPI4PY = False
 
 
 def setup_network(
@@ -346,7 +346,7 @@ def test_statistics(p_primary):
     nr_threads = 2
 
     # set NEST verbosity
-    nest.set_verbosity("M_FATAL")
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # here we test
     # 1. p_primary yields the correct indegree and outdegree
@@ -410,7 +410,7 @@ def test_autapses_true(autapses):
     }
 
     # set NEST verbosity
-    nest.set_verbosity("M_FATAL")
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # create the network
     pop_primay = nest.Create("aeif_cond_alpha_astro", N)

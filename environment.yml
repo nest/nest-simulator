@@ -36,7 +36,6 @@ dependencies:
   - boost >= 1.69
   - gsl >= 1.11
   - libtool
-  - readline
   - hdf5
   - cppcheck
   - doxygen

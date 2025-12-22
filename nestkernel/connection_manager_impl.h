@@ -42,24 +42,25 @@ template < typename ConnBuilder >
 void
 ConnectionManager::register_conn_builder( const std::string& name )
 {
-  assert( not connruledict_->known( name ) );
+  assert( not connruledict_.known( name ) );
   GenericBipartiteConnBuilderFactory* cb = new BipartiteConnBuilderFactory< ConnBuilder >();
   assert( cb );
-  const int id = connbuilder_factories_.size();
+
+  const size_t idx = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
+  connruledict_[ name ] = idx;
 }
 
 template < typename ThirdConnBuilder >
 void
 ConnectionManager::register_third_conn_builder( const std::string& name )
 {
-  assert( not thirdconnruledict_->known( name ) );
+  assert( not thirdconnruledict_.known( name ) );
   GenericThirdConnBuilderFactory* cb = new ThirdConnBuilderFactory< ThirdConnBuilder >();
   assert( cb );
-  const int id = thirdconnbuilder_factories_.size();
+  const size_t idx = thirdconnbuilder_factories_.size();
   thirdconnbuilder_factories_.push_back( cb );
-  thirdconnruledict_->insert( name, id );
+  thirdconnruledict_[ name ] = idx;
 }
 
 inline void

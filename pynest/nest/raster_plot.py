@@ -53,6 +53,7 @@ def extract_events(data, time=None, sel=None):
     numpy.array
         List of events as (node_id, t) tuples
     """
+
     val = []
 
     t_min, t_max = 0, float("inf")
@@ -88,8 +89,10 @@ def from_data(data, sel=None, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+
     if len(data) == 0:
-        raise nest.kernel.NESTError("No data to plot.")
+        raise ValueError("No data to plot.")
+
     ts = data[:, 1]
     d = extract_events(data, sel=sel)
     ts1 = d[:, 1]
@@ -112,6 +115,7 @@ def from_file(fname, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+
     if isinstance(fname, str):
         fname = [fname]
 
@@ -128,6 +132,7 @@ def from_file(fname, **kwargs):
 
 def from_file_pandas(fname, **kwargs):
     """Use pandas."""
+
     data = None
     for f in fname:
         # pylint: disable=possibly-used-before-assignment
@@ -144,6 +149,7 @@ def from_file_pandas(fname, **kwargs):
 
 def from_file_numpy(fname, **kwargs):
     """Use numpy."""
+
     data = None
     for f in fname:
         newdata = numpy.loadtxt(f, skiprows=3)
@@ -166,21 +172,17 @@ def from_device(detec, **kwargs):
         Description
     kwargs:
         Parameters passed to _make_plot
-
-    Raises
-    ------
-    nest.kernel.NESTError
     """
 
     type_id = nest.GetDefaults(detec.get("model"), "type_id")
     if not type_id == "spike_recorder":
-        raise nest.kernel.NESTError("Please provide a spike_recorder.")
+        raise TypeError("Please provide a 'spike_recorder'.")
 
     if detec.get("record_to") == "memory":
         ts, node_ids = _from_memory(detec)
 
         if not len(ts):
-            raise nest.kernel.NESTError("No events recorded!")
+            raise ValueError("No events recorded by 'spike_recorder'.")
 
         if "title" not in kwargs:
             kwargs["title"] = "Raster plot from device '%i'" % detec.get("global_id")
@@ -197,10 +199,7 @@ def from_device(detec, **kwargs):
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.kernel.NESTError(
-            "No data to plot. Make sure that \
-            record_to is set to either 'ascii' or 'memory'."
-        )
+        raise ValueError("No data to plot. Make sure that 'record_to' is set to either 'ascii' or 'memory'.")
 
 
 def _from_memory(detec):
@@ -235,6 +234,7 @@ def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0, graysca
     xlabel : str, optional
         Label for x-axis
     """
+
     import matplotlib.pyplot as plt
 
     plt.figure()
@@ -305,6 +305,7 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
     ------
     ValueError
     """
+
     from numpy import asarray, concatenate, iterable, linspace, sort
 
     a = asarray(a).ravel()

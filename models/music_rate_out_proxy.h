@@ -63,7 +63,7 @@ events is determined during connection setup by using the parameter
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 port_name    - The name of the MUSIC output_port to forward events to (default: `rate_out`)
 
@@ -127,8 +127,8 @@ public:
 
   size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -149,8 +149,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_& ); //!< Set values from dictionary
+    void get( Dictionary& ) const;          //!< Store current values in Dictionary
+    void set( const Dictionary&, State_& ); //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
@@ -163,9 +163,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //!< Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    //!< Set values from Dictionary
+    void set( const Dictionary&, const Parameters_& );
   };
 
   // ------------------------------------------------------------

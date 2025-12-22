@@ -27,14 +27,14 @@
 #include <sys/time.h>
 
 // C++ includes:
-#include "arraydatum.h"
-#include "dictdatum.h"
-#include "dictutils.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <iostream>
 #include <vector>
+
+// Includes from libnestutil:
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -305,7 +305,7 @@ public:
     timers::timeunit_t timeunit = timers::timeunit_t::SECONDS,
     std::ostream& os = std::cout ) const;
 
-  void get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const;
+  void get_status( Dictionary& d, const std::string& walltime_name, const std::string& cputime_name ) const;
 
 private:
   bool is_running_() const;

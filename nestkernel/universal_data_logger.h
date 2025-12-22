@@ -279,18 +279,17 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
   , data_()
   , next_rec_( 2, 0 )
 {
-  const std::vector< Name >& recvars = req.record_from();
+  const std::vector< std::string >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ] );
 
     if ( rec == rmap.end() )
     {
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ] );
     }
 
     node_access_.push_back( rec->second );
@@ -542,18 +541,17 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
   , data_()
   , next_rec_( 2, 0 )
 {
-  const std::vector< Name >& recvars = req.record_from();
+  const std::vector< std::string >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ] );
 
     if ( rec == rmap.end() )
     {
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ] );
     }
 
     node_access_.push_back( &( rec->second ) );

@@ -22,6 +22,7 @@
 """
 Test that spike timings of plain and canon iaf_psc populations match empirical data given preconfigured settings.
 """
+
 import nest
 import numpy as np
 import pytest
@@ -49,9 +50,8 @@ def test_simulation_completes():
     population_plain = nest.Create("iaf_psc_delta", params=neuron_params)
     population_canon = nest.Create("iaf_psc_delta_ps", params=neuron_params)
 
-    spike_generator = nest.Create(
-        "spike_generator", {"spike_times": [1.0, 2.0, 3.0, 4.0, 5.0, 10.5, 12.0], "precise_times": False}
-    )
+    sg_params = {"spike_times": [1.0, 2.0, 3.0, 4.0, 5.0, 10.5, 12.0], "precise_times": False}
+    spike_generator = nest.Create("spike_generator", params=sg_params)
     spike_recorder = nest.Create("spike_recorder")
     nest.SetDefaults("static_synapse", {"delay": 0.1, "weight": 2.5})
 
@@ -61,7 +61,7 @@ def test_simulation_completes():
 
     nest.Simulate(200.0)
 
-    spike_recs = spike_recorder.get("events", ["senders", "times"])
-
-    assert np.all(np.in1d(np.array([1, 2]), spike_recs["senders"].T[:2]))
-    assert np.all(spike_recs["times"].T[:2] == pytest.approx(4.1))
+    times = spike_recorder.events["times"]
+    senders = spike_recorder.events["senders"]
+    assert set(senders[:2]) == set([1, 2])
+    assert np.all(times.T[:2] == pytest.approx(4.1))

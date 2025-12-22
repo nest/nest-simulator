@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # run_test.sh
 #
 # This file is part of NEST.
@@ -177,5 +177,4 @@ run_test ()
     fi
 
     rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
-
 }

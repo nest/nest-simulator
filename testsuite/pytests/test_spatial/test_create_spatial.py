@@ -26,6 +26,8 @@ Tests Create with spacial specifications (create a layer)
 import unittest
 
 import nest
+import numpy as np
+import numpy.testing as nptest
 
 
 class CreateLayer(unittest.TestCase):
@@ -44,13 +46,13 @@ class CreateLayer(unittest.TestCase):
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 4, 5]))
 
         self.assertEqual(len(layer), 60)
-        self.assertEqual(layer.spatial["shape"], (3, 4, 5))
+        nptest.assert_array_equal(layer.spatial["shape"], [3, 4, 5])
 
     def test_Create_grid_with_extent(self):
         """Test Create simple grid with extent."""
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0]))
 
-        self.assertEqual(layer.spatial["extent"], (2.0, 2.0))
+        nptest.assert_array_equal(layer.spatial["extent"], (2.0, 2.0))
 
     def test_Create_grid_with_nodeParams(self):
         """Test Create grid layer with node parameters."""
@@ -60,17 +62,17 @@ class CreateLayer(unittest.TestCase):
             params={"V_m": nest.random.uniform(), "C_m": 200.0},
         )
 
-        self.assertEqual(layer.get("C_m"), (200.0,) * len(layer))
+        nptest.assert_array_equal(layer.get("C_m"), [200.0] * len(layer))
         self.assertEqual(len(layer.get("V_m")), len(layer))
         self.assertGreaterEqual(min(layer.get("V_m")), 0.0)
 
     def test_Create_free_layer(self):
         """Test Create simple free layer."""
-        pos = ((1.0, 1.0), (2.0, 2.0), (3.0, 3.0))
+        pos = [(1.0, 1.0), (2.0, 2.0), (3.0, 3.0)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(pos))
 
         self.assertEqual(len(layer), 3)
-        self.assertEqual(layer.spatial["positions"], pos)
+        nptest.assert_array_equal(layer.spatial["positions"], pos)
         self.assertGreaterEqual(layer.spatial["extent"][0], 2.0)
         self.assertGreaterEqual(layer.spatial["extent"][1], 2.0)
 
@@ -81,14 +83,14 @@ class CreateLayer(unittest.TestCase):
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(pos, extent=extent))
 
         self.assertEqual(len(layer), 3)
-        self.assertEqual(layer.spatial["positions"], pos)
-        self.assertEqual(layer.spatial["extent"], extent)
+        nptest.assert_array_equal(layer.spatial["positions"], pos)
+        nptest.assert_array_equal(layer.spatial["extent"], extent)
 
     def test_Create_free_layer_with_wrong_extent(self):
         """Test Create free layer with too small extent."""
         pos = ((1.0, 1.0), (2.0, 2.0), (3.0, 3.0))
         extent = (1.5, 3.0)
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Create("iaf_psc_alpha", positions=nest.spatial.free(pos, extent=extent))
 
     def test_Create_free_layer_from_LognormalParameter(self):
@@ -99,7 +101,7 @@ class CreateLayer(unittest.TestCase):
 
         self.assertEqual(len(layer), 33)
         self.assertEqual(len(layer.spatial["positions"]), 33)
-        self.assertGreaterEqual(min(min(layer.spatial["positions"])), 0)
+        self.assertGreaterEqual(np.min(layer.spatial["positions"]), 0)
 
     def test_Create_3D_free_layer_from_LognormalParameter(self):
         """Test Create 3D free layer from lognormal parameter."""
@@ -120,7 +122,7 @@ class CreateLayer(unittest.TestCase):
             params={"V_m": nest.random.uniform(), "C_m": 200.0},
         )
 
-        self.assertEqual(layer.get("C_m"), (200.0,) * len(layer))
+        nptest.assert_array_equal(layer.get("C_m"), [200.0] * len(layer))
         self.assertEqual(len(layer.get("V_m")), 33)
         self.assertLessEqual(max(layer.get("V_m")), 1.0)
         self.assertEqual(len(layer.spatial["positions"][0]), 3)
@@ -131,7 +133,7 @@ class CreateLayer(unittest.TestCase):
 
         self.assertEqual(len(layer), 6)
         self.assertEqual(len(layer.spatial["positions"]), 6)
-        self.assertGreaterEqual(min(min(layer.spatial["positions"])), 0)
+        self.assertGreaterEqual(np.min(layer.spatial["positions"]), 0)
 
     def test_Create_3D_free_layer_from_uniformParameter(self):
         """Test Create 3D free layer from uniform parameter."""
@@ -203,7 +205,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.grid(shape=[3, 1])
         layer = nest.Create("iaf_psc_alpha", positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_2D_grid_params_tuple(self):
         """Test Create 2D grid layer with node params as tuple."""
@@ -212,7 +214,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.grid(shape=[3, 1])
         layer = nest.Create("iaf_psc_alpha", positions=positions, params=params)
 
-        self.assertEqual(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_2D_grid_params_parameter(self):
         """Test Create 2D grid layer with node params as Parameter."""
@@ -234,7 +236,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.grid(shape=[3, 1, 2])
         layer = nest.Create("iaf_psc_alpha", positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_3D_grid_params_tuple(self):
         """Test Create 3D grid layer with node params as tuple."""
@@ -243,7 +245,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.grid(shape=[3, 1, 2])
         layer = nest.Create("iaf_psc_alpha", positions=positions, params=params)
 
-        self.assertEqual(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_3D_grid_params_parameter(self):
         """Test Create 3D grid layer with node params as Parameter."""
@@ -265,7 +267,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=2)
         layer = nest.Create("iaf_psc_alpha", n=5, positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_2D_free_params_tuple(self):
         """Test Create 2D free layer with node params as tuple."""
@@ -274,7 +276,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=2)
         layer = nest.Create("iaf_psc_alpha", n=5, positions=positions, params=params)
 
-        self.assertEqual(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_2D_free_params_parameter(self):
         """Test Create 2D free layer with node params as Parameter."""
@@ -296,7 +298,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=3)
         layer = nest.Create("iaf_psc_alpha", n=7, positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_3D_free_params_tuple(self):
         """Test Create 3D free layer with node params as tuple."""
@@ -305,7 +307,7 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(-1, 1), num_dimensions=3)
         layer = nest.Create("iaf_psc_alpha", n=7, positions=positions, params=params)
 
-        self.assertEqual(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
 
     def test_Create_3D_free_params_parameter(self):
         """Test Create 3D free layer with node params as Parameter."""
@@ -327,8 +329,8 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.grid(shape=[3, 1])
         layer = nest.Create("iaf_psc_alpha", positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
-        self.assertEqual(list(layer.C_m), [params["C_m"]] * len(layer))
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.C_m, [params["C_m"]] * len(layer))
         for tau_syn_ex in layer.tau_syn_ex:
             self.assertGreaterEqual(tau_syn_ex, 1.5)
             self.assertLessEqual(tau_syn_ex, 2.5)
@@ -340,8 +342,8 @@ class CreateLayer(unittest.TestCase):
         positions = nest.spatial.free(nest.random.normal(0, 0.5), num_dimensions=2)
         layer = nest.Create("iaf_psc_alpha", n=5, positions=positions, params=params)
 
-        self.assertEqual(list(layer.V_m), params["V_m"])
-        self.assertEqual(list(layer.C_m), [params["C_m"]] * len(layer))
+        nptest.assert_array_equal(layer.V_m, params["V_m"])
+        nptest.assert_array_equal(layer.C_m, [params["C_m"]] * len(layer))
         for tau_syn_ex in layer.tau_syn_ex:
             self.assertGreaterEqual(tau_syn_ex, 1.5)
             self.assertLessEqual(tau_syn_ex, 2.5)

@@ -116,7 +116,7 @@ def test_node_collection_add_overlapping_raises():
     nc_b = nest.Create("iaf_psc_exp", 7)
     nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nc_a + nc_b + nc_c
 
 
@@ -266,5 +266,5 @@ def test_composite_node_collection_add_sliced_raises():
 
     nc = nest.Create("iaf_psc_delta")
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         sliced_comp_nc + nc

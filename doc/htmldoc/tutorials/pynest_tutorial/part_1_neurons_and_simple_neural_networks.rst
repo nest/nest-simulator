@@ -41,13 +41,12 @@ PyNEST - an interface to the NEST Simulator
    :width: 600px
 
    Python Interface Figure.
-   The Python interpreter imports NEST as a module and
-   dynamically loads the NEST Simulator kernel (``pynestkernel.so``).
-   A simulation script of
-   the user (``mysimulation.py``) uses functions defined in this high-level
-   API. These functions generate code in SLI (Simulation Language
-   Interpreter), the native language of the interpreter of NEST. This
-   interpreter, in turn, controls the NEST simulation kernel.
+
+   The Python interpreter imports NEST as a module and dynamically
+   loads the NEST simulation kernel (``nestkernel_api.so``). A
+   simulation script of the user (``mysimulation.py``) uses functions
+   defined in this high-level API, which control the simulation
+   kernel.
 
 The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
 is designed for the simulation of large heterogeneous networks of point

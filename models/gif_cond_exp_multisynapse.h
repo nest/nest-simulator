@@ -142,7 +142,7 @@ must be non-negative.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 =========   ======   ======================================================
 **Membrane Parameters**
@@ -250,8 +250,8 @@ public:
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -316,8 +316,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -359,8 +359,8 @@ private:
 
     State_( const Parameters_& ); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
 
   }; // State_
 
@@ -492,16 +492,16 @@ gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t r
 }
 
 inline void
-gif_cond_exp_multisynapse::get_status( DictionaryDatum& d ) const
+gif_cond_exp_multisynapse::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
+gif_cond_exp_multisynapse::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

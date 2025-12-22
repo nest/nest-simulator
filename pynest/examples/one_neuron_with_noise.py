@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
 
-nest.set_verbosity("M_WARNING")
+nest.verbosity = nest.VerbosityLevel.WARNING
 nest.ResetKernel()
 
 ###############################################################################
@@ -54,11 +54,10 @@ noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 
 ###############################################################################
-# Third, the Poisson generator is configured using ``SetStatus``, which expects
-# a list of node handles and a list of parameter dictionaries. We set the
-# Poisson generators to 80,000 spks/s and 15,000 spks/s, respectively. Note that
-# we do not need to set parameters for the neuron and the voltmeter, since they
-# have satisfactory defaults.
+# Third, the rates of the Poisson generator are configured. We set the
+# generators to 80,000 Hz and 15,000 Hz, respectively. Note that we do
+# not need to set parameters for the neuron and the voltmeter, since
+# they have satisfactory defaults.
 
 noise[0].rate = 80000.0
 noise[1].rate = 15000.0

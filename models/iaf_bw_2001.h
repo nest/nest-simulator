@@ -114,7 +114,7 @@ For more implementation details and a comparison to the exact version, see:
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 =================== ================== ================================= ========================================================================
 **Parameter**       **Default**        **Math equivalent**               **Description**
@@ -229,8 +229,8 @@ public:
    * Functions for getting/setting parameters and state values.
    * ------------------------------------------------------------------------- */
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   bool
   is_off_grid() const override
@@ -285,8 +285,8 @@ private:
     //! Initialize parameters to their default values.
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
   };
 
 public:
@@ -326,8 +326,8 @@ public:
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
 
@@ -488,23 +488,23 @@ iaf_bw_2001::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-iaf_bw_2001::get_status( DictionaryDatum& d ) const
+iaf_bw_2001::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  DictionaryDatum receptor_type = new Dictionary();
-  ( *receptor_type )[ names::AMPA ] = AMPA;
-  ( *receptor_type )[ names::GABA ] = GABA;
-  ( *receptor_type )[ names::NMDA ] = NMDA;
-  ( *d )[ names::receptor_types ] = receptor_type;
+  Dictionary receptor_type;
+  receptor_type[ names::AMPA ] = static_cast< long >( AMPA );
+  receptor_type[ names::GABA ] = static_cast< long >( GABA );
+  receptor_type[ names::NMDA ] = static_cast< long >( NMDA );
+  d[ names::receptor_types ] = receptor_type;
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_bw_2001::set_status( const DictionaryDatum& d )
+iaf_bw_2001::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

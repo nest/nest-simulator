@@ -89,14 +89,14 @@ def test_ac_generaor():
 
     # Assert that the v_m of the neuron with the ac_generator
     # is equal to that with the step-current generator
-    v_m_ac = vm_ac.get("events", "V_m")
-    v_m_sc = vm_sc.get("events", "V_m")
+    v_m_ac = vm_ac.events["V_m"]
+    v_m_sc = vm_sc.events["V_m"]
 
     assert v_m_ac == pytest.approx(v_m_sc)
 
     # Assert that the I (current) of the neuron with the ac_generator
     # is equal to that with the step-current generator
-    I_ac = mm_ac.get("events", "I")
-    I_sc = mm_sc.get("events", "I")
+    I_ac = mm_ac.events["I"]
+    I_sc = mm_sc.events["I"]
 
     assert I_ac == pytest.approx(I_sc)

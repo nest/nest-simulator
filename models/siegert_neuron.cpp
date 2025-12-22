@@ -39,9 +39,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 struct my_params
 {
@@ -110,27 +107,27 @@ nest::siegert_neuron::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::siegert_neuron::Parameters_::get( DictionaryDatum& d ) const
+nest::siegert_neuron::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::mean, mean_ );
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::tau_syn, tau_syn_ );
-  def< double >( d, names::t_ref, t_ref_ );
+  d[ names::mean ] = mean_;
+  d[ names::theta ] = theta_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::tau ] = tau_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::mean, mean_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::tau, tau_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::tau_syn, tau_syn_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::mean, mean_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::tau, tau_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn, tau_syn_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
 
   if ( V_reset_ >= theta_ )
   {
@@ -159,15 +156,15 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::siegert_neuron::State_::get( DictionaryDatum& d ) const
+nest::siegert_neuron::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::rate, r_ ); // Rate
+  d[ names::rate ] = r_; // Rate
 }
 
 void
-nest::siegert_neuron::State_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::State_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, r_, node ); // Rate
+  update_value_param( d, names::rate, r_, node ); // Rate
 }
 
 nest::siegert_neuron::Buffers_::Buffers_( siegert_neuron& n )

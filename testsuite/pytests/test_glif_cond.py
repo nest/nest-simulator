@@ -30,7 +30,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
@@ -85,11 +85,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         nest.Simulate(1000.0)
 
-        times = nest.GetStatus(mm, "events")[0]["times"]
-        V_m = nest.GetStatus(mm, "events")[0]["V_m"]
-        spikes = nest.GetStatus(sr, "events")[0]["times"]
-
-        return times, V_m, spikes
+        return mm.events["times"], mm.events["V_m"], sr.events["times"]
 
     def ks_assert_spikes(self, spikes, reference_spikes):
         """Runs a two-sided Kolmogorov-Smirnov statistic test on a set of

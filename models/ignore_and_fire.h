@@ -126,8 +126,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t );
   size_t handles_test_event( DataLoggingRequest&, size_t );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -154,12 +154,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    void set( const DictionaryDatum&, Node* node );
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -173,14 +173,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, Node* node );
+    void set( const Dictionary&, const Parameters_&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -285,16 +285,16 @@ ignore_and_fire::handles_test_event( DataLoggingRequest& dlr, size_t receptor_ty
 }
 
 inline void
-ignore_and_fire::get_status( DictionaryDatum& d ) const
+ignore_and_fire::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-ignore_and_fire::set_status( const DictionaryDatum& d )
+ignore_and_fire::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

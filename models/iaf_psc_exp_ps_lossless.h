@@ -70,30 +70,12 @@ meets the threshold.
 
 .. note::
 
-   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
-   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
-   ``tau_syn_in``, respectively, to avoid numerical instabilities.
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
-
-This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_recorder, the
-property "precise_times" of the spike_recorder has to be set to true in
-order to record the offsets in addition to the on-grid spike times.
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-In the current implementation, tau_syn_ex and tau_syn_in must be equal.
-This is because the state space would be 3-dimensional otherwise, which
-makes the detection of threshold crossing more difficult [1]_.
-Support for different time constants may be added in the future,
-see issue #921.
-
-For details about exact subthreshold integration, please see
-:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -187,8 +169,8 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -326,8 +308,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;               //!< Store current values in dictionary
+    double set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -348,8 +330,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -506,17 +488,17 @@ iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, size_t rec
 }
 
 inline void
-iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
+iaf_psc_exp_ps_lossless::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
+iaf_psc_exp_ps_lossless::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                 // temporary copy in case of errors
   double delta_EL = ptmp.set( d, this ); // throws if BadProperty

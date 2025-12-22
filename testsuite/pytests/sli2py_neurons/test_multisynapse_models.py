@@ -24,6 +24,7 @@ Test properties of multisynapse models.
 """
 
 import nest
+import numpy as np
 import pytest
 
 
@@ -42,7 +43,7 @@ def test_multisynapse_model_rport_zero(multisyn_model):
     """
 
     nrn = nest.Create(multisyn_model)
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(nrn, nrn)
 
 
@@ -70,7 +71,9 @@ def test_multisynapse_model_empty_param_vector(multisyn_model):
     nrn = nest.Create(multisyn_model)
     default_params = nrn.get()
 
-    empty_params = {pname: [] for pname in ["E_rev", "tau_syn", "tau_rise", "tau_decay"] if pname in default_params}
+    empty_params = {
+        pname: np.array([]) for pname in ["E_rev", "tau_syn", "tau_rise", "tau_decay"] if pname in default_params
+    }
 
     # Try to set params as empty vectors
     nrn.set(empty_params)

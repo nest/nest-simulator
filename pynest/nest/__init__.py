@@ -61,7 +61,7 @@ import importlib  # noqa
 import sys  # noqa
 import types  # noqa
 
-from .ll_api_kernel_attributes import KernelAttribute  # noqa
+from .ll_api import KernelAttribute  # noqa
 
 try:
     import versionchecker  # noqa: F401
@@ -81,8 +81,10 @@ class NestModule(types.ModuleType):
     from . import math  # noqa
     from . import random  # noqa
     from . import spatial_distributions  # noqa
-    from . import pynestkernel as kernel  # noqa
     from .ll_api import set_communicator
+
+    NESTErrors = ll_api.nestkernel.NESTErrors
+    NESTError = ll_api.nestkernel.NESTErrors.KernelException
 
     def __init__(self, name):
         super().__init__(name)
@@ -92,7 +94,6 @@ class NestModule(types.ModuleType):
 
         # Import public APIs of submodules into the `nest.` namespace
         _rel_import_star(self, ".lib.hl_api_connections")  # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_exceptions")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_info")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_models")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_nodes")  # noqa: F821
@@ -109,7 +110,6 @@ class NestModule(types.ModuleType):
         type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
         type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
 
-        self.__version__ = ll_api.sli_func("statusdict /version get")  # noqa: F821
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
@@ -145,6 +145,8 @@ class NestModule(types.ModuleType):
     kernel_status = KernelAttribute("dict", "Get the complete kernel status", readonly=True)
     resolution = KernelAttribute("float", "The resolution of the simulation (in ms)", default=0.1)
     biological_time = KernelAttribute("float", "The current simulation time (in ms)")
+    build_info = KernelAttribute("dict", "Information about the build and compile configuration of NEST", readonly=True)
+    memory_size = KernelAttribute("int", "Memory size of NEST process in kB (-1 if unavailable)", readonly=True)
     to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
     max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
     min_delay = KernelAttribute("float", "The minimum delay in the network", default=0.1)
@@ -413,6 +415,18 @@ class NestModule(types.ModuleType):
         ("If True, reset dynamic variables of e-prop neurons upon e-prop update."),
         default=True,
     )
+    verbosity = KernelAttribute(
+        "VerbosityLevel",
+        (
+            "Controls NEST's verbosity. The following levels are available,"
+            + " from most to least chatty: ALL, DEBUG, STATUS, INFO,"
+            + " PROGRESS, DEPRECATED, WARNING, ERROR, FATAL, QUIET."
+            + " Default verbosity is INFO. To start NEST with a different verbosity"
+            + " and supress the startup message, set the environment variable PYNEST_QUIET=1"
+        ),
+        default=ll_api.nestkernel.VerbosityLevel.INFO,
+    )
+
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(
@@ -511,7 +525,7 @@ _module = NestModule(__name__)
 _module.__dict__["NestModule"] = NestModule
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
-# Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
+# Some compiled/binary components (`nestkernel_api.pyx` for example) of NEST
 # obtain a reference to this file's original module object instead of what's in
 # `sys.modules`. For these edge cases we make available all attributes of the
 # nest module instance to this file's module object.

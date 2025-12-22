@@ -29,9 +29,9 @@ import pytest
 
 def test_delay_less_than_resolution_throws():
     nest.ResetKernel()
-    nest.set_verbosity("M_ERROR")
+    nest.verbosity = nest.VerbosityLevel.ERROR
     nest.resolution = 0.3
 
     population = nest.Create("iaf_psc_alpha")
-    with pytest.raises(nest.kernel.NESTError, match="Delay must be greater than or equal to resolution"):
+    with pytest.raises(nest.NESTError, match="Delay must be greater than or equal to resolution"):
         nest.Connect(population, population, syn_spec={"delay": 0.1})

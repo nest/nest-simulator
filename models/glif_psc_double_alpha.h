@@ -30,8 +30,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard threshold
 
 Short description
@@ -231,21 +229,21 @@ public:
 
   glif_psc_double_alpha( const glif_psc_double_alpha& );
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using Node::handle;
+  using Node::handles_test_event;
 
-  size_t send_test_event( nest::Node&, size_t, nest::synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& ) override;
-  void handle( nest::CurrentEvent& ) override;
-  void handle( nest::DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  size_t handles_test_event( nest::SpikeEvent&, size_t ) override;
-  size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
-  size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
@@ -255,11 +253,11 @@ private:
   void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class nest::RecordablesMap< glif_psc_double_alpha >;
-  friend class nest::UniversalDataLogger< glif_psc_double_alpha >;
+  friend class RecordablesMap< glif_psc_double_alpha >;
+  friend class UniversalDataLogger< glif_psc_double_alpha >;
 
   struct Parameters_
   {
@@ -301,8 +299,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    void get( Dictionary& ) const;
+    double set( const Dictionary&, Node* );
   };
 
   struct State_
@@ -325,8 +323,8 @@ private:
 
     State_( const Parameters_& );
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -335,11 +333,11 @@ private:
     Buffers_( glif_psc_double_alpha& );
     Buffers_( const Buffers_&, glif_psc_double_alpha& );
 
-    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
+    std::vector< RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
+    RingBuffer currents_;              //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
-    nest::UniversalDataLogger< glif_psc_double_alpha > logger_;
+    UniversalDataLogger< glif_psc_double_alpha > logger_;
   };
 
   struct Variables_
@@ -427,46 +425,46 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static nest::RecordablesMap< glif_psc_double_alpha > recordablesMap_;
+  static RecordablesMap< glif_psc_double_alpha > recordablesMap_;
 };
 
 
 inline size_t
-nest::glif_psc_double_alpha::Parameters_::n_receptors_() const
+glif_psc_double_alpha::Parameters_::n_receptors_() const
 {
   return tau_syn_fast_.size();
 }
 
 inline size_t
-nest::glif_psc_double_alpha::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
+glif_psc_double_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  nest::SpikeEvent e;
+  SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
-nest::glif_psc_double_alpha::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
+glif_psc_double_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
 }
 
 inline size_t
-nest::glif_psc_double_alpha::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
+glif_psc_double_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
 inline void
-glif_psc_double_alpha::get_status( DictionaryDatum& d ) const
+glif_psc_double_alpha::get_status( Dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -475,11 +473,11 @@ glif_psc_double_alpha::get_status( DictionaryDatum& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-glif_psc_double_alpha::set_status( const DictionaryDatum& d )
+glif_psc_double_alpha::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

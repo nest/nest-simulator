@@ -99,9 +99,9 @@ def _test_parameter_update(neuron, key, raw_value, new_values):
     try:
         update = {key: _cast_like(raw_value, new_values)}
         update.update(dimension_pairs)
-        nest.SetStatus(neuron, update)
+        neuron.set(update)
         return True, None
-    except nest.kernel.NESTError as err:
+    except nest.NESTError as err:
         return False, str(err)
 
 

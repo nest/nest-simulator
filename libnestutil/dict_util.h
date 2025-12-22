@@ -25,43 +25,36 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_datums.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
+#include "dictionary.h"
 
 namespace nest
 {
-
-
-/** Update a variable from a dictionary entry if it exists, skip call if it
- * doesn't. If the dictionary entry is a parameter, return value generated from
- * the parameter parameter.
+/**
+ * Obtain value from parameter dictionary including evaluation of random or spatial parameters.
+ *
+ * This function should be used instead of `update_value()` everywhere where the user may pass
+ * random or spatial parameters.
  */
-template < typename FT, typename VT >
+template < typename T >
 bool
-updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
+update_value_param( Dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
-  const Token& t = d->lookup( n );
-
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
+  assert( node != nullptr ); // PYNEST-NG-FUTURE: Receive node as const Node&, but that needs many changes throughout
+  const auto it = d.find( key );
+  if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second.item ) )
   {
-    if ( not node )
-    {
-      throw BadParameter( "Cannot use Parameter with this model." );
-    }
-    auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
-    auto tid = kernel().vp_manager.vp_to_thread( vp );
-    auto rng = get_vp_specific_rng( tid );
-    value = pd->get()->value( rng, node );
+    const auto param = d.get< ParameterPTR >( key );
+    const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
+    const auto tid = kernel().vp_manager.vp_to_thread( vp );
+    const auto rng = get_vp_specific_rng( tid );
+    value = param->value( rng, node );
     return true;
   }
   else
   {
-    return updateValue< FT >( d, n, value );
+    return d.update_value( key, value );
   }
 }
 

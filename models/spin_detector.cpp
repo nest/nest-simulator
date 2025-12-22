@@ -32,9 +32,6 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_spin_detector( const std::string& name )
@@ -84,7 +81,7 @@ nest::spin_detector::get_type() const
 }
 
 void
-nest::spin_detector::get_status( DictionaryDatum& d ) const
+nest::spin_detector::get_status( Dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -108,7 +105,7 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spin_detector::set_status( const DictionaryDatum& d )
+nest::spin_detector::set_status( const Dictionary& d )
 {
   RecordingDevice::set_status( d );
 }

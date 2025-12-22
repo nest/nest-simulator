@@ -194,10 +194,10 @@ public:
   ~EpropSynapseBSSHSLM2020CommonProperties();
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
@@ -283,10 +283,10 @@ public:
   using ConnectionBase::get_target;
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! Send the spike event.
   bool send( Event& e, size_t thread, const EpropSynapseBSSHSLM2020CommonProperties& cp );
@@ -576,36 +576,38 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
 template < typename targetidentifierT >
 void
-eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_m_readout, tau_m_readout_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau_m_readout ] = tau_m_readout_;
+  d[ names::size_of ] = sizeof( *this );
 
-  DictionaryDatum optimizer_dict = new Dictionary();
+  Dictionary optimizer_dict;
 
   // The default_connection_ has no optimizer, therefore we need to protect it
   if ( optimizer_ )
   {
     optimizer_->get_status( optimizer_dict );
-    ( *d )[ names::optimizer ] = optimizer_dict;
+    d[ names::optimizer ] = optimizer_dict;
   }
 }
 
 template < typename targetidentifierT >
 void
-eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer ) and optimizer_ )
+  if ( d.known( names::optimizer ) and optimizer_ )
   {
-    optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
+    // We must pass here if called by SetDefaults. In that case, the user will get an error
+    // message because the parameters for the synapse-specific optimizer have not been accessed.
+    optimizer_->set_status( d.get< Dictionary >( names::optimizer ) );
   }
 
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
-  if ( updateValue< double >( d, names::tau_m_readout, tau_m_readout_ ) )
+  if ( d.update_value( names::tau_m_readout, tau_m_readout_ ) )
   {
     if ( tau_m_readout_ <= 0 )
     {

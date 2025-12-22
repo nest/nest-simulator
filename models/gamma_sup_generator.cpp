@@ -34,16 +34,11 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "doubledatum.h"
-
 void
 nest::register_gamma_sup_generator( const std::string& name )
 {
   register_node_model< gamma_sup_generator >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Constructor of internal states class
@@ -140,37 +135,32 @@ nest::gamma_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::gamma_sup_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::gamma_shape ] = gamma_shape_;
-  ( *d )[ names::n_proc ] = n_proc_;
+  d[ names::rate ] = rate_;
+  d[ names::gamma_shape ] = gamma_shape_;
+  d[ names::n_proc ] = n_proc_;
 }
 
 void
-nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< long >( d, names::gamma_shape, gamma_shape_, node );
+  update_value_param( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
   {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0.0 )
   {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
-  long n_proc_l = n_proc_;
-  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
-  if ( n_proc_l < 1 )
+  update_value_param( d, names::n_proc, n_proc_, node );
+  if ( n_proc_ < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
-  }
-  else
-  {
-    n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 }
 
@@ -293,10 +283,10 @@ nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< doubl
       throw BadParameterValue(
         "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+    Dictionary d;
+    d[ names::gamma_shape ] = lround( input_param[ 0 ] );
+    d[ names::rate ] = input_param[ 1 ];
+    d[ names::n_proc ] = lround( input_param[ 2 ] );
     ptmp.set( d, this );
   }
 

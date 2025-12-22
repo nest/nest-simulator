@@ -34,10 +34,6 @@
 #include "nest_timeconverter.h"
 #include "recording_device.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "name.h"
-
 /* BeginUserDocs: device, recorder
 
 Short description
@@ -155,7 +151,7 @@ public:
     return false;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -177,8 +173,8 @@ public:
   SignalType sends_signal() const override;
 
   Type get_type() const override;
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -199,15 +195,15 @@ private:
 
   struct Parameters_
   {
-    Time interval_;                   //!< recording interval, in ms
-    Time offset_;                     //!< offset relative to 0, in ms
-    std::vector< Name > record_from_; //!< which data to record
+    Time interval_;                          //!< recording interval, in ms
+    Time offset_;                            //!< offset relative to 0, in ms
+    std::vector< std::string > record_from_; //!< which data to record
 
     Parameters_();
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -233,7 +229,7 @@ private:
 
 
 inline void
-nest::multimeter::get_status( DictionaryDatum& d ) const
+nest::multimeter::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
@@ -257,11 +253,11 @@ nest::multimeter::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::multimeter::set_status( const DictionaryDatum& d )
+nest::multimeter::set_status( const Dictionary& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;
-  if ( updateValue< bool >( d, names::frozen, freeze ) and freeze )
+  if ( d.update_value( names::frozen, freeze ) and freeze )
   {
     throw BadProperty( "multimeter cannot be frozen." );
   }

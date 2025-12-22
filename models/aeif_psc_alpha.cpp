@@ -41,8 +41,6 @@
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -182,48 +180,48 @@ nest::aeif_psc_alpha::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_alpha::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex );
-  def< double >( d, names::tau_syn_in, tau_syn_in );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::tau_syn_ex ] = tau_syn_ex;
+  d[ names::tau_syn_in ] = tau_syn_in;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
 }
 
 void
-nest::aeif_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_psc_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in, node );
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -276,25 +274,25 @@ nest::aeif_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::aeif_psc_alpha::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_alpha::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::I_syn_ex, y_[ I_EXC ] );
-  def< double >( d, names::dI_syn_ex, y_[ DI_EXC ] );
-  def< double >( d, names::I_syn_in, y_[ I_INH ] );
-  def< double >( d, names::dI_syn_in, y_[ DI_INH ] );
-  def< double >( d, names::w, y_[ W ] );
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::I_syn_ex ] = y_[ I_EXC ];
+  d[ names::dI_syn_ex ] = y_[ DI_EXC ];
+  d[ names::I_syn_in ] = y_[ I_INH ];
+  d[ names::dI_syn_in ] = y_[ DI_INH ];
+  d[ names::w ] = y_[ W ];
 }
 
 void
-nest::aeif_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_psc_alpha::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::I_syn_ex, y_[ I_EXC ], node );
-  updateValueParam< double >( d, names::dI_syn_ex, y_[ DI_EXC ], node );
-  updateValueParam< double >( d, names::I_syn_in, y_[ I_INH ], node );
-  updateValueParam< double >( d, names::dI_syn_in, y_[ DI_INH ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::I_syn_ex, y_[ I_EXC ], node );
+  update_value_param( d, names::dI_syn_ex, y_[ DI_EXC ], node );
+  update_value_param( d, names::I_syn_in, y_[ I_INH ], node );
+  update_value_param( d, names::dI_syn_in, y_[ DI_INH ], node );
+  update_value_param( d, names::w, y_[ W ], node );
   if ( y_[ I_EXC ] < 0 or y_[ I_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );

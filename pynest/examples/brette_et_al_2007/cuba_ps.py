@@ -104,6 +104,6 @@ params = {
 # Run the simulation
 
 if __name__ == "__main__":
-    nest.set_verbosity("M_WARNING")
+    nest.verbosity = nest.VerbosityLevel.WARNING
     # Note: iaf_psc_delta uses precise spiking by default (off-grid)
     results = run_simulation(params)

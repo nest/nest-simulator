@@ -34,8 +34,6 @@
 #include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::VPManager::VPManager()
 #ifdef _OPENMP
@@ -71,7 +69,7 @@ nest::VPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
     msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
 
-    LOG( M_INFO, "VPManager::initialize()", msg );
+    LOG( VerbosityLevel::INFO, "VPManager::initialize()", msg );
   }
 
   set_num_threads( 1 );
@@ -97,13 +95,13 @@ nest::VPManager::get_OMP_NUM_THREADS() const
 }
 
 void
-nest::VPManager::set_status( const DictionaryDatum& d )
+nest::VPManager::set_status( const Dictionary& d )
 {
   size_t n_threads = get_num_threads();
   size_t n_vps = get_num_virtual_processes();
 
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-  bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
+  bool n_threads_updated = d.update_integer_value( names::local_num_threads, n_threads );
+  bool n_vps_updated = d.update_integer_value( names::total_num_virtual_procs, n_vps );
 
   if ( n_vps_updated )
   {
@@ -169,7 +167,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     {
       std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
       msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
-      LOG( M_WARNING, "VPManager::set_status()", msg );
+      LOG( VerbosityLevel::WARNING, "VPManager::set_status()", msg );
     }
 
     kernel().change_number_of_threads( n_threads );
@@ -177,10 +175,10 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::VPManager::get_status( DictionaryDatum& d )
+nest::VPManager::get_status( Dictionary& d )
 {
-  def< long >( d, names::local_num_threads, get_num_threads() );
-  def< long >( d, names::total_num_virtual_procs, get_num_virtual_processes() );
+  d[ names::local_num_threads ] = get_num_threads();
+  d[ names::total_num_virtual_procs ] = get_num_virtual_processes();
 }
 
 void

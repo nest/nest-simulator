@@ -318,53 +318,10 @@ NodeCollection::NodeCollection()
 }
 
 NodeCollectionPTR
-NodeCollection::create( const IntVectorDatum& node_ids_datum )
-{
-  if ( node_ids_datum->empty() )
-  {
-    return NodeCollection::create_();
-  }
-
-  std::vector< size_t > node_ids;
-  node_ids.reserve( node_ids_datum->size() );
-  for ( const auto& datum : *node_ids_datum )
-  {
-    node_ids.push_back( static_cast< size_t >( getValue< long >( datum ) ) );
-  }
-
-  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-  {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
-  }
-  return NodeCollection::create_( node_ids );
-}
-
-NodeCollectionPTR
-NodeCollection::create( const TokenArray& node_ids_array )
-{
-  if ( node_ids_array.empty() )
-  {
-    return NodeCollection::create_();
-  }
-
-  std::vector< size_t > node_ids;
-  node_ids.reserve( node_ids_array.size() );
-  for ( const auto& node_id_token : node_ids_array )
-  {
-    node_ids.push_back( static_cast< size_t >( getValue< long >( node_id_token ) ) );
-  }
-
-  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
-  {
-    throw BadProperty( "Node IDs must be sorted in ascending order" );
-  }
-  return NodeCollection::create_( node_ids );
-}
-
-NodeCollectionPTR
 NodeCollection::create( const size_t node_id )
 {
-  return NodeCollection::create_( { node_id } );
+  std::vector< size_t > node_id_vec = { node_id };
+  return NodeCollection::create_( node_id_vec );
 }
 
 NodeCollectionPTR
@@ -452,7 +409,7 @@ NodeCollection::valid() const
 }
 
 void
-NodeCollection::get_metadata_status( DictionaryDatum& d ) const
+NodeCollection::get_metadata_status( Dictionary& d ) const
 {
   NodeCollectionMetadataPTR meta = get_metadata();
   if ( not meta )
@@ -518,10 +475,10 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
 {
 }
 
-ArrayDatum
+std::vector< size_t >
 NodeCollection::to_array( const std::string& selection ) const
 {
-  ArrayDatum node_ids;
+  std::vector< size_t > node_ids;
 
   if ( selection == "thread" )
   {

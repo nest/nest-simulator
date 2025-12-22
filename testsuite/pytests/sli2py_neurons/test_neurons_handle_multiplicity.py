@@ -100,10 +100,8 @@ def reset():
 def test_spike_multiplicity_parrot_neuron():
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
-    sg = nest.Create(
-        "spike_generator",
-        {"spike_times": spikes, "spike_multiplicities": multiplicities},
-    )
+    sg_params = {"spike_times": spikes, "spike_multiplicities": multiplicities}
+    sg = nest.Create("spike_generator", params=sg_params)
     pn = nest.Create("parrot_neuron")
     sr = nest.Create("spike_recorder")
 
@@ -112,7 +110,7 @@ def test_spike_multiplicity_parrot_neuron():
 
     nest.Simulate(10.0)
 
-    spike_times = sr.get("events")["times"]
+    spike_times = sr.events["times"]
     expected_spike_times = []
     for t, m in zip(spikes, multiplicities):
         expected_spike_times.extend([t + nest.min_delay] * m)
@@ -142,9 +140,9 @@ def test_spike_multiplicity(model):
 
     # Two spike generators send one spike with default multiplicity of 1
     # A third spike generator sends one spike with multiplicity of 2
-    sg1 = nest.Create("spike_generator", {"spike_times": [5.0]})
-    sg2 = nest.Create("spike_generator", {"spike_times": [5.0]})
-    sg3 = nest.Create("spike_generator", {"spike_times": [5.0], "spike_multiplicities": [2]})
+    sg1 = nest.Create("spike_generator", params={"spike_times": [5.0]})
+    sg2 = nest.Create("spike_generator", params={"spike_times": [5.0]})
+    sg3 = nest.Create("spike_generator", params={"spike_times": [5.0], "spike_multiplicities": [2]})
 
     syn_spec = {
         "synapse_model": "static_synapse",
@@ -159,16 +157,16 @@ def test_spike_multiplicity(model):
     nest.Connect(sg3, n2, "all_to_all", syn_spec)
 
     # Get v_m before simulation
-    v1_0 = n1.get("V_m")
-    v2_0 = n2.get("V_m")
+    v1_0 = n1.V_m
+    v2_0 = n2.V_m
 
     assert v1_0 == pytest.approx(v2_0)
 
     # Simulate
     nest.Simulate(8.0)
 
-    v1 = n1.get("V_m")
-    v2 = n2.get("V_m")
+    v1 = n1.V_m
+    v2 = n2.V_m
 
     assert v1 == pytest.approx(v2)
     assert v1_0 != v1

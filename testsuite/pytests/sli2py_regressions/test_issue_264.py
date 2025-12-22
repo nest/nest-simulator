@@ -37,7 +37,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def set_resolution():
     nest.ResetKernel()
-    nest.set(resolution=1.0, tics_per_ms=1000.0)
+    nest.set(resolution=1.0, tics_per_ms=1000)
 
 
 def test_incommensurate_simulation_time():
@@ -48,7 +48,7 @@ def test_incommensurate_simulation_time():
     time is not a multiple of the resolution.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadParameter):
+    with pytest.raises(nest.NESTErrors.BadParameter):
         nest.Simulate(1.5)
 
 
@@ -62,7 +62,7 @@ def test_incommensurate_resolution_on_set_defaults(device, item):
     start/stop/origin for devices that are not multiples of the resolution.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults(device, {item: 1.5})
 
 
@@ -76,6 +76,6 @@ def test_incommensurate_resolution_on_device_set(device, item):
     start/stop/origin for devices that are not multiples of the resolution.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         d = nest.Create(device)
         d.set({item: 1.5})

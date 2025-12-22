@@ -29,10 +29,6 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
-#include "sharedptrdatum.h"
 
 namespace nest
 {
@@ -62,8 +58,8 @@ public:
   virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder*,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& ) const = 0;
+    const Dictionary&,
+    const std::vector< Dictionary >& ) const = 0;
 };
 
 /**
@@ -77,8 +73,8 @@ public:
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs ) const override
   {
     return new ConnBuilderType( sources, targets, third_out, conn_spec, syn_specs );
   }
@@ -104,8 +100,8 @@ public:
   virtual ThirdOutBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdInBuilder*,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& ) const = 0;
+    const Dictionary&,
+    const std::vector< Dictionary >& ) const = 0;
 };
 
 /**
@@ -119,8 +115,8 @@ public:
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdInBuilder* third_in,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const override
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs ) const override
   {
     return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }

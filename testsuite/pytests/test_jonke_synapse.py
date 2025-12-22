@@ -27,7 +27,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class TestJonkeSynapse:
     """
     Test the weight change by STDP.
@@ -84,7 +83,7 @@ class TestJonkeSynapse:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.resolution
 
@@ -152,9 +151,10 @@ class TestJonkeSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_recorder.events
-        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
+        all_spikes = spike_recorder.events["times"]
+        senders = spike_recorder.events["senders"]
+        pre_spikes = all_spikes[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes[senders == postsynaptic_neuron.tolist()[0]]
 
         weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)

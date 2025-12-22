@@ -26,10 +26,9 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
-@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
 class SiegertNeuronTestCase(unittest.TestCase):
     """
@@ -60,7 +59,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.start = 100.0
 
         # reset kernel
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.dt
         nest.use_wfr = False
@@ -101,22 +100,22 @@ class SiegertNeuronTestCase(unittest.TestCase):
         dt_scaling = np.sqrt((1 + exp_dt) / (1 - exp_dt))
         mean = mV_to_pA * mu
         std = mV_to_pA * sigma * dt_scaling / np.sqrt(2)
-        nest.SetStatus(self.noise_generator, {"mean": mean, "std": std})
+        self.noise_generator.set({"mean": mean, "std": std})
 
         # set initial membrane voltage distribution with stationary statistics
-        nest.SetStatus(self.iaf_psc_delta, {"V_m": nest.random.normal(mean=mu, std=sigma / np.sqrt(2))})
+        self.iaf_psc_delta.V_m = nest.random.normal(mean=mu, std=sigma / np.sqrt(2))
 
         # simulate
         nest.Simulate(self.simtime)
 
         # get rate prediction from Siegert neuron
-        events = nest.GetStatus(self.multimeter)[0]["events"]
+        events = self.multimeter.events
         senders = events["senders"]
-        rate_mask = np.where(senders == self.siegert_neuron.get("global_id"))
+        rate_mask = np.where(senders == self.siegert_neuron.global_id)
         rate_prediction = events["rate"][rate_mask][-1]
 
         # get rate of integrate-and-fire neuron
-        n_spikes = nest.GetStatus(self.spike_recorder)[0]["n_events"]
+        n_spikes = self.spike_recorder.n_events
         rate_iaf = n_spikes / ((self.simtime - self.start) * 1e-3) / self.N
 
         return rate_prediction, rate_iaf

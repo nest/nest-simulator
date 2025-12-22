@@ -38,7 +38,7 @@ def test_nest_behaves_well_after_exception_during_update():
     did_crash = False
     try:
         nest.Simulate(100.0)
-    except nest.kernel.NESTErrors.NumericalInstability:
+    except nest.NESTErrors.NumericalInstability:
         did_crash = True
         pass
 
@@ -52,7 +52,7 @@ def test_nest_behaves_well_after_exception_during_update():
     # Set neuron parameters to values that should stabilize numerics
     nrn.set({"V_m": -70.0, "w": 0.0, "I_e": 0.0})
 
-    with pytest.raises(nest.kernel.NESTErrors.KernelException):
+    with pytest.raises(nest.NESTErrors.KernelException):
         nest.Simulate(0.1)
 
     # Test that we can simulate again after a ResetKernel

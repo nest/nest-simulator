@@ -37,7 +37,7 @@ class TestAeifCondAlphaMultisynapse:
     synapse current.
     """
 
-    def test_single_multi_synapse_equivalence(self, have_plotting, report_dir):
+    def test_single_multi_synapse_equivalence(self):
         simulation_t = 2500.0  # total simulation time [ms]
 
         dt = 0.1  # time step [ms]
@@ -115,40 +115,40 @@ class TestAeifCondAlphaMultisynapse:
 
         nest.Simulate(simulation_t)
 
-        summed_V_m = np.zeros_like(multisynapse_neuron_vm.get("events")["V_m"], dtype=float)
+        summed_V_m = np.zeros_like(multisynapse_neuron_vm.events["V_m"], dtype=float)
         for i in range(4):
-            summed_V_m += singlesynapse_neuron_vm[i].get("events")["V_m"] - V_m_steadystate
+            summed_V_m += singlesynapse_neuron_vm[i].events["V_m"] - V_m_steadystate
 
         summed_V_m += V_m_steadystate
 
-        error = np.abs(summed_V_m - multisynapse_neuron_vm.get("events")["V_m"])
+        error = np.abs(summed_V_m - multisynapse_neuron_vm.events["V_m"])
 
-        if have_plotting:
+        if False:
             # plot timeseries as a sanity check
             import matplotlib.pyplot as plt
 
             fig, ax = plt.subplots(nrows=6)
             ax[0].plot(
-                multisynapse_neuron_vm.get("events")["times"],
-                multisynapse_neuron_vm.get("events")["V_m"],
+                multisynapse_neuron_vm.events["times"],
+                multisynapse_neuron_vm.events["V_m"],
                 label="V_m multisyn",
                 alpha=0.5,
             )
-            ax[0].plot(multisynapse_neuron_vm.get("events")["times"], summed_V_m, label="V_m summed", alpha=0.5)
+            ax[0].plot(multisynapse_neuron_vm.events["times"], summed_V_m, label="V_m summed", alpha=0.5)
 
             for i in range(4):
                 ax[i + 1].plot(
-                    singlesynapse_neuron_vm[i].get("events")["times"],
-                    singlesynapse_neuron_vm[i].get("events")["V_m"],
+                    singlesynapse_neuron_vm[i].events["times"],
+                    singlesynapse_neuron_vm[i].events["V_m"],
                     label="V_m single (" + str(i) + ")",
                 )
 
             for _ax in ax:
                 _ax.legend()
 
-            ax[-1].semilogy(multisynapse_neuron_vm.get("events")["times"], error, label="errror")
+            ax[-1].semilogy(multisynapse_neuron_vm.get("events")["times"], error, label="error")
 
-            fig.savefig(report_dir / "test_aeif_cond_alpha_multisynapse.png")
+            fig.savefig("test_aeif_cond_alpha_multisynapse.png")
 
         # compare with a large tolerance because previous PSPs affect subsequent PSPs in the multisynapse neuron
         np.testing.assert_allclose(error, 0, atol=1e-6)
@@ -187,7 +187,7 @@ class TestAeifCondAlphaMultisynapse:
         nrn.set({"E_rev": E_rev3, "tau_syn": tau_syn3})
         assert len(nrn.recordables) == 6
 
-    def test_g_alpha_dynamics(self, have_plotting, report_dir):
+    def test_g_alpha_dynamics(self):
         r"""Test that g has alpha function dynamics"""
 
         dt = 0.1  # time step
@@ -247,9 +247,9 @@ class TestAeifCondAlphaMultisynapse:
             tau = tau_syn[i]
             sim_g = sim_gs[i]
 
-            theo_g = alpha_function(t, W, tau, t0)
+            theo_g = alpha_function(np.array(t), W, tau, t0)
 
-            if have_plotting:
+            if False:
                 # plot timeseries as a sanity check
                 import matplotlib.pyplot as plt
 
@@ -260,6 +260,6 @@ class TestAeifCondAlphaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fig.savefig(report_dir / f"test_aeif_cond_alpha_multisynapse_psc_shape_{i}.png")
+                fig.savefig(f"test_aeif_cond_alpha_multisynapse_psc_shape_{i}.png")
 
             np.testing.assert_allclose(sim_g, theo_g)

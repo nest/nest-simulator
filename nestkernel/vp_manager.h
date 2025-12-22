@@ -29,8 +29,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 #ifdef _OPENMP
 // C includes:
@@ -59,8 +57,8 @@ public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
 
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  virtual void set_status( const Dictionary& ) override;
+  virtual void get_status( Dictionary& ) override;
 
   /**
    * Gets ID of local thread.

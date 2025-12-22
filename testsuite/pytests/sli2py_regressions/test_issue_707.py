@@ -28,7 +28,7 @@ import nest
 import pytest
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_gap_junction_weight_recording():
     """
     Test that the weight of gap junctions can be recorded with the weight_recorder.
@@ -50,7 +50,4 @@ def test_gap_junction_weight_recording():
 
     nest.Simulate(10.0)
 
-    events = nest.GetStatus(wr, "events")[0]
-    weights = events["weights"]
-
-    assert weights[0] == 2.0
+    assert wr.get("events", "weights")[0] == 2.0

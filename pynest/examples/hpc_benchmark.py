@@ -355,7 +355,7 @@ def run_simulation():
     # open log file
     with Logger(params["log_file"]) as logger:
         nest.ResetKernel()
-        nest.set_verbosity(M_INFO)
+        nest.verbosity = nest.VerbosityLevel.INFO
 
         logger.log(str(memory_thisjob()) + " # virt_mem_0")
 

@@ -39,5 +39,5 @@ def test_volume_transmitter_illegal_connection():
     sg = nest.Create("spike_generator")
     vt = nest.Create("volume_transmitter")
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(sg, vt)

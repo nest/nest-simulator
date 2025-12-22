@@ -26,9 +26,9 @@ import unittest
 
 import nest
 import numpy as np
-import numpy.testing as np_testing
+import numpy.testing as nptest
 
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 class ConnectSlicedSpatialTestCase(unittest.TestCase):
@@ -52,7 +52,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         """Create a histogram of input data and assert it against reference values"""
         hist = np.histogram(sources_or_targets, bins=self.N, range=(1, self.N + 1))
         counts, _ = hist
-        np_testing.assert_array_equal(counts, ref)
+        nptest.assert_array_equal(counts, ref)
 
     def test_connect_sliced_spatial_on_target_free(self):
         """Connect sliced free spatial source population"""
@@ -141,7 +141,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                 for attr in ["edge_wrap", "extent"]:
                     spatial_attr = nodes.spatial[attr]
                     sliced_spatial_attr = nodes_sliced.spatial[attr]
-                    self.assertEqual(spatial_attr, sliced_spatial_attr, 'with attr="{}"'.format(attr))
+                    nptest.assert_equal(spatial_attr, sliced_spatial_attr)
 
     def test_connect_sliced_spatial_range(self):
         """Connect spatial population sliced with range"""

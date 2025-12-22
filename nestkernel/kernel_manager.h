@@ -42,9 +42,6 @@
 #include "sp_manager.h"
 #include "vp_manager.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-
 #include "compose.hpp"
 #include <fstream>
 
@@ -172,7 +169,8 @@
 
  Miscellaneous
  dict_miss_is_error                    booltype    - Whether missed dictionary entries are treated as errors.
-
+ build_info                   dicttype - Various information about the NEST build
+ memory_size         integertype - Memory occupied by NEST process in kB (-1 if not available for OS)
  SeeAlso: Simulate, Node
 */
 
@@ -201,12 +199,13 @@ private:
   KernelManager( KernelManager const& );  // do not implement
   void operator=( KernelManager const& ); // do not implement
 
+  Dictionary get_build_info_();
+
 public:
   /**
    * Create/destroy and access the KernelManager singleton.
    */
   static void create_kernel_manager();
-  static void destroy_kernel_manager();
   static KernelManager& get_kernel_manager();
 
   /**
@@ -246,8 +245,8 @@ public:
    */
   void change_number_of_threads( size_t new_num_threads );
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& );
+  void set_status( const Dictionary& );
+  void get_status( Dictionary& );
 
   void prepare();
   void cleanup();
@@ -309,6 +308,9 @@ public:
   }
 
 private:
+  size_t get_memsize_linux_() const;  //!< return VmSize in kB
+  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
@@ -321,6 +323,24 @@ private:
 };
 
 KernelManager& kernel();
+
+inline RngPtr
+get_rank_synced_rng()
+{
+  return kernel().random_manager.get_rank_synced_rng();
+}
+
+inline RngPtr
+get_vp_synced_rng( size_t tid )
+{
+  return kernel().random_manager.get_vp_synced_rng( tid );
+}
+
+inline RngPtr
+get_vp_specific_rng( size_t tid )
+{
+  return kernel().random_manager.get_vp_specific_rng( tid );
+}
 
 } // namespace nest
 
@@ -348,5 +368,6 @@ nest::KernelManager::get_fingerprint() const
 {
   return fingerprint_;
 }
+
 
 #endif /* KERNEL_MANAGER_H */

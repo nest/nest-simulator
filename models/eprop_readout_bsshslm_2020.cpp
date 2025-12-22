@@ -36,9 +36,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -107,32 +104,32 @@ eprop_readout_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_readout_b
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
+eprop_readout_bsshslm_2020::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< std::string >( d, names::loss, loss_ );
-  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
+  d[ names::C_m ] = C_m_;
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::loss ] = loss_;
+  d[ names::regular_spike_arrival ] = regular_spike_arrival_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::V_min ] = V_min_ + E_L_;
 }
 
 double
-eprop_readout_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_readout_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
+  V_min_ -= update_value_param( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< std::string >( d, names::loss, loss_, node );
-  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::loss, loss_, node );
+  update_value_param( d, names::regular_spike_arrival, regular_spike_arrival_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -153,19 +150,19 @@ eprop_readout_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* no
 }
 
 void
-eprop_readout_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_readout_bsshslm_2020::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::error_signal, error_signal_ );
-  def< double >( d, names::readout_signal, readout_signal_ );
-  def< double >( d, names::readout_signal_unnorm, readout_signal_unnorm_ );
-  def< double >( d, names::target_signal, target_signal_ );
+  d[ names::V_m ] = v_m_ + p.E_L_;
+  d[ names::error_signal ] = error_signal_;
+  d[ names::readout_signal ] = readout_signal_;
+  d[ names::readout_signal_unnorm ] = readout_signal_unnorm_;
+  d[ names::target_signal ] = target_signal_;
 }
 
 void
-eprop_readout_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_readout_bsshslm_2020::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------

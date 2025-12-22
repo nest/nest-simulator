@@ -29,7 +29,7 @@ import pytest
 
 # Apply parameterization over number of threads here, each test will be run once for
 # each parameter value. Need to protect in case we are running without threads.
-@pytest.fixture(autouse=True, params=[1, 2] if nest.ll_api.sli_func("is_threaded") else [1])
+@pytest.fixture(autouse=True, params=[1, 2] if nest.build_info["have_threads"] else [1])
 def create_neurons(request):
     nest.ResetKernel()
     nest.local_num_threads = request.param
@@ -59,7 +59,7 @@ class TestGetNodes:
         nodes_ref = nest.NodeCollection(list(range(1, nest.network_size + 1)))
         if nodes_ref and local_only:
             # Need to go via global_id to get empty node collection if no locals
-            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
+            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
 
         nodes = nest.GetNodes(local_only=local_only)
 
@@ -80,7 +80,7 @@ class TestGetNodes:
         nodes_ref = nest.NodeCollection(expected_ids)
         if local_only:
             # Need to go via global_id to get empty node collection if no locals
-            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
+            nodes_ref = nest.NodeCollection(n.global_id for n in nodes_ref if n.local)
 
         nodes = nest.GetNodes(properties=filter, local_only=local_only)
         assert nodes == nodes_ref
@@ -92,5 +92,5 @@ class TestGetNodes:
         This would lead to crashes in MPI-parallel code before #3460.
         """
 
-        nodes = nest.GetNodes({"V_m": 100.0}, local_only=local_only)
+        nodes = nest.GetNodes({"V_m": 100.0})
         assert len(nodes) == 0

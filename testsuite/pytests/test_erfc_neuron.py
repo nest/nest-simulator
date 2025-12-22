@@ -35,8 +35,9 @@ def get_mean_activity(detector, T):
     returns the mean activity of a single binary neuron connected to a spin
     detector.
     """
-    states = nest.GetStatus(detector)[0]["events"]["state"]
-    times = nest.GetStatus(detector)[0]["events"]["times"]
+    states = detector.events["state"]
+    states = [states] if isinstance(states, (int, np.integer)) else states
+    times = detector.events["times"]
     # add total duration at the end, since we need to take into account
     # the time between the last state change and end of simulation
     times = np.hstack((times, T))
@@ -83,7 +84,7 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
 
     def build_and_connect_nodes(self, sigma, theta):
         """sets up an erfc neuron and spin detector."""
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.rng_seed = 1
 

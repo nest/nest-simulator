@@ -29,7 +29,6 @@ import nest
 import numpy
 
 
-@nest.ll_api.check_stack
 class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
     Test if currents from generators are recorded properly. Specifically:
@@ -40,7 +39,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # setting up the neuron and the generators
@@ -142,24 +141,25 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Simulate(50)
 
         # retrieve vectors
-        events_Vm = nest.GetStatus(m_Vm)[0]["events"]
-        v_Vm = events_Vm["V_m"]
+        events_Vm = m_Vm.events
+        t_Vm = numpy.array(events_Vm["times"])
+        v_Vm = numpy.array(events_Vm["V_m"])
 
-        events_ac = nest.GetStatus(m_ac)[0]["events"]
-        t_ac = events_ac["times"]
-        i_ac = events_ac["I"]
+        events_ac = m_ac.events
+        t_ac = numpy.array(events_ac["times"])
+        i_ac = numpy.array(events_ac["I"])
 
-        events_dc = nest.GetStatus(m_dc)[0]["events"]
-        t_dc = events_dc["times"]
-        i_dc = events_dc["I"]
+        events_dc = m_dc.events
+        t_dc = numpy.array(events_dc["times"])
+        i_dc = numpy.array(events_dc["I"])
 
-        events_step = nest.GetStatus(m_step)[0]["events"]
-        t_step = events_step["times"]
-        i_step = events_step["I"]
+        events_step = m_step.events
+        t_step = numpy.array(events_step["times"])
+        i_step = numpy.array(events_step["I"])
 
-        events_noise = nest.GetStatus(m_noise)[0]["events"]
-        t_noise = events_noise["times"]
-        i_noise = events_noise["I"]
+        events_noise = m_noise.events
+        t_noise = numpy.array(events_noise["times"])
+        i_noise = numpy.array(events_noise["I"])
 
         # test the length of current vectors
         assert len(i_ac) == len(v_Vm), "Incorrect current vector length for AC generator"

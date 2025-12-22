@@ -90,11 +90,11 @@ class TestVisualization:
     def voltage_trace_verify(self, device):
         assert plt._pylab_helpers.Gcf.get_active() is not None, "No active figure"
         ax = plt.gca()
-        vm = device.get("events", "V_m")
+        vm = device.events["V_m"]
         for ref_vm, line in zip((vm[::2], vm[1::2]), ax.lines):
             x_data, y_data = line.get_data()
             # Check that times are correct
-            assert list(x_data) == list(np.unique(device.get("events", "times")))
+            assert list(x_data) == list(np.unique(device.events["times"]))
             # Check that voltmeter data corresponds to the lines in the plot
             assert all(np.isclose(ref_vm, y_data))
         plt.close(ax.get_figure())
@@ -106,11 +106,11 @@ class TestVisualization:
 
         nest.ResetKernel()
         nodes = nest.Create("iaf_psc_alpha", 2)
-        pg = nest.Create("poisson_generator", 1, {"rate": 1000.0})
+        pg = nest.Create("poisson_generator", params={"rate": 1000.0})
         device = nest.Create("voltmeter")
         nest.Connect(pg, nodes)
         nest.Connect(device, nodes)
-        nest.Simulate(100)
+        nest.Simulate(100.0)
 
         # Test with data from device
         plt.close("all")
@@ -118,7 +118,7 @@ class TestVisualization:
         self.voltage_trace_verify(device)
 
         # Test with data from file
-        vm = device.get("events")
+        vm = device.events
         data = np.zeros([len(vm["senders"]), 3])
         data[:, 0] = vm["senders"]
         data[:, 1] = vm["times"]
@@ -133,7 +133,8 @@ class TestVisualization:
 
     def spike_recorder_data_setup(self, to_file=False):
         nest.ResetKernel()
-        pg = nest.Create("poisson_generator", {"rate": 1000.0})
+        nest.overwrite_files = True
+        pg = nest.Create("poisson_generator", params={"rate": 1000.0})
         sr = nest.Create("spike_recorder")
         if to_file:
             parrot = nest.Create("parrot_neuron")
@@ -142,10 +143,10 @@ class TestVisualization:
             nest.Connect(pg, parrot)
             nest.Connect(parrot, sr)
             nest.Connect(parrot, sr_to_file)
-            nest.Simulate(100)
+            nest.Simulate(100.0)
             return sr, sr_to_file
         else:
-            nest.Simulate(100)
+            nest.Simulate(100.0)
             return sr
 
     def spike_recorder_raster_verify(self, sr_ref):
@@ -164,34 +165,34 @@ class TestVisualization:
         import nest.raster_plot
 
         sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
-        spikes = sr.get("events")
-        sr_ref = spikes["times"]
+        spikes = sr.events["times"]
+        senders = sr.events["senders"]
 
         # Test from_device
         nest.raster_plot.from_device(sr)
-        self.spike_recorder_raster_verify(sr_ref)
+        self.spike_recorder_raster_verify(spikes)
 
         # Test from_data
-        data = np.zeros([len(spikes["senders"]), 2])
-        data[:, 0] = spikes["senders"]
-        data[:, 1] = spikes["times"]
+        data = np.zeros([len(senders), 2])
+        data[:, 0] = senders
+        data[:, 1] = spikes
         nest.raster_plot.from_data(data)
-        self.spike_recorder_raster_verify(sr_ref)
+        self.spike_recorder_raster_verify(spikes)
 
         # Test from_file
         filename = sr_to_file.filenames[0]
         self.filenames.append(filename)
         nest.raster_plot.from_file(filename)
-        self.spike_recorder_raster_verify(sr_ref)
+        self.spike_recorder_raster_verify(spikes)
 
         # Test from_file_numpy
         nest.raster_plot.from_file_numpy([filename])
-        self.spike_recorder_raster_verify(sr_ref)
+        self.spike_recorder_raster_verify(spikes)
 
         if HAVE_PANDAS:
             # Test from_file_pandas
             nest.raster_plot.from_file_pandas([filename])
-            self.spike_recorder_raster_verify(sr_ref)
+            self.spike_recorder_raster_verify(spikes)
 
         # Test extract_events
         all_extracted = nest.raster_plot.extract_events(data)

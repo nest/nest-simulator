@@ -38,8 +38,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -98,33 +96,33 @@ nest::iaf_psc_delta_ps::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_ps::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_psc_delta_ps::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, U_th_ + E_L_ );
-  def< double >( d, names::V_min, U_min_ + E_L_ );
-  def< double >( d, names::V_reset, U_reset_ + E_L_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::t_ref, t_ref_ );
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = U_th_ + E_L_;
+  d[ names::V_min ] = U_min_ + E_L_;
+  d[ names::V_reset ] = U_reset_ + E_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 double
-nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_psc_delta_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e_, node );
 
-  if ( updateValueParam< double >( d, names::V_th, U_th_, node ) )
+  if ( update_value_param( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -133,7 +131,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_min, U_min_, node ) )
+  if ( update_value_param( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -142,7 +140,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_reset, U_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -176,17 +174,17 @@ nest::iaf_psc_delta_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_psc_delta_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_delta_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
-  def< bool >( d, names::is_refractory, is_refractory_ );
-  def< bool >( d, names::refractory_input, with_refr_input_ );
+  d[ names::V_m ] = U_ + p.E_L_; // Membrane potential
+  d[ names::is_refractory ] = is_refractory_;
+  d[ names::refractory_input ] = with_refr_input_;
 }
 
 void
-nest::iaf_psc_delta_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_psc_delta_ps::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, U_, node ) )
+  if ( update_value_param( d, names::V_m, U_, node ) )
   {
     U_ -= p.E_L_;
   }

@@ -31,8 +31,6 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "layer.h"
@@ -49,8 +47,8 @@ class FreeLayer : public Layer< D >
 {
 public:
   Position< D > get_position( size_t sind ) const override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum&, NodeCollection const* ) const override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary&, NodeCollection const* const ) const override;
 
 protected:
   /**
@@ -113,7 +111,7 @@ protected:
 
 template < int D >
 void
-FreeLayer< D >::set_status( const DictionaryDatum& d )
+FreeLayer< D >::set_status( const Dictionary& d )
 {
   Layer< D >::set_status( d );
 
@@ -135,21 +133,20 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     } );
 
   // Read positions from dictionary
-  if ( d->known( names::positions ) )
+  if ( d.known( names::positions ) )
   {
-    const Token& tkn = d->lookup( names::positions );
-    if ( tkn.is_a< TokenArray >() )
+    const auto positions = d.at( names::positions );
+    if ( is_type< std::vector< std::vector< double > > >( positions ) )
     {
-      TokenArray pos = getValue< TokenArray >( tkn );
-
       positions_.clear();
       positions_.reserve( num_local_nodes_ );
 
       auto nc_it = this->node_collection_->begin();
-      for ( Token* it = pos.begin(); it != pos.end(); ++it, ++nc_it )
+      const auto pos = boost::any_cast< std::vector< std::vector< double > > >( positions );
+      for ( auto it = pos.begin(); it != pos.end(); ++it, ++nc_it )
       {
         assert( nc_it != this->node_collection_->end() );
-        Position< D > point = getValue< std::vector< double > >( *it );
+        Position< D > point = *it;
         const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
         assert( node );
         if ( not node->is_proxy() )
@@ -172,11 +169,10 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       }
       assert( positions_.size() == num_local_nodes_ );
     }
-    else if ( tkn.is_a< ParameterDatum >() )
+    else if ( is_type< std::shared_ptr< nest::Parameter > >( positions ) )
     {
-      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
-      auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
-
+      auto pd = d.get< ParameterPTR >( names::positions );
+      auto pos = dynamic_cast< DimensionParameter* >( pd.get() );
       positions_.clear();
       positions_.reserve( num_local_nodes_ );
 
@@ -215,9 +211,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
   }
-  if ( d->known( names::extent ) )
+  if ( d.known( names::extent ) )
   {
-    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->extent_ = d.get< std::vector< double > >( names::extent );
 
     Position< D > center = ( max_point + this->lower_left_ ) / 2;
     auto lower_left_point = this->lower_left_; // save lower-left-most point
@@ -255,18 +251,18 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+FreeLayer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
 {
   Layer< D >::get_status( d, nc );
 
-  TokenArray points;
+  std::vector< std::vector< double > > points;
 
   if ( not nc )
   {
     // This is needed by NodeCollectionMetadata::operator==() which does not have access to the node collection
     for ( const auto& pos : positions_ )
     {
-      points.push_back( pos.getToken() );
+      points.emplace_back( pos.get_vector() );
     }
   }
   else
@@ -286,16 +282,16 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
       // to get right indices into positions_, which has only rank-local data.
       const size_t n_procs = kernel().mpi_manager.get_num_processes();
       size_t pos_idx = ( *nc_it ).nc_index / n_procs;
-      size_t step = nc_it.get_step_size() / n_procs;
+      const size_t step = nc_it.get_step_size() / n_procs;
 
       for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
       {
-        points.push_back( positions_.at( pos_idx ).getToken() );
+        points.emplace_back( positions_.at( pos_idx ).get_vector() );
       }
     }
   }
 
-  def2< TokenArray, ArrayDatum >( d, names::positions, points );
+  d[ names::positions ] = points;
 }
 
 template < int D >
@@ -365,7 +361,7 @@ void
 FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
 
-  communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
+  communicate_positions_( std::back_inserter( tree ), node_collection );
 }
 
 // Helper function to compare node IDs used for sorting (Position,node ID) pairs

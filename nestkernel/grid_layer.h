@@ -26,6 +26,9 @@
 // Includes from spatial:
 #include "layer.h"
 
+// Includes from C++
+#include <iterator>
+
 namespace nest
 {
 
@@ -148,8 +151,8 @@ public:
 
   Position< D, size_t > get_dims() const;
 
-  void set_status( const DictionaryDatum& d ) override;
-  void get_status( DictionaryDatum& d, NodeCollection const* ) const override;
+  void set_status( const Dictionary& d ) override;
+  void get_status( Dictionary& d, NodeCollection const* const ) const override;
 
 protected:
   Position< D, size_t > dims_; ///< number of nodes in each direction.
@@ -170,11 +173,11 @@ GridLayer< D >::get_dims() const
 
 template < int D >
 void
-GridLayer< D >::set_status( const DictionaryDatum& d )
+GridLayer< D >::set_status( const Dictionary& d )
 {
   std::vector< long > new_dims( D );
 
-  updateValue< std::vector< long > >( d, names::shape, new_dims );
+  d.update_value( names::shape, new_dims );
 
   size_t new_size = 1;
   for ( int i = 0; i < D; ++i )
@@ -189,15 +192,15 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     throw BadProperty( "Total size of layer must be unchanged." );
   }
 
-  if ( d->known( names::extent ) )
+  if ( d.known( names::extent ) )
   {
     Position< D > center = this->get_center();
-    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->extent_ = d.get< std::vector< double > >( names::extent );
     this->lower_left_ = center - this->extent_ / 2;
   }
-  if ( d->known( names::center ) )
+  if ( d.known( names::center ) )
   {
-    this->lower_left_ = getValue< std::vector< double > >( d, names::center );
+    this->lower_left_ = d.get< std::vector< double > >( names::center );
     this->lower_left_ -= this->extent_ / 2;
   }
 
@@ -206,11 +209,11 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+GridLayer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
 {
   Layer< D >::get_status( d, nc );
 
-  ( *d )[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
+  d[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
 }
 
 template < int D >
@@ -294,8 +297,10 @@ template < int D >
 void
 GridLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
-  insert_global_positions_( std::inserter( tree, tree.end() ), node_collection );
+  auto ins2 = std::back_inserter( tree );
+  insert_global_positions_( ins2, node_collection );
 }
+
 
 template < int D >
 void

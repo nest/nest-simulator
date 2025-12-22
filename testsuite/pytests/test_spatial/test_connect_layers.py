@@ -34,7 +34,7 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 class ConnectLayersTestCase(unittest.TestCase):
@@ -357,7 +357,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }
         for conn_spec in [conn_spec_kernel, conn_spec_mask]:
-            with self.assertRaises(nest.kernel.NESTError):
+            with self.assertRaises(ValueError):
                 nest.Connect(self.layer, self.layer, conn_spec)
 
     def test_connect_oversized_mask(self):
@@ -366,7 +366,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             "iaf_psc_alpha", positions=nest.spatial.free([[0.0, 0.0]], edge_wrap=True, extent=[1.0, 1.0])
         )
         conn_spec = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": {"circular": {"radius": 2.0}}}
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.Connect(free_layer, free_layer, conn_spec)
         self.assertEqual(nest.num_connections, 0)
         conn_spec["allow_oversized_mask"] = True
@@ -382,7 +382,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         syn_spec = {"weight": nest.random.uniform(min=0.5)}
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
-        conn_weights = np.array(conns.get("weight"))
+        conn_weights = np.array(conns.weight)
         self.assertTrue(len(np.unique(conn_weights)) > 1)
         self.assertTrue((conn_weights >= 0.5).all())
         self.assertTrue((conn_weights <= 1.0).all())
@@ -396,7 +396,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         syn_spec = {"delay": nest.random.uniform(min=0.5)}
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
-        conn_delays = np.array(conns.get("delay"))
+        conn_delays = np.array(conns.delay)
         self.assertTrue(len(np.unique(conn_delays)) > 1)
         self.assertTrue((conn_delays >= 0.5).all())
         self.assertTrue((conn_delays <= 1.0).all())

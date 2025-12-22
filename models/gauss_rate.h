@@ -151,8 +151,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const;        //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* ); //!< Set values from dictionary
+  void get( Dictionary& ) const;        //!< Store current values in dictionary
+  void set( const Dictionary&, Node* ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling

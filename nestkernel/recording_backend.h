@@ -26,9 +26,7 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
+#include "dictionary.h"
 
 namespace nest
 {
@@ -114,7 +112,7 @@ public:
    * @see set_value_names(), disenroll(), write(),
    *
    */
-  virtual void enroll( const RecordingDevice& device, const DictionaryDatum& params ) = 0;
+  virtual void enroll( const RecordingDevice& device, const Dictionary& params ) = 0;
 
   /**
    * Disenroll a `RecordingDevice` from the `RecordingBackend`.
@@ -152,8 +150,8 @@ public:
    *
    */
   virtual void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) = 0;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) = 0;
 
   /**
    * Prepare the backend at begin of the NEST Simulate function.
@@ -245,7 +243,7 @@ public:
    * @see get_status()
    *
    */
-  virtual void set_status( const DictionaryDatum& params ) = 0;
+  virtual void set_status( const Dictionary& params ) = 0;
 
   /**
    * Return the status of the recording backend by writing it to the given
@@ -256,7 +254,7 @@ public:
    * @see set_status()
    *
    */
-  virtual void get_status( DictionaryDatum& params ) const = 0;
+  virtual void get_status( Dictionary& params ) const = 0;
 
   /**
    * Check if the given per-device properties are valid and usable by
@@ -274,7 +272,7 @@ public:
    * @see get_device_defaults(), get_device_status()
    *
    */
-  virtual void check_device_status( const DictionaryDatum& params ) const = 0;
+  virtual void check_device_status( const Dictionary& params ) const = 0;
 
   /**
    * Return the per-device defaults by writing it to the given params
@@ -285,7 +283,7 @@ public:
    * @see check_device_status(), get_device_status()
    *
    */
-  virtual void get_device_defaults( DictionaryDatum& params ) const = 0;
+  virtual void get_device_defaults( Dictionary& params ) const = 0;
 
   /**
    * Return the per-device status of the given recording device by
@@ -301,10 +299,10 @@ public:
    * @see enroll(), check_device_status(), get_device_defaults()
    *
    */
-  virtual void get_device_status( const RecordingDevice& device, DictionaryDatum& params ) const = 0;
+  virtual void get_device_status( const RecordingDevice& device, Dictionary& params ) const = 0;
 
-  static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
-  static const std::vector< Name > NO_LONG_VALUE_NAMES;
+  static const std::vector< std::string > NO_DOUBLE_VALUE_NAMES;
+  static const std::vector< std::string > NO_LONG_VALUE_NAMES;
   static const std::vector< double > NO_DOUBLE_VALUES;
   static const std::vector< long > NO_LONG_VALUES;
 };

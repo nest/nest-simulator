@@ -117,50 +117,46 @@ nest::gif_pop_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::gif_pop_psc_exp::Parameters_::get( Dictionary& d ) const
 {
-  def< long >( d, names::N, N_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::lambda_0, lambda_0_ );
-  def< double >( d, names::Delta_V, Delta_V_ );
-  def< long >( d, names::len_kernel, len_kernel_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::V_T_star, V_T_star_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  def< double >( d, names::tau_syn_in, tau_syn_in_ );
-  def< bool >( d, "BinoRand", BinoRand_ );
-
-  ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
-
-  ArrayDatum q_sfa_list_ad( q_sfa_ );
-  def< ArrayDatum >( d, names::q_sfa, q_sfa_list_ad );
+  d[ names::N ] = N_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::C_m ] = c_m_;
+  d[ names::lambda_0 ] = lambda_0_;
+  d[ names::Delta_V ] = Delta_V_;
+  d[ names::len_kernel ] = len_kernel_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::V_T_star ] = V_T_star_;
+  d[ names::E_L ] = E_L_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::tau_syn_ex ] = tau_syn_ex_;
+  d[ names::tau_syn_in ] = tau_syn_in_;
+  d[ "BinoRand" ] = BinoRand_;
+  d[ names::tau_sfa ] = tau_sfa_;
+  d[ names::q_sfa ] = q_sfa_;
 }
 
 void
-nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< long >( d, names::N, N_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::lambda_0, lambda_0_, node );
-  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
-  updateValueParam< long >( d, names::len_kernel, len_kernel_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
-  updateValueParam< double >( d, names::E_L, E_L_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in_, node );
-  updateValueParam< bool >( d, "BinoRand", BinoRand_, node );
+  update_value_param( d, names::N, N_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::lambda_0, lambda_0_, node );
+  update_value_param( d, names::Delta_V, Delta_V_, node );
+  update_value_param( d, names::len_kernel, len_kernel_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_T_star, V_T_star_, node );
+  update_value_param( d, names::E_L, E_L_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in_, node );
+  update_value_param( d, "BinoRand", BinoRand_, node );
 
-  updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
-  updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
+  d.update_value( names::tau_sfa, tau_sfa_ );
+  d.update_value( names::q_sfa, q_sfa_ );
 
 
   if ( tau_sfa_.size() != q_sfa_.size() )
@@ -217,22 +213,22 @@ nest::gif_pop_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_pop_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
+nest::gif_pop_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  def< double >( d, names::V_m, V_m_ );         // Filtered version of input
-  def< long >( d, names::n_events, n_spikes_ ); // Number of generated spikes
-  def< double >( d, names::E_sfa, theta_hat_ ); // Adaptive threshold potential
-  def< double >( d, names::mean, n_expect_ );
-  def< double >( d, names::I_syn_ex, I_syn_ex_ );
-  def< double >( d, names::I_syn_in, I_syn_in_ );
+  d[ names::V_m ] = V_m_;           // Filtered version of input
+  d[ names::n_events ] = n_spikes_; // Number of generated spikes
+  d[ names::E_sfa ] = theta_hat_;   // Adaptive threshold potential
+  d[ names::mean ] = n_expect_;
+  d[ names::I_syn_ex ] = I_syn_ex_;
+  d[ names::I_syn_in ] = I_syn_in_;
 }
 
 void
-nest::gif_pop_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::gif_pop_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, V_m_, node );
-  updateValueParam< double >( d, names::I_syn_ex, I_syn_ex_, node );
-  updateValueParam< double >( d, names::I_syn_in, I_syn_in_, node );
+  update_value_param( d, names::V_m, V_m_, node );
+  update_value_param( d, names::I_syn_ex, I_syn_ex_, node );
+  update_value_param( d, names::I_syn_in, I_syn_in_, node );
   initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 

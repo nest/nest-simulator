@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <memory>
 #include <vector>
 
 // Includes from nestkernel:
@@ -35,9 +36,6 @@
 #include "nest_types.h"
 #include "spike_data.h"
 #include "vp_manager.h"
-
-// Includes from sli:
-#include "name.h"
 
 namespace nest
 {
@@ -630,11 +628,11 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
-  DataLoggingRequest( const Time&, const std::vector< Name >& );
+  DataLoggingRequest( const Time&, const std::vector< std::string >& );
 
   /** Create event for given time interval, offset for interval start,
    *  and vector of recordables. */
-  DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
+  DataLoggingRequest( const Time&, const Time&, const std::vector< std::string >& );
 
   DataLoggingRequest* clone() const override;
 
@@ -647,7 +645,7 @@ public:
   const Time& get_recording_offset() const;
 
   /** Access to vector of recordables. */
-  const std::vector< Name >& record_from() const;
+  const std::vector< std::string >& record_from() const;
 
 private:
   //! Interval between two recordings, first is step 1
@@ -660,18 +658,18 @@ private:
    * @note This pointer shall be nullptr unless the event is sent by a connection
    * routine.
    */
-  std::vector< Name > const* const record_from_;
+  std::vector< std::string > const* const record_from_;
 };
 
 inline DataLoggingRequest::DataLoggingRequest()
   : Event()
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
-  , record_from_( nullptr )
+  , record_from_( 0 )
 {
 }
 
-inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< std::string >& recs )
   : Event()
   , recording_interval_( rec_int )
   , record_from_( &recs )
@@ -680,7 +678,7 @@ inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::v
 
 inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
   const Time& rec_offset,
-  const std::vector< Name >& recs )
+  const std::vector< std::string >& recs )
   : Event()
   , recording_interval_( rec_int )
   , recording_offset_( rec_offset )
@@ -712,7 +710,7 @@ DataLoggingRequest::get_recording_offset() const
   return recording_offset_;
 }
 
-inline const std::vector< Name >&
+inline const std::vector< std::string >&
 DataLoggingRequest::record_from() const
 {
   // During simulation, events are created without recordables

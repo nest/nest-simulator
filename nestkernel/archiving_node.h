@@ -34,8 +34,6 @@
 #include "node.h"
 #include "structural_plasticity_node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 
@@ -94,8 +92,8 @@ public:
    */
   void register_stdp_connection( double t_first_read, double delay ) override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 protected:
   /**

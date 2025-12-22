@@ -52,7 +52,7 @@ def test_ConnectNeuronsWithSICConnection(source_model, target_model):
         nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
     else:
         # Connection should fail
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
 
 
@@ -63,7 +63,7 @@ def test_SynapseFunctionWithAeifModel():
     resol = nest.resolution
 
     # Create neurons and devices
-    astrocyte = nest.Create("astrocyte_lr_1994", {"Ca_astro": 0.2})  # a calcium value which produces SIC
+    astrocyte = nest.Create("astrocyte_lr_1994", params={"Ca_astro": 0.2})  # a calcium value which produces SIC
     neuron = nest.Create("aeif_cond_alpha_astro")
 
     mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"], "interval": resol})

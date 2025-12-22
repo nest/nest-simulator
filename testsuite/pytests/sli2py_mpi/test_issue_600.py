@@ -47,10 +47,10 @@ def test_issue_600():
             "wfr_tol": 0.0001,
             "wfr_interpolation_order": 3,
             "wfr_max_iterations": 10,
-            "wfr_comm_interval": 1.0,
+            "wfr_comm_interval": 1,
         }
     )
-    n1 = nest.Create("hh_psc_alpha_gap", params={"I_e": 400.0})
+    n1 = nest.Create("hh_psc_alpha_gap", params={"I_e": 400})
     n2 = nest.Create("iaf_psc_alpha")
     n3 = nest.Create("hh_psc_alpha_gap")
     n4 = nest.Create("iaf_psc_alpha")

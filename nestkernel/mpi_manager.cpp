@@ -33,8 +33,6 @@
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 #ifdef HAVE_MPI
 
@@ -131,7 +129,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   else
   {
 #ifdef HAVE_MUSIC
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "MPIManager::init_mpi()",
       "When compiled with MUSIC, NEST must be initialized before any other modules that call MPI_Init(). "
       "Calling MPI_Abort()." );
@@ -205,7 +203,7 @@ nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 
   if ( mpi_launcher_or_mpi4py_used and mpi_num_procs > 1 )
   {
-    LOG( M_FATAL,
+    LOG( VerbosityLevel::FATAL,
       "MPIManager::initialize()",
       "You seem to be using NEST via an MPI launcher like mpirun, mpiexec or srun "
       "although NEST was not compiled with MPI support. Please see the NEST "
@@ -221,12 +219,12 @@ nest::MPIManager::finalize( const bool )
 }
 
 void
-nest::MPIManager::set_status( const DictionaryDatum& dict )
+nest::MPIManager::set_status( const Dictionary& dict )
 {
-  updateValue< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
+  dict.update_value( names::adaptive_target_buffers, adaptive_target_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
-  updateValue< long >( dict, names::buffer_size_target_data, new_buffer_size_target_data );
+  dict.update_value( names::buffer_size_target_data, new_buffer_size_target_data );
   if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ )
     and new_buffer_size_target_data < static_cast< long >( max_buffer_size_target_data_ ) )
   {
@@ -234,32 +232,31 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
   }
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
-  updateValue< long >( dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
+  dict.update_value( names::buffer_size_spike_data, new_buffer_size_spike_data );
   if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
-  updateValue< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
-
-  updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-
-  updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
+  dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
+  dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  dict.update_value( names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
 void
-nest::MPIManager::get_status( DictionaryDatum& dict )
+nest::MPIManager::get_status( Dictionary& dict )
 {
-  def< long >( dict, names::num_processes, num_processes_ );
-  def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
-  def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  dict[ names::num_processes ] = num_processes_;
+  dict[ names::mpi_rank ] = rank_;
+  dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
+  dict[ names::buffer_size_target_data ] = buffer_size_target_data_;
+  dict[ names::buffer_size_spike_data ] = buffer_size_spike_data_;
+  dict[ names::send_buffer_size_secondary_events ] = get_send_buffer_size_secondary_events_in_int();
+  dict[ names::recv_buffer_size_secondary_events ] = get_recv_buffer_size_secondary_events_in_int();
+  dict[ names::max_buffer_size_target_data ] = max_buffer_size_target_data_;
+  dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
+  dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
 }
 
 #ifdef HAVE_MPI
@@ -283,7 +280,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
     }
     else
     {
-      LOG( M_INFO, "MPIManager::finalize()", "Calling MPI_Abort() due to errors in the script." );
+      LOG( VerbosityLevel::INFO, "MPIManager::finalize()", "Calling MPI_Abort() due to errors in the script." );
       mpi_abort( exitcode );
     }
   }
@@ -318,7 +315,7 @@ nest::MPIManager::get_processor_name()
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< long >& global_nodes )
+nest::MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t >& global_nodes )
 {
   const size_t num_procs = get_num_processes();
 
@@ -347,14 +344,14 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
   }
 
   // Avoid dereferencing empty vector. As long as sendcount is 0, we can pass any pointer for sendbuf.
-  long dummy = 0;
+  size_t dummy = 0;
   MPI_Allgatherv( num_local_nodes > 0 ? &local_nodes[ 0 ] : &dummy,
     num_local_nodes,
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
     &global_nodes[ 0 ],
     &num_nodes_per_rank[ 0 ],
     &displacements[ 0 ],
-    MPI_Type< long >::type,
+    MPI_Type< size_t >::type,
     comm );
 }
 
@@ -1071,7 +1068,7 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
+nest::MPIManager::communicate( std::vector< size_t >&, std::vector< size_t >& )
 {
 }
 

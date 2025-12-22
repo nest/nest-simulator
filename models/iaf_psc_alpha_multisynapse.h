@@ -58,7 +58,6 @@ a different time constant. The port number has to match the respective
 
 .. note::
 
-
    If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
    will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
@@ -115,8 +114,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -172,12 +171,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const Dictionary&, Node* node );
   }; // Parameters_
 
   // ----------------------------------------------------------------
@@ -219,14 +218,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
+    void set( const Dictionary&, const Parameters_&, const double, Node* );
   }; // State_
 
   // ----------------------------------------------------------------
@@ -309,7 +308,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_i_syn_name( size_t elem );
+  std::string get_i_syn_name( size_t elem );
   void insert_current_recordables( size_t first = 0 );
 };
 
@@ -349,13 +348,13 @@ iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t 
 }
 
 inline void
-iaf_psc_alpha_multisynapse::get_status( DictionaryDatum& d ) const
+iaf_psc_alpha_multisynapse::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 } // namespace

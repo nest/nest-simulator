@@ -29,10 +29,16 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 
-neuron = nest.Create("aeif_cond_beta_multisynapse")
-nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b": 80.5})
-nest.SetStatus(
-    neuron, {"E_rev": [0.0, 0.0, 0.0, -85.0], "tau_decay": [50.0, 20.0, 20.0, 20.0], "tau_rise": [10.0, 10.0, 1.0, 1.0]}
+neuron = nest.Create(
+    "aeif_cond_beta_multisynapse",
+    params={
+        "V_peak": 0.0,
+        "a": 4.0,
+        "b": 80.5,
+        "E_rev": [0.0, 0.0, 0.0, -85.0],
+        "tau_decay": [50.0, 20.0, 20.0, 20.0],
+        "tau_rise": [10.0, 10.0, 1.0, 1.0],
+    },
 )
 
 spike = nest.Create("spike_generator", params={"spike_times": np.array([10.0])})
@@ -52,8 +58,8 @@ nest.Connect(voltmeter, neuron)
 
 nest.Simulate(1000.0)
 
-Vms = voltmeter.get("events", "V_m")
-ts = voltmeter.get("events", "times")
+Vms = voltmeter.events["V_m"]
+ts = voltmeter.events["times"]
 
 plt.plot(ts, Vms)
 plt.show()

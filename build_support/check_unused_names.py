@@ -60,7 +60,7 @@ EXIT_UNUSED_NAME = 31
 EXIT_NO_SOURCE = 126
 
 try:
-    heuristic_folders = "nest nestkernel build_support models .git"
+    heuristic_folders = "pynest nestkernel build_support models .git"
     if "NEST_SOURCE" not in os.environ:
         if all([name in os.listdir() for name in heuristic_folders.split()]):
             os.environ["NEST_SOURCE"] = "."
@@ -93,17 +93,9 @@ def get_names(fname, pattern):
 names_defined = set()
 for names_file in names_files:
     fname = os.path.join(source_dir, names_file)
-
-    names_header = get_names(fname + ".h", r"extern\s+const\s+Name\s+(\w+)\s*;")
-    names_source = get_names(fname + ".cpp", r"const\s+Name\s+(\w+)\(.*")
-
-    for h, s in zip(names_header, names_source):
-        if h != s:
-            eprint(f"[NAME] {names_file}: inconsistent declaration: {h} != {s}")
-            print(f"... {names_file}\\n")
-            sys.exit(EXIT_NAME_H_CPP_MISMATCH)
-        else:
-            names_defined.add(h)
+    names_header = get_names(fname + ".h", r"const\s+std::string\s+(\w+)\(.*")
+    for h in names_header:
+        names_defined.add(h)
 
 
 # We call to recursive grep in the shell here, because that's much

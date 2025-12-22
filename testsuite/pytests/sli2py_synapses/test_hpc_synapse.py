@@ -38,6 +38,7 @@ Test basic properties of HPC synapses as follows:
 """
 
 import nest
+import numpy.testing as nptest
 import pytest
 
 pytestmark = pytest.mark.skipif_missing_threads
@@ -46,29 +47,23 @@ pytestmark = pytest.mark.skipif_missing_threads
 @pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
-    nest.set_verbosity("M_ERROR")
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
 
 def has_hpc_suffix(syn_model):
     return syn_model.endswith("_hpc")
 
 
-def synapse_filter(syn):
-    try:
-        n = nest.Create("iaf_psc_alpha")
-        nest.Connect(n, n, syn_spec={"synapse_model": syn})
-        nest.Simulate(10)
-    except Exception:
-        return False
-    return True
-
-
 def get_hpc_models():
-    all_syn_models = nest.synapse_models
+    ignore_list = [
+        "clopath_synapse_hpc",
+        "eprop_synapse_hpc",
+        "eprop_synapse_bsshslm_2020_hpc",
+        "stdp_dopamine_synapse_hpc",
+        "urbanczik_synapse_hpc",
+    ]
 
-    hpc_models = [model for model in all_syn_models if has_hpc_suffix(model)]
-    hpc_counterpart = [model for model in hpc_models if model[: len(model) - 4] in all_syn_models]
-    hpc_models = [model for model in all_syn_models if synapse_filter(hpc_counterpart)]
+    hpc_models = [model for model in nest.synapse_models if has_hpc_suffix(model) and model not in ignore_list]
 
     return hpc_models
 
@@ -77,9 +72,9 @@ def prepare_neuron(syn):
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [5.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [5.0]})
     pn = nest.Create("parrot_neuron")
-    neuron = nest.Create("iaf_psc_alpha", {"V_th": 100000.0})
+    neuron = nest.Create("iaf_psc_alpha", params={"V_th": 100000.0})
 
     nest.Connect(sg, pn)
     nest.Connect(pn, neuron, syn_spec={"synapse_model": syn})
@@ -92,7 +87,7 @@ def prepare_neurons(syn):
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [1.0]})
     pn = nest.Create("parrot_neuron")
     nest.Connect(sg, pn)
 
@@ -109,7 +104,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, freeze_before_connect=Tr
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [1.0]})
     pn = nest.Create("parrot_neuron")
 
     nodes = nest.Create("iaf_psc_alpha", 4, {"V_th": 100000.0})
@@ -137,32 +132,32 @@ def test_hpc_synapse(syn):
     net_without_hpc_suffix = prepare_neuron(synapse_without_hpc_suffix)
     net_with_hpc_suffix = prepare_neuron(syn)
 
-    assert net_with_hpc_suffix == net_without_hpc_suffix
+    nptest.assert_equal(net_with_hpc_suffix, net_without_hpc_suffix)
 
 
 def test_static_synapse():
     using_static_synapse = prepare_neurons("static_synapse")
     using_static_synapse_hpc = prepare_neurons("static_synapse_hpc")
 
-    assert using_static_synapse_hpc == using_static_synapse
+    nptest.assert_equal(using_static_synapse_hpc, using_static_synapse)
 
 
 def test_frozen_disconnected_neuron_before_connect():
     using_static_synapse = prepare_frozen_neuron("static_synapse")
     using_static_synapse_hpc = prepare_frozen_neuron("static_synapse_hpc")
 
-    assert using_static_synapse_hpc == using_static_synapse
+    nptest.assert_equal(using_static_synapse_hpc, using_static_synapse)
 
 
 def test_frozen_connected_neuron_before_connect():
     using_static_synapse = prepare_frozen_neuron("static_synapse", 0)
     using_static_synapse_hpc = prepare_frozen_neuron("static_synapse_hpc", 0)
 
-    assert using_static_synapse_hpc == using_static_synapse
+    nptest.assert_equal(using_static_synapse_hpc, using_static_synapse)
 
 
 def test_frozen_connected_neuron_after_connect():
     using_static_synapse = prepare_frozen_neuron("static_synapse", 0, True)
     using_static_synapse_hpc = prepare_frozen_neuron("static_synapse_hpc", 0, True)
 
-    assert using_static_synapse_hpc == using_static_synapse
+    nptest.assert_equal(using_static_synapse_hpc, using_static_synapse)

@@ -33,8 +33,6 @@
 #include "nest_types.h"
 #include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -105,8 +103,8 @@ protected:
    * into the buffer before we read from it, we have to add 1 to the size of the buffers.
    */
   void init_clopath_buffers();
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   std::vector< histentry_extended > ltd_history_;

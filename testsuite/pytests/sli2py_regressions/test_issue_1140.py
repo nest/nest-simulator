@@ -27,6 +27,7 @@ arrays for `rate_times` and `rate_values`.
 """
 
 import nest
+import numpy as np
 import numpy.testing as nptest
 import pytest
 
@@ -44,7 +45,7 @@ def test_inhomogeneous_poisson_generator_set_empty_params():
     and `rate_values` without causing a segfault.
     """
 
-    params = {"rate_times": [], "rate_values": []}
+    params = {"rate_times": np.array([]), "rate_values": np.array([])}
     ipg = nest.Create("inhomogeneous_poisson_generator")
     ipg.set(params)
 
@@ -59,7 +60,7 @@ def test_inhomogeneous_poisson_generator_params_set_implicitly():
     """
 
     params = {"rate_times": [10.0, 110.0, 210.0], "rate_values": [400.0, 1000.0, 200.0]}
-    ipg = nest.Create("inhomogeneous_poisson_generator", params)
+    ipg = nest.Create("inhomogeneous_poisson_generator", params=params)
 
     for key in params:
         actual = ipg.get(key)

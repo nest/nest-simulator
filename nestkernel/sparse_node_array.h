@@ -28,6 +28,7 @@
 #include <map>
 
 // Includes from nestkernel:
+#include "exceptions.h"
 #include "nest_types.h"
 
 // Includes from libnestutil

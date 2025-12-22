@@ -28,14 +28,13 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class ThreadTestCase(unittest.TestCase):
     """Tests for multi-threading"""
 
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        return nest.ll_api.sli_func("statusdict/threading :: (no) eq not")
+        return nest.build_info["have_threads"]
 
     def test_Threads(self):
         """Multiple threads"""
@@ -48,7 +47,7 @@ class ThreadTestCase(unittest.TestCase):
 
         nest.local_num_threads = 8
         n = nest.Create("iaf_psc_alpha", 8)
-        st = list(nest.GetStatus(n, "vp"))
+        st = list(n.vp)
         st.sort()
         self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
 
@@ -101,8 +100,8 @@ class ThreadTestCase(unittest.TestCase):
 
             nest.Simulate(Simtime)
 
-            n_events_sr.append(nest.GetStatus(sr, "n_events")[0])
-            n_events_vm.append(nest.GetStatus(vm, "n_events")[0])
+            n_events_sr.append(sr.n_events)
+            n_events_vm.append(vm.n_events)
 
         ref_vm = N * (Simtime - 1)
         ref_sr = n_events_sr[0]

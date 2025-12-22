@@ -18,7 +18,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-from nest.ll_api import sr
 
 """
 Test for correct handling of IAF neuron propagator singularity.
@@ -30,7 +29,6 @@ import pandas as pd
 import pytest
 
 
-@nest.ll_api.check_stack
 class TestIAFSingularity:
     """
     Test that iaf neurons handle singularities for ``tau_syn = tau_m`` correctly.
@@ -41,7 +39,7 @@ class TestIAFSingularity:
 
     @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_psc_alpha"])
     @pytest.mark.parametrize("h", [0.001, 0.1])
-    @pytest.mark.parametrize("tau_m", [1, 10, 100])
+    @pytest.mark.parametrize("tau_m", [1.0, 10.0, 100.0])
     def test_smooth_response(self, model, h, tau_m):
         """
         Drive single neuron with single spike through excitatory and inhibitory synapse.

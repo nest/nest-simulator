@@ -31,18 +31,12 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_spike_generator( const std::string& name )
 {
   register_node_model< spike_generator >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -65,27 +59,26 @@ nest::spike_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::spike_generator::Parameters_::get( Dictionary& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
-  auto* times_ms = new std::vector< double >();
-  times_ms->reserve( n_spikes );
+  std::vector< double > times_ms( n_spikes );
 
   for ( size_t n = 0; n < n_spikes; ++n )
   {
-    times_ms->push_back( spike_stamps_[ n ].get_ms() );
+    times_ms[ n ] = spike_stamps_[ n ].get_ms();
     if ( precise_times_ )
     {
-      ( *times_ms )[ n ] -= spike_offsets_[ n ];
+      times_ms[ n ] -= spike_offsets_[ n ];
     }
   }
 
-  ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::spike_weights ] = DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
-  ( *d )[ names::spike_multiplicities ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
-  ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
-  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
-  ( *d )[ names::shift_now_spikes ] = BoolDatum( shift_now_spikes_ );
+  d[ names::spike_times ] = times_ms;
+  d[ names::spike_weights ] = spike_weights_;
+  d[ names::spike_multiplicities ] = spike_multiplicities_;
+  d[ names::precise_times ] = precise_times_;
+  d[ names::allow_offgrid_times ] = allow_offgrid_times_;
+  d[ names::shift_now_spikes ] = shift_now_spikes_;
 }
 
 void
@@ -129,10 +122,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
       t_spike.advance();
     }
   }
-  // t_spike is now the correct time stamp given the chosen options
-
-  // when we get here, we know that the spike time is valid
+  // when we get here, we know that the spike time is valid and
+  // t_spike is the correct time stamp given the chosen options
   spike_stamps_.push_back( t_spike );
+
   if ( precise_times_ )
   {
     // t_spike is created with ms_stamp() that aligns the time to the next
@@ -154,16 +147,15 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 }
 
 void
-nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
+nest::spike_generator::Parameters_::set( const Dictionary& d,
   State_& s,
   const Time& origin,
   const Time& now,
   Node* node )
 {
-  bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
-  bool shift_now_spikes_changed = updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
-  bool allow_offgrid_times_changed =
-    updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
+  bool precise_times_changed = update_value_param( d, names::precise_times, precise_times_, node );
+  bool shift_now_spikes_changed = update_value_param( d, names::shift_now_spikes, shift_now_spikes_, node );
+  bool allow_offgrid_times_changed = update_value_param( d, names::allow_offgrid_times, allow_offgrid_times_, node );
   bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
   if ( precise_times_ and ( allow_offgrid_times_ or shift_now_spikes_ ) )
   {
@@ -172,7 +164,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       "allow_offgrid_times or shift_now_spikes is set to true." );
   }
 
-  const bool updated_spike_times = d->known( names::spike_times );
+  const bool updated_spike_times = d.known( names::spike_times );
   if ( flags_changed and not( updated_spike_times or spike_stamps_.empty() ) )
   {
     throw BadProperty(
@@ -182,7 +174,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   if ( updated_spike_times )
   {
-    const std::vector< double > d_times = getValue< std::vector< double > >( d->lookup( names::spike_times ) );
+    const auto d_times = d.get< std::vector< double > >( names::spike_times );
     const size_t n_spikes = d_times.size();
     spike_stamps_.clear();
     spike_stamps_.reserve( n_spikes );
@@ -216,10 +208,10 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   // spike_weights can be the same size as spike_times, or can be of size 0 to
   // only use the spike_times array
-  bool updated_spike_weights = d->known( names::spike_weights );
+  bool updated_spike_weights = d.known( names::spike_weights );
   if ( updated_spike_weights )
   {
-    std::vector< double > spike_weights = getValue< std::vector< double > >( d->lookup( names::spike_weights ) );
+    auto spike_weights = d.get< std::vector< double > >( names::spike_weights );
 
     if ( spike_weights.empty() )
     {
@@ -240,11 +232,10 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   // spike_multiplicities can be the same size as spike_times,
   // or can be of size 0 to only use the spike_times array
-  bool updated_spike_multiplicities = d->known( names::spike_multiplicities );
+  bool updated_spike_multiplicities = d.known( names::spike_multiplicities );
   if ( updated_spike_multiplicities )
   {
-    std::vector< long > spike_multiplicities =
-      getValue< std::vector< long > >( d->lookup( names::spike_multiplicities ) );
+    auto spike_multiplicities = d.get< std::vector< long > >( names::spike_multiplicities );
 
     if ( spike_multiplicities.empty() )
     {
@@ -264,7 +255,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   // Set position to start if something changed
-  if ( updated_spike_times or updated_spike_weights or updated_spike_multiplicities or d->known( names::origin ) )
+  if ( updated_spike_times or updated_spike_weights or updated_spike_multiplicities or d.known( names::origin ) )
   {
     s.position_ = 0;
   }
@@ -423,7 +414,7 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   if ( not input_spikes.empty() )
   {
 
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    Dictionary d;
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();
     times_ms.reserve( n_spikes + input_spikes.size() );
@@ -432,7 +423,7 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
     }
     std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
-    ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
+    d[ names::spike_times ] = times_ms;
 
     ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
   }

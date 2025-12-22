@@ -24,7 +24,7 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 
 
 @unittest.skipIf(not HAVE_GSL, "GSL is not available")
@@ -176,10 +176,10 @@ class TestMCNeuron(unittest.TestCase):
         rqs = nest.GetDefaults("iaf_cond_alpha_mc")["recordables"]
         self.mm = nest.Create("multimeter", params={"record_from": rqs, "interval": 0.1})
         self.cgs = nest.Create("dc_generator", 3)
-        nest.SetStatus(self.cgs, [self.rec_dic_dc_soma, self.rec_dic_dc_proximal, self.rec_dic_dc_distal])
+        self.cgs.set([self.rec_dic_dc_soma, self.rec_dic_dc_proximal, self.rec_dic_dc_distal])
+
         self.sgs = nest.Create("spike_generator", 6)
-        nest.SetStatus(
-            self.sgs,
+        self.sgs.set(
             [
                 {"spike_times": self.rec_sp_soma_ex},
                 {"spike_times": self.rec_sp_soma_in},
@@ -187,7 +187,7 @@ class TestMCNeuron(unittest.TestCase):
                 {"spike_times": self.rec_sp_prox_in},
                 {"spike_times": self.rec_sp_dist_ex},
                 {"spike_times": self.rec_sp_dist_in},
-            ],
+            ]
         )
 
     def setUpNetwork(self):
@@ -213,21 +213,22 @@ class TestMCNeuron(unittest.TestCase):
         self.setUpNodes()
         self.setUpNetwork()
         nest.Simulate(self.t0)
-        nest.SetStatus(self.n, {"soma": {"I_e": self.I_e}})
+        self.n.soma = {"I_e": self.I_e}
         nest.Simulate(self.t_stim)
-        rec = nest.GetStatus(self.mm)[0]["events"]
+        rec = self.mm.events
+
         # test membrane potential recorded in the soma
-        self.assertTrue(np.allclose(rec["V_m.s"][self.I0 : self.I1], self.Vm_soma_test))
+        assert np.allclose(rec["V_m.s"][self.I0 : self.I1], self.Vm_soma_test)
         # test membrane potential in the proximal compartment
-        self.assertTrue(np.allclose(rec["V_m.p"][self.I0 : self.I1], self.Vm_prox_test))
+        assert np.allclose(rec["V_m.p"][self.I0 : self.I1], self.Vm_prox_test)
         # test membrane potential in the distal compartment
-        self.assertTrue(np.allclose(rec["V_m.d"][self.I0 : self.I1], self.Vm_dist_test))
+        assert np.allclose(rec["V_m.d"][self.I0 : self.I1], self.Vm_dist_test)
         # test conductance recorded in the soma
-        self.assertTrue(np.allclose(rec["g_ex.s"][self.I0 : self.I1], self.gex_soma_test))
+        assert np.allclose(rec["g_ex.s"][self.I0 : self.I1], self.gex_soma_test)
         # test conductance in the proximal compartment
-        self.assertTrue(np.allclose(rec["g_ex.p"][self.I0 : self.I1], self.gex_prox_test))
+        assert np.allclose(rec["g_ex.p"][self.I0 : self.I1], self.gex_prox_test)
         # test conductance in the distal compartment
-        self.assertTrue(np.allclose(rec["g_ex.d"][self.I0 : self.I1], self.gex_dist_test))
+        assert np.allclose(rec["g_ex.d"][self.I0 : self.I1], self.gex_dist_test)
 
 
 def suite():

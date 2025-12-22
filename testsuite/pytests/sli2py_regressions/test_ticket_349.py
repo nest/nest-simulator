@@ -41,7 +41,7 @@ def test_exception_on_bad_recordables():
     mm = nest.Create("multimeter")
     nrn = nest.Create("iaf_psc_alpha")
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         mm.record_from = not_recordables
         nest.Connect(mm, nrn)
 

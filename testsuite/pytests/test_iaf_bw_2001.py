@@ -37,9 +37,6 @@ import numpy as np
 import numpy.testing as nptest
 import pytest
 
-HAVE_BOOST = nest.ll_api.sli_func("statusdict/have_boost ::")
-
-
 w_ex = 40.0
 w_in = 15.0
 
@@ -67,7 +64,7 @@ def spiketrain_response(t, tau, spiketrain, w):
     return response
 
 
-@pytest.mark.skipif(not HAVE_BOOST, reason="Boost is not available")
+@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_iaf_bw_2001():
     """
     Creates 4 neurons.
@@ -106,20 +103,20 @@ def test_iaf_bw_2001():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    nrn_presyn = nest.Create("iaf_bw_2001", wang_params)
-    postsyn_bw1 = nest.Create("iaf_bw_2001", wang_params)
-    postsyn_bw2 = nest.Create("iaf_bw_2001", wang_params)
-    postsyn_ce = nest.Create("iaf_cond_exp", cond_exp_params)
+    nrn_presyn = nest.Create("iaf_bw_2001", params=wang_params)
+    postsyn_bw1 = nest.Create("iaf_bw_2001", params=wang_params)
+    postsyn_bw2 = nest.Create("iaf_bw_2001", params=wang_params)
+    postsyn_ce = nest.Create("iaf_cond_exp", params=cond_exp_params)
 
     receptor_types = nrn_presyn.receptor_types
 
-    pg = nest.Create("poisson_generator", {"rate": 50.0})
-    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+    pg = nest.Create("poisson_generator", params={"rate": 50.0})
+    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
 
     mm_presyn, mm_bw1, mm_bw2 = nest.Create(
         "multimeter", n=3, params={"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
     )
-    mm_ce = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_ce = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
     # for post-synaptic iaf_bw_2001
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
@@ -166,7 +163,7 @@ def test_iaf_bw_2001():
     nptest.assert_array_almost_equal(gaba_soln, mm_bw1.events["s_GABA"])
 
 
-@pytest.mark.skipif(not HAVE_BOOST, reason="Boost is not available")
+@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_approximation_I_NMDA_V_m():
     """
     Creates 3 neurons.
@@ -192,19 +189,21 @@ def test_approximation_I_NMDA_V_m():
         "t_ref": 0.0,  # refreactory period
     }
 
-    nrn_presyn = nest.Create("iaf_bw_2001", nrn_params)
-    nrn_approx = nest.Create("iaf_bw_2001", nrn_params)
-    nrn_exact = nest.Create("iaf_bw_2001_exact", nrn_params)
+    nrn_presyn = nest.Create("iaf_bw_2001", params=nrn_params)
+    nrn_approx = nest.Create("iaf_bw_2001", params=nrn_params)
+    nrn_exact = nest.Create("iaf_bw_2001_exact", params=nrn_params)
 
     receptor_types = nrn_presyn.receptor_types
 
-    pg = nest.Create("poisson_generator", {"rate": 150.0})
-    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+    pg = nest.Create("poisson_generator", params={"rate": 150.0})
+    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
 
-    mm_presyn = nest.Create("multimeter", {"record_from": ["V_m", "I_NMDA"], "interval": 0.1, "time_in_steps": True})
+    mm_presyn = nest.Create(
+        "multimeter", params={"record_from": ["V_m", "I_NMDA"], "interval": 0.1, "time_in_steps": True}
+    )
 
-    mm_approx = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
-    mm_exact = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_approx = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_exact = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
     # for post-synaptic iaf_bw_2001
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
@@ -226,7 +225,7 @@ def test_approximation_I_NMDA_V_m():
     assert np.max(np.abs(mm_approx.events["V_m"] - mm_exact.events["V_m"])) < 0.25
 
 
-@pytest.mark.skipif(not HAVE_BOOST, reason="Boost is not available")
+@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_illegal_connection_error():
     """
     Test that connecting with NMDA synapses from iaf_cond_exp throws error.
@@ -236,5 +235,5 @@ def test_illegal_connection_error():
     nrn_bw = nest.Create("iaf_bw_2001")
     receptor_types = nrn_bw.receptor_types
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(nrn_ce, nrn_bw, syn_spec=nmda_syn_spec)

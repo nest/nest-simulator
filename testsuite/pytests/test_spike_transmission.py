@@ -24,19 +24,19 @@ Test correct spike transmission for multiple threads.
 """
 
 import nest
+import numpy.testing as nptest
 import pytest
 
 # This is a hack until I find out how to use the have_threads fixture to
 # implement this switch. Then, one should also see if we can parametrize
 # the entire class instead of parametrizing each test in the class in the
 # same way.
-if nest.ll_api.sli_func("is_threaded"):
+if nest.build_info["have_threads"]:
     THREAD_NUMBERS = [1, 2, 3, 4]
 else:
     THREAD_NUMBERS = [1]
 
 
-@nest.ll_api.check_stack
 class TestSpikeTransmission:
     """
     Test that spikes are transmitted correctly for different numbers of spikes.
@@ -92,8 +92,9 @@ class TestSpikeTransmission:
         post_pop, spike_data = self._simulate_network(
             num_neurons, num_neurons, "one_to_one", num_threads, compressed_spikes
         )
-        assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+
+        nptest.assert_array_equal(sorted(spike_data["senders"]), sorted(post_pop.tolist()))
+        nptest.assert_equal(spike_data["times"], self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -108,8 +109,9 @@ class TestSpikeTransmission:
         """
 
         post_pop, spike_data = self._simulate_network(1, num_neurons, "all_to_all", num_threads, compressed_spikes)
-        assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+
+        nptest.assert_array_equal(sorted(spike_data["senders"]), sorted(post_pop.tolist()))
+        nptest.assert_equal(spike_data["times"], self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -124,9 +126,10 @@ class TestSpikeTransmission:
         """
 
         post_pop, spike_data = self._simulate_network(num_neurons, 1, "all_to_all", num_threads, compressed_spikes)
+
         # post_pop is one neuron, which receives a spike from each pre neuron
-        assert all(spike_data["senders"] == num_neurons * post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+        nptest.assert_array_equal(spike_data["senders"], num_neurons * post_pop.tolist())
+        nptest.assert_equal(spike_data["times"], self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -143,5 +146,6 @@ class TestSpikeTransmission:
         post_pop, spike_data = self._simulate_network(
             num_neurons, num_neurons, "all_to_all", num_threads, compressed_spikes
         )
-        assert sorted(spike_data["senders"]) == sorted(num_neurons * post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+
+        nptest.assert_array_equal(sorted(spike_data["senders"]), sorted(num_neurons * post_pop.tolist()))
+        nptest.assert_equal(spike_data["times"], self.t_arrival)

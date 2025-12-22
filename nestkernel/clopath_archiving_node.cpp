@@ -25,8 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -76,21 +74,21 @@ nest::ClopathArchivingNode::init_clopath_buffers()
 }
 
 void
-nest::ClopathArchivingNode::get_status( DictionaryDatum& d ) const
+nest::ClopathArchivingNode::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 
-  def< double >( d, names::A_LTD, A_LTD_ );
-  def< double >( d, names::A_LTP, A_LTP_ );
-  def< double >( d, names::u_ref_squared, u_ref_squared_ );
-  def< double >( d, names::theta_plus, theta_plus_ );
-  def< double >( d, names::theta_minus, theta_minus_ );
-  def< bool >( d, names::A_LTD_const, A_LTD_const_ );
-  def< double >( d, names::delay_u_bars, delay_u_bars_ );
+  d[ names::A_LTD ] = A_LTD_;
+  d[ names::A_LTP ] = A_LTP_;
+  d[ names::u_ref_squared ] = u_ref_squared_;
+  d[ names::theta_plus ] = theta_plus_;
+  d[ names::theta_minus ] = theta_minus_;
+  d[ names::A_LTD_const ] = A_LTD_const_;
+  d[ names::delay_u_bars ] = delay_u_bars_;
 }
 
 void
-nest::ClopathArchivingNode::set_status( const DictionaryDatum& d )
+nest::ClopathArchivingNode::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 
@@ -102,13 +100,13 @@ nest::ClopathArchivingNode::set_status( const DictionaryDatum& d )
   double new_u_ref_squared = u_ref_squared_;
   double new_A_LTD_const = A_LTD_const_;
   double new_delay_u_bars = delay_u_bars_;
-  updateValue< double >( d, names::A_LTD, new_A_LTD );
-  updateValue< double >( d, names::A_LTP, new_A_LTP );
-  updateValue< double >( d, names::u_ref_squared, new_u_ref_squared );
-  updateValue< double >( d, names::theta_plus, new_theta_plus );
-  updateValue< double >( d, names::theta_minus, new_theta_minus );
-  updateValue< bool >( d, names::A_LTD_const, new_A_LTD_const );
-  updateValue< double >( d, names::delay_u_bars, new_delay_u_bars );
+  d.update_value( names::A_LTD, new_A_LTD );
+  d.update_value( names::A_LTP, new_A_LTP );
+  d.update_value( names::u_ref_squared, new_u_ref_squared );
+  d.update_value( names::theta_plus, new_theta_plus );
+  d.update_value( names::theta_minus, new_theta_minus );
+  d.update_value( names::A_LTD_const, new_A_LTD_const );
+  d.update_value( names::delay_u_bars, new_delay_u_bars );
   A_LTD_ = new_A_LTD;
   A_LTP_ = new_A_LTP;
   u_ref_squared_ = new_u_ref_squared;

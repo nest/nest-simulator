@@ -99,7 +99,7 @@ simulators covered is available from ModelDB [3]_.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 =========== ======  =========================================================
 V_m          mV     Membrane potential
@@ -183,8 +183,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -232,8 +232,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
   };
 
 public:
@@ -265,8 +265,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -381,19 +381,19 @@ hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, size_t receptor_
 }
 
 inline void
-hh_cond_exp_traub::get_status( DictionaryDatum& d ) const
+hh_cond_exp_traub::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
-  def< double >( d, names::t_spike, get_spiketime_ms() );
+  d[ names::t_spike ] = get_spiketime_ms();
 }
 
 inline void
-hh_cond_exp_traub::set_status( const DictionaryDatum& d )
+hh_cond_exp_traub::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

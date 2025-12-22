@@ -45,10 +45,6 @@
 #include "target_table.h"
 #include "target_table_devices.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -79,8 +75,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   bool valid_connection_rule( std::string );
 
@@ -106,24 +102,24 @@ public:
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   //! Obtain builder for bipartite connections
   ThirdOutBuilder* get_third_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdInBuilder* third_in,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   /**
    * Create connections.
    */
   void connect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   /**
    * Connect two nodes.
@@ -150,7 +146,7 @@ public:
     Node* target,
     size_t target_thread,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const Dictionary& params,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -166,16 +162,16 @@ public:
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
-  bool connect( const size_t snode_id, const size_t target, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const size_t snode_id, const size_t target, const Dictionary& params, const synindex syn_id );
 
   void connect_arrays( long* sources,
     long* targets,
     double* weights,
     double* delays,
-    std::vector< std::string >& p_keys,
+    const std::vector< std::string >& p_keys,
     double* p_values,
     size_t n,
-    std::string syn_model );
+    const std::string& syn_model );
 
   /**
    * @brief Connect nodes from SONATA specification.
@@ -186,7 +182,7 @@ public:
    * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
    * @param hyberslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
-  void connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size );
+  void connect_sonata( const Dictionary& graph_specs, const long hyberslab_size );
 
   /**
    * @brief Create tripartite connections
@@ -197,9 +193,9 @@ public:
   void connect_tripartite( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
-    const DictionaryDatum& connectivity,
-    const DictionaryDatum& third_connectivity,
-    const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
+    const Dictionary& connectivity,
+    const Dictionary& third_connectivity,
+    const std::map< std::string, std::vector< Dictionary > >& synapse_specs );
 
   /**
    * Find first non-disabled thread-local connection of given synapse type with given source and target node.
@@ -220,7 +216,7 @@ public:
   ConnectionType connection_required( Node*& source, Node*& target, size_t tid );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( const size_t source_node_id,
+  Dictionary get_synapse_status( const size_t source_node_id,
     const size_t target_node_id,
     const size_t tid,
     const synindex syn_id,
@@ -232,7 +228,7 @@ public:
     const size_t tid,
     const synindex syn_id,
     const size_t lcid,
-    const DictionaryDatum& dict );
+    const Dictionary& dict );
 
   /**
    * Return connections between pairs of neurons.
@@ -249,7 +245,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( const DictionaryDatum& params );
+  std::deque< ConnectionID > get_connections( const Dictionary& params );
 
   void get_connections( std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -558,7 +554,7 @@ private:
     const size_t s_node_id,
     const size_t tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const Dictionary& params,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -585,7 +581,7 @@ private:
     const size_t s_node_id,
     const size_t tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const Dictionary& params,
     const double delay = NAN,
     const double weight = NAN );
 
@@ -611,7 +607,7 @@ private:
     Node& target,
     const size_t tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const Dictionary& params,
     const double delay = NAN,
     const double weight = NAN );
 
@@ -667,12 +663,12 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
-  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
+  Dictionary connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericBipartiteConnBuilderFactory* > connbuilder_factories_;
 
-  DictionaryDatum thirdconnruledict_; //!< Dictionary for third-factor connection rules.
+  Dictionary thirdconnruledict_; //!< Dictionary for third-factor connection rules.
 
   //! Third-factor ConnBuilder factories, indexed by thirdconnruledict_ elements.
   std::vector< GenericThirdConnBuilderFactory* > thirdconnbuilder_factories_;
@@ -725,7 +721,7 @@ private:
 inline bool
 ConnectionManager::valid_connection_rule( std::string rule_name )
 {
-  return connruledict_->known( rule_name );
+  return connruledict_.known( rule_name );
 }
 
 inline long

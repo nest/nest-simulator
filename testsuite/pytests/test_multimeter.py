@@ -44,7 +44,7 @@ def test_connect_multimeter_twice():
     mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(mm, nrn)
 
 
@@ -58,8 +58,8 @@ def test_receptors_with_multiple_multimeters(model):
     """
 
     nrn = nest.Create(model)
-    mm1 = nest.Create("multimeter", {"record_from": nrn.recordables})
-    mm2 = nest.Create("multimeter", {"record_from": nrn.recordables})
+    mm1 = nest.Create("multimeter", params={"record_from": nrn.recordables})
+    mm2 = nest.Create("multimeter", params={"record_from": nrn.recordables})
     nest.Connect(mm1, nrn)
     nest.Connect(mm2, nrn)
 
@@ -84,19 +84,20 @@ def test_recordables_are_recorded(model):
        This test does not check if the data is meaningful.
     """
 
+    nest.resolution = 2**-3  # Set to power of two to avoid rounding issues
     recording_interval = 2
     simtime = 10
-    num_data_expected = simtime / recording_interval - 1
+    num_data_expected = int(simtime / recording_interval - 1)
 
     nrn = nest.Create(model)
     recordables = nrn.recordables
-    mm = nest.Create("multimeter", {"interval": recording_interval, "record_from": recordables})
+    mm = nest.Create("multimeter", params={"interval": recording_interval, "record_from": recordables})
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)
 
     result = mm.events
 
-    for r in recordables + ("times", "senders"):
+    for r in recordables + ["times", "senders"]:
         assert r in result
         assert len(result[r]) == num_data_expected
 
@@ -116,8 +117,8 @@ def test_identical_recording_from_multiple_multimeters(model):
         nrn.compartments = {"parent_idx": -1}
 
     recordables = nrn.recordables
-    mm1 = nest.Create("multimeter", {"record_from": recordables})
-    mm2 = nest.Create("multimeter", {"record_from": recordables})
+    mm1 = nest.Create("multimeter", params={"record_from": recordables})
+    mm2 = nest.Create("multimeter", params={"record_from": recordables})
 
     nest.Connect(mm1, nrn)
     nest.Connect(mm2, nrn)

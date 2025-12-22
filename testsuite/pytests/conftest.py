@@ -60,6 +60,26 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         "markers",
+        "skipif_missing_mpi: mark tests requiring MPI support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_incompatible_mpi: mark tests requiring subprocess to invoke mpirun (needs OpenMPI 5.0.7 or later)",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_threads: mark tests requiring multithreading support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_gsl: mark tests requiring GSL support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_hdf5: mark tests requiring HDF5 support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
         "skipif_missing_music: mark tests requiring MUSIC",
     )
     config.addinivalue_line(
@@ -85,12 +105,7 @@ def safety_reset():
 
 @pytest.fixture(scope="session")
 def have_threads():
-    return nest.ll_api.sli_func("is_threaded")
-
-
-@pytest.fixture(scope="session")
-def report_dir() -> pathlib.Path:
-    return pathlib.Path(os.environ.get("REPORTDIR", ""))
+    return nest.build_info["have_threads"]
 
 
 @pytest.fixture(autouse=True)
@@ -105,7 +120,7 @@ def skipif_missing_threads(request, have_threads):
 
 @pytest.fixture(scope="session")
 def have_mpi():
-    return nest.ll_api.sli_func("statusdict/have_mpi ::")
+    return nest.build_info["have_mpi"]
 
 
 @pytest.fixture(autouse=True)
@@ -120,7 +135,7 @@ def skipif_missing_mpi(request, have_mpi):
 
 @pytest.fixture(scope="session")
 def have_mpi4py():
-    return importlib.util.find_spec("mpi4py") is not None and nest.ll_api.sli_func("statusdict/have_mpi ::")
+    return importlib.util.find_spec("mpi4py") is not None and nest.build_info["have_mpi"]
 
 
 @pytest.fixture(autouse=True)
@@ -135,7 +150,7 @@ def skipif_missing_mpi4py(request, have_mpi4py):
 
 @pytest.fixture(scope="session")
 def have_gsl():
-    return nest.ll_api.sli_func("statusdict/have_gsl ::")
+    return nest.build_info["have_gsl"]
 
 
 @pytest.fixture(autouse=True)
@@ -150,12 +165,12 @@ def skipif_missing_gsl(request, have_gsl):
 
 @pytest.fixture(scope="session")
 def have_hdf5():
-    return nest.ll_api.sli_func("statusdict/have_hdf5 ::")
+    return nest.build_info["have_hdf5"]
 
 
 @pytest.fixture(scope="session")
 def have_music():
-    return nest.ll_api.sli_func("statusdict/have_music ::")
+    return nest.build_info["have_music"]
 
 
 @pytest.fixture(autouse=True)
@@ -176,22 +191,6 @@ def skipif_missing_music(request, have_music):
     """
     if not have_music and request.node.get_closest_marker("skipif_missing_music"):
         pytest.skip("skipped because missing MUSIC support.")
-
-
-@pytest.fixture(scope="session")
-def have_plotting():
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")  # backend without window
-        import matplotlib.pyplot as plt
-
-        # make sure we can open a window; DISPLAY may not be set
-        fig = plt.figure()
-        plt.close(fig)
-        return True
-    except Exception:
-        return False
 
 
 @pytest.fixture(scope="session")

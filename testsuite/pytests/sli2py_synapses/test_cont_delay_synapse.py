@@ -40,7 +40,7 @@ def run_simulation(resolution, delay, explicit=False):
     if explicit:
         nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse", "weight": 100.0, "delay": delay})
         for conn in nest.GetConnections(source=sg):
-            nest.SetStatus(conn, params={"delay": delay})
+            conn.set({"delay": delay})
     else:
         nest.SetDefaults("cont_delay_synapse", {"weight": 100.0, "delay": delay})
         nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse"})
@@ -48,7 +48,7 @@ def run_simulation(resolution, delay, explicit=False):
     nest.Connect(n, sr)
 
     nest.Simulate(10.0)
-    actual_spike_times = sr.get("events")["times"]
+    actual_spike_times = sr.events["times"]
     return actual_spike_times
 
 
@@ -62,5 +62,5 @@ def test_delay_compatible_with_resolution(prepare_kernel, expected_spike_times, 
 
 
 def test_delay_shorter_than_resolution(prepare_kernel):
-    with pytest.raises(nest.kernel.NESTErrors.BadDelay):
+    with pytest.raises(nest.NESTErrors.BadDelay):
         actual_spike_times = run_simulation(1.0, 0.7)

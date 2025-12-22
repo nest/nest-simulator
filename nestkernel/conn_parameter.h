@@ -27,13 +27,11 @@
 #include <limits>
 #include <vector>
 
+#include <boost/any.hpp>
+
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "nest_datums.h"
 #include "parameter.h"
-
-// Includes from sli:
-#include "token.h"
 
 /**
  * Base class for parameters provided to connection routines.
@@ -116,7 +114,7 @@ public:
    * @param nthread number of threads
    * required to fix number pointers to the iterator (one for each thread)
    */
-  static ConnParameter* create( const Token&, const size_t );
+  static ConnParameter* create( const boost::any&, const size_t );
 };
 
 
@@ -233,20 +231,19 @@ private:
  * - All parameters are  doubles, thus calling the function value_int()
  *   throws an error.
  */
-
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
   ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
-    : values_( &values )
-    , next_( nthreads, values_->begin() )
+    : values_( values )
+    , next_( nthreads, values_.begin() )
   {
   }
 
   void
   skip( size_t tid, size_t n_skip ) const override
   {
-    if ( next_[ tid ] < values_->end() )
+    if ( next_[ tid ] < values_.end() )
     {
       next_[ tid ] += n_skip;
     }
@@ -259,13 +256,13 @@ public:
   size_t
   number_of_values() const override
   {
-    return values_->size();
+    return values_.size();
   }
 
   double
   value_double( size_t tid, RngPtr, size_t, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return *next_[ tid ]++;
     }
@@ -292,12 +289,12 @@ public:
   {
     for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
-      *it = values_->begin();
+      *it = values_.begin();
     }
   }
 
 private:
-  const std::vector< double >* values_;
+  const std::vector< double > values_;
   mutable std::vector< std::vector< double >::const_iterator > next_;
 };
 
@@ -315,20 +312,19 @@ private:
  * - All parameters are integer, thus calling the function value_double()
  *   throws an error.
  */
-
-class ArrayIntegerParameter : public ConnParameter
+class ArrayLongParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads )
-    : values_( &values )
-    , next_( nthreads, values_->begin() )
+  ArrayLongParameter( const std::vector< long >& values, const size_t nthreads )
+    : values_( values )
+    , next_( nthreads, values_.begin() )
   {
   }
 
   void
   skip( size_t tid, size_t n_skip ) const override
   {
-    if ( next_[ tid ] < values_->end() )
+    if ( next_[ tid ] < values_.end() )
     {
       next_[ tid ] += n_skip;
     }
@@ -341,13 +337,13 @@ public:
   size_t
   number_of_values() const override
   {
-    return values_->size();
+    return values_.size();
   }
 
   long
   value_int( size_t tid, RngPtr, size_t, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return *next_[ tid ]++;
     }
@@ -360,7 +356,7 @@ public:
   double
   value_double( size_t tid, RngPtr, size_t, Node* ) const override
   {
-    if ( next_[ tid ] != values_->end() )
+    if ( next_[ tid ] != values_.end() )
     {
       return static_cast< double >( *next_[ tid ]++ );
     }
@@ -387,19 +383,19 @@ public:
   {
     for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
-      *it = values_->begin();
+      *it = values_.begin();
     }
   }
 
 private:
-  const std::vector< long >* values_;
+  const std::vector< long > values_;
   mutable std::vector< std::vector< long >::const_iterator > next_;
 };
 
 class ParameterConnParameterWrapper : public ConnParameter
 {
 public:
-  ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
+  ParameterConnParameterWrapper( ParameterPTR, const size_t );
 
   double value_double( size_t target_thread, RngPtr rng, size_t snode_id, Node* target ) const override;
 
@@ -422,7 +418,7 @@ public:
   }
 
 private:
-  Parameter* parameter_;
+  ParameterPTR parameter_;
 };
 
 } // namespace nest

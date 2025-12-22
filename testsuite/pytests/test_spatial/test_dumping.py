@@ -49,7 +49,7 @@ class DumpingTestCase(unittest.TestCase):
         nest.DumpLayerNodes(spatial_nodes, filename)
 
         npa = np.genfromtxt(filename)
-        reference = np.array([[n.get("global_id")] + list(nest.GetPosition(n)) for n in spatial_nodes])
+        reference = np.array([[n.global_id] + list(nest.GetPosition(n)) for n in spatial_nodes])
         self.assertTrue(np.allclose(npa, reference))
         os.remove(filename)
 

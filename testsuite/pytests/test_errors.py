@@ -28,7 +28,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class ErrorTestCase(unittest.TestCase):
     """Tests if errors are handled correctly"""
 
@@ -39,23 +38,9 @@ class ErrorTestCase(unittest.TestCase):
             raise exc(msg)
 
         message = "test"
-        exception = nest.kernel.NESTError
+        exception = nest.NESTError
 
         self.assertRaisesRegex(exception, message, raise_custom_exception, exception, message)
-
-    def test_StackUnderFlow(self):
-        """Stack underflow"""
-
-        nest.ResetKernel()
-
-        self.assertRaisesRegex(nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, "clear ;")
-
-    def test_DivisionByZero(self):
-        """Division by zero"""
-
-        nest.ResetKernel()
-
-        self.assertRaisesRegex(nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, "1 0 div")
 
     def test_InvalidNodeCollection(self):
         """Invalid NodeCollection"""
@@ -85,11 +70,11 @@ class ErrorTestCase(unittest.TestCase):
             return nc_c[8:9]
 
         msg = "InvalidNodeCollection"
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_primitive)
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_composite)
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_pc)
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_primitive)
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_composite)
+        self.assertRaisesRegex(nest.NESTError, msg, add_test_primitive)
+        self.assertRaisesRegex(nest.NESTError, msg, add_test_composite)
+        self.assertRaisesRegex(nest.NESTError, msg, add_test_pc)
+        self.assertRaisesRegex(nest.NESTError, msg, slice_test_primitive)
+        self.assertRaisesRegex(nest.NESTError, msg, slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""
@@ -99,16 +84,16 @@ class ErrorTestCase(unittest.TestCase):
         nc = nest.Create("iaf_psc_alpha", 10)  # noqa: F841
         nest.ResetKernel()
 
-        msg = "UnknownNode"
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.NodeCollection, [99])
+        msg = "Node with id 99 does not exist."
+        self.assertRaisesRegex(nest.NESTError, msg, nest.NodeCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""
 
         nest.ResetKernel()
 
-        msg = "UnknownModelName"
-        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.Create, -1)
+        msg = "not a known model name"
+        self.assertRaisesRegex(nest.NESTError, msg, nest.Create, "unknown_model")
 
 
 def suite():

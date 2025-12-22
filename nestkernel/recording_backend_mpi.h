@@ -109,13 +109,13 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const RecordingDevice& device, const Dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) override;
 
   void cleanup() override;
 
@@ -123,9 +123,9 @@ public:
 
   void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( Dictionary& ) const override;
 
   void pre_run_hook() override;
 
@@ -133,9 +133,9 @@ public:
 
   void post_step_hook() override;
 
-  void check_device_status( const DictionaryDatum& ) const override;
-  void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
+  void check_device_status( const Dictionary& ) const override;
+  void get_device_defaults( Dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, Dictionary& params_dictionary ) const override;
 
 private:
   bool enrolled_;

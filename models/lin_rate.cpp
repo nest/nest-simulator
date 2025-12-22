@@ -49,23 +49,23 @@ register_rate_transformer_lin( const std::string& name )
 
 
 void
-nonlinearities_lin_rate::get( DictionaryDatum& d ) const
+nonlinearities_lin_rate::get( Dictionary& d ) const
 {
-  def< double >( d, names::g, g_ );
-  def< double >( d, names::g_ex, g_ex_ );
-  def< double >( d, names::g_in, g_in_ );
-  def< double >( d, names::theta_ex, theta_ex_ );
-  def< double >( d, names::theta_in, theta_in_ );
+  d[ names::g ] = g_;
+  d[ names::g_ex ] = g_ex_;
+  d[ names::g_in ] = g_in_;
+  d[ names::theta_ex ] = theta_ex_;
+  d[ names::theta_in ] = theta_in_;
 }
 
 void
-nonlinearities_lin_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_lin_rate::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g, g_, node );
-  updateValueParam< double >( d, names::g_ex, g_ex_, node );
-  updateValueParam< double >( d, names::g_in, g_in_, node );
-  updateValueParam< double >( d, names::theta_ex, theta_ex_, node );
-  updateValueParam< double >( d, names::theta_in, theta_in_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::g_ex, g_ex_, node );
+  update_value_param( d, names::g_in, g_in_, node );
+  update_value_param( d, names::theta_ex, theta_ex_, node );
+  update_value_param( d, names::theta_in, theta_in_, node );
 }
 
 /*

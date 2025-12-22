@@ -50,11 +50,11 @@ def test_mini_brunel_ps():
 
     neuron_params = {
         "tau_m": 20,  # membrance time constant [ms]
-        "t_ref": 2.0,  # refractory period [ms]
-        "C_m": 250.0,  # membrane capacitance [pF]
-        "E_L": 0.0,  # resting membrane potential [mV]
-        "V_th": 20.0,  # threshold potential [mV]
-        "V_reset": 0.0,  # reset potential [mV]
+        "t_ref": 2,  # refractory period [ms]
+        "C_m": 250,  # membrane capacitance [pF]
+        "E_L": 0,  # resting membrane potential [mV]
+        "V_th": 20,  # threshold potential [mV]
+        "V_reset": 0,  # reset potential [mV]
     }
 
     # Threshold rate; the external rate needed for a neuron to reach

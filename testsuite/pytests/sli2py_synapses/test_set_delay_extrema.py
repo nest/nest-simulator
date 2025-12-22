@@ -34,7 +34,7 @@ def prepare_network():
     h = 0.1
     nest.set(resolution=h, min_delay=h, max_delay=2.0)
 
-    n1 = nest.Create("iaf_psc_alpha", {"I_e": 1450.0})
+    n1 = nest.Create("iaf_psc_alpha", params={"I_e": 1450.0})
     n2 = nest.Create("iaf_psc_alpha")
 
     nest.Connect(n1, n2, syn_spec={"weight": 100.0, "delay": 0.5})  # small delay

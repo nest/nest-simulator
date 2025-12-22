@@ -35,8 +35,6 @@
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
@@ -97,30 +95,30 @@ iaf_psc_alpha::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
+iaf_psc_alpha::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ ); // Resting potential
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + E_L_ );
-  def< double >( d, names::V_min, LowerBound_ + E_L_ );
-  def< double >( d, names::C_m, C_ );
-  def< double >( d, names::tau_m, Tau_ );
-  def< double >( d, names::t_ref, TauR_ );
-  def< double >( d, names::tau_syn_ex, tau_ex_ );
-  def< double >( d, names::tau_syn_in, tau_in_ );
+  d[ names::E_L ] = E_L_; // Resting potential
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_reset ] = V_reset_ + E_L_;
+  d[ names::V_min ] = LowerBound_ + E_L_;
+  d[ names::C_m ] = C_;
+  d[ names::tau_m ] = Tau_;
+  d[ names::t_ref ] = TauR_;
+  d[ names::tau_syn_ex ] = tau_ex_;
+  d[ names::tau_syn_in ] = tau_in_;
 }
 
 double
-iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
+iaf_psc_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -129,7 +127,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_th, Theta_, node ) )
+  if ( update_value_param( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -138,7 +136,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     Theta_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_min, LowerBound_, node ) )
+  if ( update_value_param( d, names::V_min, LowerBound_, node ) )
   {
     LowerBound_ -= E_L_;
   }
@@ -147,12 +145,12 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     LowerBound_ -= delta_EL;
   }
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_, node );
-  updateValueParam< double >( d, names::tau_m, Tau_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
-  updateValueParam< double >( d, names::t_ref, TauR_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_, node );
+  update_value_param( d, names::tau_m, Tau_, node );
+  update_value_param( d, names::tau_syn_ex, tau_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_in_, node );
+  update_value_param( d, names::t_ref, TauR_, node );
 
   if ( C_ <= 0.0 )
   {
@@ -182,15 +180,15 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+iaf_psc_alpha::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
+  d[ names::V_m ] = y3_ + p.E_L_; // Membrane potential
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_alpha::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
+  if ( update_value_param( d, names::V_m, y3_, node ) )
   {
     y3_ -= p.E_L_;
   }

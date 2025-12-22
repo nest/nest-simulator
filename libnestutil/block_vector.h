@@ -29,7 +29,7 @@
 #include <iterator>
 #include <vector>
 
-#include "sliexceptions.h"
+#include "exceptions.h"
 
 template < typename value_type_ >
 class BlockVector;
@@ -556,35 +556,35 @@ template < typename value_type_ >
 inline typename BlockVector< value_type_ >::size_type
 BlockVector< value_type_ >::max_size() const
 {
-  throw NotImplemented( "BlockVector max_size() is not implemented." );
+  throw nest::NotImplemented( "BlockVector max_size() is not implemented." );
 }
 
 template < typename value_type_ >
 inline typename BlockVector< value_type_ >::reverse_iterator
 BlockVector< value_type_ >::rbegin()
 {
-  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+  throw nest::NotImplemented( "BlockVector rbegin() is not implemented." );
 }
 
 template < typename value_type_ >
 inline typename BlockVector< value_type_ >::reverse_iterator
 BlockVector< value_type_ >::rbegin() const
 {
-  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+  throw nest::NotImplemented( "BlockVector rbegin() is not implemented." );
 }
 
 template < typename value_type_ >
 inline typename BlockVector< value_type_ >::reverse_iterator
 BlockVector< value_type_ >::rend()
 {
-  throw NotImplemented( "BlockVector rend() is not implemented." );
+  throw nest::NotImplemented( "BlockVector rend() is not implemented." );
 }
 
 template < typename value_type_ >
 inline typename BlockVector< value_type_ >::reverse_iterator
 BlockVector< value_type_ >::rend() const
 {
-  throw NotImplemented( "BlockVector rend() is not implemented." );
+  throw nest::NotImplemented( "BlockVector rend() is not implemented." );
 }
 
 /////////////////////////////////////////////////////////////

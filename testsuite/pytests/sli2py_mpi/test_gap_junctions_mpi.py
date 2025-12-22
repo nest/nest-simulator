@@ -49,7 +49,7 @@ def test_gap_junctions_mpi():
             "wfr_tol": 0.0001,
             "wfr_interpolation_order": 3,
             "wfr_max_iterations": 10,
-            "wfr_comm_interval": 1.0,
+            "wfr_comm_interval": 1,
         }
     )
     n = nest.Create("hh_psc_alpha_gap", n=4)

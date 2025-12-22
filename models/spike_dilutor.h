@@ -105,7 +105,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::stimulator;
@@ -119,8 +119,8 @@ public:
   size_t handles_test_event( SpikeEvent&, size_t ) override;
   void handle( SpikeEvent& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_state_() override;
@@ -144,8 +144,8 @@ private:
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   struct Buffers_
@@ -189,14 +189,14 @@ spike_dilutor::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-spike_dilutor::get_status( DictionaryDatum& d ) const
+spike_dilutor::get_status( Dictionary& d ) const
 {
   P_.get( d );
   device_.get_status( d );
 }
 
 inline void
-spike_dilutor::set_status( const DictionaryDatum& d )
+spike_dilutor::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

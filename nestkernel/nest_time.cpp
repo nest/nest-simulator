@@ -31,11 +31,6 @@
 // Includes from libnestutil:
 #include "numerics.h"
 
-// Includes from sli:
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "token.h"
-
 using namespace nest;
 
 const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
@@ -124,25 +119,6 @@ Time::reset_resolution()
   const tic_t max = compute_max();
   LIM_MAX = +max;
   LIM_MIN = -max;
-}
-
-double
-Time::ms::fromtoken( const Token& t )
-{
-  IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( idat )
-  {
-    return static_cast< double >( idat->get() );
-  }
-
-  DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( ddat )
-  {
-    return ddat->get();
-  }
-
-  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
-    t.datum()->gettypename().toString() );
 }
 
 tic_t

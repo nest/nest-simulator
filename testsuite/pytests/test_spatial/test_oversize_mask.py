@@ -79,7 +79,7 @@ def test_grid_layer_grid_mask_incorrect(grid_layer, mask):
     and the third too wide and tall.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             grid_layer,
             grid_layer,
@@ -113,7 +113,7 @@ def test_free_layer_circular_mask_incorrect(free_layer, mask):
     The circular mask in the parametrization is too wide.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             free_layer,
             free_layer,
@@ -151,7 +151,7 @@ def test_free_layer_doughnut_mask_incorrect(free_layer, mask):
     The doughnut mask in the parametrization is too wide.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             free_layer,
             free_layer,
@@ -189,7 +189,7 @@ def test_free_layer_rectangular_mask_incorrect(free_layer, mask):
     The rectangular mask in the parametrization is too wide.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             free_layer,
             free_layer,

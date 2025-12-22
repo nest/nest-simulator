@@ -37,7 +37,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   const size_t source_node_id,
   const size_t tid,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const Dictionary& p,
   const double d,
   const double w )
 {
@@ -55,7 +55,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
   const size_t tid,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const Dictionary& p,
   const double d,
   const double w )
 {
@@ -110,7 +110,7 @@ inline void
 nest::TargetTableDevices::get_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
-  DictionaryDatum& dict,
+  Dictionary& dict,
   const size_t lcid ) const
 {
   const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );
@@ -125,7 +125,7 @@ nest::TargetTableDevices::set_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
   ConnectorModel& cm,
-  const DictionaryDatum& dict,
+  const Dictionary& dict,
   const size_t lcid )
 {
   const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );

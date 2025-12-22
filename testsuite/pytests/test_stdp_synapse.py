@@ -41,7 +41,6 @@ if DEBUG_PLOTS:
 RESOLUTION = 0.1  # [ms]
 
 
-@nest.ll_api.check_stack
 class TestSTDPSynapse:
     """
     Compare the STDP synaptic plasticity model against a self-contained Python reference.
@@ -150,7 +149,7 @@ class TestSTDPSynapse:
         This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the
         resulting weight established by STDP.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
@@ -208,7 +207,9 @@ class TestSTDPSynapse:
             syn_spec={"synapse_model": "static_synapse", "weight": 3000.0},
         )
         nest.Connect(
-            presynaptic_neuron + postsynaptic_neuron, spike_recorder, syn_spec={"synapse_model": "static_synapse"}
+            presynaptic_neuron + postsynaptic_neuron,
+            spike_recorder,
+            syn_spec={"synapse_model": "static_synapse"},
         )
 
         # The synapse of interest itself
@@ -218,12 +219,14 @@ class TestSTDPSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys="events")[0]
-        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
+        all_spikes = spike_recorder.events
+        times = all_spikes["times"]
+        senders = all_spikes["senders"]
+        pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
 
-        t_hist = nest.GetStatus(wr, "events")[0]["times"]
-        weight = nest.GetStatus(wr, "events")[0]["weights"]
+        t_hist = wr.events["times"]
+        weight = wr.events["weights"]
 
         return pre_spikes, post_spikes, t_hist, weight
 
@@ -233,7 +236,10 @@ class TestSTDPSynapse:
         def facilitate(w, Kpre):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
                 self.synapse_parameters["lambda"]
-                * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
+                * pow(
+                    1 - (w / self.synapse_parameters["Wmax"]),
+                    self.synapse_parameters["mu_plus"],
+                )
                 * Kpre
             )
             if norm_w < 1.0:
@@ -245,7 +251,10 @@ class TestSTDPSynapse:
             norm_w = (w / self.synapse_parameters["Wmax"]) - (
                 self.synapse_parameters["alpha"]
                 * self.synapse_parameters["lambda"]
-                * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
+                * pow(
+                    w / self.synapse_parameters["Wmax"],
+                    self.synapse_parameters["mu_minus"],
+                )
                 * Kpost
             )
             if norm_w > 0.0:

@@ -45,9 +45,6 @@
 #include "device_node.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -78,13 +75,13 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 ============ ======= =========================================================
  port_name   string  The name of the MUSIC input port to listen to (default:
                      message_in)
  port_width  integer The width of the MUSIC input port
- data        array   A sub-dictionary that contains the string messages
+ data        array   A sub-Dictionary that contains the string messages
                      in the form of two arrays:
                      messages      - The strings
                      message_times - The times the messages were sent (ms)
@@ -107,8 +104,8 @@ EndUserDocs */
 
 class MsgHandler : public MUSIC::MessageHandler
 {
-  ArrayDatum messages;                 //!< The buffer for incoming message
-  std::vector< double > message_times; //!< The buffer for incoming message
+  std::vector< std::string > messages; //!< The buffer for incoming message
+  std::vector< double > message_times; //!< The times for incoming message
 
   void
   operator()( double t, void* msg, size_t size )
@@ -119,13 +116,13 @@ class MsgHandler : public MUSIC::MessageHandler
 
 public:
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
-    DictionaryDatum dict( new Dictionary );
-    ( *dict )[ names::messages ] = messages;
-    ( *dict )[ names::message_times ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
-    ( *d )[ names::n_messages ] = messages.size();
-    ( *d )[ names::data ] = dict;
+    Dictionary dict;
+    dict[ names::messages ] = messages;
+    dict[ names::message_times ] = std::vector< double >( message_times );
+    d[ names::n_messages ] = messages.size();
+    d[ names::data ] = dict;
   }
 
   void
@@ -159,8 +156,8 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -181,12 +178,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /**
-     * Set values from dictionary.
+     * Set values from Dictionary.
      */
-    void set( const DictionaryDatum&, State_&, Node* );
+    void set( const Dictionary&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -199,9 +196,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    //! Set values from Dictionary
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -227,7 +224,7 @@ private:
 };
 
 inline void
-music_message_in_proxy::get_status( DictionaryDatum& d ) const
+music_message_in_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -236,7 +233,7 @@ music_message_in_proxy::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-music_message_in_proxy::set_status( const DictionaryDatum& d )
+music_message_in_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, S_, this ); // throws if BadProperty
@@ -245,7 +242,7 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_, this ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValueParam< long >( d, names::n_messages, nm, this ) )
+  if ( update_value_param( d, names::n_messages, nm, this ) )
   {
     if ( nm == 0 )
     {

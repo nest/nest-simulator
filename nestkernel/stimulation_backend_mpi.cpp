@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& params )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dictionary& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -81,7 +81,7 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   enrolled_ = true;
 
   // Try to read the mpi_address from the device status
-  updateValue< std::string >( params, names::mpi_address, mpi_address_ );
+  params.update_value( names::mpi_address, mpi_address_ );
 }
 
 
@@ -200,7 +200,7 @@ nest::StimulationBackendMPI::prepare()
     }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Input connect", msg.str() );
+    LOG( VerbosityLevel::INFO, "MPI Input connect", msg.str() );
   }
 }
 

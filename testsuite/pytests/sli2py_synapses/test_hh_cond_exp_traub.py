@@ -64,16 +64,12 @@ def neuron(reference_params):
 
 @pytest.fixture()
 def recording_devices(neuron):
-    dc = nest.Create("dc_generator", {"amplitude": 100.0})
-
-    sg = nest.Create("spike_generator", {"precise_times": False, "spike_times": [0.1, 1.2]})
-
-    sr = nest.Create("spike_recorder", {"time_in_steps": True})
-
-    vm = nest.Create("voltmeter", {"time_in_steps": True, "interval": nest.resolution})
-
+    dc = nest.Create("dc_generator", params={"amplitude": 100.0})
+    sg = nest.Create("spike_generator", params={"precise_times": False, "spike_times": [0.1, 1.2]})
+    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
+    vm = nest.Create("voltmeter", params={"time_in_steps": True, "interval": nest.resolution})
     mm = nest.Create(
-        "multimeter", {"time_in_steps": True, "interval": nest.resolution, "record_from": ["g_ex", "g_in"]}
+        "multimeter", params={"time_in_steps": True, "interval": nest.resolution, "record_from": ["g_ex", "g_in"]}
     )
 
     nest.Connect(sg, neuron)
@@ -187,16 +183,16 @@ def test_setting_params(neuron, reference_params):
 def test_recoding_device_status(recording_devices, reference_data_vm, reference_data_mm):
     vm, mm, sr = recording_devices
     reference_data_vm = np.array(reference_data_vm)
-    vm_events = vm.get("events")
+    vm_events = vm.events
     actual_vm_data = np.array(list(zip(vm_events["times"], vm_events["V_m"])))
 
     nptest.assert_allclose(actual_vm_data, reference_data_vm, rtol=1e-5)
 
     reference_data_mm = np.array(reference_data_mm)
-    mm_events = mm.get("events")
+    mm_events = mm.events
     actual_mm_data = np.array(list(zip(mm_events["times"], mm_events["g_ex"], mm_events["g_in"])))
 
     nptest.assert_allclose(actual_mm_data, reference_data_mm, rtol=1e-5)
 
-    sr_events_times = sr.get("events")["times"]
-    assert sr_events_times == [2]
+    sr_events_times = sr.events["times"]
+    assert sr_events_times == 2

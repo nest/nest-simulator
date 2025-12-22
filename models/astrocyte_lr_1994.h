@@ -162,7 +162,7 @@ See also [1]_, [2]_, [3]_.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ======== ========= =============================================================
 **Dynamic state variables**
@@ -279,8 +279,8 @@ public:
   {
   }
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -331,8 +331,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -367,8 +367,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -467,16 +467,16 @@ astrocyte_lr_1994::handles_test_event( DataLoggingRequest& dlr, size_t receptor_
 }
 
 inline void
-astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
+astrocyte_lr_1994::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-astrocyte_lr_1994::set_status( const DictionaryDatum& d )
+astrocyte_lr_1994::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

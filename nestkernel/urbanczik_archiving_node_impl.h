@@ -25,8 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -46,14 +44,14 @@ nest::UrbanczikArchivingNode< urbanczik_parameters >::UrbanczikArchivingNode( co
 
 template < class urbanczik_parameters >
 void
-nest::UrbanczikArchivingNode< urbanczik_parameters >::get_status( DictionaryDatum& d ) const
+nest::UrbanczikArchivingNode< urbanczik_parameters >::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 template < class urbanczik_parameters >
 void
-nest::UrbanczikArchivingNode< urbanczik_parameters >::set_status( const DictionaryDatum& d )
+nest::UrbanczikArchivingNode< urbanczik_parameters >::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 }

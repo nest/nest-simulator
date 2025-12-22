@@ -37,9 +37,6 @@
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 nest::RecordablesMap< nest::ignore_and_fire > nest::ignore_and_fire::recordablesMap_;
 
 namespace nest
@@ -79,17 +76,17 @@ ignore_and_fire::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-ignore_and_fire::Parameters_::get( DictionaryDatum& d ) const
+ignore_and_fire::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::phase, phase_ );
-  def< double >( d, names::rate, rate_ );
+  d[ names::phase ] = phase_;
+  d[ names::rate ] = rate_;
 }
 
 void
-ignore_and_fire::Parameters_::set( const DictionaryDatum& d, Node* node )
+ignore_and_fire::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::phase, phase_, node );
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::phase, phase_, node );
+  update_value_param( d, names::rate, rate_, node );
 
   if ( phase_ <= 0.0 or phase_ > 1.0 )
   {
@@ -103,13 +100,13 @@ ignore_and_fire::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-ignore_and_fire::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+ignore_and_fire::State_::get( Dictionary& d, const Parameters_& p ) const
 {
 }
 
 
 void
-ignore_and_fire::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
+ignore_and_fire::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
 {
 }
 

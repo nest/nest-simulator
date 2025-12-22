@@ -190,7 +190,7 @@ class AIPong:
 
 
 if __name__ == "__main__":
-    nest.set_verbosity("M_WARNING")
+    nest.verbosity = nest.VerbosityLevel.WARNING
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", type=int, default=5000, help="Number of game steps to simulate.")

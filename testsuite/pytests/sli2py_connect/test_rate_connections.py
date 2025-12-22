@@ -94,7 +94,7 @@ def test_illegal_rate_connections(synapse_model, supported_nrn_model, unsupporte
 
     supported_nrn = nest.Create(supported_nrn_model)
     unsupported_nrn = nest.Create(unsupported_nrn_model)
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(
             supported_nrn, unsupported_nrn, conn_spec={"rule": "one_to_one"}, syn_spec={"synapse_model": synapse_model}
         )
@@ -117,7 +117,8 @@ def test_rate_connection_instantaneous_set_delay_disallowed(supported_nrn_model)
     """
 
     supported_nrn = nest.Create(supported_nrn_model)
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             supported_nrn,
             supported_nrn,
@@ -160,7 +161,8 @@ def test_illegal_diffusion_connection_connections(unsupported_nrn_model):
 
     supported_nrn = nest.Create("siegert_neuron")
     unsupported_nrn = nest.Create(unsupported_nrn_model)
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(
             supported_nrn,
             unsupported_nrn,
@@ -176,7 +178,8 @@ def test_diffusion_connection_set_weight_and_delay_disallowed(syn_param):
     """
 
     supported_nrn = nest.Create("siegert_neuron")
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             supported_nrn,
             supported_nrn,

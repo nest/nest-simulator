@@ -32,9 +32,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -93,26 +90,26 @@ nest::iaf_chs_2007::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_chs_2007::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_reset, U_reset_ );
-  def< double >( d, names::V_epsp, U_epsp_ );
-  def< double >( d, names::tau_epsp, tau_epsp_ );
-  def< double >( d, names::tau_reset, tau_reset_ );
-  def< double >( d, names::V_noise, U_noise_ );
-  ( *d )[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  d[ names::V_reset ] = U_reset_;
+  d[ names::V_epsp ] = U_epsp_;
+  d[ names::tau_epsp ] = tau_epsp_;
+  d[ names::tau_reset ] = tau_reset_;
+  d[ names::V_noise ] = U_noise_;
+  d[ names::noise ] = noise_;
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
-  updateValueParam< double >( d, names::V_reset, U_reset_, node );
-  updateValueParam< double >( d, names::V_epsp, U_epsp_, node );
-  updateValueParam< double >( d, names::tau_epsp, tau_epsp_, node );
-  updateValueParam< double >( d, names::tau_reset, tau_reset_, node );
-  updateValueParam< double >( d, names::V_noise, U_noise_, node );
+  update_value_param( d, names::V_reset, U_reset_, node );
+  update_value_param( d, names::V_epsp, U_epsp_, node );
+  update_value_param( d, names::tau_epsp, tau_epsp_, node );
+  update_value_param( d, names::tau_reset, tau_reset_, node );
+  update_value_param( d, names::V_noise, U_noise_, node );
 
-  const bool updated_noise = updateValue< std::vector< double > >( d, names::noise, noise_ );
+  const bool updated_noise = d.update_value( names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -140,15 +137,15 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
 }
 
 void
-nest::iaf_chs_2007::State_::get( DictionaryDatum& d ) const
+nest::iaf_chs_2007::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, V_m_ ); // Membrane potential
+  d[ names::V_m ] = V_m_; // Membrane potential
 }
 
 void
-nest::iaf_chs_2007::State_::set( DictionaryDatum const& d, Node* node )
+nest::iaf_chs_2007::State_::set( Dictionary const& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, V_m_, node );
+  update_value_param( d, names::V_m, V_m_, node );
 }
 
 nest::iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )

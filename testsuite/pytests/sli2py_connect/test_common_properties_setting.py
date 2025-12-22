@@ -119,7 +119,7 @@ def test_no_setting_on_connection(syn_model, specs):
     n = nest.Create(specs["neuron"])
     nest.Connect(n, n, syn_spec={"synapse_model": syn_model})
     conn = nest.GetConnections()
-    with pytest.raises(nest.kernel.NESTErrors.DictError):
+    with pytest.raises(nest.NESTErrors.UnaccessedDictionaryEntry):
         conn.set({specs["parameter"]: specs["value"]})
 
 
@@ -131,5 +131,5 @@ def test_no_setting_on_connect(syn_model, specs):
         specs["setup"]()
 
     n = nest.Create(specs["neuron"])
-    with pytest.raises(nest.kernel.NESTErrors.NotImplemented):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(n, n, syn_spec={"synapse_model": syn_model, specs["parameter"]: specs["value"]})

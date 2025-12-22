@@ -41,9 +41,6 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "token.h"
-
 namespace nest
 {
 
@@ -117,13 +114,6 @@ public:
    * @returns an element (coordinate) of the Position
    */
   const T& operator[]( int i ) const;
-
-  /**
-   * Moves Position variables into an array.
-   *
-   * @returns array of positions stored as a token object.
-   */
-  Token getToken() const;
 
   const std::vector< T > get_vector() const;
   void get_vector( std::vector< T >& vector ) const;
@@ -505,15 +495,6 @@ Position< D, T >::operator[]( int i ) const
 {
   return x_[ i ];
 }
-
-template < int D, class T >
-Token
-Position< D, T >::getToken() const
-{
-  std::vector< T > result = get_vector();
-  return Token( result );
-}
-
 
 template < int D, class T >
 const std::vector< T >

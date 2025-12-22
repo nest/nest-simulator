@@ -33,6 +33,7 @@
 // C++ includes:
 #include <map>
 #include <set>
+#include <stdexcept>
 #include <vector>
 
 // Includes from libnestutil
@@ -44,9 +45,6 @@
 #include "node_collection.h"
 #include "parameter.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "sliexceptions.h"
 
 namespace nest
 {
@@ -89,8 +87,8 @@ public:
   BipartiteConnBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
   virtual ~BipartiteConnBuilder();
 
   size_t
@@ -100,6 +98,7 @@ public:
     {
       throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
     }
+    assert( not synapse_model_id_.empty() );
     return synapse_model_id_[ 0 ];
   }
 
@@ -110,6 +109,7 @@ public:
     {
       throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
     }
+    assert( not default_delay_.empty() );
     return default_delay_[ 0 ];
   }
 
@@ -226,8 +226,8 @@ protected:
   bool make_symmetric_;
   bool creates_symmetric_connections_;
 
-  //! Buffer for exceptions raised in threads
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+  //! buffer for exceptions raised in threads
+  std::vector< std::exception_ptr > exceptions_raised_;
 
   // Name of the pre synaptic and postsynaptic elements for this connection builder
   std::string pre_synaptic_element_name_;
@@ -247,10 +247,10 @@ protected:
    *
    * @note Each thread can independently modify its dictionary to pass parameters on
    */
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+  std::vector< std::vector< Dictionary > > param_dicts_;
 
 private:
-  typedef std::map< Name, ConnParameter* > ConnParameterMap;
+  typedef std::map< std::string, ConnParameter* > ConnParameterMap;
 
   //! indicate that weight and delay should not be set per synapse
   std::vector< bool > default_weight_and_delay_;
@@ -269,7 +269,7 @@ private:
   std::vector< ConnParameterMap > synapse_params_;
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
-  std::set< Name > skip_syn_params_;
+  std::set< std::string > skip_syn_params_;
 
   /**
    * Collects all array parameters in a vector.
@@ -283,9 +283,9 @@ private:
   /**
    * Set synapse specific parameters.
    */
-  void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
-  void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
-  void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+  void set_synapse_model_( const Dictionary& syn_params, const size_t indx );
+  void set_default_weight_or_delay_( const Dictionary& syn_params, const size_t indx );
+  void set_synapse_params( const Dictionary& syn_defaults, const Dictionary& syn_params, const size_t indx );
 
   /**
    * Set structural plasticity parameters (if provided)
@@ -302,7 +302,7 @@ private:
    * * multiple syn_specs are given and structural plasticity parameters
    *   are present
    */
-  void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
+  void set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs );
 
   /**
    * Reset weight and delay pointers
@@ -340,13 +340,13 @@ public:
    * @param third_conn_spec is ignored by this builder but required to make base class happy
    * @param syn_specs Collection of synapse specification for connection from primary source to third factor
    *
-   * @todo Once DictionaryDatums are gone, see if we can remove `third_conn_spec` and just pass empty conn spec
-   * container to base-class constructor, since \class ThirdInBuilder has no connection rule properties to set.
+   * @PYNEST-NG-FUTURE Once DictionaryDatums are gone, see if we can remove `third_conn_spec` and just pass empty conn
+   * spec container to base-class constructor, since \class ThirdInBuilder has no connection rule properties to set.
    */
   ThirdInBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR third,
-    const DictionaryDatum& third_conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& third_conn_spec,
+    const std::vector< Dictionary >& syn_specs );
   ~ThirdInBuilder();
 
   /**
@@ -419,8 +419,8 @@ public:
   ThirdOutBuilder( const NodeCollectionPTR third,
     const NodeCollectionPTR targets,
     ThirdInBuilder* third_in,
-    const DictionaryDatum& third_conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& third_conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   //! Only call third_connect() on ThirdOutBuilder
   void
@@ -463,8 +463,8 @@ public:
   ConnBuilder( const std::string& primary_rule,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   /**
    * Constructor for tripartite connection
@@ -484,9 +484,9 @@ public:
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const DictionaryDatum& third_conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+    const Dictionary& conn_spec,
+    const Dictionary& third_conn_spec,
+    const std::map< std::string, std::vector< Dictionary > >& syn_specs );
 
   ~ConnBuilder();
 
@@ -513,8 +513,8 @@ public:
   ThirdBernoulliWithPoolBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdInBuilder*,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
   ~ThirdBernoulliWithPoolBuilder();
 
   void third_connect( size_t source_gid, Node& target ) override;
@@ -567,8 +567,8 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   bool
   supports_symmetric() const override
@@ -615,8 +615,8 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs )
     : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   {
   }
@@ -670,15 +670,15 @@ public:
   FixedInDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t, bool, long );
-  ParameterDatum indegree_;
+  ParameterPTR indegree_;
 };
 
 class FixedOutDegreeBuilder : public BipartiteConnBuilder
@@ -687,14 +687,14 @@ public:
   FixedOutDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
 
 private:
-  ParameterDatum outdegree_;
+  ParameterPTR outdegree_;
 };
 
 class FixedTotalNumberBuilder : public BipartiteConnBuilder
@@ -703,8 +703,8 @@ public:
   FixedTotalNumberBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
@@ -719,15 +719,15 @@ public:
   BernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterDatum p_; //!< connection probability
+  ParameterPTR p_; //!< connection probability
 };
 
 class PoissonBuilder : public BipartiteConnBuilder
@@ -736,15 +736,15 @@ public:
   PoissonBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_() override;
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
+  ParameterPTR pairwise_avg_num_conns_; //!< Mean number of connections
 };
 
 class SymmetricBernoulliBuilder : public BipartiteConnBuilder
@@ -753,8 +753,8 @@ public:
   SymmetricBernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
   bool
   supports_symmetric() const override
@@ -784,8 +784,8 @@ public:
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     ThirdOutBuilder* third_out,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_spec );
 
   const std::string&
   get_pre_synaptic_element_name() const

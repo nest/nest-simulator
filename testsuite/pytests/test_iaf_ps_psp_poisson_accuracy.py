@@ -106,7 +106,7 @@ def spiketrain_response(spiketrain):
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2**10, resolution=2**h)
+    nest.set(tics_per_ms=2**10, resolution=float(2**h))
 
     pg = nest.Create("poisson_generator_ps", params={"rate": 16000.0})
 
@@ -125,20 +125,20 @@ def test_poisson_spikes_different_stepsizes(h):
 
     nest.Simulate(T)
 
-    spiketrain = sr.get("events", "times")
+    spiketrain = sr.events["times"]
 
     reference_potential = spiketrain_response(spiketrain)
     if DEBUG:
-        u = neuron.get("V_m")
+        u = neuron.V_m
         nest.Simulate(1.0)  # to get V_m recording until time T
-        times = mm.get("events", "times")
-        V_m = mm.get("events", "V_m")
+        times = mm.events["times"]
+        V_m = mm.events["V_m"]
         import matplotlib.pyplot as plt
 
         plt.plot(times, V_m)
         plt.scatter([T], [u], s=20.0)
         plt.scatter([T], [reference_potential], s=20, marker="X")
         plt.show()
-        neuron.set(V_m=u)  # reset to value before extra 1s simulation
+        neuron.V_m = u  # reset to value before extra 1s simulation
 
-    assert neuron.get("V_m") == pytest.approx(reference_potential)
+    assert neuron.V_m == pytest.approx(reference_potential)

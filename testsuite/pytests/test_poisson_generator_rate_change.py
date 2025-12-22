@@ -29,7 +29,7 @@ import scipy.stats
 
 class TestPgRateChange(unittest.TestCase):
     def _kstest_first_spiketimes(self, sr, start_t, expon_scale, resolution, p_value_lim):
-        events = nest.GetStatus(sr)[0]["events"]
+        events = sr.events
         senders = events["senders"]
         times = events["times"]
         min_times = [np.min(times[np.where(senders == s)]) for s in np.unique(senders)]
@@ -61,17 +61,17 @@ class TestPgRateChange(unittest.TestCase):
 
         # Second simulation, with rate = 0
         rate = 0.0
-        nest.SetStatus(pg, {"rate": rate})
+        pg.rate = rate
         # We need to skip a timestep to not receive the spikes from the
         # previous simulation run that were sent, but not received.
-        nest.SetStatus(sr, {"n_events": 0, "start": float(sim_time) + resolution, "stop": 2.0 * sim_time})
+        sr.set({"n_events": 0, "start": float(sim_time) + resolution, "stop": 2.0 * sim_time})
         nest.Simulate(sim_time)
-        self.assertEqual(nest.GetStatus(sr)[0]["n_events"], 0)
+        self.assertEqual(sr.n_events, 0)
 
         # Third simulation, with rate increased back up to 100
         rate = 100.0
-        nest.SetStatus(pg, {"rate": rate})
-        nest.SetStatus(sr, {"n_events": 0, "start": 2.0 * sim_time, "stop": 3.0 * sim_time})
+        pg.rate = rate
+        sr.set({"n_events": 0, "start": 2.0 * sim_time, "stop": 3.0 * sim_time})
         nest.Simulate(sim_time)
         expon_scale = 1000 / rate
         self._kstest_first_spiketimes(sr, 2.0 * sim_time, expon_scale, resolution, p_value_lim)

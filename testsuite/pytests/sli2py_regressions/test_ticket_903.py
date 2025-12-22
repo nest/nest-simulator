@@ -42,7 +42,7 @@ def test_correct_rounding_distributions():
         conn_spec={"rule": "fixed_indegree", "indegree": indegree},
     )
 
-    delays = nest.GetConnections().delay
+    delays = np.array(nest.GetConnections().delay)
 
     assert set(delays) == {1, 2}
     assert scipy.stats.binomtest(sum(np.array(delays) == 2.0), indegree).pvalue > significance

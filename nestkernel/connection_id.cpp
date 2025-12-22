@@ -25,8 +25,7 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 
-// Includes from sli:
-#include "integerdatum.h"
+#include "dictionary.h"
 
 namespace nest
 {
@@ -53,35 +52,23 @@ ConnectionID::ConnectionID( long source_node_id, long target_thread, long synaps
 {
 }
 
-DictionaryDatum
+Dictionary
 ConnectionID::get_dict() const
 {
-  DictionaryDatum dict( new Dictionary );
+  Dictionary dict;
 
   // The node ID of the presynaptic node
-  def< long >( dict, nest::names::source, source_node_id_ );
+  dict[ nest::names::source ] = source_node_id_;
   // The node ID of the postsynaptic node
-  def< long >( dict, nest::names::target, target_node_id_ );
+  dict[ nest::names::target ] = target_node_id_;
   // The id of the synapse model
-  def< long >( dict, nest::names::synapse_modelid, synapse_modelid_ );
+  dict[ nest::names::synapse_modelid ] = synapse_modelid_;
   // The thread of the postsynaptic node
-  def< long >( dict, nest::names::target_thread, target_thread_ );
+  dict[ nest::names::target_thread ] = target_thread_;
   // The index in the list
-  def< long >( dict, nest::names::port, port_ );
+  dict[ nest::names::port ] = port_;
 
   return dict;
-}
-
-ArrayDatum
-ConnectionID::to_ArrayDatum() const
-{
-  ArrayDatum ad;
-  ad.push_back( new IntegerDatum( source_node_id_ ) );
-  ad.push_back( new IntegerDatum( target_node_id_ ) );
-  ad.push_back( new IntegerDatum( target_thread_ ) );
-  ad.push_back( new IntegerDatum( synapse_modelid_ ) );
-  ad.push_back( new IntegerDatum( port_ ) );
-  return ad;
 }
 
 bool

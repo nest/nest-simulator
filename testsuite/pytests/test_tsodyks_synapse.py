@@ -57,7 +57,7 @@ class TestTsodyksSynapse:
         nest.ResetKernel()
         nest.resolution = h
 
-        sg = nest.Create("spike_generator", {"spike_times": input_train})
+        sg = nest.Create("spike_generator", params={"spike_times": input_train})
         pn = nest.Create("parrot_neuron")
 
         neuron = nest.Create(
@@ -152,7 +152,8 @@ class TestTsodyksSynapse:
             ]
         )
 
-        times_vm_sim = np.vstack([vm.get("events")["times"], vm.get("events")["V_m"]]).T
+        events = vm.events
+        times_vm_sim = np.vstack([events["times"], events["V_m"]]).T
 
         # test uses large atol due to finite precision of reference timeseries
         np.testing.assert_allclose(times_vm_sim, times_vm_expected, atol=1e-5)
@@ -185,7 +186,7 @@ class TestTsodyksSynapse:
         # limits must be set BEFORE connecting any elements
         nest.SetKernelStatus({"resolution": h})
 
-        sg = nest.Create("spike_generator", {"spike_times": input_train})
+        sg = nest.Create("spike_generator", params={"spike_times": input_train})
         pn = nest.Create("parrot_neuron")
 
         neuron = nest.Create("iaf_psc_exp_htum")
@@ -276,7 +277,8 @@ class TestTsodyksSynapse:
             ]
         )
 
-        times_vm_sim = np.vstack([vm.get("events")["times"], vm.get("events")["V_m"]]).T
+        events = vm.events
+        times_vm_sim = np.vstack([events["times"], events["V_m"]]).T
 
         # test uses large atol due to finite precision of reference timeseries
         np.testing.assert_allclose(times_vm_sim, times_vm_expected, atol=1e-5)

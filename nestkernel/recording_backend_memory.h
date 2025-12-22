@@ -118,13 +118,13 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const RecordingDevice& device, const Dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) override;
 
   void prepare() override;
 
@@ -138,22 +138,22 @@ public:
 
   void post_step_hook() override;
 
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( Dictionary& ) const override;
 
-  void check_device_status( const DictionaryDatum& ) const override;
-  void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
+  void check_device_status( const Dictionary& ) const override;
+  void get_device_defaults( Dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, Dictionary& ) const override;
 
 private:
   struct DeviceData
   {
     DeviceData();
-    void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
+    void set_value_names( const std::vector< std::string >&, const std::vector< std::string >& );
     void push_back( const Event&, const std::vector< double >&, const std::vector< long >& );
-    void get_status( DictionaryDatum& ) const;
-    void set_status( const DictionaryDatum& );
+    void get_status( Dictionary& ) const;
+    void set_status( const Dictionary& );
 
   private:
     void clear();
@@ -161,8 +161,8 @@ private:
     std::vector< double > times_ms_;                     //!< times of registered events in ms
     std::vector< long > times_steps_;                    //!< times of registered events in steps
     std::vector< double > times_offset_;                 //!< offsets of registered events if time_in_steps_
-    std::vector< Name > double_value_names_;             //!< names for values of type double
-    std::vector< Name > long_value_names_;               //!< names for values of type long
+    std::vector< std::string > double_value_names_;      //!< names for values of type double
+    std::vector< std::string > long_value_names_;        //!< names for values of type long
     std::vector< std::vector< double > > double_values_; //!< recorded values of type double, one vector per value
     std::vector< std::vector< long > > long_values_;     //!< recorded values of type long, one vector per value
     bool time_in_steps_;                                 //!< Should time be recorded in steps (ms if false)

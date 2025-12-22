@@ -30,7 +30,7 @@ nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
   , P_()
-  , backend_params_( new Dictionary )
+  , backend_params_()
 {
 }
 
@@ -38,7 +38,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
   , P_( rd.P_ )
-  , backend_params_( new Dictionary( *rd.backend_params_ ) )
+  , backend_params_( rd.backend_params_ )
 {
 }
 
@@ -49,8 +49,8 @@ nest::RecordingDevice::set_initialized_()
 }
 
 void
-nest::RecordingDevice::pre_run_hook( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingDevice::pre_run_hook( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   Device::pre_run_hook();
   kernel().io_manager.set_recording_value_names( P_.record_to_, *this, double_value_names, long_value_names );
@@ -69,19 +69,19 @@ nest::RecordingDevice::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingDevice::Parameters_::get( DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::label ] = label_;
-  ( *d )[ names::record_to ] = LiteralDatum( record_to_ );
+  d[ names::label ] = label_;
+  d[ names::record_to ] = record_to_;
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
+nest::RecordingDevice::Parameters_::set( const Dictionary& d )
 {
-  updateValue< std::string >( d, names::label, label_ );
+  d.update_value( names::label, label_ );
 
   std::string record_to;
-  if ( updateValue< std::string >( d, names::record_to, record_to ) )
+  if ( d.update_value( names::record_to, record_to ) )
   {
     if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
@@ -99,18 +99,19 @@ nest::RecordingDevice::State_::State_()
 }
 
 void
-nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
+nest::RecordingDevice::State_::get( Dictionary& d ) const
 {
   size_t n_events = 0;
-  updateValue< long >( d, names::n_events, n_events );
-  ( *d )[ names::n_events ] = n_events + n_events_;
+  d.update_value( names::n_events, n_events );
+  d[ names::n_events ] = n_events + n_events_;
 }
 
 void
-nest::RecordingDevice::State_::set( const DictionaryDatum& d )
+nest::RecordingDevice::State_::set( const Dictionary& d )
 {
-  size_t n_events = 0;
-  if ( updateValue< long >( d, names::n_events, n_events ) )
+  long n_events = 0;
+
+  if ( d.update_value( names::n_events, n_events ) )
   {
     if ( n_events != 0 )
     {
@@ -122,7 +123,7 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingDevice::set_status( const DictionaryDatum& d )
+nest::RecordingDevice::set_status( const Dictionary& d )
 {
   if ( kernel().simulation_manager.has_been_prepared() )
   {
@@ -139,27 +140,27 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
+    Dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
-    for ( auto kv_pair = d->begin(); kv_pair != d->end(); ++kv_pair )
+    for ( auto& [ key, entry ] : d )
     {
-      if ( not kv_pair->second.accessed() )
+      if ( not d.has_been_accessed( key ) )
       {
-        ( *backend_params )[ kv_pair->first ] = kv_pair->second;
+        backend_params[ key ] = entry.item;
       }
     }
 
     kernel().io_manager.check_recording_backend_device_status( ptmp.record_to_, backend_params );
 
     // cache all properties accessed by the backend in private member
-    backend_params_->clear();
-    for ( auto kv_pair = backend_params->begin(); kv_pair != backend_params->end(); ++kv_pair )
+    backend_params_.clear();
+    for ( auto& [ key, entry ] : backend_params )
     {
-      if ( kv_pair->second.accessed() )
+      if ( backend_params.has_been_accessed( key ) )
       {
-        ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
-        d->lookup( kv_pair->first ).set_access_flag();
+        backend_params_[ key ] = entry.item;
+        d.mark_as_accessed( key );
       }
     }
   }
@@ -174,14 +175,14 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingDevice::get_status( DictionaryDatum& d ) const
+nest::RecordingDevice::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
   Device::get_status( d );
 
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
+  d[ names::element_type ] = names::recorder;
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
@@ -189,9 +190,9 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
     kernel().io_manager.get_recording_backend_device_defaults( P_.record_to_, d );
 
     // then overwrite with cached parameters
-    for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
+    for ( const auto& [ key, entry ] : backend_params_ )
     {
-      ( *d )[ kv_pair->first ] = kv_pair->second;
+      d[ key ] = entry.item;
     }
   }
   else

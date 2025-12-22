@@ -23,8 +23,8 @@
 #ifndef WEIGHT_OPTIMIZER_H
 #define WEIGHT_OPTIMIZER_H
 
-// Includes from sli
-#include "dictdatum.h"
+// nestkernel
+#include "dictionary.h"
 
 namespace nest
 {
@@ -175,10 +175,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update parameters in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Clone constructor.
   virtual WeightOptimizerCommonProperties* clone() const = 0;
@@ -259,10 +259,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Return optimized weight based on current weight.
   double optimized_weight( const WeightOptimizerCommonProperties& cp,
@@ -349,8 +349,8 @@ public:
   //! Assignment operator.
   WeightOptimizerAdam& operator=( const WeightOptimizerAdam& ) = delete;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
@@ -386,8 +386,8 @@ public:
   WeightOptimizerCommonProperties* clone() const override;
   WeightOptimizer* get_optimizer() const override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   std::string
   get_name() const override

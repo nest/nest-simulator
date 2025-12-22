@@ -49,8 +49,6 @@
 #include "spike_data.h"
 #include "target_data.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -68,8 +66,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI
@@ -122,7 +120,7 @@ public:
 
   // gather all send_buffer vectors on other mpi process to recv_buffer
   // vector
-  void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
+  void communicate( std::vector< size_t >& send_buffer, std::vector< size_t >& recv_buffer );
 
   /**
    * communicate (on-grid) if compiled without MPI

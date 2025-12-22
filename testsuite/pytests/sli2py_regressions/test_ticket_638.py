@@ -65,5 +65,5 @@ def test_ticket_638_precise_models_reject_zero_refractory(model):
 
     nest.ResetKernel()
 
-    with pytest.raises(nest.kernel.NESTError, match="Refractory time must be at least one time step"):
+    with pytest.raises(nest.NESTErrors.BadProperty, match="Refractory time must be at least one time step"):
         nest.Create(model, params={"t_ref": 0.0})

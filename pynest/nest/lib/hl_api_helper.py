@@ -32,8 +32,9 @@ import textwrap
 import warnings
 from string import Template
 
-from .. import pynestkernel as kernel
-from ..ll_api import sli_func, spp, sps, sr
+import nest
+
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     "broadcast",
@@ -42,10 +43,6 @@ __all__ = [
     "get_parameters_hierarchical_addressing",
     "get_wrapped_text",
     "is_iterable",
-    "is_literal",
-    "is_sequence_of_connections",
-    "is_sequence_of_node_ids",
-    "is_string",
     "load_help",
     "model_deprecation_warning",
     "restructure_data",
@@ -173,38 +170,6 @@ def stringify_path(filepath):
     return filepath
 
 
-def is_literal(obj):
-    """Check whether obj is a "literal": a unicode string or SLI literal
-
-    Parameters
-    ----------
-    obj : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if obj is a "literal"
-    """
-    return isinstance(obj, (str, kernel.SLILiteral))
-
-
-def is_string(obj):
-    """Check whether obj is a unicode string
-
-    Parameters
-    ----------
-    obj : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if obj is a unicode string
-    """
-    return isinstance(obj, str)
-
-
 def is_iterable(seq):
     """Return True if the given object is an iterable, False otherwise.
 
@@ -227,9 +192,8 @@ def is_iterable(seq):
     return True
 
 
-def is_sequence_of_connections(seq):
-    """Checks whether low-level API accepts seq as a sequence of
-    connections.
+def is_iterable_not_str(seq):
+    """Return True if the given object is a non-string iterable, False otherwise.
 
     Parameters
     ----------
@@ -239,35 +203,10 @@ def is_sequence_of_connections(seq):
     Returns
     -------
     bool:
-        True if object is an iterable of dictionaries or
-        subscriptables of CONN_LEN
+        True if object is an iterable
     """
 
-    try:
-        cnn = next(iter(seq))
-        return isinstance(cnn, dict) or len(cnn) == kernel.CONN_LEN
-    except TypeError:
-        pass
-
-    return False
-
-
-def is_sequence_of_node_ids(seq):
-    """Checks whether the argument is a potentially valid sequence of
-    node IDs (non-negative integers).
-
-    Parameters
-    ----------
-    seq : object
-        Object to check
-
-    Returns
-    -------
-    bool:
-        True if object is a potentially valid sequence of node IDs
-    """
-
-    return all(isinstance(n, int) and n >= 0 for n in seq)
+    return not isinstance(seq, str) and is_iterable(seq)
 
 
 def broadcast(item, length, allowed_types, name="item"):
@@ -362,7 +301,7 @@ def get_help_fname(obj):
         File name of the help text for obj
     """
 
-    docdir = sli_func("statusdict/prgdocdir ::")
+    docdir = nestkernel.llapi_get_kernel_status()["build_info"]["docdir"]
     help_fname = os.path.join(docdir, "html", "models", f"{obj}.rst")
 
     if os.path.isfile(help_fname):
@@ -459,7 +398,8 @@ def restructure_data(result, keys):
     -------
     int, list or dict
     """
-    if is_literal(keys):
+
+    if isinstance(keys, str):
         if len(result) != 1:
             all_keys = sorted({key for result_dict in result for key in result_dict})
             final_result = []
@@ -517,17 +457,10 @@ def get_parameters(nc, param):
         param is a list of string so a dictionary is returned
     """
     # param is single literal
-    if is_literal(param):
-        cmd = "/{} get".format(param)
-        sps(nc._datum)
-        try:
-            sr(cmd)
-            result = spp()
-        except kernel.NESTError:
-            result = nc.get()[param]  # If the NodeCollection is a composite.
-    # param is array of strings
+    if isinstance(param, str):
+        result = nestkernel.llapi_get_nc_status(nc._datum, param)
     elif is_iterable(param):
-        result = {param_name: nc.get(param_name) for param_name in param}
+        result = {param_name: get_parameters(nc, param_name) for param_name in param}
     else:
         raise TypeError("Params should be either a string or an iterable")
 
@@ -561,7 +494,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     # Right now, NEST only allows get(arg0, arg1) for hierarchical
     # addressing, where arg0 must be a string and arg1 can be string
     # or list of strings.
-    if is_literal(params[0]):
+    if isinstance(params[0], str):
         value_list = nc.get(params[0])
         if not isinstance(value_list, tuple):
             value_list = (value_list,)
@@ -570,7 +503,7 @@ def get_parameters_hierarchical_addressing(nc, params):
 
     result = restructure_data(value_list, None)
 
-    if is_literal(params[-1]):
+    if isinstance(params[-1], str):
         result = result[params[-1]]
     else:
         result = {key: result[key] for key in params[-1]}
@@ -595,10 +528,9 @@ class SuppressedDeprecationWarning:
                       for which to suppress deprecation warnings
         """
 
-        self._no_dep_funcs = no_dep_funcs if not is_string(no_dep_funcs) else (no_dep_funcs,)
+        self._no_dep_funcs = no_dep_funcs if not isinstance(no_dep_funcs, str) else (no_dep_funcs,)
         self._deprecation_status = {}
-        sr("verbosity")  # Use sli-version as we cannon import from info because of cirular inclusion problem
-        self._verbosity_level = spp()
+        self._verbosity_level = nest.verbosity
 
     def __enter__(self):
         for func_name in self._no_dep_funcs:
@@ -606,13 +538,12 @@ class SuppressedDeprecationWarning:
             _deprecation_warning[func_name]["deprecation_issued"] = True
 
             # Suppress only if verbosity level is deprecated or lower
-            if self._verbosity_level <= sli_func("M_DEPRECATED"):
-                # Use sli-version as we cannon import from info because of cirular inclusion problem
-                sr("{} setverbosity".format(sli_func("M_WARNING")))
+            if self._verbosity_level <= nestkernel.VerbosityLevel.DEPRECATED:
+                nest.verbosity = nestkernel.VerbosityLevel.WARNING
 
     def __exit__(self, *args):
         # Reset the verbosity level and deprecation warning status
-        sr("{} setverbosity".format((self._verbosity_level)))
+        nest.verbosity = self._verbosity_level
 
         for func_name, deprec_dict in self._deprecation_status.items():
             _deprecation_warning[func_name]["deprecation_issued"] = deprec_dict["deprecation_issued"]

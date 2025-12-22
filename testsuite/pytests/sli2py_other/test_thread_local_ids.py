@@ -25,6 +25,7 @@ Test that thread-local IDs are set correctly on multithreaded simulations.
 """
 
 import nest
+import numpy as np
 import pytest
 
 pytestmark = pytest.mark.skipif_missing_threads
@@ -47,7 +48,7 @@ def test_thread_local_ids_after_connect():
         syn_spec={"synapse_model": "static_synapse_hpc"},
     )
 
-    assert nc.thread_local_id == (0, 0, 0, 0)
+    np.testing.assert_array_equal(nc.thread_local_id, (0, 0, 0, 0))
 
 
 def test_thread_local_ids_after_simulate():
@@ -56,4 +57,4 @@ def test_thread_local_ids_after_simulate():
     nc = nest.Create("iaf_psc_alpha", 4)
     nest.Simulate(10.0)
 
-    assert nc.thread_local_id == (0, 0, 0, 0)
+    np.testing.assert_array_equal(nc.thread_local_id, (0, 0, 0, 0))

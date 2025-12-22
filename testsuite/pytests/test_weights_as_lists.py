@@ -28,7 +28,6 @@ import unittest
 import nest
 
 
-@nest.ll_api.check_stack
 class WeightsAsListTestCase(unittest.TestCase):
     """Test weights given as lists"""
 

@@ -70,18 +70,19 @@ def test_ticket_618_tau_parameters_raise_or_behave():
 
         tau_params = {key: 10.0 for key in tau_keys}
 
+        # Do not use pytest.raises here because we may proceed to simulation for some models
         try:
             neuron = nest.Create(model, params=tau_params)
-        except nest.kernel.NESTErrors.BadProperty:
+        except nest.NESTErrors.BadProperty:
             continue
-        except nest.kernel.NESTErrors.TypeMismatch:
+        except nest.NESTErrors.TypeMismatch:
             continue
-        except nest.kernel.NESTErrors.BadParameter:
+        except nest.NESTErrors.BadParameter:
             continue
 
         nest.Simulate(10.0)
 
-        v_m = neuron.get("V_m")
+        v_m = neuron.V_m
 
         if math.isnan(v_m):
             failing_models.append(model)

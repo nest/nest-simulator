@@ -54,7 +54,7 @@ def test_spike_recorder_reset():
     srec.n_events = 0
 
     assert srec.n_events == 0
-    assert srec.events["times"].size == 0
+    assert len(srec.events["times"]) == 0
 
     # simulate more, till 160
     nest.Simulate(55.0)  # spikes 110 .. 160 -> 6 spikes

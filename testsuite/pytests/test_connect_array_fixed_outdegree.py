@@ -28,11 +28,10 @@ import unittest
 
 import nest
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed outdegree and parameter arrays"""
 

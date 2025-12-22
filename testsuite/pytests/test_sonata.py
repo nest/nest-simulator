@@ -22,26 +22,17 @@
 from pathlib import Path
 
 import nest
+import numpy as np
 import pytest
 
 # Skip all tests in this module if no HDF5 or OpenMP threads
 pytestmark = [pytest.mark.skipif_missing_hdf5, pytest.mark.skipif_missing_threads]
 
-# We consider two possible cases:
-# - When running via `make installcheck`, this file is in $INSTALLDIR/share/nest/testsuite/pytests,
-#   while the data is in $INSTALLDIR/share/doc/nest/examples/pynest/sonata_example.
-# - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests,
-#   while the data is in $SOURCEDIR/pynest/examples/sonata_example.
-for relpath in ["../../../doc/nest/examples/pynest", "../../pynest/examples"]:
-    sonata_path = Path(__file__).parent / relpath / "sonata_example" / "300_pointneurons"
-    config = sonata_path / "circuit_config.json"
-    sim_config = sonata_path / "simulation_config.json"
-    have_sonata_files = config.is_file() and sim_config.is_file()
-    if have_sonata_files:
-        break
-else:
-    have_sonata_files = False
-
+# We assume here that NEST is installed
+sonata_path = Path(nest.build_info["docdir"]) / "examples" / "pynest" / "sonata_example" / "300_pointneurons"
+config = sonata_path / "circuit_config.json"
+sim_config = sonata_path / "simulation_config.json"
+have_sonata_files = config.is_file() and sim_config.is_file()
 
 EXPECTED_NUM_NODES = 400  # 300 'internal' + 100 'external'
 EXPECTED_NUM_CONNECTIONS = 48432
@@ -75,6 +66,5 @@ def test_SonataNetwork(num_threads, hyperslab_size):
     srec = nest.Create("spike_recorder")
     nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
-    spike_data = srec.events
-    post_times = spike_data["times"]
+    post_times = srec.events["times"]
     assert post_times.size == EXPECTED_NUM_SPIKES

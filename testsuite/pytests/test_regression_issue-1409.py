@@ -24,10 +24,10 @@ import unittest
 import nest
 import numpy as np
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
     def test_multiple_poisson_generators(self):
         """Invariable number of spikes with multiple poisson generators"""
@@ -41,7 +41,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
         for i in range(num_iterations):
             nest.ResetKernel()
             nest.local_num_threads = local_num_threads
-            nest.set_verbosity("M_WARNING")
+            nest.verbosity = nest.VerbosityLevel.WARNING
             print("num iter {:>5d}/{}".format(i + 1, num_iterations), end="\r")
 
             parrots = nest.Create("parrot_neuron", num_neurons)

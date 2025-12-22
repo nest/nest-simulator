@@ -41,14 +41,12 @@ def test_recorded_times_relative_to_offset():
 
     nest.resolution = 2**-3  # Set to power of two to avoid rounding issues.
     nrn = nest.Create("iaf_psc_alpha")
-    mm = nest.Create(
-        "multimeter",
-        params={
-            "interval": 3.0,  # different from default
-            "offset": 5.0,  # different from default
-            "record_from": ["V_m"],
-        },
-    )
+    mm_params = {
+        "interval": 3.0,  # different from default
+        "offset": 5.0,  # different from default
+        "record_from": ["V_m"],
+    }
+    mm = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm, nrn)
     nest.Simulate(15.0)
@@ -68,17 +66,15 @@ def test_correct_data_logger_initialization():
 
     # Create and connect one multimeter and simulate
     nrn = nest.Create("iaf_psc_alpha")
-    mm1 = nest.Create(
-        "multimeter", params={"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
-    )
+    mm1_params = {"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    mm1 = nest.Create("multimeter", params=mm1_params)
 
     nest.Connect(mm1, nrn)
     nest.Simulate(10.0)
 
     # Create and connect a second multimeter then simulate further
-    mm2 = nest.Create(
-        "multimeter", params={"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
-    )
+    mm2_params = {"start": 20.0, "stop": 30.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    mm2 = nest.Create("multimeter", params=mm2_params)
 
     nest.Connect(mm2, nrn)
     nest.Simulate(20.0)
@@ -101,7 +97,7 @@ def test_offset_cannot_be_changed_after_connect():
     mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         mm.offset = 5.0
 
 
@@ -121,9 +117,8 @@ def test_offset_wrt_origin_start_stop():
 
     # Create and connect one multimeter and simulate
     nrn = nest.Create("iaf_psc_exp")
-    mm = nest.Create(
-        "multimeter", params={"start": 3.0, "stop": 15.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
-    )
+    mm_params = {"start": 3.0, "stop": 15.0, "interval": 3.0, "offset": 5.0, "record_from": ["V_m"]}
+    mm = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm, nrn)
     nest.Simulate(20.0)
@@ -159,14 +154,14 @@ def test_creation_after_initial_simulation():
 
     # Create and connect one multimeter and simulate
     nrn = nest.Create("iaf_psc_exp")
-    mm1 = nest.Create("multimeter", mm_params)
+    mm1 = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm1, nrn, conn_spec, syn_spec)
 
     nest.Simulate(10.0)
 
     # Create and connect a second multimeter then simulate further
-    mm2 = nest.Create("multimeter", mm_params)
+    mm2 = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm2, nrn, conn_spec, syn_spec)
     nest.Simulate(20.0)
@@ -204,7 +199,7 @@ def test_offset_after_initial_simulation():
     conn_spec = {"rule": "all_to_all"}
     syn_spec = {"delay": 0.1}
 
-    mm = nest.Create("multimeter", mm_params)
+    mm = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm, nrn, conn_spec, syn_spec)
     nest.Simulate(sim_time)
@@ -239,7 +234,7 @@ def test_initial_simulation_longer_than_offset():
     conn_spec = {"rule": "all_to_all"}
     syn_spec = {"delay": 0.1}
 
-    mm = nest.Create("multimeter", mm_params)
+    mm = nest.Create("multimeter", params=mm_params)
 
     nest.Connect(mm, nrn, conn_spec, syn_spec)
     nest.Simulate(sim_time)

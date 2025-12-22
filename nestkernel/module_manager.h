@@ -33,9 +33,6 @@
 // Includes from nestkernel:
 #include "manager_interface.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 // DynamicLoaderModule defined only if libltdl is available
 #ifdef HAVE_LIBLTDL
 #include <ltdl.h>
@@ -58,8 +55,8 @@ public:
   //! To be called after change of number of threads to re-register components provided by modules
   void reinitialize_dynamic_modules();
 
-  void get_status( DictionaryDatum& ) override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) override;
+  void set_status( const Dictionary& ) override;
 
   void install( const std::string& name );
 
@@ -112,11 +109,11 @@ public:
   }
 
   void
-  get_status( DictionaryDatum& ) override
+  get_status( Dictionary& ) override
   {
   }
   void
-  set_status( const DictionaryDatum& ) override
+  set_status( const Dictionary& ) override
   {
   }
 

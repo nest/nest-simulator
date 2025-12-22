@@ -307,6 +307,12 @@ public:
   iterator insert( iterator, const value_type& val );
 
   /**
+   * STL container compatible push_back method
+   */
+  void push_back( const value_type& val );
+
+
+  /**
    * @returns member nodes in ntree and their position.
    */
   std::vector< value_type > get_nodes();
@@ -486,6 +492,15 @@ Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Posit
   return insert( val.first, val.second );
 }
 
+template < int D, class T, int max_capacity, int max_depth >
+void
+Ntree< D, T, max_capacity, max_depth >::push_back( const value_type& val )
+{
+  insert( val );
+}
+
+
 } // namespace nest
+
 
 #endif

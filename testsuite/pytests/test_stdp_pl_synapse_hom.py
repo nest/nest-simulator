@@ -37,7 +37,6 @@ if DEBUG_PLOTS:
         DEBUG_PLOTS = False
 
 
-@nest.ll_api.check_stack
 class TestSTDPPlSynapse:
     """
     Compare the STDP power-law synaptic plasticity model against a self-contained Python reference.
@@ -131,7 +130,7 @@ class TestSTDPPlSynapse:
         This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the
         resulting weight established by STDP.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
@@ -199,12 +198,13 @@ class TestSTDPPlSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys="events")[0]
-        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
+        all_spikes = spike_recorder.events["times"]
+        senders = spike_recorder.events["senders"]
+        pre_spikes = all_spikes[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes[senders == postsynaptic_neuron.tolist()[0]]
 
-        t_hist = nest.GetStatus(wr, "events")[0]["times"]
-        weight = nest.GetStatus(wr, "events")[0]["weights"]
+        t_hist = wr.events["times"]
+        weight = wr.events["weights"]
 
         return pre_spikes, post_spikes, t_hist, weight
 

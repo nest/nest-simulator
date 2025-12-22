@@ -407,8 +407,8 @@ public:
   size_t handles_test_event( LearningSignalConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -502,10 +502,10 @@ private:
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -518,7 +518,7 @@ private:
     double v_m_;
 
     //! Number of remaining refractory steps.
-    int r_;
+    long r_;
 
     //! Count of spikes arriving during refractory period discounted for decay until end of refractory period.
     double refr_spikes_buffer_;
@@ -542,10 +542,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -580,7 +580,7 @@ private:
     double P_adapt_;
 
     //! Total refractory steps.
-    int RefractoryCounts_;
+    long RefractoryCounts_;
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
@@ -710,15 +710,15 @@ eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t r
 }
 
 inline void
-eprop_iaf_psc_delta_adapt::get_status( DictionaryDatum& d ) const
+eprop_iaf_psc_delta_adapt::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-eprop_iaf_psc_delta_adapt::set_status( const DictionaryDatum& d )
+eprop_iaf_psc_delta_adapt::set_status( const Dictionary& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;

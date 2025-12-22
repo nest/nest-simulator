@@ -227,13 +227,13 @@ def test_node_collection_slice_unsorted_raises():
 
     nc = nest.Create("iaf_psc_alpha", 10)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nc[[6, 5, 4]]
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nc[[5, 4, 6]]
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nc[[5, 4, 6]]
 
 
@@ -263,13 +263,13 @@ def test_node_collection_with_nonunique_nodes_raises():
 
     nc = nest.Create("iaf_psc_alpha", 10)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nc[1:3] + nc[2:5]
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.NodeCollection([2, 2])
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
 
 

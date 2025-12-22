@@ -24,16 +24,9 @@
 #define GRID_MASK_H
 
 // Includes from nestkernel:
+#include "mask.h"
 #include "nest_names.h"
 #include "nest_types.h"
-#include "nestmodule.h"
-
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
-
-// Includes from spatial:
-#include "mask.h"
 #include "position.h"
 
 namespace nest
@@ -51,7 +44,7 @@ public:
    * shape - size in grid coordinates
              (length 2 for 2D layers or length 3 for 3D layers)
    */
-  GridMask( const DictionaryDatum& d );
+  GridMask( const Dictionary& d );
 
   bool
   inside( const std::vector< double >& ) const override
@@ -61,7 +54,7 @@ public:
 
   void set_anchor( const Position< D, int >& );
 
-  DictionaryDatum get_dict() const override;
+  Dictionary get_dict() const override;
 
   GridMask< D >*
   clone() const
@@ -72,7 +65,7 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
   AbstractMask*
   intersect_mask( const AbstractMask& ) const override
@@ -110,9 +103,9 @@ protected:
 };
 
 template < int D >
-GridMask< D >::GridMask( const DictionaryDatum& d )
+GridMask< D >::GridMask( const Dictionary& d )
 {
-  std::vector< long > shape = getValue< std::vector< long > >( d, names::shape );
+  std::vector< long > shape = d.get< std::vector< long > >( names::shape );
 
   if ( D == 2 )
   {
@@ -129,26 +122,26 @@ GridMask< D >::GridMask( const DictionaryDatum& d )
 }
 
 template <>
-inline Name
+inline std::string
 GridMask< 2 >::get_name()
 {
   return names::grid;
 }
 
 template <>
-inline Name
+inline std::string
 GridMask< 3 >::get_name()
 {
   return names::grid3d;
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 GridMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
+  Dictionary d;
+  Dictionary maskd;
+  d[ get_name() ] = maskd;
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
@@ -159,7 +152,7 @@ GridMask< D >::get_dict() const
     long shape_z = lower_right_[ 2 ] - upper_left_[ 2 ];
     shape_dim.push_back( shape_z );
   }
-  def< std::vector< long > >( maskd, names::shape, shape_dim );
+  maskd[ names::shape ] = shape_dim;
 
   return d;
 }

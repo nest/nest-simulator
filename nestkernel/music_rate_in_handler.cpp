@@ -116,7 +116,7 @@ MusicRateInHandler::publish_port()
     published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", port_name_, port_width_ );
-    LOG( M_INFO, "music_rate_in_handler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "music_rate_in_handler::publish_port()", msg.c_str() );
   }
 }
 

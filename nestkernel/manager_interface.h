@@ -26,8 +26,8 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {
@@ -101,7 +101,7 @@ public:
    *
    * @see get_status()
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Retrieve the status of the manager
@@ -115,7 +115,7 @@ public:
    *
    * @see set_status()
    */
-  virtual void get_status( DictionaryDatum& ) = 0;
+  virtual void get_status( Dictionary& ) = 0;
 
   virtual void prepare() {};
   virtual void cleanup() {};

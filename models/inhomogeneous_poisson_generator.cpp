@@ -35,18 +35,11 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
-
 void
 nest::register_inhomogeneous_poisson_generator( const std::string& name )
 {
   register_node_model< inhomogeneous_poisson_generator >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -65,19 +58,19 @@ nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::inhomogeneous_poisson_generator::Parameters_::get( Dictionary& d ) const
 {
   const size_t n_rates = rate_times_.size();
-  std::vector< double >* times_ms = new std::vector< double >();
-  times_ms->reserve( n_rates );
+  std::vector< double > times_ms;
+  times_ms.reserve( n_rates );
   for ( size_t n = 0; n < n_rates; ++n )
   {
-    times_ms->push_back( rate_times_[ n ].get_ms() );
+    times_ms.push_back( rate_times_[ n ].get_ms() );
   }
 
-  ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
-  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
+  d[ names::rate_times ] = times_ms;
+  d[ names::rate_values ] = rate_values_;
+  d[ names::allow_offgrid_times ] = allow_offgrid_times_;
 }
 
 void
@@ -117,16 +110,16 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+nest::inhomogeneous_poisson_generator::Parameters_::set( const Dictionary& d, Buffers_& b, Node* )
 {
-  const bool times = d->known( names::rate_times );
-  const bool rates = updateValue< std::vector< double > >( d, names::rate_values, rate_values_ );
+  const bool times = d.known( names::rate_times );
+  const bool rates = d.update_value( names::rate_values, rate_values_ );
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
-  if ( d->known( names::allow_offgrid_times ) )
+  if ( d.known( names::allow_offgrid_times ) )
   {
-    const bool flag_offgrid = d->lookup( names::allow_offgrid_times );
+    const auto flag_offgrid = d.get< bool >( names::allow_offgrid_times );
 
     if ( flag_offgrid != allow_offgrid_times_ and not( times or rate_times_.empty() ) )
     {
@@ -151,7 +144,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
     return;
   }
 
-  const std::vector< double > d_times = getValue< std::vector< double > >( d->lookup( names::rate_times ) );
+  const auto d_times = d.get< std::vector< double > >( names::rate_times );
 
   if ( d_times.empty() )
   {
@@ -306,7 +299,7 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
       throw BadParameterValue(
         "The size of the data for the inhomogeneous_poisson_generator needs to be even [(time,rate) pairs]" );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    Dictionary d;
     std::vector< double > times_ms;
     std::vector< double > rate_values;
     const size_t n_spikes = P_.rate_times_.size();
@@ -320,8 +313,8 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
       times_ms.push_back( rate_time_update[ n * 2 ] );
       rate_values.push_back( rate_time_update[ n * 2 + 1 ] );
     }
-    ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
-    ( *d )[ names::rate_values ] = DoubleVectorDatum( rate_values );
+    d[ names::rate_times ] = times_ms;
+    d[ names::rate_values ] = rate_values;
 
     ptmp.set( d, B_, this );
   }

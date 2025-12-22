@@ -47,7 +47,7 @@ nest::RecordingBackendMemory::finalize()
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -77,8 +77,8 @@ nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -113,21 +113,21 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendMemory::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd;
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendMemory::get_device_defaults( Dictionary& params ) const
 {
   DeviceData dd;
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -152,13 +152,13 @@ nest::RecordingBackendMemory::post_step_hook()
 }
 
 void
-nest::RecordingBackendMemory::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+nest::RecordingBackendMemory::get_status( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::set_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+nest::RecordingBackendMemory::set_status( const Dictionary& )
 {
   // nothing to do
 }
@@ -177,8 +177,8 @@ nest::RecordingBackendMemory::DeviceData::DeviceData()
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   double_value_names_ = double_value_names;
   double_values_.resize( double_value_names.size() );
@@ -215,56 +215,52 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendMemory::DeviceData::get_status( Dictionary& d ) const
 {
-  DictionaryDatum events;
+  Dictionary events;
 
-  if ( not d->known( names::events ) )
+  if ( d.known( names::events ) )
   {
-    events = DictionaryDatum( new Dictionary );
-    ( *d )[ names::events ] = events;
-  }
-  else
-  {
-    events = getValue< DictionaryDatum >( d, names::events );
+    events = d.get< Dictionary >( names::events );
   }
 
-  initialize_property_intvector( events, names::senders );
-  append_property( events, names::senders, senders_ );
+  auto& senders = events.get_vector< int >( names::senders );
+  senders.insert( senders.end(), senders_.begin(), senders_.end() );
 
   if ( time_in_steps_ )
   {
-    initialize_property_intvector( events, names::times );
-    append_property( events, names::times, times_steps_ );
+    auto& times = events.get_vector< int >( names::times );
+    times.insert( times.end(), times_steps_.begin(), times_steps_.end() );
 
-    initialize_property_doublevector( events, names::offsets );
-    append_property( events, names::offsets, times_offset_ );
+    auto& offsets = events.get_vector< double >( names::offsets );
+    offsets.insert( offsets.end(), times_offset_.begin(), times_offset_.end() );
   }
   else
   {
-    initialize_property_doublevector( events, names::times );
-    append_property( events, names::times, times_ms_ );
+    auto& times = events.get_vector< double >( names::times );
+    times.insert( times.end(), times_ms_.begin(), times_ms_.end() );
   }
 
   for ( size_t i = 0; i < double_values_.size(); ++i )
   {
-    initialize_property_doublevector( events, double_value_names_[ i ] );
-    append_property( events, double_value_names_[ i ], double_values_[ i ] );
+    auto& double_name = events.get_vector< double >( double_value_names_[ i ] );
+    double_name.insert( double_name.end(), double_values_[ i ].begin(), double_values_[ i ].end() );
   }
   for ( size_t i = 0; i < long_values_.size(); ++i )
   {
-    initialize_property_intvector( events, long_value_names_[ i ] );
-    append_property( events, long_value_names_[ i ], long_values_[ i ] );
+    auto& long_name = events.get_vector< int >( long_value_names_[ i ] );
+    long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  d[ names::events ] = events;
+  d[ names::time_in_steps ] = time_in_steps_;
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
+nest::RecordingBackendMemory::DeviceData::set_status( const Dictionary& d )
 {
   bool time_in_steps = false;
-  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
+  if ( d.update_value( names::time_in_steps, time_in_steps ) )
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {
@@ -274,8 +270,8 @@ nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
     time_in_steps_ = time_in_steps;
   }
 
-  size_t n_events = 1;
-  if ( updateValue< long >( d, names::n_events, n_events ) and n_events == 0 )
+  long n_events = 1;
+  if ( d.update_value( names::n_events, n_events ) and n_events == 0 )
   {
     clear();
   }

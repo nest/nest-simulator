@@ -51,7 +51,7 @@ class TestBinary:
         sg = nest.Create("spike_generator")
         sg.spike_times = [10.0, 10.0, 15.0]
         nest.Connect(sg, nrn)
-        multi = nest.Create("multimeter", {"record_from": ["h"]})
+        multi = nest.Create("multimeter", params={"record_from": ["h"]})
         nest.Connect(multi, nrn)
 
         nest.Simulate(20.0)
@@ -102,11 +102,11 @@ class TestBinary:
         sr = nest.Create("spike_recorder")
 
         # check if connecting a binary to a spiking neuron throws exception
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(binary, spiking)
 
         # check if connecting a spiking neuron to a binary throws exception
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(spiking, binary)
 
         # check if connecting a binary or a spiking neuron to general device works
@@ -125,5 +125,5 @@ class TestBinary:
 
         nest.Connect(ginzburg, mcculloch)
 
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Simulate(100.0)

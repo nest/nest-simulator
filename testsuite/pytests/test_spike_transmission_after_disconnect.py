@@ -35,10 +35,10 @@ def test_spike_transmission_after_disconnect():
     c[::3].disconnect()
 
     # Add spike generator to drive
-    g = nest.Create("spike_generator", params={"spike_times": [1]})
+    g = nest.Create("spike_generator", params={"spike_times": [1.0]})
     nest.Connect(g, n)
 
     # Simulate long enough for spikes to be delivered, but not too long
     # since we otherwise will be buried by exponential growth in number
     # of spikes.
-    nest.Simulate(3)
+    nest.Simulate(3.0)

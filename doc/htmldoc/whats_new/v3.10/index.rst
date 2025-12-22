@@ -1,0 +1,164 @@
+.. _release_3.10:
+
+What's new in NEST 3.10
+=======================
+
+This page contains a summary of important breaking and non-breaking
+changes from NEST 3.9 to NEST 3.10.
+
+If you transition from a NEST 2.x version, please see our extensive
+:ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the
+:ref:`list of updates for previous releases in the 3.x series <whats_new>`.
+
+The release of 3.10 brought a lot of changes with XXX PRs
+including YYY bug fixes and ZZZ enhancements as detailed in the `release notes
+on GitHub <https://github.com/nest/nest-simulator/releases/>`_. Here are some
+of the more interesting developments that happened:
+
+Removal of the SLI interpreter
+------------------------------
+
+The SLI interpreter was the original user interface of NEST since its beginnings as SYNOD
+in the mid-1990s. When we added a Python user interface in the late 2000s, we built it on
+top of the SLI interface. Today, all practical use of NEST appears to be via the Python
+interface and SLI is only used as an intermediate layer. Therefore, we decided to eliminate
+this layer and to directly interface PyNEST with the NEST simulator kernel. All SLI-related
+code is therefore removed from NEST.
+
+This has been a huge effort over several years. The original design and implementation of the
+new interface was done by Jochen Eppler and Håkon Mørk. Many developers through several hackathons
+contributed to porting all SLI-based tests to Python to ensure we did not break anything in
+the process.
+
+This has been a huge change for us and we would be very interested in hearing about your experiences!
+
+
+What does this mean for you as a NEST user?
+...........................................
+
+Fortunately, almost nothing, except that you can now `pip install nest-simulator` and that scripts might
+construct your networks slightly faster.
+
+Verbosity settings
+++++++++++++++++++
+
+If you have implemented your models using PyNEST, the only change you will need to make is to replace
+
+.. code-block:: python
+
+   nest.set_verbosity("M_WARNING")
+
+with
+
+.. code-block:: python
+
+   nest.verbosity = nest.VerbosityLevel.WARNING
+
+Configuration information
++++++++++++++++++++++++++
+
+Various information about NEST capabilities and properties that were previously accessible
+in varied ways are now collected in the `nest.build_info` dictionary:
+
+.. code-block::
+
+   {'built':    'Dec  4 2025 05:31:32',
+    'datadir':    '<path>',
+    'docdir':    '<path>',
+    'exitcode': 0,
+    'have_boost': True,
+    'have_gsl': True,
+    'have_hdf5': True,
+    'have_libneurosim': False,
+    'have_mpi': True,
+    'have_music': False,
+    'have_sionlib': False,
+    'have_threads': True,
+    'host':    'arm64-apple-darwin',
+    'hostcpu':    'arm64',
+    'hostos':    'darwin',
+    'hostvendor':    'apple',
+    'mpiexec':    '/opt/homebrew/bin/mpiexec',
+    'mpiexec_max_numprocs':    '12',
+    'mpiexec_numproc_flag':    '-n',
+    'mpiexec_postflags':    '',
+    'mpiexec_preflags':    '',
+    'ndebug': False,
+    'prefix':    '<path>',
+    'test_exitcodes': {'abort': 134,
+     'exception': 125,
+     'fatal': 127,
+     'scripterror': 126,
+     'segfault': 139,
+     'skipped': 200,
+     'skipped_have_mpi': 202,
+     'skipped_no_gsl': 204,
+     'skipped_no_mpi': 201,
+     'skipped_no_music': 205,
+     'skipped_no_threading': 203,
+     'success': 0,
+     'unknownerror': 10,
+     'userabort': 15},
+    'threads_model':    'openmp',
+    'version':    '3.9.0-post0.dev0'}
+
+
+Deprecated functions
+++++++++++++++++++++
+
+We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
+
+.. code-block:: python
+
+   nest.GetStatus(node_coll)
+
+with
+
+.. code-block:: python
+
+   node_coll.get()
+
+and correspondingly for connection collections and use `nest.get()/set()` for kernel status parameters.
+
+No more SLI functions
++++++++++++++++++++++
+
+If you have used direct interaction with SLI from the Python level through ``sli_func()``, ``sli_run()``
+or ``sr()`` you will need to now use the direct interface. Please get in touch via the NEST User
+mailing list for advice.
+
+If you still have your network models implemented in SLI, it is time now to migrate to PyNEST.
+
+
+
+What does this mean for you as a developer?
+...........................................
+
+The key change from a developer perspective are that the entire SLI interpreter code has been
+removed, noticeably reducing compile times. We therefore no longer have the ``SLIModule`` concept.
+Also, `Dictionary`, `Datum`, and `Token` are a matter of the past. Instead, we now
+have class ``Dictionary`` based directly on ``std::map`` using ``boost::any`` to store entries of
+arbitrary type. Instead of our own ``lockPTR``, we now use ``std::unique_ptr`` to manage objects with
+reference counting. Where changes are necessary in code for neuron or synapse models, they will
+likely be limited to slightly different notation in the ``set()/get()`` methods to support the new
+``Dictionary`` class.
+
+To test whether certain errors are raised when writing tests, instead of
+
+.. code-block:: python
+
+   with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+
+you now have
+
+.. code-block:: python
+
+   with pytest.raises(nest.NESTErrors.IllegalConnection):
+
+
+Model improvements
+------------------
+
+
+Documentation additions
+-----------------------

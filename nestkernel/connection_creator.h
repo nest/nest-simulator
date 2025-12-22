@@ -28,11 +28,9 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_names.h"
-#include "nestmodule.h"
-
-// Includes from spatial:
 #include "mask.h"
+#include "nest_names.h"
+#include "ntree.h"
 #include "position.h"
 
 namespace nest
@@ -93,7 +91,7 @@ public:
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
    */
-  ConnectionCreator( DictionaryDatum dict );
+  ConnectionCreator( const Dictionary& dict );
 
   /**
    * Connect two layers.
@@ -133,7 +131,7 @@ private:
     std::vector< std::pair< Position< D >, size_t > >* positions_;
   };
 
-  void extract_params_( const DictionaryDatum& dict_datum, std::vector< DictionaryDatum >& params );
+  void extract_params_( const Dictionary&, std::vector< Dictionary >& );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
@@ -179,13 +177,13 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  std::shared_ptr< Parameter > number_of_connections_;
-  std::shared_ptr< AbstractMask > mask_;
-  std::shared_ptr< Parameter > kernel_;
+  ParameterPTR number_of_connections_;
+  MaskPTR mask_;
+  ParameterPTR kernel_;
   std::vector< size_t > synapse_model_;
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
-  std::vector< std::shared_ptr< Parameter > > weight_;
-  std::vector< std::shared_ptr< Parameter > > delay_;
+  std::vector< std::vector< Dictionary > > param_dicts_;
+  std::vector< ParameterPTR > weight_;
+  std::vector< ParameterPTR > delay_;
 };
 
 } // namespace nest

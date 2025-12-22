@@ -41,11 +41,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -87,41 +82,41 @@ nest::rate_neuron_opn< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::Parameters_::get( DictionaryDatum& d ) const
+nest::rate_neuron_opn< TNonlinearities >::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::sigma, sigma_ );
-  def< double >( d, names::mu, mu_ );
-  def< bool >( d, names::linear_summation, linear_summation_ );
-  def< bool >( d, names::mult_coupling, mult_coupling_ );
+  d[ names::tau ] = tau_;
+  d[ names::sigma ] = sigma_;
+  d[ names::mu ] = mu_;
+  d[ names::linear_summation ] = linear_summation_;
+  d[ names::mult_coupling ] = mult_coupling_;
 
   // Also allow old names (to not break old scripts)
-  def< double >( d, names::std, sigma_ );
-  def< double >( d, names::mean, mu_ );
+  d[ names::std ] = sigma_;
+  d[ names::mean ] = mu_;
 }
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::tau, tau_, node );
-  updateValueParam< double >( d, names::mu, mu_, node );
-  updateValueParam< double >( d, names::sigma, sigma_, node );
-  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
-  updateValueParam< bool >( d, names::mult_coupling, mult_coupling_, node );
+  update_value_param( d, names::tau, tau_, node );
+  update_value_param( d, names::mu, mu_, node );
+  update_value_param( d, names::sigma, sigma_, node );
+  update_value_param( d, names::linear_summation, linear_summation_, node );
+  update_value_param( d, names::mult_coupling, mult_coupling_, node );
 
   // Check for old names
-  if ( updateValueParam< double >( d, names::mean, mu_, node ) )
+  if ( update_value_param( d, names::mean, mu_, node ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
   }
 
-  if ( updateValueParam< double >( d, names::std, sigma_, node ) )
+  if ( update_value_param( d, names::std, sigma_, node ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );
@@ -140,18 +135,18 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::State_::get( DictionaryDatum& d ) const
+nest::rate_neuron_opn< TNonlinearities >::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ );             // Rate
-  def< double >( d, names::noise, noise_ );           // Noise
-  def< double >( d, names::noisy_rate, noisy_rate_ ); // Noisy rate
+  d[ names::rate ] = rate_;             // Rate
+  d[ names::noise ] = noise_;           // Noise
+  d[ names::noisy_rate ] = noisy_rate_; // Noisy rate
 }
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_opn< TNonlinearities >::State_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate, rate_, node ); // Rate
 }
 
 template < class TNonlinearities >

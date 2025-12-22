@@ -31,9 +31,6 @@
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
 
@@ -53,7 +50,7 @@ ModuleManager::ModuleManager()
   const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
   if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "ModuleManager::ModuleManager",
       String::compose( "Could not add dynamic module search directory '%1'.", module_dir ) );
   }
@@ -96,18 +93,18 @@ ModuleManager::reinitialize_dynamic_modules()
 }
 
 void
-ModuleManager::get_status( DictionaryDatum& d )
+ModuleManager::get_status( Dictionary& d )
 {
-  ArrayDatum loaded;
+  std::vector< std::string > loaded;
   for ( const auto& [ name, module_info ] : modules_ )
   {
-    loaded.push_back( new LiteralDatum( name ) );
+    loaded.emplace_back( name );
   }
-  ( *d )[ names::modules ] = loaded;
+  d[ names::modules ] = loaded;
 }
 
 void
-ModuleManager::set_status( const DictionaryDatum& d )
+ModuleManager::set_status( const Dictionary& d )
 {
 }
 
@@ -179,7 +176,7 @@ ModuleManager::install( const std::string& name )
   // add the handle to list of loaded modules
   modules_[ name ] = ModuleMapEntry_( hModule, extension );
 
-  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
+  LOG( VerbosityLevel::INFO, "Install", ( "loaded module " + name ).c_str() );
 }
 
 } // namespace nest

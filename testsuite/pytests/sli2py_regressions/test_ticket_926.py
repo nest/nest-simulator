@@ -29,7 +29,7 @@ import pytest
 
 def test_simulation_completes():
     nest.ResetKernel()
-    spike_generator = nest.Create("spike_generator", {"spike_times": [5.0]})
+    spike_generator = nest.Create("spike_generator", params={"spike_times": [5.0]})
 
     parrot_neuron = nest.Create("parrot_neuron")
     iaf_psc_neuron = nest.Create("iaf_psc_alpha")
@@ -38,6 +38,6 @@ def test_simulation_completes():
 
     # original SLI test uses passorfailbutnocrash_or_die; no clear way to check for a segfault in Python bindings,
     # therefore the assertion here is that the simulation completes with the expected error but no 'crash'
-    with pytest.raises(nest.kernel.NESTError, match="No volume transmitter"):
+    with pytest.raises(nest.NESTError, match="No volume transmitter"):
         nest.Connect(parrot_neuron, iaf_psc_neuron, syn_spec="stdp_dopamine_synapse")
         nest.Simulate(10.0)

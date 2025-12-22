@@ -27,10 +27,12 @@
 #include <map>
 
 // Includes from nestkernel:
+#include "generic_factory.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from nestutil:
+#include "dictionary.h"
+
 
 namespace nest
 {
@@ -49,8 +51,8 @@ template < class BaseT >
 class GenericFactory
 {
 public:
-  typedef BaseT* ( *CreatorFunction )( const DictionaryDatum& d );
-  typedef std::map< Name, CreatorFunction > AssocMap;
+  typedef BaseT* ( *CreatorFunction )( const Dictionary& d );
+  typedef std::map< std::string, CreatorFunction > AssocMap;
 
   /**
    * Factory function.
@@ -58,68 +60,68 @@ public:
    * @param d    Dictionary containing parameters for this subtype.
    * @returns dynamically allocated new object.
    */
-  BaseT* create( const Name& name, const DictionaryDatum& d ) const;
+  BaseT* create( const std::string& name, const Dictionary& d ) const;
 
   /**
    * Register a new subtype.
    *
    * The type name must not already exist. The
    * class for the subtype is supplied via the template argument. This
-   * class should have a constructor taking a const DictionaryDatum& as
+   * class should have a constructor taking a const dictionary& as
    * parameter.
    * @param name subtype name.
    * @returns true if subtype was successfully registered.
    */
   template < class T >
-  bool register_subtype( const Name& name );
+  bool register_subtype( const std::string& name );
 
   /**
    * Register a new subtype. The type name must not already exist.
    * @param name    Subtype name.
    * @param creator A factory function creating objects of this subtype
-   *                from a const DictionaryDatum& containing parameters
+   *                from a const dictionary& containing parameters
    * @returns true if mask was successfully registered.
    */
-  bool register_subtype( const Name& name, CreatorFunction creator );
+  bool register_subtype( const std::string& name, CreatorFunction creator );
 
 private:
   template < class T >
-  static BaseT* new_from_dict_( const DictionaryDatum& d );
+  static BaseT* new_from_dict_( const Dictionary& d );
 
   AssocMap associations_;
 };
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
+GenericFactory< BaseT >::create( const std::string& name, const Dictionary& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
   {
     return ( i->second )( d );
   }
-  throw UndefinedName( name.toString() );
+  throw UndefinedName( name );
 }
 
 template < class BaseT >
 template < class T >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name )
+GenericFactory< BaseT >::register_subtype( const std::string& name )
 {
   return register_subtype( name, new_from_dict_< T > );
 }
 
 template < class BaseT >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction creator )
+GenericFactory< BaseT >::register_subtype( const std::string& name, CreatorFunction creator )
 {
-  return associations_.insert( std::pair< Name, CreatorFunction >( name, creator ) ).second;
+  return associations_.insert( std::pair< std::string, CreatorFunction >( name, creator ) ).second;
 }
 
 template < class BaseT >
 template < class T >
 BaseT*
-GenericFactory< BaseT >::new_from_dict_( const DictionaryDatum& d )
+GenericFactory< BaseT >::new_from_dict_( const Dictionary& d )
 {
   return new T( d );
 }

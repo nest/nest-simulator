@@ -124,7 +124,7 @@ class RotatedRectangularMask(unittest.TestCase):
         # Test that an error is raised if we send in a polar angle to a 2D
         # mask.
         maskdict = {"lower_left": [-1.5, -0.5], "upper_right": [1.5, 0.5], "polar_angle": 45.0}
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             mask = nest.CreateMask("rectangular", maskdict)
 
     def test_RotatedBoxMaskByAzimuthAngle(self):

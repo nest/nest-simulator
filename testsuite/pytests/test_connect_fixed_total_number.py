@@ -26,11 +26,10 @@ import nest
 import numpy as np
 import scipy.stats
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
     # specify connection pattern and specific params
     rule = "fixed_total_number"
@@ -57,7 +56,7 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         conn_params["N"] = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except nest.kernel.NESTError:
+        except nest.NESTError:
             got_error = True
         self.assertTrue(got_error)
 

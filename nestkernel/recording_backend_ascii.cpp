@@ -20,6 +20,12 @@
  *
  */
 
+
+#include "recording_backend_ascii.h"
+
+// C++ includes:
+#include <iomanip>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -27,10 +33,6 @@
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
-// includes from sli:
-#include "dictutils.h"
-
-#include "recording_backend_ascii.h"
 
 const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
 
@@ -56,7 +58,7 @@ nest::RecordingBackendASCII::finalize()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -88,8 +90,8 @@ nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 
 void
 nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+  const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -181,33 +183,33 @@ nest::RecordingBackendASCII::prepare()
 }
 
 void
-nest::RecordingBackendASCII::set_status( const DictionaryDatum& )
+nest::RecordingBackendASCII::set_status( const Dictionary& )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
+nest::RecordingBackendASCII::get_status( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendASCII::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendASCII::get_device_defaults( Dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -232,8 +234,8 @@ nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std:
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< std::string >& double_value_names,
+  const std::vector< std::string >& long_value_names )
 {
   double_value_names_ = double_value_names;
   long_value_names_ = long_value_names;
@@ -258,7 +260,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
       "the kernel property overwrite_files to true. To change the name or location of the file, "
       "change the kernel properties data_path or data_prefix, or the device property label.",
       filename );
-    LOG( M_ERROR, "RecordingBackendASCII::enroll()", msg );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::enroll()", msg );
     throw IOError();
   }
   test.close();
@@ -268,7 +270,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   if ( not file_.good() )
   {
     std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
-    LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
 
@@ -323,26 +325,26 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendASCII::DeviceData::get_status( Dictionary& d ) const
 {
-  ( *d )[ names::file_extension ] = file_extension_;
-  ( *d )[ names::precision ] = precision_;
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  d[ names::file_extension ] = file_extension_;
+  d[ names::precision ] = precision_;
+  d[ names::time_in_steps ] = time_in_steps_;
 
   std::string filename = compute_filename_();
-  initialize_property_array( d, names::filenames );
-  append_property( d, names::filenames, filename );
+  d[ names::filenames ] = std::vector< std::string >( { filename } );
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
+nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
 {
-  updateValue< std::string >( d, names::file_extension, file_extension_ );
-  updateValue< long >( d, names::precision, precision_ );
-  updateValue< std::string >( d, names::label, label_ );
+  d.update_value( names::file_extension, file_extension_ );
+  d.update_value( names::precision, precision_ );
+  d.update_value( names::label, label_ );
 
   bool time_in_steps = false;
-  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
+  if ( d.update_value( names::time_in_steps, time_in_steps )
+    and time_in_steps != time_in_steps_ ) // setting to the existing value is not an error
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {

@@ -192,28 +192,27 @@ def do_exec(args, kwargs):
     source_code = kwargs.get("source", "")
     source_cleaned = clean_code(source_code)
 
-    locals_ = globals()
     response = dict()
     if RESTRICTION_DISABLED:
         with Capturing() as stdout:
             globals_ = globals().copy()
             globals_.update(get_modules_from_env())
-            get_or_error(exec)(source_cleaned, globals_, locals_)
+            get_or_error(exec)(source_cleaned, globals_)
         if len(stdout) > 0:
             response["stdout"] = "\n".join(stdout)
     else:
         code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
         globals_ = get_restricted_globals()
         globals_.update(get_modules_from_env())
-        get_or_error(exec)(code, globals_, locals_)
-        if "_print" in locals_:
-            response["stdout"] = "".join(locals_["_print"].txt)
+        get_or_error(exec)(code, globals_)
+        if "_print" in globals_:
+            response["stdout"] = "".join(globals_["_print"].txt)
 
     if "return" in kwargs:
         if isinstance(kwargs["return"], (list, tuple)):
-            data = dict([(variable, locals_.get(variable, None)) for variable in kwargs["return"]])
+            data = dict([(variable, globals_.get(variable, None)) for variable in kwargs["return"]])
         else:
-            data = locals_.get(kwargs["return"], None)
+            data = globals_.get(kwargs["return"], None)
 
         response["data"] = get_or_error(nest.serialize_data)(data)
     return response

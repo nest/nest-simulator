@@ -413,7 +413,7 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
   auto nc = std::accumulate( std::next( slices.begin() ),
     slices.end(),
     node_collection_aggregate,
-    [ &node_collection ]( auto acc, const auto& pair )
+    [ &node_collection ]( const auto& acc, const auto& pair )
     { return acc + node_collection->slice( pair.first, pair.second, 1 ); } );
 
   return new NodeCollectionDatum( nc );
@@ -447,7 +447,7 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   auto nc = std::accumulate( std::next( slices.begin() ),
     slices.end(),
     node_collection_aggregate,
-    [ &node_collection ]( auto acc, const auto& pair )
+    [ &node_collection ]( const auto& acc, const auto& pair )
     { return acc + node_collection->slice( pair.first, pair.second, 1 ); } );
 
   return new NodeCollectionDatum( nc );

@@ -24,6 +24,8 @@
 #define VECTOR_UTIL_H
 
 #include <cstddef>
+#include <functional>
+#include <utility>
 #include <vector>
 
 namespace vector_util
@@ -47,6 +49,64 @@ grow( std::vector< T >& v )
   }
 }
 
+template < typename T >
+using Predicate = std::function< bool( const T&, const T& ) >;
+
+
+template < typename T >
+using Filter = std::function< bool( const T& ) >;
+
+
+template < typename Container >
+inline std::vector< std::pair< size_t, size_t > >
+split_into_contiguous_slices(
+  const Container& container,
+  const bool& useIndex = false,
+  Predicate< typename Container::value_type > pred = []( const auto& current, const auto& next )
+  { return next == current + 1; },
+  Filter< typename Container::value_type > filter = []( const auto& ) { return true; } )
+{
+  if ( container.empty() )
+  {
+    return {};
+  }
+
+  if ( container.size() == 1 )
+  {
+    return { std::make_pair( 0, 1 ) };
+  }
+
+  auto ret = std::vector< std::pair< size_t, size_t > > {};
+  ret.reserve( container.size() );
+  auto get_value = [ &container, &useIndex ]( size_t index ) -> size_t
+  {
+    if ( index > container.size() and !useIndex )
+    {
+      return container[ index - 1 ] + 1;
+    }
+    return useIndex ? index : static_cast< size_t >( container[ index ] );
+  };
+
+  size_t current = 0;
+
+  for ( size_t index = 1; index < container.size(); index++ )
+  {
+    if ( not pred( container[ current ], container[ index ] ) )
+    {
+      if ( filter( container[ current ] ) )
+      {
+        ret.emplace_back( get_value( current ), get_value( index ) );
+      }
+      current = index;
+    }
+    if ( index + 1 == container.size() and filter( container[ current ] ) )
+    {
+      ret.emplace_back( get_value( current ), get_value( index + 1 ) );
+    }
+  }
+
+  return ret;
+}
 } // namespace vector_util
 
 #endif // VECTOR_UTIL_H

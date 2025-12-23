@@ -23,7 +23,6 @@
 #include "nest.h"
 
 // C++ includes:
-
 #include <cassert>
 #include <vector>
 

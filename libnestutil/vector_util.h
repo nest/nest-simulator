@@ -71,13 +71,6 @@ split_into_contiguous_slices(
     return {};
   }
 
-  if ( container.size() == 1 )
-  {
-    return { std::make_pair( 0, 1 ) };
-  }
-
-  auto ret = std::vector< std::pair< size_t, size_t > > {};
-  ret.reserve( container.size() );
   auto get_value = [ &container, &useIndex ]( size_t index ) -> size_t
   {
     if ( index > container.size() and !useIndex )
@@ -86,6 +79,14 @@ split_into_contiguous_slices(
     }
     return useIndex ? index : static_cast< size_t >( container[ index ] );
   };
+
+  if ( container.size() == 1 )
+  {
+    return { std::make_pair( get_value( 0 ), get_value( 1 ) ) };
+  }
+
+  auto ret = std::vector< std::pair< size_t, size_t > > {};
+  ret.reserve( container.size() );
 
   size_t current = 0;
 

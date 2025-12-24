@@ -343,17 +343,6 @@ public:
     return iterator();
   }
 
-  const iterator
-  begin() const
-  {
-    return iterator( *this );
-  }
-
-  const iterator
-  end() const
-  {
-    return iterator();
-  }
   /**
    * This function returns a masked node iterator which will traverse the
    * subtree below this Ntree, skipping nodes outside the mask.

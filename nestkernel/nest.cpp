@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <span>
 #include <vector>
 
 #include <boost/core/span.hpp>
@@ -393,7 +394,7 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
   std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
-  boost::span< const long > span { array, n };
+  std::span< const long > span { array, n };
 
   auto slices = vector_util::split_into_contiguous_slices( span );
   if ( slices.empty() )
@@ -425,7 +426,7 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() == n );
 
-  boost::span< const bool > span { array, n };
+  std::span< const bool > span { array, n };
 
   auto slices = vector_util::split_into_contiguous_slices(
     span, true, []( auto current, auto next ) { return current == next; }, []( const auto& v ) { return v == true; } );

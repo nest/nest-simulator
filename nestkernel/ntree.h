@@ -68,6 +68,11 @@ public:
   class iterator
   {
   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< Position< D >, T >;
+    using difference_type = std::ptrdiff_t;
+    using pointer = value_type*;
+    using reference = value_type&;
     /**
      * Initialize an invalid iterator.
      */
@@ -338,6 +343,17 @@ public:
     return iterator();
   }
 
+  const iterator
+  begin() const
+  {
+    return iterator( *this );
+  }
+
+  const iterator
+  end() const
+  {
+    return iterator();
+  }
   /**
    * This function returns a masked node iterator which will traverse the
    * subtree below this Ntree, skipping nodes outside the mask.

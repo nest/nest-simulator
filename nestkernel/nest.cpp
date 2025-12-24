@@ -27,7 +27,6 @@
 #include <span>
 #include <vector>
 
-#include <boost/core/span.hpp>
 
 // Includes from nestkernel:
 #include "exceptions.h"

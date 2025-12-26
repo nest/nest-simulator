@@ -24,16 +24,25 @@
 
 // C++ includes:
 #include <cassert>
+#include <cstddef>
+#include <memory>
+#include <numeric>
+#include <span>
+#include <vector>
+
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "nest_datums.h"
+#include "node_collection.h"
 #include "parameter.h"
 
 // Includes from sli:
 #include "sliexceptions.h"
 #include "token.h"
+#include "vector_util.h"
 
 namespace nest
 {
@@ -386,14 +395,30 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() >= n );
-  std::vector< size_t > node_ids;
-  node_ids.reserve( n );
 
-  for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
+  if ( n == 0 )
   {
-    node_ids.push_back( node_collection->operator[]( *node_ptr ) );
+    return new NodeCollectionDatum( std::make_shared< NodeCollectionPrimitive >() );
   }
-  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+
+  if ( n == 1 )
+  {
+    auto index = *array;
+    return new NodeCollectionDatum( node_collection->slice( index, index + 1, 1 ) );
+  }
+
+  auto vec = std::span< const long > { array, std::size_t { n } };
+
+  auto first_index = vec.front();
+  auto nc = node_collection->slice( first_index, first_index + 1, 1 );
+
+  auto ret = std::accumulate( std::next( vec.begin() ),
+    vec.end(),
+    nc,
+    [ &node_collection ]( const auto& acc, const auto& index )
+    { return acc + node_collection->slice( index, index + 1, 1 ); } );
+
+  return new NodeCollectionDatum( ret );
 }
 
 Datum*
@@ -401,18 +426,33 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() == n );
-  std::vector< size_t > node_ids;
-  node_ids.reserve( n );
 
-  auto nc_it = node_collection->begin();
-  for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr, ++nc_it )
+  std::span< const bool > span { array, n };
+
+  auto slices = vector_util::split_into_contiguous_slices(
+    span, true, []( auto current, auto next ) { return current == next; }, []( const auto& v ) { return v == true; } );
+
+  if ( slices.empty() )
   {
-    if ( *node_ptr )
-    {
-      node_ids.push_back( ( *nc_it ).node_id );
-    }
+    return new NodeCollectionDatum( std::make_shared< NodeCollectionPrimitive >() );
   }
-  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+
+  if ( slices.size() == 1 )
+  {
+    auto pair = slices.front();
+    return new NodeCollectionDatum( node_collection->slice( pair.first, pair.second, 1 ) );
+  }
+
+  auto first_slice = slices.front();
+  auto node_collection_aggregate = node_collection->slice( first_slice.first, first_slice.second, 1 );
+
+  auto nc = std::accumulate( std::next( slices.begin() ),
+    slices.end(),
+    node_collection_aggregate,
+    [ &node_collection ]( const auto& acc, const auto& pair )
+    { return acc + node_collection->slice( pair.first, pair.second, 1 ); } );
+
+  return new NodeCollectionDatum( nc );
 }
 
 } // namespace nest

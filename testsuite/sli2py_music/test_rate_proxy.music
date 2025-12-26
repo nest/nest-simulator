@@ -1,5 +1,5 @@
 /*
- *  test_cont_proxies.music
+ *  test_rate_proxy.music
  *
  *  This file is part of NEST.
  *
@@ -20,17 +20,14 @@
  *
  */
 
-stoptime=0.2
-timestep=0.01
+stoptime=5.0
 
 [from]
-    binary=nest
-    np=2
-    args=test_cont_proxy_sender.sli
+    binary=./test_rate_proxy_sender.py
+    np=1
 
 [to]
-    binary=nest
+    binary=./test_rate_proxy_receiver.py
     np=1
-    args=test_cont_proxy_receiver.sli
 
-from.voltage_out -> to.voltage_in [2]
+from.rate_out -> to.rate_in [1]

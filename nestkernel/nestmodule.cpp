@@ -1321,8 +1321,14 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  i->assert_stack_load( 3 );
+  const double max_distance = getValue< double >( i->OStack.pick( 0 ) );
+  const double sigma = getValue< double >( i->OStack.pick( 1 ) );
+  const bool use_kernel = getValue< bool >( i->OStack.pick( 2 ) );
 
+  kernel().sp_manager.enable_structural_plasticity( use_kernel, sigma, max_distance );
+
+  i->OStack.pop( 3 );
   i->EStack.pop();
 }
 void

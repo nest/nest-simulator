@@ -73,9 +73,9 @@ split_into_contiguous_slices(
 
   auto get_value = [ &container, &useIndex ]( size_t index ) -> size_t
   {
-    if ( index > container.size() and !useIndex )
+    if ( index >= container.size() and !useIndex )
     {
-      return container[ index - 1 ] + 1;
+      return *std::prev( container.end() );
     }
     return useIndex ? index : static_cast< size_t >( container[ index ] );
   };

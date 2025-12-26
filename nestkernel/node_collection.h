@@ -989,6 +989,13 @@ private:
    */
   void merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const;
 
+  /**
+   * Explodes the possibly sliced composite into a vector of primitives.
+   *
+   * @return Vector of primitives.
+   */
+  std::vector< NodeCollectionPrimitive > to_primitives_() const;
+
   //! Type for lambda-helper function used by {rank, thread, specific}_local_begin
   typedef size_t ( *gid_to_phase_fcn_ )( size_t );
 

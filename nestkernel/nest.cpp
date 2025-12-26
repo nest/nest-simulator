@@ -24,6 +24,9 @@
 
 // C++ includes:
 #include <cassert>
+#include <cstddef>
+#include <memory>
+#include <numeric>
 #include <span>
 #include <vector>
 
@@ -32,6 +35,8 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "nest_datums.h"
+#include "node_collection.h"
 #include "parameter.h"
 
 // Includes from sli:
@@ -390,33 +395,30 @@ node_collection_array_index( const Datum* datum, const long* array, unsigned lon
 {
   const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
   assert( node_collection->size() >= n );
-  std::vector< size_t > node_ids;
-  node_ids.reserve( n );
 
-  std::span< const long > span { array, n };
-
-  auto slices = vector_util::split_into_contiguous_slices( span );
-  if ( slices.empty() )
+  if ( n == 0 )
   {
     return new NodeCollectionDatum( std::make_shared< NodeCollectionPrimitive >() );
   }
 
-  if ( slices.size() == 1 )
+  if ( n == 1 )
   {
-    auto pair = slices.front();
-    return new NodeCollectionDatum( node_collection->slice( pair.first, pair.second, 1 ) );
+    auto index = *array;
+    return new NodeCollectionDatum( node_collection->slice( index, index + 1, 1 ) );
   }
 
-  auto first_slice = slices.front();
-  auto node_collection_aggregate = node_collection->slice( first_slice.first, first_slice.second, 1 );
+  auto vec = std::span< const long > { array, std::size_t { n } };
 
-  auto nc = std::accumulate( std::next( slices.begin() ),
-    slices.end(),
-    node_collection_aggregate,
-    [ &node_collection ]( const auto& acc, const auto& pair )
-    { return acc + node_collection->slice( pair.first, pair.second, 1 ); } );
+  auto first_index = vec.front();
+  auto nc = node_collection->slice( first_index, first_index + 1, 1 );
 
-  return new NodeCollectionDatum( nc );
+  auto ret = std::accumulate( std::next( vec.begin() ),
+    vec.end(),
+    nc,
+    [ &node_collection ]( const auto& acc, const auto& index )
+    { return acc + node_collection->slice( index, index + 1, 1 ); } );
+
+  return new NodeCollectionDatum( ret );
 }
 
 Datum*

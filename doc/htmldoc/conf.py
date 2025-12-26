@@ -40,6 +40,10 @@ pynest_dir = os.path.join(repo_root_dir, "pynest")
 sys.path.append(pynest_dir)
 
 # -- General configuration ------------------------------------------------
+read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+
+if read_the_docs_build:
+    subprocess.call("doxygen Doxyfile", shell=True)
 
 source_suffix = ".rst"
 master_doc = "index"
@@ -55,6 +59,7 @@ extensions = [
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
     "sphinx_carousel.carousel",
+    "breathe",
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
@@ -70,6 +75,14 @@ extensions = [
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+
+# Setup the breathe extension
+breathe_projects = {"NEST Simulator": "./_doxygen/xml"}
+breathe_default_project = "NEST Simulator"
+breathe_domain_by_extension = {
+    "h": "cpp",
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
@@ -96,10 +109,10 @@ copybutton_prompt_text = ">>> "
 copybutton_only_copy_prompt_lines = True
 
 mermaid_output_format = "raw"
-mermaid_version = "10.3.0"
-
+# mermaid_version = "10.3.0"
 # disable require js - mermaid doesn't work if require.js is loaded before it
 nbsphinx_requirejs_path = ""
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -200,8 +213,9 @@ htmlhelp_basename = "NESTsimulatordoc"
 html_show_sphinx = False
 html_show_copyright = False
 
-# This way works for ReadTheDocs
-# With this local 'make html' is broken!
+# https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+
+
 github_doc_root = ""
 
 intersphinx_mapping = {
@@ -215,7 +229,7 @@ intersphinx_mapping = {
     "pd14": ("https://microcircuit-pd14-model.readthedocs.io/en/latest", None),
     "neuromorph": ("https://electronicvisions.github.io/hbp-sp9-guidebook/", None),
     "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
-    "tvb": ("https://docs.thevirtualbrain.org/", None),
+    # "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
     "benchmarks": ("https://performance-benchmarks.readthedocs.io/en/latest", None),
 }

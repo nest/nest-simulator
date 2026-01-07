@@ -51,10 +51,7 @@ register_amat2_psc_exp( const std::string& name )
   register_node_model< amat2_psc_exp >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< amat2_psc_exp >::create()

@@ -58,8 +58,7 @@ register_pp_psc_delta( const std::string& name )
 
 RecordablesMap< pp_psc_delta > pp_psc_delta::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< pp_psc_delta >::create()

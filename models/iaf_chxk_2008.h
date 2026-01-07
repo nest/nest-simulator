@@ -462,8 +462,10 @@ iaf_chxk_2008::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+template <>
+void RecordablesMap< iaf_chxk_2008 >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // IAF_CHXK_2008_H

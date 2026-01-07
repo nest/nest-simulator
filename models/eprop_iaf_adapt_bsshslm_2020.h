@@ -614,6 +614,9 @@ eprop_iaf_adapt_bsshslm_2020::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >::create();
+
 } // namespace nest
 
 #endif // EPROP_IAF_ADAPT_BSSHSLM_2020_H

@@ -54,8 +54,7 @@ register_glif_cond( const std::string& name )
   register_node_model< glif_cond >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 DynamicRecordablesMap< nest::glif_cond >::create( glif_cond& host )

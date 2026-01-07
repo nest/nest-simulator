@@ -49,10 +49,7 @@ register_iaf_psc_alpha( const std::string& name )
 }
 
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_psc_alpha >::create()

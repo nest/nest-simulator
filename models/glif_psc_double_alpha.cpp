@@ -50,8 +50,7 @@ register_glif_psc_double_alpha( const std::string& name )
   register_node_model< glif_psc_double_alpha >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::glif_psc_double_alpha >::create()

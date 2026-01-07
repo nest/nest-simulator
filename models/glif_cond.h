@@ -533,6 +533,9 @@ nest::glif_cond::handle( DataLoggingRequest& e )
   B_.logger_.handle( e ); // the logger does this for us
 }
 
+template <>
+void DynamicRecordablesMap< nest::glif_cond >::create( glif_cond& host );
+
 } // namespace nest
 
 #endif // HAVE_GSL

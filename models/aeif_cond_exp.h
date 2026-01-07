@@ -461,6 +461,9 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< aeif_cond_exp >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

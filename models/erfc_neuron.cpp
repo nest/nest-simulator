@@ -45,10 +45,7 @@ gainfunction_erfc::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::sigma, sigma_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::erfc_neuron >::create()

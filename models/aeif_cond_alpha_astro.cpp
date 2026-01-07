@@ -59,8 +59,7 @@ register_aeif_cond_alpha_astro( const std::string& name )
   register_node_model< aeif_cond_alpha_astro >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< aeif_cond_alpha_astro >::create()

@@ -242,6 +242,9 @@ dc_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
+template <>
+void RecordablesMap< dc_generator >::create();
+
 } // namespace
 
 #endif /* #ifndef DC_GENERATOR_H */

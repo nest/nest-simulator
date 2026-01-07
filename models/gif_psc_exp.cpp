@@ -51,8 +51,7 @@ register_gif_psc_exp( const std::string& name )
 
 RecordablesMap< gif_psc_exp > gif_psc_exp::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< gif_psc_exp >::create()

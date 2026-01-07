@@ -365,6 +365,9 @@ siegert_neuron::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< siegert_neuron >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

@@ -485,6 +485,9 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< gif_pop_psc_exp >::create();
+
 } // namespace
 
 

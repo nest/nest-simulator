@@ -56,8 +56,7 @@ register_iaf_psc_delta( const std::string& name )
 
 RecordablesMap< iaf_psc_delta > iaf_psc_delta::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_psc_delta >::create()

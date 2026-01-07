@@ -348,6 +348,9 @@ iaf_chs_2007::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< iaf_chs_2007 >::create();
+
 } // namespace
 
 #endif // IAF_CHS_2007_H

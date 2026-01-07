@@ -550,6 +550,9 @@ iaf_psc_exp::phi_() const
   return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
 }
 
+template <>
+void RecordablesMap< iaf_psc_exp >::create();
+
 } // namespace
 
 #endif // IAF_PSC_EXP_H

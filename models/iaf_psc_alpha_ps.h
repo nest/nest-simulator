@@ -535,6 +535,9 @@ iaf_psc_alpha_ps::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< iaf_psc_alpha_ps >::create();
+
 } // namespace
 
 #endif // IAF_PSC_ALPHA_PS_H

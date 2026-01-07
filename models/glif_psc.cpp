@@ -51,8 +51,7 @@ register_glif_psc( const std::string& name )
   register_node_model< glif_psc >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< glif_psc >::create()

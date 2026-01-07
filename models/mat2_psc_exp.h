@@ -420,6 +420,9 @@ mat2_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< mat2_psc_exp >::create();
+
 } // namespace
 
 #endif // MAT2_PSC_EXP_H

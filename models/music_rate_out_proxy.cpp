@@ -148,7 +148,7 @@ nest::music_rate_out_proxy::pre_run_hook()
   {
     MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
 
-    if ( s == 0 )
+    if ( not s )
     {
       throw MUSICSimulationHasRun( "" );
     }

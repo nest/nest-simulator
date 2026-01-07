@@ -369,13 +369,10 @@ constexpr ConnectionModelProperties eprop_synapse_bsshslm_2020< targetidentifier
 // Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse_bsshslm_2020
 template <>
 void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
-
 template <>
 void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector();
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
 

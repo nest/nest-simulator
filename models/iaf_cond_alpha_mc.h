@@ -585,6 +585,9 @@ iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< iaf_cond_alpha_mc >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

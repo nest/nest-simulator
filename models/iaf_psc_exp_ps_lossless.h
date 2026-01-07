@@ -533,5 +533,9 @@ iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< iaf_psc_exp_ps_lossless >::create();
+
 } // namespace
 #endif // IAF_PSC_EXP_PS_LOSSLESS_H

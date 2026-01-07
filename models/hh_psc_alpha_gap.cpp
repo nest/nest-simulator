@@ -55,8 +55,7 @@ register_hh_psc_alpha_gap( const std::string& name )
   register_node_model< hh_psc_alpha_gap >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_psc_alpha_gap >::create()

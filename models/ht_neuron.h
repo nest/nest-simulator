@@ -565,6 +565,10 @@ ht_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
+
+template <>
+void RecordablesMap< ht_neuron >::create();
+
 }
 
 #endif // HAVE_GSL

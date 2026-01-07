@@ -61,10 +61,7 @@ nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::alpha, alpha_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::threshold_lin_rate_ipn >::create()

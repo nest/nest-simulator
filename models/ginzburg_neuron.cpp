@@ -52,10 +52,7 @@ gainfunction_ginzburg::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::c_3, c3_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::ginzburg_neuron >::create()

@@ -59,8 +59,7 @@ register_hh_cond_beta_gap_traub( const std::string& name )
   register_node_model< hh_cond_beta_gap_traub >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_cond_beta_gap_traub >::create()

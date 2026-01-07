@@ -113,12 +113,9 @@ set ( nestkernel_sources
       spike_data.h spike_data.cpp
       structural_plasticity_node.h structural_plasticity_node.cpp
       connection_creator.h connection_creator.cpp
-      free_layer.h
-      free_layer_impl.h
-      grid_layer.h
-      grid_layer_impl.h
-      grid_mask.h
-      grid_mask_impl.h
+      free_layer.h free_layer_impl.h
+      grid_layer.h grid_layer_impl.h
+      grid_mask.h grid_mask_impl.h grid_mask.cpp
       layer.h layer.cpp layer_impl.h
       mask.h mask.cpp mask_impl.h
       ntree.h ntree.cpp ntree_impl.h

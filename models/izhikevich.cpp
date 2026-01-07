@@ -53,8 +53,7 @@ register_izhikevich( const std::string& name )
   register_node_model< izhikevich >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< izhikevich >::create()

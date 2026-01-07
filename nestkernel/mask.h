@@ -718,6 +718,39 @@ protected:
   Position< D > anchor_;
 };
 
+template <>
+bool BallMask< 2 >::inside( const Box< 2 >& b ) const;
+template <>
+bool BallMask< 3 >::inside( const Box< 3 >& b ) const;
+template <>
+void BoxMask< 2 >::calculate_min_max_values_();
+template <>
+void BoxMask< 3 >::calculate_min_max_values_();
+template <>
+bool BoxMask< 2 >::inside( const Position< 2 >& p ) const;
+template <>
+bool BoxMask< 3 >::inside( const Position< 3 >& p ) const;
+template <>
+bool EllipseMask< 2 >::inside( const Position< 2 >& p ) const;
+template <>
+bool EllipseMask< 3 >::inside( const Position< 3 >& p ) const;
+template <>
+bool EllipseMask< 2 >::inside( const Box< 2 >& b ) const;
+template <>
+bool EllipseMask< 3 >::inside( const Box< 3 >& b ) const;
+template <>
+Name BoxMask< 2 >::get_name();
+template <>
+Name BoxMask< 3 >::get_name();
+template <>
+Name BallMask< 2 >::get_name();
+template <>
+Name BallMask< 3 >::get_name();
+template <>
+Name EllipseMask< 2 >::get_name();
+template <>
+Name EllipseMask< 3 >::get_name();
+
 } // namespace nest
 
 #endif

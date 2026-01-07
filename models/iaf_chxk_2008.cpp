@@ -55,10 +55,7 @@ register_iaf_chxk_2008( const std::string& name )
   register_node_model< iaf_chxk_2008 >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_chxk_2008 >::create()

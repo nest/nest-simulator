@@ -59,8 +59,7 @@ register_aeif_psc_alpha( const std::string& name )
   register_node_model< aeif_psc_alpha >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< aeif_psc_alpha >::create()

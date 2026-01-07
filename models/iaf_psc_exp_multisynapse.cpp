@@ -46,8 +46,7 @@ register_iaf_psc_exp_multisynapse( const std::string& name )
   register_node_model< iaf_psc_exp_multisynapse >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 DynamicRecordablesMap< iaf_psc_exp_multisynapse >::create( iaf_psc_exp_multisynapse& host )

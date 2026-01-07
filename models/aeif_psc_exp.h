@@ -445,6 +445,9 @@ aeif_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< aeif_psc_exp >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

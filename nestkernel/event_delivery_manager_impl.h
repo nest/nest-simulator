@@ -31,7 +31,7 @@ namespace nest
 {
 
 template < class EventT >
-void
+inline void
 EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
@@ -44,7 +44,7 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 
 
 template < class EventT >
-void
+inline void
 EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
   send_local_( source, e, lag );

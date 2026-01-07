@@ -30,20 +30,6 @@
 namespace nest
 {
 
-template <>
-inline Name
-BoxMask< 2 >::get_name()
-{
-  return names::rectangular;
-}
-
-template <>
-inline Name
-BoxMask< 3 >::get_name()
-{
-  return names::box;
-}
-
 template < int D >
 BoxMask< D >::BoxMask( const DictionaryDatum& d )
 {
@@ -191,20 +177,6 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   calculate_min_max_values_();
 }
 
-template <>
-inline Name
-BallMask< 2 >::get_name()
-{
-  return names::circular;
-}
-
-template <>
-inline Name
-BallMask< 3 >::get_name()
-{
-  return names::spherical;
-}
-
 template < int D >
 BallMask< D >::BallMask( const DictionaryDatum& d )
 {
@@ -220,20 +192,6 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
   {
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
-}
-
-template <>
-inline Name
-EllipseMask< 2 >::get_name()
-{
-  return names::elliptical;
-}
-
-template <>
-inline Name
-EllipseMask< 3 >::get_name()
-{
-  return names::ellipsoidal;
 }
 
 template < int D >

@@ -62,8 +62,7 @@ register_aeif_psc_delta_clopath( const std::string& name )
 /*
  * template specialization must be placed in namespace
  *
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
+ * Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
  */
 template <>
 void

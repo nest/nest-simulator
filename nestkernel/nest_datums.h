@@ -55,7 +55,6 @@ sli::pool ConnectionDatum::memory;
 
 template <>
 void ConnectionDatum::print( std::ostream& ) const;
-
 template <>
 void ConnectionDatum::pprint( std::ostream& ) const;
 template <>

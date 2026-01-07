@@ -284,6 +284,9 @@ ac_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
+template <>
+void RecordablesMap< ac_generator >::create();
+
 } // namespace
 
 #endif // AC_GENERATOR_H

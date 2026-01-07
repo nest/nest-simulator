@@ -588,6 +588,9 @@ nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
     e.get_weight() * e.get_current() );
 }
 
+template <>
+void RecordablesMap< iaf_bw_2001_exact >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

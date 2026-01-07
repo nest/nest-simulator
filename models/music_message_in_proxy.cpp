@@ -135,7 +135,7 @@ nest::music_message_in_proxy::pre_run_hook()
   if ( not S_.published_ )
   {
     MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
-    if ( s == 0 )
+    if ( not s )
     {
       throw MUSICSimulationHasRun( get_name() );
     }

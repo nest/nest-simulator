@@ -453,6 +453,9 @@ aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
+template <>
+void DynamicRecordablesMap< aeif_cond_alpha_multisynapse >::create( aeif_cond_alpha_multisynapse& host );
+
 } // namespace
 
 #endif // HAVE_GSL

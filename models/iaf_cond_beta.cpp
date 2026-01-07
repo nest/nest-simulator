@@ -58,10 +58,7 @@ register_iaf_cond_beta( const std::string& name )
   register_node_model< iaf_cond_beta >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_cond_beta >::create()

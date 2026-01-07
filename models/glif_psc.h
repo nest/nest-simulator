@@ -498,6 +498,9 @@ glif_psc::handle( CurrentEvent& e )
     e.get_weight() * e.get_current() );
 }
 
+template <>
+void RecordablesMap< glif_psc >::create();
+
 } // namespace nest
 
 #endif

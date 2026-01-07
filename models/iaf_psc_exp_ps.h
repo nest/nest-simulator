@@ -487,6 +487,9 @@ iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< iaf_psc_exp_ps >::create();
+
 } // namespace
 
 #endif // IAF_PSC_EXP_PS_H

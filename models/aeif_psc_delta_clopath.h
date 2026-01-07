@@ -487,6 +487,9 @@ aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< aeif_psc_delta_clopath >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

@@ -22,14 +22,13 @@
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
+#include "booldatum.h"
 #include "connection_creator_impl.h"
 #include "free_layer_impl.h"
 #include "grid_layer_impl.h"
 #include "grid_mask_impl.h"
 #include "layer.h"
 #include "mask_impl.h"
-
-#include <booldatum.h>
 
 namespace nest
 {
@@ -51,7 +50,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     // If the above cast succeeds, then this is a grid mask
 
     GridLayer< D >* grid_layer = dynamic_cast< GridLayer< D >* >( &layer );
-    if ( grid_layer == 0 )
+    if ( not grid_layer )
     {
       throw BadProperty( "Grid masks can only be used with grid layers." );
     }

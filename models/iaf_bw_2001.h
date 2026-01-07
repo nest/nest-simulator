@@ -558,6 +558,9 @@ iaf_bw_2001::handle( CurrentEvent& e )
     e.get_weight() * e.get_current() );
 }
 
+template <>
+void RecordablesMap< iaf_bw_2001 >::create();
+
 } // namespace
 
 #endif // HAVE_BOOST

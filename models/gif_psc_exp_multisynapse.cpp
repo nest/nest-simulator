@@ -54,8 +54,7 @@ register_gif_psc_exp_multisynapse( const std::string& name )
 
 RecordablesMap< gif_psc_exp_multisynapse > gif_psc_exp_multisynapse::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< gif_psc_exp_multisynapse >::create()

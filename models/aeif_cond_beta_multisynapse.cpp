@@ -56,8 +56,7 @@ register_aeif_cond_beta_multisynapse( const std::string& name )
  * Recordables map
  * ---------------------------------------------------------------- */
 
-// Override the create() method with one call to
-// DynamicRecordablesMap::insert() for each quantity to be recorded.
+// Override the create() method with one call to DynamicRecordablesMap::insert() for each quantity to be recorded.
 template <>
 void
 DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create( aeif_cond_beta_multisynapse& host )

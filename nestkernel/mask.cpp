@@ -456,4 +456,46 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 
   return true;
 }
+
+template <>
+Name
+BoxMask< 2 >::get_name()
+{
+  return names::rectangular;
+}
+
+template <>
+Name
+BoxMask< 3 >::get_name()
+{
+  return names::box;
+}
+
+template <>
+Name
+BallMask< 2 >::get_name()
+{
+  return names::circular;
+}
+
+template <>
+Name
+BallMask< 3 >::get_name()
+{
+  return names::spherical;
+}
+template <>
+Name
+EllipseMask< 2 >::get_name()
+{
+  return names::elliptical;
+}
+
+template <>
+Name
+EllipseMask< 3 >::get_name()
+{
+  return names::ellipsoidal;
+}
+
 }

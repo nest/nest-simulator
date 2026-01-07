@@ -358,6 +358,9 @@ iaf_psc_alpha_multisynapse::get_status( DictionaryDatum& d ) const
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
+template <>
+void DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create( iaf_psc_alpha_multisynapse& host );
+
 } // namespace
 
 #endif /* #ifndef IAF_PSC_ALPHA_MULTISYNAPSE_H */

@@ -456,6 +456,9 @@ aeif_psc_alpha::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< aeif_psc_alpha >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

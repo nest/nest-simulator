@@ -418,6 +418,9 @@ iaf_psc_exp_htum::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
+template <>
+void RecordablesMap< iaf_psc_exp_htum >::create();
+
 } // namespace
 
 #endif // iaf_psc_exp_htum_H

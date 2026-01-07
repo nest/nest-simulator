@@ -46,10 +46,7 @@ gainfunction_mcculloch_pitts::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::theta, theta_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::mcculloch_pitts_neuron >::create()

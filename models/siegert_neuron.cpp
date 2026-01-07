@@ -74,8 +74,7 @@ register_siegert_neuron( const std::string& name )
 
 RecordablesMap< siegert_neuron > siegert_neuron::recordablesMap_;
 
-// // Override the create() method with one call to RecordablesMap::insert_()
-// // for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< siegert_neuron >::create()

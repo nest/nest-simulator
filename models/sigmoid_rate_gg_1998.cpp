@@ -51,10 +51,7 @@ nonlinearities_sigmoid_rate_gg_1998::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::g, g_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::sigmoid_rate_gg_1998_ipn >::create()

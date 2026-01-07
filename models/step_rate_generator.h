@@ -279,6 +279,9 @@ step_rate_generator::get_type() const
   return StimulationDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
 }
 
+template <>
+void RecordablesMap< step_rate_generator >::create();
+
 } // namespace
 
 #endif /* #ifndef STEP_RATE_GENERATOR_H */

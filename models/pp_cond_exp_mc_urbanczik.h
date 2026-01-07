@@ -656,8 +656,10 @@ pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+template <>
+void RecordablesMap< pp_cond_exp_mc_urbanczik >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // PP_COND_EXP_MC_URBANCZIK_H

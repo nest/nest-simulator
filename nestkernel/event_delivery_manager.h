@@ -362,7 +362,6 @@ private:
    */
   template < class EventT >
   void send_local_( Node& source, EventT& e, const long lag );
-  void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 
@@ -468,6 +467,13 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_target_data_;
 };
+
+template <>
+void EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long lag );
 
 } // namespace nest
 

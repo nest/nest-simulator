@@ -23,14 +23,8 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
-// Includes from nestkernel:
-#include "nest_names.h"
-#include "nest_types.h"
-#include "nestmodule.h"
-
 // Includes from sli:
 #include "dictdatum.h"
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "mask.h"
@@ -108,6 +102,11 @@ protected:
   Position< D, int > upper_left_;
   Position< D, int > lower_right_;
 };
+
+template <>
+Name GridMask< 2 >::get_name();
+template <>
+Name GridMask< 3 >::get_name();
 
 } // namespace nest
 

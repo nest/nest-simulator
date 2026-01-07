@@ -499,6 +499,9 @@ glif_psc_double_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e ); // the logger does this for us
 }
 
+template <>
+void RecordablesMap< nest::glif_psc_double_alpha >::create();
+
 } // namespace nest
 
 #endif

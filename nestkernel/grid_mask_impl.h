@@ -47,20 +47,6 @@ GridMask< D >::GridMask( const DictionaryDatum& d )
   }
 }
 
-template <>
-inline Name
-GridMask< 2 >::get_name()
-{
-  return names::grid;
-}
-
-template <>
-inline Name
-GridMask< 3 >::get_name()
-{
-  return names::grid3d;
-}
-
 template < int D >
 DictionaryDatum
 GridMask< D >::get_dict() const

@@ -446,6 +446,9 @@ sinusoidal_gamma_generator::get_type() const
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
+template <>
+void RecordablesMap< sinusoidal_gamma_generator >::create();
+
 } // namespace
 
 #endif // SINUSOIDAL_GAMMA_GENERATOR_H

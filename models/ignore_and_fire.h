@@ -314,6 +314,9 @@ ignore_and_fire::set_status( const DictionaryDatum& d )
   ignore_and_fire::calc_initial_variables_();
 }
 
+template <>
+void RecordablesMap< ignore_and_fire >::create();
+
 } // namespace
 
 #endif /* #ifndef IGNORE_AND_FIRE_H */

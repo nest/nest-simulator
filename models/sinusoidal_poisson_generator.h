@@ -334,6 +334,9 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+template <>
+void RecordablesMap< sinusoidal_poisson_generator >::create();
+
 } // namespace
 
 #endif // SINUSOIDAL_POISSON_GENERATOR_H

@@ -53,8 +53,7 @@ register_iaf_psc_exp_ps_lossless( const std::string& name )
   register_node_model< iaf_psc_exp_ps_lossless >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_psc_exp_ps_lossless >::create()

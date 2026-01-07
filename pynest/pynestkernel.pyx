@@ -591,35 +591,42 @@ cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 
     return tmp
 
-cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ = 0):
+cdef inline object _sli_ivector_to_object(sli_vector_int_ptr_t dat):
+    cdef long* array_data = NULL
+    cdef vector[long]* vector_ptr = deref_ivector(dat)
 
-    cdef vector_value_t* array_data = NULL
-    cdef vector[vector_value_t]* vector_ptr = NULL
+    arr = array.clone(ARRAY_LONG, vector_ptr.size(), False)
+    array_data = arr.data.as_longs
 
-    if sli_vector_ptr_t is sli_vector_int_ptr_t and vector_value_t is long:
-        vector_ptr = deref_ivector(dat)
-        arr = array.clone(ARRAY_LONG, vector_ptr.size(), False)
-        array_data = arr.data.as_longs
-        if HAVE_NUMPY:
-            ret_dtype = int
-    elif sli_vector_ptr_t is sli_vector_double_ptr_t and vector_value_t is double:
-        vector_ptr = deref_dvector(dat)
-        arr = array.clone(ARRAY_DOUBLE, vector_ptr.size(), False)
-        array_data = arr.data.as_doubles
-        if HAVE_NUMPY:
-            ret_dtype = float
-    else:
-        raise NESTErrors.PyNESTError("unsupported specialization")
-
-    # skip when vector_ptr points to an empty vector
     if vector_ptr.size() > 0:
-        memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(vector_value_t))
+        memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(long))
 
     if HAVE_NUMPY:
-        if vector_ptr.size() > 0:
-            return numpy.frombuffer(arr, dtype=ret_dtype)
-        else:
-            # Compatibility with NumPy < 1.7.0
-            return numpy.array([], dtype=ret_dtype)
+        return numpy.frombuffer(arr, dtype=int) if vector_ptr.size() > 0 else numpy.array([], dtype=int)
     else:
         return arr
+
+
+cdef inline object _sli_dvector_to_object(sli_vector_double_ptr_t dat):
+    cdef double* array_data = NULL
+    cdef vector[double]* vector_ptr = deref_dvector(dat)
+
+    arr = array.clone(ARRAY_DOUBLE, vector_ptr.size(), False)
+    array_data = arr.data.as_doubles
+
+    if vector_ptr.size() > 0:
+        memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(double))
+
+    if HAVE_NUMPY:
+        return numpy.frombuffer(arr, dtype=float) if vector_ptr.size() > 0 else numpy.array([], dtype=float)
+    else:
+        return arr
+
+
+cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ = 0):
+    if sli_vector_ptr_t is sli_vector_int_ptr_t and vector_value_t is long:
+        return _sli_ivector_to_object(<sli_vector_int_ptr_t>dat)
+    elif sli_vector_ptr_t is sli_vector_double_ptr_t and vector_value_t is double:
+        return _sli_dvector_to_object(<sli_vector_double_ptr_t>dat)
+    else:
+        raise NESTErrors.PyNESTError("unsupported specialization")

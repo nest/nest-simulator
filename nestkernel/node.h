@@ -272,33 +272,37 @@ public:
   virtual void finalize();
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$.
+   * Advance the state of the node in time through the given interval.
    *
-   * n->update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1, ie, emitting events with time stamps
-   * T+from+1 .. T+to.
+   * This method advances the state of the node through the interval
+   * ``(origin+from, origin+to]``, which is at most ``min_delay`` long.
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * - Precondition: State of the node corresponds to the time ``origin+from``.
+   * - Postcondition: State of the node corresponds to the time ``origin+to``.
+   *
+   * Each step between ``from`` and ``to`` corresponds to one simulation timestep (``nest.resolution``).
+   *
+   * If events are emitted, they have time stamps in the interval
+   * ``T+from+1 .. T+to``.
+   *
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual void update( Time const&, const long, const long ) = 0;
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
-   *
-   * n->wfr_update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1.
+   * Advance the state of the node in time through the given interval (see
+   * Node::update() for more details).
    *
    * Does not emit spikes, does not log state variables.
    *
    * throws UnexpectedEvent if not reimplemented in derived class
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual bool wfr_update( Time const&, const long, const long );

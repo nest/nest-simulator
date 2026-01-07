@@ -650,9 +650,6 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff):
     eprop_history_duration = events_mm_rec["eprop_history_duration"]
 
     eprop_history_duration_reference = np.hstack(
-        [
-            np.arange(x, y + 1)
-            for x, y in [[1.0, 11.0], [2.0, 21.0], [12.0, 31.0], [12.0, 21.0], [12.0, 41.0], [32.0, 49.0]]
-        ]
+        [np.arange(x, y + 1) for x, y in [[1.0, 11.0], [2.0, 51.0], [12.0, 59.0]]]
     )
     assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

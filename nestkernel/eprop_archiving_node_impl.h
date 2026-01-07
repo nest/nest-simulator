@@ -133,7 +133,7 @@ template < typename HistEntryT >
 typename std::vector< HistEntryT >::iterator
 EpropArchivingNode< HistEntryT >::get_eprop_history( const long time_step )
 {
-  return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
+  return std::lower_bound( eprop_history_.begin() + eprop_head_, eprop_history_.end(), time_step );
 }
 
 template < typename HistEntryT >
@@ -202,11 +202,18 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, 
     return;
   }
   const long time_end = update_history_.front().t_ - 1;
-  auto it_end = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_end );
+  auto it_begin = eprop_history_.begin() + eprop_head_;
+  auto it_end = std::lower_bound( it_begin, eprop_history_.end(), time_end );
 
   if ( it_end != eprop_history_.end() and it_end->t_ == time_end )
   {
-    eprop_history_.erase( eprop_history_.begin(), it_end );
+    eprop_head_ += std::distance( it_begin, it_end );
+
+    if ( eprop_head_ > eprop_history_.capacity() / 2 )
+    {
+      eprop_history_.erase( eprop_history_.begin(), eprop_history_.begin() + eprop_head_ );
+      eprop_head_ = 0;
+    }
   }
 }
 

@@ -829,10 +829,15 @@ def test_unsupported_surrogate_gradient(source_model):
 @pytest.mark.parametrize(
     "neuron_model,eprop_history_duration_reference",
     [
-        ("eprop_iaf_bsshslm_2020", np.hstack([np.arange(x, y) for x, y in [[1, 3], [1, 61], [21, 61], [41, 48]]])),
+        (
+            "eprop_iaf_bsshslm_2020",
+            np.hstack([np.arange(x, y + 1) for x, y in [[1.0, 2.0], [1.0, 60.0], [21.0, 60.0], [41.0, 47.0]]]),
+        ),
         (
             "eprop_readout_bsshslm_2020",
-            np.hstack([np.arange(x, y) for x, y in [[1, 4], [2, 22], [21, 61], [21, 61], [41, 47]]]),
+            np.hstack(
+                [np.arange(x, y + 1) for x, y in [[1.0, 3.0], [1.0, 20.0], [20.0, 59.0], [20.0, 59.0], [40.0, 45.0]]]
+            ),
         ),
     ],
 )

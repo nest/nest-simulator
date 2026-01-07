@@ -62,9 +62,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 

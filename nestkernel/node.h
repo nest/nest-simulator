@@ -848,8 +848,8 @@ public:
    * Compute gradient change for eprop synapses.
    *
    * This method is called from an eprop synapse on the eprop target neuron. It updates various parameters related to
-   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in Korcsak-Gorzo,
-   * Stapmanns, and Espinoza Valverde et al. (in preparation).
+   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+   * Korcsak-Gorzo et al. (2025).
    *
    * @param t_spike [in] Time of the current spike.
    * @param t_spike_previous [in] Time of the previous spike.

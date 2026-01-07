@@ -365,7 +365,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
   if ( trace_decay_interval > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, trace_decay_interval );
+    z_bar *= std::exp( std::log( V_.P_v_m_ ) * trace_decay_interval );
   }
 
   if ( not( activation or optimize_each_step ) )

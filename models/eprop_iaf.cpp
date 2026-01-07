@@ -453,9 +453,9 @@ eprop_iaf::compute_gradient( const long t_spike,
 
   if ( trace_decay_interval > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, trace_decay_interval );
-    e_bar *= std::pow( P_.kappa_, trace_decay_interval );
-    e_bar_reg *= std::pow( P_.kappa_reg_, trace_decay_interval );
+    z_bar *= std::exp( std::log( V_.P_v_m_ ) * trace_decay_interval );
+    e_bar *= std::exp( std::log( P_.kappa_ ) * trace_decay_interval );
+    e_bar_reg *= std::exp( std::log( P_.kappa_reg_ ) * trace_decay_interval );
   }
 
   if ( not( activation or optimize_each_step ) )

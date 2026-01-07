@@ -342,8 +342,8 @@ def test_eprop_regression():
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -784,8 +784,8 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -925,6 +925,6 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
     eprop_history_duration = events_mm_rec["eprop_history_duration"]
     senders = events_mm_rec["senders"]
 
-    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
+    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in np.unique(senders)])[0]
 
     assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

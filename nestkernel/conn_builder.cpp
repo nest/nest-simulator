@@ -1873,9 +1873,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   }
 
   // for now multapses cannot be forbidden
-  // TODO: Implement option for multapses_ = False, where already existing
-  // connections are stored in
-  // a bitmap
+  // TODO: Implement option for multapses_ = False, where already existing connections are stored in a bitmap
   if ( not allow_multapses_ )
   {
     throw NotImplemented( "Connect doesn't support the suppression of multapses in the FixedTotalNumber connector." );
@@ -1891,8 +1889,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // drawing connection ids
 
-  // Compute the distribution of targets over processes using the modulo
-  // function
+  // Compute the distribution of targets over processes using the modulo function
   std::vector< size_t > number_of_targets_on_vp( M, 0 );
   std::vector< size_t > local_targets;
   local_targets.reserve( size_targets / kernel::manager< MPIManager >.get_num_processes() );
@@ -1906,14 +1903,10 @@ nest::FixedTotalNumberBuilder::connect_()
     }
   }
 
-  // We use the multinomial distribution to determine the number of
-  // connections that will be made on one virtual process, i.e. we
-  // partition the set of edges into n_vps subsets. The number of
-  // edges on one virtual process is binomially distributed with
-  // the boundary condition that the sum of all edges over virtual
-  // processes is the total number of edges.
-  // To obtain the num_conns_on_vp we adapt the gsl
-  // implementation of the multinomial distribution.
+  // We use the multinomial distribution to determine the number of connections that will be made on one virtual
+  // process, i.e. we partition the set of edges into n_vps subsets. The number of edges on one virtual process is
+  // binomially distributed with the boundary condition that the sum of all edges over virtual processes is the total
+  // number of edges. To obtain the num_conns_on_vp we adapt the gsl implementation of the multinomial distribution.
 
   // K from gsl is equivalent to M = n_vps
   // N is already taken from stack
@@ -1921,7 +1914,7 @@ nest::FixedTotalNumberBuilder::connect_()
   std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
 
   // calculate exact multinomial distribution
-  // get global rng that is tested for synchronization for all threads
+  // get global rng that is tested for synchronization for all ranks
   RngPtr grng = get_rank_synced_rng();
 
   // begin code adapted from gsl 1.8 //

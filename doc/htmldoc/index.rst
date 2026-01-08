@@ -22,6 +22,12 @@ Welcome to the NEST Simulator documentation!
           ranging from algorithmically determined connections to data-driven connectivity.
           Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+          To get started you can:
+
+          ``pip install nest-simulator``
+
+          see :ref:`here <install_nest>` for all installation options!
+
 
        .. grid-item::
 

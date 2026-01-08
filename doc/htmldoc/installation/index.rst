@@ -1,35 +1,46 @@
 .. _install_nest:
 
-Install NEST
-============
+Install and run NEST
+====================
 
-
-.. grid:: 2
+.. grid::
    :gutter: 1
 
-   .. grid-item-card:: |user|  Install a pre-built NEST package using
+
+   .. grid-item-card:: |user| I want to run NEST on my laptop
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       You can ``pip install nest-simulator``
+
+       See our :ref`detailed instructions` including installing NEST with
+       |nestml| and |desktop|.
+
+       .. dropdown:: Other options for pre-packaged NEST
+          :class-title: sd-font-weight-light sd-fs-7 sd-text-secondary
+          :class-container: sd-align-major-center
+          :color: light
+
+          * :ref:`Docker (cross-platform) <docker>`
+            (Includes NESTML)
+          * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
+          * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
+          * :ref:`Homebrew (macOS) <macos_install>`
+          * :ref:`Options for Windows users <windows_install>`
+
+   .. grid-item-card:: |dev| I want to do development with NEST
       :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
 
-      * :ref:`Docker (cross-platform) <docker>`
-        (Includes NESTML)
-      * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
-      * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
-      * :ref:`Homebrew (macOS) <macos_install>`
-      * :ref:`Options for Windows users <windows_install>`
-
-
-   .. grid-item-card:: |dev| Source install
-      :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
-
-      If you want to do development with NEST
+      For customizing the build (e.g., adding MPI support), you can
 
       * :ref:`dev_install`
 
-   .. grid-item-card:: |launch| Try NEST installation-free
+
+.. grid::
+   :gutter: 1
+
+
+   .. grid-item-card:: |launch| I want to try out NEST without installing anything
       :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
 
       With the JupyterHub service from EBRAINS, you can
       try out NEST (and many other tools) directly in your browser.
@@ -42,47 +53,50 @@ Install NEST
 
       * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
 
-Install related tools
-~~~~~~~~~~~~~~~~~~~~~
 
-.. grid:: 2
-   :gutter: 1
-
-   .. grid-item-card:: |desktop|
+   .. grid-item-card:: |teach| I want to use NEST in the classroom/for a workshop
       :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
 
-      A graphical user interface, ideal for learning and teaching concepts
+
+      Use |desktop| -
+      a graphical user interface, ideal for learning and teaching concepts
       regarding neural networks in classrooms and workshops.
 
-      * :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
-
-      * :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
-
-   .. grid-item-card:: |nestml|
-      :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
-
-      Install the NEST modeling language to create and customize models
+      * :doc:`Lecturer guide <desktop:lecturer/index>`
+      * :ref:`Introduction to PyNEST tutorial <pynest_tutorial>`
+      * :doc:`NESTML tutorials <nestml:tutorials/index>`
 
 
-      * :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
 
-      * :ref:`Install docker container for NEST + NESTML <docker>`
+.. grid::
+   :gutter: 1
 
+   .. grid-item-card:: |hpc| I want to run NEST on an HPC system
+     :class-title: sd-d-flex-row sd-align-minor-center
+     :columns: 6
 
-   .. grid-item-card:: |hpc| Configure HPC systems
-      :class-title: sd-d-flex-row sd-align-minor-center
-      :columns: 4
-
-      Find out how to set up and optimize HPC systems for NEST
+      We have provided some helpful guides to understanding and optimizing NEST
+      in HPC environments:
 
       * :ref:`optimize_performance`
+      * :ref:`parallel_computing`
 
 
+What's next?
+-------------
+
+
+.. grid::
+   :gutter: 1
+
+   .. grid-item-card::
+     :columns: 6
+
+     See our :ref:`tutorials and guides <tutorials_guides>` to get started with NEST
+     or
+     explore are vast catalog of :ref:`examples <pynest_examples>`.
 
 ----
-
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
@@ -101,5 +115,10 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |launch| image:: ../static/img/001-shuttle.svg
 .. |dev| image:: ../static/img/dev_orange.svg
 .. |desktop| image:: ../static/img/nestdesktop022023.svg
+   :width: 120px
+   :target: https://nest-desktop.readthedocs.io/en/latest/
 .. |nestml| image:: ../static/img/nestml022023.svg
+   :width: 80px
+   :target: https://nestml.readthedocs.io/en/latest/
 .. |hpc| image:: ../static/img/hpc_orange128.svg
+.. |teach| image:: ../static/img/014-teacher.svg

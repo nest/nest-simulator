@@ -29,6 +29,7 @@
     --sd-color-info: var(--nest-blue);
     --sd-color-card-border-hover: var(--nest-orange);
     --sd-color-tabs-underline: #fff;
+    --sd-fontsize-dropdown-title: 0.8rem;
 }
 /* Define base font color and style */
 body{
@@ -360,6 +361,9 @@ nav.md-nav.md-nav--secondary label.md-nav__title:after{
 
 }
 
+details.sd-dropdown:not([open]).sd-card {
+  width: max-content;
+}
 #welcome-to-the-nest-simulator-documentation .sd-row-cols-lg-1 > *{
 width: 85%;
 }

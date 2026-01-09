@@ -19,14 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import pytest
 from mpi_test_wrapper import MPITestAssertEqual
 
 
+@pytest.mark.skipif_incompatible_mpi
 @MPITestAssertEqual([2, 4])
 def test_issue_1957():
     """
     Confirm that GetConnections works in parallel without hanging if not all ranks have connections.
+
+    The test is performed on connection data written to OTHER_LABEL.
     """
 
     import nest
@@ -44,7 +47,7 @@ def test_issue_1957():
     if pre_conns:
         # need to do this here, Disconnect invalidates pre_conns
         df = pd.DataFrame.from_dict(pre_conns.get()).drop(labels="target_thread", axis=1)
-        df.to_csv(OTHER_LABEL.format(nest.num_processes) + f"-{nest.Rank()}.dat", index=False)  # noqa: F821
+        df.to_csv(OTHER_LABEL.format(nest.num_processes, nest.Rank()), index=False, sep="\t")  # noqa: F821
 
     nest.Disconnect(nrn, nrn)
     nest.Disconnect(nrn, nrn)

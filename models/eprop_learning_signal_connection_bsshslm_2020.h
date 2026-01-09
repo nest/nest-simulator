@@ -65,27 +65,34 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-========= ===== ================ ======= ===============
+========== ===== ================ ======= ===============
 **Individual synapse parameters**
---------------------------------------------------------
-Parameter  Unit  Math equivalent Default Description
-========= ===== ================ ======= ===============
-delay     ms    :math:`d_{jk}`       1.0 Dendritic delay
-weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
-========= ===== ================ ======= ===============
+---------------------------------------------------------
+Parameter  Unit  Math equivalent  Default Description
+========== ===== ================ ======= ===============
+``delay``  ms    :math:`d_{jk}`       1.0 Dendritic delay
+``weight`` pA    :math:`B_{jk}`       1.0 Synaptic weight
+========== ===== ================ ======= ===============
 
 Recordables
 +++++++++++
 
-The following variables can be recorded:
+The following variables can be recorded. Note that since this connection lacks
+a plasticity mechanism the weight does not evolve over time.
 
-  - synaptic weight ``weight``
+============== ==== =============== ============= ===============
+**Synapse recordables**
+-----------------------------------------------------------------
+State variable Unit Math equivalent Initial value Description
+============== ==== =============== ============= ===============
+``weight``     pA   :math:`B_{jk}`            1.0 Synaptic weight
+============== ==== =============== ============= ===============
 
 Usage
 +++++
 
-This model can only be used in combination with the other e-prop models,
-whereby the network architecture requires specific wiring, input, and output.
+This model can only be used in combination with the other e-prop models
+and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
 reproducing among others the original proof-of-concept tasks in [1]_.
@@ -102,15 +109,16 @@ References
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
-       van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
-       eligibility propagation (in preparation)
+
+.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
+       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
+       implementation of eligibility propagation (in preparation)
 
 See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_learning_signal_connection_bsshslm_2020
 
@@ -119,6 +127,8 @@ EndUserDocs */
 void register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name );
 
 /**
+ * @brief Class implementing a feedback connection model for e-prop plasticity.
+ *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
  * according to Bellec et al. (2020).
  */
@@ -144,7 +154,7 @@ public:
   }
 
   //! Get the secondary learning signal event.
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -214,10 +224,10 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( 
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_secondary_event()
 {
-  return new LearningSignalConnectionEvent();
+  return std::make_unique< LearningSignalConnectionEvent >();
 }
 
 } // namespace nest

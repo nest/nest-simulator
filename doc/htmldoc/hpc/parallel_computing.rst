@@ -203,7 +203,7 @@ experimenting.
    ``local_num_threads`` or the ``total_num_virtual_procs``
    :ref:`kernel attribute<sec_kernel_attributes>`.
 
-   
+
 Multiprocessing
 ---------------
 

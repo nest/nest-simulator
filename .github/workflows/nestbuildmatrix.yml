@@ -14,13 +14,13 @@ jobs:
       CLANG_FORMAT_FILE: ".clang-format"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
@@ -33,17 +33,74 @@ jobs:
           files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
           diff -u <(cat ${files}) <(clang-format ${files})
 
+  shellcheck:
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install shellcheck
+
+      - name: "Run shellcheck..."
+        run: |
+          shellcheck --version
+          find . -iname "*.sh" -o -iname "*.sh.in" | xargs shellcheck
+
+  pre-commit-hooks:
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pre-commit
+
+      - name: "Run pre-commit checks..."
+        run: |
+          pre-commit run --all-files
+
+  no-crlf:
+    # While pre-commit-hook mixed-line-endings could check for this, it would
+    # be incompatible with "git smudge", as users may decide to use any
+    # formatting in their editor consistently.
+    # https://github.com/pre-commit/pre-commit-hooks?tab=readme-ov-file#mixed-line-ending
+    #
+    # This check makes sure the files in the repository are always consistent
+    # in their line endings, i.e. new line, and not carriage return+line feed.
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Check all files for broken line endings…"
+        run: '! find . -not -type d -exec file "{}" ";" | grep CRLF'
+
   cppcheck:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
@@ -60,18 +117,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -87,18 +144,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -119,18 +176,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -146,18 +203,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -169,13 +226,13 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
@@ -187,13 +244,13 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
@@ -214,18 +271,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -241,18 +298,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -291,7 +348,7 @@ jobs:
   #         name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+  #       uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
   #       with:
   #         python-version: "3.10"
 
@@ -313,12 +370,12 @@ jobs:
   #   needs: [build_macos]
   #   steps:
   #     - name: "Checkout repository content"
-  #       uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+  #       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
   #       with:
   #         fetch-depth: 0
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+  #       uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
   #       with:
   #         python-version: "3.10"
 
@@ -334,18 +391,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -355,18 +412,18 @@ jobs:
 
       - name: "Run pylint..."
         run: |
-          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
+          pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py
 
   isort:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Run isort..."
-        uses: isort/isort-action@f14e57e1d457956c45a19c05a89cccdf087846e5  # 1.1.0
+        uses: isort/isort-action@24d8a7a51d33ca7f36c3f23598dafa33f7071326  # 1.1.1
         with:
           configuration: --profile=black --thirdparty="nest" --check-only --diff
 
@@ -374,18 +431,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Run black..."
-        uses: psf/black@d9ad09a32b0e0481bb4fef548d35b7a49cc03c5d  # 23.12.0
+        uses: psf/black@af0ba72a73598c76189d6dd1b21d8532255d5942  # 25.9.0
         with:
           jupyter: true
 
@@ -393,18 +450,18 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
@@ -422,18 +479,18 @@ jobs:
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
@@ -454,7 +511,7 @@ jobs:
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: "sphinx-rtd output"
           path: |
@@ -468,18 +525,18 @@ jobs:
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: Install Conda
-        uses: conda-incubator/setup-miniconda@a4260408e20b96e80095f42ff7f1a15b27dd94ca   # v3.0.4
+        uses: conda-incubator/setup-miniconda@835234971496cad1653abb28a638a281cf32541f   # v3.2.0
         with:
           auto-update-conda: true
           python-version: "3.10"
@@ -500,7 +557,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           path: |
             build/sphinx-output.log
@@ -509,7 +566,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -522,32 +579,33 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music, readline
         use:
+          - "optimize, warning"
           - "boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: "3.10"
 
       - name: "Restore apt cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         env:
           cache-name: "apt-cache"
         with:
@@ -562,33 +620,48 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt-get update
           # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install ccache
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
-          sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
-          # Install MPI dependencies regardless of whether we compile NEST with or without MPI, so the installation of MPI4Py works
-          sudo apt-get install openmpi-bin libopenmpi-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install pkg-config
+          sudo apt-get update
+          sudo apt-get install \
+                           ccache \
+                           python3-all-dev \
+                           jq \
+                           libpcre3 libpcre3-dev \
+                           pkg-config
+          # not sure why these would be required:
+          #   sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
           sudo ldconfig
+
+      - name: "Install Readline dependencies"
+        if: "${{ contains(matrix.use, 'readline') }}"
+        run: "sudo apt-get install libreadline6-dev libncurses5-dev"
+
+      - name: "Install LTDL dependencies"
+        if: "${{ contains(matrix.use, 'ltdl') }}"
+        run: "sudo apt-get install libltdl-dev"
+
+      - name: "Install Boost dependencies"
+        if: "${{ contains(matrix.use, 'boost') }}"
+        run: "sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev"
+
+      - name: "Install OpenMPI development dependencies"
+        if: "${{ contains(matrix.use, 'mpi') }}"
+        run: "sudo apt-get install openmpi-bin libopenmpi-dev"
 
       - name: "Install GSL system dependencies"
         if: "${{ contains(matrix.use, 'gsl') }}"
-        run: |
-          sudo apt-get install libgsl0-dev
+        run: "sudo apt-get install libgsl0-dev"
 
       - name: "Install HDF5 system dependencies"
         if: "${{ contains(matrix.use, 'hdf5') }}"
-        run: |
-          sudo apt-get install libhdf5-dev
+        run: "sudo apt-get install libhdf5-dev"
 
       - name: "Restore ccache"
         # Using CCache to re-use compiled objects from prior runs that have the same
         # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             $HOME/.ccache
@@ -604,7 +677,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -617,13 +690,24 @@ jobs:
       - name: "Install Python dependencies"
         run: |
           python -m pip install --upgrade pip setuptools
+          python -m pip install --force-reinstall --upgrade cython  # this finds a broken preinstall if not explicitly forced
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist cython matplotlib terminaltables pandoc pandas
-          # Install mpi4py regardless of whether we compile NEST with or without MPI, so regressiontests/issue-1703.py will run in both cases
-          python -m pip install --force-reinstall --upgrade mpi4py
+          pip list
+
+      - name: "Install Python test dependencies"
+        # These could go to a separate venv…
+        run: |
+          python -m pip install 'junitparser>=2' pytest pytest-timeout pytest-xdist terminaltables
+          python -m pip install numpy scipy pandas matplotlib
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
+
+      - name: "Install Python doc dependencies"
+        run: "python -m pip install pandoc"
+
+      - name: "Install Python mpi dependencies"
+        if: "${{ contains(matrix.use, 'mpi') }}"
+        run: "python -m pip install --force-reinstall --upgrade mpi4py"
 
       - name: "Install h5py"
         if: "${{ contains(matrix.use, 'hdf5') }}"
@@ -649,12 +733,32 @@ jobs:
           PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
           ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
 
+      - name: "Uninstall Boost development libraries"
+        if: "${{ ! contains(matrix.use, 'boost') }}"
+        run: |
+          apt list --installed 'libboost*'
+          sudo apt-get remove --autoremove 'libboost*-dev'
+
+      - name: "List available packages"
+        if: "${{ ! contains(matrix.use, 'boost') }}"
+        run: |
+          gcc --version
+          python --version
+          echo "INSTALLED PYTHON PACKAGES:"
+          pip list
+          echo "INSTALLED BOOST PACKAGES:"
+          dpkg -l 'libboost*' | grep "^ii" || true
+          echo "INSTALLED BOOST HEADERS:"
+          dpkg -l 'libboost*-dev' | grep "^ii"  || true
+          echo "LIST HAS TO BE ZERO"
+          test -z "$(dpkg -l 'libboost*-dev' | grep "^ii")"
+
       - name: "Configure NEST build"
         env:
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
@@ -679,6 +783,9 @@ jobs:
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
+              -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
+              -Dwith-mpi-sync-timer=${{ contains(matrix.use, 'mpi-sync-timer') && 'ON' || 'OFF' }} \
               ..
 
       - name: "Add GCC problem matcher"
@@ -703,7 +810,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
@@ -716,7 +823,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
@@ -727,7 +834,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -746,18 +853,18 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: 3.12
 
@@ -768,7 +875,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -789,7 +896,7 @@ jobs:
 
       - name: "Configure NEST build"
         run: |
-          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+          mkdir -pv "$NEST_VPATH/reports" "$NEST_RESULT"
 
           cd "$NEST_VPATH"
           cmake \
@@ -798,8 +905,7 @@ jobs:
               -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
               -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
-              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
-              ${{ contains(matrix.use, 'openmp') && '-DOpenMP_ROOT=$(brew --prefix libomp)' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && '$(brew --prefix libomp)' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
@@ -833,7 +939,7 @@ jobs:
       - name: "Initialize Matplotlibrc"
         run: |
           # initialize matplotlib backend
-          mkdir -p $HOME/.matplotlib
+          mkdir -pv $HOME/.matplotlib
           echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 
       - name: "Run NEST testsuite"
@@ -844,7 +950,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         if: ${{ always() }}
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"

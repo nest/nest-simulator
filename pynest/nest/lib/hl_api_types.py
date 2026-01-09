@@ -755,12 +755,12 @@ class SynapseCollection:
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
-            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
-            srcs = srcs[:15] + ["\u22EE "] + srcs[-15:]
-            trgt = trgt[:15] + ["\u22EE "] + trgt[-15:]
-            wght = wght[:15] + ["\u22EE "] + wght[-15:]
-            dlay = dlay[:15] + ["\u22EE "] + dlay[-15:]
-            s_model = s_model[:15] + ["\u22EE "] + s_model[-15:]
+            # u'\u22ee ' is the unicode for vertical ellipsis, used when we have many connections
+            srcs = srcs[:15] + ["\u22ee "] + srcs[-15:]
+            trgt = trgt[:15] + ["\u22ee "] + trgt[-15:]
+            wght = wght[:15] + ["\u22ee "] + wght[-15:]
+            dlay = dlay[:15] + ["\u22ee "] + dlay[-15:]
+            s_model = s_model[:15] + ["\u22ee "] + s_model[-15:]
 
         headers = f"{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}" + "\n"
         borders = (
@@ -868,8 +868,13 @@ class SynapseCollection:
         # This avoids problems with invalid SynapseCollections.
         # See also #3100.
         if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
-            # Return empty tuple if get is called with an argument
-            return {} if keys is None else ()
+            if pandas_output:
+                return pandas.DataFrame()
+            elif output == "json":
+                return to_json({})
+            else:
+                # Return empty tuple if get is called with an argument
+                return {} if keys is None else ()
 
         if keys is None:
             cmd = "GetStatus"
@@ -1281,6 +1286,8 @@ def serialize_data(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
+    if isinstance(data, (numpy.integer)):
+        return int(data)
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serialize_data(data.get())

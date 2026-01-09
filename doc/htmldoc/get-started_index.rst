@@ -118,9 +118,9 @@ Next steps: Create your own network model
          Discover how to build large and more complex network models with these examples:
 
          * :doc:`Brunel network </auto_examples/brunel_alpha_nest>`: A random balanced network
-         * :doc:`The microcircuit  model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014
+         * :doc:`The microcircuit model <pd14:index>`: A network model example based on Potjans and Diesman 2014
          * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
-         * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
+         * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
 
 
 
@@ -147,6 +147,8 @@ More topics
        |neuron| More about neurons
        ^^^
 
+       * :ref:`types_neurons`
+       * :ref:`neuron_update`
        * :ref:`sim_precise_spike_times`
        * :ref:`exact_integration`
 
@@ -211,6 +213,8 @@ More topics
 
    tutorials/index
    tutorials/pynest_tutorial/index
+   neurons/neuron_update
+   neurons/neuron_types
 
 .. toctree::
    :maxdepth: 1
@@ -221,13 +225,8 @@ More topics
    Devices  <devices/index>
    Spatially-structured networks <networks/spatially_structured_networks>
    High performance computing <hpc/index>
-   NEST models <models/index>
    NEST and SONATA <nest_sonata/nest_sonata_guide>
-   Simulation behavior <nest_behavior/running_simulations>
-   Randomness in NEST <nest_behavior/random_numbers>
-   Built-in timers <nest_behavior/built-in_timers>
    Connect NEST with other tools <interface_nest/index>
-   From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
 
 .. toctree::
    :hidden:

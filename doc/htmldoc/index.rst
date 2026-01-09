@@ -22,6 +22,7 @@ Welcome to the NEST Simulator documentation!
           ranging from algorithmically determined connections to data-driven connectivity.
           Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+
        .. grid-item::
 
           .. button-ref:: tutorials_guides
@@ -45,31 +46,29 @@ Welcome to the NEST Simulator documentation!
               :data-bs-ride: carousel
 
                 .. figure:: static/img/network_model_sketch_mesocircuit.png
+                  :target: networks/index.html
 
-
-                  Create spatially structured networks
-
+                  Create large network models
 
                 .. figure:: static/img/astrocyte_interaction.png
-
+                  :target: auto_examples/astrocytes/index.html
 
                   Inspect neuron and astrocyte interactions
 
-
                 .. figure:: static/img/hpc_benchmark_connectivity.svg
-
+                  :target: auto_examples/hpc_benchmark.html
 
                   Test perfomance and benchmarks
 
                 .. figure:: static/img/pong_sim.gif
-
+                  :target: auto_examples/pong/run_simulations.html
 
                   Simulate a game of PONG with NEST
 
-                .. figure:: static/img/gapjunctions.png
+                .. figure:: static/img/pynest/eprop_supervised_classification_infrastructure.png
+                  :target: auto_examples/eprop_plasticity/index.html
 
-
-                  Explore synapse types like gap junctions
+                  Explore eligibility propagation plasticity
 
        .. grid-item::
 
@@ -123,7 +122,7 @@ How NEST works --- The Big Picture
    Models <models/index>
    Python API <ref_material/pynest_api/index>
    ref_material/glossary
-   benchmark_results
+   NEST performance results <https://performance-benchmarks.readthedocs.io/en/latest>
    Cite NEST <citing-nest>
    License <license>
 
@@ -146,3 +145,4 @@ How NEST works --- The Big Picture
    NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
    NESTML <https://nestml.readthedocs.io/en/latest/>
    NESTGPU <https://nest-gpu.readthedocs.io/en/latest/>
+   NEST NEAT <https://nest-neat.readthedocs.io/en/latest/>

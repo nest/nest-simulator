@@ -4,6 +4,7 @@ PyNEST examples
 ===============
 
 .. grid:: 1 1 2 3
+    :gutter: 1
 
     .. grid-item-card:: Simple networks
            :img-top: ../static/img/pynest/mc_neuron.png
@@ -76,12 +77,13 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
 
-    .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../auto_examples/Potjans_2014/potjans_2014_raster_plot.png
+    .. grid-item-card::  Large scale cortical network models
+           :img-top: ../static/img/network_model_sketch_mesocircuit.png
 
-           * :doc:`../auto_examples/Potjans_2014/index`
-
-
+           * :doc:`Cortical Microcircuit Model <pd14:auto_examples/index>`
+           * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
+           * `The multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
+           * `The HuMAM model <https://github.com/INM-6/human-multi-area-model>`_: Multi-Scale Spiking Network Model of Human Cerebral Cortex
 
     .. grid-item-card:: EI clustered network (Rostami et al)
            :img-top: ../auto_examples/EI_clustered_network/EI_clustered_network_schematic.png
@@ -148,6 +150,7 @@ PyNEST examples
            :img-top: ../static/img/pynest/precisespiking.png
 
            * :doc:`../auto_examples/precise_spiking`
+           * :doc:`../auto_examples/artificial_synchrony`
 
     .. grid-item-card:: Campbell Siegert
            :img-top: ../static/img/nest_logo-faded.png
@@ -160,6 +163,7 @@ PyNEST examples
            :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`../auto_examples/wang_decision_making`
+
 
 .. grid:: 1 1 2 3
 
@@ -212,10 +216,12 @@ PyNEST examples
     .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
            :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
 
-           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting_bsshslm_2020`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_lemniscate_bsshslm_2020`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
-           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
-           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_neuromorphic_mnist`
 
 
 .. grid:: 1 1 2 3
@@ -262,6 +268,19 @@ PyNEST examples
 
            * :doc:`../auto_examples/sonata_example/sonata_network`
 
+    .. grid-item-card:: HPC benchmark
+           :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
+
+           * :doc:`../auto_examples/hpc_benchmark`
+
+    .. grid-item-card:: Brette et al. 2007 Benchmarks
+           :img-top: ../static/img/nest_logo-faded.png
+
+           :doc:`../auto_examples/brette_et_al_2007/index`
+
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Connection set algebra
            :img-top: ../static/img/nest_logo-faded.png
 
@@ -277,7 +296,6 @@ PyNEST examples
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index
-   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
@@ -296,6 +314,7 @@ PyNEST examples
    ../auto_examples/glif_psc_neuron
    ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
+   ../auto_examples/artificial_synchrony
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example
    ../auto_examples/recording_demo
@@ -311,8 +330,6 @@ PyNEST examples
    ../auto_examples/urbanczik_synapse_example
    ../auto_examples/iaf_tum_2000_short_term_depression
    ../auto_examples/iaf_tum_2000_short_term_facilitation
-   ../auto_examples/compartmental_model/receptors_and_current
-   ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network
    ../auto_examples/rate_neuron_dm
    ../auto_examples/brunel_alpha_nest
@@ -321,20 +338,6 @@ PyNEST examples
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
    ../auto_examples/sonata_example/index
-   ../auto_examples/sonata_example/sonata_network
-   ../auto_examples/spatial/conncomp
-   ../auto_examples/spatial/conncon_sources
-   ../auto_examples/spatial/conncon_targets
-   ../auto_examples/spatial/connex
-   ../auto_examples/spatial/connex_ew
-   ../auto_examples/spatial/ctx_2n
-   ../auto_examples/spatial/gaussex
-   ../auto_examples/spatial/grid_iaf
-   ../auto_examples/spatial/grid_iaf_irr
-   ../auto_examples/spatial/grid_iaf_oc
-   ../auto_examples/spatial/test_3d
-   ../auto_examples/spatial/test_3d_exp
-   ../auto_examples/spatial/test_3d_gauss
    ../auto_examples/testiaf
    ../auto_examples/repeated_stimulation
    ../auto_examples/multimeter_file
@@ -351,27 +354,8 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/brette_et_al_2007/index
    ../auto_examples/astrocytes/index
-   ../auto_examples/astrocytes/astrocyte_single
-   ../auto_examples/astrocytes/astrocyte_interaction
-   ../auto_examples/astrocytes/astrocyte_small_network
-   ../auto_examples/astrocytes/astrocyte_brunel
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index
    ../auto_examples/wang_decision_making
-
-.. toctree::
-   :hidden:
-
-   ../auto_examples/sudoku/sudoku_net
-   ../auto_examples/sudoku/sudoku_solver
-   ../auto_examples/sudoku/plot_progress
-
-.. toctree::
-   :hidden:
-   :glob:
-
-   ../auto_examples/ignore_and_fire/*
-   ../auto_examples/pong/run_simulations
-   ../auto_examples/pong/pong
-   ../auto_examples/pong/generate_gif

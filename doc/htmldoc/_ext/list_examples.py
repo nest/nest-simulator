@@ -28,8 +28,8 @@ from docutils.parsers.rst import Directive, Parser
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
 
-logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
+log.setLevel(level=logging.WARNING)
 
 
 class listnode(nodes.General, nodes.Element):

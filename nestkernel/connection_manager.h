@@ -125,8 +125,6 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
-
   /**
    * Connect two nodes.
    *
@@ -203,6 +201,11 @@ public:
     const DictionaryDatum& third_connectivity,
     const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
+  /**
+   * Find first non-disabled thread-local connection of given synapse type with given source and target node.
+   *
+   * @returns Local connection id (lcid) or `invalid_index`
+   */
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
@@ -391,11 +394,6 @@ public:
   void sort_connections( const size_t tid );
 
   /**
-   * Removes disabled connections (of structural plasticity)
-   */
-  void remove_disabled_connections( const size_t tid );
-
-  /**
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
@@ -461,7 +459,7 @@ public:
 
   // public stop watch for benchmarking purposes
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
-  Stopwatch sw_construction_connect;
+  Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
 
@@ -473,10 +471,35 @@ private:
 
   size_t get_num_connections_( const size_t tid, const synindex syn_id ) const;
 
+  //! See get_connections()
+  void get_connections_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
+  void get_connections_to_targets_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
+  void get_connections_from_sources_( const size_t tid,
+    std::deque< ConnectionID >& connectome,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
+    synindex syn_id,
+    long synapse_label ) const;
+
   void get_source_node_ids_( const size_t tid,
     const synindex syn_id,
     const size_t tnode_id,
     std::vector< size_t >& sources );
+
+  /**
+   * Removes disabled connections (of structural plasticity)
+   */
+  void remove_disabled_connections_( const size_t tid );
 
   /**
    * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and

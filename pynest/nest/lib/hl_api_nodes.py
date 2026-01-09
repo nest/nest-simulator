@@ -212,6 +212,4 @@ def GetLocalNodeCollection(nc):
     if not isinstance(nc, NodeCollection):
         raise TypeError("GetLocalNodeCollection requires a NodeCollection in order to run")
 
-    sps(nc)
-    sr("LocalOnly")
-    return spp()
+    return nc[nc.local]

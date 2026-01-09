@@ -23,59 +23,74 @@
 Test GetNodes
 """
 
-import unittest
-
 import nest
+import pytest
 
 
-@nest.ll_api.check_stack
-class GetNodesTestCase(unittest.TestCase):
-    """Test GetNodes function"""
+# Apply parameterization over number of threads here, each test will be run once for
+# each parameter value. Need to protect in case we are running without threads.
+@pytest.fixture(autouse=True, params=[1, 2] if nest.ll_api.sli_func("is_threaded") else [1])
+def create_neurons(request):
+    nest.ResetKernel()
+    nest.local_num_threads = request.param
 
-    def setUp(self):
-        nest.ResetKernel()
+    nest.Create("iaf_psc_alpha", 3)
+    nest.Create("iaf_psc_delta", 2, {"V_m": -77.0})
+    # Work around because Create() with arrays does not work with more than one rank
+    # nest.Create("iaf_psc_alpha", 4, {"V_m": [-77.0, -66.0, -77.0, -66.0], "tau_m": [10.0, 11.0, 12.0, 13.0]})
+    c = nest.Create("iaf_psc_alpha", 4, {"V_m": -77.0, "tau_m": 10.0})
+    c[1].V_m = -66.0
+    c[3].V_m = -66.0
+    c[1].tau_m = 11.0
+    c[2].tau_m = 12.0
+    c[3].tau_m = 13.0
 
-        a = nest.Create("iaf_psc_alpha", 3)  # noqa: F841
-        b = nest.Create("iaf_psc_delta", 2, {"V_m": -77.0})  # noqa: F841
-        c = nest.Create(
-            "iaf_psc_alpha", 4, {"V_m": [-77.0, -66.0, -77.0, -66.0], "tau_m": [10.0, 11.0, 12.0, 13.0]}  # noqa: F841
-        )
-        d = nest.Create("iaf_psc_exp", 4)  # noqa: F841
-
-    def test_GetNodes(self):
-        """test GetNodes"""
-        all_nodes_ref = nest.NodeCollection(list(range(1, nest.network_size + 1)))
-        all_nodes = nest.GetNodes()
-
-        self.assertEqual(all_nodes_ref, all_nodes)
-
-    def test_GetNodes_with_params(self):
-        """test GetNodes with params"""
-        nodes_Vm = nest.GetNodes({"V_m": -77.0})
-        nodes_Vm_ref = nest.NodeCollection([4, 5, 6, 8])
-
-        self.assertEqual(nodes_Vm_ref, nodes_Vm)
-
-        nodes_Vm_tau = nest.GetNodes({"V_m": -77.0, "tau_m": 12.0})
-        nodes_Vm_tau_ref = nest.NodeCollection([8])
-
-        self.assertEqual(nodes_Vm_tau_ref, nodes_Vm_tau)
-
-        nodes_exp = nest.GetNodes({"model": "iaf_psc_exp"})
-        nodes_exp_ref = nest.NodeCollection([10, 11, 12, 13])
-
-        self.assertEqual(nodes_exp_ref, nodes_exp)
+    nest.Create("iaf_psc_exp", 4)
+    nest.Create("spike_generator", 3)
 
 
-def suite():
-    suite = unittest.makeSuite(GetNodesTestCase, "test")
-    return suite
+@pytest.mark.parametrize("local_only", [True, False])
+class TestGetNodes:
+    """Tests for GetNodes() function."""
 
+    def test_GetNodes(self, local_only):
+        """Test that nodes are correctly retrieved if on parameters are specified."""
 
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+        nodes_ref = nest.NodeCollection(list(range(1, nest.network_size + 1)))
+        if nodes_ref and local_only:
+            # Need to go via global_id to get empty node collection if no locals
+            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
 
+        nodes = nest.GetNodes(local_only=local_only)
 
-if __name__ == "__main__":
-    run()
+        assert nodes == nodes_ref
+
+    @pytest.mark.parametrize(
+        "filter, expected_ids",
+        [
+            [{"V_m": -77.0}, [4, 5, 6, 8]],
+            [{"V_m": -77.0, "tau_m": 12.0}, [8]],
+            [{"model": "iaf_psc_exp"}, [10, 11, 12, 13]],
+            [{"model": "spike_generator"}, [14, 15, 16]],
+        ],
+    )
+    def test_GetNodes_with_params(self, local_only, filter, expected_ids):
+        """Test that nodes are correctly filtered."""
+
+        nodes_ref = nest.NodeCollection(expected_ids)
+        if local_only:
+            # Need to go via global_id to get empty node collection if no locals
+            nodes_ref = nest.NodeCollection([n.global_id for n in nodes_ref if n.local])
+
+        nodes = nest.GetNodes(properties=filter, local_only=local_only)
+        assert nodes == nodes_ref
+
+    def test_GetNodes_no_match(self, local_only):
+        """
+        Ensure we get an empty result if nothing matches.
+
+        This would lead to crashes in MPI-parallel code before #3460.
+        """
+
+        nodes = nest.GetNodes({"V_m": 100.0}, local_only=local_only)
+        assert len(nodes) == 0

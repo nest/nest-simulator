@@ -183,6 +183,7 @@ params_nrn_out = {
 }
 
 params_nrn_rec = {
+    "activation_interval": duration["sequence"],  # ms, interval for activating synapse to free memory
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
     "c_reg": 300.0,  # coefficient of firing rate regularization
@@ -208,7 +209,7 @@ params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside 
 # since devices cannot establish plastic synapses for technical reasons
 
 gen_spk_in = nest.Create("spike_generator", n_in)
-nrns_in = nest.Create("parrot_neuron", n_in)
+nrns_in = nest.Create("eprop_input_neuron", n_in)
 
 # The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
 # that introduced it by the first letter of the authors' last names and the publication year.

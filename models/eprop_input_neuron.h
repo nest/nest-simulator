@@ -1,0 +1,170 @@
+/*
+ *  eprop_input_neuron.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef EPROP_INPUT_NEURON_H
+#define EPROP_INPUT_NEURON_H
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
+
+namespace nest
+{
+
+/* BeginUserDocs: neuron, parrot
+
+Short description
++++++++++++++++++
+
+Neuron that repeats incoming spikes
+
+Description
++++++++++++
+
+The parrot neuron simply emits one spike for every incoming spike.
+An important application is to provide identical poisson spike
+trains to a group of neurons. The ``poisson_generator`` sends a different
+spike train to each of its target neurons. By connecting one
+``poisson_generator`` to a ``eprop_input_neuron`` and then that ``eprop_input_neuron`` to
+a group of neurons, all target neurons will receive the same poisson
+spike train.
+
+Please note that weights of connections *to* the ``eprop_input_neuron``
+are ignored, while weights on connections *from* the ``eprop_input_neuron``
+to the target are handled as usual. Delays are honored on both
+incoming and outgoing connections.
+
+Only spikes arriving on connections to port 0 will be repeated.
+Connections onto port 1 will be accepted, but spikes incoming
+through port 1 will be ignored. This allows setting exact pre-
+and postsynaptic spike times for STDP protocols by connecting
+two parrot neurons spiking at desired times by, for example, a
+``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
+
+Receives
+++++++++
+
+SpikeEvent
+
+Sends
++++++
+
+SpikeEvent
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: eprop_input_neuron
+
+EndUserDocs */
+
+void register_eprop_input_neuron( const std::string& name );
+
+class eprop_input_neuron : public ArchivingNode
+{
+
+public:
+  eprop_input_neuron();
+
+  /**
+   * Import sets of overloaded virtual functions.
+   * @see Technical Issues / Virtual Functions: Overriding,
+   * Overloading, and Hiding
+   */
+  using Node::handle;
+  using Node::handles_test_event;
+  using Node::receives_signal;
+  using Node::sends_signal;
+
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  SignalType sends_signal() const override;
+  SignalType receives_signal() const override;
+
+  void handle( SpikeEvent& ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+private:
+  void init_buffers_() override;
+  void
+  pre_run_hook() override
+  {
+  } // no variables
+
+  void update( Time const&, const long, const long ) override;
+
+  /**
+     Buffers and accumulates the number of incoming spikes per time step;
+     RingBuffer stores doubles; for now the numbers are casted.
+  */
+  struct Buffers_
+  {
+    RingBuffer n_spikes_;
+  };
+
+  Buffers_ B_;
+};
+
+inline size_t
+eprop_input_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+{
+  SpikeEvent e;
+  e.set_sender( *this );
+
+  return target.handles_test_event( e, receptor_type );
+}
+
+inline size_t
+eprop_input_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  // Allow connections to port 0 (spikes to be repeated)
+  // and port 1 (spikes to be ignored).
+  if ( receptor_type == 0 or receptor_type == 1 )
+  {
+    return receptor_type;
+  }
+  else
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+}
+
+inline SignalType
+eprop_input_neuron::sends_signal() const
+{
+  return ALL;
+}
+
+inline SignalType
+eprop_input_neuron::receives_signal() const
+{
+  return ALL;
+}
+
+} // namespace
+
+#endif // EPROP_INPUT_NEURON_H

@@ -387,25 +387,22 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
   double grad = 0.0;  // gradient value to be calculated
-  double L = 0.0;     // error signal
-  double z = 0.0;     // spiking variable
   double z_bar = 0.0; // low-pass filtered spiking variable
 
-  for ( long presyn_isi : presyn_isis )
+  for ( const long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    double z = 1.0; // set spiking variable to 1 for each incoming spike
 
-    for ( long t = 0; t < presyn_isi; ++t )
+    for ( long t = 0; t < presyn_isi; ++t, ++eprop_hist_it )
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      L = eprop_hist_it->error_signal_;
+      const double E = eprop_hist_it->error_signal_; // error signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      grad += L * z_bar;
-      z = 0.0; // set spiking variable to 0 between spikes
+      grad += E * z_bar;
 
-      ++eprop_hist_it;
+      z = 0.0; // set spiking variable to 0 between spikes
     }
   }
   presyn_isis.clear();

@@ -317,6 +317,9 @@ private:
   //! The time step when the previous spike arrived.
   long t_spike_previous_ = 0;
 
+  //! Last event was an activation.
+  bool previous_event_was_activation_ = false;
+
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_ = 0;
 
@@ -334,6 +337,9 @@ private:
 
   //! Value of spiking variable one time step before t_previous_spike_.
   double z_previous_buffer_ = 0.0;
+
+  //! Sum of gradients.
+  double sum_grad_ = 0.0;
 
   /**
    *  Optimizer
@@ -365,6 +371,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_spike_previous_( 0 )
+  , previous_event_was_activation_( false )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( nullptr )
 {
@@ -399,12 +406,14 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
+  sum_grad_ = es.sum_grad_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -415,11 +424,14 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_spike_previous_( es.t_spike_previous_ )
+  , previous_event_was_activation_( es.previous_event_was_activation_ )
   , t_previous_trigger_spike_( es.t_previous_trigger_spike_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
   , e_bar_reg_( es.e_bar_reg_ )
   , epsilon_( es.epsilon_ )
+  , z_previous_buffer_( es.z_previous_buffer_ )
+  , sum_grad_( es.sum_grad_ )
   , optimizer_( es.optimizer_ )
 {
   // Move operator, therefore we must null the optimizer pointer in the source of the move.
@@ -440,13 +452,14 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
-
+  sum_grad_ = es.sum_grad_;
   optimizer_ = es.optimizer_;
 
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
@@ -471,7 +484,7 @@ eprop_synapse< targetidentifierT >::check_connection( Node& s,
   ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  t.register_eprop_connection();
+  t.register_synapse();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
@@ -492,24 +505,43 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool activation = e.get_activation();
+
+  if ( previous_event_was_activation_ and activation )
+  {
+    return false;
+  }
 
   if ( t_spike_previous_ != 0 )
   {
-    target->compute_gradient(
-      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, e_bar_reg_, epsilon_, weight_, cp, optimizer_ );
+    target->compute_gradient( t_spike,
+      t_spike_previous_,
+      z_previous_buffer_,
+      z_bar_,
+      e_bar_,
+      e_bar_reg_,
+      epsilon_,
+      weight_,
+      cp,
+      optimizer_,
+      activation,
+      previous_event_was_activation_,
+      sum_grad_ );
   }
 
-  const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff );
+  target->erase_used_eprop_history( t_spike, t_spike_previous_ );
 
   t_spike_previous_ = t_spike;
+  previous_event_was_activation_ = activation;
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
-
+  if ( not activation )
+  {
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
   return true;
 }
 

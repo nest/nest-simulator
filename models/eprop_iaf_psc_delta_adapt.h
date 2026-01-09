@@ -249,6 +249,8 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
+``activation_interval``         ms                                              3000.0 Interval between two
+                                                                                       activations
 ``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
@@ -425,7 +427,10 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
@@ -497,6 +502,9 @@ private:
 
     //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
     double eprop_isi_trace_cutoff_;
+
+    //! Interval between two activations.
+    long activation_interval_;
 
     //! Default constructor.
     Parameters_();
@@ -584,6 +592,9 @@ private:
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
+
+    //! Time steps of activation interval.
+    long activation_interval_steps_;
   };
 
   //! Get the current value of the membrane voltage.

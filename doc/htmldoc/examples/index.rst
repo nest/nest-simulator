@@ -245,6 +245,8 @@ PyNEST examples
            * :doc:`../auto_examples/sensitivity_to_perturbation`
            * :doc:`../auto_examples/intrinsic_currents_spiking`
            * :doc:`../auto_examples/intrinsic_currents_subthreshold`
+           * :doc:`../auto_examples/ou_vs_white_noise`
+           * :doc:`../auto_examples/ou_noise_single_neuron`
 
     .. grid-item-card:: Handling output
            :img-top: ../static/img/pynest/store_restore.png
@@ -353,3 +355,5 @@ PyNEST examples
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index
    ../auto_examples/wang_decision_making
+   ../auto_examples/ou_vs_white_noise
+   ../auto_examples/ou_noise_single_neuron

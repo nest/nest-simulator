@@ -350,6 +350,11 @@ configure_file(
     "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
 
+configure_file(
+    "${PROJECT_SOURCE_DIR}/pynest/nest/config.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/config.py" @ONLY
+)
+
 
 ################################################################################
 ##################            Install Extra Files             ##################

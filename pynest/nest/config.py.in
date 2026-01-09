@@ -1,0 +1,129 @@
+import sys
+
+status = {  # mixed "HAVE_*", "NEST_*" and others...
+    # This list is defined in sli/slistartup.cc lines 285 and onwards
+    "argv": sys.argv.copy(),
+    "version": "@NEST_VERSION@",  # NEST_VERSION
+    "version_git": {
+        "hash": "@NEST_VERSION_GIT_HASH@",  # NEST_VERSION_GIT_HASH
+        "branch": "@NEST_VERSION_GIT_BRANCH@",  # NEST_VERSION_GIT_BRANCH
+        "remote": "@NEST_VERSION_GIT_REMOTE@",  # NEST_VERSION_GIT_REMOTE
+    } if "@NEST_VERSION_GIT@" else False,  # NEST_VERSION_GIT
+    #"exitcode": "@EXIT_SUCCESS@",  # EXIT_SUCCESS
+    #"built": "@__TIME__@",  # __TIME__
+    #"prefix": "@NEST_INSTALL_PREFIX@",  # NEST_INSTALL_PREFIX
+    "prefix": "@CMAKE_INSTALL_PREFIX@",  # CMAKE_INSTALL_PREFIX
+    "cmake_prefix": "@CMAKE_INSTALL_PREFIX@",  # CMAKE_INSTALL_PREFIX
+    "cmake_datadir": "@CMAKE_INSTALL_DATADIR@",  # CMAKE_INSTALL_DATADIR
+    "cmake_full_datadir": "@CMAKE_INSTALL_FULL_DATADIR@",  # CMAKE_INSTALL_FULL_DATADIR
+    "cmake_docdir": "@CMAKE_INSTALL_DOCDIR@",  # CMAKE_INSTALL_DOCDIR
+    #"slilibdir": "@NEST_INSTALL_PREFIX@/@NEST_INSTALL_DATADIR@",  # NEST_INSTALL_PREFIX/NEST_INSTALL_DATADIR
+    #"slidocdir": "@NEST_INSTALL_PREFIX@/@NEST_INSTALL_DOCDIR@",  # NEST_INSTALL_PREFIX/NEST_INSTALL_DOCDIR
+    #"host": "@NEST_HOST@",  # NEST_HOST
+    #"hostos": "@NEST_HOSTOS@",  # NEST_HOSTOS
+    #"hostvendor": "@NEST_HOSTVENDOR@",  # NEST_HOSTVENDOR
+    #"hostcpu": "@NEST_HOSTCPU@",  # NEST_HOSTCPU
+    "host": {
+        "arch": "@NEST_HOST_ARCH@",  # NEST_HOST_ARCH
+        "os": "@NEST_HOST_OS@",  # NEST_HOST_OS
+        "vendor": "@NEST_HOST_VENDOR@",  # NEST_HOST_VENDOR
+    },
+    "target": {
+        "arch": "@NEST_TARGET_ARCH@",  # NEST_TARGET_ARCH
+        "os": "@NEST_TARGET_OS@",  # NEST_TARGET_OS
+        "vendor": "@NEST_TARGET_VENDOR@",  # NEST_TARGET_VENDOR
+    },
+    "nest_user_email": "@NEST_USER_EMAIL@",  # NEST_USER_EMAIL
+    "platform": "default",  # for backward compatibility with BlueGene
+    "threading": "@with-openmp@" != "OFF",  # with-openmp, originally "threading" was to choose "ptreads" or "openmp"
+    "mpi": {
+        "mpiexec": "@MPIEXEC@",  # MPIEXEC
+        "mpiexec_numproc_flag": "@MPIEXEC_NUMPROC_FLAG@",  # MPIEXEC_NUMPROC_FLAG
+        "mpiexec_max_numprocs": "@MPIEXEC_MAX_NUMPROCS@",  # MPIEXEC_MAX_NUMPROCS
+        "mpiexec_preflags": "@MPIEXEC_PREFLAGS@",  # MPIEXEC_PREFLAGS
+        "mpiexec_postflags": "@MPIEXEC_POSTFLAGS@",  # MPIEXEC_POSTFLAGS
+    } if "@HAVE_MPI@" != "OFF" else False,  # HAVE_MPI
+    "have_mpi": "@HAVE_MPI@" != "OFF",  # HAVE_MPI
+    "have_gsl": "@HAVE_GSL@" != "OFF",  # HAVE_GSL
+    "have_music": "@HAVE_MUSIC@" != "OFF",  # HAVE_MUSIC
+    "have_boost": "@HAVE_BOOST@" != "OFF",  # HAVE_BOOST
+    "have_libneurosim": "@HAVE_LIBNEUROSIM@" != "OFF",  # HAVE_LIBNEUROSIM
+    "have_sionlib": "@HAVE_SIONLIB@" != "",  # HAVE_SIONLIB
+    "have_hdf5": "@HAVE_HDF5@" != "OFF",  # HAVE_HDF5
+    "ndebug": "@NDEBUG@" != "",  # NDEBUG, for "#ifdef NDEBUG" sections
+    #"architecture": { … }
+    #"exitcodes": {
+    #    "success": "@EXIT_SUCCSESS@",  # EXIT_SUCCSESS
+    #    "skipped": "@EXITCODE_SKIPPED@",  # EXITCODE_SKIPPED
+    #    "success": "@EXITCODE_SKIPPED_NO_MPI@",  # EXITCODE_SKIPPED_NO_MPI
+    #    …
+    #}
+    #"environment": os.environ.copy(),
+}
+
+config = {  # everything "HAVE_*"
+    "python": "@HAVE_PYTHON@",
+    "mpi": "@HAVE_MPI@",
+    "openmp": "@HAVE_OPENMP@",
+    "libneurosim": "@HAVE_LIBNEUROSIM@",
+    "music": "@HAVE_MUSIC@",
+    "sionlib": "@HAVE_SIONLIB@",
+    "boost": "@HAVE_BOOST@",
+    "hdf5": "@HAVE_HDF5@",
+    "readline": "@HAVE_READLINE@",
+    "ltdl": "@HAVE_LTDL@",
+    "gsl": "@HAVE_GSL@",
+    "modelset": "@HAVE_MODELSET@",
+    "models": "@HAVE_MODELS@",
+    "modelset": "@HAVE_MODELSET@",
+    "detailed-timers": "@HAVE_DETAILED-TIMERS@",
+    "optimize": "@HAVE_OPTIMIZE@",
+    "warning": "@HAVE_WARNING@",
+    "debug": "@HAVE_DEBUG@",
+    "cpp-std": "@HAVE_CPP-STD@",
+    "intel-compiler-flags": "@HAVE_INTEL-COMPILER-FLAGS@",
+    "libraries": "@HAVE_LIBRARIES@",
+    "includes": "@HAVE_INCLUDES@",
+    "defines": "@HAVE_DEFINES@",
+    "userdoc": "@HAVE_USERDOC@",
+    "devdoc": "@HAVE_DEVDOC@",
+    "full-logging": "@HAVE_FULL-LOGGING@",
+    "python": "@HAVE_PYTHON@",
+    "music": "@HAVE_MUSIC@",
+    "defines": "@HAVE_DEFINES@",
+    "libraries": "@HAVE_LIBRARIES@",
+    "includes": "@HAVE_INCLUDES@",
+}
+setup = {  # everything "with-*"
+    "python": "@with-python@",
+    "mpi": "@with-mpi@",
+    "openmp": "@with-openmp@",
+    "libneurosim": "@with-libneurosim@",
+    "music": "@with-music@",
+    "sionlib": "@with-sionlib@",
+    "boost": "@with-boost@",
+    "hdf5": "@with-hdf5@",
+    "readline": "@with-readline@",
+    "ltdl": "@with-ltdl@",
+    "gsl": "@with-gsl@",
+    "modelset": "@with-modelset@",
+    "models": "@with-models@",
+    "modelset": "@with-modelset@",
+    "detailed-timers": "@with-detailed-timers@",
+    "optimize": "@with-optimize@",
+    "warning": "@with-warning@",
+    "debug": "@with-debug@",
+    "cpp-std": "@with-cpp-std@",
+    "intel-compiler-flags": "@with-intel-compiler-flags@",
+    "libraries": "@with-libraries@",
+    "includes": "@with-includes@",
+    "defines": "@with-defines@",
+    "userdoc": "@with-userdoc@",
+    "devdoc": "@with-devdoc@",
+    "full-logging": "@with-full-logging@",
+    "python": "@with-python@",
+    "music": "@with-music@",
+    "defines": "@with-defines@",
+    "libraries": "@with-libraries@",
+    "includes": "@with-includes@",
+}

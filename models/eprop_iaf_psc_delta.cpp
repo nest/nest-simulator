@@ -88,6 +88,9 @@ eprop_iaf_psc_delta::Parameters_::Parameters_()
   , kappa_reg_( 0.97 )
   , eprop_isi_trace_cutoff_( 1000.0 )
   , activation_interval_( 3000.0 )
+  , ignore_and_fire_( false )
+  , firing_phase_( 1.0 )
+  , firing_rate_( 10.0 )
 {
 }
 
@@ -136,6 +139,9 @@ eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::kappa_reg, kappa_reg_ );
   def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
   def< double >( d, names::activation_interval, activation_interval_ );
+  def< bool >( d, names::ignore_and_fire, ignore_and_fire_ );
+  def< double >( d, names::phase, firing_phase_ );
+  def< double >( d, names::rate, firing_rate_ );
 }
 
 double
@@ -177,6 +183,9 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
   updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
   updateValueParam< double >( d, names::activation_interval, activation_interval_, node );
+  updateValueParam< bool >( d, names::ignore_and_fire, ignore_and_fire_, node );
+  updateValueParam< double >( d, names::phase, firing_phase_, node );
+  updateValueParam< double >( d, names::rate, firing_rate_, node );
 
   if ( V_th_ < V_min_ )
   {
@@ -238,6 +247,16 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty(
       "Computation cutoff of eprop trace 0 ≤ eprop trace eprop_isi_trace_cutoff ≤ activation_interval required." );
   }
+
+  if ( firing_phase_ <= -1.0 or firing_phase_ > 1.0 )
+  {
+    throw BadProperty( "Firing phase must be > -1 and <= 1." );
+  }
+
+  if ( firing_rate_ <= -1.0 )
+  {
+    throw BadProperty( "Firing rate must be > -1." );
+  }
   return delta_EL;
 }
 
@@ -266,6 +285,10 @@ eprop_iaf_psc_delta::eprop_iaf_psc_delta()
   , B_( *this )
 {
   recordablesMap_.create();
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
@@ -274,6 +297,10 @@ eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -347,23 +374,45 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
-    if ( S_.v_m_ >= P_.V_th_ )
+    if ( P_.ignore_and_fire_ )
     {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.v_m_ = P_.V_reset_;
+      if ( V_.firing_phase_steps_ == 0 )
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.v_m_ = P_.V_reset_;
+        V_.firing_phase_steps_ = V_.firing_interval_steps_ - 1;
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
 
-      z = 1.0;
-      set_last_event_time( t );
+        z = 1.0;
+        set_last_event_time( t );
+      }
+      else
+      {
+        --V_.firing_phase_steps_;
+      }
     }
-    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= V_.activation_interval_steps_ )
+    else
     {
-      SpikeEvent se;
-      se.set_activation();
-      kernel().event_delivery_manager.send( *this, se, lag );
-      set_last_event_time( t );
+      if ( S_.v_m_ >= P_.V_th_ )
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.v_m_ = P_.V_reset_;
+
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+
+        z = 1.0;
+        set_last_event_time( t );
+      }
+      else if ( get_last_event_time() > 0 and t - get_last_event_time() >= V_.activation_interval_steps_ )
+      {
+        SpikeEvent se;
+        se.set_activation();
+        kernel().event_delivery_manager.send( *this, se, lag );
+        set_last_event_time( t );
+      }
     }
 
     append_new_eprop_history_entry( t );

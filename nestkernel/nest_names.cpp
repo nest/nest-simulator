@@ -270,6 +270,7 @@ const Name Inact_h( "Inact_h" );
 const Name Inact_p( "Inact_p" );
 const Name IP3( "IP3" );
 const Name IP3_0( "IP3_0" );
+const Name ignore_and_fire( "ignore_and_fire" );
 const Name indegree( "indegree" );
 const Name index_map( "index_map" );
 const Name individual_spike_trains( "individual_spike_trains" );

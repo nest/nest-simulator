@@ -392,6 +392,15 @@ private:
     //! Interval between two activations.
     long activation_interval_;
 
+    //! If True, the neuron is an ignore-and-fire neuron.
+    bool ignore_and_fire_;
+
+    //! Time offset of the first forced spike within each second (ms).
+    double firing_phase_;
+
+    //! Rate for forced firing mode (spikes/s).
+    double firing_rate_;
+
     //! Default constructor.
     Parameters_();
 
@@ -464,6 +473,12 @@ private:
   //! Structure of internal variables.
   struct Variables_
   {
+    //! Current state counter holding the remaining steps until the next forced spike.
+    long firing_phase_steps_;
+
+    //! Number of simulation steps between two consecutive forced spikes.
+    long firing_interval_steps_;
+
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
@@ -535,6 +550,13 @@ private:
 
   //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf_adapt_bsshslm_2020 > recordablesMap_;
+
+  inline void
+  calc_initial_variables_()
+  {
+    V_.firing_interval_steps_ = Time( Time::ms( 1. / P_.firing_rate_ * 1000. ) ).get_steps();
+    V_.firing_phase_steps_ = Time( Time::ms( P_.firing_phase_ / P_.firing_rate_ * 1000. ) ).get_steps();
+  }
 };
 
 inline long
@@ -622,6 +644,11 @@ eprop_iaf_adapt_bsshslm_2020::set_status( const DictionaryDatum& d )
 
   P_ = ptmp;
   S_ = stmp;
+
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 } // namespace nest

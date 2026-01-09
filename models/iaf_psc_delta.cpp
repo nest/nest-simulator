@@ -79,6 +79,9 @@ nest::iaf_psc_delta::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
   , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
   , with_refr_input_( false )
+  , ignore_and_fire_( false )
+  , firing_phase_( 1.0 )
+  , firing_rate_( 10.0 )
 {
 }
 
@@ -106,6 +109,9 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
+  def< bool >( d, names::ignore_and_fire, ignore_and_fire_ );
+  def< double >( d, names::phase, firing_phase_ );
+  def< double >( d, names::rate, firing_rate_ );
 }
 
 double
@@ -167,6 +173,17 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 
+  updateValueParam< bool >( d, names::ignore_and_fire, ignore_and_fire_, node );
+  updateValueParam< double >( d, names::phase, firing_phase_, node );
+  updateValueParam< double >( d, names::rate, firing_rate_, node );
+  if ( firing_phase_ <= -1.0 or firing_phase_ > 1.0 )
+  {
+    throw BadProperty( "Firing phase must be > -1 and <= 1." );
+  }
+  if ( firing_rate_ <= -1.0 )
+  {
+    throw BadProperty( "Firing rate must be > -1." );
+  }
   return delta_EL;
 }
 
@@ -210,6 +227,10 @@ nest::iaf_psc_delta::iaf_psc_delta()
   , B_( *this )
 {
   recordablesMap_.create();
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
@@ -218,6 +239,10 @@ nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -310,17 +335,37 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
       --S_.r_;
     }
 
-    // threshold crossing
-    if ( S_.y3_ >= P_.V_th_ )
+    if ( P_.ignore_and_fire_ )
     {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y3_ = P_.V_reset_;
+      if ( V_.firing_phase_steps_ == 0 )
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y3_ = P_.V_reset_;
+        V_.firing_phase_steps_ = V_.firing_interval_steps_ - 1;
 
-      // EX: must compute spike time
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
+      else
+      {
+        --V_.firing_phase_steps_;
+      }
+    }
+    else
+    {
+      // threshold crossing
+      if ( S_.y3_ >= P_.V_th_ )
+      {
+        S_.r_ = V_.RefractoryCounts_;
+        S_.y3_ = P_.V_reset_;
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+        // EX: must compute spike time
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
     }
 
     // set new input current

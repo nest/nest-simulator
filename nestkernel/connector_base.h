@@ -55,12 +55,12 @@ namespace nest
 {
 
 /**
- * Base class to allow storing Connectors for different synapse types
- * in vectors. We define the interface here to avoid casting.
+ * Base class to allow storing Connectors for different synapse types in vectors. We define the interface here to avoid
+ * casting.
  *
- * @note If any member functions need to do something special for a given connection type,
- * declare specializations in the corresponding header file and define them in the corresponding
- * source file. For an example, see `eprop_synapse_bsshslm_2020`.
+ * @note If any member functions need to do something special for a given connection type, declare specializations in
+ * the corresponding header file and define them in the corresponding source file. For an example, see
+ * `eprop_synapse_bsshslm_2020`.
  */
 class ConnectorBase
 {
@@ -72,8 +72,7 @@ public:
   virtual ~ConnectorBase() {};
 
   /**
-   * Return syn_id_ of the synapse type of this Connector (index in
-   * list of synapse prototypes).
+   * Return syn_id_ of the synapse type of this Connector (index in list of synapse prototypes).
    */
   virtual synindex get_syn_id() const = 0;
 
@@ -83,21 +82,18 @@ public:
   virtual size_t size() const = 0;
 
   /**
-   * Write status of the connection at position lcid to the dictionary
-   * dict.
+   * Write status of the connection at position lcid to the dictionary dict.
    */
   virtual void get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const = 0;
 
   /**
-   * Set status of the connection at position lcid according to the
-   * dictionary dict.
+   * Set status of the connection at position lcid according to the dictionary dict.
    */
   virtual void set_synapse_status( const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /**
-   * Add ConnectionID with given source_node_id and lcid to conns. If
-   * target_node_id is given, only add connection if target_node_id matches
-   * the node_id of the target of the connection.
+   * Add ConnectionID with given source_node_id and lcid to conns. If target_node_id is given, only add connection if
+   * target_node_id matches the node_id of the target of the connection.
    */
   virtual void get_connection( const size_t source_node_id,
     const size_t target_node_id,
@@ -107,9 +103,8 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionID with given source_node_id and lcid to conns. If
-   * target_neuron_node_ids is given, only add connection if
-   * target_neuron_node_ids contains the node ID of the target of the connection.
+   * Add ConnectionID with given source_node_id and lcid to conns. If target_neuron_node_ids is given, only add
+   * connection if target_neuron_node_ids contains the node ID of the target of the connection.
    */
   virtual void get_connection_with_specified_targets( const size_t source_node_id,
     const std::vector< size_t >& target_neuron_node_ids,
@@ -119,9 +114,8 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionIDs with given source_node_id to conns, looping over
-   * all lcids. If target_node_id is given, only add connection if
-   * target_node_id matches the node ID of the target of the connection.
+   * Add ConnectionIDs with given source_node_id to conns, looping over all lcids. If target_node_id is given, only add
+   * connection if target_node_id matches the node ID of the target of the connection.
    */
   virtual void get_all_connections( const size_t source_node_id,
     const size_t target_node_id,
@@ -130,15 +124,13 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * For a given target_node_id add lcids of all connections with matching
-   * node ID of target to source_lcids.
+   * For a given target_node_id add lcids of all connections with matching node ID of target to source_lcids.
    */
   virtual void
   get_source_lcids( const size_t tid, const size_t target_node_id, std::vector< size_t >& source_lcids ) const = 0;
 
   /**
-   * For a given start_lcid add node IDs of all targets that belong to the
-   * same source to target_node_ids.
+   * For a given start_lcid add node IDs of all targets that belong to the same source to target_node_ids.
    */
   virtual void get_target_node_ids( const size_t tid,
     const size_t start_lcid,
@@ -156,11 +148,34 @@ public:
   virtual void send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
   /**
-   * Send the event e to the connection at position lcid. Return bool
-   * indicating whether the following connection belongs to the same
-   * source.
+   * Send the event e to the connection at position lcid. Return bool indicating whether the following connection
+   * belongs to the same source.
    */
   virtual size_t send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
+
+  /**
+   * On occurrence of a post-synaptic spike, correct the weight update of a previous pre-synaptic spike which was
+   * processed before the current post-synaptic spike, but had to be processed after it, if it was known at this point
+   * in time.
+   *
+   * @param tid The thread storing the synapse.
+   * @param syn_id Synapse type.
+   * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
+   * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
+   * @param t_spike The time of the pre-synaptic spike which needs a correction.
+   * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
+   * correction.
+   * @param t_post_spike Time of the current post-synaptic spike.
+   */
+  virtual void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    const double t_spike_critical_interval_end,
+    const double weight_revert,
+    double& new_weight,
+    const double K_plus_revert,
+    const double t_post_spike ) = 0;
 
   virtual void
   send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
@@ -180,15 +195,13 @@ public:
   virtual void sort_connections( BlockVector< Source >& ) = 0;
 
   /**
-   * Set a flag in the connection indicating whether the following
-   * connection belongs to the same source.
+   * Set a flag in the connection indicating whether the following connection belongs to the same source.
    */
   virtual void set_source_has_more_targets( const size_t lcid, const bool has_more_targets ) = 0;
 
   /**
-   * Return lcid of the first connection after start_lcid (inclusive)
-   * where the node_id of the target matches target_node_id. If there are no matches,
-   * the function returns invalid_index.
+   * Return lcid of the first connection after start_lcid (inclusive) where the node_id of the target matches
+   * target_node_id. If there are no matches, the function returns invalid_index.
    */
   virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
 
@@ -205,8 +218,7 @@ public:
     const SourceTable& source_table ) const = 0;
 
   /**
-   * Disable the transfer of events through the connection at position
-   * lcid.
+   * Disable the transfer of events through the connection at position lcid.
    */
   virtual void disable_connection( const size_t lcid ) = 0;
 
@@ -411,6 +423,9 @@ public:
       e.set_port( lcid + lcid_offset );
       if ( not conn.is_disabled() )
       {
+        // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+        // only if needed, as this is computationally costly
+        e.set_sender_node_id_info( tid, syn_id_, lcid + lcid_offset );
         // Some synapses, e.g., bernoulli_synapse, may not send an event after all
         const bool event_sent = conn.send( e, tid, cp );
         if ( event_sent )
@@ -427,6 +442,16 @@ public:
 
     return 1 + lcid_offset; // event was delivered to at least one target
   }
+
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const double t_last_pre_spike,
+    const double t_spike_critical_interval_end,
+    const double weight_revert,
+    double& new_weight,
+    const double K_plus_revert,
+    const double t_post_spike ) override;
 
   // Implemented in connector_base_impl.h
   void

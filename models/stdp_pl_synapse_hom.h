@@ -42,8 +42,8 @@ Synapse type for spike-timing dependent plasticity with power law
 Description
 +++++++++++
 
-``stdp_pl_synapse`` is a connector to create synapses with spike time
-dependent plasticity using homoegeneous parameters (as defined in [1]_).
+``stdp_pl_synapse_hom`` is a connector to create synapses with spike time
+dependent plasticity using homogeneous parameters (as defined in [1]_).
 
 Parameters
 ++++++++++
@@ -131,12 +131,12 @@ public:
 void register_stdp_pl_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
-class stdp_pl_synapse_hom : public Connection< targetidentifierT >
+class stdp_pl_synapse_hom : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef STDPPLHomCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
@@ -159,7 +159,7 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_ms;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
@@ -207,13 +207,13 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+    ConnectionBase::check_connection_( dummy_target, s, t, syn_id, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay_ms(), get_delay_ms(), 0 );
   }
 
   void
@@ -266,7 +266,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
 
   Node* target = get_target( t );
 
-  double dendritic_delay = get_delay();
+  const double dendritic_delay = get_delay_ms();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
@@ -278,15 +278,17 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
   while ( start != finish )
   {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
-    start++;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+
+    ++start;
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+  const double K_minus = target->get_K_value( t_spike - dendritic_delay );
+  weight_ = depress_( weight_, K_minus, cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

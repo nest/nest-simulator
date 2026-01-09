@@ -75,6 +75,7 @@ const Name asc_init( "asc_init" );
 const Name asc_r( "asc_r" );
 const Name available( "available" );
 const Name average_gradient( "average_gradient" );
+const Name axonal_delay( "axonal_delay" );
 const Name azimuth_angle( "azimuth_angle" );
 
 const Name b( "b" );
@@ -134,6 +135,7 @@ const Name delta_IP3( "delta_IP3" );
 const Name delta_P( "delta_P" );
 const Name delta_tau( "delta_tau" );
 const Name dendritic_curr( "dendritic_curr" );
+const Name dendritic_delay( "dendritic_delay" );
 const Name dendritic_exc( "dendritic_exc" );
 const Name dendritic_inh( "dendritic_inh" );
 const Name dg( "dg" );
@@ -356,6 +358,7 @@ const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );
 const Name noisy_rate( "noisy_rate" );
 const Name num_connections( "num_connections" );
+const Name num_corrections( "num_corrections" );
 const Name num_processes( "num_processes" );
 const Name number_of_connections( "number_of_connections" );
 

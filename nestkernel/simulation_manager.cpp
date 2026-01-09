@@ -34,7 +34,6 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
-#include "connection_manager_impl.h"
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "stopwatch_impl.h"
@@ -539,10 +538,24 @@ nest::SimulationManager::prepare()
   }
   prepared_ = true;
 
-  // check whether waveform relaxation is used on any MPI process;
-  // needs to be called before update_connection_intrastructure_since
-  // it resizes coefficient arrays for secondary events
+  // check whether waveform relaxation is used on any MPI process; needs to be called before
+  // update_connection_infrastructure() since it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
+
+  // If we simulated already and we use axonal delays, we have to make sure connectivity didn't change, as this would
+  // invalidate the correction entries in the neurons that are required for connections with predominant axonal delays.
+  if ( simulated_ and kernel().connection_manager.have_nonzero_axonal_delays()
+    and kernel().connection_manager.connections_have_changed() )
+  {
+    throw KernelException(
+      "Connections have changed during simulation, which is not allowed when using axonal delays!" );
+  }
+
+  if ( kernel().connection_manager.have_nonzero_axonal_delays()
+    and kernel().sp_manager.is_structural_plasticity_enabled() )
+  {
+    throw KernelException( "Structural plasticity is not compatible with axonal delays!" );
+  }
 
   if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
   {
@@ -911,7 +924,7 @@ nest::SimulationManager::update_()
 #endif
         } // if from_step == 0
 
-        // preliminary update of nodes that use waveform relaxtion, only
+        // preliminary update of nodes that use waveform relaxation, only
         // necessary if secondary connections exist and any node uses
         // wfr
         if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )

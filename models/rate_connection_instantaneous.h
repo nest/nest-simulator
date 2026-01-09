@@ -80,13 +80,13 @@ EndUserDocs */
 void register_rate_connection_instantaneous( const std::string& name );
 
 template < typename targetidentifierT >
-class rate_connection_instantaneous : public Connection< targetidentifierT >
+class rate_connection_instantaneous : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::SUPPORTS_WFR;
 
@@ -113,14 +113,14 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     InstantaneousRateConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
-    Connection< targetidentifierT >::target_.set_target( &t );
+    Connection< targetidentifierT, TotalDelay >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT, TotalDelay >::target_.set_target( &t );
   }
 
   /**
@@ -149,11 +149,15 @@ public:
   }
 
   void
-  set_delay( double )
+  set_delay_ms( double )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
+  }
+
+  void
+  set_delay_steps( long )
+  {
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
 private:
@@ -179,9 +183,7 @@ rate_connection_instantaneous< targetidentifierT >::set_status( const Dictionary
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   ConnectionBase::set_status( d, cm );

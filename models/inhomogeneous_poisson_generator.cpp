@@ -48,11 +48,14 @@ nest::register_inhomogeneous_poisson_generator( const std::string& name )
 }
 
 
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
+inhomogeneous_poisson_generator::Parameters_::Parameters_()
   : rate_times_()  // ms
   , rate_values_() // spikes/ms,
   , allow_offgrid_times_( false )
@@ -65,7 +68,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_rates = rate_times_.size();
   std::vector< double >* times_ms = new std::vector< double >();
@@ -81,7 +84,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) co
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double t )
+inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double t )
 {
   Time t_rate;
 
@@ -117,7 +120,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
 {
   const bool times = d->known( names::rate_times );
   const bool rates = updateValue< std::vector< double > >( d, names::rate_values, rate_values_ );
@@ -196,7 +199,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
+inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
   : StimulationDevice()
   , P_()
   , B_()
@@ -204,7 +207,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
 {
 }
 
-nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
+inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , B_( n.B_ )
@@ -216,13 +219,13 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const in
  * Node initialization functions
  * ---------------------------------------------------------------- */
 void
-nest::inhomogeneous_poisson_generator::init_state_()
+inhomogeneous_poisson_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::inhomogeneous_poisson_generator::init_buffers_()
+inhomogeneous_poisson_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.idx_ = 0;
@@ -230,7 +233,7 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 }
 
 void
-nest::inhomogeneous_poisson_generator::pre_run_hook()
+inhomogeneous_poisson_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
   V_.h_ = Time::get_resolution().get_ms();
@@ -241,7 +244,7 @@ nest::inhomogeneous_poisson_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
+inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
 {
   assert( P_.rate_times_.size() == P_.rate_values_.size() );
 
@@ -278,7 +281,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
 }
 
 void
-nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
+inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
   poisson_distribution::param_type param( B_.rate_ * V_.h_ );
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
@@ -295,7 +298,7 @@ nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& rate_time_update )
+inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& rate_time_update )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   // For the input backend
@@ -329,3 +332,5 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::v
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest

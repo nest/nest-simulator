@@ -157,12 +157,12 @@ public:
 void register_stdp_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
-class stdp_synapse_hom : public Connection< targetidentifierT >
+class stdp_synapse_hom : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   typedef STDPHomCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
@@ -186,7 +186,7 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_ms;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
@@ -241,12 +241,12 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+    ConnectionBase::check_connection_( dummy_target, s, t, syn_id, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay_ms(), get_delay_ms(), 0 );
   }
 
 private:
@@ -302,7 +302,7 @@ stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCo
   // t_lastspike_ = 0 initially
 
   Node* target = get_target( t );
-  double dendritic_delay = get_delay();
+  double dendritic_delay = get_delay_ms();
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;

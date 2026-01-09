@@ -26,28 +26,31 @@
 
 #include "recording_backend_memory.h"
 
-nest::RecordingBackendMemory::RecordingBackendMemory()
+namespace nest
+{
+
+RecordingBackendMemory::RecordingBackendMemory()
 {
 }
 
-nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
+RecordingBackendMemory::~RecordingBackendMemory() throw()
 {
 }
 
 void
-nest::RecordingBackendMemory::initialize()
+RecordingBackendMemory::initialize()
 {
   device_data_map tmp( kernel().vp_manager.get_num_threads() );
   device_data_.swap( tmp );
 }
 
 void
-nest::RecordingBackendMemory::finalize()
+RecordingBackendMemory::finalize()
 {
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -63,7 +66,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const Dicti
 }
 
 void
-nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
+RecordingBackendMemory::disenroll( const RecordingDevice& device )
 {
   size_t t = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -76,7 +79,7 @@ nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
+RecordingBackendMemory::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -89,19 +92,19 @@ nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::pre_run_hook()
+RecordingBackendMemory::pre_run_hook()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::cleanup()
+RecordingBackendMemory::cleanup()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::write( const RecordingDevice& device,
+RecordingBackendMemory::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
@@ -113,21 +116,21 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
+RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
 {
   DeviceData dd;
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) const
+RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) const
 {
   DeviceData dd;
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -140,44 +143,44 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
 }
 
 void
-nest::RecordingBackendMemory::post_run_hook()
+RecordingBackendMemory::post_run_hook()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::post_step_hook()
+RecordingBackendMemory::post_step_hook()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+RecordingBackendMemory::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::set_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+RecordingBackendMemory::set_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMemory::prepare()
+RecordingBackendMemory::prepare()
 {
   // nothing to do
 }
 
 /* ******************* Device meta data class DeviceInfo ******************* */
 
-nest::RecordingBackendMemory::DeviceData::DeviceData()
+RecordingBackendMemory::DeviceData::DeviceData()
   : time_in_steps_( false )
 {
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
+RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
   double_value_names_ = double_value_names;
@@ -188,7 +191,7 @@ nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Na
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
+RecordingBackendMemory::DeviceData::push_back( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
@@ -215,7 +218,7 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
+RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 {
   DictionaryDatum events;
 
@@ -261,7 +264,7 @@ nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
+RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
 {
   bool time_in_steps = false;
   if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
@@ -282,7 +285,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::clear()
+RecordingBackendMemory::DeviceData::clear()
 {
   senders_.clear();
   times_ms_.clear();
@@ -298,3 +301,5 @@ nest::RecordingBackendMemory::DeviceData::clear()
     long_values_[ i ].clear();
   }
 }
+
+} // namespace nest

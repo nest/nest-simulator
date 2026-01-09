@@ -434,6 +434,8 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
   V_.rng_ = get_vp_specific_rng( get_thread() );

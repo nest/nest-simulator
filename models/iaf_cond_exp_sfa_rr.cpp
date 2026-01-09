@@ -372,6 +372,8 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
 void
 nest::iaf_cond_exp_sfa_rr::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 

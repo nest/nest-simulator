@@ -296,6 +296,8 @@ nest::siegert_neuron::init_buffers_()
 void
 nest::siegert_neuron::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();

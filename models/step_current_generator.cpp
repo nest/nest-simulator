@@ -49,28 +49,27 @@ RecordablesMap< step_current_generator >::create()
 {
   insert_( Name( names::I ), &step_current_generator::get_I_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::step_current_generator::Parameters_::Parameters_()
+step_current_generator::Parameters_::Parameters_()
   : amp_time_stamps_()
   , amp_values_() // pA
   , allow_offgrid_amp_times_( false )
 {
 }
 
-nest::step_current_generator::Parameters_::Parameters_( const Parameters_& p )
+step_current_generator::Parameters_::Parameters_( const Parameters_& p )
   : amp_time_stamps_( p.amp_time_stamps_ )
   , amp_values_( p.amp_values_ )
   , allow_offgrid_amp_times_( p.allow_offgrid_amp_times_ )
 {
 }
 
-nest::step_current_generator::Parameters_&
-nest::step_current_generator::Parameters_::operator=( const Parameters_& p )
+step_current_generator::Parameters_&
+step_current_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -84,19 +83,19 @@ nest::step_current_generator::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::step_current_generator::State_::State_()
+step_current_generator::State_::State_()
   : I_( 0.0 ) // pA
 {
 }
 
-nest::step_current_generator::Buffers_::Buffers_( step_current_generator& n )
+step_current_generator::Buffers_::Buffers_( step_current_generator& n )
   : idx_( 0 )
   , amp_( 0 )
   , logger_( n )
 {
 }
 
-nest::step_current_generator::Buffers_::Buffers_( const Buffers_&, step_current_generator& n )
+step_current_generator::Buffers_::Buffers_( const Buffers_&, step_current_generator& n )
   : idx_( 0 )
   , amp_( 0 )
   , logger_( n )
@@ -108,7 +107,7 @@ nest::step_current_generator::Buffers_::Buffers_( const Buffers_&, step_current_
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
+step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
@@ -121,8 +120,8 @@ nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
 }
 
-nest::Time
-nest::step_current_generator::Parameters_::validate_time_( double t, const Time& t_previous )
+Time
+step_current_generator::Parameters_::validate_time_( double t, const Time& t_previous )
 {
   if ( t <= 0.0 )
   {
@@ -166,7 +165,7 @@ nest::step_current_generator::Parameters_::validate_time_( double t, const Time&
 }
 
 void
-nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
 {
   std::vector< double > new_times;
   const bool times_changed = updateValue< std::vector< double > >( d, names::amplitude_times, new_times );
@@ -226,7 +225,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::step_current_generator::step_current_generator()
+step_current_generator::step_current_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -235,7 +234,7 @@ nest::step_current_generator::step_current_generator()
   recordablesMap_.create();
 }
 
-nest::step_current_generator::step_current_generator( const step_current_generator& n )
+step_current_generator::step_current_generator( const step_current_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -249,13 +248,13 @@ nest::step_current_generator::step_current_generator( const step_current_generat
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::init_state_()
+step_current_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::step_current_generator::init_buffers_()
+step_current_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
@@ -265,7 +264,7 @@ nest::step_current_generator::init_buffers_()
 }
 
 void
-nest::step_current_generator::pre_run_hook()
+step_current_generator::pre_run_hook()
 {
   B_.logger_.init();
   StimulationDevice::pre_run_hook();
@@ -277,7 +276,7 @@ nest::step_current_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::update( Time const& origin, const long from, const long to )
+step_current_generator::update( Time const& origin, const long from, const long to )
 {
   assert( P_.amp_time_stamps_.size() == P_.amp_values_.size() );
 
@@ -319,7 +318,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
 }
 
 void
-nest::step_current_generator::handle( DataLoggingRequest& e )
+step_current_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -328,7 +327,7 @@ nest::step_current_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_current_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
+step_current_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -367,3 +366,5 @@ nest::step_current_generator::set_data_from_stimulation_backend( std::vector< do
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest

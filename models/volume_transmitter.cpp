@@ -37,18 +37,20 @@
 // Includes from sli:
 #include "dictutils.h"
 
+namespace nest
+{
+
 void
-nest::register_volume_transmitter( const std::string& name )
+register_volume_transmitter( const std::string& name )
 {
   register_node_model< volume_transmitter >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
-nest::volume_transmitter::Parameters_::Parameters_()
+volume_transmitter::Parameters_::Parameters_()
   : deliver_interval_( 1 ) // in steps of mindelay
 {
 }
@@ -58,12 +60,13 @@ nest::volume_transmitter::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
+volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
 {
   def< long >( d, names::deliver_interval, deliver_interval_ );
 }
 
-void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
+void
+volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< long >( d, names::deliver_interval, deliver_interval_, node );
 }
@@ -72,14 +75,14 @@ void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Nod
  * Default and copy constructor for volume transmitter
  * ---------------------------------------------------------------- */
 
-nest::volume_transmitter::volume_transmitter()
+volume_transmitter::volume_transmitter()
   : Node()
   , P_()
   , local_device_id_( 0 )
 {
 }
 
-nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
+volume_transmitter::volume_transmitter( const volume_transmitter& n )
   : Node( n )
   , P_( n.P_ )
   , local_device_id_( n.local_device_id_ )
@@ -87,7 +90,7 @@ nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
 }
 
 void
-nest::volume_transmitter::init_buffers_()
+volume_transmitter::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
@@ -95,14 +98,14 @@ nest::volume_transmitter::init_buffers_()
 }
 
 void
-nest::volume_transmitter::pre_run_hook()
+volume_transmitter::pre_run_hook()
 {
   // +1 as pseudo dopa spike at t_trig is inserted after trigger_update_weight
   B_.spikecounter_.reserve( kernel().connection_manager.get_min_delay() * P_.deliver_interval_ + 1 );
 }
 
 void
-nest::volume_transmitter::update( const Time&, const long from, const long to )
+volume_transmitter::update( const Time&, const long from, const long to )
 {
   // spikes that arrive in this time slice are stored in spikecounter_
   double t_spike;
@@ -139,8 +142,10 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
 }
 
 void
-nest::volume_transmitter::handle( SpikeEvent& e )
+volume_transmitter::handle( SpikeEvent& e )
 {
   B_.neuromodulatory_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
+}
+
 }

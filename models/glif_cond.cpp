@@ -557,6 +557,8 @@ nest::glif_cond::init_buffers_()
 void
 nest::glif_cond::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms(); // in ms

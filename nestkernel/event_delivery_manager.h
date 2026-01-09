@@ -314,22 +314,18 @@ private:
 
 
   /**
-   * Reads spikes from MPI buffers and delivers them to ringbuffer of
-   * nodes.
+   * Reads spikes from MPI buffers and delivers them to ringbuffer of nodes.
    */
   template < typename SpikeDataT >
   void deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
-   * Deletes all spikes from spike registers and resets spike
-   * counters.
+   * Deletes all spikes from spike registers and resets spike counters.
    */
   void reset_spike_register_( const size_t tid );
 
   /**
-   * Returns true if spike has been moved to MPI buffer, such that it
-   * can be removed by clean_spike_register. Required static function
-   * by std::remove_if.
+   * Resizes spike registers according minimal delay so it can accommodate all possible lags.
    */
   static bool is_marked_for_removal_( const Target& target );
 
@@ -347,22 +343,19 @@ private:
     TargetSendBufferPosition& send_buffer_position );
 
   /**
-   * Sets marker in MPI buffer that signals end of communication
-   * across MPI ranks.
+   * Sets marker in MPI buffer that signals end of communication across MPI ranks.
    */
   void set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
     const TargetSendBufferPosition& send_buffer_position );
 
   /**
-   * Reads TargetData objects from MPI buffers and creates Target
-   * objects on TargetTable (presynaptic part of connection
-   * infrastructure).
+   * Reads TargetData objects from MPI buffers and creates Target objects on TargetTable (presynaptic part of
+   * connection infrastructure).
    */
   bool distribute_target_data_buffers_( const size_t tid );
 
   /**
-   * Sends event e to all targets of node source. Delivers events from
-   * devices directly to targets.
+   * Sends event e to all targets of node source. Delivers events from devices directly to targets.
    */
   template < class EventT >
   void send_local_( Node& source, EventT& e, const long lag );
@@ -370,8 +363,7 @@ private:
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
-                          //!< the grid
+  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to the grid
 
   /**
    * Table of pre-computed modulos.

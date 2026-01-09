@@ -79,13 +79,13 @@ EndUserDocs */
 void register_rate_connection_delayed( const std::string& name );
 
 template < typename targetidentifierT >
-class rate_connection_delayed : public Connection< targetidentifierT >
+class rate_connection_delayed : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY;
 
@@ -112,14 +112,14 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     DelayedRateConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
-    Connection< targetidentifierT >::target_.set_target( &t );
+    Connection< targetidentifierT, TotalDelay >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT, TotalDelay >::target_.set_target( &t );
   }
 
   /**

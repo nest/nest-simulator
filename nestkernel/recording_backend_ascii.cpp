@@ -32,31 +32,34 @@
 
 #include "recording_backend_ascii.h"
 
-const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
+namespace nest
+{
 
-nest::RecordingBackendASCII::RecordingBackendASCII()
+const unsigned int RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
+
+RecordingBackendASCII::RecordingBackendASCII()
 {
 }
 
-nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
+RecordingBackendASCII::~RecordingBackendASCII() throw()
 {
 }
 
 void
-nest::RecordingBackendASCII::initialize()
+RecordingBackendASCII::initialize()
 {
   data_map tmp( kernel().vp_manager.get_num_threads() );
   device_data_.swap( tmp );
 }
 
 void
-nest::RecordingBackendASCII::finalize()
+RecordingBackendASCII::finalize()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -74,7 +77,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictio
 }
 
 void
-nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
+RecordingBackendASCII::disenroll( const RecordingDevice& device )
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -87,7 +90,7 @@ nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
+RecordingBackendASCII::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -100,13 +103,13 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendASCII::pre_run_hook()
+RecordingBackendASCII::pre_run_hook()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::post_run_hook()
+RecordingBackendASCII::post_run_hook()
 {
   for ( auto& inner : device_data_ )
   {
@@ -118,13 +121,13 @@ nest::RecordingBackendASCII::post_run_hook()
 }
 
 void
-nest::RecordingBackendASCII::post_step_hook()
+RecordingBackendASCII::post_step_hook()
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::cleanup()
+RecordingBackendASCII::cleanup()
 {
   for ( auto& inner : device_data_ )
   {
@@ -136,7 +139,7 @@ nest::RecordingBackendASCII::cleanup()
 }
 
 void
-nest::RecordingBackendASCII::write( const RecordingDevice& device,
+RecordingBackendASCII::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
@@ -154,7 +157,7 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
+RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
 {
   const double num_vps = kernel().vp_manager.get_num_virtual_processes();
   const double num_nodes = kernel().node_manager.size();
@@ -169,7 +172,7 @@ nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& 
 }
 
 void
-nest::RecordingBackendASCII::prepare()
+RecordingBackendASCII::prepare()
 {
   for ( auto& inner : device_data_ )
   {
@@ -181,33 +184,33 @@ nest::RecordingBackendASCII::prepare()
 }
 
 void
-nest::RecordingBackendASCII::set_status( const DictionaryDatum& )
+RecordingBackendASCII::set_status( const DictionaryDatum& )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
+RecordingBackendASCII::get_status( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
+RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
 {
   DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
+RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
 {
   DeviceData dd( "", "" );
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
+RecordingBackendASCII::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -221,7 +224,7 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
 
 /* ******************* Device meta data class DeviceData ******************* */
 
-nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_node_id_string )
+RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_node_id_string )
   : precision_( 3 )
   , time_in_steps_( false )
   , modelname_( modelname )
@@ -232,7 +235,7 @@ nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std:
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
+RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
   double_value_names_ = double_value_names;
@@ -240,13 +243,13 @@ nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Nam
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::flush_file()
+RecordingBackendASCII::DeviceData::flush_file()
 {
   file_.flush();
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::open_file()
+RecordingBackendASCII::DeviceData::open_file()
 {
   std::string filename = compute_filename_();
 
@@ -289,13 +292,13 @@ nest::RecordingBackendASCII::DeviceData::open_file()
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::close_file()
+RecordingBackendASCII::DeviceData::close_file()
 {
   file_.close();
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::write( const Event& event,
+RecordingBackendASCII::DeviceData::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
@@ -323,7 +326,7 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
+RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
 {
   ( *d )[ names::file_extension ] = file_extension_;
   ( *d )[ names::precision ] = precision_;
@@ -335,7 +338,7 @@ nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
+RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_extension_ );
   updateValue< long >( d, names::precision, precision_ );
@@ -354,7 +357,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 }
 
 std::string
-nest::RecordingBackendASCII::DeviceData::compute_filename_() const
+RecordingBackendASCII::DeviceData::compute_filename_() const
 {
   std::string data_path = kernel().io_manager.get_data_path();
   if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
@@ -372,3 +375,5 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 
   return data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_;
 }
+
+} // namespace nest

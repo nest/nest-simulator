@@ -59,13 +59,12 @@ RecordablesMap< sinusoidal_poisson_generator >::create()
 {
   insert_( Name( names::rate ), &sinusoidal_poisson_generator::get_rate_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
+sinusoidal_poisson_generator::Parameters_::Parameters_()
   : om_( 0.0 )        // radian/ms
   , phi_( 0.0 )       // radian
   , rate_( 0.0 )      // spikes/ms
@@ -74,7 +73,7 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_& p )
+sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
   , rate_( p.rate_ )
@@ -83,8 +82,8 @@ nest::sinusoidal_poisson_generator::Parameters_::Parameters_( const Parameters_&
 {
 }
 
-nest::sinusoidal_poisson_generator::Parameters_&
-nest::sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p )
+sinusoidal_poisson_generator::Parameters_&
+sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -100,7 +99,7 @@ nest::sinusoidal_poisson_generator::Parameters_::operator=( const Parameters_& p
   return *this;
 }
 
-nest::sinusoidal_poisson_generator::State_::State_()
+sinusoidal_poisson_generator::State_::State_()
   : y_0_( 0 )
   , y_1_( 0 )
   , rate_( 0 )
@@ -108,12 +107,12 @@ nest::sinusoidal_poisson_generator::State_::State_()
 }
 
 
-nest::sinusoidal_poisson_generator::Buffers_::Buffers_( sinusoidal_poisson_generator& n )
+sinusoidal_poisson_generator::Buffers_::Buffers_( sinusoidal_poisson_generator& n )
   : logger_( n )
 {
 }
 
-nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&, sinusoidal_poisson_generator& n )
+sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&, sinusoidal_poisson_generator& n )
   : logger_( n )
 {
 }
@@ -124,7 +123,7 @@ nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&, sinusoi
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::rate ] = rate_ * 1000.0;
   ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
@@ -134,14 +133,14 @@ nest::sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::sinusoidal_poisson_generator::State_::get( DictionaryDatum& d ) const
+sinusoidal_poisson_generator::State_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::y_0 ] = y_0_;
   ( *d )[ names::y_1 ] = y_1_;
 }
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
+sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_poisson_generator& n,
   Node* node )
 {
@@ -179,7 +178,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
+sinusoidal_poisson_generator::sinusoidal_poisson_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -188,7 +187,7 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
   recordablesMap_.create();
 }
 
-nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoidal_poisson_generator& n )
+sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoidal_poisson_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -201,20 +200,20 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoid
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::init_state_()
+sinusoidal_poisson_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::sinusoidal_poisson_generator::init_buffers_()
+sinusoidal_poisson_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
 void
-nest::sinusoidal_poisson_generator::pre_run_hook()
+sinusoidal_poisson_generator::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -234,7 +233,7 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
 }
 
 void
-nest::sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
+sinusoidal_poisson_generator::update( Time const& origin, const long from, const long to )
 {
   const long start = origin.get_steps();
 
@@ -287,7 +286,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
 }
 
 void
-nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
+sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
   poisson_distribution::param_type param( S_.rate_ * V_.h_ );
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
@@ -300,7 +299,7 @@ nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 }
 
 void
-nest::sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
+sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -310,7 +309,7 @@ nest::sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -335,3 +334,5 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vect
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest

@@ -303,6 +303,8 @@ nest::cm_default::init_recordables_pointers_()
 void
 nest::cm_default::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   logger_.init();
 
   // initialize the pointers within the compartment tree

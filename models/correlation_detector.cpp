@@ -47,11 +47,14 @@ nest::register_correlation_detector( const std::string& name )
 }
 
 
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::correlation_detector::Parameters_::Parameters_()
+correlation_detector::Parameters_::Parameters_()
   : delta_tau_( get_default_delta_tau() )
   , tau_max_( 10 * delta_tau_ )
   , Tstart_( Time::ms( 0.0 ) )
@@ -59,7 +62,7 @@ nest::correlation_detector::Parameters_::Parameters_()
 {
 }
 
-nest::correlation_detector::Parameters_::Parameters_( const Parameters_& p )
+correlation_detector::Parameters_::Parameters_( const Parameters_& p )
   : delta_tau_( p.delta_tau_ )
   , tau_max_( p.tau_max_ )
   , Tstart_( p.Tstart_ )
@@ -79,8 +82,8 @@ nest::correlation_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
-nest::correlation_detector::Parameters_&
-nest::correlation_detector::Parameters_::operator=( const Parameters_& p )
+correlation_detector::Parameters_&
+correlation_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -95,7 +98,7 @@ nest::correlation_detector::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::correlation_detector::State_::State_()
+correlation_detector::State_::State_()
   : n_events_( 2, 0 )
   , incoming_( 2 )
   , histogram_()
@@ -110,7 +113,7 @@ nest::correlation_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::Parameters_::get( DictionaryDatum& d ) const
+correlation_detector::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::delta_tau ] = delta_tau_.get_ms();
   ( *d )[ names::tau_max ] = tau_max_.get_ms();
@@ -119,7 +122,7 @@ nest::correlation_detector::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::correlation_detector::State_::get( DictionaryDatum& d ) const
+correlation_detector::State_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
   ( *d )[ names::histogram ] = DoubleVectorDatum( new std::vector< double >( histogram_ ) );
@@ -128,7 +131,7 @@ nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
+correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
 {
   bool reset = false;
   double t;
@@ -170,7 +173,7 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 }
 
 void
-nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required, Node* )
+correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required, Node* )
 {
   std::vector< long > nev;
   if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
@@ -191,7 +194,7 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d, const Paramet
 }
 
 void
-nest::correlation_detector::State_::reset( const Parameters_& p )
+correlation_detector::State_::reset( const Parameters_& p )
 {
   n_events_.clear();
   n_events_.resize( 2, 0 );
@@ -214,7 +217,7 @@ nest::correlation_detector::State_::reset( const Parameters_& p )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::correlation_detector::correlation_detector()
+correlation_detector::correlation_detector()
   : Node()
   , device_()
   , P_()
@@ -222,7 +225,7 @@ nest::correlation_detector::correlation_detector()
 {
 }
 
-nest::correlation_detector::correlation_detector( const correlation_detector& n )
+correlation_detector::correlation_detector( const correlation_detector& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -236,20 +239,20 @@ nest::correlation_detector::correlation_detector( const correlation_detector& n 
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::init_state_()
+correlation_detector::init_state_()
 {
   device_.init_state();
 }
 
 void
-nest::correlation_detector::init_buffers_()
+correlation_detector::init_buffers_()
 {
   device_.init_buffers();
   S_.reset( P_ );
 }
 
 void
-nest::correlation_detector::pre_run_hook()
+correlation_detector::pre_run_hook()
 {
   device_.pre_run_hook();
 }
@@ -260,12 +263,12 @@ nest::correlation_detector::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::update( Time const&, const long, const long )
+correlation_detector::update( Time const&, const long, const long )
 {
 }
 
 void
-nest::correlation_detector::handle( SpikeEvent& e )
+correlation_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
@@ -354,7 +357,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
 }
 
 void
-nest::correlation_detector::calibrate_time( const TimeConverter& tc )
+correlation_detector::calibrate_time( const TimeConverter& tc )
 {
   if ( P_.delta_tau_.is_step() )
   {
@@ -371,4 +374,6 @@ nest::correlation_detector::calibrate_time( const TimeConverter& tc )
   P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
   P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
   P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+}
+
 }

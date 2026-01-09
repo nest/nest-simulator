@@ -39,7 +39,6 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_correlomatrix_detector( const std::string& name )
@@ -228,11 +227,11 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
   count_covariance_.clear();
   count_covariance_.resize( p.N_channels_ );
 
-  for ( auto i = 0; i < p.N_channels_; ++i )
+  for ( size_t i = 0; i < p.N_channels_; ++i )
   {
     covariance_[ i ].resize( p.N_channels_ );
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( auto j = 0; j < p.N_channels_; ++j )
+    for ( size_t j = 0; j < p.N_channels_; ++j )
     {
       covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
       count_covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );

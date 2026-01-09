@@ -223,6 +223,10 @@ PyNEST examples
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_neuromorphic_mnist`
 
+    .. grid-item-card:: Axonal delays
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`/auto_examples/axonal_delays`
 
 .. grid:: 1 1 2 3
 

@@ -122,4 +122,5 @@ Developer guides
    guidelines/styleguide/vim_support_sli
    templates/*
    sli_docs/index
+   axonal_delays
    cppcomments

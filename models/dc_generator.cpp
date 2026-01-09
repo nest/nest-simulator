@@ -52,24 +52,23 @@ RecordablesMap< dc_generator >::create()
 {
   insert_( Name( names::I ), &dc_generator::get_I_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::dc_generator::Parameters_::Parameters_()
+dc_generator::Parameters_::Parameters_()
   : amp_( 0.0 ) // pA
 {
 }
 
-nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
+dc_generator::Parameters_::Parameters_( const Parameters_& p )
   : amp_( p.amp_ )
 {
 }
 
-nest::dc_generator::Parameters_&
-nest::dc_generator::Parameters_::operator=( const Parameters_& p )
+dc_generator::Parameters_&
+dc_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -81,18 +80,18 @@ nest::dc_generator::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::dc_generator::State_::State_()
+dc_generator::State_::State_()
   : I_( 0.0 ) // pA
 {
 }
 
 
-nest::dc_generator::Buffers_::Buffers_( dc_generator& n )
+dc_generator::Buffers_::Buffers_( dc_generator& n )
   : logger_( n )
 {
 }
 
-nest::dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
+dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
   : logger_( n )
 {
 }
@@ -102,13 +101,13 @@ nest::dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
+dc_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::amplitude, amp_ );
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::amplitude, amp_, node );
 }
@@ -118,7 +117,7 @@ nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::dc_generator::dc_generator()
+dc_generator::dc_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -127,7 +126,7 @@ nest::dc_generator::dc_generator()
   recordablesMap_.create();
 }
 
-nest::dc_generator::dc_generator( const dc_generator& n )
+dc_generator::dc_generator( const dc_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -140,20 +139,20 @@ nest::dc_generator::dc_generator( const dc_generator& n )
  * Node initialization functions
  * ---------------------------------------------------------------- */
 void
-nest::dc_generator::init_state_()
+dc_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::dc_generator::init_buffers_()
+dc_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
 void
-nest::dc_generator::pre_run_hook()
+dc_generator::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -166,7 +165,7 @@ nest::dc_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::update( Time const& origin, const long from, const long to )
+dc_generator::update( Time const& origin, const long from, const long to )
 {
   long start = origin.get_steps();
 
@@ -185,13 +184,13 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::dc_generator::handle( DataLoggingRequest& e )
+dc_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -210,3 +209,5 @@ nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& in
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest

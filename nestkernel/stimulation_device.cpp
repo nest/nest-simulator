@@ -25,8 +25,10 @@
 #include "stimulation_device.h"
 #include "kernel_manager.h"
 
+namespace nest
+{
 
-nest::StimulationDevice::StimulationDevice()
+StimulationDevice::StimulationDevice()
   : DeviceNode()
   , Device()
   , first_syn_id_( invalid_synindex )
@@ -34,7 +36,7 @@ nest::StimulationDevice::StimulationDevice()
 {
 }
 
-nest::StimulationDevice::StimulationDevice( StimulationDevice const& sd )
+StimulationDevice::StimulationDevice( StimulationDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
   , P_( sd.P_ )
@@ -44,7 +46,7 @@ nest::StimulationDevice::StimulationDevice( StimulationDevice const& sd )
 }
 
 bool
-nest::StimulationDevice::is_active( const Time& T ) const
+StimulationDevice::is_active( const Time& T ) const
 {
   long step = T.get_steps();
   if ( get_type() == StimulationDevice::Type::CURRENT_GENERATOR
@@ -57,7 +59,7 @@ nest::StimulationDevice::is_active( const Time& T ) const
 }
 
 void
-nest::StimulationDevice::enforce_single_syn_type( synindex syn_id )
+StimulationDevice::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {
@@ -70,39 +72,39 @@ nest::StimulationDevice::enforce_single_syn_type( synindex syn_id )
 }
 
 void
-nest::StimulationDevice::pre_run_hook()
+StimulationDevice::pre_run_hook()
 {
   Device::pre_run_hook();
 }
 
 void
-nest::StimulationDevice::set_initialized_()
+StimulationDevice::set_initialized_()
 {
   kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
 const std::string&
-nest::StimulationDevice::get_label() const
+StimulationDevice::get_label() const
 {
   return P_.label_;
 }
 
 
-nest::StimulationDevice::Parameters_::Parameters_()
+StimulationDevice::Parameters_::Parameters_()
   : label_()
   , stimulus_source_( Name() )
 {
 }
 
 void
-nest::StimulationDevice::Parameters_::get( DictionaryDatum& d ) const
+StimulationDevice::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
 }
 
 void
-nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
+StimulationDevice::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -120,7 +122,7 @@ nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::StimulationDevice::set_status( const DictionaryDatum& d )
+StimulationDevice::set_status( const DictionaryDatum& d )
 {
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
@@ -163,7 +165,7 @@ nest::StimulationDevice::set_status( const DictionaryDatum& d )
 
 
 void
-nest::StimulationDevice::get_status( DictionaryDatum& d ) const
+StimulationDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
 
@@ -180,3 +182,5 @@ nest::StimulationDevice::get_status( DictionaryDatum& d ) const
     }
   }
 }
+
+} // namespace nest

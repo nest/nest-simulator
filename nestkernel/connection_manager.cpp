@@ -112,6 +112,9 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
     register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
     register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
     register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+    register_conn_builder< ClusteredFixedTotalNumberBuilder >( "clustered_fixed_total_number" );
+    register_conn_builder< AltClusteredFixedTotalNumberBuilder >( "alt_clustered_fixed_total_number" );
+    register_conn_builder< ClusteredApproxTotalNumberBuilder >( "clustered_approx_total_number" );
     register_third_conn_builder< ThirdBernoulliWithPoolBuilder >( "third_factor_bernoulli_with_pool" );
 #ifdef HAVE_LIBNEUROSIM
     register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );

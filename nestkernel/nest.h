@@ -23,17 +23,12 @@
 #ifndef NEST_H
 #define NEST_H
 
-// C++ includes:
-#include <ostream>
-
 // Includes from libnestutil:
-#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_datums.h"
-#include "nest_time.h"
-#include "nest_types.h"
 
 // Includes from sli:
 #include "arraydatum.h"

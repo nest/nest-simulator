@@ -118,6 +118,26 @@ include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
 
+# enable link-time optimizations
+include(CheckIPOSupported)
+check_ipo_supported()
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
+# --- PGO Configuration Start ---
+set(PGO_MODE "OFF" CACHE STRING "Control Profile Guided Optimization: OFF, GENERATE, USE")
+
+if(PGO_MODE STREQUAL "GENERATE")
+    message(STATUS "PGO: Instrumentation Build Enabled")
+    add_compile_options(-fprofile-generate)
+    add_link_options(-fprofile-generate)
+
+elseif(PGO_MODE STREQUAL "USE")
+    message(STATUS "PGO: Optimized Build Enabled")
+    add_compile_options(-fprofile-use -fprofile-correction)
+    add_link_options(-fprofile-use -fprofile-correction)
+endif()
+# --- PGO Configuration End ---
+
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )

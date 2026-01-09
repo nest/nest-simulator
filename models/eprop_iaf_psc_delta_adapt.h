@@ -25,13 +25,12 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -731,6 +730,9 @@ eprop_iaf_psc_delta_adapt::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< eprop_iaf_psc_delta_adapt >::create();
 
 } // namespace nest
 

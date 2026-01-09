@@ -30,7 +30,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -549,6 +549,9 @@ iaf_psc_exp::phi_() const
   assert( P_.delta_ > 0. );
   return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
 }
+
+template <>
+void RecordablesMap< iaf_psc_exp >::create();
 
 } // namespace
 

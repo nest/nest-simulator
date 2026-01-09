@@ -42,7 +42,7 @@
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -516,8 +516,10 @@ hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
   pre_run_hook();
 }
 
-} // namespace
+template <>
+void RecordablesMap< hh_cond_beta_gap_traub >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // HH_COND_BETA_GAP_TRAUB_H

@@ -33,11 +33,10 @@
 
 // Includes from nestkernel:
 #include "connection.h"
-#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -446,6 +445,9 @@ sinusoidal_gamma_generator::get_type() const
 {
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
+
+template <>
+void RecordablesMap< sinusoidal_gamma_generator >::create();
 
 } // namespace
 

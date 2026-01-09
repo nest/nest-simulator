@@ -26,6 +26,8 @@
 // Includes from nestkernel:
 #include "connection.h"
 
+#include "nest_impl.h"
+
 namespace nest
 {
 
@@ -257,6 +259,70 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
   t_lastspike_ = t_spike;
 
   return send_spike;
+}
+
+template < typename targetidentifierT >
+quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
+  : ConnectionBase()
+  , weight_( 1.0 )
+  , U_( 0.5 )
+  , u_( U_ )
+  , tau_rec_( 800.0 )
+  , tau_fac_( 0.0 )
+  , n_( 1 )
+  , a_( n_ )
+  , t_lastspike_( -1.0 )
+{
+}
+
+template < typename targetidentifierT >
+void
+quantal_stp_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+{
+  ConnectionBase::get_status( d );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, names::dU, U_ );
+  def< double >( d, names::u, u_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
+  def< int >( d, names::n, n_ );
+  def< int >( d, names::a, a_ );
+}
+
+
+template < typename targetidentifierT >
+void
+quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+{
+  ConnectionBase::set_status( d, cm );
+  updateValue< double >( d, names::weight, weight_ );
+
+  updateValue< double >( d, names::dU, U_ );
+  if ( U_ > 1.0 or U_ < 0.0 )
+  {
+    throw BadProperty( "'U' must be in [0,1]." );
+  }
+
+  updateValue< double >( d, names::u, u_ );
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
+
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  if ( tau_rec_ <= 0.0 )
+  {
+    throw BadProperty( "'tau_rec' must be > 0." );
+  }
+
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "'tau_fac' must be >= 0." );
+  }
+
+  updateValue< long >( d, names::n, n_ );
+  updateValue< long >( d, names::a, a_ );
 }
 
 } // namespace

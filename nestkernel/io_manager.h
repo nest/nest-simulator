@@ -24,16 +24,23 @@
 #define IO_MANAGER_H
 
 // C++ includes:
+#include <map>
 #include <string>
+#include <vector>
 
 // Includes from libnestutil:
+#include "exceptions.h"
 #include "manager_interface.h"
 
-#include "recording_backend.h"
-#include "stimulation_backend.h"
 
+// NOTE: Use forward declarations to avoid circular dependencies
 namespace nest
 {
+class RecordingBackend;
+class StimulationBackend;
+class RecordingDevice;
+class StimulationDevice;
+class Event;
 
 /**
  * Manager to handle everything related to input and output.
@@ -166,24 +173,34 @@ private:
   std::map< Name, StimulationBackend* > stimulation_backends_;
 };
 
+template < class RecordingBackendT >
+void
+IOManager::register_recording_backend( const Name name )
+{
+  if ( recording_backends_.find( name ) != recording_backends_.end() )
+  {
+    throw BackendAlreadyRegistered( name.toString() );
+  }
+
+  RecordingBackendT* recording_backend = new RecordingBackendT();
+  recording_backend->pre_run_hook();
+  recording_backends_.insert( std::make_pair( name, recording_backend ) );
+}
+
+template < class StimulationBackendT >
+void
+IOManager::register_stimulation_backend( const Name name )
+{
+  if ( stimulation_backends_.find( name ) != stimulation_backends_.end() )
+  {
+    throw BackendAlreadyRegistered( name.toString() );
+  }
+
+  StimulationBackendT* stimulation_backend = new StimulationBackendT();
+  stimulation_backend->pre_run_hook();
+  stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
+}
+
 } // namespace nest
-
-inline const std::string&
-nest::IOManager::get_data_path() const
-{
-  return data_path_;
-}
-
-inline const std::string&
-nest::IOManager::get_data_prefix() const
-{
-  return data_prefix_;
-}
-
-inline bool
-nest::IOManager::overwrite_files() const
-{
-  return overwrite_files_;
-}
 
 #endif /* #ifndef IO_MANAGER_H */

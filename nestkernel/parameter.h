@@ -159,11 +159,7 @@ public:
   /**
    * @returns the constant value of this parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    return value_;
-  }
+  double value( RngPtr, Node* ) override;
 
 private:
   double value_;
@@ -203,11 +199,7 @@ public:
     range_ -= lower_;
   }
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return lower_ + rng->drand() * range_;
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double lower_, range_;
@@ -240,11 +232,7 @@ public:
     }
   }
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return rng->ulrand( max_ );
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double max_;
@@ -327,11 +315,7 @@ public:
     updateValue< double >( d, names::beta, beta_ );
   }
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return beta_ * ( -std::log( 1 - rng->drand() ) );
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double beta_;
@@ -377,40 +361,13 @@ public:
     }
   }
 
-  double
-  value( RngPtr, Node* node ) override
-  {
-    if ( synaptic_endpoint_ != 0 )
-    {
-      throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
-    }
-    if ( not node )
-    {
-      throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
-    }
-    return get_node_pos_( node );
-  }
+  double value( RngPtr, Node* node ) override;
 
-  double
-  value( RngPtr,
+  double value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer&,
-    Node* ) override
-  {
-    switch ( synaptic_endpoint_ )
-    {
-    case 0:
-      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
-    case 1:
-    {
-      return source_pos[ dimension_ ];
-    }
-    case 2:
-      return target_pos[ dimension_ ];
-    }
-    throw KernelException( "Wrong synaptic_endpoint_." );
-  }
+    Node* ) override;
 
 private:
   int dimension_;
@@ -437,11 +394,7 @@ public:
     }
   }
 
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -482,22 +435,13 @@ public:
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      * parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const parameter1_;
@@ -532,22 +476,13 @@ public:
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) / parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      / parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const parameter1_;
@@ -582,22 +517,13 @@ public:
   /**
    * @returns the value of the sum.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) + parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      + parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const parameter1_;
@@ -632,22 +558,13 @@ public:
   /**
    * @returns the value of the difference.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      - parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const parameter1_;
@@ -700,48 +617,20 @@ public:
   /**
    * @returns the result of the comparison, bool given as a double.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return compare_( parameter1_->value( rng, source_pos, target_pos, layer, node ),
-      parameter2_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const parameter1_;
   std::shared_ptr< Parameter > const parameter2_;
 
 private:
-  bool
-  compare_( double value_a, double value_b ) const
-  {
-    switch ( comparator_ )
-    {
-    case 0:
-      return value_a < value_b;
-    case 1:
-      return value_a <= value_b;
-    case 2:
-      return value_a == value_b;
-    case 3:
-      return value_a != value_b;
-    case 4:
-      return value_a >= value_b;
-    case 5:
-      return value_a > value_b;
-    }
-    throw KernelException( "Wrong comparison operator." );
-  }
+  bool compare_( double value_a, double value_b ) const;
 
   int comparator_;
 };
@@ -779,35 +668,12 @@ public:
   /**
    * @returns the value chosen by the comparison.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    if ( condition_->value( rng, node ) )
-    {
-      return if_true_->value( rng, node );
-    }
-    else
-    {
-      return if_false_->value( rng, node );
-    }
-  }
-
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    if ( condition_->value( rng, source_pos, target_pos, layer, node ) )
-    {
-      return if_true_->value( rng, source_pos, target_pos, layer, node );
-    }
-    else
-    {
-      return if_false_->value( rng, source_pos, target_pos, layer, node );
-    }
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const condition_;
@@ -844,21 +710,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::min( p_->value( rng, node ), other_value_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::min( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -893,21 +751,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::max( p_->value( rng, node ), other_value_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::max( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -979,21 +829,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::exp( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::exp( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1025,21 +867,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::sin( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::sin( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1070,21 +904,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::cos( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::cos( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1118,21 +944,13 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::pow( p_->value( rng, node ), exponent_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::pow( p_->value( rng, source_pos, target_pos, layer, node ), exponent_ );
-  }
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1187,35 +1005,16 @@ public:
   /**
    * The DimensionParameter has no double value, so this method will always throw.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw KernelException( "Cannot get value of DimensionParameter." );
-  }
+  double value( RngPtr, Node* ) override;
 
   /**
    * Generates a position with values for each dimension generated from their respective parameters.
    *
    * @returns The position, given as an array.
    */
-  std::vector< double >
-  get_values( RngPtr rng )
-  {
-    switch ( num_dimensions_ )
-    {
-    case 2:
-      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ) };
-    case 3:
-      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ), pz_->value( rng, nullptr ) };
-    }
-    throw KernelException( "Wrong number of dimensions in get_values!" );
-  }
+  std::vector< double > get_values( RngPtr rng );
 
-  int
-  get_num_dimensions() const
-  {
-    return num_dimensions_;
-  }
+  int get_num_dimensions() const;
 
 protected:
   int num_dimensions_;
@@ -1251,11 +1050,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Exponential distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1295,11 +1090,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gaussian distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1344,11 +1135,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gaussian 2D parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1395,11 +1182,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gabor parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1446,11 +1229,7 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gamma distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1464,37 +1243,6 @@ protected:
   const double inv_theta_;
   const double delta_;
 };
-
-inline double
-Parameter::value( RngPtr rng,
-  const std::vector< double >&,
-  const std::vector< double >&,
-  const AbstractLayer&,
-  Node* node )
-{
-  return value( rng, node );
-}
-
-inline bool
-Parameter::is_spatial() const
-{
-  return is_spatial_;
-}
-
-inline bool
-Parameter::returns_int_only() const
-{
-  return returns_int_only_;
-}
-
-inline bool
-Parameter::value_is_integer_( const double value ) const
-{
-  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0, the remainder is the
-  // fractional part of the value. If the fractional part is zero, the value is an integer.
-  return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
-}
-
 
 /**
  * Create the product of one parameter with another.

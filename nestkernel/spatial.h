@@ -59,56 +59,18 @@ public:
 
   void set_status( const DictionaryDatum&, bool ) override {};
 
-  void
-  get_status( DictionaryDatum& d, NodeCollection const* nc ) const override
-  {
-    layer_->get_status( d, nc );
-  }
+  void get_status( DictionaryDatum& d, NodeCollection const* nc ) const override;
 
   //! Returns pointer to object with layer representation
-  const AbstractLayerPTR
-  get_layer() const
-  {
-    return layer_;
-  }
+  const AbstractLayerPTR get_layer() const;
 
   // Using string as enum would make stuff more complicated
-  std::string
-  get_type() const override
-  {
-    return "spatial";
-  }
+  std::string get_type() const override;
 
-  void
-  set_first_node_id( size_t node_id ) override
-  {
-    first_node_id_ = node_id;
-  }
+  void set_first_node_id( size_t node_id ) override;
 
-  size_t
-  get_first_node_id() const override
-  {
-    return first_node_id_;
-  }
-
-  bool
-  operator==( const NodeCollectionMetadataPTR rhs ) const override
-  {
-    const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( not rhs_layer_metadata )
-    {
-      return false;
-    }
-    // Compare status dictionaries of this layer and rhs layer
-    DictionaryDatum dict( new Dictionary() );
-    DictionaryDatum rhs_dict( new Dictionary() );
-
-    // Since we do not have access to the node collection here, we
-    // compare based on all metadata, irrespective of any slicing
-    get_status( dict, /* nc */ nullptr );
-    rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
-    return *dict == *rhs_dict;
-  }
+  size_t get_first_node_id() const override;
+  bool operator==( const NodeCollectionMetadataPTR rhs ) const override;
 
 private:
   const AbstractLayerPTR layer_; //!< layer object

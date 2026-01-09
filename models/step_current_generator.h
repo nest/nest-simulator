@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -272,6 +272,10 @@ step_current_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
+
+template <>
+void RecordablesMap< step_current_generator >::create();
+
 } // namespace
 
 #endif /* #ifndef STEP_CURRENT_GENERATOR_H */

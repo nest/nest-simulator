@@ -29,10 +29,10 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -50,8 +50,7 @@ register_glif_psc_double_alpha( const std::string& name )
   register_node_model< glif_psc_double_alpha >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::glif_psc_double_alpha >::create()
@@ -628,7 +627,7 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
     else
@@ -686,7 +685,8 @@ nest::glif_psc_double_alpha::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -694,14 +694,6 @@ nest::glif_psc_double_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-nest::glif_psc_double_alpha::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e ); // the logger does this for us
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }

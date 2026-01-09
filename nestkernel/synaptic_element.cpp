@@ -25,6 +25,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
+#include "sp_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -53,7 +55,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , growth_rate_( se.growth_rate_ )
   , tau_vacant_( se.tau_vacant_ )
 {
-  growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
+  growth_curve_ = kernel::manager< SPManager >.new_growth_curve( se.growth_curve_->get_name() );
   assert( growth_curve_ );
   DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
   se.get( nc_parameters );
@@ -66,7 +68,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
   if ( this != &other )
   {
     // 1: allocate new memory and copy the elements
-    GrowthCurve* new_nc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
+    GrowthCurve* new_nc = kernel::manager< SPManager >.new_growth_curve( other.growth_curve_->get_name() );
     DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
 
     other.get( nc_parameters );
@@ -121,7 +123,7 @@ nest::SynapticElement::set( const DictionaryDatum& d )
     Name growth_curve_name( getValue< std::string >( d, names::growth_curve ) );
     if ( not growth_curve_->is( growth_curve_name ) )
     {
-      growth_curve_ = kernel().sp_manager.new_growth_curve( growth_curve_name );
+      growth_curve_ = kernel::manager< SPManager >.new_growth_curve( growth_curve_name );
     }
   }
   growth_curve_->set( d );
@@ -148,4 +150,74 @@ nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double
   }
   z_ = growth_curve_->update( t, t_minus, Ca_minus, z_, tau_Ca, growth_rate_ );
   z_t_ = t;
+}
+
+int
+nest::SynapticElement::get_z_vacant() const
+{
+  return std::floor( z_ ) - z_connected_;
+}
+
+int
+nest::SynapticElement::get_z_connected() const
+{
+  return z_connected_;
+}
+
+double
+nest::SynapticElement::get_tau_vacant() const
+{
+  return tau_vacant_;
+}
+
+void
+nest::SynapticElement::connect( int n )
+{
+  z_connected_ += n;
+  if ( z_connected_ > floor( z_ ) )
+  {
+    z_ = z_connected_ + ( z_ - floor( z_ ) );
+  }
+}
+
+void
+nest::SynapticElement::set_growth_curve( GrowthCurve& g )
+{
+  if ( growth_curve_ != &g )
+  {
+    delete growth_curve_;
+    growth_curve_ = &g;
+  }
+}
+
+double
+nest::SynapticElement::get_growth_rate() const
+{
+  return growth_rate_;
+}
+
+void
+nest::SynapticElement::set_z( const double z_new )
+{
+  z_ = z_new;
+}
+double
+nest::SynapticElement::get_z() const
+{
+  return z_;
+}
+
+void
+nest::SynapticElement::decay_z_vacant()
+{
+  if ( get_z_vacant() > 0 )
+  {
+    z_ -= get_z_vacant() * tau_vacant_;
+  }
+}
+
+bool
+nest::SynapticElement::continuous() const
+{
+  return continuous_;
 }

@@ -24,8 +24,6 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
 
 namespace nest
 {
@@ -58,10 +56,7 @@ nonlinearities_gauss_rate::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::sigma, sigma_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::gauss_rate_ipn >::create()

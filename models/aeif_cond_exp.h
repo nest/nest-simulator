@@ -40,7 +40,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -460,6 +460,9 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< aeif_cond_exp >::create();
 
 } // namespace
 

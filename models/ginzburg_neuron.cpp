@@ -24,9 +24,6 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -55,10 +52,7 @@ gainfunction_ginzburg::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::c_3, c3_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::ginzburg_neuron >::create()

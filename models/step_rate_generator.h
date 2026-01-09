@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -278,6 +278,9 @@ step_rate_generator::get_type() const
 {
   return StimulationDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
 }
+
+template <>
+void RecordablesMap< step_rate_generator >::create();
 
 } // namespace
 

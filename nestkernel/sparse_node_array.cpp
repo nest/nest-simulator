@@ -26,7 +26,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "node.h"
-#include "vp_manager_impl.h"
 
 
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, size_t node_id )
@@ -87,7 +86,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
     left_side_has_proxies_ = node.has_proxies();
 
     // we now know which scale applies on which side of the split
-    const double proxy_scale = 1.0 / static_cast< double >( kernel().vp_manager.get_num_virtual_processes() );
+    const double proxy_scale = 1.0 / static_cast< double >( kernel::manager< VPManager >.get_num_virtual_processes() );
     if ( left_side_has_proxies_ )
     {
       left_scale_ = proxy_scale;
@@ -172,4 +171,62 @@ nest::SparseNodeArray::get_node_by_node_id( size_t node_id ) const
   {
     return nullptr;
   }
+}
+size_t
+nest::SparseNodeArray::NodeEntry::get_node_id() const
+{
+
+  assert( node_id_ > 0 );
+  return node_id_;
+}
+
+nest::Node*
+nest::SparseNodeArray::NodeEntry::get_node() const
+{
+
+  assert( node_ );
+  return node_;
+}
+
+bool
+nest::SparseNodeArray::is_consistent_() const
+{
+
+  return nodes_.size() == 0 or global_max_node_id_ > 0;
+}
+
+size_t
+nest::SparseNodeArray::get_max_node_id() const
+{
+
+  return global_max_node_id_;
+}
+
+nest::Node*
+nest::SparseNodeArray::get_node_by_index( size_t idx ) const
+{
+
+  assert( idx < nodes_.size() );
+  return nodes_[ idx ].node_;
+}
+
+size_t
+nest::SparseNodeArray::size() const
+{
+
+  return nodes_.size();
+}
+
+nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::end() const
+{
+
+  return nodes_.end();
+}
+
+nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::begin() const
+{
+
+  return nodes_.begin();
 }

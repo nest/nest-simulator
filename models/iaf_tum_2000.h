@@ -30,7 +30,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -469,6 +469,9 @@ iaf_tum_2000::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< iaf_tum_2000 >::create();
 
 } // namespace
 

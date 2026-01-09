@@ -29,16 +29,19 @@
 
 // Includes from sli:
 #include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
 #include "nest_impl.h"
+#include "universal_data_logger_impl.h"
 
 void
 nest::register_music_message_in_proxy( const std::string& name )
@@ -131,8 +134,8 @@ nest::music_message_in_proxy::pre_run_hook()
   // only publish the port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
+    if ( not s )
     {
       throw MUSICSimulationHasRun( get_name() );
     }

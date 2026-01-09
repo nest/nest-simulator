@@ -26,6 +26,7 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 #include "nest_types.h"
+#include "static_assert.h"
 
 namespace nest
 {
@@ -37,68 +38,36 @@ struct SynIdDelay
   bool more_targets : 1;
   bool disabled : 1;
 
-  explicit SynIdDelay( double d )
-    : syn_id( invalid_synindex )
-    , more_targets( false )
-    , disabled( false )
-  {
-    set_delay_ms( d );
-  }
-
-  SynIdDelay( const SynIdDelay& s ) = default;
-  SynIdDelay& operator=( const SynIdDelay& s ) = default;
+  explicit SynIdDelay( double d );
+  SynIdDelay( const SynIdDelay& s );
+  SynIdDelay& operator=( const SynIdDelay& s );
 
   /**
    * Return the delay of the connection in ms
    */
-  double
-  get_delay_ms() const
-  {
-    return Time::delay_steps_to_ms( delay );
-  }
+  double get_delay_ms() const;
 
   /**
    * Set the delay of the connection specified in ms
    */
-  void
-  set_delay_ms( const double d )
-  {
-    delay = Time::delay_ms_to_steps( d );
-  }
+  void set_delay_ms( const double d );
 
-  void
-  set_source_has_more_targets( const bool more_targets )
-  {
-    this->more_targets = more_targets;
-  }
+  void set_source_has_more_targets( const bool more_targets );
 
-  bool
-  source_has_more_targets() const
-  {
-    return more_targets;
-  }
+  bool source_has_more_targets() const;
 
   /**
    * Disables the synapse.
    *
    * @see is_disabled
    */
-  void
-  disable()
-  {
-    disabled = true;
-  }
-
+  void disable();
   /**
    * Returns a flag denoting if the synapse is disabled.
    *
    * @see disable
    */
-  bool
-  is_disabled() const
-  {
-    return disabled;
-  }
+  bool is_disabled() const;
 };
 
 //! check legal size

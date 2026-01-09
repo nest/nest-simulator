@@ -28,13 +28,11 @@
 
 // Includes from nestkernel:
 #include "connection.h"
-#include "device_node.h"
 #include "event.h"
-#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -300,7 +298,7 @@ private:
 inline size_t
 noise_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     throw KernelException( "Recording from a noise_generator is only possible in single-threaded mode." );
   }
@@ -362,6 +360,9 @@ noise_generator::Parameters_::get_default_dt()
 {
   return 10 * Time::get_resolution();
 }
+
+template <>
+void RecordablesMap< noise_generator >::create();
 
 } // namespace
 

@@ -39,7 +39,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -540,6 +540,57 @@ iaf_bw_2001_exact::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 };
+
+inline void
+nest::iaf_bw_2001_exact::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );
+}
+
+inline void
+nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+  assert( e.get_rport() <= static_cast< int >( B_.spikes_.size() ) );
+
+  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() );
+  const auto rport = e.get_rport();
+
+  if ( rport < NMDA )
+  {
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+  }
+  else
+  // we need to scale each individual S_j variable by its weight,
+  // so we store them
+  {
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
+    // since we scale entire S_j variable by the weight it also affects previous spikes.
+    // we therefore require them to be constant.
+    const size_t w_idx = rport - NMDA;
+    if ( B_.weights_[ w_idx ] == 0 )
+    {
+      B_.weights_[ w_idx ] = e.get_weight();
+    }
+    else if ( B_.weights_[ w_idx ] != e.get_weight() )
+    {
+      throw KernelException( "iaf_bw_2001_exact requires constant weights." );
+    }
+  }
+}
+
+inline void
+nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
+}
+
+template <>
+void RecordablesMap< iaf_bw_2001_exact >::create();
+
 } // namespace
 
 #endif // HAVE_GSL

@@ -38,9 +38,9 @@
 #include "event.h"
 #include "ring_buffer.h"
 
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
-#include "nest.h"
+#include "nest_impl.h"
 
 
 namespace nest
@@ -509,6 +509,9 @@ gif_cond_exp::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< gif_cond_exp >::create();
 
 } // namespace
 

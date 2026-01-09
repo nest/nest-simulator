@@ -63,21 +63,13 @@ class Device
 public:
   Device();
   Device( const Device& n );
-  virtual ~Device()
-  {
-  }
+  virtual ~Device();
 
   /** Reset dynamic state to that of model. */
-  virtual void
-  init_state()
-  {
-  }
+  void init_state();
 
   /** Reset buffers. */
-  virtual void
-  init_buffers()
-  {
-  }
+  void init_buffers();
 
   /** Set internal variables before calls to SimulationManager::run() */
   virtual void pre_run_hook();
@@ -178,51 +170,5 @@ private:
 };
 
 } // namespace
-
-inline void
-nest::Device::get_status( DictionaryDatum& d ) const
-{
-  P_.get( d );
-}
-
-inline void
-nest::Device::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-}
-
-inline nest::Time const&
-nest::Device::get_origin() const
-{
-  return P_.origin_;
-}
-
-inline nest::Time const&
-nest::Device::get_start() const
-{
-  return P_.start_;
-}
-
-inline nest::Time const&
-nest::Device::get_stop() const
-{
-  return P_.stop_;
-}
-
-inline long
-nest::Device::get_t_min_() const
-{
-  return V_.t_min_;
-}
-
-inline long
-nest::Device::get_t_max_() const
-{
-  return V_.t_max_;
-}
 
 #endif /* DEVICE_H */

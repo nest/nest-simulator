@@ -331,201 +331,74 @@ public:
   static void reset_resolution();
   static void reset_to_defaults();
 
-  static Time
-  get_resolution()
-  {
-    return Time( Range::TICS_PER_STEP );
-  }
+  static Time get_resolution();
 
-  static bool
-  resolution_is_default()
-  {
-    return Range::TICS_PER_STEP == Range::TICS_PER_STEP_DEFAULT;
-  }
+  static bool resolution_is_default();
 
   /////////////////////////////////////////////////////////////
   // Common zero-ary or unary operations
   /////////////////////////////////////////////////////////////
 
-  void
-  set_to_zero()
-  {
-    tics = 0;
-  }
+  void set_to_zero();
 
-  void
-  advance()
-  {
-    tics += Range::TICS_PER_STEP;
-    range();
-  }
+  void advance();
 
-  Time
-  succ() const
-  {
-    return tic( tics + Range::TICS_PER_STEP );
-  } // check range
-  Time
-  pred() const
-  {
-    return tic( tics - Range::TICS_PER_STEP );
-  } // check range
+  Time succ() const;
+
+  Time pred() const;
 
   /////////////////////////////////////////////////////////////
   // Subtypes of Time (bool tests)
   /////////////////////////////////////////////////////////////
 
-  bool
-  is_finite() const
-  {
-    return tics != LIM_POS_INF.tics and tics != LIM_NEG_INF.tics;
-  }
+  bool is_finite() const;
+  bool is_neg_inf() const;
+  bool is_pos_inf() const;
 
-  bool
-  is_neg_inf() const
-  {
-    // Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
-    // LIM_NEG_INF.tics represent negative infinity, any smaller
-    // value cannot be larger and thus must be infinity as well. to be on the safe side
-    // we use less-or-equal instead of just equal.
-    return tics <= LIM_NEG_INF.tics;
-  }
-  bool
-  is_pos_inf() const
-  {
-    return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
-  }
-
-  bool
-  is_grid_time() const
-  {
-    return ( tics % Range::TICS_PER_STEP ) == 0;
-  }
-  bool
-  is_step() const
-  {
-    return tics > 0 and is_grid_time();
-  }
-
-  bool
-  is_multiple_of( const Time& divisor ) const
-  {
-    assert( divisor.tics > 0 );
-    return ( tics % divisor.tics ) == 0;
-  }
+  bool is_grid_time() const;
+  bool is_step() const;
+  bool is_multiple_of( const Time& divisor ) const;
 
   /////////////////////////////////////////////////////////////
   // Singleton'ish types
   /////////////////////////////////////////////////////////////
 
-  static Time
-  max()
-  {
-    return Time( LIM_MAX.tics );
-  }
-  static Time
-  min()
-  {
-    return Time( LIM_MIN.tics );
-  }
-  static double
-  get_ms_per_tic()
-  {
-    return Range::MS_PER_TIC;
-  }
-  static Time
-  neg_inf()
-  {
-    return Time( LIM_NEG_INF.tics );
-  }
-  static Time
-  pos_inf()
-  {
-    return Time( LIM_POS_INF.tics );
-  }
+  static Time max();
+
+  static Time min();
+
+  static double get_ms_per_tic();
+
+  static Time neg_inf();
+
+  static Time pos_inf();
+
 
   /////////////////////////////////////////////////////////////
   // Overflow checks & recalibrate after resolution setting
   /////////////////////////////////////////////////////////////
 
-  void
-  range()
-  {
-    if ( time_abs( tics ) < LIM_MAX.tics )
-    {
-      return;
-    }
-    tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
-  }
+  void range();
 
-  void
-  calibrate()
-  {
-    range();
-  }
+  void calibrate();
 
   /////////////////////////////////////////////////////////////
   // Unary operators
   /////////////////////////////////////////////////////////////
 
-  Time&
-  operator+=( const Time& t )
-  {
-    tics += t.tics;
-    range();
-    return *this;
-  }
+  Time& operator+=( const Time& t );
 
   /////////////////////////////////////////////////////////////
   // Convert to external units
   /////////////////////////////////////////////////////////////
 
-  tic_t
-  get_tics() const
-  {
-    return tics;
-  }
-  static tic_t
-  get_tics_per_step()
-  {
-    return Range::TICS_PER_STEP;
-  }
-  static double
-  get_tics_per_ms()
-  {
-    return Range::TICS_PER_MS;
-  }
+  tic_t get_tics() const;
+  static tic_t get_tics_per_step();
+  static double get_tics_per_ms();
 
-  double
-  get_ms() const
-  {
-    if ( is_pos_inf() )
-    {
-      return LIM_POS_INF_ms;
-    }
-    if ( is_neg_inf() )
-    {
-      return LIM_NEG_INF_ms;
-    }
-    return Range::MS_PER_TIC * tics;
-  }
+  double get_ms() const;
 
-  long
-  get_steps() const
-  {
-    if ( is_pos_inf() )
-    {
-      return LIM_POS_INF.steps;
-    }
-    if ( is_neg_inf() )
-    {
-      return LIM_NEG_INF.steps;
-    }
-
-    // round tics up to nearest step
-    // by adding TICS_PER_STEP-1 before division
-    return ( tics + Range::TICS_PER_STEP_RND ) * Range::TICS_PER_STEP_INV;
-  }
+  long get_steps() const;
 
   /**
    * Convert between delays given in steps and milliseconds.
@@ -535,17 +408,9 @@ public:
    * ld_round, which is different from ms_stamp --> Time mapping, which rounds
    * up. See #903.
    */
-  static double
-  delay_steps_to_ms( long steps )
-  {
-    return steps * Range::MS_PER_STEP;
-  }
+  static double delay_steps_to_ms( long steps );
 
-  static long
-  delay_ms_to_steps( double ms )
-  {
-    return ld_round( ms * Range::STEPS_PER_MS );
-  }
+  static long delay_ms_to_steps( double ms );
 };
 
 /////////////////////////////////////////////////////////////
@@ -556,82 +421,6 @@ public:
 // maybe make the zero visible for optimization.
 const Time TimeZero;
 
-/////////////////////////////////////////////////////////////
-// Binary operators
-/////////////////////////////////////////////////////////////
-
-inline bool
-operator==( const Time& t1, const Time& t2 )
-{
-  return t1.tics == t2.tics;
-}
-
-inline bool
-operator!=( const Time& t1, const Time& t2 )
-{
-  return t1.tics != t2.tics;
-}
-
-inline bool
-operator<( const Time& t1, const Time& t2 )
-{
-  return t1.tics < t2.tics;
-}
-
-inline bool
-operator>( const Time& t1, const Time& t2 )
-{
-  return t1.tics > t2.tics;
-}
-
-inline bool
-operator<=( const Time& t1, const Time& t2 )
-{
-  return t1.tics <= t2.tics;
-}
-
-inline bool
-operator>=( const Time& t1, const Time& t2 )
-{
-  return t1.tics >= t2.tics;
-}
-
-inline Time
-operator+( const Time& t1, const Time& t2 )
-{
-  return Time::tic( t1.tics + t2.tics ); // check range
-}
-
-inline Time
-operator-( const Time& t1, const Time& t2 )
-{
-  return Time::tic( t1.tics - t2.tics ); // check range
-}
-
-inline Time
-operator*( const long factor, const Time& t )
-{
-  const tic_t n = factor * t.tics;
-  // if no overflow:
-  if ( t.tics == 0 or n / t.tics == factor )
-  {
-    return Time::tic( n ); // check range
-  }
-  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
-  {
-    return Time( Time::LIM_POS_INF.tics );
-  }
-  else
-  {
-    return Time( Time::LIM_NEG_INF.tics );
-  }
-}
-
-inline Time
-operator*( const Time& t, long factor )
-{
-  return factor * t;
-}
 } // namespace
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );

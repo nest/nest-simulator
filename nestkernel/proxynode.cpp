@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "connection.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -45,59 +46,63 @@ proxynode::proxynode( size_t node_id, size_t model_id, size_t vp )
 size_t
 proxynode::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
-  Model* model = kernel().model_manager.get_node_model( get_model_id() );
+  Model* model = kernel::manager< ModelManager >.get_node_model( get_model_id() );
   return model->send_test_event( target, receptor_type, syn_id, dummy_target );
 }
 
 void
 proxynode::sends_secondary_event( GapJunctionEvent& ge )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( ge );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( ge );
 }
 
 void
 proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( de );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( de );
 }
 
 void
 proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( LearningSignalConnectionEvent& re )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( SICEvent& sic )
 {
-  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( sic );
+  kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_secondary_event( sic );
 }
 
 nest::SignalType
 proxynode::sends_signal() const
 {
-  return kernel().model_manager.get_node_model( get_model_id() )->sends_signal();
+  return kernel::manager< ModelManager >.get_node_model( get_model_id() )->sends_signal();
 }
 
 void
 proxynode::get_status( DictionaryDatum& d ) const
 {
-  const Model* model = kernel().model_manager.get_node_model( model_id_ );
+  const Model* model = kernel::manager< ModelManager >.get_node_model( model_id_ );
   const Name element_type = model->get_prototype().get_element_type();
   ( *d )[ names::element_type ] = LiteralDatum( element_type );
 }
 
-
+bool
+proxynode::is_proxy() const
+{
+  return true;
+}
 } // namespace

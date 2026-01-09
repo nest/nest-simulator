@@ -31,7 +31,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -419,6 +419,9 @@ mat2_psc_exp::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< mat2_psc_exp >::create();
 
 } // namespace
 

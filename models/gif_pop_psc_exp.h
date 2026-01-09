@@ -25,11 +25,11 @@
 
 
 // Includes from nestkernel:
-#include "nest.h"
+#include "nest_impl.h"
 #include "node.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 #ifdef HAVE_GSL
 
@@ -484,6 +484,9 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< gif_pop_psc_exp >::create();
 
 } // namespace
 

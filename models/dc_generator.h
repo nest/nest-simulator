@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -241,6 +241,9 @@ dc_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
+
+template <>
+void RecordablesMap< dc_generator >::create();
 
 } // namespace
 

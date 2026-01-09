@@ -29,23 +29,18 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "conn_builder.h"
-#include "connection_creator_impl.h"
 #include "free_layer.h"
-#include "genericmodel.h"
-#include "grid_layer.h"
 #include "grid_mask.h"
 #include "kernel_manager.h"
-#include "layer.h"
 #include "layer_impl.h"
-#include "mask.h"
-#include "mask_impl.h"
-#include "model_manager_impl.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "module_manager.h"
+#include "music_manager.h"
 #include "nest.h"
 #include "nest_datums.h"
-#include "nest_types.h"
-#include "node.h"
 #include "parameter.h"
+#include "sp_manager.h"
 #include "spatial.h"
 #include "stopwatch_impl.h"
 
@@ -381,7 +376,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+      kernel::manager< ConnectionManager >.set_synapse_status( con_id.get_source_node_id(),
         con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
@@ -399,7 +394,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+      kernel::manager< ConnectionManager >.set_synapse_status( con_id.get_source_node_id(),
         con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
@@ -463,7 +458,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+  DictionaryDatum result_dict = kernel::manager< ConnectionManager >.get_synapse_status( conn.get_source_node_id(),
     conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
@@ -486,7 +481,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+    DictionaryDatum result_dict = kernel::manager< ConnectionManager >.get_synapse_status( con_id.get_source_node_id(),
       con_id.get_target_node_id(),
       con_id.get_target_thread(),
       con_id.get_synapse_model_id(),
@@ -563,7 +558,7 @@ NestModule::Install_sFunction::execute( SLIInterpreter* i ) const
 
   const std::string modulename = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  kernel().module_manager.install( modulename );
+  kernel::manager< ModuleManager >.install( modulename );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -635,7 +630,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.copy_model( old_name, new_name, params );
+  kernel::manager< ModelManager >.copy_model( old_name, new_name, params );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -699,7 +694,7 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
-  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+  kernel::manager< SPManager >.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -724,7 +719,7 @@ NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   i->assert_stack_load( 4 );
 
@@ -734,18 +729,18 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
+  kernel::manager< ConnectionManager >.connect( sources, targets, connectivity, { synapse_params } );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 void
 NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   i->assert_stack_load( 4 );
 
@@ -761,19 +756,19 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   }
 
   // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel::manager< ConnectionManager >.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 
 void
 NestModule::ConnectTripartite_g_g_g_D_D_DFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   i->assert_stack_load( 6 );
 
@@ -804,26 +799,26 @@ NestModule::ConnectTripartite_g_g_g_D_D_DFunction::execute( SLIInterpreter* i ) 
   i->OStack.pop( 6 );
   i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 
 void
 NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   i->assert_stack_load( 2 );
 
   DictionaryDatum graph_specs = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const long hyberslab_size = getValue< long >( i->OStack.pick( 0 ) );
 
-  kernel().connection_manager.connect_sonata( graph_specs, hyberslab_size );
+  kernel::manager< ConnectionManager >.connect_sonata( graph_specs, hyberslab_size );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -843,7 +838,7 @@ NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
 void
 NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().model_manager.memory_info();
+  kernel::manager< ModelManager >.memory_info();
   i->EStack.pop();
 }
 
@@ -868,21 +863,21 @@ NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::RankFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( kernel().mpi_manager.get_rank() );
+  i->OStack.push( kernel::manager< MPIManager >.get_rank() );
   i->EStack.pop();
 }
 
 void
 NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( kernel().mpi_manager.get_num_processes() );
+  i->OStack.push( kernel::manager< MPIManager >.get_num_processes() );
   i->EStack.pop();
 }
 
 void
 NestModule::SyncProcessesFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().mpi_manager.synchronize();
+  kernel::manager< MPIManager >.synchronize();
   i->EStack.pop();
 }
 
@@ -897,11 +892,11 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
   double time = 0.0;
   if ( offgrid )
   {
-    time = kernel().mpi_manager.time_communicate_offgrid( num_bytes, samples );
+    time = kernel::manager< MPIManager >.time_communicate_offgrid( num_bytes, samples );
   }
   else
   {
-    time = kernel().mpi_manager.time_communicate( num_bytes, samples );
+    time = kernel::manager< MPIManager >.time_communicate( num_bytes, samples );
   }
 
   i->OStack.pop( 3 );
@@ -919,7 +914,7 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
 
   double time = 0.0;
 
-  time = kernel().mpi_manager.time_communicatev( num_bytes, samples );
+  time = kernel::manager< MPIManager >.time_communicatev( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -936,7 +931,7 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute( SLIInterpreter* i ) 
 
   double time = 0.0;
 
-  time = kernel().mpi_manager.time_communicate_alltoall( num_bytes, samples );
+  time = kernel::manager< MPIManager >.time_communicate_alltoall( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -953,7 +948,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i )
 
   double time = 0.0;
 
-  time = kernel().mpi_manager.time_communicate_alltoallv( num_bytes, samples );
+  time = kernel::manager< MPIManager >.time_communicate_alltoallv( num_bytes, samples );
 
   i->OStack.pop( 2 );
   i->OStack.push( time );
@@ -963,7 +958,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute( SLIInterpreter* i )
 void
 NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 {
-  i->OStack.push( kernel().mpi_manager.get_processor_name() );
+  i->OStack.push( kernel::manager< MPIManager >.get_processor_name() );
   i->EStack.pop();
 }
 
@@ -973,7 +968,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   long exitcode = getValue< long >( i->OStack.pick( 0 ) );
-  kernel().mpi_manager.mpi_abort( exitcode );
+  kernel::manager< MPIManager >.mpi_abort( exitcode );
   i->EStack.pop();
 }
 #endif
@@ -1296,7 +1291,7 @@ NestModule::SetAcceptableLatencyFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   double latency = getValue< double >( i->OStack.pick( 0 ) );
 
-  kernel().music_manager.set_music_in_port_acceptable_latency( port_name, latency );
+  kernel::manager< MUSICManager >.set_music_in_port_acceptable_latency( port_name, latency );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1310,7 +1305,7 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   std::string port_name = getValue< std::string >( i->OStack.pick( 1 ) );
   int maxBuffered = getValue< long >( i->OStack.pick( 0 ) );
 
-  kernel().music_manager.set_music_in_port_max_buffered( port_name, maxBuffered );
+  kernel::manager< MUSICManager >.set_music_in_port_max_buffered( port_name, maxBuffered );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -1321,14 +1316,14 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::EnableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  kernel::manager< SPManager >.enable_structural_plasticity();
 
   i->EStack.pop();
 }
 void
 NestModule::DisableStructuralPlasticity_Function::execute( SLIInterpreter* i ) const
 {
-  kernel().sp_manager.disable_structural_plasticity();
+  kernel::manager< SPManager >.disable_structural_plasticity();
 
   i->EStack.pop();
 }
@@ -1339,7 +1334,7 @@ NestModule::SetStdpEps_dFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   const double stdp_eps = getValue< double >( i->OStack.top() );
 
-  kernel().connection_manager.set_stdp_eps( stdp_eps );
+  kernel::manager< ConnectionManager >.set_stdp_eps( stdp_eps );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -1901,7 +1896,7 @@ NestModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   i->assert_stack_load( 3 );
 
@@ -1914,7 +1909,7 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 3 );
   i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 void
@@ -2194,7 +2189,7 @@ NestModule::init( SLIInterpreter* i )
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
-  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
+  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel::manager< MPIManager >.is_mpi_used() ) );
 
   register_parameter< ConstantParameter >( "constant" );
   register_parameter< UniformParameter >( "uniform" );
@@ -2225,5 +2220,18 @@ NestModule::init( SLIInterpreter* i )
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
 }
+
+bool
+NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+AbstractMask*
+NestModule::create_mask( const Name& name, const DictionaryDatum& d )
+{
+  return mask_factory_().create( name, d );
+}
+
 
 } // namespace nest

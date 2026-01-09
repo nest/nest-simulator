@@ -23,7 +23,10 @@
 
 // Includes from nestkernel:
 #include "stimulation_device.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
+
+#include <nest_names.h>
 
 
 nest::StimulationDevice::StimulationDevice()
@@ -78,7 +81,7 @@ nest::StimulationDevice::pre_run_hook()
 void
 nest::StimulationDevice::set_initialized_()
 {
-  kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
+  kernel::manager< IOManager >.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
 const std::string&
@@ -110,7 +113,7 @@ nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, names::stimulus_source, stimulus_source ) )
   {
 
-    if ( not kernel().io_manager.is_valid_stimulation_backend( stimulus_source ) )
+    if ( not kernel::manager< IOManager >.is_valid_stimulation_backend( stimulus_source ) )
     {
       std::string msg = String::compose( "Unknown input backend '%1'", stimulus_source );
       throw BadProperty( msg );
@@ -154,7 +157,7 @@ nest::StimulationDevice::set_status( const DictionaryDatum& d )
   }
   else
   {
-    kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
+    kernel::manager< IOManager >.enroll_stimulator( ptmp.stimulus_source_, *this, d );
   }
 
   // if we get here, temporaries contain consistent set of properties
@@ -179,4 +182,16 @@ nest::StimulationDevice::get_status( DictionaryDatum& d ) const
       ( *d )[ kv_pair.first ] = kv_pair.second;
     }
   }
+}
+
+Name
+nest::StimulationDevice::get_element_type() const
+{
+  return names::stimulator;
+}
+
+bool
+nest::StimulationDevice::has_proxies() const
+{
+  return false;
 }

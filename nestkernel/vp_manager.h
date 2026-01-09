@@ -26,11 +26,11 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from nestkernel:
-#include "nest_types.h"
-
 // Includes from sli:
 #include "dictdatum.h"
+
+#include "kernel_manager.h"
+#include "mpi_manager.h"
 
 #ifdef _OPENMP
 // C includes:
@@ -173,40 +173,7 @@ private:
   const bool force_singlethreading_;
   size_t n_threads_; //!< Number of threads per process.
 };
-}
 
-inline size_t
-nest::VPManager::get_thread_id() const
-{
-#ifdef _OPENMP
-  return omp_get_thread_num();
-#else
-  return 0;
-#endif
-}
-
-inline size_t
-nest::VPManager::get_num_threads() const
-{
-  return n_threads_;
-}
-
-inline void
-nest::VPManager::assert_single_threaded() const
-{
-#ifdef _OPENMP
-  assert( omp_get_num_threads() == 1 );
-#endif
-}
-
-inline void
-nest::VPManager::assert_thread_parallel() const
-{
-#ifdef _OPENMP
-  // omp_get_num_threads() returns int
-  assert( omp_get_num_threads() == static_cast< int >( n_threads_ ) );
-#endif
-}
-
+} // namespace nest
 
 #endif /* #ifndef VP_MANAGER_H */

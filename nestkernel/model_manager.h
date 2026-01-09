@@ -27,18 +27,13 @@
 #include <string>
 
 // Includes from nestkernel:
-#include "connector_model.h"
-#include "genericmodel.h"
+#include "connection_manager.h"
 #include "manager_interface.h"
 #include "model.h"
-#include "nest.h"
 #include "nest_time.h"
-#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -283,48 +278,6 @@ private:
   bool model_defaults_modified_;
 };
 
-
-inline Model*
-ModelManager::get_node_model( size_t m ) const
-{
-  assert( m < node_models_.size() );
-  return node_models_[ m ];
-}
-
-inline bool
-ModelManager::are_model_defaults_modified() const
-{
-  return model_defaults_modified_;
-}
-
-inline ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
-{
-  assert_valid_syn_id( syn_id, thread_id );
-  return *( connection_models_[ thread_id ][ syn_id ] );
-}
-
-inline const std::vector< ConnectorModel* >&
-ModelManager::get_connection_models( size_t tid )
-{
-  return connection_models_[ tid ];
-}
-
-inline void
-ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
-{
-  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
-  {
-    throw UnknownSynapseType( syn_id );
-  }
-}
-
-inline std::unique_ptr< SecondaryEvent >
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
-{
-  assert_valid_syn_id( syn_id, tid );
-  return get_connection_model( syn_id, tid ).get_secondary_event();
-}
 
 } // namespace nest
 

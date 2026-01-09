@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 /* BeginUserDocs: device, generator
 
@@ -283,6 +283,9 @@ ac_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
+
+template <>
+void RecordablesMap< ac_generator >::create();
 
 } // namespace
 

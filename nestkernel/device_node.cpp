@@ -1,5 +1,5 @@
 /*
- *  sp_manager_impl.h
+ *  device_node.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,33 @@
  *
  */
 
-#ifndef SP_MANAGER_IMPL_H
-#define SP_MANAGER_IMPL_H
-
-#include "sp_manager.h"
-
-// C++ includes:
-#include <string>
-
-// Includes from nestkernel:
-#include "growth_curve.h"
-#include "growth_curve_factory.h"
+#include "device_node.h"
 
 namespace nest
 {
 
-template < typename GrowthCurve >
-void
-SPManager::register_growth_curve( const std::string& name )
+DeviceNode::DeviceNode()
+  : Node()
+  , local_device_id_( invalid_index )
 {
-  assert( not growthcurvedict_->known( name ) );
-  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
-  assert( nc );
-  const int id = growthcurve_factories_.size();
-  growthcurve_factories_.push_back( nc );
-  growthcurvedict_->insert( name, id );
+}
+
+DeviceNode::DeviceNode( DeviceNode const& dn )
+  : Node( dn )
+  , local_device_id_( invalid_index )
+{
+}
+
+void
+DeviceNode::set_local_device_id( const size_t ldid )
+{
+  local_device_id_ = ldid;
+}
+
+size_t
+DeviceNode::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace nest
-
-#endif /* SP_MANAGER_IMPL_H */

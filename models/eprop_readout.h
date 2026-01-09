@@ -25,13 +25,14 @@
 
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
+
+#include <model_manager.h>
 
 namespace nest
 {
@@ -518,7 +519,7 @@ eprop_readout::handles_test_event( CurrentEvent&, size_t receptor_type )
 inline size_t
 eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
 {
-  size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
+  size_t step_rate_model_id = kernel::manager< ModelManager >.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG and receptor_type != LEARNING_WINDOW_SIG )
@@ -575,6 +576,9 @@ eprop_readout::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< eprop_readout >::create();
 
 } // namespace nest
 

@@ -18,34 +18,35 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set ( nestkernel_sources
-      universal_data_logger_impl.h universal_data_logger.h
+      universal_data_logger.h
       recordables_map.h
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
-      urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      urbanczik_archiving_node.h
       eprop_archiving_node.h eprop_archiving_node_impl.h
-      eprop_archiving_node_readout.h
+      eprop_archiving_node_readout.h eprop_archiving_node_readout_impl.h
       eprop_archiving_node_recurrent.h eprop_archiving_node_recurrent_impl.h
       common_synapse_properties.h common_synapse_properties.cpp
-      connection.h
-      connection_label.h
-      common_properties_hom_w.h
-      syn_id_delay.h
-      connector_base.h connector_base_impl.h
-      connector_model.h connector_model_impl.h connector_model.cpp
+      connection.h connection_impl.h
+      connection_label.h connection_label_impl.h
+      common_properties_hom_w.h common_properties_hom_w.cpp
+      syn_id_delay.h syn_id_delay.cpp
+      connector_base.h connector_base.cpp connector_base_impl.h
+      connector_model.h connector_model.cpp connector_model_impl.h
       connection_id.h connection_id.cpp
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
-      device_node.h
+      device_node.h device_node.cpp
       module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
-      genericmodel.h genericmodel_impl.h
+      genericmodel.h
       node_collection.h node_collection.cpp
       generic_factory.h
+      generic_factory_impl.h
       histentry.h histentry.cpp
       model.h model.cpp
-      model_manager.h model_manager_impl.h model_manager.cpp
+      model_manager.h model_manager.cpp model_manager_impl.h
       nest_datums.h nest_datums.cpp
       nest_names.cpp nest_names.h
       nestmodule.h nestmodule.cpp
@@ -59,36 +60,39 @@ set ( nestkernel_sources
       proxynode.h proxynode.cpp
       random_generators.h
       recording_device.h recording_device.cpp
-      pseudo_recording_device.h
-      ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
-      secondary_event.h secondary_event_impl.h
+      pseudo_recording_device.h pseudo_recording_device.cpp
+      ring_buffer.h ring_buffer.cpp ring_buffer_impl.h
+      secondary_event.h secondary_event.cpp secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
-      target_identifier.h
+      target_identifier.h target_identifier.cpp
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
-      conn_builder.h conn_builder_impl.h conn_builder.cpp
+      conn_builder.h conn_builder.cpp
       conn_builder_factory.h
+      conn_builder_factory.cpp
+      conn_builder_factory_impl.h
       conn_builder_conngen.h conn_builder_conngen.cpp
       sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
-      nest.h nest_impl.h nest.cpp
+      nest.h nest.cpp nest_impl.h
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h
       kernel_manager.h kernel_manager.cpp
-      vp_manager.h vp_manager_impl.h vp_manager.cpp
-      io_manager.h io_manager_impl.h io_manager.cpp
-      mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
+      vp_manager.h vp_manager.cpp
+      io_manager.h io_manager.cpp
+      mpi_manager.h mpi_manager.cpp mpi_manager_impl.h
       simulation_manager.h simulation_manager.cpp
-      connection_manager.h connection_manager_impl.h connection_manager.cpp
-      sp_manager.h sp_manager_impl.h sp_manager.cpp
+      connection_manager.h connection_manager.cpp connection_manager_impl.h
+      sp_manager.h sp_manager.cpp
       delay_checker.h delay_checker.cpp
       random_manager.h random_manager.cpp
-      event_delivery_manager.h event_delivery_manager_impl.h
+      event_delivery_manager.h
+      event_delivery_manager_impl.h
       event_delivery_manager.cpp
       node_manager.h node_manager.cpp
       logging_manager.h logging_manager.cpp
@@ -98,27 +102,29 @@ set ( nestkernel_sources
       recording_backend_screen.h recording_backend_screen.cpp
       manager_interface.h
       target_table.h target_table.cpp
-      target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
-      target.h target_data.h static_assert.h
+      target_table_devices.h target_table_devices.cpp
+      target.h target.cpp
+      static_assert.h
+      target_data.h target_data.cpp
       send_buffer_position.h send_buffer_position.cpp
-      source.h
+      source.h source.cpp
       source_table.h source_table.cpp
-      source_table_position.h
-      spike_data.h
+      source_table_position.h source_table_position.cpp
+      spike_data.h spike_data.cpp
       structural_plasticity_node.h structural_plasticity_node.cpp
-      connection_creator.h connection_creator.cpp connection_creator_impl.h
-      free_layer.h
-      grid_layer.h
-      grid_mask.h
+      connection_creator.h connection_creator.cpp
+      free_layer.h free_layer_impl.h
+      grid_layer.h grid_layer_impl.h
+      grid_mask.h grid_mask_impl.h grid_mask.cpp
       layer.h layer.cpp layer_impl.h
       mask.h mask.cpp mask_impl.h
-      ntree.h ntree_impl.h
-      position.h
+      ntree.h ntree.cpp ntree_impl.h
+      position.h position_impl.h
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
-      stopwatch.h stopwatch_impl.h
+      stopwatch.h
       )
 
 

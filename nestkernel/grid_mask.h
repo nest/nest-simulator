@@ -23,14 +23,8 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
-// Includes from nestkernel:
-#include "nest_names.h"
-#include "nest_types.h"
-#include "nestmodule.h"
-
 // Includes from sli:
 #include "dictdatum.h"
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "mask.h"
@@ -109,68 +103,10 @@ protected:
   Position< D, int > lower_right_;
 };
 
-template < int D >
-GridMask< D >::GridMask( const DictionaryDatum& d )
-{
-  std::vector< long > shape = getValue< std::vector< long > >( d, names::shape );
-
-  if ( D == 2 )
-  {
-    lower_right_ = Position< D, int >( shape[ 0 ], shape[ 1 ] );
-  }
-  else if ( D == 3 )
-  {
-    lower_right_ = Position< D, int >( shape[ 0 ], shape[ 1 ], shape[ 2 ] );
-  }
-  else
-  {
-    throw BadProperty( "Grid mask must be 2- or 3-dimensional." );
-  }
-}
-
 template <>
-inline Name
-GridMask< 2 >::get_name()
-{
-  return names::grid;
-}
-
+Name GridMask< 2 >::get_name();
 template <>
-inline Name
-GridMask< 3 >::get_name()
-{
-  return names::grid3d;
-}
-
-template < int D >
-DictionaryDatum
-GridMask< D >::get_dict() const
-{
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
-
-  long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
-  long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
-  std::vector< long > shape_dim { shape_x, shape_y };
-
-  if ( D == 3 )
-  {
-    long shape_z = lower_right_[ 2 ] - upper_left_[ 2 ];
-    shape_dim.push_back( shape_z );
-  }
-  def< std::vector< long > >( maskd, names::shape, shape_dim );
-
-  return d;
-}
-
-template < int D >
-void
-GridMask< D >::set_anchor( const Position< D, int >& anchor )
-{
-  lower_right_ = lower_right_ - upper_left_ - anchor;
-  upper_left_ = -anchor;
-}
+Name GridMask< 3 >::get_name();
 
 } // namespace nest
 

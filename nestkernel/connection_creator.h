@@ -27,9 +27,12 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "nest.h"
 #include "nest_names.h"
 #include "nestmodule.h"
+#include "node_manager.h"
 
 // Includes from spatial:
 #include "mask.h"

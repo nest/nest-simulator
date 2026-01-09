@@ -99,35 +99,7 @@ private:
   void set_min_max_delay_( const double, const double );
 };
 
-inline const Time&
-DelayChecker::get_min_delay() const
-{
-  return min_delay_;
-}
 
-inline const Time&
-DelayChecker::get_max_delay() const
-{
-  return max_delay_;
-}
-
-inline bool
-DelayChecker::get_user_set_delay_extrema() const
-{
-  return user_set_delay_extrema_;
-}
-
-inline void
-DelayChecker::freeze_delay_update()
-{
-  freeze_delay_update_ = true;
-}
-
-inline void
-DelayChecker::enable_delay_update()
-{
-  freeze_delay_update_ = false;
-}
 }
 
 

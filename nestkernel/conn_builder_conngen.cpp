@@ -26,6 +26,8 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest.h"
+#include "node_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -89,7 +91,7 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
+      Node* const target_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *targets_ )[ target ] );
       const size_t target_thread = target_node->get_thread();
       single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
@@ -118,13 +120,13 @@ ConnectionGeneratorBuilder::connect_()
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
+      Node* target_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *targets_ )[ target ] );
       const size_t target_thread = target_node->get_thread();
 
       update_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
 
       // Use the low-level connect() here, as we need to pass a custom weight and delay
-      kernel().connection_manager.connect( ( *sources_ )[ source ],
+      kernel::manager< ConnectionManager >.connect( ( *sources_ )[ source ],
         target_node,
         target_thread,
         synapse_model_id_[ 0 ],
@@ -143,7 +145,7 @@ ConnectionGeneratorBuilder::connect_()
 void
 ConnectionGeneratorBuilder::cg_set_masks()
 {
-  const size_t np = kernel().mpi_manager.get_num_processes();
+  const size_t np = kernel::manager< MPIManager >.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks( np, ConnectionGenerator::Mask( 1, np ) );
 
   // The index of the left border of the currently looked at range
@@ -203,7 +205,7 @@ ConnectionGeneratorBuilder::cg_set_masks()
     cg_idx_left += num_elements;
   }
 
-  cg_->setMask( masks, kernel().mpi_manager.get_rank() );
+  cg_->setMask( masks, kernel::manager< MPIManager >.get_rank() );
 }
 
 

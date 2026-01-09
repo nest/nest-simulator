@@ -24,8 +24,8 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
+
+#include <dict_util.h>
 
 namespace nest
 {
@@ -68,10 +68,7 @@ nonlinearities_lin_rate::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::theta_in, theta_in_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::lin_rate_ipn >::create()

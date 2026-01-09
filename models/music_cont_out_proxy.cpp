@@ -30,9 +30,14 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
 #include "nest_datums.h"
 #include "nest_impl.h"
+#include "node_manager.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -41,8 +46,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 void
 nest::register_music_cont_out_proxy( const std::string& name )
@@ -243,16 +246,16 @@ nest::music_cont_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const size_t synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
+    const size_t synmodel_id = kernel::manager< ModelManager >.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
       const size_t tnode_id = ( *P_.targets_ )[ i ];
-      if ( kernel().node_manager.is_local_node_id( tnode_id ) )
+      if ( kernel::manager< NodeManager >.is_local_node_id( tnode_id ) )
       {
-        kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
+        kernel::manager< ConnectionManager >.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
@@ -261,8 +264,8 @@ nest::music_cont_out_proxy::pre_run_hook()
       }
     }
 
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
+    if ( not s )
     {
       throw MUSICSimulationHasRun( get_name() );
     }
@@ -324,7 +327,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    const std::vector< Node* > siblings = kernel::manager< NodeManager >.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
@@ -360,7 +363,7 @@ nest::music_cont_out_proxy::update( Time const& origin, const long from, const l
   //
   // Note that not all nodes receiving the request will necessarily answer.
   DataLoggingRequest req;
-  kernel().event_delivery_manager.send( *this, req );
+  kernel::manager< EventDeliveryManager >.send( *this, req );
 }
 
 void

@@ -24,7 +24,8 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "stopwatch_impl.h"
+
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -48,7 +49,7 @@ PerThreadBoolIndicator::operator[]( const size_t tid )
 void
 PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status )
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel::manager< VPManager >.assert_single_threaded();
   per_thread_status_.clear();
   per_thread_status_.resize( num_threads, BoolIndicatorUInt64( status ) );
   size_ = num_threads;
@@ -65,7 +66,7 @@ PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status 
 bool
 PerThreadBoolIndicator::all_false() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 // We need two barriers here to ensure that no thread can continue and change the result
 // before all threads have determined the result.
 #pragma omp barrier
@@ -74,43 +75,102 @@ PerThreadBoolIndicator::all_false() const
   bool ret = ( are_true_ == 0 );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::all_true() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ == size_ );
 #pragma omp barrier
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_false() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ < size_ );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_true() const
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
   bool ret = ( are_true_ > 0 );
 #pragma omp barrier
 
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  kernel::manager< SimulationManager >.get_omp_synchronization_construction_stopwatch().stop();
   return ret;
 }
 
+bool
+BoolIndicatorUInt64::is_true() const
+{
+  return ( status_ == true_uint64 );
+}
+
+bool
+BoolIndicatorUInt64::is_false() const
+{
+  return ( status_ == false_uint64 );
+}
+
+void
+BoolIndicatorUInt64::set_true()
+{
+  status_ = true_uint64;
+}
+
+void
+BoolIndicatorUInt64::set_false()
+{
+  status_ = false_uint64;
+}
+
+void
+BoolIndicatorUInt64::logical_and( const bool status )
+{
+  status_ = ( static_cast< bool >( status_ ) and status );
+}
+
+void
+PerThreadBoolIndicator::set_true( const size_t tid )
+{
+  if ( per_thread_status_[ tid ].is_false() )
+  {
+    are_true_++;
+    per_thread_status_[ tid ].set_true();
+  }
+}
+
+void
+PerThreadBoolIndicator::set_false( const size_t tid )
+{
+  if ( per_thread_status_[ tid ].is_true() )
+  {
+    are_true_--;
+    per_thread_status_[ tid ].set_false();
+  }
+}
+
+void
+PerThreadBoolIndicator::logical_and( const size_t tid, const bool status )
+{
+  if ( per_thread_status_[ tid ].is_true() and not status )
+  {
+    are_true_--;
+    per_thread_status_[ tid ].set_false();
+  }
+}
 } // namespace nest

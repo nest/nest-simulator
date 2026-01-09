@@ -38,7 +38,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -413,8 +413,10 @@ hh_cond_exp_traub::set_status( const DictionaryDatum& d )
   pre_run_hook();
 }
 
-} // namespace
+template <>
+void RecordablesMap< hh_cond_exp_traub >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // HH_COND_EXP_TRAUB_H

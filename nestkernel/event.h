@@ -107,9 +107,7 @@ class Event
 public:
   Event();
 
-  virtual ~Event()
-  {
-  }
+  virtual ~Event();
 
   virtual Event* clone() const = 0;
 
@@ -289,7 +287,7 @@ public:
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( double ) {};
+  virtual void set_drift_factor( double );
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
@@ -420,29 +418,6 @@ protected:
   size_t multiplicity_;
 };
 
-inline SpikeEvent::SpikeEvent()
-  : multiplicity_( 1 )
-{
-}
-
-inline SpikeEvent*
-SpikeEvent::clone() const
-{
-  return new SpikeEvent( *this );
-}
-
-inline void
-SpikeEvent::set_multiplicity( size_t multiplicity )
-{
-  multiplicity_ = multiplicity;
-}
-
-inline size_t
-SpikeEvent::get_multiplicity() const
-{
-  return multiplicity_;
-}
-
 
 /**
  * Event for recording the weight of a spike.
@@ -468,29 +443,6 @@ public:
 protected:
   size_t receiver_node_id_; //!< node ID of receiver or 0.
 };
-
-inline WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_node_id_( 0 )
-{
-}
-
-inline WeightRecorderEvent*
-WeightRecorderEvent::clone() const
-{
-  return new WeightRecorderEvent( *this );
-}
-
-inline void
-WeightRecorderEvent::set_receiver_node_id( size_t node_id )
-{
-  receiver_node_id_ = node_id;
-}
-
-inline size_t
-WeightRecorderEvent::get_receiver_node_id() const
-{
-  return receiver_node_id_;
-}
 
 
 /**
@@ -535,23 +487,6 @@ public:
   double get_rate() const;
 };
 
-inline RateEvent*
-RateEvent::clone() const
-{
-  return new RateEvent( *this );
-}
-
-inline void
-RateEvent::set_rate( double r )
-{
-  r_ = r;
-}
-
-inline double
-RateEvent::get_rate() const
-{
-  return r_;
-}
 
 /**
  * Event for electrical currents.
@@ -569,23 +504,6 @@ public:
   double get_current() const;
 };
 
-inline CurrentEvent*
-CurrentEvent::clone() const
-{
-  return new CurrentEvent( *this );
-}
-
-inline void
-CurrentEvent::set_current( double c )
-{
-  c_ = c;
-}
-
-inline double
-CurrentEvent::get_current() const
-{
-  return c_;
-}
 
 /**
  * "Callback request event" for use in Device.
@@ -663,64 +581,6 @@ private:
   std::vector< Name > const* const record_from_;
 };
 
-inline DataLoggingRequest::DataLoggingRequest()
-  : Event()
-  , recording_interval_( Time::neg_inf() )
-  , recording_offset_( Time::ms( 0. ) )
-  , record_from_( nullptr )
-{
-}
-
-inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
-  : Event()
-  , recording_interval_( rec_int )
-  , record_from_( &recs )
-{
-}
-
-inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
-  const Time& rec_offset,
-  const std::vector< Name >& recs )
-  : Event()
-  , recording_interval_( rec_int )
-  , recording_offset_( rec_offset )
-  , record_from_( &recs )
-{
-}
-
-
-inline DataLoggingRequest*
-DataLoggingRequest::clone() const
-{
-  return new DataLoggingRequest( *this );
-}
-
-inline const Time&
-DataLoggingRequest::get_recording_interval() const
-{
-  // During simulation, events are created without recording interval
-  // information. On these, get_recording_interval() must not be called.
-  assert( recording_interval_.is_finite() );
-
-  return recording_interval_;
-}
-
-inline const Time&
-DataLoggingRequest::get_recording_offset() const
-{
-  assert( recording_offset_.is_finite() );
-  return recording_offset_;
-}
-
-inline const std::vector< Name >&
-DataLoggingRequest::record_from() const
-{
-  // During simulation, events are created without recordables
-  // information. On these, record_from() must not be called.
-  assert( record_from_ );
-
-  return *record_from_;
-}
 
 /**
  * Provide logged data through request transmitting reference.
@@ -763,33 +623,19 @@ public:
   void operator()() override;
 
   //! Access referenced data
-  const Container&
-  get_info() const
-  {
-    return info_;
-  }
+  const Container& get_info() const;
 
 private:
   //! Prohibit copying
   DataLoggingReply( const DataLoggingReply& );
 
   //! Prohibit cloning
-  DataLoggingReply*
-  clone() const override
-  {
-    assert( false );
-    return nullptr;
-  }
+  DataLoggingReply* clone() const override;
 
   //! data to be transmitted, with time stamps
   const Container& info_;
 };
 
-inline DataLoggingReply::DataLoggingReply( const Container& d )
-  : Event()
-  , info_( d )
-{
-}
 
 /**
  * Event for electrical conductances.
@@ -808,24 +654,6 @@ public:
   void set_conductance( double );
   double get_conductance() const;
 };
-
-inline ConductanceEvent*
-ConductanceEvent::clone() const
-{
-  return new ConductanceEvent( *this );
-}
-
-inline void
-ConductanceEvent::set_conductance( double g )
-{
-  g_ = g;
-}
-
-inline double
-ConductanceEvent::get_conductance() const
-{
-  return g_;
-}
 
 
 /**
@@ -875,164 +703,11 @@ public:
   DoubleDataEvent* clone() const override;
 };
 
-inline DoubleDataEvent*
-DoubleDataEvent::clone() const
-{
-  return new DoubleDataEvent( *this );
-}
 
 //*************************************************************
 // Inline implementations.
 
-inline bool
-Event::sender_is_valid() const
-{
-  return sender_;
-}
 
-inline bool
-Event::receiver_is_valid() const
-{
-  return receiver_;
-}
-
-inline bool
-Event::is_valid() const
-{
-  return ( sender_is_valid() and receiver_is_valid() and d_ > 0 );
-}
-
-inline void
-Event::set_receiver( Node& r )
-{
-  receiver_ = &r;
-}
-
-inline void
-Event::set_sender( Node& s )
-{
-  sender_ = &s;
-}
-
-inline void
-Event::set_sender_node_id( const size_t node_id )
-{
-  sender_node_id_ = node_id;
-}
-
-inline void
-Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid )
-{
-  // lag and offset of SpikeData are not used here
-  sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
-}
-
-inline Node&
-Event::get_receiver() const
-{
-  assert( receiver_ );
-  return *receiver_;
-}
-
-inline Node&
-Event::get_sender() const
-{
-  assert( sender_ );
-  return *sender_;
-}
-
-inline size_t
-Event::get_sender_node_id() const
-{
-  assert( sender_node_id_ > 0 );
-  return sender_node_id_;
-}
-
-inline double
-Event::get_weight() const
-{
-  return w_;
-}
-
-inline void
-Event::set_weight( double w )
-{
-  w_ = w;
-}
-
-inline Time const&
-Event::get_stamp() const
-{
-  return stamp_;
-}
-
-inline void
-Event::set_stamp( Time const& s )
-{
-  stamp_ = s;
-  stamp_steps_ = 0; // setting stamp_steps to zero indicates
-                    // stamp_steps needs to be recalculated from
-                    // stamp_ next time it is needed (e.g., in
-                    // get_rel_delivery_steps)
-}
-
-inline long
-Event::get_delay_steps() const
-{
-  return d_;
-}
-
-inline long
-Event::get_rel_delivery_steps( const Time& t ) const
-{
-  if ( stamp_steps_ == 0 )
-  {
-    stamp_steps_ = stamp_.get_steps();
-  }
-  return stamp_steps_ + d_ - 1 - t.get_steps();
-}
-
-inline void
-Event::set_delay_steps( long d )
-{
-  d_ = d;
-}
-
-inline double
-Event::get_offset() const
-{
-  return offset_;
-}
-
-inline void
-Event::set_offset( double t )
-{
-  offset_ = t;
-}
-
-inline size_t
-Event::get_port() const
-{
-  return p_;
-}
-
-inline size_t
-Event::get_rport() const
-{
-  return rp_;
-}
-
-inline void
-Event::set_port( size_t p )
-{
-  p_ = p;
-}
-
-inline void
-Event::set_rport( size_t rp )
-{
-  rp_ = rp;
-}
 }
 
 #endif /* EVENT_H */

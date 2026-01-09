@@ -26,7 +26,11 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 #include "stimulation_backend.h"
 #include "stimulation_backend_mpi.h"
 #include "stimulation_device.h"
@@ -45,7 +49,7 @@ nest::StimulationBackendMPI::~StimulationBackendMPI() noexcept
 void
 nest::StimulationBackendMPI::initialize()
 {
-  auto nthreads = kernel().vp_manager.get_num_threads();
+  auto nthreads = kernel::manager< VPManager >.get_num_threads();
   device_map devices( nthreads );
   devices_.swap( devices );
 }
@@ -113,7 +117,7 @@ nest::StimulationBackendMPI::prepare()
   }
 
   // need to be run only by the master thread : it is the case because this part is not running in parallel
-  size_t thread_id_master = kernel().vp_manager.get_thread_id();
+  size_t thread_id_master = kernel::manager< VPManager >.get_thread_id();
   // Create the connection with MPI
   // 1) take all the ports of the connections. Get port and update the list of device only for master
   for ( auto& it_device : devices_[ thread_id_master ] )
@@ -128,7 +132,7 @@ nest::StimulationBackendMPI::prepare()
       // it's not a new communicator
       comm = std::get< 0 >( comm_it->second );
       // add the id of the device if there are a connection with the device.
-      if ( kernel().connection_manager.get_device_connected(
+      if ( kernel::manager< ConnectionManager >.get_device_connected(
              thread_id_master, it_device.second.second->get_local_device_id() ) )
       {
         std::get< 1 >( comm_it->second )->push_back( it_device.second.second->get_node_id() );
@@ -142,10 +146,12 @@ nest::StimulationBackendMPI::prepare()
       // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
       comm = new MPI_Comm;
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
-      int* vector_nb_device_th { new int[ kernel().vp_manager.get_num_threads() ] {} }; // number of device by thread
-      std::fill_n( vector_nb_device_th, kernel().vp_manager.get_num_threads(), 0 );
+      int* vector_nb_device_th {
+        new int[ kernel::manager< VPManager >.get_num_threads() ] {}
+      }; // number of device by thread
+      std::fill_n( vector_nb_device_th, kernel::manager< VPManager >.get_num_threads(), 0 );
       // add the id of the device if there is a connection with the device.
-      if ( kernel().connection_manager.get_device_connected(
+      if ( kernel::manager< ConnectionManager >.get_device_connected(
              thread_id_master, it_device.second.second->get_local_device_id() ) )
       {
         vector_id_device->push_back( it_device.second.second->get_node_id() );
@@ -159,7 +165,7 @@ nest::StimulationBackendMPI::prepare()
   }
 
   // Add the id of device of the other thread in the vector_id_device and update the count of all device
-  for ( size_t id_thread = 0; id_thread < kernel().vp_manager.get_num_threads(); id_thread++ )
+  for ( size_t id_thread = 0; id_thread < kernel::manager< VPManager >.get_num_threads(); id_thread++ )
   {
     // don't do it again for the master thread
     if ( id_thread != thread_id_master )
@@ -167,7 +173,7 @@ nest::StimulationBackendMPI::prepare()
       for ( auto& it_device : devices_[ id_thread ] )
       {
         // add the id of the device if there is a connection with the device.
-        if ( kernel().connection_manager.get_device_connected(
+        if ( kernel::manager< ConnectionManager >.get_device_connected(
                id_thread, it_device.second.second->get_local_device_id() ) )
         {
           std::string port_name;
@@ -276,7 +282,7 @@ nest::StimulationBackendMPI::cleanup()
     }
     // clear map of devices
     commMap_.clear();
-    size_t thread_id_master = kernel().vp_manager.get_thread_id();
+    size_t thread_id_master = kernel::manager< VPManager >.get_thread_id();
     for ( auto& it_device : devices_[ thread_id_master ] )
     {
       it_device.second.first = nullptr;
@@ -312,12 +318,12 @@ nest::StimulationBackendMPI::get_port( const size_t index_node, const std::strin
   // (file contains only one line with name of the port)
   std::ostringstream basename;
   // get the path from the kernel
-  const std::string& path = kernel().io_manager.get_data_path();
+  const std::string& path = kernel::manager< IOManager >.get_data_path();
   if ( not path.empty() )
   {
     basename << path << '/';
   }
-  basename << kernel().io_manager.get_data_prefix();
+  basename << kernel::manager< IOManager >.get_data_prefix();
 
   // add the path from the label of the device
   if ( not label.empty() )
@@ -380,7 +386,7 @@ nest::StimulationBackendMPI::update_device( int* array_index,
     if ( data.first[ 0 ] != 0 )
     {
       // if there are some data
-      size_t thread_id = kernel().vp_manager.get_thread_id();
+      size_t thread_id = kernel::manager< VPManager >.get_thread_id();
       int index_id_device = 0; // the index for the array of device in the data
       // get the first id of the device for the current thread
       // if the thread_id == 0, the index_id_device equals 0

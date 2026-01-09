@@ -40,7 +40,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -462,8 +462,10 @@ iaf_chxk_2008::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+template <>
+void RecordablesMap< iaf_chxk_2008 >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // IAF_CHXK_2008_H

@@ -29,7 +29,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_types.h"
 #include "nestmodule.h"
 
 // Includes from sli:
@@ -37,7 +36,7 @@
 #include "dictutils.h"
 
 // Includes from spatial:
-#include "position.h"
+#include "position_impl.h"
 
 namespace nest
 {
@@ -720,293 +719,37 @@ protected:
 };
 
 template <>
-inline Name
-BoxMask< 2 >::get_name()
-{
-  return names::rectangular;
-}
-
+bool BallMask< 2 >::inside( const Box< 2 >& b ) const;
 template <>
-inline Name
-BoxMask< 3 >::get_name()
-{
-  return names::box;
-}
-
-template < int D >
-BoxMask< D >::BoxMask( const DictionaryDatum& d )
-{
-  lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
-  upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
-
-  if ( not( lower_left_ < upper_right_ ) )
-  {
-    throw BadProperty(
-      "nest::BoxMask<D>: "
-      "Upper right must be strictly to the right and above lower left." );
-  }
-
-  if ( d->known( names::azimuth_angle ) )
-  {
-    azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
-  }
-  else
-  {
-    azimuth_angle_ = 0.0;
-  }
-
-  if ( d->known( names::polar_angle ) )
-  {
-    if ( D == 2 )
-    {
-      throw BadProperty(
-        "nest::BoxMask<D>: "
-        "polar_angle not defined in 2D." );
-    }
-    polar_angle_ = getValue< double >( d, names::polar_angle );
-  }
-  else
-  {
-    polar_angle_ = 0.0;
-  }
-
-  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
-  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
-  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
-  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
-
-  cntr_ = ( upper_right_ + lower_left_ ) * 0.5;
-  for ( int i = 0; i != D; ++i )
-  {
-    eps_[ i ] = 1e-12;
-  }
-
-  cntr_x_az_cos_ = cntr_[ 0 ] * azimuth_cos_;
-  cntr_x_az_sin_ = cntr_[ 0 ] * azimuth_sin_;
-  cntr_y_az_cos_ = cntr_[ 1 ] * azimuth_cos_;
-  cntr_y_az_sin_ = cntr_[ 1 ] * azimuth_sin_;
-  if ( D == 3 )
-  {
-    cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
-    cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
-    cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
-    cntr_x_az_cos_pol_sin_ = cntr_x_az_cos_ * polar_sin_;
-    cntr_y_az_sin_pol_cos_ = cntr_y_az_sin_ * polar_cos_;
-    cntr_y_az_sin_pol_sin_ = cntr_y_az_sin_ * polar_sin_;
-    az_cos_pol_cos_ = azimuth_cos_ * polar_cos_;
-    az_cos_pol_sin_ = azimuth_cos_ * polar_sin_;
-    az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
-    az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
-  }
-  else
-  {
-    cntr_z_pol_cos_ = 0.0;
-    cntr_z_pol_sin_ = 0.0;
-    cntr_x_az_cos_pol_cos_ = 0.0;
-    cntr_x_az_cos_pol_sin_ = 0.0;
-    cntr_y_az_sin_pol_cos_ = 0.0;
-    cntr_y_az_sin_pol_sin_ = 0.0;
-    az_cos_pol_cos_ = 0.0;
-    az_cos_pol_sin_ = 0.0;
-    az_sin_pol_cos_ = 0.0;
-    az_sin_pol_sin_ = 0.0;
-  }
-
-  is_rotated_ = azimuth_angle_ != 0.0 or polar_angle_ != 0.0;
-
-  calculate_min_max_values_();
-}
-
-template < int D >
-inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
-  const Position< D >& upper_right,
-  const double azimuth_angle,
-  const double polar_angle )
-  : lower_left_( lower_left )
-  , upper_right_( upper_right )
-  , azimuth_angle_( azimuth_angle )
-  , polar_angle_( polar_angle )
-  , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
-  , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
-  , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
-  , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
-  , cntr_( ( upper_right_ + lower_left_ ) * 0.5 )
-  , cntr_x_az_cos_( cntr_[ 0 ] * azimuth_cos_ )
-  , cntr_x_az_sin_( cntr_[ 0 ] * azimuth_sin_ )
-  , cntr_y_az_cos_( cntr_[ 1 ] * azimuth_cos_ )
-  , cntr_y_az_sin_( cntr_[ 1 ] * azimuth_sin_ )
-{
-  if ( D == 2 and not( polar_angle_ == 0.0 ) )
-  {
-    throw BadProperty(
-      "nest::BoxMask<D>: "
-      "polar_angle not defined in 2D." );
-  }
-
-  for ( int i = 0; i != D; ++i )
-  {
-    eps_[ i ] = 1e-12;
-  }
-
-  if ( D == 3 )
-  {
-    cntr_z_pol_cos_ = cntr_[ 2 ] * polar_cos_;
-    cntr_z_pol_sin_ = cntr_[ 2 ] * polar_sin_;
-    cntr_x_az_cos_pol_cos_ = cntr_x_az_cos_ * polar_cos_;
-    cntr_x_az_cos_pol_sin_ = cntr_x_az_cos_ * polar_sin_;
-    cntr_y_az_sin_pol_cos_ = cntr_y_az_sin_ * polar_cos_;
-    cntr_y_az_sin_pol_sin_ = cntr_y_az_sin_ * polar_sin_;
-    az_cos_pol_cos_ = azimuth_cos_ * polar_cos_;
-    az_cos_pol_sin_ = azimuth_cos_ * polar_sin_;
-    az_sin_pol_cos_ = azimuth_sin_ * polar_cos_;
-    az_sin_pol_sin_ = azimuth_sin_ * polar_sin_;
-  }
-  else
-  {
-    cntr_z_pol_cos_ = 0.0;
-    cntr_z_pol_sin_ = 0.0;
-    cntr_x_az_cos_pol_cos_ = 0.0;
-    cntr_x_az_cos_pol_sin_ = 0.0;
-    cntr_y_az_sin_pol_cos_ = 0.0;
-    cntr_y_az_sin_pol_sin_ = 0.0;
-    az_cos_pol_cos_ = 0.0;
-    az_cos_pol_sin_ = 0.0;
-    az_sin_pol_cos_ = 0.0;
-    az_sin_pol_sin_ = 0.0;
-  }
-
-  is_rotated_ = azimuth_angle_ != 0.0 or polar_angle_ != 0.0;
-
-  calculate_min_max_values_();
-}
-
+bool BallMask< 3 >::inside( const Box< 3 >& b ) const;
 template <>
-inline Name
-BallMask< 2 >::get_name()
-{
-  return names::circular;
-}
-
+void BoxMask< 2 >::calculate_min_max_values_();
 template <>
-inline Name
-BallMask< 3 >::get_name()
-{
-  return names::spherical;
-}
-
-template < int D >
-BallMask< D >::BallMask( const DictionaryDatum& d )
-{
-  radius_ = getValue< double >( d, names::radius );
-  if ( radius_ <= 0 )
-  {
-    throw BadProperty(
-      "nest::BallMask<D>: "
-      "radius > 0 required." );
-  }
-
-  if ( d->known( names::anchor ) )
-  {
-    center_ = getValue< std::vector< double > >( d, names::anchor );
-  }
-}
-
+void BoxMask< 3 >::calculate_min_max_values_();
 template <>
-inline Name
-EllipseMask< 2 >::get_name()
-{
-  return names::elliptical;
-}
-
+bool BoxMask< 2 >::inside( const Position< 2 >& p ) const;
 template <>
-inline Name
-EllipseMask< 3 >::get_name()
-{
-  return names::ellipsoidal;
-}
-
-template < int D >
-EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
-{
-  major_axis_ = getValue< double >( d, names::major_axis );
-  minor_axis_ = getValue< double >( d, names::minor_axis );
-  if ( major_axis_ <= 0 or minor_axis_ <= 0 )
-  {
-    throw BadProperty(
-      "nest::EllipseMask<D>: "
-      "All axis > 0 required." );
-  }
-  if ( major_axis_ < minor_axis_ )
-  {
-    throw BadProperty(
-      "nest::EllipseMask<D>: "
-      "major_axis greater than minor_axis required." );
-  }
-
-  x_scale_ = 4.0 / ( major_axis_ * major_axis_ );
-  y_scale_ = 4.0 / ( minor_axis_ * minor_axis_ );
-
-  if ( d->known( names::polar_axis ) )
-  {
-    if ( D == 2 )
-    {
-      throw BadProperty(
-        "nest::EllipseMask<D>: "
-        "polar_axis not defined in 2D." );
-    }
-    polar_axis_ = getValue< double >( d, names::polar_axis );
-
-    if ( polar_axis_ <= 0 )
-    {
-      throw BadProperty(
-        "nest::EllipseMask<D>: "
-        "All axis > 0 required." );
-    }
-
-    z_scale_ = 4.0 / ( polar_axis_ * polar_axis_ );
-  }
-  else
-  {
-    polar_axis_ = 0.0;
-    z_scale_ = 0.0;
-  }
-
-  if ( d->known( names::anchor ) )
-  {
-    center_ = getValue< std::vector< double > >( d, names::anchor );
-  }
-
-  if ( d->known( names::azimuth_angle ) )
-  {
-    azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
-  }
-  else
-  {
-    azimuth_angle_ = 0.0;
-  }
-
-  if ( d->known( names::polar_angle ) )
-  {
-    if ( D == 2 )
-    {
-      throw BadProperty(
-        "nest::EllipseMask<D>: "
-        "polar_angle not defined in 2D." );
-    }
-    polar_angle_ = getValue< double >( d, names::polar_angle );
-  }
-  else
-  {
-    polar_angle_ = 0.0;
-  }
-
-  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
-  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
-  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
-  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
-
-  create_bbox_();
-}
+bool BoxMask< 3 >::inside( const Position< 3 >& p ) const;
+template <>
+bool EllipseMask< 2 >::inside( const Position< 2 >& p ) const;
+template <>
+bool EllipseMask< 3 >::inside( const Position< 3 >& p ) const;
+template <>
+bool EllipseMask< 2 >::inside( const Box< 2 >& b ) const;
+template <>
+bool EllipseMask< 3 >::inside( const Box< 3 >& b ) const;
+template <>
+Name BoxMask< 2 >::get_name();
+template <>
+Name BoxMask< 3 >::get_name();
+template <>
+Name BallMask< 2 >::get_name();
+template <>
+Name BallMask< 3 >::get_name();
+template <>
+Name EllipseMask< 2 >::get_name();
+template <>
+Name EllipseMask< 3 >::get_name();
 
 } // namespace nest
 

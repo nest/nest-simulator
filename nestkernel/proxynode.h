@@ -143,12 +143,6 @@ private:
   }
 };
 
-inline bool
-proxynode::is_proxy() const
-{
-  return true;
-}
-
 } // namespace
 
 #endif /* #ifndef PROXYNODE_H */

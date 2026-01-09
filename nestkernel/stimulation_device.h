@@ -223,18 +223,6 @@ private:
   DictionaryDatum backend_params_;
 };
 
-inline Name
-StimulationDevice::get_element_type() const
-{
-  return names::stimulator;
-}
-
-inline bool
-StimulationDevice::has_proxies() const
-{
-  return false;
-}
-
 } // namespace nest
 
 #endif /* #ifndef STIMULATION_DEVICE_H */

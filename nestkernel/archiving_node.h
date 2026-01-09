@@ -106,7 +106,7 @@ protected:
   /**
    * Return most recent spike time in ms
    */
-  inline double get_spiketime_ms() const;
+  double get_spiketime_ms() const;
 
   /**
    * Clear spike history
@@ -143,12 +143,6 @@ private:
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
 };
-
-inline double
-ArchivingNode::get_spiketime_ms() const
-{
-  return last_spike_;
-}
 
 } // of namespace
 #endif

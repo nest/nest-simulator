@@ -21,6 +21,9 @@
  */
 #include "cm_tree.h"
 
+#include "logging.h"
+#include "logging_manager.h"
+
 
 nest::Compartment::Compartment( const long compartment_index, const long parent_index )
   : xx_( 0.0 )

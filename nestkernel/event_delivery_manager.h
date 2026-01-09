@@ -24,21 +24,17 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
-#include <cassert>
-#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
+#include "connection_manager.h"
 #include "event.h"
 #include "mpi_manager.h" // OffGridSpike
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 #include "per_thread_bool_indicator.h"
 #include "secondary_event.h"
 #include "spike_data.h"
@@ -366,7 +362,6 @@ private:
    */
   template < class EventT >
   void send_local_( Node& source, EventT& e, const long lag );
-  void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 
@@ -473,63 +468,12 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_target_data_;
 };
 
-inline void
-EventDeliveryManager::reset_spike_register_( const size_t tid )
-{
-  emitted_spikes_register_[ tid ]->clear();
-  off_grid_emitted_spikes_register_[ tid ]->clear();
-}
-
-inline bool
-EventDeliveryManager::is_marked_for_removal_( const Target& target )
-{
-  return target.is_processed();
-}
-
-inline void
-EventDeliveryManager::send_to_node( Event& e )
-{
-  e();
-}
-
-inline bool
-EventDeliveryManager::get_off_grid_communication() const
-{
-  return off_grid_spiking_;
-}
-
-inline void
-EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
-{
-  off_grid_spiking_ = off_grid_spiking;
-}
-
-inline size_t
-EventDeliveryManager::read_toggle() const
-{
-  // define in terms of write_toggle() to ensure consistency
-  return 1 - write_toggle();
-}
-
-inline long
-EventDeliveryManager::get_modulo( long d )
-{
-  // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
-
-  return moduli_[ d ];
-}
-
-inline long
-EventDeliveryManager::get_slice_modulo( long d )
-{
-  // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
-
-  return slice_moduli_[ d ];
-}
+template <>
+void EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long lag );
 
 } // namespace nest
 

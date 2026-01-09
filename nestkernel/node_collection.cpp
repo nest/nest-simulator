@@ -27,14 +27,14 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
 #include "node.h"
-#include "vp_manager_impl.h"
 
 // C++ includes:
+#include "numeric"   // accumulate
 #include <algorithm> // copy
 #include <cmath>     // lcm
-#include <numeric>   // accumulate
 
 
 namespace nest
@@ -63,24 +63,24 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
-  , step_( kind == NCIteratorKind::RANK_LOCAL
-        ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
-        : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
-                                                 : stride ) )
+  , step_( kind == NCIteratorKind::RANK_LOCAL ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
+                                              : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride,
+                                                    kernel::manager< VPManager >.get_num_virtual_processes() )
+                                                                                       : stride ) )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
-        ? kernel().mpi_manager.get_rank()
-        : ( kind == NCIteratorKind::THREAD_LOCAL ? kernel().vp_manager.get_vp() : invalid_thread ) )
+        ? kernel::manager< MPIManager >.get_rank()
+        : ( kind == NCIteratorKind::THREAD_LOCAL ? kernel::manager< VPManager >.get_vp() : invalid_thread ) )
   , primitive_collection_( &collection )
   , composite_collection_( nullptr )
 {
   assert( not collection_ptr.get() or collection_ptr.get() == &collection );
   assert( element_idx_ <= collection.size() ); // allow == for end()
 
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NCIT Prim ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
-      kernel().mpi_manager.get_rank(),
-      kernel().vp_manager.get_thread_id(),
+  FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump(
+    String::compose( "NCIT Prim ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
+      kernel::manager< MPIManager >.get_rank(),
+      kernel::manager< VPManager >.get_thread_id(),
       part_idx_,
       element_idx_,
       step_,
@@ -97,14 +97,14 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
-  , step_( kind == NCIteratorKind::RANK_LOCAL
-        ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
-        : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
-                                                 : stride ) )
+  , step_( kind == NCIteratorKind::RANK_LOCAL ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
+                                              : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride,
+                                                    kernel::manager< VPManager >.get_num_virtual_processes() )
+                                                                                       : stride ) )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
-        ? kernel().mpi_manager.get_rank()
-        : ( kind == NCIteratorKind::THREAD_LOCAL ? kernel().vp_manager.get_vp() : invalid_thread ) )
+        ? kernel::manager< MPIManager >.get_rank()
+        : ( kind == NCIteratorKind::THREAD_LOCAL ? kernel::manager< VPManager >.get_vp() : invalid_thread ) )
   , primitive_collection_( nullptr )
   , composite_collection_( &collection )
 {
@@ -113,10 +113,10 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   // Allow <= for end iterator
   assert( ( part < collection.parts_.size() and offset <= collection.parts_[ part ].size() ) );
 
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NCIT Comp ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
-      kernel().mpi_manager.get_rank(),
-      kernel().vp_manager.get_thread_id(),
+  FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump(
+    String::compose( "NCIT Comp ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
+      kernel::manager< MPIManager >.get_rank(),
+      kernel::manager< VPManager >.get_thread_id(),
       part_idx_,
       element_idx_,
       step_,
@@ -225,20 +225,21 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
       {
       case NCIteratorKind::RANK_LOCAL:
       {
-        const size_t num_ranks = kernel().mpi_manager.get_num_processes();
-        const size_t current_rank = kernel().mpi_manager.get_rank();
+        const size_t num_ranks = kernel::manager< MPIManager >.get_num_processes();
+        const size_t current_rank = kernel::manager< MPIManager >.get_rank();
 
         std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
           num_ranks, current_rank, part_idx_, element_idx_, NodeCollectionComposite::gid_to_rank_ );
 
-        FULL_LOGGING_ONLY( kernel().write_to_dump(
-          String::compose( "ACIL rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
+        FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump( String::compose(
+          "ACIL rk %1, pix %2, eix %3", kernel::manager< MPIManager >.get_rank(), part_idx_, element_idx_ ) ); )
         break;
       }
       case NCIteratorKind::THREAD_LOCAL:
       {
-        const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-        const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
+        const size_t num_vps = kernel::manager< VPManager >.get_num_virtual_processes();
+        const size_t current_vp =
+          kernel::manager< VPManager >.thread_to_vp( kernel::manager< VPManager >.get_thread_id() );
 
         std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
           num_vps, current_vp, part_idx_, element_idx_, NodeCollectionComposite::gid_to_vp_ );
@@ -290,9 +291,9 @@ nc_const_iterator::operator*() const
   {
     if ( not composite_collection_->valid_idx_( part_idx_, element_idx_ ) )
     {
-      FULL_LOGGING_ONLY( kernel().write_to_dump(
+      FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump(
         String::compose( "nci::op* comp err rk %1, lp %2, le %3, pix %4, eix %5, end_pix %6, end_eix %7",
-          kernel().mpi_manager.get_rank(),
+          kernel::manager< MPIManager >.get_rank(),
           composite_collection_->last_part_,
           composite_collection_->last_elem_,
           part_idx_,
@@ -313,7 +314,7 @@ nc_const_iterator::operator*() const
 }
 
 NodeCollection::NodeCollection()
-  : fingerprint_( kernel().get_fingerprint() )
+  : fingerprint_( kernel::manager< KernelManager >.get_fingerprint() )
 {
 }
 
@@ -402,7 +403,7 @@ NodeCollection::create_( const std::vector< size_t >& node_ids )
 {
   size_t current_first = node_ids[ 0 ];
   size_t current_last = current_first;
-  size_t current_model = kernel().modelrange_manager.get_model_id( node_ids[ 0 ] );
+  size_t current_model = kernel::manager< ModelRangeManager >.get_model_id( node_ids[ 0 ] );
 
   std::vector< NodeCollectionPrimitive > parts;
 
@@ -415,7 +416,7 @@ NodeCollection::create_( const std::vector< size_t >& node_ids )
     }
     old_node_id = *node_id;
 
-    const size_t next_model = kernel().modelrange_manager.get_model_id( *node_id );
+    const size_t next_model = kernel::manager< ModelRangeManager >.get_model_id( *node_id );
 
     if ( next_model == current_model and *node_id == ( current_last + 1 ) )
     {
@@ -448,7 +449,7 @@ NodeCollection::create_( const std::vector< size_t >& node_ids )
 bool
 NodeCollection::valid() const
 {
-  return fingerprint_ == kernel().get_fingerprint();
+  return fingerprint_ == kernel::manager< KernelManager >.get_fingerprint();
 }
 
 void
@@ -470,7 +471,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
   assert_consistent_model_ids_( model_id_ );
@@ -481,7 +482,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last, siz
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -495,18 +496,18 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const auto first_model_id = kernel().modelrange_manager.get_model_id( first );
+  const auto first_model_id = kernel::manager< ModelRangeManager >.get_model_id( first );
   const auto init_index = first + 1;
   for ( size_t node_id = init_index; node_id <= last; ++node_id )
   {
-    const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
+    const auto model_id = kernel::manager< ModelRangeManager >.get_model_id( node_id );
     if ( model_id != first_model_id )
     {
       throw BadProperty( "model ids does not match" );
     }
   }
   model_id_ = first_model_id;
-  nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
+  nodes_have_no_proxies_ = not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -534,7 +535,7 @@ NodeCollection::to_array( const std::string& selection ) const
         // We need to defined zero explicitly here, otherwise push_back() does strange things
         const size_t zero = 0;
         node_ids.push_back( zero );
-        node_ids.push_back( kernel().vp_manager.get_thread_id() );
+        node_ids.push_back( kernel::manager< VPManager >.get_thread_id() );
         node_ids.push_back( zero );
 
         const auto end_it = end();
@@ -647,10 +648,10 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 NodeCollection::const_iterator
 NodeCollectionPrimitive::rank_local_begin( NodeCollectionPTR cp ) const
 {
-  const size_t num_processes = kernel().mpi_manager.get_num_processes();
-  const size_t rank = kernel().mpi_manager.get_rank();
+  const size_t num_processes = kernel::manager< MPIManager >.get_num_processes();
+  const size_t rank = kernel::manager< MPIManager >.get_rank();
   const size_t first_elem_rank =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
+    kernel::manager< MPIManager >.get_process_id_of_vp( kernel::manager< VPManager >.node_id_to_vp( first_ ) );
   const size_t elem_idx = ( rank - first_elem_rank + num_processes ) % num_processes;
 
   if ( elem_idx > size() ) // Too few node IDs to be shared among all MPI processes.
@@ -666,9 +667,9 @@ NodeCollectionPrimitive::rank_local_begin( NodeCollectionPTR cp ) const
 NodeCollection::const_iterator
 NodeCollectionPrimitive::thread_local_begin( NodeCollectionPTR cp ) const
 {
-  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  const size_t vp_first_node = kernel().vp_manager.node_id_to_vp( first_ );
+  const size_t num_vps = kernel::manager< VPManager >.get_num_virtual_processes();
+  const size_t current_vp = kernel::manager< VPManager >.thread_to_vp( kernel::manager< VPManager >.get_thread_id() );
+  const size_t vp_first_node = kernel::manager< VPManager >.node_id_to_vp( first_ );
   const size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   if ( offset >= size() ) // Too few node IDs to be shared among all vps.
@@ -735,7 +736,7 @@ void
 NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
   const std::string model =
-    model_id_ != invalid_index ? kernel().model_manager.get_node_model( model_id_ )->get_name() : "none";
+    model_id_ != invalid_index ? kernel::manager< ModelManager >.get_node_model( model_id_ )->get_name() : "none";
 
   out << "model=" << model << ", size=" << size();
 
@@ -766,11 +767,12 @@ NodeCollectionPrimitive::assert_consistent_model_ids_( const size_t expected_mod
 {
   for ( size_t node_id = first_; node_id <= last_; ++node_id )
   {
-    const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
+    const auto model_id = kernel::manager< ModelRangeManager >.get_model_id( node_id );
     if ( model_id != expected_model_id )
     {
-      const auto node_model = kernel().modelrange_manager.get_model_of_node_id( model_id )->get_name();
-      const auto expected_model = kernel().modelrange_manager.get_model_of_node_id( expected_model_id )->get_name();
+      const auto node_model = kernel::manager< ModelRangeManager >.get_model_of_node_id( model_id )->get_name();
+      const auto expected_model =
+        kernel::manager< ModelRangeManager >.get_model_of_node_id( expected_model_id )->get_name();
       const auto message = "All nodes must have the same model (node with ID " + std::to_string( node_id )
         + " has model " + node_model + ", expected " + expected_model + ")";
       throw BadProperty( message );
@@ -1131,11 +1133,11 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
       elem_idx += first_elem;
     }
 
-    FULL_LOGGING_ONLY(
-      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, phase_first %3, offs %4, stp %5, sto %6,"
-                                               " pix %7, lp %8, le %9, primsz %10, nprts: %11, this: %12",
-        kernel().mpi_manager.get_rank(),
-        kernel().vp_manager.get_thread_id(),
+    FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump(
+      String::compose( "SPLB rk %1, thr %2, phase_first %3, offs %4, stp %5, sto %6,"
+                       " pix %7, lp %8, le %9, primsz %10, nprts: %11, this: %12",
+        kernel::manager< MPIManager >.get_rank(),
+        kernel::manager< VPManager >.get_thread_id(),
         phase_first_node,
         offset,
         first_part,
@@ -1179,20 +1181,20 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
 size_t
 NodeCollectionComposite::gid_to_vp_( size_t gid )
 {
-  return kernel().vp_manager.node_id_to_vp( gid );
+  return kernel::manager< VPManager >.node_id_to_vp( gid );
 }
 
 size_t
 NodeCollectionComposite::gid_to_rank_( size_t gid )
 {
-  return kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( gid ) );
+  return kernel::manager< MPIManager >.get_process_id_of_vp( kernel::manager< VPManager >.node_id_to_vp( gid ) );
 }
 
 NodeCollection::const_iterator
 NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
 {
-  const size_t num_ranks = kernel().mpi_manager.get_num_processes();
-  const size_t current_rank = kernel().mpi_manager.get_rank();
+  const size_t num_ranks = kernel::manager< MPIManager >.get_num_processes();
+  const size_t current_rank = kernel::manager< MPIManager >.get_rank();
 
   const auto [ part_index, part_offset ] =
     specific_local_begin_( num_ranks, current_rank, first_part_, first_elem_, gid_to_rank_ );
@@ -1214,8 +1216,8 @@ NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
 NodeCollection::const_iterator
 NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
 {
-  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
+  const size_t num_vps = kernel::manager< VPManager >.get_num_virtual_processes();
+  const size_t current_vp = kernel::manager< VPManager >.thread_to_vp( kernel::manager< VPManager >.get_thread_id() );
 
   const auto [ part_index, part_offset ] =
     specific_local_begin_( num_vps, current_vp, first_part_, first_elem_, gid_to_vp_ );
@@ -1252,9 +1254,9 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice()" ); )
+  FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump( "Calling NCC from slice()" ); )
   const auto new_composite = NodeCollectionComposite( *this, start, end, stride );
-  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice() --- DONE" ); )
+  FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump( "Calling NCC from slice() --- DONE" ); )
 
   if ( stride == 1 and new_composite.first_part_ == new_composite.last_part_ )
   {
@@ -1263,8 +1265,8 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
       new_composite.first_elem_, new_composite.last_elem_ + 1 );
   }
 
-  FULL_LOGGING_ONLY(
-    kernel().write_to_dump( String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
+  FULL_LOGGING_ONLY( kernel::manager< KernelManager >.write_to_dump(
+    String::compose( "NewComposite: fp %1, fe %2, lp %3, le %4, sz %5, strd %6",
       new_composite.first_part_,
       new_composite.first_elem_,
       new_composite.last_part_,
@@ -1416,7 +1418,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         {
           // Need to count the primitive, so can't start at begin()
           out << "\n" + space
-              << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
+              << "model=" << kernel::manager< ModelManager >.get_node_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
@@ -1444,7 +1446,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
+    out << "\n" + space
+        << "model=" << kernel::manager< ModelManager >.get_node_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
@@ -1480,6 +1483,361 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
   }
   out << ")";
+}
+
+bool
+NodeCollectionComposite::valid_idx_( const size_t part_idx, const size_t element_idx ) const
+{
+
+  return part_idx < last_part_ or ( part_idx == last_part_ and element_idx <= last_elem_ );
+}
+
+bool
+NodeCollectionComposite::contains( const size_t node_id ) const
+{
+
+  return get_nc_index( node_id ) != -1;
+}
+
+bool
+NodeCollectionComposite::empty() const
+{
+
+  // Composite NodeCollections can never be empty.
+  return false;
+}
+
+bool
+NodeCollectionComposite::is_range() const
+{
+
+  return false;
+}
+
+NodeCollectionMetadataPTR
+NodeCollectionComposite::get_metadata() const
+{
+
+  return parts_[ 0 ].get_metadata();
+}
+
+void
+NodeCollectionComposite::set_metadata( NodeCollectionMetadataPTR meta )
+{
+
+  for ( auto& part : parts_ )
+  {
+    part.set_metadata( meta );
+  }
+}
+
+size_t
+NodeCollectionComposite::stride() const
+{
+
+  return stride_;
+}
+
+size_t
+NodeCollectionComposite::size() const
+{
+
+  return size_;
+}
+
+NodeCollection::const_iterator
+NodeCollectionComposite::end( NodeCollectionPTR cp ) const
+{
+
+  // The unique end() element of a composite NC is given by one past the last element
+  // This is the (potentially non-existing) next element irrespective of stride and step
+  return nc_const_iterator(
+    cp, *this, last_part_, last_elem_ + 1, /* stride */ 1, nc_const_iterator::NCIteratorKind::END );
+}
+
+NodeCollection::const_iterator
+NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
+{
+
+  return nc_const_iterator( cp, *this, first_part_, first_elem_, stride_ );
+}
+
+bool
+NodeCollectionPrimitive::has_proxies() const
+{
+
+  return not nodes_have_no_proxies_;
+}
+
+long
+NodeCollectionPrimitive::get_nc_index( const size_t neuron_id ) const
+{
+
+  if ( neuron_id < first_ or last_ < neuron_id )
+  {
+    return -1;
+  }
+  else
+  {
+    return neuron_id - first_;
+  }
+}
+
+bool
+NodeCollectionPrimitive::empty() const
+{
+
+  return last_ == 0;
+}
+
+bool
+NodeCollectionPrimitive::is_range() const
+{
+
+  return true;
+}
+
+NodeCollectionMetadataPTR
+NodeCollectionPrimitive::get_metadata() const
+{
+
+  return metadata_;
+}
+
+void
+NodeCollectionPrimitive::set_metadata( NodeCollectionMetadataPTR meta )
+{
+
+  metadata_ = meta;
+}
+
+bool
+NodeCollectionPrimitive::contains( const size_t node_id ) const
+{
+
+  return first_ <= node_id and node_id <= last_;
+}
+
+size_t
+NodeCollectionPrimitive::stride() const
+{
+
+  return 1;
+}
+
+size_t
+NodeCollectionPrimitive::size() const
+{
+
+  // empty NC has first_ == last_ == 0, need to handle that special
+  return std::min( last_, last_ - first_ + 1 );
+}
+
+NodeCollection::const_iterator
+NodeCollectionPrimitive::end( NodeCollectionPTR cp ) const
+{
+
+  // The unique end() element of a primitive NC is given by (part 0, element size()) )
+  return nc_const_iterator( cp, *this, /* offset */ size(), /* stride */ 1, nc_const_iterator::NCIteratorKind::END );
+}
+
+NodeCollection::const_iterator
+NodeCollectionPrimitive::begin( NodeCollectionPTR cp ) const
+{
+
+  return nc_const_iterator( cp, *this, /* offset */ 0, /* stride */ 1 );
+}
+
+bool
+NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
+{
+
+  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
+  // operator==() of *metadata_, and to let it handle typechecking.
+  const bool eq_metadata =
+    ( not metadata_ and not rhs.metadata_ ) or ( metadata_ and rhs.metadata_ and *metadata_ == rhs.metadata_ );
+
+  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and eq_metadata;
+}
+
+bool
+NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
+{
+
+  auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
+  // rhs_ptr will be a null pointer.
+  if ( not rhs_ptr )
+  {
+    return false;
+  }
+
+  // We know we have a primitive collection, so forward
+  return *this == *rhs_ptr;
+}
+
+size_t
+NodeCollectionPrimitive::operator[]( const size_t idx ) const
+{
+
+  // throw exception if outside of NodeCollection
+  if ( first_ + idx > last_ )
+  {
+    throw std::out_of_range( String::compose( "pos %1 points outside of the NodeCollection", idx ) );
+  }
+  return first_ + idx;
+}
+
+size_t
+nc_const_iterator::get_step_size() const
+{
+
+  return step_;
+}
+
+std::pair< size_t, size_t >
+nc_const_iterator::get_part_offset() const
+{
+
+  return { part_idx_, element_idx_ };
+}
+
+bool
+nc_const_iterator::operator>=( const nc_const_iterator& rhs ) const
+{
+
+  return not( *this < rhs );
+}
+
+bool
+nc_const_iterator::operator>( const nc_const_iterator& rhs ) const
+{
+
+  return not( *this <= rhs );
+}
+
+bool
+nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
+{
+
+  return ( *this < rhs or *this == rhs );
+}
+
+bool
+nc_const_iterator::operator<( const nc_const_iterator& rhs ) const
+{
+
+  return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
+}
+
+bool
+nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
+{
+
+  return not( *this == rhs );
+}
+
+bool
+nc_const_iterator::operator==( const nc_const_iterator& rhs ) const
+{
+
+  return part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_;
+}
+
+nc_const_iterator
+nc_const_iterator::operator++( int )
+{
+
+  nc_const_iterator tmp = *this;
+  ++( *this );
+  return tmp;
+}
+
+nc_const_iterator&
+nc_const_iterator::operator++()
+{
+
+  ( *this ) += 1;
+  return *this;
+}
+
+nc_const_iterator
+nc_const_iterator::operator+( const size_t n ) const
+{
+
+  nc_const_iterator it = *this;
+  return it += n;
+}
+
+nc_const_iterator&
+nc_const_iterator::operator+=( const size_t n )
+{
+
+  assert( kind_ != NCIteratorKind::END );
+
+  if ( n == 0 )
+  {
+    return *this;
+  }
+
+  const auto new_element_idx = find_next_within_part_( n );
+
+  // For a primitive collection, we either have a new element or are at the end
+  // For a composite collection, we may need to search through further parts,
+  // which is signalled by new_element_idx == element_idx_
+  if ( primitive_collection_ or new_element_idx != element_idx_ )
+  {
+    element_idx_ = new_element_idx;
+  }
+  else
+  {
+    // We did not find a new element in the current part and have not exhausted the collection
+    if ( kind_ == NCIteratorKind::GLOBAL )
+    {
+      advance_global_iter_to_new_part_( n );
+    }
+    else
+    {
+      advance_local_iter_to_new_part_( n );
+    }
+  }
+
+  return *this;
+}
+
+size_t
+NodeCollection::get_last() const
+{
+
+  assert( size() > 0 );
+  return ( *( begin() + ( size() - 1 ) ) ).node_id;
+}
+
+size_t
+NodeCollection::get_first() const
+{
+
+  return ( *begin() ).node_id;
+}
+
+void
+NodeCollection::set_metadata( NodeCollectionMetadataPTR )
+{
+
+  throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
+}
+
+bool
+NodeCollection::operator!=( NodeCollectionPTR rhs ) const
+{
+
+  return not( *this == rhs );
+}
+
+NodeCollectionPTR
+operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
+{
+  return lhs->operator+( rhs );
 }
 
 } // namespace nest

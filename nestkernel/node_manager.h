@@ -28,7 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -212,11 +212,7 @@ public:
    * @see prepare_nodes()
    * @return number of active nodes
    */
-  size_t
-  get_num_active_nodes()
-  {
-    return num_active_nodes_;
-  };
+  size_t get_num_active_nodes();
 
   /**
    * Invoke post_run_cleanup() on all nodes.
@@ -369,47 +365,6 @@ private:
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;
 };
 
-inline size_t
-NodeManager::size() const
-{
-  return local_nodes_[ 0 ].get_max_node_id();
-}
-
-inline Node*
-NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
-{
-  return local_nodes_[ t ].get_node_by_index( thread_local_id );
-}
-
-inline const std::vector< Node* >&
-NodeManager::get_wfr_nodes_on_thread( size_t t ) const
-{
-  return wfr_nodes_vec_.at( t );
-}
-
-inline bool
-NodeManager::wfr_is_used() const
-{
-  return wfr_is_used_;
-}
-
-inline const SparseNodeArray&
-NodeManager::get_local_nodes( size_t t ) const
-{
-  return local_nodes_[ t ];
-}
-
-inline bool
-NodeManager::have_nodes_changed() const
-{
-  return have_nodes_changed_;
-}
-
-inline void
-NodeManager::set_have_nodes_changed( const bool changed )
-{
-  have_nodes_changed_ = changed;
-}
 
 inline bool
 NodeManager::thread_local_data_is_up_to_date() const

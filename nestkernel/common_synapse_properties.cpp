@@ -24,9 +24,8 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
-#include "nest_timeconverter.h"
-#include "nest_types.h"
 #include "node.h"
+#include "node_manager.h"
 
 // Includes from models:
 #include "weight_recorder.h"
@@ -64,8 +63,8 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
       throw BadProperty( "Property weight_recorder must be a single element NodeCollection" );
     }
 
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    Node* wr_node = kernel().node_manager.get_node_or_proxy( ( *wr_datum )[ 0 ], tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    Node* wr_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *wr_datum )[ 0 ], tid );
     weight_recorder* wr = dynamic_cast< weight_recorder* >( wr_node );
     if ( not wr )
     {
@@ -81,4 +80,17 @@ CommonSynapseProperties::calibrate( const TimeConverter& )
 {
 }
 
+weight_recorder*
+CommonSynapseProperties::get_weight_recorder() const
+{
+
+  return weight_recorder_;
+}
+
+long
+CommonSynapseProperties::get_vt_node_id() const
+{
+
+  return -1;
+}
 } // namespace nest

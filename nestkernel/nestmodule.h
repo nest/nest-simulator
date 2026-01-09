@@ -25,14 +25,11 @@
 
 // Includes from nestkernel:
 #include "event.h"
-#include "exceptions.h"
-#include "generic_factory.h"
-#include "ntree.h"
+#include "generic_factory_impl.h"
+#include "ntree_impl.h"
 #include "parameter.h"
-#include "position.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "sharedptrdatum.h"
 #include "slifunction.h"
 #include "slimodule.h"
@@ -1872,18 +1869,6 @@ inline bool
 NestModule::register_mask()
 {
   return mask_factory_().register_subtype< T >( T::get_name() );
-}
-
-inline bool
-NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
-{
-  return mask_factory_().register_subtype( name, creator );
-}
-
-inline AbstractMask*
-NestModule::create_mask( const Name& name, const DictionaryDatum& d )
-{
-  return mask_factory_().create( name, d );
 }
 
 } // namespace

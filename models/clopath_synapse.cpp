@@ -22,9 +22,6 @@
 
 #include "clopath_synapse.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 void
 nest::register_clopath_synapse( const std::string& name )
 {

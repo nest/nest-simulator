@@ -24,9 +24,6 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -49,10 +46,7 @@ gainfunction_mcculloch_pitts::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::theta, theta_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::mcculloch_pitts_neuron >::create()

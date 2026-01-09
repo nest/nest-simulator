@@ -22,8 +22,6 @@
 
 #include "tsodyks_synapse_hom.h"
 
-// Includes from nestkernel:
-#include "connector_model.h"
 #include "nest_impl.h"
 
 void

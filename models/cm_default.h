@@ -27,7 +27,7 @@
 #include "archiving_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 #include "cm_compartmentcurrents.h"
 #include "cm_tree.h"
@@ -350,6 +350,9 @@ cm_default::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
   }
   return logger_.connect_logging_device( dlr, recordablesMap_ );
 }
+
+template <>
+void DynamicRecordablesMap< cm_default >::create( cm_default& host );
 
 } // namespace
 

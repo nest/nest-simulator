@@ -24,13 +24,17 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "io_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "node_manager.h"
+#include "recording_backend_ascii.h"
 #include "recording_device.h"
-#include "vp_manager_impl.h"
+#include "simulation_manager.h"
 
 // includes from sli:
 #include "dictutils.h"
 
-#include "recording_backend_ascii.h"
 
 const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
 
@@ -45,7 +49,7 @@ nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
 void
 nest::RecordingBackendASCII::initialize()
 {
-  data_map tmp( kernel().vp_manager.get_num_threads() );
+  data_map tmp( kernel::manager< VPManager >.get_num_threads() );
   device_data_.swap( tmp );
 }
 
@@ -156,8 +160,8 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 const std::string
 nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
 {
-  const double num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const double num_nodes = kernel().node_manager.size();
+  const double num_vps = kernel::manager< VPManager >.get_num_virtual_processes();
+  const double num_nodes = kernel::manager< NodeManager >.size();
   const int vp_digits = static_cast< int >( std::floor( std::log10( num_vps ) ) + 1 );
   const int node_id_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
 
@@ -251,7 +255,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   std::string filename = compute_filename_();
 
   std::ifstream test( filename.c_str() );
-  if ( test.good() and not kernel().io_manager.overwrite_files() )
+  if ( test.good() and not kernel::manager< IOManager >.overwrite_files() )
   {
     std::string msg = String::compose(
       "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
@@ -344,7 +348,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
   bool time_in_steps = false;
   if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
   {
-    if ( kernel().simulation_manager.has_been_simulated() )
+    if ( kernel::manager< SimulationManager >.has_been_simulated() )
     {
       throw BadProperty( "Property time_in_steps cannot be set after Simulate has been called." );
     }
@@ -356,7 +360,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 std::string
 nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 {
-  std::string data_path = kernel().io_manager.get_data_path();
+  std::string data_path = kernel::manager< IOManager >.get_data_path();
   if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
   {
     data_path += '/';
@@ -368,7 +372,7 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_() const
     label = modelname_;
   }
 
-  std::string data_prefix = kernel().io_manager.get_data_prefix();
+  std::string data_prefix = kernel::manager< IOManager >.get_data_prefix();
 
   return data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_;
 }

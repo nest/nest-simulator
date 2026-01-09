@@ -24,6 +24,8 @@
 
 #include <stdlib.h>
 
+#include "logging.h"
+#include "logging_manager.h"
 #include "ring_buffer.h"
 
 namespace nest

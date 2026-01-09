@@ -23,14 +23,15 @@
 #include "spike_train_injector.h"
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -305,7 +306,7 @@ spike_train_injector::pre_run_hook()
   // is not an exclusive precise spiking model
   if ( is_off_grid() )
   {
-    kernel().event_delivery_manager.set_off_grid_communication( true );
+    kernel::manager< EventDeliveryManager >.set_off_grid_communication( true );
     LOG( M_INFO,
       "spike_train_injector::pre_run_hook",
       "Spike train injector has been configured to emit precisely timed "
@@ -379,7 +380,7 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
       // we need to subtract one from stamp which is added again in send()
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     ++S_.position_;

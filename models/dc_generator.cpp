@@ -24,6 +24,8 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -178,7 +180,7 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
     if ( StimulationDevice::is_active( Time::step( start + offs ) ) )
     {
       S_.I_ = P_.amp_;
-      kernel().event_delivery_manager.send( *this, ce, offs );
+      kernel::manager< EventDeliveryManager >.send( *this, ce, offs );
     }
     B_.logger_.record_data( origin.get_steps() + offs );
   }

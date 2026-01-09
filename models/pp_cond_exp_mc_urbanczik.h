@@ -43,9 +43,8 @@
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 #include "urbanczik_archiving_node.h"
-#include "urbanczik_archiving_node_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -657,8 +656,10 @@ pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+template <>
+void RecordablesMap< pp_cond_exp_mc_urbanczik >::create();
 
+} // namespace
 
 #endif // HAVE_GSL
 #endif // PP_COND_EXP_MC_URBANCZIK_H

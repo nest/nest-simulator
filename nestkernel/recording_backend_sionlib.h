@@ -261,17 +261,9 @@ private:
     void ensure_space( size_t size );
     void write( const char* v, size_t n );
 
-    size_t
-    get_capacity()
-    {
-      return max_size_;
-    };
+    size_t get_capacity();
 
-    size_t
-    get_size()
-    {
-      return ptr_;
-    };
+    size_t get_size();
 
     size_t
     get_free()

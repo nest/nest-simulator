@@ -192,68 +192,6 @@ public:
 //! check legal size
 using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::success;
 
-inline SpikeData::SpikeData()
-  : lcid_( 0 )
-  , marker_( SPIKE_DATA_ID_DEFAULT )
-  , lag_( 0 )
-  , tid_( 0 )
-  , syn_id_( 0 )
-{
-}
-
-inline SpikeData::SpikeData( const SpikeData& rhs )
-  : lcid_( rhs.lcid_ )
-  , marker_( rhs.marker_ )
-  , lag_( rhs.lag_ )
-  , tid_( rhs.tid_ )
-  , syn_id_( rhs.syn_id_ )
-{
-}
-
-inline SpikeData::SpikeData( const Target& target, const size_t lag )
-  : lcid_( target.get_lcid() )
-  , marker_( SPIKE_DATA_ID_DEFAULT )
-  , lag_( lag )
-  , tid_( target.get_tid() )
-  , syn_id_( target.get_syn_id() )
-{
-}
-
-inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
-  : lcid_( lcid )
-  , marker_( SPIKE_DATA_ID_DEFAULT )
-  , lag_( lag )
-  , tid_( tid )
-  , syn_id_( syn_id )
-{
-}
-
-inline SpikeData&
-SpikeData::operator=( const SpikeData& rhs )
-{
-  lcid_ = rhs.lcid_;
-  marker_ = rhs.marker_;
-  lag_ = rhs.lag_;
-  tid_ = rhs.tid_;
-  syn_id_ = rhs.syn_id_;
-  return *this;
-}
-
-inline void
-SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
-{
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
-  assert( syn_id < MAX_SYN_ID );
-  assert( lcid < MAX_LCID );
-  assert( lag < MAX_LAG );
-
-  lcid_ = lcid;
-  marker_ = SPIKE_DATA_ID_DEFAULT;
-  lag_ = lag;
-  tid_ = tid;
-  syn_id_ = syn_id;
-}
-
 
 template < class TargetT >
 inline void
@@ -268,90 +206,6 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   syn_id_ = target.get_syn_id();
 }
 
-inline size_t
-SpikeData::get_lcid() const
-{
-  return lcid_;
-}
-
-inline void
-SpikeData::set_lcid( size_t value )
-{
-  assert( value < MAX_LCID );
-  lcid_ = value;
-}
-
-inline unsigned int
-SpikeData::get_lag() const
-{
-  return lag_;
-}
-
-inline size_t
-SpikeData::get_tid() const
-{
-  return tid_;
-}
-
-inline synindex
-SpikeData::get_syn_id() const
-{
-  return syn_id_;
-}
-
-inline unsigned int
-SpikeData::get_marker() const
-{
-  return marker_;
-}
-
-inline void
-SpikeData::reset_marker()
-{
-  marker_ = SPIKE_DATA_ID_DEFAULT;
-}
-
-inline void
-SpikeData::set_complete_marker()
-{
-  marker_ = SPIKE_DATA_ID_COMPLETE;
-}
-
-inline void
-SpikeData::set_end_marker()
-{
-  marker_ = SPIKE_DATA_ID_END;
-}
-
-inline void
-SpikeData::set_invalid_marker()
-{
-  marker_ = SPIKE_DATA_ID_INVALID;
-}
-
-inline bool
-SpikeData::is_complete_marker() const
-{
-  return marker_ == SPIKE_DATA_ID_COMPLETE;
-}
-
-inline bool
-SpikeData::is_end_marker() const
-{
-  return marker_ == SPIKE_DATA_ID_END;
-}
-
-inline bool
-SpikeData::is_invalid_marker() const
-{
-  return marker_ == SPIKE_DATA_ID_INVALID;
-}
-
-inline double
-SpikeData::get_offset() const
-{
-  return 0;
-}
 
 class OffGridSpikeData : public SpikeData
 {
@@ -378,80 +232,6 @@ public:
 
 //! check legal size
 using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
-
-inline OffGridSpikeData::OffGridSpikeData()
-  : SpikeData()
-  , offset_( 0.0 )
-{
-}
-
-inline OffGridSpikeData::OffGridSpikeData( const Target& target, const size_t lag, const double offset )
-  : SpikeData( target, lag )
-  , offset_( offset )
-{
-}
-
-inline OffGridSpikeData::OffGridSpikeData( const size_t tid,
-  const synindex syn_id,
-  const size_t lcid,
-  const unsigned int lag,
-  const double offset )
-  : SpikeData( tid, syn_id, lcid, lag )
-  , offset_( offset )
-{
-}
-
-inline OffGridSpikeData::OffGridSpikeData( const OffGridSpikeData& rhs )
-  : SpikeData( rhs )
-  , offset_( rhs.offset_ )
-{
-}
-
-inline OffGridSpikeData&
-OffGridSpikeData::operator=( const OffGridSpikeData& rhs )
-{
-  lcid_ = rhs.lcid_;
-  marker_ = rhs.marker_;
-  lag_ = rhs.lag_;
-  tid_ = rhs.tid_;
-  syn_id_ = rhs.syn_id_;
-  offset_ = rhs.offset_;
-  return *this;
-}
-
-inline OffGridSpikeData&
-OffGridSpikeData::operator=( const SpikeData& rhs )
-{
-  // Need to use get_*() here, direct access to protected members of base-class instance is prohibited,
-  // see example in https://en.cppreference.com/w/cpp/language/access.
-  lcid_ = rhs.get_lcid();
-  marker_ = rhs.get_marker();
-  lag_ = rhs.get_lag();
-  tid_ = rhs.get_tid();
-  syn_id_ = rhs.get_syn_id();
-  offset_ = 0;
-  return *this;
-}
-
-inline void
-OffGridSpikeData::set( const size_t tid,
-  const synindex syn_id,
-  const size_t lcid,
-  const unsigned int lag,
-  const double offset )
-{
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
-  assert( syn_id < MAX_SYN_ID );
-  assert( lcid < MAX_LCID );
-  assert( lag < MAX_LAG );
-
-  lcid_ = lcid;
-  marker_ = SPIKE_DATA_ID_DEFAULT;
-  lag_ = lag;
-  tid_ = tid;
-  syn_id_ = syn_id;
-  offset_ = offset;
-}
 
 
 template < class TargetT >
@@ -482,12 +262,6 @@ struct SpikeDataWithRank
   const SpikeData spike_data; //! data on spike transmitted
 };
 
-inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
-  : rank( target.get_rank() )
-  , spike_data( target, lag )
-{
-}
-
 /**
  * Combine target rank and spike data information for storage in emitted_off_grid_spikes_register.
  *
@@ -500,12 +274,6 @@ struct OffGridSpikeDataWithRank
   const size_t rank;                 //!< rank of target neuron
   const OffGridSpikeData spike_data; //! data on spike transmitted
 };
-
-inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset )
-  : rank( target.get_rank() )
-  , spike_data( target, lag, offset )
-{
-}
 
 
 } // namespace nest

@@ -25,8 +25,6 @@
 
 // nestkernel
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 
 // sli
@@ -57,14 +55,21 @@ public:
   /**
    * Constructs a new EpropArchivingNode object.
    */
-  EpropArchivingNode();
+  EpropArchivingNode()
+    : eprop_indegree_( 0 )
+  {
+  }
 
   /**
    * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
    *
    * @param other The other object to copy.
    */
-  EpropArchivingNode( const EpropArchivingNode& other );
+  EpropArchivingNode( const EpropArchivingNode& other )
+    : Node( other )
+    , eprop_indegree_( other.eprop_indegree_ )
+  {
+  }
 
   void register_eprop_connection() override;
 

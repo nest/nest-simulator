@@ -30,10 +30,10 @@
 
 // Includes from nestkernel:
 #include "event.h"
-#include "nest_timeconverter.h"
-#include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
+
+#include "nest_names.h"
 
 
 namespace nest
@@ -211,9 +211,9 @@ private:
   {
     long timestep_;
     double weight_;
-    long receptor_channel_;
+    size_t receptor_channel_;
 
-    Spike_( long timestep, double weight, long receptorchannel )
+    Spike_( long timestep, double weight, size_t receptorchannel )
       : timestep_( timestep )
       , weight_( weight )
       , receptor_channel_( receptorchannel )

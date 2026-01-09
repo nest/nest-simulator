@@ -22,7 +22,6 @@
 
 #include "stdp_triplet_synapse.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

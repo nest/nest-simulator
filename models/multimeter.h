@@ -30,13 +30,17 @@
 #include "connection.h"
 #include "device_node.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_timeconverter.h"
 #include "recording_device.h"
 
 // Includes from sli:
 #include "dictutils.h"
 #include "name.h"
+
+#include "node_manager.h"
 
 /* BeginUserDocs: device, recorder
 
@@ -247,7 +251,7 @@ nest::multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    const std::vector< Node* > siblings = kernel::manager< NodeManager >.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {

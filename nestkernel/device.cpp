@@ -149,3 +149,71 @@ nest::Device::pre_run_hook()
   V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();
   V_.t_max_ = ( P_.origin_ + P_.stop_ ).get_steps();
 }
+
+
+long
+nest::Device::get_t_max_() const
+{
+
+  return V_.t_max_;
+}
+
+long
+nest::Device::get_t_min_() const
+{
+
+  return V_.t_min_;
+}
+
+nest::Time const&
+nest::Device::get_stop() const
+{
+
+  return P_.stop_;
+}
+
+nest::Time const&
+nest::Device::get_start() const
+{
+
+  return P_.start_;
+}
+
+nest::Time const&
+nest::Device::get_origin() const
+{
+
+  return P_.origin_;
+}
+
+void
+nest::Device::set_status( const DictionaryDatum& d )
+{
+
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+}
+
+void
+nest::Device::get_status( DictionaryDatum& d ) const
+{
+
+  P_.get( d );
+}
+
+void
+nest::Device::init_buffers()
+{
+}
+
+void
+nest::Device::init_state()
+{
+}
+
+nest::Device::~Device()
+{
+}

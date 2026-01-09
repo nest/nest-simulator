@@ -77,42 +77,6 @@ public:
 //! check legal size
 using success_target_data_fields_size = StaticAssert< sizeof( TargetDataFields ) == 8 >::success;
 
-inline void
-TargetDataFields::set_lcid( const size_t lcid )
-{
-  lcid_ = lcid;
-}
-
-inline size_t
-TargetDataFields::get_lcid() const
-{
-  return lcid_;
-}
-
-inline void
-TargetDataFields::set_tid( const size_t tid )
-{
-  tid_ = tid;
-}
-
-inline size_t
-TargetDataFields::get_tid() const
-{
-  return tid_;
-}
-
-inline void
-TargetDataFields::set_syn_id( const synindex syn_id )
-{
-  syn_id_ = syn_id;
-}
-
-inline synindex
-TargetDataFields::get_syn_id() const
-{
-  return syn_id_;
-}
-
 class SecondaryTargetDataFields
 {
 private:
@@ -129,32 +93,6 @@ public:
 
 //! check legal size
 using success_secondary_target_data_fields_size = StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success;
-
-inline void
-SecondaryTargetDataFields::set_recv_buffer_pos( const size_t pos )
-{
-  assert( pos < std::numeric_limits< unsigned int >::max() );
-  recv_buffer_pos_ = pos;
-}
-
-inline size_t
-SecondaryTargetDataFields::get_recv_buffer_pos() const
-{
-  return recv_buffer_pos_;
-}
-
-inline void
-SecondaryTargetDataFields::set_syn_id( const synindex syn_id )
-{
-  assert( syn_id < std::numeric_limits< unsigned char >::max() );
-  syn_id_ = syn_id;
-}
-
-inline synindex
-SecondaryTargetDataFields::get_syn_id() const
-{
-  return syn_id_;
-}
 
 enum enum_status_target_data_id
 {
@@ -216,85 +154,6 @@ public:
 //! check legal size
 using success_target_data_size = StaticAssert< sizeof( TargetData ) == 12 >::success;
 
-inline void
-TargetData::reset_marker()
-{
-  marker_ = TARGET_DATA_ID_DEFAULT;
-}
-
-inline void
-TargetData::set_complete_marker()
-{
-  marker_ = TARGET_DATA_ID_COMPLETE;
-}
-
-inline void
-TargetData::set_end_marker()
-{
-  marker_ = TARGET_DATA_ID_END;
-}
-
-inline void
-TargetData::set_invalid_marker()
-{
-  marker_ = TARGET_DATA_ID_INVALID;
-}
-
-inline bool
-TargetData::is_complete_marker() const
-{
-  return marker_ == TARGET_DATA_ID_COMPLETE;
-}
-
-inline bool
-TargetData::is_end_marker() const
-{
-  return marker_ == TARGET_DATA_ID_END;
-}
-
-inline bool
-TargetData::is_invalid_marker() const
-{
-  return marker_ == TARGET_DATA_ID_INVALID;
-}
-
-inline void
-TargetData::set_source_lid( const size_t source_lid )
-{
-  assert( source_lid < MAX_LID );
-  source_lid_ = source_lid;
-}
-
-inline void
-TargetData::set_source_tid( const size_t source_tid )
-{
-  assert( source_tid < MAX_TID );
-  source_tid_ = source_tid;
-}
-
-inline size_t
-TargetData::get_source_lid() const
-{
-  return source_lid_;
-}
-
-inline size_t
-TargetData::get_source_tid() const
-{
-  return source_tid_;
-}
-
-inline void
-TargetData::set_is_primary( const bool is_primary )
-{
-  is_primary_ = is_primary;
-}
-
-inline bool
-TargetData::is_primary() const
-{
-  return is_primary_;
-}
 } // namespace nest
 
 #endif /* #ifndef TARGET_DATA_H */

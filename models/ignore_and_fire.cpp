@@ -22,20 +22,16 @@
 
 #include "ignore_and_fire.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "iaf_propagator.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "numerics.h"
+#include "nest_impl.h"
 #include "ring_buffer_impl.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -50,10 +46,7 @@ register_ignore_and_fire( const std::string& name )
   register_node_model< ignore_and_fire >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< ignore_and_fire >::create()
@@ -185,7 +178,7 @@ ignore_and_fire::update( Time const& origin, const long from, const long to )
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
     else
     {
@@ -202,8 +195,8 @@ ignore_and_fire::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
   const double s = e.get_weight() * e.get_multiplicity();
 
   // separate buffer channels for excitatory and inhibitory inputs
@@ -215,8 +208,8 @@ ignore_and_fire::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
 
   const double I = e.get_current();
   const double w = e.get_weight();

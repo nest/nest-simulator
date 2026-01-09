@@ -22,7 +22,6 @@
 
 #include "stdp_nn_pre_centered_synapse.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

@@ -1,0 +1,17 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "clang",
+      "displayName": "Clang",
+      "description": "Clang toolchain with llvm-ar for LTO support",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/clang.cmake"
+    },
+    {
+      "name": "gcc",
+      "displayName": "GCC",
+      "description": "GCC toolchain with gcc-ar",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/gcc.cmake"
+    }
+  ]
+}

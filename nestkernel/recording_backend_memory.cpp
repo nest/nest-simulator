@@ -21,10 +21,11 @@
  */
 
 // Includes from nestkernel:
-#include "recording_device.h"
-#include "vp_manager_impl.h"
-
 #include "recording_backend_memory.h"
+#include "recording_device.h"
+#include "simulation_manager.h"
+
+#include <nest_names.h>
 
 nest::RecordingBackendMemory::RecordingBackendMemory()
 {
@@ -37,7 +38,7 @@ nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
 void
 nest::RecordingBackendMemory::initialize()
 {
-  device_data_map tmp( kernel().vp_manager.get_num_threads() );
+  device_data_map tmp( kernel::manager< VPManager >.get_num_threads() );
   device_data_.swap( tmp );
 }
 
@@ -266,7 +267,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
   bool time_in_steps = false;
   if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
   {
-    if ( kernel().simulation_manager.has_been_simulated() )
+    if ( kernel::manager< SimulationManager >.has_been_simulated() )
     {
       throw BadProperty( "Property time_in_steps cannot be set after Simulate has been called." );
     }

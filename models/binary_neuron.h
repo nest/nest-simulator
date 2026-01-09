@@ -23,33 +23,27 @@
 #ifndef BINARY_NEURON_H
 #define BINARY_NEURON_H
 
-// C++ includes:
-#include <cmath>
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -481,7 +475,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
         // use multiplicity 2 to signal transition to 1 state
         // use multiplicity 1 to signal transition to 0 state
         se.set_multiplicity( new_y ? 2 : 1 );
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
         // As multiplicity is used only to signal internal information
         // to other binary neurons, we only set spiketime once, independent
@@ -537,20 +531,21 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
       // received twice the same node ID, so transition 0->1
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), 2.0 * e.get_weight() );
+        e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), 2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
       B_.spikes_.add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
+        e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), -e.get_weight() );
     }
   }
   else if ( m == 2 )
   {
     // count this event positively, transition 0->1
-    B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
+    B_.spikes_.add_value(
+      e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), e.get_weight() );
   }
 
   S_.last_in_node_id_ = node_id;
@@ -569,7 +564,7 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 

@@ -30,7 +30,7 @@
 #include "nest_types.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -462,6 +462,9 @@ pp_psc_delta::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< pp_psc_delta >::create();
 
 } // namespace
 

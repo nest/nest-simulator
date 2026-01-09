@@ -21,9 +21,7 @@
  */
 
 #include "stdp_facetshw_synapse_hom.h"
-#include "stdp_facetshw_synapse_hom_impl.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

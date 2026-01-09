@@ -24,12 +24,8 @@
 #define MODEL_H
 
 // C++ includes:
-#include <new>
 #include <string>
 #include <vector>
-
-// Includes from libnestutil:
-#include "allocator.h"
 
 // Includes from nestkernel:
 #include "node.h"
@@ -201,17 +197,9 @@ public:
   /**
    * Set the model id on the prototype.
    */
-  void
-  set_type_id( size_t id )
-  {
-    type_id_ = id;
-  }
+  void set_type_id( size_t id );
 
-  size_t
-  get_type_id() const
-  {
-    return type_id_;
-  }
+  size_t get_type_id() const;
 
 private:
   virtual void set_status_( DictionaryDatum ) = 0;
@@ -253,20 +241,5 @@ private:
   std::vector< std::vector< Node* > > memory_;
 };
 
-
-inline Node*
-Model::create( size_t t )
-{
-  assert( t < memory_.size() );
-  Node* n = create_();
-  memory_[ t ].emplace_back( n );
-  return n;
-}
-
-inline std::string
-Model::get_name() const
-{
-  return name_;
-}
 }
 #endif

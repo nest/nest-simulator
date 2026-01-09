@@ -29,6 +29,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
+#include "connection_manager.h"
 #include "connector_model.h"
 #include "event.h"
 
@@ -329,7 +330,7 @@ jonke_synapse< targetidentifierT >::send( Event& e, size_t t, const JonkeCommonP
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
+    assert( minus_dt < -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }
 

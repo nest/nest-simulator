@@ -40,7 +40,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -456,6 +456,9 @@ aeif_cond_beta_multisynapse::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
+
+template <>
+void DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create( aeif_cond_beta_multisynapse& host );
 
 } // namespace
 

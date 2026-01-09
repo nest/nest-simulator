@@ -26,10 +26,17 @@
 #include <cassert>
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "exceptions.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "node_manager.h"
 #include "parameter.h"
+#include "random_manager.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
 
 // Includes from sli:
 #include "sliexceptions.h"
@@ -41,9 +48,8 @@ namespace nest
 void
 init_nest( int* argc, char** argv[] )
 {
-  KernelManager::create_kernel_manager();
-  kernel().mpi_manager.init_mpi( argc, argv );
-  kernel().initialize();
+  kernel::manager< MPIManager >.init_mpi( argc, argv );
+  kernel::manager< KernelManager >.initialize();
 }
 
 void
@@ -59,54 +65,54 @@ install_module( const std::string& )
 void
 reset_kernel()
 {
-  kernel().reset();
+  kernel::manager< KernelManager >.reset();
 }
 
 void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
-  kernel().logging_manager.register_logging_client( client_callback );
+  kernel::manager< LoggingManager >.register_logging_client( client_callback );
 }
 
 void
 print_nodes_to_stream( std::ostream& ostr )
 {
-  kernel().node_manager.print( ostr );
+  kernel::manager< NodeManager >.print( ostr );
 }
 
 RngPtr
 get_rank_synced_rng()
 {
-  return kernel().random_manager.get_rank_synced_rng();
+  return kernel::manager< RandomManager >.get_rank_synced_rng();
 }
 
 RngPtr
 get_vp_synced_rng( size_t tid )
 {
-  return kernel().random_manager.get_vp_synced_rng( tid );
+  return kernel::manager< RandomManager >.get_vp_synced_rng( tid );
 }
 
 RngPtr
 get_vp_specific_rng( size_t tid )
 {
-  return kernel().random_manager.get_vp_specific_rng( tid );
+  return kernel::manager< RandomManager >.get_vp_specific_rng( tid );
 }
 
 void
 set_kernel_status( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
-  kernel().set_status( dict );
+  kernel::manager< KernelManager >.set_status( dict );
   ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
 DictionaryDatum
 get_kernel_status()
 {
-  assert( kernel().is_initialized() );
+  assert( kernel::manager< KernelManager >.is_initialized() );
 
   DictionaryDatum d( new Dictionary );
-  kernel().get_status( d );
+  kernel::manager< KernelManager >.get_status( d );
 
   return d;
 }
@@ -114,13 +120,13 @@ get_kernel_status()
 void
 set_node_status( const size_t node_id, const DictionaryDatum& dict )
 {
-  kernel().node_manager.set_status( node_id, dict );
+  kernel::manager< NodeManager >.set_status( node_id, dict );
 }
 
 DictionaryDatum
 get_node_status( const size_t node_id )
 {
-  return kernel().node_manager.get_status( node_id );
+  return kernel::manager< NodeManager >.get_status( node_id );
 }
 
 void
@@ -135,7 +141,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 
   dict->clear_access_flags();
 
-  kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
+  kernel::manager< ConnectionManager >.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -147,7 +153,7 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+  return kernel::manager< ConnectionManager >.get_synapse_status( conn.get_source_node_id(),
     conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
@@ -162,14 +168,14 @@ create( const Name& model_name, const size_t n_nodes )
     throw RangeCheck();
   }
 
-  const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
-  return kernel().node_manager.add_node( model_id, n_nodes );
+  const size_t model_id = kernel::manager< ModelManager >.get_node_model_id( model_name );
+  return kernel::manager< NodeManager >.add_node( model_id, n_nodes );
 }
 
 NodeCollectionPTR
 get_nodes( const DictionaryDatum& params, const bool local_only )
 {
-  return kernel().node_manager.get_nodes( params, local_only );
+  return kernel::manager< NodeManager >.get_nodes( params, local_only );
 }
 
 void
@@ -178,7 +184,7 @@ connect( NodeCollectionPTR sources,
   const DictionaryDatum& connectivity,
   const std::vector< DictionaryDatum >& synapse_params )
 {
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel::manager< ConnectionManager >.connect( sources, targets, connectivity, synapse_params );
 }
 
 void
@@ -189,7 +195,7 @@ connect_tripartite( NodeCollectionPTR sources,
   const DictionaryDatum& third_connectivity,
   const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
 {
-  kernel().connection_manager.connect_tripartite(
+  kernel::manager< ConnectionManager >.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
 }
 
@@ -203,7 +209,8 @@ connect_arrays( long* sources,
   size_t n,
   std::string syn_model )
 {
-  kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
+  kernel::manager< ConnectionManager >.connect_arrays(
+    sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }
 
 ArrayDatum
@@ -211,7 +218,7 @@ get_connections( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
 
-  ArrayDatum array = kernel().connection_manager.get_connections( dict );
+  ArrayDatum array = kernel::manager< ConnectionManager >.get_connections( dict );
 
   ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
@@ -222,13 +229,13 @@ void
 disconnect( const ArrayDatum& conns )
 {
   // probably not strictly necessary here, but does nothing if all is up to date
-  kernel().node_manager.update_thread_local_node_data();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   for ( size_t conn_index = 0; conn_index < conns.size(); ++conn_index )
   {
     const auto conn_datum = getValue< ConnectionDatum >( conns.get( conn_index ) );
-    const auto target_node = kernel().node_manager.get_node_or_proxy( conn_datum.get_target_node_id() );
-    kernel().sp_manager.disconnect(
+    const auto target_node = kernel::manager< NodeManager >.get_node_or_proxy( conn_datum.get_target_node_id() );
+    kernel::manager< SPManager >.disconnect(
       conn_datum.get_source_node_id(), target_node, conn_datum.get_target_thread(), conn_datum.get_synapse_model_id() );
   }
 }
@@ -261,38 +268,38 @@ run( const double& time )
       "of the simulation resolution." );
   }
 
-  kernel().simulation_manager.run( t_sim );
+  kernel::manager< SimulationManager >.run( t_sim );
 }
 
 void
 prepare()
 {
-  kernel().prepare();
+  kernel::manager< KernelManager >.prepare();
 }
 
 void
 cleanup()
 {
-  kernel().cleanup();
+  kernel::manager< KernelManager >.cleanup();
 }
 
 void
 copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
-  kernel().model_manager.copy_model( oldmodname, newmodname, dict );
+  kernel::manager< ModelManager >.copy_model( oldmodname, newmodname, dict );
 }
 
 void
 set_model_defaults( const std::string component, const DictionaryDatum& dict )
 {
-  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  if ( kernel::manager< ModelManager >.set_model_defaults( component, dict ) )
   {
     return;
   }
 
-  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  if ( kernel::manager< IOManager >.is_valid_recording_backend( component ) )
   {
-    kernel().io_manager.set_recording_backend_status( component, dict );
+    kernel::manager< IOManager >.set_recording_backend_status( component, dict );
     return;
   }
 
@@ -304,8 +311,8 @@ get_model_defaults( const std::string component )
 {
   try
   {
-    const size_t model_id = kernel().model_manager.get_node_model_id( component );
-    return kernel().model_manager.get_node_model( model_id )->get_status();
+    const size_t model_id = kernel::manager< ModelManager >.get_node_model_id( component );
+    return kernel::manager< ModelManager >.get_node_model( model_id )->get_status();
   }
   catch ( UnknownModelName& )
   {
@@ -314,17 +321,17 @@ get_model_defaults( const std::string component )
 
   try
   {
-    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
-    return kernel().model_manager.get_connector_defaults( synapse_model_id );
+    const size_t synapse_model_id = kernel::manager< ModelManager >.get_synapse_model_id( component );
+    return kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id );
   }
   catch ( UnknownSynapseType& )
   {
     // ignore errors; throw at the end of the function if that's reached
   }
 
-  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  if ( kernel::manager< IOManager >.is_valid_recording_backend( component ) )
   {
-    return kernel().io_manager.get_recording_backend_status( component );
+    return kernel::manager< IOManager >.get_recording_backend_status( component );
   }
 
   throw UnknownComponent( component );
@@ -364,7 +371,7 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
   RngPtr rng = get_rank_synced_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
-    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );
+    auto node = kernel::manager< NodeManager >.get_node_or_proxy( ( *it ).node_id );
     result.push_back( param->value( rng, node ) );
   }
   return result;

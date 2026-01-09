@@ -22,7 +22,6 @@
 
 #include "urbanczik_synapse.h"
 
-// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

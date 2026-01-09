@@ -30,7 +30,7 @@
 #include "nest_types.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -333,6 +333,9 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
+
+template <>
+void RecordablesMap< sinusoidal_poisson_generator >::create();
 
 } // namespace
 

@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -357,6 +357,9 @@ iaf_psc_alpha_multisynapse::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
+
+template <>
+void DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create( iaf_psc_alpha_multisynapse& host );
 
 } // namespace
 

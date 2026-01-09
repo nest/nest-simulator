@@ -40,7 +40,7 @@
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -364,6 +364,9 @@ siegert_neuron::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< siegert_neuron >::create();
 
 } // namespace
 

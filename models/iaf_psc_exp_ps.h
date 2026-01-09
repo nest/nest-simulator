@@ -38,7 +38,7 @@
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -486,6 +486,9 @@ iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+template <>
+void RecordablesMap< iaf_psc_exp_ps >::create();
 
 } // namespace
 

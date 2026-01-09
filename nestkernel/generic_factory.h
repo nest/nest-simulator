@@ -89,41 +89,6 @@ private:
   AssocMap associations_;
 };
 
-template < class BaseT >
-inline BaseT*
-GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
-{
-  typename AssocMap::const_iterator i = associations_.find( name );
-  if ( i != associations_.end() )
-  {
-    return ( i->second )( d );
-  }
-  throw UndefinedName( name.toString() );
-}
-
-template < class BaseT >
-template < class T >
-inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name )
-{
-  return register_subtype( name, new_from_dict_< T > );
-}
-
-template < class BaseT >
-inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction creator )
-{
-  return associations_.insert( std::pair< Name, CreatorFunction >( name, creator ) ).second;
-}
-
-template < class BaseT >
-template < class T >
-BaseT*
-GenericFactory< BaseT >::new_from_dict_( const DictionaryDatum& d )
-{
-  return new T( d );
-}
-
 } // namespace nest
 
 #endif

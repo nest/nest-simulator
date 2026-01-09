@@ -107,14 +107,23 @@ section#kernel-attributes-nest-nestmodule dd {
   box-shadow: 3px 3px lightgray !important;
 }
 .imgbutton:hover {
-
   background-color: white;
-	outline-color: var(--nest-orange) !important;
-	outline-style: solid !important;
-	outline-width: 1px !important;
-	padding-top: 20px !important;
-	padding-bottom: 20px !important;
+  outline-color: var(--nest-orange) !important;
+  outline-style: solid !important;
+  outline-width: 1px !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
   box-shadow: 3px 3px var(--nest-orange) !important;
+}
+
+.md-typeset table:not([class]) th {
+   background-color: rgba(0, 0, 0, 0.0);
+   color: #666;
+}
+
+.md-typeset table:not([class]) tr{
+  border-bottom-color: #e3e3e3;
+  border-bottom-width: 1px;
 }
 
 

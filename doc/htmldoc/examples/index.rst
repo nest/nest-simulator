@@ -257,6 +257,12 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: Performance testing
+           :img-top: ../static/img/NetworkSketch_TwoPopulationNetworkPlastic.svg
+
+           * :doc:`../auto_examples/hpc_benchmark`
+           * :doc:`../auto_examples/ignore_and_fire/index`
+
     .. grid-item-card:: SONATA network
            :img-top: ../static/img/300_pointneurons.png
 

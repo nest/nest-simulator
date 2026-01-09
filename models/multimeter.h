@@ -72,11 +72,12 @@ recordables to have them sampled during simulation.
 The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter`` parameter ``interval``. The default value of
 1.0 ms can be changed by supplying a new value either in the call to
-``Create`` or by using ``SetStatus`` on the model instance.
+``Create`` or by using ``SetStatus`` on the model instance. To sample
+ values at every simulation time step, use
 
 ::
 
-   nest.SetStatus(mm, {'interval': 0.1})
+   nest.SetStatus(mm, {'interval': nest.resolution})
 
 The recording interval must be greater than or equal to the
 :ref:`simulation resolution <simulation_resolution>`, which defaults
@@ -121,6 +122,7 @@ record_from
 interval
     A float (default: 1.0) specifying the interval in ms, at which
     data is collected from the nodes, the multimeter is connected to.
+    Must be a multiple of the resolution.
 
 See also
 ++++++++

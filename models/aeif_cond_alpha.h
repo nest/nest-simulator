@@ -112,6 +112,18 @@ For the reference implementation of this model, see
 
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
+Numerical stability
+-------------------
+
+Under some conditions, the exponential function inside this model can cause a
+numerical instability in the solver due to its tendency to divergence to
+positive infinity. The rate of change of the membrane voltage will be evaluated
+at each solver timestep and its absolute value limited to the value given by
+the parameter ``max_V_m_rate``. By default the value is set to positive
+infinity, which means that the rate is unbounded. Setting ``max_V_m_rate`` to
+any other value changes the dynamics of the model. See :doc:`doc/htmldoc/model_details/aeif_models_implementation.ipynb`
+for more details.
+
 Parameters
 ++++++++++
 
@@ -128,16 +140,17 @@ The following parameters can be set in the status dictionary.
  w       pA      Spike-adaptation current
 ======== ======= =======================================
 
-======== ======= =======================================
+=========== ======= =======================================
 **Membrane Parameters**
---------------------------------------------------------
- C_m     pF      Capacity of the membrane
- t_ref   ms      Duration of refractory period
- V_reset mV      Reset value for V_m after a spike
- E_L     mV      Leak reversal potential
- g_L     nS      Leak conductance
- I_e     pA      Constant external input current
-======== ======= =======================================
+-----------------------------------------------------------
+ C_m          pF      Capacity of the membrane
+ t_ref        ms      Duration of refractory period
+ V_reset      mV      Reset value for V_m after a spike
+ E_L          mV      Leak reversal potential
+ g_L          nS      Leak conductance
+ max_V_m_rate V/s     Maximum membrane potential rate of change
+ I_e          pA      Constant external input current
+============= ======= =======================================
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -186,6 +199,8 @@ References
        integrate-and-fire model as an effective description of neuronal
        activity. Journal of Neurophysiology. 943637-3642
        DOI: https://doi.org/10.1152/jn.00686.2005
+
+.. [2] https://brian2.readthedocs.io/en/stable/examples/frompapers.Brette_Gerstner_2005.html
 
 See also
 ++++++++
@@ -256,19 +271,20 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;        //!< Leak Conductance in nS
-    double C_m;        //!< Membrane Capacitance in pF
-    double E_ex;       //!< Excitatory reversal Potential in mV
-    double E_in;       //!< Inhibitory reversal Potential in mV
-    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in mV
-    double tau_w;      //!< Adaptation time-constant in ms
-    double a;          //!< Subthreshold adaptation in nS
-    double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV
-    double tau_syn_ex; //!< Excitatory synaptic rise time
-    double tau_syn_in; //!< Excitatory synaptic rise time
-    double I_e;        //!< Intrinsic current in pA
+    double g_L;          //!< Leak Conductance in nS
+    double C_m;          //!< Membrane Capacitance in pF
+    double E_ex;         //!< Excitatory reversal Potential in mV
+    double E_in;         //!< Inhibitory reversal Potential in mV
+    double E_L;          //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;      //!< Slope factor in mV
+    double tau_w;        //!< Adaptation time-constant in ms
+    double a;            //!< Subthreshold adaptation in nS
+    double b;            //!< Spike-triggered adaptation in pA
+    double V_th;         //!< Spike threshold in mV
+    double tau_syn_ex;   //!< Excitatory synaptic rise time
+    double tau_syn_in;   //!< Inhibitory synaptic rise time
+    double max_V_m_rate; //!< Maximum V_m rate of change in V/s
+    double I_e;          //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator
 

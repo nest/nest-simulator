@@ -422,16 +422,21 @@ if test "${MUSIC}"; then
     BASEDIR="$PWD"
     TMPDIR_MUSIC="$(mktemp -d)"
 
-    TESTDIR="${TEST_BASEDIR}/musictests/"
+    TESTDIR="${TEST_BASEDIR}/sli2py_music/"
 
     # shellcheck disable=SC2044
     for test_name in $(find "${TESTDIR}" -maxdepth 1 -name '*.music' -printf '%f\n'); do
         music_file="${TESTDIR}/${test_name}"
 
-        # Collect the list of SLI files from the '.music' file.
-        sli_files="$(grep '\.sli' "${music_file}" | sed -e "s#args=#${TESTDIR}#g")"
-        sli_files="$(for f in ${sli_files}; do if test -f "${f}"; then echo "${f}"; fi; done)"
-        sli_files="${sli_files//$'\n'/ }"
+        # Collect the list of Python files from the '.music' file.
+        if py_file_matches="$(grep '\.py' "${music_file}")"; then
+            py_files="${py_file_matches//binary=/${TESTDIR}}"
+            py_files="$(for f in ${py_files}; do if test -f "${f}"; then echo "${f}"; fi; done)"
+            py_files="${py_files//$'\n'/ }"
+        else
+            py_files=""
+            echo "No python files found in music file ${music_file}"
+        fi
 
         # Check if there is an accompanying shell script for the test.
         sh_file="${TESTDIR}/$(basename "${music_file}" ".music").sh"
@@ -443,7 +448,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np="$(($(sed -n 's/np=//p' "${music_file}" | paste -sd'+' -)))"
-        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =only")"
+        test_command="${MPI_LAUNCHER} ${SLI_MPIEXEC_PREFLAGS} -np ${np} ${MUSIC} ${test_name}"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -451,16 +456,16 @@ if test "${MUSIC}"; then
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
         # Copy everything to TMPDIR_MUSIC.
-        # Note that variables might also be empty, so test for file existance first.
-	# Note that ${sli_files} must not be quoted because it expands into multiple, space-separate file names.
-        for filename in "${music_file}" "${sh_file}" "${input_file}" ${sli_files}; do
+        # Note that variables might also be empty, so test for file existence first.
+        # Note that ${py_files} must not be quoted because it expands into multiple, space-separate file names.
+        for filename in "${music_file}" "${sh_file}" "${input_file}" ${py_files}; do
             test -e "${filename}" && cp "${filename}" "${TMPDIR_MUSIC}"
         done
 
         # Create the runner script in TMPDIR_MUSIC.
         cd "${TMPDIR_MUSIC}"
         {
-            echo "#!/bin/sh"
+            echo "#!/usr/bin/env sh"
             echo "set +e"
             echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\""
             echo "${test_command} > ${TEST_OUTFILE} 2>&1"

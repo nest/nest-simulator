@@ -958,34 +958,57 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  if ( is_sliced_ )
+  // Helper lambda to check overlap using iteration (works for sliced collections)
+  auto check_overlap = []( const NodeCollectionComposite& c1, const NodeCollection& c2 )
   {
-    assert( stride_ > 1 or last_part_ != 0 or last_elem_ != 0 );
-    throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
-  }
-
-  auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
-  if ( rhs_ptr ) // if rhs is Primitive
-  {
-    // check primitives in the composite for overlap
-    for ( auto part_it = parts_.begin(); part_it < parts_.end(); ++part_it )
+    // Check if smaller contains any element in larger is usually faster
+    // But here we iterate c1 and check if c2 contains.
+    for ( const auto& elem : c1 )
     {
-      if ( part_it->overlapping( *rhs_ptr ) )
+      if ( c2.contains( elem.node_id ) )
       {
         throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
     }
-    return NodeCollectionPTR( *this + *rhs_ptr );
+  };
+
+  auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+  if ( rhs_ptr ) // if rhs is Primitive
+  {
+    // Check overlap
+    if ( is_sliced_ )
+    {
+      check_overlap( *this, *rhs_ptr );
+    }
+    else
+    {
+      // Optimization: if not sliced, use parts overlap check
+      for ( const auto& part : parts_ )
+      {
+        if ( part.overlapping( *rhs_ptr ) )
+        {
+          throw BadProperty( "Cannot join overlapping NodeCollections." );
+        }
+      }
+    }
+
+    std::vector< NodeCollectionPrimitive > new_parts = to_primitives_();
+    new_parts.push_back( *rhs_ptr );
+    std::sort( new_parts.begin(), new_parts.end(), primitive_sort_op );
+    merge_parts_( new_parts );
+    if ( new_parts.size() == 1 )
+    {
+      return std::make_shared< NodeCollectionPrimitive >( new_parts[ 0 ] );
+    }
+    else
+    {
+      return std::make_shared< NodeCollectionComposite >( new_parts );
+    }
   }
   else // rhs is Composite
   {
     auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
     assert( rhs_ptr );
-    if ( rhs_ptr->is_sliced_ )
-    {
-      assert( rhs_ptr->stride_ > 1 or rhs_ptr->last_part_ != 0 or rhs_ptr->last_elem_ != 0 );
-      throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
-    }
 
     // check overlap between the two composites
     const auto shortest_longest_nc = std::minmax( *this,
@@ -1002,9 +1025,14 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
       }
     }
 
-    auto new_parts = parts_;
-    new_parts.reserve( new_parts.size() + rhs_ptr->parts_.size() );
-    new_parts.insert( new_parts.end(), rhs_ptr->parts_.begin(), rhs_ptr->parts_.end() );
+    std::vector< NodeCollectionPrimitive > parts1 = to_primitives_();
+    std::vector< NodeCollectionPrimitive > parts2 = rhs_ptr->to_primitives_();
+
+    std::vector< NodeCollectionPrimitive > new_parts;
+    new_parts.reserve( parts1.size() + parts2.size() );
+    new_parts.insert( new_parts.end(), parts1.begin(), parts1.end() );
+    new_parts.insert( new_parts.end(), parts2.begin(), parts2.end() );
+
     std::sort( new_parts.begin(), new_parts.end(), primitive_sort_op );
     merge_parts_( new_parts );
     if ( new_parts.size() == 1 )
@@ -1027,16 +1055,29 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
     throw BadProperty( "can only join NodeCollections with the same metadata" );
   }
 
-  // check primitives in the composites for overlap
-  for ( auto part_it = parts_.begin(); part_it < parts_.end(); ++part_it )
+  // check overlap
+  if ( is_sliced_ )
   {
-    if ( part_it->overlapping( rhs ) )
+    for ( const auto& elem : *this )
     {
-      throw BadProperty( "Cannot join overlapping NodeCollections." );
+      if ( rhs.contains( elem.node_id ) )
+      {
+        throw BadProperty( "Cannot join overlapping NodeCollections." );
+      }
+    }
+  }
+  else
+  {
+    for ( const auto& part : parts_ )
+    {
+      if ( part.overlapping( rhs ) )
+      {
+        throw BadProperty( "Cannot join overlapping NodeCollections." );
+      }
     }
   }
 
-  std::vector< NodeCollectionPrimitive > new_parts = parts_;
+  std::vector< NodeCollectionPrimitive > new_parts = to_primitives_();
   new_parts.push_back( rhs );
   std::sort( new_parts.begin(), new_parts.end(), primitive_sort_op );
   merge_parts_( new_parts );
@@ -1273,6 +1314,74 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
       new_composite.stride_ ) ); )
 
   return std::make_shared< NodeCollectionComposite >( new_composite );
+}
+
+std::vector< NodeCollectionPrimitive >
+NodeCollectionComposite::to_primitives_() const
+{
+  if ( not is_sliced_ )
+  {
+    return parts_;
+  }
+
+  std::vector< NodeCollectionPrimitive > primitives;
+  NodeCollectionMetadataPTR meta = get_metadata();
+
+  // If the composite is empty (should not happen for composite), return empty
+  if ( empty() )
+  {
+    return primitives;
+  }
+
+  // Iterate over the composite to identify contiguous ranges
+  auto it = begin();
+  const auto end_it = end();
+
+  // Initialize the first range
+  NodeIDTriple current = *it;
+  size_t range_first = current.node_id;
+  size_t range_last = current.node_id;
+  size_t range_model = current.model_id;
+
+  ++it;
+  for ( ; it != end_it; ++it )
+  {
+    NodeIDTriple next_node = *it;
+    if ( next_node.node_id == range_last + 1 and next_node.model_id == range_model )
+    {
+      // Extend the current range
+      range_last = next_node.node_id;
+    }
+    else
+    {
+      // Range interrupted, push current primitive
+      if ( meta )
+      {
+        primitives.emplace_back( range_first, range_last, range_model, meta );
+      }
+      else
+      {
+        primitives.emplace_back( range_first, range_last, range_model );
+      }
+
+      // Start new range
+      range_first = next_node.node_id;
+      range_last = next_node.node_id;
+      range_model = next_node.model_id;
+    }
+  }
+
+  // Push the final range
+  if ( meta )
+  {
+    primitives.emplace_back( range_first, range_last, range_model, meta );
+  }
+  else
+  {
+    primitives.emplace_back( range_first, range_last, range_model );
+  }
+
+  return primitives;
 }
 
 void

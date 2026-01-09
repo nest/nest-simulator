@@ -185,8 +185,8 @@ EventDeliveryManager::get_status( Dictionary& dict )
   dict[ names::spike_buffer_grow_extra ] = send_recv_buffer_grow_extra_;
 
   Dictionary log_events;
-  dict[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
+  dict[ names::spike_buffer_resize_log ] = log_events;
 
   sw_collocate_spike_data_.get_status( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
   sw_communicate_spike_data_.get_status(

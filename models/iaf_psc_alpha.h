@@ -36,7 +36,9 @@ namespace nest
 {
 // Disable clang-formatting for documentation due to over-wide table.
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
+/** BeginUserDocs: neuron, integrate-and-fire, current-based, hard threshold
+
+
 
 Short description
 +++++++++++++++++
@@ -206,6 +208,7 @@ Examples using this model
 .. listexamples:: iaf_psc_alpha
 
 EndUserDocs */
+
 // clang-format on
 
 void register_iaf_psc_alpha( const std::string& name );

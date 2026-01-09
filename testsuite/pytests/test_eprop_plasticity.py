@@ -214,7 +214,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         params_nrn_rec["adaptation"] = 0.0
 
     gen_spk_in = nest.Create("spike_generator", n_in)
-    nrns_in = nest.Create("parrot_neuron", n_in)
+    nrns_in = nest.Create("eprop_input_neuron", n_in)
     nrns_rec = nest.Create(neuron_model, n_rec, params_nrn_rec)
     nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
@@ -412,8 +412,8 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
@@ -523,7 +523,7 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
     }
 
     gen_spk_in = nest.Create("spike_generator", 1)
-    nrns_in = nest.Create("parrot_neuron", 1)
+    nrns_in = nest.Create("eprop_input_neuron", 1)
     nrns_rec = nest.Create("eprop_iaf", 1, params_nrn_rec)
 
     params_mm_rec = {
@@ -558,23 +558,9 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
 
 
 @pytest.mark.parametrize(
-    "neuron_model,eprop_isi_trace_cutoff,eprop_history_duration_reference",
-    [
-        (
-            "eprop_iaf",
-            5.0,
-            np.hstack(
-                [
-                    np.arange(x, y)
-                    for x, y in [[1, 12], [6, 16], [11, 21], [16, 26], [21, 31], [17, 27], [12, 42], [12, 30]]
-                ]
-            ),
-        ),
-        ("eprop_iaf", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
-        ("eprop_readout", 100000.0, np.hstack([np.arange(x, y) for x, y in [[1, 52], [33, 43], [23, 53], [43, 61]]])),
-    ],
+    "neuron_model,eprop_isi_trace_cutoff", [("eprop_iaf", 5.0), ("eprop_iaf", 100000.0), ("eprop_readout", 100000.0)]
 )
-def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_history_duration_reference):
+def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff):
     """
     Test the e-prop archiving mechanism's cleaning process by ensuring that the length of the `eprop_history`
     buffer matches the expected values based on a given input firing pattern. These reference length values
@@ -599,13 +585,16 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
 
     # Create neurons
 
-    params_nrn_rec = {
+    params_nrn = {
         "eprop_isi_trace_cutoff": eprop_isi_trace_cutoff,
     }
 
+    if neuron_model != "eprop_readout":
+        params_nrn["activation_interval"] = eprop_isi_trace_cutoff
+
     gen_spk_in = nest.Create("spike_generator", 3)
-    nrns_in = nest.Create("parrot_neuron", 3)
-    nrns_rec = nest.Create(neuron_model, 1, params_nrn_rec)
+    nrns_in = nest.Create("eprop_input_neuron", 3)
+    nrns = nest.Create(neuron_model, 1, params_nrn)
 
     # Create recorders
 
@@ -635,8 +624,8 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
     params_syn_in = params_syn_base.copy()
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
-    nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)
-    nest.Connect(mm_rec, nrns_rec, params_conn_all_to_all, params_syn_static)
+    nest.Connect(nrns_in, nrns, params_conn_all_to_all, params_syn_in)
+    nest.Connect(mm_rec, nrns, params_conn_all_to_all, params_syn_static)
 
     # Create input
 
@@ -659,7 +648,8 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff, eprop_hist
     events_mm_rec = mm_rec.get("events")
 
     eprop_history_duration = events_mm_rec["eprop_history_duration"]
-    senders = events_mm_rec["senders"]
-    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
 
+    eprop_history_duration_reference = np.hstack(
+        [np.arange(x, y + 1) for x, y in [[1.0, 11.0], [2.0, 51.0], [12.0, 59.0]]]
+    )
     assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

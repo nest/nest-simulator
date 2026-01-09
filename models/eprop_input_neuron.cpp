@@ -1,5 +1,5 @@
 /*
- *  parrot_neuron.cpp
+ *  eprop_input_neuron.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 
-#include "parrot_neuron.h"
+#include "eprop_input_neuron.h"
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -38,26 +38,26 @@
 namespace nest
 {
 void
-register_parrot_neuron( const std::string& name )
+register_eprop_input_neuron( const std::string& name )
 {
-  register_node_model< parrot_neuron >( name );
+  register_node_model< eprop_input_neuron >( name );
 }
 
 
-parrot_neuron::parrot_neuron()
+eprop_input_neuron::eprop_input_neuron()
   : ArchivingNode()
 {
 }
 
 void
-parrot_neuron::init_buffers_()
+eprop_input_neuron::init_buffers_()
 {
   B_.n_spikes_.clear(); // includes resize
   ArchivingNode::clear_history();
 }
 
 void
-parrot_neuron::update( Time const& origin, const long from, const long to )
+eprop_input_neuron::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -77,7 +77,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       }
       last_event_time_ = t;
     }
-    else if ( t - last_event_time_ >= activation_interval_ )
+    else if ( last_event_time_ > 0 and t - last_event_time_ >= activation_interval_ )
     {
       SpikeEvent se;
       se.set_activation();
@@ -88,19 +88,19 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 }
 
 void
-parrot_neuron::get_status( DictionaryDatum& d ) const
+eprop_input_neuron::get_status( DictionaryDatum& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron::set_status( const DictionaryDatum& d )
+eprop_input_neuron::set_status( const DictionaryDatum& d )
 {
   ArchivingNode::set_status( d );
 }
 
 void
-parrot_neuron::handle( SpikeEvent& e )
+eprop_input_neuron::handle( SpikeEvent& e )
 {
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )

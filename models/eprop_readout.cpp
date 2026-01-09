@@ -314,51 +314,63 @@ eprop_readout::compute_gradient( const long t_spike,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
-  WeightOptimizer* optimizer )
+  WeightOptimizer* optimizer,
+  const bool activation,
+  const bool previous_event_was_activation,
+  double& sum_grad )
 {
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double L = 0.0;                // error signal
-  double grad = 0.0;             // gradient
+  const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+  const auto& opt_cp = *ecp.optimizer_cp_;
+  const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
-  const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
+  if ( not previous_event_was_activation )
+  {
+    sum_grad = 0.0; // sum of gradients
+  }
 
   auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
-  const long t_compute_until = std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
+  const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
+  const long t_compute_until = std::min( cutoff_end, t_spike );
 
-  for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
+  if ( not previous_event_was_activation )
   {
-    z = z_previous_buffer;
-    z_previous_buffer = z_current_buffer;
-    z_current_buffer = 0.0;
+    double z_current_buffer = 1.0; // spike that triggered current computation
 
-    L = eprop_hist_it->error_signal_;
-
-    z_bar = V_.P_v_m_ * z_bar + z;
-
-    if ( optimize_each_step )
+    for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
     {
-      grad = L * z_bar;
-      weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
-    }
-    else
-    {
-      grad += L * z_bar;
+      const double z = z_previous_buffer; // spiking variable
+      z_previous_buffer = z_current_buffer;
+      z_current_buffer = 0.0;
+
+      const double E = eprop_hist_it->error_signal_; // error signal
+
+      z_bar = V_.P_v_m_ * z_bar + z;
+
+      const double grad = E * z_bar;
+
+      if ( optimize_each_step )
+      {
+        sum_grad = grad;
+        weight = optimizer->optimized_weight( opt_cp, t, sum_grad, weight );
+      }
+      else
+      {
+        sum_grad += grad;
+      }
     }
   }
 
-  if ( not optimize_each_step )
+  const long trace_decay_interval = t_spike - ( previous_event_was_activation ? t_spike_previous : t_compute_until );
+
+  if ( trace_decay_interval > 0 )
   {
-    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+    z_bar *= std::exp( std::log( V_.P_v_m_ ) * trace_decay_interval );
   }
 
-  const long cutoff_to_spike_interval = t_spike - t_compute_until;
-
-  if ( cutoff_to_spike_interval > 0 )
+  if ( not( activation or optimize_each_step ) )
   {
-    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
+    weight = optimizer->optimized_weight( opt_cp, t_compute_until, sum_grad, weight );
   }
 }
 

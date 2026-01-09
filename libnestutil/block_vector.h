@@ -323,7 +323,7 @@ private:
 template < typename value_type_ >
 BlockVector< value_type_ >::BlockVector()
   : blockmap_(
-    std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
+      std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
   , finish_( begin() )
 {
 }
@@ -331,7 +331,7 @@ BlockVector< value_type_ >::BlockVector()
 template < typename value_type_ >
 BlockVector< value_type_ >::BlockVector( size_t n )
   : blockmap_(
-    std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
+      std::vector< std::vector< value_type_ > >( 1, std::move( std::vector< value_type_ >( max_block_size ) ) ) )
   , finish_( begin() )
 {
   size_t num_blocks_needed = std::ceil( static_cast< double >( n ) / max_block_size );

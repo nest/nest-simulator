@@ -85,7 +85,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     param_dicts_.resize( syn_params_dvd->size() );
     auto param_dict = param_dicts_.begin();
     for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end();
-          ++synapse_datum, ++param_dict )
+      ++synapse_datum, ++param_dict )
     {
       auto syn_param = dynamic_cast< DictionaryDatum* >( synapse_datum->datum() );
       extract_params_( *syn_param, *param_dict );

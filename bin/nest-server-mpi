@@ -13,21 +13,17 @@ Options:
 
 """
 
-from docopt import docopt
-from mpi4py import MPI
-
-if __name__ == "__main__":
-    opt = docopt(__doc__)
-
 import logging
 import os
 import time
 
-logger = logging.getLogger(__name__)
-logger.setLevel(os.getenv("NEST_SERVER_MPI_LOGGER_LEVEL", "INFO"))
-
 import nest
 import nest.server
+from docopt import docopt
+from mpi4py import MPI
+
+logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("NEST_SERVER_MPI_LOGGER_LEVEL", "INFO"))
 
 HOST = os.getenv("NEST_SERVER_HOST", "127.0.0.1")
 PORT = os.getenv("NEST_SERVER_PORT", "52425")
@@ -41,41 +37,47 @@ def log(call_name, msg):
     logger.debug(msg)
 
 
-if rank == 0:
-    logger.info("==> Starting NEST Server Master on rank 0")
-    nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app(host=opt.get("--host", HOST), port=opt.get("--port", PORT))
+def main():
+    opt = docopt(__doc__)
+    if rank == 0:
+        logger.info("==> Starting NEST Server Master on rank 0")
+        nest.server.set_mpi_comm(comm)
+        nest.server.run_mpi_app(host=opt.get("--host", HOST), port=opt.get("--port", PORT))
 
-else:
-    logger.info(f"==> Starting NEST Server Worker on rank {rank}")
-    nest.server.set_mpi_comm(comm)
+    else:
+        logger.info(f"==> Starting NEST Server Worker on rank {rank}")
+        nest.server.set_mpi_comm(comm)
 
-    while True:
-        log("spinwait", "waiting for call bcast")
-        call_name = comm.bcast(None, root=0)
+        while True:
+            log("spinwait", "waiting for call bcast")
+            call_name = comm.bcast(None, root=0)
 
-        log(call_name, "received call bcast, waiting for data bcast")
-        data = comm.bcast(None, root=0)
+            log(call_name, "received call bcast, waiting for data bcast")
+            data = comm.bcast(None, root=0)
 
-        log(call_name, f"received data bcast, data={data}")
-        args, kwargs = data
+            log(call_name, f"received data bcast, data={data}")
+            args, kwargs = data
 
-        if call_name == "exec":
-            response = nest.server.do_exec(args, kwargs)
-        else:
-            call, args, kwargs = nest.server.nestify(call_name, args, kwargs)
-            log(call_name, f"local call, args={args}, kwargs={kwargs}")
+            if call_name == "exec":
+                response = nest.server.do_exec(args, kwargs)
+            else:
+                call, args, kwargs = nest.server.nestify(call_name, args, kwargs)
+                log(call_name, f"local call, args={args}, kwargs={kwargs}")
 
-            # The following exception handler is useful if an error
-            # occurs simulataneously on all processes. If only a
-            # subset of processes raises an exception, a deadlock due
-            # to mismatching MPI communication calls is inevitable on
-            # the next call.
-            try:
-                response = call(*args, **kwargs)
-            except Exception:
-                logger.error("Failed to execute call")
-                continue
+                # The following exception handler is useful if an error
+                # occurs simulataneously on all processes. If only a
+                # subset of processes raises an exception, a deadlock due
+                # to mismatching MPI communication calls is inevitable on
+                # the next call.
+                try:
+                    response = call(*args, **kwargs)
+                except Exception:
+                    logger.error("Failed to execute call")
+                    continue
 
-        log(call_name, f"sending reponse gather, data={response}")
-        comm.gather(nest.serialize_data(response), root=0)
+            log(call_name, f"sending reponse gather, data={response}")
+            comm.gather(nest.serialize_data(response), root=0)
+
+
+if __name__ == "__main__":
+    main()

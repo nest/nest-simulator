@@ -771,7 +771,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         }
       }
     } // if-else not compressed
-  }   // for rank
+  } // for rank
 }
 
 
@@ -1003,7 +1003,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
       }
       return is_source_table_read;
     } // of else
-  }   // of while(true)
+  } // of while(true)
 }
 
 bool

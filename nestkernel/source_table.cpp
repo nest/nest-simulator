@@ -252,8 +252,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
     if ( not is_primary )
     {
       for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
-            source_cit != sources_[ tid ][ syn_id ].end();
-            ++source_cit )
+        source_cit != sources_[ tid ][ syn_id ].end();
+        ++source_cit )
       {
 #pragma omp critical
         {
@@ -274,8 +274,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 
     for ( std::set< std::pair< size_t, size_t > >::const_iterator cit =
             ( *unique_secondary_source_node_id_syn_id ).begin();
-          cit != ( *unique_secondary_source_node_id_syn_id ).end();
-          ++cit )
+      cit != ( *unique_secondary_source_node_id_syn_id ).end();
+      ++cit )
     {
       const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
       const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid )->size();
@@ -561,7 +561,7 @@ nest::SourceTable::fill_compressed_spike_data(
   for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
   {
     for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
-          ++target_thread )
+      ++target_thread )
     {
       for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
       {
@@ -589,7 +589,7 @@ nest::SourceTable::fill_compressed_spike_data(
       compressible_sources_[ target_thread ][ syn_id ].clear();
 
     } // for target_thread
-  }   // for syn_id
+  } // for syn_id
 }
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.
@@ -598,8 +598,7 @@ nest::SourceTable::dump_compressed_spike_data(
   const std::vector< std::vector< std::vector< SpikeData > > >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
 {
   FULL_LOGGING_ONLY(
-    for ( const auto& tab
-          : compressed_spike_data_map_ ) {
+    for ( const auto& tab : compressed_spike_data_map_ ) {
       for ( const auto& entry : tab )
       {
         kernel().write_to_dump( String::compose( "csdm : r%1 t%2 s%3 sx%4 tt%5",
@@ -611,8 +610,7 @@ nest::SourceTable::dump_compressed_spike_data(
       }
     }
 
-    for ( const auto& tab
-          : compressed_spike_data ) {
+    for ( const auto& tab : compressed_spike_data ) {
       for ( size_t six = 0; six < tab.size(); ++six )
       {
         for ( size_t tx = 0; tx < tab[ six ].size(); ++tx )

@@ -2007,8 +2007,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
 
     for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
-          it != ml.end();
-          ++it )
+      it != ml.end();
+      ++it )
     {
       mask_node_ids.push_back( it->second );
     }
@@ -2024,8 +2024,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
 
     for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
-          it != ml.end();
-          ++it )
+      it != ml.end();
+      ++it )
     {
       mask_node_ids.push_back( it->second );
     }

@@ -46,7 +46,7 @@ def _second_spike_time(model: str, t_ref: float) -> float:
     nest.Simulate(20.0)
 
     events = nest.GetStatus(spike_recorder, "events")[0]
-    times = events["times"]
+    times: list[float] = events["times"]
 
     assert len(times) > 1, f"Model {model} did not fire at least twice."
 

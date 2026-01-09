@@ -156,7 +156,7 @@ run_test ()
 
     echo "${explanation}"
 
-    if test "x${msg_error}" != x ; then
+    if test -n "${msg_error}"; then
         echo ==================================================
         echo "Following is the full output of the test:"
         echo ==================================================
@@ -170,7 +170,7 @@ run_test ()
     junit_write "${junit_class}" "${junit_name}" "${junit_status}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
-    if test "x${unexpected_exitcode:-}" != x ; then
+    if test -n "${unexpected_exitcode:-}"; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
         exit 2

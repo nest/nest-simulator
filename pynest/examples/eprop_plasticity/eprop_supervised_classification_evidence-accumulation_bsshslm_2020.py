@@ -212,6 +212,7 @@ params_nrn_out = {
 }
 
 params_nrn_reg = {
+    "activation_interval": duration["sequence"],  # ms, interval for activating synapse to free memory
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
     "c_reg": 300.0,  # coefficient of firing rate regularization - 2*learning_window*(TF c_reg) for technical reasons
@@ -232,6 +233,7 @@ params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
 params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])  # prefactor is inside abs in the original definition
 
 params_nrn_ad = {
+    "activation_interval": duration["sequence"],
     "beta": 1.0,
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "adaptation": 0.0,  # initial value of the spike threshold adaptation
@@ -263,7 +265,7 @@ params_nrn_ad["adapt_beta"] = 1.7 * (
 # since devices cannot establish plastic synapses for technical reasons
 
 gen_spk_in = nest.Create("spike_generator", n_in)
-nrns_in = nest.Create("parrot_neuron", n_in)
+nrns_in = nest.Create("eprop_input_neuron", n_in)
 
 # The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
 # that introduced it by the first letter of the authors' last names and the publication year.

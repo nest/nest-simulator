@@ -183,6 +183,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit Math equivalent         Default            Description
 =============================== ==== ======================= ================== ================================
+``activation_interval``         ms                                       3000.0 Interval between two activations
 ``c_reg``                            :math:`c_\text{reg}`                 0.0   Coefficient of firing rate
                                                                                 regularization
 ``f_target``                    Hz   :math:`f^\text{target}`             10.0   Target firing rate of rate
@@ -365,6 +366,9 @@ private:
     //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
+    //! Interval between two activations.
+    long activation_interval_;
+
     //! Default constructor.
     Parameters_();
 
@@ -443,6 +447,9 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
+
+    //! Time steps of activation interval.
+    long activation_interval_steps_;
   };
 
   //! Get the current value of the membrane voltage.

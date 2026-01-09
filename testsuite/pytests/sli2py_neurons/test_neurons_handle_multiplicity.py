@@ -55,6 +55,8 @@ skip_list = [
     "rate_transformer_sigmoid_gg_1998",  # rate transformer
     "parrot_neuron",
     "parrot_neuron_ps",
+    "eprop_input_neuron",
+    "eprop_input_neuron_ps",
     "spike_train_injector",  # spike emitting neuron, does not support spike input
     "cm_default",  # cannot readout V_m directly
     "iaf_cond_alpha_mc",  # cannot readout V_m directly

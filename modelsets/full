@@ -21,6 +21,7 @@ correlomatrix_detector
 correlospinmatrix_detector
 dc_generator
 diffusion_connection
+eprop_input_neuron
 eprop_iaf_bsshslm_2020
 eprop_iaf_adapt_bsshslm_2020
 eprop_readout_bsshslm_2020

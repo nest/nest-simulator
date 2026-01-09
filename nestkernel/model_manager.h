@@ -240,9 +240,8 @@ private:
    * registered from within extension modules, and models created by
    * calls to CopyModel().
    *
-   * This list is cleared and built-in models are re-registered upon
-   * calls to ResetKernel, while those registered from user-modules
-   * and copies are not.
+   * ResetKernel() clears this list and rebuilds it with built-in
+   * models only.
    *
    * The elements of this list are used to create instances and are
    * responsible for the storage of model defaults.

@@ -164,6 +164,15 @@ figure.align-default {
    background-color: #fff9;
    position: initial;
 }
+
+.cpp.class{
+ border-style:dashed;
+ border-width: 0.13em;
+
+}
+.sig.sig-object.cpp {
+   background-color: #3332;
+}
 /**************************************************************************************
  Settings for overriding material design theme
  Setting nest colors to override sphinx material "orange" and other default colors

@@ -30,7 +30,7 @@ Simulation parameters
 +=======================+=================================+=============================+
 | :math:`T`             | :math:`1000\,\text{ms}`         | total simulation time       |
 +-----------------------+---------------------------------+-----------------------------+
-| :math:`\Delta{}t`     | :math:`2^{-3}=0.125\,\text{ms}` | duration pof simulation step|
+| :math:`\Delta{}t`     | :math:`2^{-3}=0.125\,\text{ms}` | duration of simulation step |
 +-----------------------+---------------------------------+-----------------------------+
 | ``tics_per_step``     | :math:`2^7=128`                 | number of tics per          |
 |                       |                                 | simulation step             |

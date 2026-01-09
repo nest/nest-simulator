@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 """
-Scalable two population STDP network model
-------------------------------------------
+Scalable balanced random network with STDP synapses
+---------------------------------------------------
 
 In this example, we employ a simple network model describing the
 dynamics of a local cortical circuit at the spatial scale of ~1mm within
@@ -74,12 +74,12 @@ import scipy.special
 
 class Model:
     """
-    Instatitation of model
+    Instantiation of model
     """
 
     def __init__(self, parameters):
         """
-        Intialise model and simulation instance, including
+        Initialise model and simulation instance, including
 
         1) parameter setting,
         2) configuration of the NEST kernel,
@@ -222,7 +222,7 @@ class Model:
                 max=self.pars["ignore_and_fire_pars"]["phase_dist"][1],
             )
 
-        pop_E = pop_all[: self.pars["N_E"]]  # population of exitatory neurons
+        pop_E = pop_all[: self.pars["N_E"]]  # population of excitatory neurons
         pop_I = pop_all[self.pars["N_E"] :]  # population of inhibitory neurons
 
         # create external Poissonian sources (stimulus)
@@ -483,11 +483,11 @@ def load_spike_data(path, label, time_interval=None, pop=None, skip_rows=3):
                     Spike file label (file name root).
 
     time_interval:  None (default) or tuple (optional)
-                    Start and stop of observation interval (ms). All spikes outside this interva are discarded.
+                    Start and stop of observation interval (ms). All spikes outside this interval are discarded.
                     If None, all recorded spikes are loaded.
 
     pop:            None (default) or nest.NodeCollection (optional)
-                    Oberserved neuron population. All spike sendes that are not part of this population are discarded.
+                    Observed neuron population. All spike senders that are not part of this population are discarded.
                     If None, all recorded spikes are loaded.
 
     skip_rows:      int (optional)

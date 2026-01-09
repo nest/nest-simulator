@@ -7,7 +7,7 @@ Background: (Non-) Scalability of recurrent neuronal networks
 ---------------------------------------------------------------
 
 The verification and validation of neuronal simulation architectures (soft- and hardware) is typically based on
-models describing networks of neurons. Ideally,  such test-case models are scalable with respect to the network size
+models describing networks of neurons. Ideally, such test-case models are scalable with respect to the network size
 
 -  to foster a comparison between different computing architectures with different computational resources,
 -  to be able to extrapolate (up-scale) to networks at brain scale, even if data constrained and well tested
@@ -16,8 +16,8 @@ models describing networks of neurons. Ideally,  such test-case models are scala
 
 Biological neuronal networks are characterized by a high degree of recurrency. As shown in [1]_, scaling the number of nodes or edges in a recurrent neuronal
 networks generally alters the network dynamics, such as the average activity level or the structure of correlations.
-Preserving certain dynamical features by adjusting other parameters can only be  achieved in limited ranges or exceptional cases. Recurrent neuronal net
-works are hence not truly scalable. In this example, we demonstrate  how the :doc:`ignore_and_fire </models/ignore_and_fire>` neuron can help to perform
+Preserving certain dynamical features by adjusting other parameters can only be achieved in limited ranges or exceptional cases. Recurrent neuronal net
+works are hence not truly scalable. In this example, we demonstrate how the :doc:`ignore_and_fire </models/ignore_and_fire>` neuron can help to perform
 exact scaling experiments with arbitrary types of networks.
 
 
@@ -98,7 +98,7 @@ across the network within each time interval, is fully controlled by the user.
    :scale: 50%
 
 Dependence of the simulation time (top), the time and population averaged firing rate (middle) and the excitatory
-synaptic weights (bottom) on the network size :math:`N` for the\ ``integrate-and-fire`` (black) and the
+synaptic weights (bottom) on the network size :math:`N` for the ``integrate-and-fire`` (black) and the
 ``ignore-and-fire`` variant of the network model (gray). The in-degree :math:`K=1250` is fixed. Figure generated using
 :doc:`scaling.py </auto_examples/ignore_and_fire/scaling>`.
 

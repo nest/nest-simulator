@@ -22,7 +22,7 @@
 Parameter dictionary
 --------------------
 
-Default parameters for Two population STDP network model (TwoPopulationNetworkPlastic)
+Default parameters for balanced random network with STDP synapses (TwoPopulationNetworkPlastic)
 
 """
 
@@ -75,7 +75,7 @@ pars["stdp_w_0"] = 1.0  # reference weight (pA)
 
 # initial conditions
 pars["V_init_min"] = pars["E_L"]  # min of initial membrane potential (mV)
-pars["V_init_max"] = pars["theta"]  # min of initial membrane potential (mV)
+pars["V_init_max"] = pars["theta"]  # max of initial membrane potential (mV)
 
 # data recording
 pars["record_spikes"] = False  # if True: set up spike detectors and record spikes

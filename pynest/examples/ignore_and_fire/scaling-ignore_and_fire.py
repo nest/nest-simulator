@@ -152,7 +152,7 @@ def time_and_population_averaged_spike_rate(spikes, time_interval, pop_size):
 ##########################################################
 def data_statistics(data):
     """
-    Calculates and collet simple statistics for a list of data samples.
+    Calculates and collects simple statistics for a list of data samples.
     """
     stats = {}
     stats["mean"] = numpy.nanmean(data)

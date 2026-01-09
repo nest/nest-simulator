@@ -1,7 +1,7 @@
 .. _sec_model_description:
 
-Two population STDP network model
-=================================
+Balanced random network with STDP synapses
+==========================================
 
 Network model
 -------------
@@ -36,7 +36,7 @@ Summary of network model
            Network sketch (see `Fig. 8  <https://doi.org/10.1371/journal.pcbi.1010086.g008>`_
            in Senk et al. [3]_).
 
-Detailed desciption of network model
+Detailed description of network model
 ------------------------------------
 
 Populations
@@ -121,7 +121,7 @@ Connectivity
    |                     |                      |    in-degree                                            |
    |                     |                      |    :math:`K_{\text{I},i}=K_\text{I}`                    |
    |                     |                      |                                                         |
-   |                     |                      |    (:math:`forall{}i\in\mathcal{E}\cup\mathcal{I}`)\    |
+   |                     |                      |    (:math:`\forall{}i\in\mathcal{E}\cup\mathcal{I}`)\    |
    |                     |                      |    j\in\mathcal{I}`)                                    |
    |                     |                      |                                                         |
    |                     |                      | -  fixed synaptic                                       |
@@ -172,7 +172,7 @@ Neuron
 
    * - **Leaky integrate-and-fire (iaf) dynamics**
      - Dynamics of membrane potential :math:`V_{i}(t)` and
-       spiking activity :math:`s_i(t)` of neuro :math:`i\in\left\{1,\ldots,N\right\}`:
+       spiking activity :math:`s_i(t)` of neuron :math:`i\in\left\{1,\ldots,N\right\}`:
 
        * emission of :math:`k`\ th (:math:`k=1,2,\ldots`) spike of neuron
          :math:`i` at time :math:`t_{i}^{k}` if
@@ -184,7 +184,7 @@ Neuron
 
        * reset and refractoriness:
 
-         .. math:: \forall{}k,\ \forall t \in \left(t_{k}^{i},\,t_{k}^{i}+\tau_\text{ref}\right]:\quad V_{i}(t)=V_\text{reset}
+         .. math:: \forall{}k,\ \forall t \in \left[t_{k}^{i},t_{k}^{i}+\tau_\text{ref}\right]:\quad V_{i}(t)=V_\text{reset}
 
          with refractory period :math:`\tau_\text{ref}` and reset potential
          :math:`V_\text{reset}`
@@ -389,7 +389,6 @@ Initial conditions
 
    +--------------------------------------------------+---------------------------------------------------+
    | **Type**                                         | **Description**                                   |
-   |                                                  |                                                   |
    +==================================================+===================================================+
    | random initial membrane potentials, homogeneous  | -  membrane potentials:                           |
    | initial synaptic weights and spike traces        |    :math:`V_i(t=0)\sim \                          |

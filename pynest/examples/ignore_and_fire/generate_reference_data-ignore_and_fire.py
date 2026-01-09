@@ -30,7 +30,7 @@ import psutil
 
 def generate_reference_data(neuron_model="ignore_and_fire"):
     """
-    Generate set of reference data and store on disk (spike data and model paramaters).
+    Generate set of reference data and store on disk (spike data and model parameters).
 
     Note: Data can be loaded from file using
 

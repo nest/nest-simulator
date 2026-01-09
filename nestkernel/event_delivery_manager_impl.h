@@ -112,7 +112,7 @@ EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag );
+      ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.get_activation() );
     }
   }
 }

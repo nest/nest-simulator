@@ -106,9 +106,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -127,7 +128,7 @@ void register_eprop_learning_signal_connection( const std::string& name );
  *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
  * according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * Korcsak-Gorzo et al. (2025).
  */
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT >

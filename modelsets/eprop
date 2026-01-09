@@ -4,14 +4,15 @@ multimeter
 spike_recorder
 weight_recorder
 
-parrot_neuron
 poisson_generator
 spike_generator
 step_rate_generator
 
 rate_connection_delayed
 static_synapse
+iaf_psc_delta
 
+eprop_input_neuron
 eprop_iaf_bsshslm_2020
 eprop_iaf_adapt_bsshslm_2020
 eprop_readout_bsshslm_2020

@@ -151,9 +151,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -331,8 +332,13 @@ private:
   //! Synaptic weight.
   double weight_;
 
+  double gradient_sum_;
+
   //! The time step when the previous spike arrived.
   long t_spike_previous_;
+
+  //! Last event was an activation.
+  bool previous_event_was_activation_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -384,7 +390,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
+  , gradient_sum_( 0.0 )
   , t_spike_previous_( 0 )
+  , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -406,7 +414,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_sum_( es.gradient_sum_ )
   , t_spike_previous_( 0 )
+  , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -430,7 +440,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_sum_ = es.gradient_sum_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -446,7 +458,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_sum_( es.gradient_sum_ )
   , t_spike_previous_( 0 )
+  , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -471,7 +485,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_sum_ = es.gradient_sum_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -524,6 +540,19 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool activation = e.get_activation();
+
+  if ( previous_event_was_activation_ )
+  {
+    if ( activation )
+    {
+      return false;
+    }
+
+    t_spike_previous_ = t_spike;
+    t_previous_trigger_spike_ = t_spike;
+  }
+
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
@@ -541,8 +570,8 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
   if ( t_spike_previous_ > 0 )
   {
-    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_spike_previous_ );
+    presyn_isis_.push_back(
+      std::min( t_spike, t_next_update_ + shift ) - std::min( t_spike_previous_, t_next_update_ + shift ) );
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -550,26 +579,50 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
 
-    target->write_update_to_history( t_previous_update_, t_current_update );
+    target->write_update_to_history( t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
 
     const double gradient = target->compute_gradient(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
+    gradient_sum_ += gradient;
+    if ( not activation )
+    {
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_sum_, weight_ );
+      gradient_sum_ = 0.0;
+    }
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
 
     t_previous_trigger_spike_ = t_spike;
   }
+  else
+  {
+    if ( not activation and previous_event_was_activation_ )
+    {
+      const long idx_current_update = ( t_spike - shift ) / update_interval;
+      const long t_current_update = idx_current_update * update_interval;
 
-  t_spike_previous_ = t_spike;
+      target->write_update_to_history(
+        t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_sum_, weight_ );
+      gradient_sum_ = 0.0;
+    }
+  }
+
+  if ( not activation )
+  {
+    t_spike_previous_ = t_spike;
+
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
+
+  previous_event_was_activation_ = activation;
 
   return true;
 }

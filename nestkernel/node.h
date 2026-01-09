@@ -495,6 +495,16 @@ public:
    *
    * @throws IllegalConnection
    */
+  virtual void register_synapse();
+
+  /**
+   * @brief Registers an eprop synapse and initializes the update history.
+   *
+   * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
+   * models and to the negative transmission delay from the recurrent to the output layer otherwise.
+   *
+   * @throws IllegalConnection
+   */
   virtual void register_eprop_connection();
 
   /**
@@ -525,7 +535,11 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
+    const bool activation,
+    const bool previous_event_was_activation,
     const long eprop_isi_trace_cutoff = 0 );
+
+  virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**
    * Retrieves the maximum number of time steps integrated between two consecutive spikes.
@@ -834,8 +848,8 @@ public:
    * Compute gradient change for eprop synapses.
    *
    * This method is called from an eprop synapse on the eprop target neuron. It updates various parameters related to
-   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in Korcsak-Gorzo,
-   * Stapmanns, and Espinoza Valverde et al. (in preparation).
+   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+   * Korcsak-Gorzo et al. (2025).
    *
    * @param t_spike [in] Time of the current spike.
    * @param t_spike_previous [in] Time of the previous spike.
@@ -858,7 +872,10 @@ public:
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
-    WeightOptimizer* optimizer );
+    WeightOptimizer* optimizer,
+    bool activation,
+    bool previous_event_was_activation,
+    double& sum_grad );
 
   /**
    * Compute gradient change for eprop synapses.

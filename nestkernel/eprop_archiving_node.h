@@ -38,8 +38,8 @@ namespace nest
  * @brief Base class implementing archiving for node models supporting e-prop plasticity.
  *
  * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
- * according to Bellec et al. (2020) and supporting additional biological features described in Korcsak-Gorzo,
- * Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * according to Bellec et al. (2020) and supporting additional biological features described in
+ * Korcsak-Gorzo et al. (2025).
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
@@ -66,10 +66,13 @@ public:
    */
   EpropArchivingNode( const EpropArchivingNode& other );
 
+  void register_synapse() override;
   void register_eprop_connection() override;
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
+    const bool activation,
+    const bool previous_event_was_activation,
     const long eprop_isi_trace_cutoff = 0 ) override;
 
   /**
@@ -104,7 +107,7 @@ public:
    *
    * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
    */
-  void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
+  void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**
    * @brief Retrieves eprop history size.
@@ -132,6 +135,9 @@ protected:
 
   //! History of dynamic variables needed for e-prop plasticity.
   std::vector< HistEntryT > eprop_history_;
+
+  // Count of leading entries in eprop_history that are scheduled for erasure.
+  size_t eprop_head_ = 0;
 
   // The following shifts are, for now, hardcoded to 1 time step since the current
   // implementation only works if all the delays are equal to the simulation resolution.

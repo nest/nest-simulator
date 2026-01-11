@@ -143,6 +143,7 @@ extern const Name continuous;
 extern const Name count_covariance;
 extern const Name count_histogram;
 extern const Name covariance;
+extern const Name cycle_time_log;
 
 extern const Name Delta_T;
 extern const Name Delta_V;

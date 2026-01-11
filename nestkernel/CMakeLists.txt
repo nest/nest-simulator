@@ -34,6 +34,7 @@ set ( nestkernel_sources
       connector_base.h connector_base_impl.h
       connector_model.h connector_model_impl.h connector_model.cpp
       connection_id.h connection_id.cpp
+      cycle_time_log.h cycle_time_log.cpp
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h

@@ -116,6 +116,7 @@ const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
+const Name cycle_time_log( "cycle_time_log" );
 
 const Name Delta_T( "Delta_T" );
 const Name Delta_V( "Delta_V" );

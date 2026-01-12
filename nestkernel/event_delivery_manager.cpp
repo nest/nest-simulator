@@ -1086,4 +1086,18 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
+#ifdef CYCLE_TIMERS
+double
+EventDeliveryManager::get_sw_communicate_spike_data() const
+{
+  return sw_communicate_spike_data_.elapsed();
+}
+
+unsigned long
+EventDeliveryManager::get_local_spike_counter() const
+{
+  return std::accumulate(local_spike_counter_.begin(), local_spike_counter_.end(), 0UL);
+}
+#endif
+
 } // of namespace nest

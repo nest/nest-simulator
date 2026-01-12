@@ -368,6 +368,21 @@ private:
   void send_local_( Node& source, EventT& e, const long lag );
   void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
+
+#ifdef CYCLE_TIMERS
+  /**
+   * Returns the elapsed time of sw_communicate_spike_data_
+   * Used in SimulationManager::update_() for cycle timers 
+   */
+  double get_sw_communicate_spike_data() const;
+
+  /**
+   * Accumulates the spike counts stored in local_spike_counter_
+   * Used in SimulationManager::update_() for cycle timers 
+   */
+  unsigned long get_local_spike_counter() const;
+#endif
+
   //--------------------------------------------------//
 
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to

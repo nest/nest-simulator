@@ -119,6 +119,7 @@ set ( nestkernel_sources
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
       stopwatch.h stopwatch_impl.h
+      cycle_time_log.h cycle_time_log.cpp
       )
 
 
@@ -134,13 +135,6 @@ if ( HAVE_MPI )
     ${nestkernel_sources}
     recording_backend_mpi.h recording_backend_mpi.cpp
     stimulation_backend_mpi.h stimulation_backend_mpi.cpp
-  )
-endif ()
-
-if ( CYCLE_TIMERS )
-  set( nestkernel_sources
-    ${nestkernel_sources}
-    cycle_time_log.h cycle_time_log.cpp
   )
 endif ()
 

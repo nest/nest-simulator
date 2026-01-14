@@ -109,14 +109,7 @@ nest::multimeter::Parameters_::get( Dictionary& d ) const
 {
   d[ names::interval ] = interval_.get_ms();
   d[ names::offset ] = offset_.get_ms();
-
-  // JME: Why can't this be done using std::copy?
-  std::vector< std::string > ad;
-  for ( size_t j = 0; j < record_from_.size(); ++j )
-  {
-    ad.push_back( record_from_[ j ] );
-  }
-  d[ names::record_from ] = ad;
+  d[ names::record_from ] = record_from_;
 }
 
 void

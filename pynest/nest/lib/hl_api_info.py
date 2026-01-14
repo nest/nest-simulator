@@ -57,7 +57,7 @@ def helpdesk():
 
     """
 
-    docdir = nestkernel.ll_api_get_kernel_status()["docdir"]
+    docdir = nestkernel.llapi_get_kernel_status()["build_info"]["docdir"]
     help_fname = os.path.join(docdir, "html", "index.html")
 
     if not os.path.isfile(help_fname):

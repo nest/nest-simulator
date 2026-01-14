@@ -931,7 +931,7 @@ class SynapseCollection:
             return
 
         if isinstance(params, (list, tuple)) and self.__len__() != len(params):
-            raise TypeError(f"status dict must be a dict, or a list of dicts of length {self.__len__()}")
+            raise TypeError(f"Status dict must be a dict, or a list of dicts of length {self.__len__()}")
 
         if kwargs and params is None:
             params = kwargs
@@ -1068,7 +1068,7 @@ class Parameter:
         """Parameters must be created using the CreateParameter command."""
         if not isinstance(datum, nestkernel.ParameterObject):
             raise TypeError(
-                "expected low-level parameter object; use the 'CreateParameter()' function to create a 'Parameter'."
+                "Expected low-level parameter object; use the 'CreateParameter()' function to create a 'Parameter'."
             )
         self._datum = datum
 

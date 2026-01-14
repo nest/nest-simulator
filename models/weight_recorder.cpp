@@ -70,9 +70,9 @@ nest::weight_recorder::Parameters_::get( Dictionary& d ) const
 void
 nest::weight_recorder::Parameters_::set( const Dictionary& d )
 {
-  auto get_or_create_nc = [ &d ]( NodeCollectionPTR& nc, const std::string& key )
+  auto update_nc = [ &d ]( NodeCollectionPTR& nc, const std::string& key )
   {
-    if ( not d.empty() and d.known( key ) )
+    if ( d.known( key ) )
     {
       const auto value = d.at( key );
       if ( is_type< NodeCollectionPTR >( value ) )
@@ -86,8 +86,8 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
     }
   };
 
-  get_or_create_nc( senders_, names::senders );
-  get_or_create_nc( targets_, names::targets );
+  update_nc( senders_, names::senders );
+  update_nc( targets_, names::targets );
 }
 
 void

@@ -176,7 +176,7 @@ EOF
 archs = ["auto64"]
 config-settings = {}
 dependency-versions = "pinned"
-environment-pass = ["CIBW_BUILD_VERBOSITY"]
+environment-pass = ["CIBW_BUILD_VERBOSITY", "PIP_PREFER_BINARY", "PIP_ONLY_BINARY"]
 build-verbosity = 1
 before-all = """
   set -e
@@ -260,7 +260,12 @@ before-all = """
     export CMAKE_ARGS="${CMAKE_ARGS} -Dwith-hdf5=ON"
 
   elif command -v yum >/dev/null 2>&1; then
-    yum install -y git glibc glibc-devel gsl gsl-devel wget bzip2 cmake make gcc gcc-c++
+    yum install -y git glibc glibc-devel gsl gsl-devel wget bzip2 cmake make gcc gcc-c++ gcc-gfortran
+    # Install OpenBLAS for scipy (required for test dependencies)
+    yum install -y openblas-devel || echo "OpenBLAS not available via yum, scipy may need to build BLAS"
+    # Force pip to prefer binary wheels to avoid building scipy from source
+    export PIP_PREFER_BINARY=1
+    export PIP_ONLY_BINARY=scipy
     # Install boost from source on manylinux
     wget -q https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.bz2
     tar --bzip2 -xf boost_1_88_0.tar.bz2

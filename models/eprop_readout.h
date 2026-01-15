@@ -308,7 +308,10 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;

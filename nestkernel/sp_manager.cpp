@@ -644,34 +644,6 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v )
   global_shuffle( v, v.size() );
 }
 
-/*
-void
-nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
-{
-  assert( n <= v.size() );
-
-  // shuffle res using the global random number generator
-  unsigned int N = v.size();
-  std::vector< size_t > v2;
-  size_t tmp;
-  unsigned int rnd;
-  std::vector< size_t >::iterator rndi;
-  for ( unsigned int i = 0; i < n; i++ )
-  {
-    N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N );
-    tmp = v[ rnd ];
-    v2.push_back( tmp );
-    rndi = v.begin();
-    v.erase( rndi + rnd );
-  }
-  v = v2;
-}
-*/
-
-
-//This shuffle is in O(n) and use half of the memory used in the other function for n close to N
-
 void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
     assert(n <= v.size());
 

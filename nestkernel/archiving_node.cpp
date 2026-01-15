@@ -34,7 +34,9 @@ namespace nest
 // member functions for ArchivingNode
 
 nest::ArchivingNode::ArchivingNode()
-  : n_incoming_( 0 )
+  : activation_interval_( 3 * kernel().simulation_manager.get_eprop_update_interval().get_steps() )
+  , last_event_time_( 0 )
+  , n_incoming_( 0 )
   , Kminus_( 0.0 )
   , Kminus_triplet_( 0.0 )
   , tau_minus_( 20.0 )
@@ -49,6 +51,8 @@ nest::ArchivingNode::ArchivingNode()
 
 nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
   : StructuralPlasticityNode( n )
+  , activation_interval_( n.activation_interval_ )
+  , last_event_time_( n.last_event_time_ )
   , n_incoming_( n.n_incoming_ )
   , Kminus_( n.Kminus_ )
   , Kminus_triplet_( n.Kminus_triplet_ )

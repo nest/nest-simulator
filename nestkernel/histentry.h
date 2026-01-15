@@ -82,13 +82,13 @@ public:
   {
   }
 
-  friend bool operator<( const HistEntryEprop& he, long t );
+  friend bool operator<( const HistEntryEprop& a, const HistEntryEprop& b );
 };
 
 inline bool
-operator<( const HistEntryEprop& he, long t )
+operator<( const HistEntryEprop& a, const HistEntryEprop& b )
 {
-  return he.t_ < t;
+  return a.t_ < b.t_;
 }
 
 /**

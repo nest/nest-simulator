@@ -1,0 +1,113 @@
+/*
+ *  eprop_input_neuron.cpp
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+#include "eprop_input_neuron.h"
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+
+// Includes from sli:
+#include "dictutils.h"
+
+namespace nest
+{
+void
+register_eprop_input_neuron( const std::string& name )
+{
+  register_node_model< eprop_input_neuron >( name );
+}
+
+
+eprop_input_neuron::eprop_input_neuron()
+  : ArchivingNode()
+{
+}
+
+void
+eprop_input_neuron::init_buffers_()
+{
+  B_.n_spikes_.clear(); // includes resize
+  ArchivingNode::clear_history();
+}
+
+void
+eprop_input_neuron::update( Time const& origin, const long from, const long to )
+{
+  for ( long lag = from; lag < to; ++lag )
+  {
+    const long t = origin.get_steps() + lag;
+    const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
+    if ( current_spikes_n > 0 )
+    {
+      // create a new SpikeEvent, set its multiplicity and send it
+      SpikeEvent se;
+      se.set_multiplicity( current_spikes_n );
+      kernel().event_delivery_manager.send( *this, se, lag );
+
+      // set the spike times, respecting the multiplicity
+      for ( unsigned long i = 0; i < current_spikes_n; i++ )
+      {
+        set_spiketime( Time::step( t + 1 ) );
+      }
+      last_event_time_ = t;
+    }
+    else if ( last_event_time_ > 0 and t - last_event_time_ >= activation_interval_ )
+    {
+      SpikeEvent se;
+      se.set_activation();
+      kernel().event_delivery_manager.send( *this, se, lag );
+      last_event_time_ = t;
+    }
+  }
+}
+
+void
+eprop_input_neuron::get_status( DictionaryDatum& d ) const
+{
+  ArchivingNode::get_status( d );
+}
+
+void
+eprop_input_neuron::set_status( const DictionaryDatum& d )
+{
+  ArchivingNode::set_status( d );
+}
+
+void
+eprop_input_neuron::handle( SpikeEvent& e )
+{
+  // Repeat only spikes incoming on port 0, port 1 will be ignored
+  if ( 0 == e.get_rport() )
+  {
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      static_cast< double >( e.get_multiplicity() ) );
+  }
+}
+
+} // namespace

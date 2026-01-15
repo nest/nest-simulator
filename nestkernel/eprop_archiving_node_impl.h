@@ -50,6 +50,13 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 
 template < typename HistEntryT >
 void
+EpropArchivingNode< HistEntryT >::register_synapse()
+{
+  ++eprop_indegree_;
+}
+
+template < typename HistEntryT >
+void
 EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
   ++eprop_indegree_;
@@ -72,6 +79,8 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
+  const bool activation,
+  const bool previous_event_was_activation,
   const long eprop_isi_trace_cutoff )
 {
   if ( eprop_indegree_ == 0 )
@@ -80,32 +89,35 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   }
 
   const long shift = model_dependent_history_shift_();
+  const long t_curr_update_shifted = t_current_update + shift;
+  const long t_prev_update_shifted = t_previous_update + shift;
 
-  const auto it_hist_curr = get_update_history( t_current_update + shift );
-
-  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
+  if ( not activation )
   {
-    ++it_hist_curr->access_counter_;
-  }
-  else
-  {
-    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+    auto it_hist_curr = get_update_history( t_curr_update_shifted );
 
-    if ( not history_shift_required_() )
+    if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_curr_update_shifted )
     {
-      erase_used_eprop_history( eprop_isi_trace_cutoff );
+      ++it_hist_curr->access_counter_;
+    }
+    else
+    {
+      update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_curr_update_shifted, 1 ) );
     }
   }
 
-  const auto it_hist_prev = get_update_history( t_previous_update + shift );
-
-  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
+  if ( not previous_event_was_activation )
   {
-    // If an entry exists for the previous update time, decrement its access counter
-    --it_hist_prev->access_counter_;
-    if ( it_hist_prev->access_counter_ == 0 )
+    auto it_hist_prev = get_update_history( t_prev_update_shifted );
+
+    if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_prev_update_shifted )
     {
-      update_history_.erase( it_hist_prev );
+      // If an entry exists for the previous update time, decrement its access counter
+      --it_hist_prev->access_counter_;
+      if ( it_hist_prev->access_counter_ == 0 )
+      {
+        update_history_.erase( it_hist_prev );
+      }
     }
   }
 }
@@ -159,27 +171,43 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, const long t_spike_previous )
 {
-  if ( eprop_history_.empty()     // nothing to remove
-    or update_history_.size() < 2 // no time markers to check
-  )
+
+  if ( not update_history_.empty() and update_history_.back().t_ == t_spike )
+  {
+    ++update_history_.back().access_counter_;
+  }
+  else
+  {
+    update_history_.emplace_back( t_spike, 1 );
+  }
+
+  if ( t_spike_previous != 0 )
+  {
+    auto it_hist_prev = std::lower_bound( update_history_.begin(), update_history_.end(), t_spike_previous );
+
+    if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_spike_previous )
+    {
+      --it_hist_prev->access_counter_;
+      if ( it_hist_prev->access_counter_ == 0 )
+      {
+        update_history_.erase( it_hist_prev );
+      }
+    }
+  }
+
+  if ( eprop_history_.empty() )
   {
     return;
   }
+  const long time_end = update_history_.front().t_ - 1;
+  auto it_end = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_end );
 
-  const long t_prev = ( update_history_.end() - 2 )->t_;
-  const long t_curr = ( update_history_.end() - 1 )->t_;
-
-  if ( t_prev + eprop_isi_trace_cutoff < t_curr )
+  if ( it_end != eprop_history_.end() and it_end->t_ == time_end )
   {
-    // erase no longer needed entries to be ignored by trace cutoff
-    eprop_history_.erase( get_eprop_history( t_prev + eprop_isi_trace_cutoff ), get_eprop_history( t_curr ) );
+    eprop_history_.erase( eprop_history_.begin(), it_end );
   }
-
-  // erase no longer needed entries before the earliest current update
-  eprop_history_.erase(
-    get_eprop_history( std::numeric_limits< long >::min() ), get_eprop_history( update_history_.begin()->t_ - 1 ) );
 }
 
 template < typename HistEntryT >

@@ -2,7 +2,7 @@ name: Build NEST simulator wheels
 
 on:
   push:
-    branches: [master, pynest-ng]
+    branches: [master, pynest-ng, hep_pynest-ng]
   pull_request:
   release:
     types: [published]

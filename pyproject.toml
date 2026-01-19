@@ -291,7 +291,7 @@ before-all = """
 [[tool.cibuildwheel.overrides]]
 select = "*-macos*"
 inherit.environment = "append"
-environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }  # Match Homebrew library targets
+environment = { MACOSX_DEPLOYMENT_TARGET = "26.0" }  # Match Homebrew library targets
 # Add scipy back for macOS builds where it works reliably
 test-requires = [
   "isort",

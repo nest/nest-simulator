@@ -184,22 +184,9 @@ before-all = """
   # Clean up any existing build artifacts
   rm -rf build/ *.so *.c 2>/dev/null || true
 
-  # =============================================================================
-  # PLATFORM-SPECIFIC DEPENDENCY INSTALLATION AND CONFIGURATION
-  # =============================================================================
-  # This section handles the installation of system dependencies based on the
-  # detected platform. Each platform has specific requirements and paths that
-  # need to be configured correctly for NEST to build successfully.
-
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    # =========================================================================
-    # macOS Universal Setup - Supporting both Intel and Apple Silicon
-    # =========================================================================
-    # Supports both architectures with proper Homebrew path detection:
-    # - Intel (x86_64): /usr/local (traditional Homebrew path)
-    # - ARM64 (Apple Silicon): /opt/homebrew (Apple Silicon Homebrew path)
-
-    ARCH=$(arch)
+    # Use uname -m instead of arch for macOS architecture detection
+    ARCH=$(uname -m)
     echo "=== macOS $ARCH Setup ==="
     echo "Architecture: $ARCH | OS: $OSTYPE"
 
@@ -208,7 +195,7 @@ before-all = """
       # Apple Silicon - uses /opt/homebrew
       EXPECTED_BREW_PREFIX="/opt/homebrew"
       echo "Detected Apple Silicon (ARM64) - using $EXPECTED_BREW_PREFIX"
-    elif [[ "$ARCH" == "i386" ]] || [[ "$ARCH" == "x86_64" ]]; then
+    elif [[ "$ARCH" == "x86_64" ]]; then
       # Intel - uses /usr/local
       EXPECTED_BREW_PREFIX="/usr/local"
       echo "Detected Intel ($ARCH) - using $EXPECTED_BREW_PREFIX"
@@ -219,7 +206,7 @@ before-all = """
 
     # Install dependencies and configure OpenMP
     brew install llvm libomp gsl libtool open-mpi graphviz ncurses cmake hdf5
-    brew install boost@1.85 # Ensure compatible boost version
+    brew install boost@1.85
     brew link boost@1.85 --force
     brew link --force libomp
 
@@ -260,10 +247,8 @@ before-all = """
 
   elif command -v yum >/dev/null 2>&1; then
     yum install -y git glibc glibc-devel gsl gsl-devel wget bzip2 cmake make gcc gcc-c++ gcc-gfortran
-    # Force pip to use only binary wheels for problematic packages
     export PIP_PREFER_BINARY=1
     export PIP_ONLY_BINARY="scipy,numpy,pandas"
-    # Install boost from source on manylinux
     wget -q https://archives.boost.io/release/1.88.0/source/boost_1_88_0.tar.bz2
     tar --bzip2 -xf boost_1_88_0.tar.bz2
     cd boost_1_88_0
@@ -290,7 +275,7 @@ before-all = """
 [[tool.cibuildwheel.overrides]]
 select = "*-macos*"
 inherit.environment = "append"
-environment = { MACOSX_DEPLOYMENT_TARGET = "26.0" }  # Match Homebrew library targets
+environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }  # Changed for modern compatibility
 # Add scipy back for macOS builds where it works reliably
 test-requires = [
   "isort",

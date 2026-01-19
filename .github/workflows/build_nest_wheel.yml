@@ -17,7 +17,7 @@ jobs:
       matrix:
         # TODO: Conditional matrix: fewer builds for PRs, full builds for releases/pushes
         # os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-24.04"]') || fromJSON('["macos-15-intel", "macos-15", "ubuntu-24.04"]') }}
-        os: ["macos-15-intel", "macos-15", "macos-26", "ubuntu-24.04"]
+        os: ["macos-15-intel", "macos-15", "ubuntu-24.04"]
     steps:
       - uses: actions/checkout@v4
 
@@ -105,9 +105,6 @@ jobs:
           - os: macos-15
             name-suffix: "macos-arm"
             artifact-os: "macos-15"
-          - os: macos-26
-            name-suffix: "macos-26"
-            artifact-os: "macos-26"
     steps:
       - name: Download wheels
         uses: actions/download-artifact@v4

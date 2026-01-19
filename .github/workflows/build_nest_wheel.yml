@@ -162,7 +162,7 @@ jobs:
           python -m pip install "$wheel_file" numpy matplotlib cython
 
           # Test import
-          python -c "import nest; print('Local wheel test successful:', nest.__version__)"
+          python -c "import nest; print('Local wheel test successful:', nest.help())"
 
   test_uploaded_package:
     name: Test uploaded package on ${{ matrix.os }}
@@ -271,7 +271,7 @@ jobs:
             python -m pip install --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple nest-simulator
           fi
-          python -c "import nest; print('NEST import successful:', nest.__version__)"
+          python -c "import nest; print('NEST import successful:', nest.nest.help())"
           python -c "
           import nest
           import time

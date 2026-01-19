@@ -110,13 +110,6 @@ class NestModule(types.ModuleType):
         type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
         type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
 
-        # Set version using the low-level API
-        try:
-            self.__version__ = ll_api.sli_func("statusdict /version get")  # noqa: F821
-        except Exception:
-            # Fallback version if sli_func is not available
-            self.__version__ = "PYNEST-NG"
-
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
@@ -149,17 +142,36 @@ class NestModule(types.ModuleType):
     # * Do not end docstrings with punctuation. A `.` or `,` is added by the
     #   formatting logic.
 
-    kernel_status = KernelAttribute("dict", "Get the complete kernel status", readonly=True)
-    resolution = KernelAttribute("float", "The resolution of the simulation (in ms)", default=0.1)
+    kernel_status = KernelAttribute(
+        "dict", "Get the complete kernel status", readonly=True
+    )
+    resolution = KernelAttribute(
+        "float", "The resolution of the simulation (in ms)", default=0.1
+    )
     biological_time = KernelAttribute("float", "The current simulation time (in ms)")
-    build_info = KernelAttribute("dict", "Information about the build and compile configuration of NEST", readonly=True)
-    memory_size = KernelAttribute("int", "Memory size of NEST process in kB (-1 if unavailable)", readonly=True)
-    to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
-    max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
-    min_delay = KernelAttribute("float", "The minimum delay in the network", default=0.1)
+    build_info = KernelAttribute(
+        "dict",
+        "Information about the build and compile configuration of NEST",
+        readonly=True,
+    )
+    memory_size = KernelAttribute(
+        "int", "Memory size of NEST process in kB (-1 if unavailable)", readonly=True
+    )
+    to_do = KernelAttribute(
+        "int", "The number of steps yet to be simulated", readonly=True
+    )
+    max_delay = KernelAttribute(
+        "float", "The maximum delay in the network", default=0.1
+    )
+    min_delay = KernelAttribute(
+        "float", "The minimum delay in the network", default=0.1
+    )
     ms_per_tic = KernelAttribute(
         "float",
-        ("The number of milliseconds per tic. Calculated by " + "ms_per_tic = 1 / tics_per_ms"),
+        (
+            "The number of milliseconds per tic. Calculated by "
+            + "ms_per_tic = 1 / tics_per_ms"
+        ),
         readonly=True,
     )
     tics_per_ms = KernelAttribute(
@@ -175,8 +187,12 @@ class NestModule(types.ModuleType):
         "The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms",
         readonly=True,
     )
-    T_max = KernelAttribute("float", "The largest representable time value", readonly=True)
-    T_min = KernelAttribute("float", "The smallest representable time value", readonly=True)
+    T_max = KernelAttribute(
+        "float", "The largest representable time value", readonly=True
+    )
+    T_min = KernelAttribute(
+        "float", "The smallest representable time value", readonly=True
+    )
     rng_types = KernelAttribute(
         "list[str]",
         "List of available random number generator types",
@@ -189,10 +205,15 @@ class NestModule(types.ModuleType):
     )
     rng_seed = KernelAttribute(
         "int",
-        ("Seed value used as base for seeding NEST random number generators " + r"(:math:`1 \leq s\leq 2^{32}-1`)"),
+        (
+            "Seed value used as base for seeding NEST random number generators "
+            + r"(:math:`1 \leq s\leq 2^{32}-1`)"
+        ),
         default=143202461,
     )
-    total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
+    total_num_virtual_procs = KernelAttribute(
+        "int", "The total number of virtual processes", default=1
+    )
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
     off_grid_spiking = KernelAttribute(
@@ -207,12 +228,18 @@ class NestModule(types.ModuleType):
     )
     send_buffer_size_secondary_events = KernelAttribute(
         "int",
-        ("Size of MPI send buffers for communicating secondary events " + "(in bytes, per MPI rank, for developers)"),
+        (
+            "Size of MPI send buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
         readonly=True,
     )
     recv_buffer_size_secondary_events = KernelAttribute(
         "int",
-        ("Size of MPI recv buffers for communicating secondary events " + "(in bytes, per MPI rank, for developers)"),
+        (
+            "Size of MPI recv buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
         readonly=True,
     )
     buffer_size_spike_data = KernelAttribute(
@@ -227,7 +254,10 @@ class NestModule(types.ModuleType):
     )
     growth_factor_buffer_target_data = KernelAttribute(
         "float",
-        ("If MPI buffers for communication of connections resize on the " + "fly, grow them by this factor each round"),
+        (
+            "If MPI buffers for communication of connections resize on the "
+            + "fly, grow them by this factor each round"
+        ),
         default=1.5,
     )
     max_buffer_size_target_data = KernelAttribute(
@@ -271,7 +301,9 @@ class NestModule(types.ModuleType):
         readonly=True,
     )
 
-    use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
+    use_wfr = KernelAttribute(
+        "bool", "Whether to use waveform relaxation method", default=True
+    )
     wfr_comm_interval = KernelAttribute(
         "float",
         "Desired waveform relaxation communication interval",
@@ -290,7 +322,9 @@ class NestModule(types.ModuleType):
     wfr_interpolation_order = KernelAttribute(
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
     )
-    max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
+    max_num_syn_models = KernelAttribute(
+        "int", "Maximal number of synapse models supported", readonly=True
+    )
     structural_plasticity_synapses = KernelAttribute(
         "dict",
         (
@@ -329,13 +363,17 @@ class NestModule(types.ModuleType):
         "A path, where all data is written to, defaults to current directory",
     )
     data_prefix = KernelAttribute("str", "A common prefix for all data files")
-    overwrite_files = KernelAttribute("bool", "Whether to overwrite existing data files", default=False)
+    overwrite_files = KernelAttribute(
+        "bool", "Whether to overwrite existing data files", default=False
+    )
     print_time = KernelAttribute(
         "bool",
         "Whether to print progress information during the simulation",
         default=False,
     )
-    network_size = KernelAttribute("int", "The number of nodes in the network", readonly=True)
+    network_size = KernelAttribute(
+        "int", "The number of nodes in the network", readonly=True
+    )
     num_connections = KernelAttribute(
         "int",
         "The number of connections in the network",
@@ -435,7 +473,9 @@ class NestModule(types.ModuleType):
     )
 
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
-    _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
+    _kernel_attr_names = builtins.set(
+        k for k, v in vars().items() if isinstance(v, KernelAttribute)
+    )
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )

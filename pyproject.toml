@@ -34,6 +34,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: C++",
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Medical Science Apps.",
@@ -213,7 +214,7 @@ before-all = """
       EXPECTED_BREW_PREFIX="/usr/local"
       echo "Detected Intel ($ARCH) - using $EXPECTED_BREW_PREFIX"
     else
-      echo "❌ Unsupported architecture: $ARCH"
+      echo "Unsupported architecture: $ARCH"
       exit 1
     fi
 
@@ -229,7 +230,7 @@ before-all = """
 
     # Verify Homebrew installation location matches architecture
     if [[ "$HOMEBREW_PREFIX" != "$EXPECTED_BREW_PREFIX" ]]; then
-      echo "⚠️  Warning: Homebrew prefix mismatch. Expected $EXPECTED_BREW_PREFIX, got $HOMEBREW_PREFIX"
+      echo "Warning: Homebrew prefix mismatch. Expected $EXPECTED_BREW_PREFIX, got $HOMEBREW_PREFIX"
       echo "Continuing with detected path: $HOMEBREW_PREFIX"
     fi
 
@@ -245,7 +246,7 @@ before-all = """
 
     # Verify OpenMP installation
     [[ -f "$LIBOMP_PATH/lib/libomp.dylib" ]] || {
-      echo "❌ OpenMP not found at $LIBOMP_PATH/lib/libomp.dylib"
+      echo "OpenMP not found at $LIBOMP_PATH/lib/libomp.dylib"
       exit 1
     }
 
@@ -304,3 +305,20 @@ test-requires = [
   "pytest-xdist",
   "scipy",
 ]
+
+[tool.pytest.ini_options]
+markers = [
+    "skipif_missing_gsl: skip test if NEST was built without GSL support",
+    "skipif_missing_hdf5: skip test if NEST was built without HDF5 support",
+    "skipif_missing_mpi: skip test if NEST was built without MPI support",
+    "skipif_missing_threads: skip test if NEST was built without multithreading support",
+    "skipif_incompatible_mpi: skip test if NEST was built with OpenMPI < 5.0.7",
+    "simulation: the simulation class to use. Always pass a 2nd dummy argument"
+]
+
+[tool.isort]
+profile = "black"
+known_third_party = "nest"
+
+[tool.black]
+line-length = 120

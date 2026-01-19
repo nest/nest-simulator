@@ -69,8 +69,7 @@ Verify that NEST installed successfully:
 
 .. code-block:: bash
 
-   python -c "import nest; print('NEST version:', nest.__version__)"
-
+   python -c "import nest; print('NEST Version:', nest.build_info["version"])"
 .. note::
 
    The package name is ``nest-simulator`` but you import it as ``nest`` in Python.

@@ -48,6 +48,12 @@ target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
 )
 
+# Install the models headers
+if(NOT "${SKBUILD}" STREQUAL "")
+  set( CMAKE_INSTALL_INCLUDEDIR "nest/include")
+endif()
+
+
 FILTER_HEADERS("${models_sources}" install_headers)
 install(FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

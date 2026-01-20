@@ -161,6 +161,11 @@ target_include_directories( nestkernel PRIVATE
 )
 
 FILTER_HEADERS( "${nestkernel_sources}" install_headers )
+
+if(NOT "${SKBUILD}" STREQUAL "")
+  set( CMAKE_INSTALL_INCLUDEDIR "nest/include")
+endif()
+
 install( FILES ${install_headers}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
 )

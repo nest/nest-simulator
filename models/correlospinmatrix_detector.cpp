@@ -392,7 +392,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       // yet every impulse in the queue that is further in the past than
       // this minimum - tau_max cannot contribute to the count covariance
       long t_min_on = t_i_on;
-      for ( auto n = 0; n < P_.N_channels_; n++ )
+      for ( size_t n = 0; n < P_.N_channels_; n++ )
       {
         if ( S_.curr_state_[ n ] )
         {

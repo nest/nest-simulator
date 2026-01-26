@@ -43,7 +43,6 @@ def main():
         logger.info("==> Starting NEST Server Master on rank 0")
         nest.server.set_mpi_comm(comm)
         nest.server.run_mpi_app(host=opt.get("--host", HOST), port=opt.get("--port", PORT))
-
     else:
         logger.info(f"==> Starting NEST Server Worker on rank {rank}")
         nest.server.set_mpi_comm(comm)

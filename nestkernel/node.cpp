@@ -237,7 +237,7 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long, const long, const bool, const bool, const long )
+Node::write_update_to_history( const long, const long, const bool, const bool )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }

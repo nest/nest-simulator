@@ -60,11 +60,11 @@ public:
   size_t
     access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 
-  friend bool operator<( const histentry_extended he, double t );
+  friend bool operator<( const histentry_extended& he, double t );
 };
 
 inline bool
-operator<( const histentry_extended he, double t )
+operator<( const histentry_extended& he, double t )
 {
   return he.t_ < t;
 }
@@ -89,6 +89,18 @@ inline bool
 operator<( const HistEntryEprop& a, const HistEntryEprop& b )
 {
   return a.t_ < b.t_;
+}
+
+inline bool
+operator<( const HistEntryEprop& e, long t )
+{
+  return e.t_ < t;
+}
+
+inline bool
+operator<( long t, const HistEntryEprop& e )
+{
+  return t < e.t_;
 }
 
 /**

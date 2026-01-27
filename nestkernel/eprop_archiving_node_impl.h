@@ -80,8 +80,7 @@ void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
   const bool activation,
-  const bool previous_event_was_activation,
-  const long eprop_isi_trace_cutoff )
+  const bool previous_event_was_activation )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -173,40 +172,81 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, const long t_spike_previous )
 {
+  auto it_hist = get_update_history( t_spike );
 
-  if ( not update_history_.empty() and update_history_.back().t_ == t_spike )
+  if ( it_hist != update_history_.end() and it_hist->t_ == t_spike )
   {
-    ++update_history_.back().access_counter_;
+    ++it_hist->access_counter_;
   }
   else
   {
-    update_history_.emplace_back( t_spike, 1 );
+    update_history_.emplace( it_hist, t_spike, 1 );
   }
 
-  if ( t_spike_previous != 0 )
+  if ( t_spike_previous > 0 )
   {
-    auto it_hist_prev = std::lower_bound( update_history_.begin(), update_history_.end(), t_spike_previous );
+    auto it_hist_prev = get_update_history( t_spike_previous );
 
     if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_spike_previous )
     {
-      --it_hist_prev->access_counter_;
+      if ( it_hist_prev->access_counter_ > 0 )
+      {
+        --it_hist_prev->access_counter_;
+      }
       if ( it_hist_prev->access_counter_ == 0 )
       {
         update_history_.erase( it_hist_prev );
       }
     }
+
+    const long cutoff = Time( Time::ms( get_eprop_isi_trace_cutoff() ) ).get_steps();
+
+    const long erase_candidate_begin = t_spike_previous - 1;
+    const long erase_candidate_end = erase_candidate_begin + cutoff;
+
+    long erase_begin = erase_candidate_begin;
+    long erase_end = erase_candidate_end;
+
+    const long search_begin = std::max( 0L, erase_candidate_begin - cutoff );
+    const long search_end = erase_candidate_end;
+
+    auto it_search_begin = get_update_history( search_begin );
+    auto it_search_end = std::lower_bound( it_search_begin, update_history_.end(), search_end + 1 );
+
+    for ( auto it = it_search_begin; it != it_search_end and erase_begin < erase_end; ++it )
+    {
+      const long required_begin = it->t_ - 1;
+      const long required_end = required_begin + cutoff;
+
+      if ( required_begin >= erase_candidate_begin and required_begin <= erase_candidate_end )
+      {
+        erase_end = std::min( erase_end, required_begin );
+      }
+      if ( required_end >= erase_candidate_begin and required_end <= erase_candidate_end )
+      {
+        erase_begin = std::max( erase_begin, required_end );
+      }
+    }
+
+    const auto it_erase_begin = get_eprop_history( erase_begin );
+    const auto it_erase_end = get_eprop_history( erase_end );
+    if ( it_erase_begin < it_erase_end )
+    {
+      eprop_history_.erase( it_erase_begin, it_erase_end );
+    }
   }
 
-  if ( eprop_history_.empty() )
+  if ( update_history_.empty() or eprop_history_.empty() )
   {
     return;
   }
-  const long time_end = update_history_.front().t_ - 1;
-  auto it_end = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_end );
 
-  if ( it_end != eprop_history_.end() and it_end->t_ == time_end )
+  const long time_keep = update_history_.front().t_ - 1;
+  auto it_keep = get_eprop_history( time_keep );
+
+  if ( it_keep != eprop_history_.end() and it_keep->t_ == time_keep and it_keep != eprop_history_.begin() )
   {
-    eprop_history_.erase( eprop_history_.begin(), it_end );
+    eprop_history_.erase( eprop_history_.begin(), it_keep );
   }
 }
 

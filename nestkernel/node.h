@@ -536,8 +536,7 @@ public:
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
     const bool activation,
-    const bool previous_event_was_activation,
-    const long eprop_isi_trace_cutoff = 0 );
+    const bool previous_event_was_activation );
 
   virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 

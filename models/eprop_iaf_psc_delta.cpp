@@ -439,19 +439,14 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  if ( not previous_event_was_activation )
-  {
-    sum_grad = 0.0; // sum of gradients
-  }
-
-  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
-
   const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
   const long t_compute_until = std::min( cutoff_end, t_spike );
 
   if ( not previous_event_was_activation )
   {
+    sum_grad = 0.0;                // sum of gradients
     double z_current_buffer = 1.0; // spike that triggered current computation
+    auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
     for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
     {
@@ -459,16 +454,16 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
       z_previous_buffer = z_current_buffer;
       z_current_buffer = 0.0;
 
-      const double psi = eprop_hist_it->surrogate_gradient_;          // surrogate gradient
-      const double L = eprop_hist_it->learning_signal_;               // learning signal
-      const double firing_rate_reg = eprop_hist_it->firing_rate_reg_; // firing rate regularization
+      const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
+      const double L = eprop_hist_it->learning_signal_;      // learning signal
+      const double fr_reg = eprop_hist_it->firing_rate_reg_; // firing rate regularization
 
       z_bar = V_.P_v_m_ * z_bar + z;
       const double e = psi * z_bar; // eligibility trace
       e_bar = P_.kappa_ * e_bar + e;
       e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
-      const double grad = L * e_bar + firing_rate_reg * e_bar_reg;
+      const double grad = L * e_bar + fr_reg * e_bar_reg;
 
       if ( optimize_each_step )
       {

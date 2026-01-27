@@ -69,9 +69,7 @@ public:
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
     const bool activation,
-    const bool previous_event_was_activation,
-    const long eprop_isi_trace_cutoff = 0 ) override;
-
+    const bool previous_event_was_activation ) override;
   /**
    * Retrieves the update history entry for a specific time step.
    *

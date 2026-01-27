@@ -320,19 +320,14 @@ eprop_readout::compute_gradient( const long t_spike,
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  if ( not previous_event_was_activation )
-  {
-    sum_grad = 0.0; // sum of gradients
-  }
-
-  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
-
   const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
   const long t_compute_until = std::min( cutoff_end, t_spike );
 
   if ( not previous_event_was_activation )
   {
+    sum_grad = 0.0;                // sum of gradients
     double z_current_buffer = 1.0; // spike that triggered current computation
+    auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
     for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
     {

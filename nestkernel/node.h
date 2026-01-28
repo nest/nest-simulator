@@ -538,6 +538,23 @@ public:
     const bool activation,
     const bool previous_event_was_activation );
 
+  /**
+   * Erases used e-prop history for bsshslm_2020 models.
+   *
+   * Removes history entries for update intervals without spikes and entries older than required.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void erase_used_eprop_history();
+
+  /**
+   * Erases used e-prop history based on inter-spike interval.
+   *
+   * @param t_spike The time step of the current spike.
+   * @param t_spike_previous The time step of the previous spike.
+   *
+   * @throws IllegalConnection
+   */
   virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**

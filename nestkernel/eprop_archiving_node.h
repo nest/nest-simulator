@@ -92,7 +92,7 @@ public:
    * Erases e-prop history entries for update intervals during which no spikes were sent to the target neuron,
    * and any entries older than the earliest time stamp required by the first update in the history.
    */
-  void erase_used_eprop_history();
+  void erase_used_eprop_history() override;
 
   /**
    * @brief Erases the used eprop history.
@@ -102,7 +102,7 @@ public:
    *
    * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
    */
-  void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
+  void erase_used_eprop_history( const long t_spike, const long t_spike_previous ) override;
 
   /**
    * @brief Retrieves eprop history size.

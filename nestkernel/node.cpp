@@ -238,6 +238,12 @@ Node::write_update_to_history( const long, const long, const bool, const bool )
 }
 
 void
+Node::erase_used_eprop_history()
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
 Node::erase_used_eprop_history( const long, const long )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );

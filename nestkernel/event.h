@@ -994,19 +994,19 @@ Event::set_stamp( Time const& s )
 inline void
 Event::set_activation()
 {
-  sender_spike_data_.set_activation_marker();
+  sender_spike_data_.set_activation_event();
 }
 
 inline void
 Event::unset_activation()
 {
-  sender_spike_data_.unset_activation_marker();
+  sender_spike_data_.unset_activation_event();
 }
 
 inline bool
 Event::get_activation()
 {
-  return sender_spike_data_.is_activation_marker();
+  return sender_spike_data_.is_activation_event();
 }
 
 inline long

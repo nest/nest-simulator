@@ -664,7 +664,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
           se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
-          if ( spike_data.is_activation_marker() )
+          if ( spike_data.is_activation_event() )
           {
             se_batch[ j ].set_activation();
           }
@@ -693,7 +693,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
         se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
-        if ( spike_data.is_activation_marker() )
+        if ( spike_data.is_activation_event() )
         {
           se_batch[ j ].set_activation();
         }
@@ -721,7 +721,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
 
-          if ( spike_data.is_activation_marker() )
+          if ( spike_data.is_activation_event() )
           {
             se_batch[ j ].set_activation();
           }
@@ -775,7 +775,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
-        if ( spike_data.is_activation_marker() )
+        if ( spike_data.is_activation_event() )
         {
           se_batch[ j ].set_activation();
         }

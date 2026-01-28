@@ -85,10 +85,10 @@ enum enum_status_spike_data_id
   SPIKE_DATA_ID_INVALID
 };
 
-enum enum_activation_id
+enum enum_activation_event
 {
-  SPIKE_DATA_ID_ACTIVATION_DEFAULT,
-  SPIKE_DATA_ID_ACTIVATION
+  NOT_ACTIVATION_EVENT,
+  IS_ACTIVATION_EVENT
 };
 
 /**
@@ -102,12 +102,12 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                                  //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;             //!< status flag
-  unsigned int activation_marker_ : NUM_BITS_MARKER_ACTIVATION;  //!< activation flag
-  unsigned int lag_ : NUM_BITS_LAG;                              //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                              //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                            //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                                //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;           //!< status flag
+  unsigned int activation_event_ : NUM_BITS_ACTIVATION_EVENT;  //!< activation flag
+  unsigned int lag_ : NUM_BITS_LAG;                            //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                            //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                          //!< synapse-type index
 
 public:
   SpikeData();
@@ -191,9 +191,9 @@ public:
   bool is_invalid_marker() const;
 
   /**
-   * Returns whether the marker is the default marker.
+   * Returns whether this spike is an activation event.
    */
-  bool is_activation_marker() const;
+  bool is_activation_event() const;
 
   /**
    * Returns offset.
@@ -201,14 +201,14 @@ public:
   double get_offset() const;
 
   /**
-   * Sets the activation marker.
+   * Marks this spike as an activation event.
    */
-  void set_activation_marker();
+  void set_activation_event();
 
   /**
-   * Unsets the activation marker.
+   * Marks this spike as a regular (non-activation) event.
    */
-  void unset_activation_marker();
+  void unset_activation_event();
 };
 
 //! check legal size
@@ -217,7 +217,7 @@ using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::succes
 inline SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
+  , activation_event_( NOT_ACTIVATION_EVENT )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -227,7 +227,7 @@ inline SpikeData::SpikeData()
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
   , marker_( rhs.marker_ )
-  , activation_marker_( rhs.activation_marker_ )
+  , activation_event_( rhs.activation_event_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
@@ -237,21 +237,21 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool activation )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
+  , activation_event_( NOT_ACTIVATION_EVENT )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
   if ( activation )
   {
-    activation_marker_ = SPIKE_DATA_ID_ACTIVATION;
+    activation_event_ = IS_ACTIVATION_EVENT;
   }
 }
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_marker_( SPIKE_DATA_ID_ACTIVATION_DEFAULT )
+  , activation_event_( NOT_ACTIVATION_EVENT )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -263,7 +263,7 @@ SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
-  activation_marker_ = rhs.activation_marker_;
+  activation_event_ = rhs.activation_event_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;
@@ -280,7 +280,7 @@ SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, cons
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
+  activation_event_ = NOT_ACTIVATION_EVENT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -295,7 +295,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
+  activation_event_ = NOT_ACTIVATION_EVENT;
   lag_ = lag;
   tid_ = target.get_tid();
   syn_id_ = target.get_syn_id();
@@ -381,9 +381,9 @@ SpikeData::is_invalid_marker() const
 }
 
 inline bool
-SpikeData::is_activation_marker() const
+SpikeData::is_activation_event() const
 {
-  return activation_marker_ == SPIKE_DATA_ID_ACTIVATION;
+  return activation_event_ == IS_ACTIVATION_EVENT;
 }
 
 inline double
@@ -393,15 +393,15 @@ SpikeData::get_offset() const
 }
 
 inline void
-SpikeData::set_activation_marker()
+SpikeData::set_activation_event()
 {
-  activation_marker_ = SPIKE_DATA_ID_ACTIVATION;
+  activation_event_ = IS_ACTIVATION_EVENT;
 }
 
 inline void
-SpikeData::unset_activation_marker()
+SpikeData::unset_activation_event()
 {
-  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
+  activation_event_ = NOT_ACTIVATION_EVENT;
 }
 
 class OffGridSpikeData : public SpikeData
@@ -498,7 +498,7 @@ OffGridSpikeData::set( const size_t tid,
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_marker_ = SPIKE_DATA_ID_ACTIVATION_DEFAULT;
+  activation_event_ = NOT_ACTIVATION_EVENT;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;

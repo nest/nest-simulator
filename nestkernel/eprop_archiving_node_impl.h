@@ -38,6 +38,8 @@ template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
   , eprop_indegree_( 0 )
+  , activation_interval_( 3000 )
+  , last_event_time_( 0 )
 {
 }
 
@@ -45,6 +47,8 @@ template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
   , eprop_indegree_( n.eprop_indegree_ )
+  , activation_interval_( n.activation_interval_ )
+  , last_event_time_( n.last_event_time_ )
 {
 }
 
@@ -255,6 +259,25 @@ inline double
 EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
 {
   return Time::get_resolution().get_ms() * eprop_history_.size();
+}
+
+template < typename HistEntryT >
+inline void
+EpropArchivingNode< HistEntryT >::get_status( DictionaryDatum& d ) const
+{
+  def< double >( d, names::activation_interval, activation_interval_ );
+}
+
+template < typename HistEntryT >
+inline void
+EpropArchivingNode< HistEntryT >::set_status( const DictionaryDatum& d )
+{
+  updateValue< double >( d, names::activation_interval, activation_interval_ );
+  if ( activation_interval_ < 0 )
+  {
+    throw BadProperty( "Interval between activations activation_interval ≥ 0 required." );
+  }
+  activation_interval_steps_ = Time( Time::ms( activation_interval_ ) ).get_steps();
 }
 
 } // namespace nest

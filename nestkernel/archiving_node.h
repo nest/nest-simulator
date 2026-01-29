@@ -98,12 +98,6 @@ public:
   void set_status( const DictionaryDatum& d ) override;
 
 protected:
-  //! Interval between two activations in steps.
-  long activation_interval_;
-
-  //! Time of last spike or activation event in steps.
-  long last_event_time_;
-
   /**
    * Record spike history
    */

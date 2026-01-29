@@ -24,8 +24,9 @@
 #define EPROP_INPUT_NEURON_H
 
 // Includes from nestkernel:
-#include "archiving_node.h"
 #include "connection.h"
+#include "eprop_archiving_node_impl.h"
+#include "eprop_archiving_node_recurrent.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -82,7 +83,7 @@ EndUserDocs */
 
 void register_eprop_input_neuron( const std::string& name );
 
-class eprop_input_neuron : public ArchivingNode
+class eprop_input_neuron : public EpropArchivingNodeRecurrent< false >
 {
 
 public:

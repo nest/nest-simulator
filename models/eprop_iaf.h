@@ -463,9 +463,6 @@ private:
     //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
     double eprop_isi_trace_cutoff_;
 
-    //! Interval between two activations.
-    long activation_interval_;
-
     //! Default constructor.
     Parameters_();
 
@@ -543,9 +540,6 @@ private:
 
     //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
     long eprop_isi_trace_cutoff_steps_;
-
-    //! Time steps of activation interval.
-    long activation_interval_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -660,6 +654,7 @@ eprop_iaf::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 inline void
 eprop_iaf::get_status( Dictionary& d ) const
 {
+  EpropArchivingNode::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -668,6 +663,7 @@ eprop_iaf::get_status( Dictionary& d ) const
 inline void
 eprop_iaf::set_status( const Dictionary& d )
 {
+  EpropArchivingNode::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

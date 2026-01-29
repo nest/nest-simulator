@@ -84,7 +84,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
-  , activation_interval_( 3 * kernel().simulation_manager.get_eprop_update_interval().get_ms() )
 {
 }
 
@@ -133,7 +132,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( Dictionary& d ) const
   d[ names::tau_m ] = tau_m_;
   d[ names::V_min ] = V_min_ + E_L_;
   d[ names::V_th ] = V_th_ + E_L_;
-  d[ names::activation_interval ] = activation_interval_;
 }
 
 double
@@ -161,7 +159,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node 
   update_value_param( d, names::gamma, gamma_, node );
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::regular_spike_arrival, regular_spike_arrival_, node );
-  update_value_param( d, names::activation_interval, activation_interval_, node );
   if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
     eprop_iaf_adapt_bsshslm_2020* nrn = dynamic_cast< eprop_iaf_adapt_bsshslm_2020* >( node );
@@ -210,20 +207,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node 
   if ( V_th_ < V_min_ )
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
-  }
-
-  if ( activation_interval_ < 0 )
-  {
-    throw BadProperty( "Interval between activations activation_interval ≥ 0 required." );
-  }
-
-  if ( Time( Time::ms( activation_interval_ ) ).get_steps()
-      % kernel().simulation_manager.get_eprop_update_interval().get_steps()
-    != 0 )
-  {
-    throw BadProperty(
-      "Interval between activations activation_interval required to be an integer multiple of the e-prop update "
-      "interval." );
   }
   return delta_EL;
 }
@@ -295,7 +278,6 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
   B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.activation_interval_steps_ = Time( Time::ms( P_.activation_interval_ ) ).get_steps();
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -368,7 +350,7 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       S_.r_ = V_.RefractoryCounts_;
       set_last_event_time( t );
     }
-    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= V_.activation_interval_steps_ )
+    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= activation_interval_steps_ )
     {
       SpikeEvent se;
       se.set_activation();

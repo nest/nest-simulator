@@ -111,6 +111,9 @@ public:
    */
   double get_eprop_history_duration() const;
 
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
+
 protected:
   //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
   virtual long model_dependent_history_shift_() const = 0;
@@ -124,6 +127,15 @@ protected:
 
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
+
+  //! Interval between two activation events (ms).
+  long activation_interval_;
+
+  //! Interval between two activation events (steps).
+  long activation_interval_steps_;
+
+  //! Time of last spike or activation event (steps).
+  long last_event_time_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;

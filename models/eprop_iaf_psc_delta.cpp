@@ -84,7 +84,6 @@ eprop_iaf_psc_delta::Parameters_::Parameters_()
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
   , eprop_isi_trace_cutoff_( 1000.0 )
-  , activation_interval_( 3000.0 )
 {
 }
 
@@ -173,7 +172,6 @@ eprop_iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
   update_value_param( d, names::kappa, kappa_, node );
   update_value_param( d, names::kappa_reg, kappa_reg_, node );
   update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  update_value_param( d, names::activation_interval, activation_interval_, node );
 
   if ( V_th_ < V_min_ )
   {
@@ -223,17 +221,6 @@ eprop_iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
   if ( kappa_reg_ < 0.0 or kappa_reg_ > 1.0 )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
-  }
-
-  if ( activation_interval_ < 0 )
-  {
-    throw BadProperty( "Interval between activations activation_interval ≥ 0 required." );
-  }
-
-  if ( eprop_isi_trace_cutoff_ < 0.0 or eprop_isi_trace_cutoff_ > activation_interval_ )
-  {
-    throw BadProperty(
-      "Computation cutoff of eprop trace 0 ≤ eprop trace eprop_isi_trace_cutoff ≤ activation_interval required." );
   }
   return delta_EL;
 }
@@ -292,7 +279,6 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
-  V_.activation_interval_steps_ = Time( Time::ms( P_.activation_interval_ ) ).get_steps();
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -355,7 +341,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       z = 1.0;
       set_last_event_time( t );
     }
-    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= V_.activation_interval_steps_ )
+    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= activation_interval_steps_ )
     {
       SpikeEvent se;
       se.set_activation();

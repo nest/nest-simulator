@@ -27,6 +27,7 @@
 #include "numerics.h"
 
 // Includes from nestkernel:
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -43,7 +44,7 @@ register_eprop_input_neuron( const std::string& name )
 
 
 eprop_input_neuron::eprop_input_neuron()
-  : ArchivingNode()
+  : EpropArchivingNodeRecurrent()
 {
 }
 
@@ -51,7 +52,6 @@ void
 eprop_input_neuron::init_buffers_()
 {
   B_.n_spikes_.clear(); // includes resize
-  ArchivingNode::clear_history();
 }
 
 void
@@ -68,19 +68,14 @@ eprop_input_neuron::update( Time const& origin, const long from, const long to )
       se.set_multiplicity( current_spikes_n );
       kernel().event_delivery_manager.send( *this, se, lag );
 
-      // set the spike times, respecting the multiplicity
-      for ( unsigned long i = 0; i < current_spikes_n; i++ )
-      {
-        set_spiketime( Time::step( t + 1 ) );
-      }
-      last_event_time_ = t;
+      set_last_event_time( t );
     }
-    else if ( last_event_time_ > 0 and t - last_event_time_ >= activation_interval_ )
+    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= activation_interval_ )
     {
       SpikeEvent se;
       se.set_activation();
       kernel().event_delivery_manager.send( *this, se, lag );
-      last_event_time_ = t;
+      set_last_event_time( t );
     }
   }
 }
@@ -88,13 +83,13 @@ eprop_input_neuron::update( Time const& origin, const long from, const long to )
 void
 eprop_input_neuron::get_status( Dictionary& d ) const
 {
-  ArchivingNode::get_status( d );
+  EpropArchivingNode::get_status( d );
 }
 
 void
 eprop_input_neuron::set_status( const Dictionary& d )
 {
-  ArchivingNode::set_status( d );
+  EpropArchivingNode::set_status( d );
 }
 
 void

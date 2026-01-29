@@ -1,5 +1,5 @@
 /*
- *  eprop_input_neuron.h
+ *  eprop_parrot_neuron.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_INPUT_NEURON_H
-#define EPROP_INPUT_NEURON_H
+#ifndef EPROP_PARROT_NEURON_H
+#define EPROP_PARROT_NEURON_H
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -48,12 +48,12 @@ The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
 trains to a group of neurons. The ``poisson_generator`` sends a different
 spike train to each of its target neurons. By connecting one
-``poisson_generator`` to a ``eprop_input_neuron`` and then that ``eprop_input_neuron`` to
+``poisson_generator`` to a ``eprop_parrot_neuron`` and then that ``eprop_parrot_neuron`` to
 a group of neurons, all target neurons will receive the same poisson
 spike train.
 
-Please note that weights of connections *to* the ``eprop_input_neuron``
-are ignored, while weights on connections *from* the ``eprop_input_neuron``
+Please note that weights of connections *to* the ``eprop_parrot_neuron``
+are ignored, while weights on connections *from* the ``eprop_parrot_neuron``
 to the target are handled as usual. Delays are honored on both
 incoming and outgoing connections.
 
@@ -77,17 +77,17 @@ SpikeEvent
 Examples using this model
 +++++++++++++++++++++++++
 
-.. listexamples:: eprop_input_neuron
+.. listexamples:: eprop_parrot_neuron
 
 EndUserDocs */
 
-void register_eprop_input_neuron( const std::string& name );
+void register_eprop_parrot_neuron( const std::string& name );
 
-class eprop_input_neuron : public EpropArchivingNodeRecurrent< false >
+class eprop_parrot_neuron : public EpropArchivingNodeRecurrent< false >
 {
 
 public:
-  eprop_input_neuron();
+  eprop_parrot_neuron();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -131,7 +131,7 @@ private:
 };
 
 inline size_t
-eprop_input_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_parrot_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -140,7 +140,7 @@ eprop_input_neuron::send_test_event( Node& target, size_t receptor_type, syninde
 }
 
 inline size_t
-eprop_input_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_parrot_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).
@@ -155,17 +155,17 @@ eprop_input_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline SignalType
-eprop_input_neuron::sends_signal() const
+eprop_parrot_neuron::sends_signal() const
 {
   return ALL;
 }
 
 inline SignalType
-eprop_input_neuron::receives_signal() const
+eprop_parrot_neuron::receives_signal() const
 {
   return ALL;
 }
 
 } // namespace
 
-#endif // EPROP_INPUT_NEURON_H
+#endif // EPROP_PARROT_NEURON_H

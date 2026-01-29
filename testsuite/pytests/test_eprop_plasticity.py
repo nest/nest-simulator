@@ -214,7 +214,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         params_nrn_rec["adaptation"] = 0.0
 
     gen_spk_in = nest.Create("spike_generator", n_in)
-    nrns_in = nest.Create("eprop_input_neuron", n_in)
+    nrns_in = nest.Create("eprop_parrot_neuron", n_in)
     nrns_rec = nest.Create(neuron_model, n_rec, params_nrn_rec)
     nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
@@ -523,7 +523,7 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
     }
 
     gen_spk_in = nest.Create("spike_generator", 1)
-    nrns_in = nest.Create("eprop_input_neuron", 1)
+    nrns_in = nest.Create("eprop_parrot_neuron", 1)
     nrns_rec = nest.Create("eprop_iaf", 1, params_nrn_rec)
 
     params_mm_rec = {
@@ -593,7 +593,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff):
         params_nrn["activation_interval"] = eprop_isi_trace_cutoff
 
     gen_spk_in = nest.Create("spike_generator", 3)
-    nrns_in = nest.Create("eprop_input_neuron", 3)
+    nrns_in = nest.Create("eprop_parrot_neuron", 3)
     nrns = nest.Create(neuron_model, 1, params_nrn)
 
     # Create recorders

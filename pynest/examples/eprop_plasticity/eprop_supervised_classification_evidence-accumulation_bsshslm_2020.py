@@ -263,7 +263,7 @@ params_nrn_ad["adapt_beta"] = 1.7 * (
 # since devices cannot establish plastic synapses for technical reasons
 
 gen_spk_in = nest.Create("spike_generator", n_in)
-nrns_in = nest.Create("eprop_input_neuron", n_in)
+nrns_in = nest.Create("eprop_parrot_neuron", n_in)
 
 # The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
 # that introduced it by the first letter of the authors' last names and the publication year.

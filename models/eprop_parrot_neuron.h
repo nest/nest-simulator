@@ -44,6 +44,9 @@ Neuron that repeats incoming spikes
 Description
 +++++++++++
 
+This neuron model is identical to the standard `parrot_neuron` model but
+additionally supports the handling of activation events.
+
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
 trains to a group of neurons. The ``poisson_generator`` sends a different

@@ -224,6 +224,11 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
+
+  if ( eprop_isi_trace_cutoff_ < 0.0 )
+  {
+    throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+  }
   return delta_EL;
 }
 

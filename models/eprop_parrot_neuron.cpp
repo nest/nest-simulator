@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "eprop_parrot_neuron.h"
 
 // Includes from libnestutil:
@@ -43,7 +42,6 @@ register_eprop_parrot_neuron( const std::string& name )
 {
   register_node_model< eprop_parrot_neuron >( name );
 }
-
 
 eprop_parrot_neuron::eprop_parrot_neuron()
   : EpropArchivingNodeRecurrent()

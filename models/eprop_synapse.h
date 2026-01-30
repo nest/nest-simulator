@@ -365,7 +365,6 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
 template <>
 Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
 
-
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()

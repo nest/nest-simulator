@@ -376,7 +376,6 @@ EndUserDocs */
 
 void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
-
 /**
  * @brief Class implementing an adaptive LIF neuron model for e-prop plasticity with additional biological features.
  *

@@ -347,7 +347,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       z = 1.0;
       set_last_event_time( t );
     }
-    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= activation_interval_steps_ )
+    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= get_activation_interval_steps() )
     {
       SpikeEvent se;
       se.set_activation();

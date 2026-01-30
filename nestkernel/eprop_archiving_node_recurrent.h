@@ -246,6 +246,11 @@ public:
    */
   long get_last_event_time();
 
+  /**
+   * Gets the interval between two activation events (steps).
+   */
+  long get_activation_interval_steps();
+
   //! Firing rate regularization.
   double firing_rate_reg_;
 
@@ -305,6 +310,13 @@ inline long
 EpropArchivingNodeRecurrent< hist_shift_required >::get_last_event_time()
 {
   return last_event_time_;
+}
+
+template < bool hist_shift_required >
+inline long
+EpropArchivingNodeRecurrent< hist_shift_required >::get_activation_interval_steps()
+{
+  return activation_interval_steps_;
 }
 
 template < bool hist_shift_required >

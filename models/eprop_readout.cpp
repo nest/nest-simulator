@@ -139,7 +139,7 @@ eprop_readout::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( eprop_isi_trace_cutoff_ < 0.0 )
   {
-    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
+    throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
   }
 
   return delta_EL;

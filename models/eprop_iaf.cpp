@@ -272,7 +272,6 @@ eprop_iaf::pre_run_hook()
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
 }
 
-
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */
@@ -388,7 +387,6 @@ eprop_iaf::compute_gradient( const long t_spike,
   const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
-
 
   const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
   const long t_compute_until = std::min( cutoff_end, t_spike );

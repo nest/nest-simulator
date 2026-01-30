@@ -190,7 +190,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_his
     shift += delay_out_norm_;
   }
 
-
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
 
@@ -297,6 +296,5 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
     ++it_update_hist;
   }
 }
-
 
 }  // namespace nest

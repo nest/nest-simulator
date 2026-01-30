@@ -122,7 +122,6 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connec
   C_[ lcid ].disable();
 }
 
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector()
 {
@@ -143,5 +142,4 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
   C_.clear();
 }
 
-
-}  // namespace nest
+} // namespace nest

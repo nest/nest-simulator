@@ -88,7 +88,6 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
-  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -138,7 +137,6 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::kappa, kappa_ );
   def< double >( d, names::kappa_reg, kappa_reg_ );
-  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -177,7 +175,6 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
-  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
   {
@@ -227,11 +224,6 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( kappa_reg_ < 0.0 or kappa_reg_ > 1.0 )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
-  }
-
-  if ( eprop_isi_trace_cutoff_ < 0.0 )
-  {
-    throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
   }
   return delta_EL;
 }
@@ -303,7 +295,6 @@ eprop_iaf_adapt::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -434,7 +425,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
+  const long cutoff_end = t_spike_previous + get_eprop_isi_trace_cutoff();
   const long t_compute_until = std::min( cutoff_end, t_spike );
 
   if ( not previous_event_was_activation )

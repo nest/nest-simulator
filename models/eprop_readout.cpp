@@ -75,7 +75,6 @@ eprop_readout::Parameters_::Parameters_()
   , I_e_( 0.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
-  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -112,7 +111,6 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::I_e, I_e_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -128,7 +126,6 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -139,12 +136,6 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
-
-  if ( eprop_isi_trace_cutoff_ < 0.0 )
-  {
-    throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
-  }
-
   return delta_EL;
 }
 
@@ -200,8 +191,6 @@ void
 eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
-
-  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
   const double dt = Time::get_resolution().get_ms();
 
@@ -322,7 +311,7 @@ eprop_readout::compute_gradient( const long t_spike,
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const long cutoff_end = t_spike_previous + V_.eprop_isi_trace_cutoff_steps_;
+  const long cutoff_end = t_spike_previous + get_eprop_isi_trace_cutoff();
   const long t_compute_until = std::min( cutoff_end, t_spike );
 
   if ( not previous_event_was_activation )

@@ -117,6 +117,18 @@ public:
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
 
+  /**
+   * @brief Retrieves the eprop ISI trace cutoff.
+   *
+   * Retrieves the time interval from the previous spike until the cutoff of
+   * e-prop update computation between two spikes (ms).
+   */
+  double
+  get_eprop_isi_trace_cutoff() const
+  {
+    return Time( Time::ms( eprop_isi_trace_cutoff_ ) ).get_steps();
+  }
+
 protected:
   //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
   virtual long model_dependent_history_shift_() const = 0;
@@ -132,13 +144,16 @@ protected:
   size_t eprop_indegree_;
 
   //! Interval between two activation events (ms).
-  long activation_interval_;
+  double activation_interval_;
 
   //! Interval between two activation events (steps).
   long activation_interval_steps_;
 
   //! Time of last spike or activation event (steps).
   long last_event_time_;
+
+  //! Time interval from the previous spike until the cutoff of e-prop update computation between two spikes (ms).
+  double eprop_isi_trace_cutoff_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;

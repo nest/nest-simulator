@@ -549,15 +549,6 @@ public:
   virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**
-   * Retrieves the maximum number of time steps integrated between two consecutive spikes.
-   *
-   * @return The cutoff value for the inter-spike interval eprop trace.
-   *
-   * @throws IllegalConnection
-   */
-  virtual long get_eprop_isi_trace_cutoff() const;
-
-  /**
    * Checks if the node is part of the recurrent network and thus not a readout neuron.
    *
    * @note The e-prop synapse calls this function of the target node. If true,

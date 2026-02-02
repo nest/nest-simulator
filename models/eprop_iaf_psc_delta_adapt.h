@@ -433,7 +433,6 @@ private:
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
@@ -498,9 +497,6 @@ private:
 
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
-
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -585,9 +581,6 @@ private:
 
     //! Total refractory steps.
     long RefractoryCounts_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -653,12 +646,6 @@ inline bool
 eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
 {
   return true;
-}
-
-inline long
-eprop_iaf_psc_delta_adapt::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t

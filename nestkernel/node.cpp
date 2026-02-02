@@ -249,12 +249,6 @@ Node::erase_used_eprop_history( const long, const long )
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
-long
-Node::get_eprop_isi_trace_cutoff() const
-{
-  throw IllegalConnection( "The target node is not an e-prop neuron." );
-}
-
 bool
 Node::is_eprop_recurrent_node() const
 {

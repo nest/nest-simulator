@@ -558,6 +558,7 @@ eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t 
 inline void
 eprop_readout_bsshslm_2020::get_status( Dictionary& d ) const
 {
+  EpropArchivingNode::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -572,6 +573,7 @@ eprop_readout_bsshslm_2020::get_status( Dictionary& d ) const
 inline void
 eprop_readout_bsshslm_2020::set_status( const Dictionary& d )
 {
+  EpropArchivingNode::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

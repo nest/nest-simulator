@@ -35,8 +35,9 @@ template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
   , eprop_indegree_( 0 )
-  , activation_interval_( 3000 )
+  , activation_interval_( 3000.0 )
   , last_event_time_( 0 )
+  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -46,6 +47,7 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
   , eprop_indegree_( n.eprop_indegree_ )
   , activation_interval_( n.activation_interval_ )
   , last_event_time_( n.last_event_time_ )
+  , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {
 }
 
@@ -200,7 +202,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, 
       }
     }
 
-    const long cutoff = Time( Time::ms( get_eprop_isi_trace_cutoff() ) ).get_steps();
+    const long cutoff = get_eprop_isi_trace_cutoff();
 
     const long erase_candidate_begin = t_spike_previous - 1;
     const long erase_candidate_end = erase_candidate_begin + cutoff;
@@ -262,19 +264,52 @@ template < typename HistEntryT >
 inline void
 EpropArchivingNode< HistEntryT >::get_status( Dictionary& d ) const
 {
-  d[ names::activation_interval ] = activation_interval_;
+  if ( get_name().find( "bsshslm_2020" ) == std::string::npos )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+
+  if ( get_name().find( "readout" ) == std::string::npos )
+  {
+    d[ names::activation_interval ] = activation_interval_;
+  }
 }
 
 template < typename HistEntryT >
 inline void
 EpropArchivingNode< HistEntryT >::set_status( const Dictionary& d )
 {
-  d.update_value( names::activation_interval, activation_interval_ );
-  if ( activation_interval_ < 0 )
+  const std::string node_name = get_name();
+  const bool is_readout = node_name.find( "readout" ) != std::string::npos;
+  const bool is_bsshslm_2020 = node_name.find( "bsshslm_2020" ) != std::string::npos;
+
+  if ( not is_readout )
   {
-    throw BadProperty( "Interval between activations activation_interval ≥ 0 required." );
+    d.update_value( names::activation_interval, activation_interval_ );
+    activation_interval_steps_ = Time( Time::ms( activation_interval_ ) ).get_steps();
   }
-  activation_interval_steps_ = Time( Time::ms( activation_interval_ ) ).get_steps();
+
+  if ( not is_bsshslm_2020 )
+  {
+    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+
+    if ( not is_readout and activation_interval_ < eprop_isi_trace_cutoff_ )
+    {
+      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_isi_trace_cutoff required." );
+    }
+  }
+  else
+  {
+    if ( not is_readout and activation_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
+    {
+      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_update_interval required." );
+    }
+  }
 }
 
 }  // namespace nest

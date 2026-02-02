@@ -398,7 +398,7 @@ eprop_iaf::compute_gradient( const long t_spike,
 
   if ( not previous_event_was_activation )
   {
-    sum_grad = 0.0;
+    sum_grad = 0.0;                // sum of gradients
     double z_current_buffer = 1.0; // spike that triggered current computation
     auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 

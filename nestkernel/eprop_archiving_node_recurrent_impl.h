@@ -48,7 +48,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::EpropArchivingNodeRecurrent(
   : EpropArchivingNode()
   , firing_rate_reg_( 0.0 )
   , f_av_( 0.0 )
-  , last_event_time_( 0 )
   , n_spikes_( 0 )
 {
 }
@@ -58,7 +57,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::EpropArchivingNodeRecurrent(
   : EpropArchivingNode( n )
   , firing_rate_reg_( n.firing_rate_reg_ )
   , f_av_( n.f_av_ )
-  , last_event_time_( n.last_event_time_ )
   , n_spikes_( n.n_spikes_ )
 {
 }

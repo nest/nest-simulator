@@ -171,7 +171,7 @@ def test_eprop_regression():
     params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])
 
     gen_spk_in = nest.Create("spike_generator", n_in)
-    nrns_in = nest.Create("eprop_parrot_neuron", n_in)
+    nrns_in = nest.Create("parrot_neuron", n_in)
     nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
     nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
@@ -547,7 +547,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     )
 
     gen_spk_in = nest.Create("spike_generator", n_in)
-    nrns_in = nest.Create("eprop_parrot_neuron", n_in)
+    nrns_in = nest.Create("parrot_neuron", n_in)
     nrns_reg = nest.Create("eprop_iaf_bsshslm_2020", n_reg, params_nrn_reg)
     nrns_ad = nest.Create("eprop_iaf_adapt_bsshslm_2020", n_ad, params_nrn_ad)
     nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
@@ -863,7 +863,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
     # Create neurons
 
     gen_spk_in = nest.Create("spike_generator", 3)
-    nrns_in = nest.Create("eprop_parrot_neuron", 3)
+    nrns_in = nest.Create("parrot_neuron", 3)
     nrns_rec = nest.Create(neuron_model, 1)
 
     # Create recorders

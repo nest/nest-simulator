@@ -37,9 +37,8 @@ namespace nest
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
+  , ActivationEventNode()
   , eprop_indegree_( 0 )
-  , activation_interval_( 3000.0 )
-  , last_event_time_( 0 )
   , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
@@ -47,9 +46,8 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode()
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
+  , ActivationEventNode( n )
   , eprop_indegree_( n.eprop_indegree_ )
-  , activation_interval_( n.activation_interval_ )
-  , last_event_time_( n.last_event_time_ )
   , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {
 }
@@ -288,8 +286,7 @@ EpropArchivingNode< HistEntryT >::set_status( const DictionaryDatum& d )
 
   if ( not is_readout )
   {
-    updateValue< double >( d, names::activation_interval, activation_interval_ );
-    activation_interval_steps_ = Time( Time::ms( activation_interval_ ) ).get_steps();
+    ActivationEventNode::set_status( d );
   }
 
   if ( not is_bsshslm_2020 )

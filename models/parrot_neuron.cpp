@@ -46,6 +46,7 @@ register_parrot_neuron( const std::string& name )
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()
+  , ActivationEventNode()
 {
 }
 
@@ -61,6 +62,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
+    const long t = origin.get_steps() + lag;
     const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
@@ -72,8 +74,16 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       // set the spike times, respecting the multiplicity
       for ( unsigned long i = 0; i < current_spikes_n; i++ )
       {
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( t + 1 ) );
       }
+      set_last_event_time( t );
+    }
+    else if ( get_last_event_time() > 0 and t - get_last_event_time() >= get_activation_interval_steps() )
+    {
+      SpikeEvent se;
+      se.set_activation();
+      kernel().event_delivery_manager.send( *this, se, lag );
+      set_last_event_time( t );
     }
   }
 }
@@ -82,12 +92,14 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   ArchivingNode::get_status( d );
+  ActivationEventNode::get_status( d );
 }
 
 void
 parrot_neuron::set_status( const DictionaryDatum& d )
 {
   ArchivingNode::set_status( d );
+  ActivationEventNode::set_status( d );
 }
 
 void

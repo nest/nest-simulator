@@ -24,6 +24,7 @@
 #define EPROP_ARCHIVING_NODE_H
 
 // nestkernel
+#include "activation_event_node.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -47,9 +48,8 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node
+class EpropArchivingNode : public Node, public ActivationEventNode
 {
-
 public:
   /**
    * Constructs a new EpropArchivingNode object.
@@ -59,9 +59,9 @@ public:
   /**
    * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
    *
-   * @param other The other object to copy.
+   * @param n The other object to copy.
    */
-  EpropArchivingNode( const EpropArchivingNode& other );
+  EpropArchivingNode( const EpropArchivingNode& n );
 
   void register_synapse() override;
   void register_eprop_connection() override;
@@ -139,15 +139,6 @@ protected:
 
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
-
-  //! Interval between two activation events (ms).
-  double activation_interval_;
-
-  //! Interval between two activation events (steps).
-  long activation_interval_steps_;
-
-  //! Time of last spike or activation event (steps).
-  long last_event_time_;
 
   //! Time interval from the previous spike until the cutoff of e-prop update computation between two spikes (ms).
   double eprop_isi_trace_cutoff_;

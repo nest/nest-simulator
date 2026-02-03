@@ -236,29 +236,11 @@ public:
    */
   void reset_spike_count();
 
-  /**
-   * Sets the time the neuron spiked.
-   */
-  void set_last_event_time( const long last_event_time );
-
-  /**
-   * Gets the last time the neuron spiked.
-   */
-  long get_last_event_time();
-
-  /**
-   * Gets the interval between two activation events (steps).
-   */
-  long get_activation_interval_steps();
-
   //! Firing rate regularization.
   double firing_rate_reg_;
 
   //! Average firing rate.
   double f_av_;
-
-  //! Last time the neuron spiked.
-  long last_event_time_;
 
 protected:
   long model_dependent_history_shift_() const override;
@@ -296,27 +278,6 @@ inline void
 EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
 {
   n_spikes_ = 0;
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::set_last_event_time( const long last_event_time )
-{
-  last_event_time_ = last_event_time;
-}
-
-template < bool hist_shift_required >
-inline long
-EpropArchivingNodeRecurrent< hist_shift_required >::get_last_event_time()
-{
-  return last_event_time_;
-}
-
-template < bool hist_shift_required >
-inline long
-EpropArchivingNodeRecurrent< hist_shift_required >::get_activation_interval_steps()
-{
-  return activation_interval_steps_;
 }
 
 template < bool hist_shift_required >

@@ -250,6 +250,9 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  //! Whether this connection type supports activation events.
+  static constexpr bool supports_activation_event = true;
+
   /**
    * Properties of the connection model.
    *

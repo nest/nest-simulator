@@ -104,12 +104,9 @@ nest::spike_recorder::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    if ( not e.get_activation() )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      for ( size_t i = 0; i < e.get_multiplicity(); ++i )
-      {
-        write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
-      }
+      write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     }
   }
 }

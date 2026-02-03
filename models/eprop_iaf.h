@@ -234,10 +234,10 @@ Parameter                       Unit    Math equivalent             Default     
                                                                                        activations
 ``c_reg``                               :math:`c_\text{reg}`                       0.0 Coefficient of firing
                                                                                        rate regularization
-``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}`      maximum value Cutoff for integration of
-                                                                         representable e-prop update between two
-                                                                         by a ``long`` spikes
-                                                                           type in C++
+``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
+                                                                    representable      e-prop update between two
+                                                                    by a ``long``      spikes
+                                                                    type in C++
 ``f_target``                    Hz      :math:`f^\text{target}`                   10.0 Target firing rate of
                                                                                        rate regularization
 ``kappa``                               :math:`\kappa`                            0.97 Low-pass filter of the

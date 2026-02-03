@@ -242,6 +242,9 @@ public:
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC;
 
+  //! Whether this connection type supports activation events.
+  static constexpr bool supports_activation_event = true;
+
   //! Default constructor.
   eprop_synapse();
 

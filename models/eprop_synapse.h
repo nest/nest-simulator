@@ -137,9 +137,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -155,8 +156,8 @@ EndUserDocs */
  * @brief Base class implementing common properties for e-prop synapses with additional biological features.
  *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
- * (in preparation).
+ * additional biological features described in Korcsak-Gorzo et al. (2025).
+
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -202,7 +203,7 @@ void register_eprop_synapse( const std::string& name );
  * @brief Class implementing a synapse model for e-prop plasticity with additional biological features.
  *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * additional biological features described in Korcsak-Gorzo et al. (2025).
  *
  * @note Each synapse has an optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

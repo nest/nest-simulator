@@ -321,6 +321,12 @@ class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCom
   friend class WeightOptimizerGradientDescent;
 
 public:
+  //! Default constructor.
+  WeightOptimizerCommonPropertiesGradientDescent();
+
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesGradientDescent( const WeightOptimizerCommonPropertiesGradientDescent& ) = default;
+
   //! Assignment operator.
   WeightOptimizerCommonPropertiesGradientDescent& operator=(
     const WeightOptimizerCommonPropertiesGradientDescent& ) = delete;
@@ -380,6 +386,9 @@ class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperti
 public:
   //! Default constructor.
   WeightOptimizerCommonPropertiesAdam();
+
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesAdam( const WeightOptimizerCommonPropertiesAdam& ) = default;
 
   //! Assignment operator.
   WeightOptimizerCommonPropertiesAdam& operator=( const WeightOptimizerCommonPropertiesAdam& ) = delete;

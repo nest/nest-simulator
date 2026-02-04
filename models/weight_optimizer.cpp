@@ -114,12 +114,12 @@ WeightOptimizer::WeightOptimizer()
 }
 
 void
-WeightOptimizer::get_status( Dictionary& d ) const
+WeightOptimizer::get_status( Dictionary& ) const
 {
 }
 
 void
-WeightOptimizer::set_status( const Dictionary& d )
+WeightOptimizer::set_status( const Dictionary& )
 {
 }
 
@@ -150,6 +150,11 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
     optimization_step_ = current_optimization_step;
   }
   return weight;
+}
+
+WeightOptimizerCommonPropertiesGradientDescent::WeightOptimizerCommonPropertiesGradientDescent()
+  : WeightOptimizerCommonProperties()
+{
 }
 
 WeightOptimizerCommonProperties*

@@ -412,8 +412,8 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))

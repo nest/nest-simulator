@@ -298,6 +298,7 @@ extern const Name Inact_h;
 extern const Name Inact_p;
 extern const Name IP3;
 extern const Name IP3_0;
+extern const Name ignore_and_fire;
 extern const Name indegree;
 extern const Name index_map;
 extern const Name individual_spike_trains;

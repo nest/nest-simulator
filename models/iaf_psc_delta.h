@@ -276,6 +276,15 @@ private:
     bool with_refr_input_; //!< spikes arriving during refractory period are
                            //!< counted
 
+    //! If True, the neuron is an ignore-and-fire neuron.
+    bool ignore_and_fire_;
+
+    //! Time offset of the first forced spike within each second (ms).
+    double firing_phase_;
+
+    //! Rate for forced firing mode (spikes/s).
+    double firing_rate_;
+
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -341,6 +350,11 @@ private:
    */
   struct Variables_
   {
+    //! Current state counter holding the remaining steps until the next forced spike.
+    long firing_phase_steps_;
+
+    //! Number of simulation steps between two consecutive forced spikes.
+    long firing_interval_steps_;
 
     double P30_;
     double P33_;
@@ -373,6 +387,13 @@ private:
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_psc_delta > recordablesMap_;
+
+  inline void
+  calc_initial_variables_()
+  {
+    V_.firing_interval_steps_ = Time( Time::ms( 1. / P_.firing_rate_ * 1000. ) ).get_steps();
+    V_.firing_phase_steps_ = Time( Time::ms( P_.firing_phase_ / P_.firing_rate_ * 1000. ) ).get_steps();
+  }
 };
 
 
@@ -440,6 +461,11 @@ iaf_psc_delta::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 } // namespace

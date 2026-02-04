@@ -87,6 +87,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
+  , ignore_and_fire_( false )
+  , firing_phase_( 1.0 )
+  , firing_rate_( 10.0 )
 {
 }
 
@@ -135,6 +138,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
+  def< bool >( d, names::ignore_and_fire, ignore_and_fire_ );
+  def< double >( d, names::phase, firing_phase_ );
+  def< double >( d, names::rate, firing_rate_ );
 }
 
 double
@@ -162,6 +168,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
+  updateValueParam< bool >( d, names::ignore_and_fire, ignore_and_fire_, node );
+  updateValueParam< double >( d, names::phase, firing_phase_, node );
+  updateValueParam< double >( d, names::rate, firing_rate_, node );
 
   if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
@@ -212,6 +221,16 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
+
+  if ( firing_phase_ <= -1.0 or firing_phase_ > 1.0 )
+  {
+    throw BadProperty( "Firing phase must be > -1 and <= 1." );
+  }
+
+  if ( firing_rate_ <= -1.0 )
+  {
+    throw BadProperty( "Firing rate must be > -1." );
+  }
   return delta_EL;
 }
 
@@ -254,6 +273,10 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020()
   , B_( *this )
 {
   recordablesMap_.create();
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adapt_bsshslm_2020& n )
@@ -262,6 +285,10 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adap
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -342,23 +369,45 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
-    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
+    if ( P_.ignore_and_fire_ )
     {
-      count_spike();
+      if ( V_.firing_phase_steps_ == 0 )
+      {
+        count_spike();
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
 
-      S_.z_ = 1.0;
-      S_.r_ = V_.RefractoryCounts_;
-      set_last_event_time( t );
+        S_.z_ = 1.0;
+        S_.r_ = V_.RefractoryCounts_;
+        set_last_event_time( t );
+        V_.firing_phase_steps_ = V_.firing_interval_steps_ - 1;
+      }
+      else
+      {
+        --V_.firing_phase_steps_;
+      }
     }
-    else if ( is_activation_event_due( t ) )
+    else
     {
-      SpikeEvent se;
-      se.set_activation();
-      kernel().event_delivery_manager.send( *this, se, lag );
-      set_last_event_time( t );
+      if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
+      {
+        count_spike();
+
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+
+        S_.z_ = 1.0;
+        S_.r_ = V_.RefractoryCounts_;
+        set_last_event_time( t );
+      }
+      else if ( is_activation_event_due( t ) )
+      {
+        SpikeEvent se;
+        se.set_activation();
+        kernel().event_delivery_manager.send( *this, se, lag );
+        set_last_event_time( t );
+      }
     }
 
     append_new_eprop_history_entry( t );

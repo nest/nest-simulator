@@ -84,6 +84,9 @@ eprop_iaf::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
+  , ignore_and_fire_( false )
+  , firing_phase_( 1.0 )
+  , firing_rate_( 10.0 )
 {
 }
 
@@ -129,6 +132,9 @@ eprop_iaf::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::kappa, kappa_ );
   def< double >( d, names::kappa_reg, kappa_reg_ );
+  def< bool >( d, names::ignore_and_fire, ignore_and_fire_ );
+  def< double >( d, names::phase, firing_phase_ );
+  def< double >( d, names::rate, firing_rate_ );
 }
 
 double
@@ -165,6 +171,9 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
+  updateValueParam< bool >( d, names::ignore_and_fire, ignore_and_fire_, node );
+  updateValueParam< double >( d, names::phase, firing_phase_, node );
+  updateValueParam< double >( d, names::rate, firing_rate_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -205,6 +214,16 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
+
+  if ( firing_phase_ <= -1.0 or firing_phase_ > 1.0 )
+  {
+    throw BadProperty( "Firing phase must be > -1 and <= 1." );
+  }
+
+  if ( firing_rate_ <= -1.0 )
+  {
+    throw BadProperty( "Firing rate must be > -1." );
+  }
   return delta_EL;
 }
 
@@ -233,6 +252,10 @@ eprop_iaf::eprop_iaf()
   , B_( *this )
 {
   recordablesMap_.create();
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 eprop_iaf::eprop_iaf( const eprop_iaf& n )
@@ -241,6 +264,10 @@ eprop_iaf::eprop_iaf( const eprop_iaf& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -295,22 +322,43 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
-    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
+    if ( P_.ignore_and_fire_ )
     {
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      if ( V_.firing_phase_steps_ == 0 )
+      {
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
 
-      S_.z_ = 1.0;
-      S_.v_m_ -= P_.V_th_ * S_.z_;
-      S_.r_ = V_.RefractoryCounts_;
-      set_last_event_time( t );
+        S_.z_ = 1.0;
+        S_.v_m_ -= P_.V_th_ * S_.z_;
+        S_.r_ = V_.RefractoryCounts_;
+        V_.firing_phase_steps_ = V_.firing_interval_steps_ - 1;
+        set_last_event_time( t );
+      }
+      else
+      {
+        --V_.firing_phase_steps_;
+      }
     }
-    else if ( is_activation_event_due( t ) )
+    else
     {
-      SpikeEvent se;
-      se.set_activation();
-      kernel().event_delivery_manager.send( *this, se, lag );
-      set_last_event_time( t );
+      if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
+      {
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+
+        S_.z_ = 1.0;
+        S_.v_m_ -= P_.V_th_ * S_.z_;
+        S_.r_ = V_.RefractoryCounts_;
+        set_last_event_time( t );
+      }
+      else if ( is_activation_event_due( t ) )
+      {
+        SpikeEvent se;
+        se.set_activation();
+        kernel().event_delivery_manager.send( *this, se, lag );
+        set_last_event_time( t );
+      }
     }
 
     append_new_eprop_history_entry( t );

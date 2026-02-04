@@ -145,7 +145,7 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   if ( optimization_step_ < current_optimization_step )
   {
     sum_gradients_ /= cp.batch_size_;
-    weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
+    weight = std::clamp( optimize_( cp, weight, current_optimization_step ), cp.Wmin_, cp.Wmax_ );
     eta_current_ = cp.eta_;
     n_optimize_ += 1;
     optimization_step_ = current_optimization_step;

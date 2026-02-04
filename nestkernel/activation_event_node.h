@@ -84,6 +84,15 @@ public:
   }
 
   /**
+   * Checks if an activation event is due at the current time.
+   */
+  bool
+  is_activation_event_due( const long current_time ) const
+  {
+    return ( last_event_time_ > 0 and current_time - last_event_time_ ) >= get_activation_interval_steps();
+  }
+
+  /**
    * Retrieve activation event parameters and add to status dictionary.
    */
   void get_status( DictionaryDatum& d ) const;

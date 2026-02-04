@@ -833,7 +833,7 @@ def test_unsupported_surrogate_gradient(source_model):
         ("eprop_iaf_bsshslm_2020", np.hstack([np.arange(x, y) for x, y in [[1, 3], [1, 61], [21, 61], [41, 48]]])),
         (
             "eprop_readout_bsshslm_2020",
-            np.hstack([np.arange(x, y) for x, y in [[1, 4], [2, 22], [21, 61], [21, 61], [41, 47]]]),
+            np.hstack([np.arange(x, y) for x, y in [[1, 4], [1, 21], [20, 60], [20, 60], [40, 46]]]),
         ),
     ],
 )

@@ -165,8 +165,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     eprop_iaf_psc_delta* nrn = dynamic_cast< eprop_iaf_psc_delta* >( node );
     assert( nrn );
-    auto compute_surrogate_gradient = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
-    nrn->compute_surrogate_gradient_ = compute_surrogate_gradient;
+    nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
 
   updateValueParam< double >( d, names::kappa, kappa_, node );

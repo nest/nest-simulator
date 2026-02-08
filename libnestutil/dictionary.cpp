@@ -260,184 +260,29 @@ operator<<( std::ostream& os, const Dictionary& dict )
   return os << "}";
 }
 
+/**
+ * Return true only if first and second both hold type T and compare equal as T.
+ */
+template < typename T >
+bool
+equal_as_( const boost::any& first, const boost::any& second )
+{
+  // Compiler will short-circuit to false if not same type
+  return is_type< T >( first ) and is_type< T >( second )
+    and boost::any_cast< T >( first ) == boost::any_cast< T >( second );
+}
+
 bool
 value_equal( const boost::any& first, const boost::any& second )
 {
-  if ( is_type< int >( first ) )
-  {
-    if ( not is_type< int >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< int >( first );
-    const auto other_value = boost::any_cast< int >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< long >( first ) )
-  {
-    if ( not is_type< long >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< long >( first );
-    const auto other_value = boost::any_cast< long >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< size_t >( first ) )
-  {
-    if ( not is_type< size_t >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< size_t >( first );
-    const auto other_value = boost::any_cast< size_t >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< double >( first ) )
-  {
-    if ( not is_type< double >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< double >( first );
-    const auto other_value = boost::any_cast< double >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< bool >( first ) )
-  {
-    if ( not is_type< bool >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< bool >( first );
-    const auto other_value = boost::any_cast< bool >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::string >( first ) )
-  {
-    if ( not is_type< std::string >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::string >( first );
-    const auto other_value = boost::any_cast< std::string >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< int > >( first ) )
-  {
-    if ( not is_type< std::vector< int > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< int > >( first );
-    const auto other_value = boost::any_cast< std::vector< int > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< double > >( first ) )
-  {
-    if ( not is_type< std::vector< double > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< double > >( first );
-    const auto other_value = boost::any_cast< std::vector< double > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< std::vector< double > > >( first ) )
-  {
-    if ( not is_type< std::vector< std::vector< double > > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< std::vector< double > > >( first );
-    const auto other_value = boost::any_cast< std::vector< std::vector< double > > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< std::string > >( first ) )
-  {
-    if ( not is_type< std::vector< std::string > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< std::string > >( first );
-    const auto other_value = boost::any_cast< std::vector< std::string > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< size_t > >( first ) )
-  {
-    if ( not is_type< std::vector< size_t > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< size_t > >( first );
-    const auto other_value = boost::any_cast< std::vector< size_t > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< Dictionary >( first ) )
-  {
-    if ( not is_type< Dictionary >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< Dictionary >( first );
-    const auto other_value = boost::any_cast< Dictionary >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::shared_ptr< nest::Parameter > >( first ) )
-  {
-    if ( not is_type< std::shared_ptr< nest::Parameter > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( first );
-    const auto other_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else
-  {
-    std::string msg = std::string( "Unsupported type in Dictionary::value_equal(): " ) + debug_type( first );
-    throw nest::TypeMismatch( msg );
-  }
-  return true;
+  // Short-circuits as soon as an equal_as_() call evaluates to true
+  return ( equal_as_< int >( first, second ) or equal_as_< long >( first, second )
+    or equal_as_< size_t >( first, second ) or equal_as_< double >( first, second )
+    or equal_as_< bool >( first, second ) or equal_as_< std::string >( first, second )
+    or equal_as_< std::vector< int > >( first, second ) or equal_as_< std::vector< double > >( first, second )
+    or equal_as_< std::vector< size_t > >( first, second ) or equal_as_< std::vector< std::string > >( first, second )
+    or equal_as_< std::vector< std::vector< double > > >( first, second ) or equal_as_< Dictionary >( first, second )
+    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second ) );
 }
 
 

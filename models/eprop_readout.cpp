@@ -302,7 +302,7 @@ eprop_readout::compute_gradient( const long t_spike,
   WeightOptimizer* optimizer,
   const bool activation,
   const bool previous_event_was_activation,
-  double& sum_grad )
+  double& gradient )
 {
   const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto& opt_cp = *ecp.optimizer_cp_;
@@ -313,7 +313,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
   if ( not previous_event_was_activation )
   {
-    sum_grad = 0.0;                // sum of gradients
+    gradient = 0.0;                // gradient used for the weight update (to be calculated)
     double z_current_buffer = 1.0; // spike that triggered current computation
     auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
@@ -327,16 +327,16 @@ eprop_readout::compute_gradient( const long t_spike,
 
       z_bar = V_.P_v_m_ * z_bar + z;
 
-      const double grad = E * z_bar;
+      const double gradient_increment = E * z_bar;
 
       if ( optimize_each_step )
       {
-        sum_grad = grad;
-        weight = optimizer->optimized_weight( opt_cp, t, sum_grad, weight );
+        gradient = gradient_increment;
+        weight = optimizer->optimized_weight( opt_cp, t, gradient, weight );
       }
       else
       {
-        sum_grad += grad;
+        gradient += gradient_increment;
       }
     }
   }
@@ -350,7 +350,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
   if ( not( activation or optimize_each_step ) )
   {
-    weight = optimizer->optimized_weight( opt_cp, t_compute_until, sum_grad, weight );
+    weight = optimizer->optimized_weight( opt_cp, t_compute_until, gradient, weight );
   }
 }
 

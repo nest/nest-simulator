@@ -274,8 +274,8 @@ protected:
   //! Perform specific optimization.
   virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
-  //! Sum of gradients accumulated in current batch.
-  double sum_gradients_;
+  //! Cumulative gradient over the current batch.
+  double cumulative_gradient_;
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;

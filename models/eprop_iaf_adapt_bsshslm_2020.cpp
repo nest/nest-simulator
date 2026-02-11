@@ -425,11 +425,11 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e_bar = 0.0;    // low-pass filtered eligibility trace
-  double epsilon = 0.0;  // adaptive component of eligibility vector
-  double grad = 0.0;     // gradient value to be calculated
-  double sum_e = 0.0;    // sum of eligibility traces
-  double z_bar = 0.0;    // low-pass filtered spiking variable
+  double e_bar = 0.0;     // low-pass filtered eligibility trace
+  double epsilon = 0.0;   // adaptive component of eligibility vector
+  double gradient = 0.0;  // gradient used for the weight update (to be calculated)
+  double sum_e = 0.0;     // sum of eligibility traces
+  double z_bar = 0.0;     // low-pass filtered spiking variable
 
   for ( const long presyn_isi : presyn_isis )
   {
@@ -447,7 +447,7 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
       epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
 
-      grad += L * e_bar;
+      gradient += L * e_bar;
       sum_e += e;
 
       z = 0.0;  // set spiking variable to 0 between spikes
@@ -459,14 +459,14 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   const double firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
 
-  grad += firing_rate_reg * sum_e;
+  gradient += firing_rate_reg * sum_e;
 
   if ( average_gradient )
   {
-    grad /= learning_window;
+    gradient /= learning_window;
   }
 
-  return grad;
+  return gradient;
 }
 
 }  // namespace nest

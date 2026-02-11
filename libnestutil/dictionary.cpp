@@ -276,15 +276,24 @@ bool
 value_equal( const boost::any& first, const boost::any& second )
 {
   // Short-circuits as soon as an equal_as_() call evaluates to true
-  return ( equal_as_< int >( first, second ) or equal_as_< long >( first, second )
-    or equal_as_< size_t >( first, second ) or equal_as_< double >( first, second )
-    or equal_as_< bool >( first, second ) or equal_as_< std::string >( first, second )
-    or equal_as_< std::vector< int > >( first, second ) or equal_as_< std::vector< double > >( first, second )
-    or equal_as_< std::vector< size_t > >( first, second ) or equal_as_< std::vector< std::string > >( first, second )
-    or equal_as_< std::vector< std::vector< double > > >( first, second ) or equal_as_< Dictionary >( first, second )
-    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second ) );
+  // clang-format off
+  return (
+       equal_as_< int >( first, second )
+    or equal_as_< long >( first, second )
+    or equal_as_< size_t >( first, second )
+    or equal_as_< double >( first, second )
+    or equal_as_< bool >( first, second )
+    or equal_as_< std::string >( first, second )
+    or equal_as_< std::vector< int > >( first, second )
+    or equal_as_< std::vector< double > >( first, second )
+    or equal_as_< std::vector< size_t > >( first, second )
+    or equal_as_< std::vector< std::string > >( first, second )
+    or equal_as_< std::vector< std::vector< double > > >( first, second )
+    or equal_as_< Dictionary >( first, second )
+    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second )
+  );
+  // clang-format on
 }
-
 
 bool
 Dictionary::operator==( const Dictionary& other ) const

@@ -341,7 +341,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
     else if ( is_activation_event_due( t ) )
     {
       SpikeEvent se;
-      se.set_activation();
+      se.set_activation_event_flag( true );
       kernel().event_delivery_manager.send( *this, se, lag );
       set_last_event_time( t );
     }

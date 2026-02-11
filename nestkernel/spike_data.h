@@ -87,8 +87,8 @@ enum enum_status_spike_data_id
 
 enum enum_activation_event
 {
-  NOT_ACTIVATION_EVENT,
-  IS_ACTIVATION_EVENT
+  ACTIVATION_EVENT_FALSE,
+  ACTIVATION_EVENT_TRUE
 };
 
 /**
@@ -201,14 +201,9 @@ public:
   double get_offset() const;
 
   /**
-   * Marks this spike as an activation event.
+   * Sets the activation event flag.
    */
-  void set_activation_event();
-
-  /**
-   * Marks this spike as a regular (non-activation) event.
-   */
-  void unset_activation_event();
+  void set_activation_event_flag( bool is_activation_event );
 };
 
 //! check legal size
@@ -217,7 +212,7 @@ using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::succes
 inline SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( NOT_ACTIVATION_EVENT )
+  , activation_event_( ACTIVATION_EVENT_FALSE )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -237,21 +232,21 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool activation )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( NOT_ACTIVATION_EVENT )
+  , activation_event_( ACTIVATION_EVENT_FALSE )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
   if ( activation )
   {
-    activation_event_ = IS_ACTIVATION_EVENT;
+    activation_event_ = ACTIVATION_EVENT_TRUE;
   }
 }
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( NOT_ACTIVATION_EVENT )
+  , activation_event_( ACTIVATION_EVENT_FALSE )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -280,7 +275,7 @@ SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, cons
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = NOT_ACTIVATION_EVENT;
+  activation_event_ = ACTIVATION_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -295,7 +290,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = NOT_ACTIVATION_EVENT;
+  activation_event_ = ACTIVATION_EVENT_FALSE;
   lag_ = lag;
   tid_ = target.get_tid();
   syn_id_ = target.get_syn_id();
@@ -383,7 +378,7 @@ SpikeData::is_invalid_marker() const
 inline bool
 SpikeData::is_activation_event() const
 {
-  return activation_event_ == IS_ACTIVATION_EVENT;
+  return activation_event_ == ACTIVATION_EVENT_TRUE;
 }
 
 inline double
@@ -393,15 +388,9 @@ SpikeData::get_offset() const
 }
 
 inline void
-SpikeData::set_activation_event()
+SpikeData::set_activation_event_flag( bool is_activation_event )
 {
-  activation_event_ = IS_ACTIVATION_EVENT;
-}
-
-inline void
-SpikeData::unset_activation_event()
-{
-  activation_event_ = NOT_ACTIVATION_EVENT;
+  activation_event_ = is_activation_event ? ACTIVATION_EVENT_TRUE : ACTIVATION_EVENT_FALSE;
 }
 
 class OffGridSpikeData : public SpikeData
@@ -498,7 +487,7 @@ OffGridSpikeData::set( const size_t tid,
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = NOT_ACTIVATION_EVENT;
+  activation_event_ = ACTIVATION_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;

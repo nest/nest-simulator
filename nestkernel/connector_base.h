@@ -385,7 +385,7 @@ public:
   void
   send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
-    if ( not ConnectionT::supports_activation_event and e.get_activation() )
+    if ( not ConnectionT::supports_activation_event and e.is_activation_event() )
     {
       return;
     }
@@ -403,7 +403,7 @@ public:
   size_t
   send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
-    if ( not ConnectionT::supports_activation_event and e.get_activation() )
+    if ( not ConnectionT::supports_activation_event and e.is_activation_event() )
     {
       return 0;
     }

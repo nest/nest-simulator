@@ -507,7 +507,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const bool activation = e.get_activation();
+  const bool activation = e.is_activation_event();
 
   if ( previous_event_was_activation_ and activation )
   {

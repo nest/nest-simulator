@@ -323,19 +323,14 @@ public:
   void set_stamp( Time const& );
 
   /**
-   * Sets the activation flag.
+   * Sets the activation event flag.
    */
-  void set_activation();
+  void set_activation_event_flag( bool is_activation_event );
 
   /**
-   * Unsets the activation flag.
+   * Returns whether this spike is an activation event.
    */
-  void unset_activation();
-
-  /**
-   * Returns whether the activation flag is set.
-   */
-  bool get_activation();
+  bool is_activation_event();
 
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
@@ -992,19 +987,13 @@ Event::set_stamp( Time const& s )
 }
 
 inline void
-Event::set_activation()
+Event::set_activation_event_flag( bool is_activation_event )
 {
-  sender_spike_data_.set_activation_event();
-}
-
-inline void
-Event::unset_activation()
-{
-  sender_spike_data_.unset_activation_event();
+  sender_spike_data_.set_activation_event_flag( is_activation_event );
 }
 
 inline bool
-Event::get_activation()
+Event::is_activation_event()
 {
   return sender_spike_data_.is_activation_event();
 }

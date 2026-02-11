@@ -453,7 +453,7 @@ eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
   WeightOptimizer* optimizer,
   const bool activation,
   const bool previous_event_was_activation,
-  double& sum_grad )
+  double& gradient )
 {
   const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto& opt_cp = *ecp.optimizer_cp_;
@@ -464,7 +464,7 @@ eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
 
   if ( not previous_event_was_activation )
   {
-    sum_grad = 0.0;                // sum of gradients
+    gradient = 0.0;                // gradient used for the weight update (to be calculated)
     double z_current_buffer = 1.0; // spike that triggered current computation
     auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
 
@@ -484,16 +484,16 @@ eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
       e_bar = P_.kappa_ * e_bar + e;
       e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
-      const double grad = L * e_bar + fr_reg * e_bar_reg;
+      const double gradient_increment = L * e_bar + fr_reg * e_bar_reg;
 
       if ( optimize_each_step )
       {
-        sum_grad = grad;
-        weight = optimizer->optimized_weight( opt_cp, t, sum_grad, weight );
+        gradient = gradient_increment;
+        weight = optimizer->optimized_weight( opt_cp, t, gradient, weight );
       }
       else
       {
-        sum_grad += grad;
+        gradient += gradient_increment;
       }
     }
   }
@@ -510,7 +510,7 @@ eprop_iaf_psc_delta_adapt::compute_gradient( const long t_spike,
 
   if ( not( activation or optimize_each_step ) )
   {
-    weight = optimizer->optimized_weight( opt_cp, t_compute_until, sum_grad, weight );
+    weight = optimizer->optimized_weight( opt_cp, t_compute_until, gradient, weight );
   }
 }
 

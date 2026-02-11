@@ -342,7 +342,7 @@ private:
   double z_previous_buffer_ = 0.0;
 
   //! Sum of gradients.
-  double sum_grad_ = 0.0;
+  double gradient_ = 0.0;
 
   /**
    *  Optimizer
@@ -415,7 +415,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
-  sum_grad_ = es.sum_grad_;
+  gradient_ = es.gradient_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -433,7 +433,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , e_bar_reg_( es.e_bar_reg_ )
   , epsilon_( es.epsilon_ )
   , z_previous_buffer_( es.z_previous_buffer_ )
-  , sum_grad_( es.sum_grad_ )
+  , gradient_( es.gradient_ )
   , optimizer_( es.optimizer_ )
 {
   // Move operator, therefore we must null the optimizer pointer in the source of the move.
@@ -461,7 +461,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
-  sum_grad_ = es.sum_grad_;
+  gradient_ = es.gradient_;
   optimizer_ = es.optimizer_;
 
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
@@ -528,7 +528,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       optimizer_,
       activation,
       previous_event_was_activation_,
-      sum_grad_ );
+      gradient_ );
   }
 
   target->erase_used_eprop_history( t_spike, t_spike_previous_ );

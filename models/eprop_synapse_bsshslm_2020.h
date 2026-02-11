@@ -334,7 +334,8 @@ private:
   //! Synaptic weight.
   double weight_;
 
-  double gradient_sum_;
+  //! Gradient used for the weight update.
+  double gradient_;
 
   //! The time step when the previous spike arrived.
   long t_spike_previous_;
@@ -391,7 +392,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
-  , gradient_sum_( 0.0 )
+  , gradient_( 0.0 )
   , t_spike_previous_( 0 )
   , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
@@ -415,7 +416,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , gradient_sum_( es.gradient_sum_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
   , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
@@ -441,7 +442,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  gradient_sum_ = es.gradient_sum_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
   previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_update_ = es.t_previous_update_;
@@ -459,7 +460,7 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
-  , gradient_sum_( es.gradient_sum_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
   , previous_event_was_activation_( false )
   , t_previous_update_( 0 )
@@ -486,7 +487,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  gradient_sum_ = es.gradient_sum_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
   previous_event_was_activation_ = es.previous_event_was_activation_;
   t_previous_update_ = es.t_previous_update_;
@@ -583,14 +584,13 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
     target->write_update_to_history( t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
 
-    const double gradient = target->compute_gradient(
+    gradient_ += target->compute_gradient(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    gradient_sum_ += gradient;
     if ( not activation )
     {
-      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_sum_, weight_ );
-      gradient_sum_ = 0.0;
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
     }
 
     t_previous_update_ = t_current_update;
@@ -608,8 +608,8 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
       target->write_update_to_history(
         t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
 
-      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_sum_, weight_ );
-      gradient_sum_ = 0.0;
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
     }
   }
 

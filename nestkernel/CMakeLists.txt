@@ -20,7 +20,7 @@
 set ( nestkernel_sources
       universal_data_logger_impl.h universal_data_logger.h
       recordables_map.h
-      activation_event_node.h activation_event_node.cpp
+      activation_event_mechanism.h activation_event_mechanism.cpp
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h

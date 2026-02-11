@@ -1,5 +1,5 @@
 /*
- *  activation_event_node.h
+ *  activation_event_mechanism.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ACTIVATION_EVENT_NODE_H
-#define ACTIVATION_EVENT_NODE_H
+#ifndef ACTIVATION_EVENT_MECHANISM_H
+#define ACTIVATION_EVENT_MECHANISM_H
 
 // sli
 #include "dictdatum.h"
@@ -30,31 +30,30 @@
 namespace nest
 {
 /**
- * @brief Base class providing activation event tracking functionality.
+ * @brief Class implementing an activation event mechanism for neuron models.
  *
- * This class provides the basic infrastructure for tracking activation events,
- * including the interval between activation events and the time of the last event.
- * It can be used by neurons that need to send periodic activation events.
+ * This class implements an activation event mechanism for neuron models that
+ * sends activation events after prolonged periods without spike emission.
  */
-class ActivationEventNode
+class ActivationEventMechanism
 {
 public:
   /**
-   * Constructs a new ActivationEventNode object.
+   * Constructs a new ActivationEventMechanism object.
    */
-  ActivationEventNode();
+  ActivationEventMechanism();
 
   /**
-   * Constructs a new ActivationEventNode object by copying another.
+   * Constructs a new ActivationEventMechanism object by copying another.
    *
    * @param n The other object to copy.
    */
-  ActivationEventNode( const ActivationEventNode& n );
+  ActivationEventMechanism( const ActivationEventMechanism& n );
 
   /**
    * Virtual destructor to enable proper cleanup in derived classes.
    */
-  virtual ~ActivationEventNode() = default;
+  virtual ~ActivationEventMechanism() = default;
 
   /**
    * Sets the time the neuron last sent an event (spike or activation event).
@@ -113,4 +112,4 @@ protected:
 
 } // namespace nest
 
-#endif // ACTIVATION_EVENT_NODE_H
+#endif // ACTIVATION_EVENT_MECHANISM_H

@@ -1,5 +1,5 @@
 /*
- *  activation_event_node.cpp
+ *  activation_event_mechanism.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "activation_event_node.h"
+#include "activation_event_mechanism.h"
 
 // nestkernel
 #include "exceptions.h"
@@ -32,26 +32,26 @@
 namespace nest
 {
 
-ActivationEventNode::ActivationEventNode()
+ActivationEventMechanism::ActivationEventMechanism()
   : activation_interval_( 3000.0 )
   , last_event_time_( 0 )
 {
 }
 
-ActivationEventNode::ActivationEventNode( const ActivationEventNode& n )
+ActivationEventMechanism::ActivationEventMechanism( const ActivationEventMechanism& n )
   : activation_interval_( n.activation_interval_ )
   , last_event_time_( n.last_event_time_ )
 {
 }
 
 void
-ActivationEventNode::get_status( DictionaryDatum& d ) const
+ActivationEventMechanism::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::activation_interval, activation_interval_ );
 }
 
 void
-ActivationEventNode::set_status( const DictionaryDatum& d )
+ActivationEventMechanism::set_status( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::activation_interval, activation_interval_ );
 

@@ -46,7 +46,7 @@ register_parrot_neuron( const std::string& name )
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()
-  , ActivationEventNode()
+  , ActivationEventMechanism()
 {
 }
 
@@ -92,14 +92,14 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   ArchivingNode::get_status( d );
-  ActivationEventNode::get_status( d );
+  ActivationEventMechanism::get_status( d );
 }
 
 void
 parrot_neuron::set_status( const DictionaryDatum& d )
 {
   ArchivingNode::set_status( d );
-  ActivationEventNode::set_status( d );
+  ActivationEventMechanism::set_status( d );
 }
 
 void

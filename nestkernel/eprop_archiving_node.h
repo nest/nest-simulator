@@ -24,7 +24,7 @@
 #define EPROP_ARCHIVING_NODE_H
 
 // nestkernel
-#include "activation_event_node.h"
+#include "activation_event_mechanism.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -51,7 +51,7 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node, public ActivationEventNode
+class EpropArchivingNode : public Node, public ActivationEventMechanism
 {
 public:
   /**

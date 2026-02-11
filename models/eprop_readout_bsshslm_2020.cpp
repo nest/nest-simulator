@@ -260,7 +260,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
-    ( this->*compute_error_signal )( lag );
+    ( this->*compute_error_signal )();
 
     if ( interval_step_signals < update_interval - learning_window )
     {
@@ -307,7 +307,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error()
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
   S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
@@ -315,7 +315,7 @@ eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error( const long 
 }
 
 void
-eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy()
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;

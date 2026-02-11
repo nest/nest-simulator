@@ -303,13 +303,13 @@ private:
   bool is_eprop_recurrent_node() const override;
 
   //! Compute the error signal based on the mean-squared error loss.
-  void compute_error_signal_mean_squared_error( const long lag );
+  void compute_error_signal_mean_squared_error();
 
   //! Compute the error signal based on the cross-entropy loss.
-  void compute_error_signal_cross_entropy( const long lag );
+  void compute_error_signal_cross_entropy();
 
   //! Compute the error signal based on a loss function.
-  void ( eprop_readout_bsshslm_2020::*compute_error_signal )( const long lag );
+  void ( eprop_readout_bsshslm_2020::*compute_error_signal )();
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout_bsshslm_2020 >;

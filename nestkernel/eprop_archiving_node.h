@@ -63,8 +63,8 @@ public:
    */
   EpropArchivingNode( const EpropArchivingNode& n );
 
-  void register_synapse() override;
   void register_eprop_connection() override;
+  void initialize_update_history() override;
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,

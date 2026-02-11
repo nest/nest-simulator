@@ -51,17 +51,15 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::register_synapse()
+EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
   ++eprop_indegree_;
 }
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::register_eprop_connection()
+EpropArchivingNode< HistEntryT >::initialize_update_history()
 {
-  ++eprop_indegree_;
-
   const long t_first_entry = model_dependent_history_shift_();
 
   const auto it_hist = get_update_history( t_first_entry );

@@ -325,6 +325,10 @@ public:
     : beta_( 1.0 )
   {
     updateValue< double >( d, names::beta, beta_ );
+    if ( beta_ < 0 )
+    {
+      throw BadProperty( "nest::ExponentialParameter: beta ≥ 0 required." );
+    }
   }
 
   double

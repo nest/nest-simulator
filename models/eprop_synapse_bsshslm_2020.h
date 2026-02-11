@@ -519,6 +519,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
   t.register_eprop_connection();
+  t.initialize_update_history();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }

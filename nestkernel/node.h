@@ -488,24 +488,21 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
-   * @brief Registers an eprop synapse and initializes the update history.
-   *
-   * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
-   * models and to the negative transmission delay from the recurrent to the output layer otherwise.
-   *
-   * @throws IllegalConnection
-   */
-  virtual void register_synapse();
-
-  /**
-   * @brief Registers an eprop synapse and initializes the update history.
-   *
-   * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
-   * models and to the negative transmission delay from the recurrent to the output layer otherwise.
+   * Registers an eprop connection.
    *
    * @throws IllegalConnection
    */
   virtual void register_eprop_connection();
+
+  /**
+   * @brief Initializes the update history.
+   *
+   * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
+   * models and to the negative transmission delay from the recurrent to the output layer otherwise.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void initialize_update_history();
 
   /**
    * @brief Retrieves the temporal shift of the signal.

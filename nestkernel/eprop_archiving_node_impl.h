@@ -34,7 +34,7 @@ namespace nest
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
-  , ActivationEventNode()
+  , ActivationEventMechanism()
   , eprop_indegree_( 0 )
   , eprop_isi_trace_cutoff_( 1000.0 )
 {
@@ -43,7 +43,7 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode()
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
-  , ActivationEventNode( n )
+  , ActivationEventMechanism( n )
   , eprop_indegree_( n.eprop_indegree_ )
   , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {
@@ -283,7 +283,7 @@ EpropArchivingNode< HistEntryT >::set_status( const Dictionary& d )
 
   if ( not is_readout )
   {
-    ActivationEventNode::set_status( d );
+    ActivationEventMechanism::set_status( d );
   }
 
   if ( not is_bsshslm_2020 )

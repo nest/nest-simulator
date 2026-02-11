@@ -24,7 +24,7 @@
 #define PARROT_NEURON_H
 
 // Includes from nestkernel:
-#include "activation_event_node.h"
+#include "activation_event_mechanism.h"
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
@@ -94,7 +94,7 @@ EndUserDocs */
 
 void register_parrot_neuron( const std::string& name );
 
-class parrot_neuron : public ArchivingNode, public ActivationEventNode
+class parrot_neuron : public ArchivingNode, public ActivationEventMechanism
 {
 
 public:

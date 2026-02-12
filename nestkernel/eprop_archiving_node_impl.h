@@ -39,7 +39,7 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
   , FlushEventMechanism()
   , eprop_indegree_( 0 )
-  , eprop_isi_trace_cutoff_( 1000.0 )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< double >::infinity() )
 {
 }
 

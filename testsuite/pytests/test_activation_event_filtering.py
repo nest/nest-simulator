@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_activation_event_filtering.py
+# test_flush_event_filtering.py
 #
 # This file is part of NEST.
 #
@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test that connection types that do not support activation events filter them out.
+Test that connection types that do not support flush events filter them out.
 
-Connection types that do not support activation events (e.g., static_synapse) do not
-transmit activation events, preventing them from reaching recorders and corrupting
+Connection types that do not support flush events (e.g., static_synapse) do not
+transmit flush events, preventing them from reaching recorders and corrupting
 spike train analyses.
 """
 
@@ -31,16 +31,16 @@ import nest
 import pytest
 
 
-def test_activation_events_not_transmitted():
+def test_flush_events_not_transmitted():
     """
-    Verify that static_synapse does not transmit activation events to spike recorder.
+    Verify that static_synapse does not transmit flush events to spike recorder.
     """
     nest.set_verbosity("M_WARNING")
     nest.ResetKernel()
 
     spike_time = 10.0
     sg = nest.Create("spike_generator", params=dict(spike_times=[spike_time]))
-    pt = nest.Create("parrot_neuron", params=dict(activation_interval=5.0))
+    pt = nest.Create("parrot_neuron", params=dict(flush_event_send_interval=5.0))
     sr = nest.Create("spike_recorder")
 
     nest.Connect(sg, pt)
@@ -52,7 +52,7 @@ def test_activation_events_not_transmitted():
 
     assert (
         len(spike_times) == 1
-    ), f"Expected 1 spike, got {len(spike_times)}. Activation events may have been transmitted incorrectly."
+    ), f"Expected 1 spike, got {len(spike_times)}. Flush events may have been transmitted incorrectly."
 
     expected_time = spike_time + nest.GetDefaults("static_synapse")["delay"]
     assert spike_times[0] == pytest.approx(expected_time, abs=0.01)

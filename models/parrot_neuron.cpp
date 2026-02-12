@@ -46,7 +46,7 @@ register_parrot_neuron( const std::string& name )
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()
-  , ActivationEventMechanism()
+  , FlushEventMechanism()
 {
 }
 
@@ -78,10 +78,10 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       }
       set_last_event_time( t );
     }
-    else if ( is_activation_event_due( t ) )
+    else if ( flush_event_is_due( t ) )
     {
       SpikeEvent se;
-      se.set_activation_event_flag( true );
+      se.set_flush_event_flag( true );
       kernel().event_delivery_manager.send( *this, se, lag );
       set_last_event_time( t );
     }
@@ -92,14 +92,14 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   ArchivingNode::get_status( d );
-  ActivationEventMechanism::get_status( d );
+  FlushEventMechanism::get_status( d );
 }
 
 void
 parrot_neuron::set_status( const DictionaryDatum& d )
 {
   ArchivingNode::set_status( d );
-  ActivationEventMechanism::set_status( d );
+  FlushEventMechanism::set_status( d );
 }
 
 void

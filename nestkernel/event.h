@@ -323,14 +323,14 @@ public:
   void set_stamp( Time const& );
 
   /**
-   * Sets the activation event flag.
+   * Sets the flush event flag.
    */
-  void set_activation_event_flag( bool is_activation_event );
+  void set_flush_event_flag( bool is_flush_event );
 
   /**
-   * Returns whether this spike is an activation event.
+   * Returns whether this spike is a flush event.
    */
-  bool is_activation_event();
+  bool is_flush_event();
 
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
@@ -987,15 +987,15 @@ Event::set_stamp( Time const& s )
 }
 
 inline void
-Event::set_activation_event_flag( bool is_activation_event )
+Event::set_flush_event_flag( bool is_flush_event )
 {
-  sender_spike_data_.set_activation_event_flag( is_activation_event );
+  sender_spike_data_.set_flush_event_flag( is_flush_event );
 }
 
 inline bool
-Event::is_activation_event()
+Event::is_flush_event()
 {
-  return sender_spike_data_.is_activation_event();
+  return sender_spike_data_.is_flush_event();
 }
 
 inline long

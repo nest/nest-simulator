@@ -24,7 +24,7 @@
 #define EPROP_ARCHIVING_NODE_H
 
 // nestkernel
-#include "activation_event_mechanism.h"
+#include "flush_event_mechanism.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -51,7 +51,7 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node, public ActivationEventMechanism
+class EpropArchivingNode : public Node, public FlushEventMechanism
 {
 public:
   /**
@@ -71,8 +71,8 @@ public:
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const bool activation,
-    const bool previous_event_was_activation ) override;
+    const bool is_flush_event,
+    const bool previous_was_flush_event ) override;
   /**
    * Retrieves the update history entry for a specific time step.
    *

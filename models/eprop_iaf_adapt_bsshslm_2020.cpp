@@ -353,10 +353,10 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
       S_.r_ = V_.RefractoryCounts_;
       set_last_event_time( t );
     }
-    else if ( is_activation_event_due( t ) )
+    else if ( flush_event_is_due( t ) )
     {
       SpikeEvent se;
-      se.set_activation_event_flag( true );
+      se.set_flush_event_flag( true );
       kernel().event_delivery_manager.send( *this, se, lag );
       set_last_event_time( t );
     }

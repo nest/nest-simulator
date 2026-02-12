@@ -250,8 +250,8 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  //! Whether this connection type supports activation events.
-  static constexpr bool supports_activation_event = true;
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
 
   /**
    * Properties of the connection model.
@@ -340,8 +340,8 @@ private:
   //! The time step when the previous spike arrived.
   long t_spike_previous_;
 
-  //! Last event was an activation.
-  bool previous_event_was_activation_;
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -394,7 +394,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   , weight_( 1.0 )
   , gradient_( 0.0 )
   , t_spike_previous_( 0 )
-  , previous_event_was_activation_( false )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -418,7 +418,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
   , weight_( es.weight_ )
   , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
-  , previous_event_was_activation_( false )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -444,7 +444,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   weight_ = es.weight_;
   gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
-  previous_event_was_activation_ = es.previous_event_was_activation_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -462,7 +462,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( epr
   , weight_( es.weight_ )
   , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
-  , previous_event_was_activation_( false )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -489,7 +489,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   weight_ = es.weight_;
   gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
-  previous_event_was_activation_ = es.previous_event_was_activation_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -543,11 +543,11 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const bool activation = e.is_activation_event();
+  const bool is_flush_event = e.is_flush_event();
 
-  if ( previous_event_was_activation_ )
+  if ( previous_was_flush_event_ )
   {
-    if ( activation )
+    if ( is_flush_event )
     {
       return false;
     }
@@ -582,12 +582,12 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
 
-    target->write_update_to_history( t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
+    target->write_update_to_history( t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
     gradient_ += target->compute_gradient(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    if ( not activation )
+    if ( not is_flush_event )
     {
       weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
       gradient_ = 0.0;
@@ -600,20 +600,20 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   }
   else
   {
-    if ( not activation and previous_event_was_activation_ )
+    if ( not is_flush_event and previous_was_flush_event_ )
     {
       const long idx_current_update = ( t_spike - shift ) / update_interval;
       const long t_current_update = idx_current_update * update_interval;
 
       target->write_update_to_history(
-        t_previous_update_, t_current_update, activation, previous_event_was_activation_ );
+        t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
       weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
       gradient_ = 0.0;
     }
   }
 
-  if ( not activation )
+  if ( not is_flush_event )
   {
     t_spike_previous_ = t_spike;
 
@@ -624,7 +624,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     e();
   }
 
-  previous_event_was_activation_ = activation;
+  previous_was_flush_event_ = is_flush_event;
 
   return true;
 }

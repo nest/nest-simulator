@@ -37,7 +37,7 @@ namespace nest
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
-  , ActivationEventMechanism()
+  , FlushEventMechanism()
   , eprop_indegree_( 0 )
   , eprop_isi_trace_cutoff_( 1000.0 )
 {
@@ -46,7 +46,7 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode()
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
-  , ActivationEventMechanism( n )
+  , FlushEventMechanism( n )
   , eprop_indegree_( n.eprop_indegree_ )
   , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {
@@ -81,8 +81,8 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
-  const bool activation,
-  const bool previous_event_was_activation )
+  const bool is_flush_event,
+  const bool previous_was_flush_event )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -93,7 +93,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   const long t_curr_update_shifted = t_current_update + shift;
   const long t_prev_update_shifted = t_previous_update + shift;
 
-  if ( not activation )
+  if ( not is_flush_event )
   {
     auto it_hist_curr = get_update_history( t_curr_update_shifted );
 
@@ -107,7 +107,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
     }
   }
 
-  if ( not previous_event_was_activation )
+  if ( not previous_was_flush_event )
   {
     auto it_hist_prev = get_update_history( t_prev_update_shifted );
 
@@ -270,7 +270,7 @@ EpropArchivingNode< HistEntryT >::get_status( DictionaryDatum& d ) const
 
   if ( get_name().find( "readout" ) == std::string::npos )
   {
-    def< double >( d, names::activation_interval, activation_interval_ );
+    def< double >( d, names::flush_event_send_interval, flush_event_send_interval_ );
   }
 }
 
@@ -284,7 +284,7 @@ EpropArchivingNode< HistEntryT >::set_status( const DictionaryDatum& d )
 
   if ( not is_readout )
   {
-    ActivationEventMechanism::set_status( d );
+    FlushEventMechanism::set_status( d );
   }
 
   if ( not is_bsshslm_2020 )
@@ -296,16 +296,21 @@ EpropArchivingNode< HistEntryT >::set_status( const DictionaryDatum& d )
       throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
     }
 
-    if ( not is_readout and activation_interval_ < eprop_isi_trace_cutoff_ )
+    if ( not is_readout and flush_event_send_interval_ < eprop_isi_trace_cutoff_ )
     {
-      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_isi_trace_cutoff required." );
+      throw BadProperty(
+        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
+        "eprop_isi_trace_cutoff required." );
     }
   }
   else
   {
-    if ( not is_readout and activation_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
+    if ( not is_readout
+      and flush_event_send_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
     {
-      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_update_interval required." );
+      throw BadProperty(
+        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
+        "eprop_update_interval required." );
     }
   }
 }

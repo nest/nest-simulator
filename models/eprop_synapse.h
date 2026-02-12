@@ -242,8 +242,8 @@ public:
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC;
 
-  //! Whether this connection type supports activation events.
-  static constexpr bool supports_activation_event = true;
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
 
   //! Default constructor.
   eprop_synapse();
@@ -320,8 +320,8 @@ private:
   //! The time step when the previous spike arrived.
   long t_spike_previous_ = 0;
 
-  //! Last event was an activation.
-  bool previous_event_was_activation_ = false;
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_ = false;
 
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_ = 0;
@@ -373,7 +373,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_spike_previous_( 0 )
-  , previous_event_was_activation_( false )
+  , previous_was_flush_event_( false )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( nullptr )
 {
@@ -408,7 +408,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
-  previous_event_was_activation_ = es.previous_event_was_activation_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
@@ -426,7 +426,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_spike_previous_( es.t_spike_previous_ )
-  , previous_event_was_activation_( es.previous_event_was_activation_ )
+  , previous_was_flush_event_( es.previous_was_flush_event_ )
   , t_previous_trigger_spike_( es.t_previous_trigger_spike_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
@@ -454,7 +454,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
-  previous_event_was_activation_ = es.previous_event_was_activation_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
@@ -507,9 +507,9 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const bool activation = e.is_activation_event();
+  const bool is_flush_event = e.is_flush_event();
 
-  if ( previous_event_was_activation_ and activation )
+  if ( previous_was_flush_event_ and is_flush_event )
   {
     return false;
   }
@@ -526,17 +526,17 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       weight_,
       cp,
       optimizer_,
-      activation,
-      previous_event_was_activation_,
+      is_flush_event,
+      previous_was_flush_event_,
       gradient_ );
   }
 
   target->erase_used_eprop_history( t_spike, t_spike_previous_ );
 
   t_spike_previous_ = t_spike;
-  previous_event_was_activation_ = activation;
+  previous_was_flush_event_ = is_flush_event;
 
-  if ( not activation )
+  if ( not is_flush_event )
   {
     e.set_receiver( *target );
     e.set_weight( weight_ );

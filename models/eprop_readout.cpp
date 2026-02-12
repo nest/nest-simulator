@@ -303,8 +303,8 @@ eprop_readout::compute_gradient( const long t_spike,
   double& weight,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer,
-  const bool activation,
-  const bool previous_event_was_activation,
+  const bool is_flush_event,
+  const bool previous_was_flush_event,
   double& gradient )
 {
   const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
@@ -314,7 +314,7 @@ eprop_readout::compute_gradient( const long t_spike,
   const long cutoff_end = t_spike_previous + get_eprop_isi_trace_cutoff();
   const long t_compute_until = std::min( cutoff_end, t_spike );
 
-  if ( not previous_event_was_activation )
+  if ( not previous_was_flush_event )
   {
     gradient = 0.0;                // gradient used for the weight update (to be calculated)
     double z_current_buffer = 1.0; // spike that triggered current computation
@@ -344,14 +344,14 @@ eprop_readout::compute_gradient( const long t_spike,
     }
   }
 
-  const long trace_decay_interval = t_spike - ( previous_event_was_activation ? t_spike_previous : t_compute_until );
+  const long trace_decay_interval = t_spike - ( previous_was_flush_event ? t_spike_previous : t_compute_until );
 
   if ( trace_decay_interval > 0 )
   {
     z_bar *= std::pow( V_.P_v_m_, trace_decay_interval );
   }
 
-  if ( not( activation or optimize_each_step ) )
+  if ( not( is_flush_event or optimize_each_step ) )
   {
     weight = optimizer->optimized_weight( opt_cp, t_compute_until, gradient, weight );
   }

@@ -590,7 +590,7 @@ def test_eprop_history_cleaning(neuron_model, eprop_isi_trace_cutoff):
     }
 
     if neuron_model != "eprop_readout":
-        params_nrn["activation_interval"] = eprop_isi_trace_cutoff
+        params_nrn["flush_event_send_interval"] = eprop_isi_trace_cutoff
 
     gen_spk_in = nest.Create("spike_generator", 3)
     nrns_in = nest.Create("parrot_neuron", 3)

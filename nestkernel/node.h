@@ -523,8 +523,8 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const bool activation,
-    const bool previous_event_was_activation );
+    const bool is_flush_event,
+    const bool previous_was_flush_event );
 
   /**
    * Erases used e-prop history for bsshslm_2020 models.
@@ -867,8 +867,8 @@ public:
     double& weight,
     const CommonSynapseProperties& cp,
     WeightOptimizer* optimizer,
-    bool activation,
-    bool previous_event_was_activation,
+    bool is_flush_event,
+    bool previous_was_flush_event,
     double& sum_grad );
 
   /**

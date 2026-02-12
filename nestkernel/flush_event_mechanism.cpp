@@ -1,5 +1,5 @@
 /*
- *  activation_event_mechanism.cpp
+ *  flush_event_mechanism.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "activation_event_mechanism.h"
+#include "flush_event_mechanism.h"
 
 // nestkernel
 #include "exceptions.h"
@@ -32,32 +32,33 @@
 namespace nest
 {
 
-ActivationEventMechanism::ActivationEventMechanism()
-  : activation_interval_( std::numeric_limits< double >::infinity() )
+FlushEventMechanism::FlushEventMechanism()
+  : flush_event_send_interval_( std::numeric_limits< double >::infinity() )
   , last_event_time_( 0 )
 {
 }
 
-ActivationEventMechanism::ActivationEventMechanism( const ActivationEventMechanism& n )
-  : activation_interval_( n.activation_interval_ )
+FlushEventMechanism::FlushEventMechanism( const FlushEventMechanism& n )
+  : flush_event_send_interval_( n.flush_event_send_interval_ )
   , last_event_time_( n.last_event_time_ )
 {
 }
 
 void
-ActivationEventMechanism::get_status( Dictionary& d ) const
+FlushEventMechanism::get_status( Dictionary& d ) const
 {
-  d[ names::activation_interval ] = activation_interval_;
+  d[ names::flush_event_send_interval ] = flush_event_send_interval_;
 }
 
 void
-ActivationEventMechanism::set_status( const Dictionary& d )
+FlushEventMechanism::set_status( const Dictionary& d )
 {
-  d.update_value( names::activation_interval, activation_interval_ );
+  d.update_value( names::flush_event_send_interval, flush_event_send_interval_ );
 
-  if ( activation_interval_ <= 0.0 )
+  if ( flush_event_send_interval_ <= 0.0 )
   {
-    throw BadProperty( "Interval between activation events activation_interval > 0 required." );
+    throw BadProperty(
+      "Interval since previous event after which a flush event is sent flush_event_send_interval > 0 required." );
   }
 }
 

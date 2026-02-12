@@ -380,7 +380,7 @@ public:
   void
   send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
-    if ( not ConnectionT::supports_activation_event and e.is_activation_event() )
+    if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
     {
       return;
     }
@@ -398,7 +398,7 @@ public:
   size_t
   send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
-    if ( not ConnectionT::supports_activation_event and e.is_activation_event() )
+    if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
     {
       return 0;
     }

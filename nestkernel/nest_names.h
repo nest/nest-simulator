@@ -64,7 +64,6 @@ const std::string a_causal( "a_causal" );
 const std::string a_thresh_th( "a_thresh_th" );
 const std::string a_thresh_tl( "a_thresh_tl" );
 const std::string acceptable_latency( "acceptable_latency" );
-const std::string activation_interval( "activation_interval" );
 const std::string activity( "activity" );
 const std::string adapt_beta( "adapt_beta" );
 const std::string adapt_tau( "adapt_tau" );
@@ -213,6 +212,7 @@ const std::string f_target( "f_target" );
 const std::string file_extension( "file_extension" );
 const std::string filename( "filename" );
 const std::string filenames( "filenames" );
+const std::string flush_event_send_interval( "flush_event_send_interval" );
 const std::string frequency( "frequency" );
 const std::string frozen( "frozen" );
 

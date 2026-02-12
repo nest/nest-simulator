@@ -113,8 +113,8 @@ public:
   // properties used when registering a connection with the ModelManager
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
-  // Whether this connection type supports activation events.
-  static constexpr bool supports_activation_event = false;
+  // Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = false;
 
   Connection()
     : target_()

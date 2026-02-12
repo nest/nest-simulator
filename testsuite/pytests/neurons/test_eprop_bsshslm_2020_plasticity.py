@@ -513,7 +513,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
-        "activation_interval": 3 * duration["sequence"],
+        "flush_event_send_interval": 3 * duration["sequence"],
     }
 
     params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
@@ -535,7 +535,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
-        "activation_interval": 3 * duration["sequence"],
+        "flush_event_send_interval": 3 * duration["sequence"],
     }
 
     params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]

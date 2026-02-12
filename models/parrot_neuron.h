@@ -24,10 +24,10 @@
 #define PARROT_NEURON_H
 
 // Includes from nestkernel:
-#include "activation_event_mechanism.h"
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "flush_event_mechanism.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 
@@ -69,11 +69,11 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======================= ==== ======= ================================
-Parameter               Unit Default Description
-======================= ==== ======= ================================
-``activation_interval`` ms    3000.0 Interval between two activations
-======================= ==== ======= ================================
+============================= ==== ======= ===============================================================
+Parameter                     Unit Default Description
+============================= ==== ======= ===============================================================
+``flush_event_send_interval`` ms    3000.0 Interval since previous event after which a flush event is sent
+============================= ==== ======= ===============================================================
 
 Receives
 ++++++++
@@ -94,7 +94,7 @@ EndUserDocs */
 
 void register_parrot_neuron( const std::string& name );
 
-class parrot_neuron : public ArchivingNode, public ActivationEventMechanism
+class parrot_neuron : public ArchivingNode, public FlushEventMechanism
 {
 
 public:

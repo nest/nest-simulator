@@ -213,8 +213,9 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
-``activation_interval``         ms                                              3000.0 Interval between two
-                                                                                       activations
+``flush_event_send_interval``   ms                                              3000.0 Interval since previous
+                                                                                       event after which a flush
+                                                                                       event is sent
 ``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of

@@ -85,10 +85,10 @@ enum enum_status_spike_data_id
   SPIKE_DATA_ID_INVALID
 };
 
-enum enum_activation_event
+enum enum_flush_event
 {
-  ACTIVATION_EVENT_FALSE,
-  ACTIVATION_EVENT_TRUE
+  FLUSH_EVENT_FALSE,
+  FLUSH_EVENT_TRUE
 };
 
 /**
@@ -102,17 +102,17 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                                //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;           //!< status flag
-  unsigned int activation_event_ : NUM_BITS_ACTIVATION_EVENT;  //!< activation flag
-  unsigned int lag_ : NUM_BITS_LAG;                            //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                            //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                          //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int flush_event_ : NUM_BITS_FLUSH_EVENT;   //!< flush event flag
+  unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                   //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
 
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const Target& target, const size_t lag, const bool activation );
+  SpikeData( const Target& target, const size_t lag, const bool is_flush_event );
   SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
@@ -191,9 +191,9 @@ public:
   bool is_invalid_marker() const;
 
   /**
-   * Returns whether this spike is an activation event.
+   * Returns whether this spike is a flush event.
    */
-  bool is_activation_event() const;
+  bool is_flush_event() const;
 
   /**
    * Returns offset.
@@ -201,9 +201,9 @@ public:
   double get_offset() const;
 
   /**
-   * Sets the activation event flag.
+   * Sets the flush event flag.
    */
-  void set_activation_event_flag( bool is_activation_event );
+  void set_flush_event_flag( bool is_flush_event );
 };
 
 //! check legal size
@@ -212,7 +212,7 @@ using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::succes
 inline SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( ACTIVATION_EVENT_FALSE )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -222,31 +222,31 @@ inline SpikeData::SpikeData()
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
   , marker_( rhs.marker_ )
-  , activation_event_( rhs.activation_event_ )
+  , flush_event_( rhs.flush_event_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
 {
 }
 
-inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool activation )
+inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool is_flush_event )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( ACTIVATION_EVENT_FALSE )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
-  if ( activation )
+  if ( is_flush_event )
   {
-    activation_event_ = ACTIVATION_EVENT_TRUE;
+    flush_event_ = FLUSH_EVENT_TRUE;
   }
 }
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
-  , activation_event_( ACTIVATION_EVENT_FALSE )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -258,7 +258,7 @@ SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
-  activation_event_ = rhs.activation_event_;
+  flush_event_ = rhs.flush_event_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;
@@ -275,7 +275,7 @@ SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, cons
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = ACTIVATION_EVENT_FALSE;
+  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -290,7 +290,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = ACTIVATION_EVENT_FALSE;
+  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = target.get_tid();
   syn_id_ = target.get_syn_id();
@@ -376,9 +376,9 @@ SpikeData::is_invalid_marker() const
 }
 
 inline bool
-SpikeData::is_activation_event() const
+SpikeData::is_flush_event() const
 {
-  return activation_event_ == ACTIVATION_EVENT_TRUE;
+  return flush_event_ == FLUSH_EVENT_TRUE;
 }
 
 inline double
@@ -388,9 +388,9 @@ SpikeData::get_offset() const
 }
 
 inline void
-SpikeData::set_activation_event_flag( bool is_activation_event )
+SpikeData::set_flush_event_flag( bool is_flush_event )
 {
-  activation_event_ = is_activation_event ? ACTIVATION_EVENT_TRUE : ACTIVATION_EVENT_FALSE;
+  flush_event_ = is_flush_event ? FLUSH_EVENT_TRUE : FLUSH_EVENT_FALSE;
 }
 
 class OffGridSpikeData : public SpikeData
@@ -487,7 +487,7 @@ OffGridSpikeData::set( const size_t tid,
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  activation_event_ = ACTIVATION_EVENT_FALSE;
+  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -517,15 +517,15 @@ OffGridSpikeData::get_offset() const
  */
 struct SpikeDataWithRank
 {
-  SpikeDataWithRank( const Target& target, const size_t lag, const bool activation );
+  SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event );
 
   const size_t rank;           //!< rank of target neuron
   const SpikeData spike_data;  //! data on spike transmitted
 };
 
-inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag, const bool activation )
+inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event )
   : rank( target.get_rank() )
-  , spike_data( target, lag, activation )
+  , spike_data( target, lag, is_flush_event )
 {
 }
 

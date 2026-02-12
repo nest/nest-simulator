@@ -69,11 +69,14 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-============================= ==== ======= ===============================================================
-Parameter                     Unit Default Description
-============================= ==== ======= ===============================================================
-``flush_event_send_interval`` ms    3000.0 Interval since previous event after which a flush event is sent
-============================= ==== ======= ===============================================================
+============================= ==== ================== =================================
+Parameter                     Unit Default            Description
+============================= ==== ================== =================================
+``flush_event_send_interval`` ms   maximum value      Interval since previous event
+                                   representable by   after which a flush event is sent
+                                   ``double`` type in
+                                   C++
+============================= ==== ================== =================================
 
 Receives
 ++++++++

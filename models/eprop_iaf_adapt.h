@@ -203,7 +203,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
-                                                            a ``double``
+                                                            ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
@@ -213,14 +213,15 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
-``flush_event_send_interval``   ms                                              3000.0 Interval since previous
-                                                                                       event after which a flush
-                                                                                       event is sent
+``flush_event_send_interval``   ms                                  maximum value      Interval since previous
+                                                                    representable by   event after which a flush
+                                                                    ``double`` type in event is sent
+                                                                    C++
 ``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
                                                                     representable      e-prop update between two
-                                                                    by a ``long``      spikes
+                                                                    by ``double``      spikes
                                                                     type in C++
 ``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
                                                                                        rate regularization

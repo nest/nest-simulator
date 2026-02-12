@@ -186,7 +186,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
-                                                            a ``double``
+                                                            ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
@@ -196,10 +196,10 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent         Default            Description
 =============================== ======= ======================= ================== =============================
-``flush_event_send_interval``   ms                                          3000.0 Interval since previous event
-                                                                                   after which a flush event is
-                                                                                   sent
-
+``flush_event_send_interval``   ms                              maximum value      Interval since previous event
+                                                                representable by   after which a flush event is
+                                                                ``double`` type in sent
+                                                                C++
 ``c_reg``                               :math:`c_\text{reg}`                 0.0   Coefficient of firing rate
                                                                                    regularization
 ``f_target``                    Hz      :math:`f^\text{target}`             10.0   Target firing rate of rate

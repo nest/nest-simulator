@@ -166,7 +166,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================
@@ -178,7 +178,7 @@ Parameter                   Unit    Math equivalent             Default         
 =========================== ======= =========================== ================ ===============================
 ``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                                 representable    e-prop update between two
-                                                                by a ``long``    spikes
+                                                                by ``double``    spikes
                                                                 type in C++
 =========================== ======= =========================== ================ ===============================
 

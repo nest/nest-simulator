@@ -162,7 +162,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================

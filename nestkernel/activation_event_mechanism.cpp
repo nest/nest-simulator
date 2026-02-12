@@ -33,7 +33,7 @@ namespace nest
 {
 
 ActivationEventMechanism::ActivationEventMechanism()
-  : activation_interval_( 3000.0 )
+  : activation_interval_( std::numeric_limits< double >::infinity() )
   , last_event_time_( 0 )
 {
 }

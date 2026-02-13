@@ -23,8 +23,11 @@
 #ifndef FLUSH_EVENT_MECHANISM_H
 #define FLUSH_EVENT_MECHANISM_H
 
-// sli
+// nestkernel
 #include "nest_time.h"
+
+// libnestutil
+#include "dict_util.h"
 
 namespace nest
 {
@@ -93,13 +96,13 @@ public:
   /**
    * Retrieve flush event parameters and add to status dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set flush event parameters from status dictionary.
    * Validates that flush_event_send_interval > 0.
    */
-  void set_status( const DictionaryDatum& d );
+  void set_status( const Dictionary& d );
 
 protected:
   //! Interval since previous event after which a flush event is sent (ms).

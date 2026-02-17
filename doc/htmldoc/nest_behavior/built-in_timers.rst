@@ -104,14 +104,25 @@ Therefore, detailed timers are by default inactive.
 
      ``-Dwith-threaded-timers=OFF``
 
-     **Wall-time vs. CPU-time**
+     **Wall-clock time vs. CPU-time**
 
-     All timers in NEST measure the actual wall-time spent between starting and stopping the timer. In order to only measure
-     time spent on calculations, there is an additional variant for each of the timers above, suffixed with ``_cpu``. They
-     can be accessed in the exact same way. For example:
+     Timers in NEST measure the wall-clock time spent between starting
+     and stopping the timer. For each wall-clock timer there is also a
+     timer measuring only the actual CPU time used. This timer has the
+     same name was the wall-clock timer with the suffix
+     ``_cpu``. Thus,
+     ::
+
+         nest.time_simulate
+
+     will return the wall-clock time used for simulation and
      ::
 
          nest.time_simulate_cpu
+
+     the CPU time. Specifically, the wall-clock timer uses the
+     ``CLOCK_MONOTONIC`` POSIX timer and the CPU timer uses
+     ``CLOCK_THREAD_CPUTIME_ID``; for details see: `clock_gettime_ <https://www.man7.org/linux/man-pages/man3/clock_gettime.3.html>`_.
 
      **MPI synchronization timer**
 

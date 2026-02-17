@@ -90,7 +90,7 @@ public:
   bool
   flush_event_is_due( const long current_time ) const
   {
-    return ( last_event_time_ > 0 and current_time - last_event_time_ ) >= get_flush_event_send_interval_steps();
+    return last_event_time_ > 0 and ( current_time - last_event_time_ >= get_flush_event_send_interval_steps() );
   }
 
   /**

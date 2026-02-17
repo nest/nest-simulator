@@ -658,11 +658,11 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i * SPIKES_PER_BATCH + j ];
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
+          se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
           se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
-          se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -680,11 +680,11 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
         se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
-        se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
@@ -723,9 +723,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           {
             // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
             // only if needed, as this is computationally costly
-            const auto is_flush_event = se_batch[ j ].is_flush_event();
             se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
-            se_batch[ j ].set_flush_event_flag( is_flush_event );
           }
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
@@ -763,9 +761,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
           // only if needed, as this is computationally costly
-          const auto is_flush_event = se_batch[ j ].is_flush_event();
           se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
-          se_batch[ j ].set_flush_event_flag( is_flush_event );
         }
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )

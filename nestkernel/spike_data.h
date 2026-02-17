@@ -275,7 +275,6 @@ SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, cons
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;
@@ -290,7 +289,6 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   assert( lag < MAX_LAG );
   lcid_ = target.get_lcid();
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = target.get_tid();
   syn_id_ = target.get_syn_id();
@@ -487,7 +485,6 @@ OffGridSpikeData::set( const size_t tid,
 
   lcid_ = lcid;
   marker_ = SPIKE_DATA_ID_DEFAULT;
-  flush_event_ = FLUSH_EVENT_FALSE;
   lag_ = lag;
   tid_ = tid;
   syn_id_ = syn_id;

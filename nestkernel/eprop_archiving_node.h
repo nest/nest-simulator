@@ -123,7 +123,7 @@ public:
    * Retrieves the time interval from the previous spike until the cutoff of
    * e-prop update computation between two spikes (ms).
    */
-  double
+  long
   get_eprop_isi_trace_cutoff() const
   {
     return Time( Time::ms( eprop_isi_trace_cutoff_ ) ).get_steps();

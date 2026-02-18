@@ -281,6 +281,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     if return_synapsecollection:
         return GetConnections(pre, post)
+    else:
+        return None
 
 
 def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_specs=None):
@@ -307,7 +309,7 @@ def TripartiteConnect(pre, post, third, conn_spec, third_factor_conn_spec, syn_s
         Specifies connection rule for primary connection
     third_factor_conn_spec: dict
         Specifies third-factor connection rule
-    syn_spec : dict, optional
+    syn_specs : dict, optional
         Specifies synapse models to be used, see below
 
     Raises

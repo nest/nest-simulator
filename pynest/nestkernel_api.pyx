@@ -107,7 +107,7 @@ cdef class MaskObject:
         self.thisptr = mask_ptr
 
 
-cdef object any_vector_to_list(vector[any] cvec):
+cdef object vec_of_any_to_list(vector[any] cvec):
     cdef tmp = []
     cdef vector[any].iterator it = cvec.begin()
     while it != cvec.end():
@@ -116,13 +116,14 @@ cdef object any_vector_to_list(vector[any] cvec):
     return tmp
 
 
-cdef object dict_vector_to_list(vector[Dictionary] cvec):
+cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
         tmp.append(Dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
+
 
 def make_tuple_or_ndarray(operand):
         if len(operand) > 0 and isinstance(operand[0], numbers.Number):
@@ -168,12 +169,12 @@ cdef object any_to_pyobj(any operand):
         # return any_cast[std_vector[std_string]](operand)
         return list(map(lambda x: x.decode("utf-8"), any_cast[std_vector[std_string]](operand)))
     if is_type[std_vector[Dictionary]](operand):
-        return dict_vector_to_list(any_cast[std_vector[Dictionary]](operand))
+        return vec_of_dict_to_list(any_cast[std_vector[Dictionary]](operand))
     if is_type[std_vector[any]](operand):
         # PYNEST-NG-FUTURE: This will create a Python list first and then convert to
         # either tuple or numpy array, which will copy the data element-wise.
         # Could we do this more effienctly?
-        return make_tuple_or_ndarray(any_vector_to_list(any_cast[std_vector[any]](operand)))
+        return make_tuple_or_ndarray(vec_of_any_to_list(any_cast[std_vector[any]](operand)))
     if is_type[Dictionary](operand):
         return Dictionary_to_pydict(any_cast[Dictionary](operand))
     if is_type[NodeCollectionPTR](operand):
@@ -261,15 +262,6 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             raise AttributeError(f'when converting Python Dictionary: value of key ({key}) is not a known type, got {typename}')
 
     return cdict
-
-
-cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
-    cdef tmp = []
-    cdef vector[Dictionary].iterator it = cvec.begin()
-    while it != cvec.end():
-        tmp.append(Dictionary_to_pydict(deref(it)))
-        inc(it)
-    return tmp
 
 
 cdef vector[any] empty_any_vec():
@@ -413,7 +405,7 @@ def llapi_make_nodecollection(object node_ids):
     return nest.NodeCollection(obj)
 
 
-def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+cdef (Dictionary, vector[Dictionary]) _prepare_arguments_dis_connect(object conn_params, object synapse_params):
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
 
@@ -429,9 +421,13 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
     elif synapse_params is not None:
         syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
 
-    connect(pre.thisptr, post.thisptr,
-            pydict_to_Dictionary(conn_params),
-            syn_param_vec)
+    return pydict_to_Dictionary(conn_params), syn_param_vec
+
+def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+    cdef Dictionary conn_params_dict
+    cdef vector[Dictionary] syn_params_vec
+    conn_params_dict, syn_param_vec = _prepare_arguments_dis_connect(conn_params, synapse_params)
+    connect(pre.thisptr, post.thisptr, conn_params_dict, syn_param_vec)
 
 
 def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post, NodeCollectionObject third,
@@ -450,26 +446,10 @@ def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post
 
 
 def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
-    conn_params = conn_params if conn_params is not None else {}
-    synapse_params = synapse_params if synapse_params is not None else {}
-
-    if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
-        conn_params["rule"] = "all_to_all"
-
-    if synapse_params is dict and "synapse_model" not in synapse_params:
-        synapse_params["synapse_model"] = "static_synapse"
-
-    # Pass synapse specs as vector/collocated synapse for consistency with Connect().
-    # This simplifies the C++ level because ConnBuilder() constructors expect vectors of synapse specs.
-    cdef vector[Dictionary] syn_param_vec
-    if isinstance(synapse_params, nest.CollocatedSynapses):
-        syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
-    elif synapse_params is not None:
-        syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
-
-    disconnect(pre.thisptr, post.thisptr,
-            pydict_to_Dictionary(conn_params),
-            syn_param_vec)
+    cdef Dictionary conn_params_dict
+    cdef vector[Dictionary] syn_params_vec
+    conn_params_dict, syn_params_vec = _prepare_arguments_dis_connect(conn_params, synapse_params)
+    disconnect(pre.thisptr, post.thisptr, conn_params_dict, syn_params_vec)
 
 
 def llapi_disconnect_syncoll(object conns):
@@ -878,7 +858,7 @@ def llapi_set_connection_status(object conns, object params):
 
 
 def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
-    """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
+    """Calls connect_arrays function, passing pointers to the NumPy arrays"""
 
     if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
         raise TypeError('sources must be a 1-dimensional NumPy array of integers')

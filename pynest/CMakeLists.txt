@@ -19,10 +19,8 @@
 
 if ( HAVE_PYTHON )
 
-  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
-  # or Python_EXECUTABLE set properly.
   execute_process(
-    COMMAND "python3" "${PROJECT_SOURCE_DIR}/pynest/generate_exception_header.py"
+    COMMAND ${Python_EXECUTABLE} "${PROJECT_SOURCE_DIR}/pynest/generate_exception_header.py"
     "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT

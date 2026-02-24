@@ -61,7 +61,7 @@ def test_simulation_completes():
 
     nest.Simulate(200.0)
 
-    times = spike_recorder.events["times"]
-    senders = spike_recorder.events["senders"]
-    assert set(senders[:2]) == set([1, 2])
-    assert np.all(times.T[:2] == pytest.approx(4.1))
+    spike_recs = spike_recorder.get("events", ["senders", "times"])
+
+    assert np.all(np.isin(np.array([1, 2]), spike_recs["senders"].T[:2]))
+    assert np.all(spike_recs["times"].T[:2] == pytest.approx(4.1))

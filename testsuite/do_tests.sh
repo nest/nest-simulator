@@ -144,7 +144,7 @@ HAVE_OPENMP="$(sli -c 'is_threaded =only')"
 if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
     MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
-    export SLI_MPIEXEC_PREFLAGS="--prefix $(python -c 'import sys; print(sys.prefix)')"
+    SLI_MPIEXEC_PREFLAGS="--prefix $(python -c 'import sys; print(sys.prefix)')"
     # OpenMPI requires --oversubscribe to allow more processes than available cores
     #
     # ShellCheck warns about "SC2076 (warning): Remove quotes from right-hand side of =~ to match as a regex rather than literally.",
@@ -152,9 +152,10 @@ if test "${HAVE_MPI}" = "true"; then
     # shellcheck disable=SC2076
     if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
     if [[ ! "$(sli -c 'statusdict/mpiexec_preflags :: =only')" =~ "--oversubscribe" ]]; then
-        export SLI_MPIEXEC_PREFLAGS="--oversubscribe $SLI_MPIEXEC_PREFLAGS"
+        SLI_MPIEXEC_PREFLAGS="--oversubscribe $SLI_MPIEXEC_PREFLAGS"
     fi
     fi
+	export SLI_MPIEXEC_PREFLAGS
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.

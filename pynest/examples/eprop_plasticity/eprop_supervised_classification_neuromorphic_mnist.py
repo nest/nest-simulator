@@ -473,7 +473,7 @@ def unzip(zip_file_path, extraction_path):
 
 def download_and_extract_nmnist_dataset(save_path="./"):
     nmnist_dataset = {
-        "url": "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip",
+        "url": "https://data.mendeley.com/public-api/zip/468j46mzdv/download/1",
         "directory": "468j46mzdv-1",
         "zip": "dataset.zip",
     }
@@ -488,9 +488,13 @@ def download_and_extract_nmnist_dataset(save_path="./"):
     if not (os.path.exists(path) and os.path.exists(train_path) and os.path.exists(test_path)):
         if not os.path.exists(downloaded_zip_path):
             print("\nDownloading the N-MNIST dataset.")
-            response = requests.get(nmnist_dataset["url"], timeout=10)
-            with open(downloaded_zip_path, "wb") as file:
-                file.write(response.content)
+            chunk_size = 1024 * 1024  # 1 MiB
+            with requests.get(nmnist_dataset["url"], stream=True, timeout=60) as r:
+                r.raise_for_status()
+                with open(downloaded_zip_path, "wb", buffering=chunk_size) as f:
+                    for chunk in r.iter_content(chunk_size=chunk_size):
+                        if chunk:
+                            f.write(chunk)
 
         unzip(downloaded_zip_path, save_path)
         unzip(f"{train_path}.zip", path)

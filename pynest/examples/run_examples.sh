@@ -31,7 +31,7 @@ fi
 
 # set bash strict mode
 set -euo pipefail
-set -x
+#set -x
 IFS=$' \n\t'
 
 # current directory where all results are save is "basedir"
@@ -110,7 +110,7 @@ for i in "${EXAMPLES[@]}"; do
 
     runner="python3"
 
-    output_dir="$basedir/example_logs/$example"
+    output_dir="$basedir/example_logs/${example//./_}"
     logfile="$output_dir/output.log"
     metafile="$output_dir/meta.yaml"
     mkdir -pv "$output_dir"

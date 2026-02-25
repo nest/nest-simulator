@@ -107,9 +107,9 @@ Therefore, detailed timers are by default inactive.
      **Wall-clock time vs. CPU-time**
 
      Timers in NEST measure the wall-clock time spent between starting
-     and stopping the timer. For each wall-clock timer there is also a
+     and stopping the timer. For each wall-clock timer, there is also a
      timer measuring only the actual CPU time used. This timer has the
-     same name was the wall-clock timer with the suffix
+     same name as the wall-clock timer with the suffix
      ``_cpu``. Thus,
      ::
 

@@ -57,7 +57,7 @@ fi
 # First three skipped because they are not meant to be run by design (*_script.py are from the music example, which is currently skipped)
 # eprop...mnist currently missing some input files
 # csa... are not tested because I could not build libneurosim
-SKIP_LIST="brette_et_al_2007_benchmark.py nest_script.py receiver_script.py eprop_supervised_classification_neuromorphic_mnist.py"
+SKIP_LIST="brette_et_al_2007_benchmark.py nest_script.py receiver_script.py eprop_supervised_classification_neuromorphic_mnist.py csa_example.py csa_spatial_example.py"
 for i in $(seq 0 $(( ${#EXAMPLES[@]}-1))); do
     if [[ "${SKIP_LIST}" =~ $(basename "${EXAMPLES[$i]}") ]]; then
         echo  "Skipping ${EXAMPLES[$i]}"

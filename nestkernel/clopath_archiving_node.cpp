@@ -98,7 +98,7 @@ nest::ClopathArchivingNode::set_status( const Dictionary& d )
   double new_theta_plus = theta_plus_;
   double new_theta_minus = theta_minus_;
   double new_u_ref_squared = u_ref_squared_;
-  double new_A_LTD_const = A_LTD_const_;
+  bool new_A_LTD_const = A_LTD_const_;
   double new_delay_u_bars = delay_u_bars_;
   d.update_value( names::A_LTD, new_A_LTD );
   d.update_value( names::A_LTP, new_A_LTP );

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# test_cont_proxy_receiver.py
+# empty.py
 #
 # This file is part of NEST.
 #

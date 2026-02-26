@@ -154,7 +154,7 @@ if test "${HAVE_MPI}" = "true"; then
         MPIEXEC_PREFLAGS="--oversubscribe $MPIEXEC_PREFLAGS"
     fi
     fi
-	export SLI_MPIEXEC_PREFLAGS
+  export MPIEXEC_PREFLAGS
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -425,16 +425,22 @@ if test "${MUSIC}"; then
 
     TESTDIR="${TEST_BASEDIR}/sli2py_music/"
 
+    # Initialize tracking variables to avoid 'unbound variable' errors under set -u
+    JUNIT_TESTS=0
+    JUNIT_SKIPS=0
+    JUNIT_FAILURES=0
+    TIME_TOTAL=0
+
     # shellcheck disable=SC2044
     for test_name in $(find "${TESTDIR}" -maxdepth 1 -name '*.music' -printf '%f\n'); do
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of Python files from the '.music' file.
-        readarray py_file_matches < <(grep '\.py' "${music_file}")
-        if [ ${#py_file_matches} -gt 0 ]; then
-            readarray py_files < <(for f in "${py_file_matches[@]//binary=/${TESTDIR}}"; do if test -f "${f}"; then echo "${f}"; fi; done)
+        readarray -t py_file_matches < <(grep '\.py' "${music_file}" || true)
+        if [ ${#py_file_matches[@]} -gt 0 ]; then
+            readarray -t py_files < <(for f in "${py_file_matches[@]//binary=/${TESTDIR}}"; do if test -f "${f}"; then echo "${f}"; fi; done)
         else
-            py_files=""
+            py_files=()
             echo "No python files found in music file ${music_file}"
         fi
 
@@ -458,7 +464,7 @@ if test "${MUSIC}"; then
         # Copy everything to TMPDIR_MUSIC.
         # Note that variables might also be empty, so test for file existence first.
         # Note that ${py_files} must not be quoted because it expands into multiple, space-separate file names.
-        for filename in "${music_file}" "${sh_file}" "${input_file}" ${py_files}; do
+        for filename in "${music_file}" "${sh_file}" "${input_file}" "${py_files[@]:-}"; do
             test -e "${filename}" && cp "${filename}" "${TMPDIR_MUSIC}"
         done
 
@@ -482,7 +488,7 @@ if test "${MUSIC}"; then
         music_path="$(dirname "${MUSIC}")"
         chmod 755 "runner.sh"
         TIME_ELAPSED="$(PATH="$PATH:${music_path}" time_cmd ./runner.sh )"
-        TIME_TOTAL="$(( ${TIME_TOTAL:-0} + TIME_ELAPSED ))"
+        TIME_TOTAL="$(( TIME_TOTAL + TIME_ELAPSED ))"
         sed -e 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
 
         # Retrieve the exit code. This is either the one of the mpirun call
@@ -493,11 +499,11 @@ if test "${MUSIC}"; then
         # The values will be stored in the XML report at 'junit_close'.
         # Test failures and diagnostic information are also stored in the xml-report file
         # with 'unit_write'.
-        JUNIT_TESTS="$(( ${JUNIT_TESTS:-0} + 1 ))"
+        JUNIT_TESTS="$(( JUNIT_TESTS + 1 ))"
         if test -z "$(echo "${test_name}" | grep failure)"; then
             if test "$exit_code" -eq 0; then
                 echo "Success"
-            elif test "$exit_code" -ge 200 -a "$exit_code" -le 215; then
+            elif [ "$exit_code" -ge 200 ] && [ "$exit_code" -le 215 ]; then
                 echo "Skipped"
                 JUNIT_SKIPS="$(( JUNIT_SKIPS + 1 ))"
             else
@@ -508,7 +514,7 @@ if test "${MUSIC}"; then
         else
             if test "$exit_code" -ne 0; then
                 echo "Success (expected failure)"
-            elif test "$exit_code" -ge 200 -a "$exit_code" -le 215; then
+            elif [ "$exit_code" -ge 200 ] && [ "$exit_code" -le 215 ]; then
                 echo "Skipped"
                 JUNIT_SKIPS="$(( JUNIT_SKIPS + 1 ))"
             else
@@ -555,23 +561,23 @@ if test "${PYTHON}"; then
 
     # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "true"; then
-        if test "${MPI_LAUNCHER}"; then
+        if test -n "${MPI_LAUNCHER:-}"; then
 
-	    if test "${INFO_OS:-}" = "Darwin"; then
-		# ref https://stackoverflow.com/a/752893
-		# Note that on GNU systems an additional '-r' would be needed for
-		# xargs, which is not available here.
+      if test "${INFO_OS:-}" = "Darwin"; then
+   # ref https://stackoverflow.com/a/752893
+   # Note that on GNU systems an additional '-r' would be needed for
+   # xargs, which is not available here.
                 proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
-	    else
+      else
                 proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
-	    fi
+      fi
 
             # Loop over subdirectories whose names are the number of mpi procs to use
             for numproc in ${proc_nums}; do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
 
-                if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+                if [ "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}" = "true" ]; then
                     PYTEST_ARGS="${PYTEST_ARGS} -m 'not requires_many_cores'"
                 fi
 
@@ -608,7 +614,8 @@ set +e
 
 # We use plain python3 here to collect results. This also works if
 # PyNEST was not enabled and ${PYTHON} is consequently not set.
-if "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}"; then
+SUMMARY_OPTS=""
+if [ "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-false}" = "true" ]; then
    SUMMARY_OPTS="--no-manycore-tests"
 fi
 python3 "$(dirname "$0")/summarize_tests.py" ${SUMMARY_OPTS:+"$SUMMARY_OPTS"} "${REPORTDIR}"

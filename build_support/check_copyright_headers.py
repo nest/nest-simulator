@@ -106,6 +106,11 @@ for dirpath, _, fnames in os.walk(source_dir):
         continue
 
     for fname in fnames:
+        # Symbolic links may point to files of different names, so we do not
+        # check the name of the link.
+        if os.path.islink(os.path.join(dirpath, fname)):
+            continue
+
         if any([regex.search(fname) for regex in exclude_file_regex]):
             continue
 

@@ -31,39 +31,42 @@ fi
 
 # set bash strict mode
 set -euo pipefail
-#set -x
 IFS=$' \n\t'
 
 # current directory where all results are save is "basedir"
 basedir="$PWD"
+
 # source tree where all input scripts/data can be found is "sourcedir"
 sourcedir="$(realpath "$(dirname "$0")/../..")"
 
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
-    # Find all examples that have a line containing "autorun=true"
-    # The examples can be found in subdirectory nest and in the
-    # examples installation path.
+    # The examples can be found in the examples installation path.
     EXAMPLELIST="$(mktemp examplelist.XXXXXXXXXX)"
-    find "${sourcedir}/pynest/examples" -name '*.py' >>"$EXAMPLELIST" || true
-    readarray -t EXAMPLES <"$EXAMPLELIST"  # append each example found above
+    # Next line is based on a suggestion from perplexity.ai. The first collects all Python files from
+    # the top-level examples directory and from all subdirectories *not* containing run_example.py.
+    # The second line adds the run_example.py file for each subdirectory containing one.
+    find "${sourcedir}/pynest/examples" -maxdepth 1 -type d -not -exec test -e {}/run_example.py \; -exec find {} -maxdepth 1 -name '*.py' \;  >> "$EXAMPLELIST" || true
+    ls "${sourcedir}/pynest/examples"/*/run_example.py >> "$EXAMPLELIST" || true
+    readarray -t EXAMPLES < "$EXAMPLELIST"  # append each example found above
     rm "$EXAMPLELIST"
 else
     EXAMPLES+=( "${@}" )
 fi
 
+# First three skipped because they are not meant to be run by design (*_script.py are from the music example, which is currently skipped)
+# eprop...mnist currently missing some input files
+# csa... are not tested because I could not build libneurosim
+SKIP_LIST="brette_et_al_2007_benchmark.py nest_script.py receiver_script.py eprop_supervised_classification_neuromorphic_mnist.py"
 for i in $(seq 0 $(( ${#EXAMPLES[@]}-1))); do
-    if echo "${EXAMPLES[$i]}" | grep -vE "${SKIP_LIST}" >/dev/null; then
-        echo "Skipping ${EXAMPLES[$i]}"
-        unset "EXAMPLES['$i']"
+    if [[ "${SKIP_LIST}" =~ $(basename "${EXAMPLES[$i]}") ]]; then
+        echo  "Skipping ${EXAMPLES[$i]}"
+        unset 'EXAMPLES[i]'
     fi
 done
 
-# TODO-PYNEST-NG This does NOT turn of plotting
-# turn off plotting to the screen and waiting for input
-# And how about saving all the plots to file for inspection?
-MPLCONFIGDIR="$(pwd)/matplotlib/"
-export MPLCONFIGDIR
+# Set to non-interactive backend
+export MPLBACKEND=agg
 
 INFO_OS="$(uname -s)"
 
@@ -110,7 +113,7 @@ for i in "${EXAMPLES[@]}"; do
 
     runner="python3"
 
-    output_dir="$basedir/example_logs/${example//./_}"
+    output_dir="$basedir/example_logs/${example//./_}"   # replace .py with _py
     logfile="$output_dir/output.log"
     metafile="$output_dir/meta.yaml"
     mkdir -pv "$output_dir"

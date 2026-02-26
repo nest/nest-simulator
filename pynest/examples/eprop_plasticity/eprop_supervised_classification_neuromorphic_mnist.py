@@ -361,10 +361,10 @@ senders_in_rec, targets_in_rec = get_weight_recorder_senders_targets(weights_in_
 senders_rec_rec, targets_rec_rec = get_weight_recorder_senders_targets(weights_rec_rec, nrns_rec, nrns_rec)
 senders_rec_out, targets_rec_out = get_weight_recorder_senders_targets(weights_rec_out, nrns_rec, nrns_out)
 
-params_wr["senders"] = np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out]))
-params_wr["targets"] = np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out]))
-
-nest.SetStatus(wr, params_wr)
+wr.set(
+    senders=np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out])),
+    targets=np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out])),
+)
 
 params_common_syn_eprop = {
     "optimizer": {

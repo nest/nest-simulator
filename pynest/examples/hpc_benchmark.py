@@ -223,14 +223,14 @@ def build_network(logger):
     nest.resolution = params["dt"]
     nest.overwrite_files = True
 
-    nest.message(M_INFO, "build_network", "Creating excitatory population.")
+    print("Creating excitatory population.")
     E_neurons = nest.Create("iaf_psc_alpha", NE, params=model_params)
 
-    nest.message(M_INFO, "build_network", "Creating inhibitory population.")
+    print("Creating inhibitory population.")
     I_neurons = nest.Create("iaf_psc_alpha", NI, params=model_params)
 
     if brunel_params["randomize_Vm"]:
-        nest.message(M_INFO, "build_network", "Randomizing membrane potentials.")
+        print("Randomizing membrane potentials.")
 
         random_vm = nest.random.normal(brunel_params["mean_potential"], brunel_params["sigma_potential"])
         nest.GetLocalNodeCollection(E_neurons).V_m = random_vm
@@ -241,7 +241,7 @@ def build_network(logger):
     # number of incomining inhibitory connections
     CI = int(1.0 * NI / params["scale"])
 
-    nest.message(M_INFO, "build_network", "Creating excitatory stimulus generator.")
+    print("Creating excitatory stimulus generator.")
 
     # Convert synapse weight from mV to pA
     conversion_factor = convert_synapse_weight(model_params["tau_m"], model_params["tau_syn_ex"], model_params["C_m"])
@@ -254,7 +254,7 @@ def build_network(logger):
 
     E_stimulus = nest.Create("poisson_generator", 1, {"rate": nu_ext * CE * 1000.0})
 
-    nest.message(M_INFO, "build_network", "Creating excitatory spike recorder.")
+    print("Creating excitatory spike recorder.")
 
     if params["record_spikes"]:
         recorder_label = os.path.join(brunel_params["filestem"], "alpha_" + str(stdp_params["alpha"]) + "_spikes")
@@ -263,7 +263,7 @@ def build_network(logger):
     BuildNodeTime = time.time() - tic
 
     logger.log(str(BuildNodeTime) + " # build_time_nodes")
-    logger.log(str(memory_thisjob()) + " # virt_mem_after_nodes")
+    logger.log(str(nest.memory_size) + " # virt_mem_after_nodes")
 
     tic = time.time()
 
@@ -274,14 +274,14 @@ def build_network(logger):
     stdp_params["weight"] = JE_pA
     nest.SetDefaults("stdp_pl_synapse_hom_hpc", stdp_params)
 
-    nest.message(M_INFO, "build_network", "Connecting stimulus generators.")
+    print("Connecting stimulus generators.")
 
     # Connect Poisson generator to neuron
 
     nest.Connect(E_stimulus, E_neurons, {"rule": "all_to_all"}, {"synapse_model": "syn_ex"})
     nest.Connect(E_stimulus, I_neurons, {"rule": "all_to_all"}, {"synapse_model": "syn_ex"})
 
-    nest.message(M_INFO, "build_network", "Connecting excitatory -> excitatory population.")
+    print("Connecting excitatory -> excitatory population.")
 
     nest.Connect(
         E_neurons,
@@ -290,7 +290,7 @@ def build_network(logger):
         {"synapse_model": "stdp_pl_synapse_hom_hpc"},
     )
 
-    nest.message(M_INFO, "build_network", "Connecting inhibitory -> excitatory population.")
+    print("Connecting inhibitory -> excitatory population.")
 
     nest.Connect(
         I_neurons,
@@ -299,7 +299,7 @@ def build_network(logger):
         {"synapse_model": "syn_in"},
     )
 
-    nest.message(M_INFO, "build_network", "Connecting excitatory -> inhibitory population.")
+    print("Connecting excitatory -> inhibitory population.")
 
     nest.Connect(
         E_neurons,
@@ -308,7 +308,7 @@ def build_network(logger):
         {"synapse_model": "syn_ex"},
     )
 
-    nest.message(M_INFO, "build_network", "Connecting inhibitory -> inhibitory population.")
+    print("Connecting inhibitory -> inhibitory population.")
 
     nest.Connect(
         I_neurons,
@@ -337,14 +337,14 @@ def build_network(logger):
             )
             exit(1)
 
-        nest.message(M_INFO, "build_network", "Connecting spike recorders.")
+        print("Connecting spike recorders.")
         nest.Connect(local_neurons[: brunel_params["Nrec"]], E_recorder, "all_to_all", "static_synapse_hpc")
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic
 
     logger.log(str(BuildEdgeTime) + " # build_edge_time")
-    logger.log(str(memory_thisjob()) + " # virt_mem_after_edges")
+    logger.log(str(nest.memory_size) + " # virt_mem_after_edges")
 
     return E_recorder if params["record_spikes"] else None
 
@@ -357,7 +357,7 @@ def run_simulation():
         nest.ResetKernel()
         nest.verbosity = nest.VerbosityLevel.INFO
 
-        logger.log(str(memory_thisjob()) + " # virt_mem_0")
+        logger.log(str(nest.memory_size) + " # virt_mem_0")
 
         sr = build_network(logger)
 
@@ -367,7 +367,7 @@ def run_simulation():
 
         PreparationTime = time.time() - tic
 
-        logger.log(str(memory_thisjob()) + " # virt_mem_after_presim")
+        logger.log(str(nest.memory_size) + " # virt_mem_after_presim")
         logger.log(str(PreparationTime) + " # presim_time")
 
         tic = time.time()
@@ -376,7 +376,7 @@ def run_simulation():
 
         SimCPUTime = time.time() - tic
 
-        logger.log(str(memory_thisjob()) + " # virt_mem_after_sim")
+        logger.log(str(nest.memory_size) + " # virt_mem_after_sim")
         logger.log(str(SimCPUTime) + " # sim_time")
 
         if params["record_spikes"]:
@@ -398,12 +398,6 @@ def compute_rate(sr):
     n_local_neurons = brunel_params["Nrec"]
     simtime = params["simtime"]
     return 1.0 * n_local_spikes / (n_local_neurons * simtime) * 1e3
-
-
-def memory_thisjob():
-    """Wrapper to obtain current memory usage"""
-    nest.ll_api.sr("memory_thisjob")
-    return nest.ll_api.spp()
 
 
 def lambertwm1(x):

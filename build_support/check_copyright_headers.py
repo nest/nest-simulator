@@ -81,6 +81,7 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     "doc/copyright_header.cpp",
     "doc/copyright_header.py",
+    "doc/copyright_header.music",
     "pynest/pynestkernel.cpp",
     "get-pip.py",
 ]

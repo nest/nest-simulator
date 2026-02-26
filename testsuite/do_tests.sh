@@ -154,6 +154,7 @@ if test "${HAVE_MPI}" = "true"; then
         MPIEXEC_PREFLAGS="--oversubscribe $MPIEXEC_PREFLAGS"
     fi
     fi
+	export SLI_MPIEXEC_PREFLAGS
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -429,10 +430,9 @@ if test "${MUSIC}"; then
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of Python files from the '.music' file.
-        if py_file_matches="$(grep '\.py' "${music_file}")"; then
-            py_files="${py_file_matches//binary=/${TESTDIR}}"
-            py_files="$(for f in ${py_files}; do if test -f "${f}"; then echo "${f}"; fi; done)"
-            py_files="${py_files//$'\n'/ }"
+        readarray py_file_matches < <(grep '\.py' "${music_file}")
+        if [ ${#py_file_matches} -gt 0 ]; then
+            readarray py_files < <(for f in "${py_file_matches[@]//binary=/${TESTDIR}}"; do if test -f "${f}"; then echo "${f}"; fi; done)
         else
             py_files=""
             echo "No python files found in music file ${music_file}"

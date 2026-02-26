@@ -86,7 +86,7 @@ exclude_files = [
 ]
 
 templates = {
-    ("cc", "cpp", "h", "sli"): "cpp",
+    ("cc", "cpp", "h", "sli", "music"): "cpp",
     ("py", "pyx", "pxd"): "py",
 }
 

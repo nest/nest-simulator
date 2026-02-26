@@ -1,4 +1,4 @@
-% test_event_proxies.music
+% {{file_name}}
 %
 % This file is part of NEST.
 %
@@ -16,15 +16,3 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
-stoptime=0.01
-
-[from]
-  binary=./test_event_proxies_sender.py
-  np=1
-
-[to]
-  binary=./test_event_proxies_receiver.py
-  np=1
-
-  from.spikes_out -> to.spikes_in [1]

@@ -155,6 +155,8 @@ if test "${HAVE_MPI}" = "true"; then
     fi
     fi
   export MPIEXEC_PREFLAGS
+  # TODO PyNEST-ng: This line is only required for SLI
+  export SLI_MPIEXEC_PREFLAGS="$MPIEXEC_PREFLAGS"
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -436,11 +438,23 @@ if test "${MUSIC}"; then
         music_file="${TESTDIR}/${test_name}"
 
         # Collect the list of Python files from the '.music' file.
-        readarray -t py_file_matches < <(grep '\.py' "${music_file}" || true)
-        if [ ${#py_file_matches[@]} -gt 0 ]; then
-            readarray -t py_files < <(for f in "${py_file_matches[@]//binary=/${TESTDIR}}"; do if test -f "${f}"; then echo "${f}"; fi; done)
+        py_files=()
+
+        # Use sed to strip leading spaces and 'binary=', leaving only the file path.
+        # We pipe to grep to ensure we only capture lines containing '.py'.
+        readarray -t raw_py_files < <(sed -n 's/^[[:space:]]*binary=\(.*\)/\1/p' "${music_file}" | grep '\.py' || true)
+        if [ ${#raw_py_files[@]} -gt 0 ]; then
+            for raw_file in "${raw_py_files[@]}"; do
+                # Construct the full path.
+                # ${raw_file#./} removes any leading './' so we don't end up with messy paths like '/dir/./file.py'
+                f="${TESTDIR}${raw_file#./}"
+
+                # Check if the file exists and append it to our final array
+                if test -f "${f}"; then
+                    py_files+=("${f}")
+                fi
+            done
         else
-            py_files=()
             echo "No python files found in music file ${music_file}"
         fi
 
@@ -463,9 +477,11 @@ if test "${MUSIC}"; then
 
         # Copy everything to TMPDIR_MUSIC.
         # Note that variables might also be empty, so test for file existence first.
-        # Note that ${py_files} must not be quoted because it expands into multiple, space-separate file names.
-        for filename in "${music_file}" "${sh_file}" "${input_file}" "${py_files[@]:-}"; do
-            test -e "${filename}" && cp "${filename}" "${TMPDIR_MUSIC}"
+        # We double-quote "${py_files[@]}" so bash expands it to individual, safe arguments.
+        for filename in "${music_file}" "${sh_file}" "${input_file}" "${py_files[@]}"; do
+            if test -n "${filename}" && test -e "${filename}"; then
+                cp "${filename}" "${TMPDIR_MUSIC}"
+            fi
         done
 
         # Create the runner script in TMPDIR_MUSIC.

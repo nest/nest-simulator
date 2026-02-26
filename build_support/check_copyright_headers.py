@@ -85,10 +85,7 @@ exclude_files = [
     "get-pip.py",
 ]
 
-templates = {
-    ("cc", "cpp", "h", "sli", "music"): "cpp",
-    ("py", "pyx", "pxd"): "py",
-}
+templates = {("cc", "cpp", "h", "sli"): "cpp", ("py", "pyx", "pxd"): "py", ("music",): "music"}
 
 template_contents = {}
 

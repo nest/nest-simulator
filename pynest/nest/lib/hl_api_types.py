@@ -57,7 +57,7 @@ try:
     _ARRAY_COPY_DEFAULT = None
 except ValueError:
     _ARRAY_COPY_DEFAULT = True
-    
+
 __all__ = [
     "CollocatedSynapses",
     "Compartments",

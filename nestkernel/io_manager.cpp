@@ -40,6 +40,7 @@
 // Includes from nestkernel:
 #include "io_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
@@ -92,10 +93,18 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     {
       ( *dict )[ names::data_path ] = std::string( data_path );
     }
+    else
+    {
+      ( *dict )[ names::data_path ] = std::string( "" );
+    }
     char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
     if ( data_prefix )
     {
       ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+    }
+    else 
+    {
+      ( *dict )[ names::data_prefix ] = std::string( "" );
     }
 
     set_data_path_prefix_( dict );

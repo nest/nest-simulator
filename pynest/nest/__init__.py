@@ -115,6 +115,9 @@ class NestModule(types.ModuleType):
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
 
+        # Add version for backward compatibility
+        self.__version__ = NestModule.ll_api.nestkernel.llapi_get_kernel_status()["build_info"]["version"]
+
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error
 

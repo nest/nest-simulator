@@ -109,7 +109,7 @@ M_ERROR = 30
 
 
 params = {
-    "num_threads": 1,  # total number of threads per process
+    "num_threads": 4,  # total number of threads per process
     "scale": 1.0,  # scaling factor of the network size
     # total network size = scale*11250 neurons
     "simtime": 250.0,  # total simulation time in ms
@@ -233,8 +233,8 @@ def build_network(logger):
         print("Randomizing membrane potentials.")
 
         random_vm = nest.random.normal(brunel_params["mean_potential"], brunel_params["sigma_potential"])
-        nest.GetLocalNodeCollection(E_neurons).V_m = random_vm
-        nest.GetLocalNodeCollection(I_neurons).V_m = random_vm
+        E_neurons.V_m = random_vm
+        I_neurons.V_m = random_vm
 
     # number of incoming excitatory connections
     CE = int(1.0 * NE / params["scale"])
@@ -318,27 +318,26 @@ def build_network(logger):
     )
 
     if params["record_spikes"]:
-        if params["num_threads"] != 1:
-            local_neurons = nest.GetLocalNodeCollection(E_neurons)
-            # GetLocalNodeCollection returns a stepped composite NodeCollection, which
-            # cannot be sliced. In order to allow slicing it later on, we're creating a
-            # new regular NodeCollection from the plain node IDs.
-            local_neurons = nest.NodeCollection(local_neurons.tolist())
-        else:
-            local_neurons = E_neurons
+        nrec = brunel_params["Nrec"]
 
-        if len(local_neurons) < brunel_params["Nrec"]:
+        # For historic reasons, the number of recorded neurons is scaled with the number
+        # of processes if we use more than one thread per process. This does not make much
+        # sense and is kept solely for backward consistency.
+        if params["num_threads"] != 1:
+            nrec *= nest.num_processes
+
+        if len(E_neurons) < nrec:
             nest.message(
                 M_ERROR,
                 "build_network",
                 """Spikes can only be recorded from local neurons, but the
-                number of local neurons is smaller than the number of neurons
+                number of neurons is smaller than the number of neurons
                 spikes should be recorded from. Aborting the simulation!""",
             )
             exit(1)
 
         print("Connecting spike recorders.")
-        nest.Connect(local_neurons[: brunel_params["Nrec"]], E_recorder, "all_to_all", "static_synapse_hpc")
+        nest.Connect(E_neurons[:nrec], E_recorder, "all_to_all", "static_synapse_hpc")
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic

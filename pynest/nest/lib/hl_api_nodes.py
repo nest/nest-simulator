@@ -181,11 +181,27 @@ def GetNodes(properties={}, local_only=False):
     return nestkernel.llapi_get_nodes(properties, local_only)
 
 
+@deprecated("", "GetLocalNodeCollection() leads to inherently unsafe code; see documentation for details.")
 def GetLocalNodeCollection(nc):
     """Get local nodes of a `NodeCollection` as a new `NodeCollection`.
 
     This function returns the local nodes of a `NodeCollection`. If there are no
     local elements, an empty `NodeCollection` is returned.
+
+    Note
+    ----
+    You should not use this function except in very special circumstances, e.g.,
+    in when writing tests. The main reason to avoid `GetLocalNodeCollection()` is
+    that it is very difficult to get code correct that does different things on
+    different MPI ranks. Remember that a NEST simulation should always return the
+    same results if run with the same number of virtual processes, independent of
+    how these VPs are distrbuted across MPI ranks.
+
+    Quite likely, you can do what you want using NEST's parallel features, e.g.,
+    initializing neurons or synapses. If you see a need for a feature that needs
+    to do rank-specific things, please consider to add it to NEST!
+
+    Since this function should not be used, it's implementation is not efficient.
 
     Parameters
     ----------

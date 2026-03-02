@@ -102,6 +102,7 @@ const Name capacity( "capacity" );
 const Name center( "center" );
 const Name circular( "circular" );
 const Name clear( "clear" );
+const Name flush_event_send_interval( "flush_event_send_interval" );
 const Name comp_idx( "comp_idx" );
 const Name comparator( "comparator" );
 const Name compartments( "compartments" );

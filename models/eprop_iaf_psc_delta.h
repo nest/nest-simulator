@@ -221,7 +221,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable
-                                                            by a ``double``
+                                                            by ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 ``V_reset``                 mV      :math:`v_\text{reset}`             -70.0 Reset voltage
@@ -236,24 +236,28 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
-``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
+``flush_event_send_interval``   ms                                  maximum value      Interval since previous
+                                                                    representable by   event after which a flush
+                                                                    ``double`` type in event is sent
+                                                                    C++
+``c_reg``                               :math:`c_\text{reg}`                       0.0 Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
                                                                     representable      e-prop update between two
-                                                                    by a ``long``      spikes
+                                                                    by ``double``      spikes
                                                                     type in C++
-``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
+``f_target``                    Hz      :math:`f^\text{target}`                   10.0 Target firing rate of
                                                                                        rate regularization
-``kappa``                               :math:`\kappa`                          0.97   Low-pass filter of the
+``kappa``                               :math:`\kappa`                            0.97 Low-pass filter of the
                                                                                        eligibility trace
-``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
+``kappa_reg``                           :math:`\kappa_\text{reg}`                 0.97 Low-pass filter of the
                                                                                        firing rate for
                                                                                        regularization
-``beta``                                :math:`\beta`                            1.0   Width scaling of
+``beta``                                :math:`\beta`                              1.0 Width scaling of
                                                                                        surrogate gradient /
                                                                                        pseudo-derivative of
                                                                                        membrane voltage
-``gamma``                               :math:`\gamma`                           0.3   Height scaling of
+``gamma``                               :math:`\gamma`                             0.3 Height scaling of
                                                                                        surrogate gradient /
                                                                                        pseudo-derivative of
                                                                                        membrane voltage
@@ -409,11 +413,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta >;
@@ -472,9 +480,6 @@ private:
 
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
-
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -547,9 +552,6 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -601,12 +603,6 @@ inline bool
 eprop_iaf_psc_delta::is_eprop_recurrent_node() const
 {
   return true;
-}
-
-inline long
-eprop_iaf_psc_delta::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t
@@ -664,6 +660,7 @@ eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t recepto
 inline void
 eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 {
+  EpropArchivingNode::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
@@ -672,6 +669,7 @@ eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
 {
+  EpropArchivingNode::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

@@ -304,7 +304,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() co
   return hist_shift_required;
 }
 
-
 }
 
 #endif

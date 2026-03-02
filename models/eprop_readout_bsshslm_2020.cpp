@@ -225,7 +225,6 @@ eprop_readout_bsshslm_2020::pre_run_hook()
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
 }
 
-
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */
@@ -264,7 +263,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
-    ( this->*compute_error_signal )( lag );
+    ( this->*compute_error_signal )();
 
     if ( interval_step_signals < update_interval - learning_window )
     {
@@ -311,7 +310,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error()
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
   S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
@@ -319,7 +318,7 @@ eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error( const long 
 }
 
 void
-eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy()
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
@@ -386,26 +385,23 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double grad = 0.0;  // gradient value to be calculated
-  double L = 0.0;     // error signal
-  double z = 0.0;     // spiking variable
-  double z_bar = 0.0; // low-pass filtered spiking variable
+  double gradient = 0.0; // gradient used for the weight update (to be calculated)
+  double z_bar = 0.0;    // low-pass filtered spiking variable
 
-  for ( long presyn_isi : presyn_isis )
+  for ( const long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    double z = 1.0; // set spiking variable to 1 for each incoming spike
 
-    for ( long t = 0; t < presyn_isi; ++t )
+    for ( long t = 0; t < presyn_isi; ++t, ++eprop_hist_it )
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      L = eprop_hist_it->error_signal_;
+      const double E = eprop_hist_it->error_signal_; // error signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      grad += L * z_bar;
-      z = 0.0; // set spiking variable to 0 between spikes
+      gradient += E * z_bar;
 
-      ++eprop_hist_it;
+      z = 0.0; // set spiking variable to 0 between spikes
     }
   }
   presyn_isis.clear();
@@ -413,10 +409,10 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {
-    grad /= learning_window;
+    gradient /= learning_window;
   }
 
-  return grad;
+  return gradient;
 }
 
 } // namespace nest

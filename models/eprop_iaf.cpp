@@ -84,7 +84,6 @@ eprop_iaf::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
-  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -130,7 +129,6 @@ eprop_iaf::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::kappa, kappa_ );
   def< double >( d, names::kappa_reg, kappa_reg_ );
-  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -167,7 +165,6 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
-  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -208,12 +205,6 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
-
-  if ( eprop_isi_trace_cutoff_ < 0.0 )
-  {
-    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
-  }
-
   return delta_EL;
 }
 
@@ -270,7 +261,6 @@ eprop_iaf::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
@@ -279,7 +269,6 @@ eprop_iaf::pre_run_hook()
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
 }
-
 
 /* ----------------------------------------------------------------
  * Update function
@@ -314,6 +303,14 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       S_.z_ = 1.0;
       S_.v_m_ -= P_.V_th_ * S_.z_;
       S_.r_ = V_.RefractoryCounts_;
+      set_last_event_time( t );
+    }
+    else if ( flush_event_is_due( t ) )
+    {
+      SpikeEvent se;
+      se.set_flush_event_flag( true );
+      kernel().event_delivery_manager.send( *this, se, lag );
+      set_last_event_time( t );
     }
 
     append_new_eprop_history_entry( t );
@@ -380,61 +377,78 @@ eprop_iaf::compute_gradient( const long t_spike,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
-  WeightOptimizer* optimizer )
+  WeightOptimizer* optimizer,
+  const bool is_flush_event,
+  const bool previous_was_flush_event,
+  double& gradient,
+  long& remaining_steps_until_cutoff,
+  long& decay_steps )
 {
-  double e = 0.0;                // eligibility trace
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double psi = 0.0;              // surrogate gradient
-  double L = 0.0;                // learning signal
-  double firing_rate_reg = 0.0;  // firing rate regularization
-  double grad = 0.0;             // gradient
+  const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+  const auto& opt_cp = *ecp.optimizer_cp_;
+  const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
-  const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
+  const long isi_steps = t_spike - t_spike_previous;
+  remaining_steps_until_cutoff = previous_was_flush_event ? remaining_steps_until_cutoff : get_eprop_isi_trace_cutoff();
 
-  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
-
-  const long t_compute_until = std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
-
-  for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
+  double z_current_buffer = 0.0; // spike that triggered current computation
+  if ( not previous_was_flush_event )
   {
-    z = z_previous_buffer;
+    gradient = 0.0; // gradient used for the weight update (to be calculated)
+    z_current_buffer = 1.0;
+  }
+
+  const long t_begin = t_spike_previous - 1;
+  auto eprop_hist_it = get_eprop_history( t_begin );
+  const long t_steps = std::min( remaining_steps_until_cutoff, isi_steps );
+  const long t_end = t_begin + t_steps;
+
+  for ( long t = t_begin; t < t_end; ++t, ++eprop_hist_it )
+  {
+    assert( t == eprop_hist_it->t_ );
+
+    const double z = z_previous_buffer; // spiking variable
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;
 
-    psi = eprop_hist_it->surrogate_gradient_;
-    L = eprop_hist_it->learning_signal_;
-    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
+    const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
+    const double L = eprop_hist_it->learning_signal_;      // learning signal
+    const double fr_reg = eprop_hist_it->firing_rate_reg_; // firing rate regularization
 
     z_bar = V_.P_v_m_ * z_bar + z;
-    e = psi * z_bar;
+    const double e = psi * z_bar; // eligibility trace
     e_bar = P_.kappa_ * e_bar + e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 
+    const double gradient_increment = L * e_bar + fr_reg * e_bar_reg;
+
     if ( optimize_each_step )
     {
-      grad = L * e_bar + firing_rate_reg * e_bar_reg;
-      weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
+      gradient = gradient_increment;
+      weight = optimizer->optimized_weight( opt_cp, t + 1, gradient, weight );
     }
     else
     {
-      grad += L * e_bar + firing_rate_reg * e_bar_reg;
+      gradient += gradient_increment;
     }
   }
 
-  if ( not optimize_each_step )
+  remaining_steps_until_cutoff -= t_steps;
+  const long remaining_steps_until_event = isi_steps - t_steps;
+
+  decay_steps += remaining_steps_until_event;
+
+  if ( not is_flush_event and decay_steps > 0 )
   {
-    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+    z_bar *= std::pow( V_.P_v_m_, decay_steps );
+    e_bar *= std::pow( P_.kappa_, decay_steps );
+    e_bar_reg *= std::pow( P_.kappa_reg_, decay_steps );
+    decay_steps = 0;
   }
 
-  const long cutoff_to_spike_interval = t_spike - t_compute_until;
-
-  if ( cutoff_to_spike_interval > 0 )
+  if ( not is_flush_event and not optimize_each_step )
   {
-    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
-    e_bar *= std::pow( P_.kappa_, cutoff_to_spike_interval );
-    e_bar_reg *= std::pow( P_.kappa_reg_, cutoff_to_spike_interval );
+    weight = optimizer->optimized_weight( opt_cp, t_end + remaining_steps_until_event, gradient, weight );
   }
 }
 

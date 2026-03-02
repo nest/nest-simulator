@@ -119,6 +119,9 @@ public:
   // properties used when registering a connection with the ModelManager
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
+  // Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = false;
+
   Connection()
     : target_()
     , syn_id_delay_( 1.0 )

@@ -250,6 +250,9 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
+
   /**
    * Properties of the connection model.
    *
@@ -331,8 +334,14 @@ private:
   //! Synaptic weight.
   double weight_;
 
+  //! Gradient used for the weight update.
+  double gradient_;
+
   //! The time step when the previous spike arrived.
   long t_spike_previous_;
+
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -379,12 +388,13 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector(
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
 
-
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
+  , gradient_( 0.0 )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -406,7 +416,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -430,7 +442,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -446,7 +460,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -471,7 +487,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -502,6 +520,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
   t.register_eprop_connection();
+  t.initialize_update_history();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
@@ -524,6 +543,19 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool is_flush_event = e.is_flush_event();
+
+  if ( previous_was_flush_event_ )
+  {
+    if ( is_flush_event )
+    {
+      return false;
+    }
+
+    t_spike_previous_ = t_spike;
+    t_previous_trigger_spike_ = t_spike;
+  }
+
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
@@ -541,8 +573,8 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
   if ( t_spike_previous_ > 0 )
   {
-    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_spike_previous_ );
+    presyn_isis_.push_back(
+      std::min( t_spike, t_next_update_ + shift ) - std::min( t_spike_previous_, t_next_update_ + shift ) );
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -550,26 +582,49 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
 
-    target->write_update_to_history( t_previous_update_, t_current_update );
+    target->write_update_to_history( t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
-    const double gradient = target->compute_gradient(
+    gradient_ += target->compute_gradient(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
+    if ( not is_flush_event )
+    {
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
+    }
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
 
     t_previous_trigger_spike_ = t_spike;
   }
+  else
+  {
+    if ( not is_flush_event and previous_was_flush_event_ )
+    {
+      const long idx_current_update = ( t_spike - shift ) / update_interval;
+      const long t_current_update = idx_current_update * update_interval;
 
-  t_spike_previous_ = t_spike;
+      target->write_update_to_history(
+        t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
+    }
+  }
+
+  if ( not is_flush_event )
+  {
+    t_spike_previous_ = t_spike;
+
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
+
+  previous_was_flush_event_ = is_flush_event;
 
   return true;
 }

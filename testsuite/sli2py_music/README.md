@@ -1,11 +1,11 @@
-# `musictests` folder
+# `sli2py_music` folder
 
 This directory contains tests for the MUSIC interface of NEST [1].
 
 Each test consists of the following parts:
 
 * a MUSIC configuration file with the extension `.music`
-* one or more `.sli` scripts specifying the simulation
+* one or more `.py` scripts specifying the simulation
 * optionally a shell script with the extension `.sh`, which is run
   after the actual test simulation. This script can be used to test
   resulting data files for consistency

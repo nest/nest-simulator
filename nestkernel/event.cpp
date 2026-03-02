@@ -61,151 +61,151 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
 }
 
-size_t
+[[gnu::always_inline]] size_t
 Event::get_receiver_node_id() const
 {
   return receiver_->get_node_id();
 }
 
-void
+[[gnu::always_inline]] void
 SpikeEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 WeightRecorderEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DSSpikeEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-void
+[[gnu::always_inline]] void
 RateEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 CurrentEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DSCurrentEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-void
+[[gnu::always_inline]] void
 ConductanceEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DoubleDataEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DataLoggingRequest::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DataLoggingReply::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 GapJunctionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 InstantaneousRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DelayedRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 LearningSignalConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 SICEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_rport( size_t rp )
 {
   rp_ = rp;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_port( size_t p )
 {
   p_ = p;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 Event::get_rport() const
 {
   return rp_;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 Event::get_port() const
 {
   return p_;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_offset( double t )
 {
   offset_ = t;
 }
 
-double
+[[gnu::always_inline]] double
 Event::get_offset() const
 {
   return offset_;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_delay_steps( long d )
 {
   d_ = d;
 }
 
-long
+[[gnu::always_inline]] long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
   if ( stamp_steps_ == 0 )
@@ -215,17 +215,15 @@ Event::get_rel_delivery_steps( const Time& t ) const
   return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
-long
+[[gnu::always_inline]] long
 Event::get_delay_steps() const
 {
-
   return d_;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_stamp( Time const& s )
 {
-
   stamp_ = s;
   stamp_steps_ = 0; // setting stamp_steps to zero indicates
                     // stamp_steps needs to be recalculated from
@@ -233,135 +231,117 @@ Event::set_stamp( Time const& s )
                     // get_rel_delivery_steps)
 }
 
-Time const&
+[[gnu::always_inline]] Time const&
 Event::get_stamp() const
 {
-
   return stamp_;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_weight( double w )
 {
-
   w_ = w;
 }
 
-double
+[[gnu::always_inline]] double
 Event::get_weight() const
 {
-
   return w_;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 Event::get_sender_node_id() const
 {
-
   assert( sender_node_id_ > 0 );
   return sender_node_id_;
 }
 
-Node&
+[[gnu::always_inline]] Node&
 Event::get_sender() const
 {
-
   assert( sender_ );
   return *sender_;
 }
 
-Node&
+[[gnu::always_inline]] Node&
 Event::get_receiver() const
 {
-
   assert( receiver_ );
   return *receiver_;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid )
 {
-
   // lag and offset of SpikeData are not used here
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_sender_node_id( const size_t node_id )
 {
-
   sender_node_id_ = node_id;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_sender( Node& s )
 {
-
   sender_ = &s;
 }
 
-void
+[[gnu::always_inline]] void
 Event::set_receiver( Node& r )
 {
-
   receiver_ = &r;
 }
 
-bool
+[[gnu::always_inline]] bool
 Event::is_valid() const
 {
-
-  return ( sender_is_valid() and receiver_is_valid() and d_ > 0 );
+  return sender_is_valid() and receiver_is_valid() and d_ > 0;
 }
 
-bool
+[[gnu::always_inline]] bool
 Event::receiver_is_valid() const
 {
-
   return receiver_;
 }
 
-bool
+[[gnu::always_inline]] bool
 Event::sender_is_valid() const
 {
-
   return sender_;
 }
 
-DoubleDataEvent*
+[[gnu::always_inline]] DoubleDataEvent*
 DoubleDataEvent::clone() const
 {
-
   return new DoubleDataEvent( *this );
 }
 
 
-double
+[[gnu::always_inline]] double
 ConductanceEvent::get_conductance() const
 {
-
   return g_;
 }
 
-void
+[[gnu::always_inline]] void
 ConductanceEvent::set_conductance( double g )
 {
-
   g_ = g;
 }
 
-ConductanceEvent*
+[[gnu::always_inline]] ConductanceEvent*
 ConductanceEvent::clone() const
 {
-
   return new ConductanceEvent( *this );
 }
 
 
-const std::vector< Name >&
+[[gnu::always_inline]] const std::vector< Name >&
 DataLoggingRequest::record_from() const
 {
-
   // During simulation, events are created without recordables
   // information. On these, record_from() must not be called.
   assert( record_from_ );
@@ -369,18 +349,16 @@ DataLoggingRequest::record_from() const
   return *record_from_;
 }
 
-const Time&
+[[gnu::always_inline]] const Time&
 DataLoggingRequest::get_recording_offset() const
 {
-
   assert( recording_offset_.is_finite() );
   return recording_offset_;
 }
 
-const Time&
+[[gnu::always_inline]] const Time&
 DataLoggingRequest::get_recording_interval() const
 {
-
   // During simulation, events are created without recording interval
   // information. On these, get_recording_interval() must not be called.
   assert( recording_interval_.is_finite() );
@@ -388,10 +366,9 @@ DataLoggingRequest::get_recording_interval() const
   return recording_interval_;
 }
 
-DataLoggingRequest*
+[[gnu::always_inline]] DataLoggingRequest*
 DataLoggingRequest::clone() const
 {
-
   return new DataLoggingRequest( *this );
 }
 
@@ -418,66 +395,57 @@ DataLoggingRequest::DataLoggingRequest()
 {
 }
 
-double
+[[gnu::always_inline]] double
 CurrentEvent::get_current() const
 {
-
   return c_;
 }
 
-void
+[[gnu::always_inline]] void
 CurrentEvent::set_current( double c )
 {
-
   c_ = c;
 }
 
-CurrentEvent*
+[[gnu::always_inline]] CurrentEvent*
 CurrentEvent::clone() const
 {
-
   return new CurrentEvent( *this );
 }
 
-double
+[[gnu::always_inline]] double
 RateEvent::get_rate() const
 {
-
   return r_;
 }
 
-void
+[[gnu::always_inline]] void
 RateEvent::set_rate( double r )
 {
-
   r_ = r;
 }
 
-RateEvent*
+[[gnu::always_inline]] RateEvent*
 RateEvent::clone() const
 {
-
   return new RateEvent( *this );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 WeightRecorderEvent::get_receiver_node_id() const
 {
-
   return receiver_node_id_;
 }
 
-void
+[[gnu::always_inline]] void
 WeightRecorderEvent::set_receiver_node_id( size_t node_id )
 {
-
   receiver_node_id_ = node_id;
 }
 
-WeightRecorderEvent*
+[[gnu::always_inline]] WeightRecorderEvent*
 WeightRecorderEvent::clone() const
 {
-
   return new WeightRecorderEvent( *this );
 }
 
@@ -486,24 +454,21 @@ WeightRecorderEvent::WeightRecorderEvent()
 {
 }
 
-size_t
+[[gnu::always_inline]] size_t
 SpikeEvent::get_multiplicity() const
 {
-
   return multiplicity_;
 }
 
-void
+[[gnu::always_inline]] void
 SpikeEvent::set_multiplicity( size_t multiplicity )
 {
-
   multiplicity_ = multiplicity;
 }
 
-SpikeEvent*
+[[gnu::always_inline]] SpikeEvent*
 SpikeEvent::clone() const
 {
-
   return new SpikeEvent( *this );
 }
 
@@ -512,19 +477,17 @@ SpikeEvent::SpikeEvent()
 {
 }
 
-DataLoggingReply*
+[[gnu::always_inline]] DataLoggingReply*
 DataLoggingReply::clone() const
 {
-
   assert( false );
   return nullptr;
 }
 
 
-const DataLoggingReply::Container&
+[[gnu::always_inline]] const DataLoggingReply::Container&
 DataLoggingReply::get_info() const
 {
-
   return info_;
 }
 

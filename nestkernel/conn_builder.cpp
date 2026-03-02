@@ -285,26 +285,26 @@ nest::BipartiteConnBuilder::supports_symmetric() const
 }
 
 //! Return true if rule automatically creates symmetric connectivity
-bool
+[[gnu::always_inline]] bool
 nest::BipartiteConnBuilder::is_symmetric() const
 {
   return false;
 }
 
-bool
+[[gnu::always_inline]] bool
 nest::BipartiteConnBuilder::allows_autapses() const
 {
   return allow_autapses_;
 }
 
-bool
+[[gnu::always_inline]] bool
 nest::BipartiteConnBuilder::allows_multapses() const
 {
   return allow_multapses_;
 }
 
 //! Return true if rule is applicable only to nodes with proxies
-bool
+[[gnu::always_inline]] bool
 nest::BipartiteConnBuilder::requires_proxies() const
 {
   return true;

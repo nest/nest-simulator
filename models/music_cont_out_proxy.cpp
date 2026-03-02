@@ -299,7 +299,7 @@ nest::music_cont_out_proxy::pre_run_hook()
       new MUSIC::PermutationIndex( &music_index_map.front(), music_index_map.size() );
 
     MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, music_perm_ind );
+      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI_DOUBLE, music_perm_ind );
 
     // Setup an array map
     MP->map( dmap );

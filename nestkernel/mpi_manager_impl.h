@@ -108,7 +108,7 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
 #ifdef HAVE_MPI
 // Variable to hold the MPI communicator to use.
 #ifdef HAVE_MUSIC
-extern MPI::Intracomm comm;
+extern MPI_Comm comm;
 #else  /* #ifdef HAVE_MUSIC */
 extern MPI_Comm comm;
 #endif /* #ifdef HAVE_MUSIC */

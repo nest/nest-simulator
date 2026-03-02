@@ -78,7 +78,7 @@ public:
   void music_finalize(); // called from MPIManager::mpi_finalize
 
 #ifdef HAVE_MUSIC
-  MPI::Intracomm communicator();
+  MPI_Comm communicator();
 
   MUSIC::Setup* get_music_setup();
   MUSIC::Runtime* get_music_runtime();

@@ -1238,153 +1238,136 @@ nest::SimulationManager::print_progress_()
   std::flush( std::cout );
 }
 
-nest::Time const
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::get_previous_slice_origin() const
 {
   return clock_ - Time::step( kernel::manager< ConnectionManager >.get_min_delay() );
 }
-bool
+
+[[gnu::always_inline]] bool
 nest::SimulationManager::get_eprop_reset_neurons_on_update() const
 {
-
   return eprop_reset_neurons_on_update_;
 }
 
-nest::Time
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::get_eprop_learning_window() const
 {
-
   return Time::ms( eprop_learning_window_ );
 }
 
-nest::Time
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::get_eprop_update_interval() const
 {
-
   return Time::ms( eprop_update_interval_ );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 nest::SimulationManager::get_wfr_interpolation_order() const
 {
-
   return wfr_interpolation_order_;
 }
 
-double
+[[gnu::always_inline]] double
 nest::SimulationManager::get_wfr_tol() const
 {
-
   return wfr_tol_;
 }
 
-double
+[[gnu::always_inline]] double
 nest::SimulationManager::get_wfr_comm_interval() const
 {
-
   return wfr_comm_interval_;
 }
 
-bool
+[[gnu::always_inline]] bool
 nest::SimulationManager::use_wfr() const
 {
-
   return use_wfr_;
 }
 
-long
+[[gnu::always_inline]] long
 nest::SimulationManager::get_to_step() const
 {
-
   return to_step_;
 }
 
-long
+[[gnu::always_inline]] long
 nest::SimulationManager::get_from_step() const
 {
-
   return from_step_;
 }
 
-nest::Time
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::run_end_time() const
 {
-
   assert( not simulating_ ); // implicit due to using get_time()
   return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
-nest::Time
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::run_start_time() const
 {
-
   assert( not simulating_ ); // implicit due to using get_time()
   return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
 }
 
-nest::Time
+[[gnu::always_inline]] nest::Time
 nest::SimulationManager::run_duration() const
 {
-
   return to_do_total_ * Time::get_resolution();
 }
 
-nest::Time const&
+[[gnu::always_inline]] nest::Time const&
 nest::SimulationManager::get_clock() const
 {
-
   return clock_;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 nest::SimulationManager::get_slice() const
 {
-
   return slice_;
 }
 
-bool
+[[gnu::always_inline]] bool
 nest::SimulationManager::has_been_prepared() const
 {
-
   return prepared_;
 }
 
-bool
+[[gnu::always_inline]] bool
 nest::SimulationManager::has_been_simulated() const
 {
-
   return simulated_;
 }
 
-nest::Time const
+[[gnu::always_inline]] nest::Time const
 nest::SimulationManager::get_time() const
 {
-
   assert( not simulating_ );
   return clock_ + Time::step( from_step_ );
 }
 
-nest::Time const&
+[[gnu::always_inline]] nest::Time const&
 nest::SimulationManager::get_slice_origin() const
 {
-
   return clock_;
 }
 
-nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::MasterOnly >&
+[[gnu::always_inline]] nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::MasterOnly >&
 nest::SimulationManager::get_mpi_synchronization_stopwatch()
 {
   return sw_mpi_synchronization_;
 }
 
-nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
+[[gnu::always_inline]] nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
 nest::SimulationManager::get_omp_synchronization_simulation_stopwatch()
 {
   return sw_omp_synchronization_simulation_;
 }
 
-nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
+[[gnu::always_inline]] nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
 nest::SimulationManager::get_omp_synchronization_construction_stopwatch()
 {
   return sw_omp_synchronization_construction_;

@@ -18,9 +18,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( TESTSUBDIRS
-    regressiontests
-    cpptests
     pytests
+    cpptests
+    sli2py_music
 )
 
 add_subdirectory( cpptests )

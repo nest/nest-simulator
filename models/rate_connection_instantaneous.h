@@ -138,9 +138,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -151,9 +151,7 @@ public:
   void
   set_delay( double )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
 private:
@@ -165,27 +163,25 @@ constexpr ConnectionModelProperties rate_connection_instantaneous< targetidentif
 
 template < typename targetidentifierT >
 void
-rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_instantaneous< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
+  if ( d.known( names::delay ) )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 template < typename targetidentifierT >

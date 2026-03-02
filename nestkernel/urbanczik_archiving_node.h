@@ -33,8 +33,6 @@
 #include "nest_types.h"
 #include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -101,8 +99,8 @@ protected:
 
   urbanczik_parameters* urbanczik_params;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];

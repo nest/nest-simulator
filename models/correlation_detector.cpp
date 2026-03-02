@@ -35,17 +35,11 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-
 void
 nest::register_correlation_detector( const std::string& name )
 {
   register_node_model< correlation_detector >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -110,47 +104,47 @@ nest::correlation_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::Parameters_::get( DictionaryDatum& d ) const
+nest::correlation_detector::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::delta_tau ] = delta_tau_.get_ms();
-  ( *d )[ names::tau_max ] = tau_max_.get_ms();
-  ( *d )[ names::Tstart ] = Tstart_.get_ms();
-  ( *d )[ names::Tstop ] = Tstop_.get_ms();
+  d[ names::delta_tau ] = delta_tau_.get_ms();
+  d[ names::tau_max ] = tau_max_.get_ms();
+  d[ names::Tstart ] = Tstart_.get_ms();
+  d[ names::Tstop ] = Tstop_.get_ms();
 }
 
 void
-nest::correlation_detector::State_::get( DictionaryDatum& d ) const
+nest::correlation_detector::State_::get( Dictionary& d ) const
 {
-  ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
-  ( *d )[ names::histogram ] = DoubleVectorDatum( new std::vector< double >( histogram_ ) );
-  ( *d )[ names::histogram_correction ] = DoubleVectorDatum( new std::vector< double >( histogram_correction_ ) );
-  ( *d )[ names::count_histogram ] = IntVectorDatum( new std::vector< long >( count_histogram_ ) );
+  d[ names::n_events ] = n_events_;
+  d[ names::histogram ] = histogram_;
+  d[ names::histogram_correction ] = histogram_correction_;
+  d[ names::count_histogram ] = count_histogram_;
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
+nest::correlation_detector::Parameters_::set( const Dictionary& d, const correlation_detector& n, Node* node )
 {
   bool reset = false;
   double t;
-  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
+  if ( update_value_param( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
+  if ( update_value_param( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
+  if ( update_value_param( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
+  if ( update_value_param( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -170,10 +164,10 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 }
 
 void
-nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required, Node* )
+nest::correlation_detector::State_::set( const Dictionary& d, const Parameters_& p, bool reset_required, Node* )
 {
   std::vector< long > nev;
-  if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
+  if ( d.update_value( names::n_events, nev ) )
   {
     if ( nev.size() == 2 and nev[ 0 ] == 0 and nev[ 1 ] == 0 )
     {
@@ -365,7 +359,7 @@ nest::correlation_detector::calibrate_time( const TimeConverter& tc )
     const double old = P_.delta_tau_.get_ms();
     P_.delta_tau_ = P_.get_default_delta_tau();
     std::string msg = String::compose( "Default for delta_tau changed from %1 to %2 ms", old, P_.delta_tau_.get_ms() );
-    LOG( M_INFO, get_name(), msg );
+    LOG( VerbosityLevel::INFO, get_name(), msg );
   }
 
   P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );

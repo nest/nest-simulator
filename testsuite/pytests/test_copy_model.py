@@ -28,7 +28,6 @@ import nest
 import pytest
 
 
-@nest.ll_api.check_stack
 class TestCopyModel:
     """nest.CopyModel Test"""
 
@@ -107,7 +106,7 @@ class TestCopyModel:
         except KeyError:
             org_name = nest.GetDefaults(org_model)["synapse_model"]
 
-        with pytest.raises(nest.kernel.NESTError, match="NewModelNameExists"):
+        with pytest.raises(nest.NESTErrors.NewModelNameExists):
             nest.CopyModel(org_model, org_model)
 
     @pytest.mark.parametrize("org_model", [nest.node_models[0], nest.synapse_models[0]])
@@ -118,5 +117,6 @@ class TestCopyModel:
 
         new_model = f"{org_model}_copy"
         nest.CopyModel(org_model, new_model)
-        with pytest.raises(nest.kernel.NESTError, match="NewModelNameExists"):
+
+        with pytest.raises(nest.NESTErrors.NewModelNameExists):
             nest.CopyModel(org_model, new_model)

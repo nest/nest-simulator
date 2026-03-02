@@ -27,7 +27,6 @@ import nest
 import numpy
 
 
-@nest.ll_api.check_stack
 class QuantalSTPSynapseTestCase(unittest.TestCase):
     """Compare quantal_stp_synapse with its deterministic equivalent."""
 
@@ -35,7 +34,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         """Compare quantal_stp_synapse with its deterministic equivalent"""
         nest.ResetKernel()
         nest.rng_seed = 1
-        nest.set_verbosity(100)
+        nest.verbosity = nest.VerbosityLevel.QUIET
         n_syn = 12  # number of synapses in a connection
         n_trials = 100  # number of measurement trials
 
@@ -95,7 +94,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         for t in range(n_trials):
             t_net = nest.biological_time
-            nest.SetStatus(source, {"origin": t_net})
+            source.origin = t_net
             nest.Simulate(t_tot)
 
         nest.Simulate(0.1)  # flush the last voltmeter events from the queue

@@ -96,20 +96,20 @@ def test_iaf_bw_2001_exact():
         conc_Mg2=1.0,  # Magnesium concentration
     )
 
-    bw_presyn = nest.Create("iaf_bw_2001_exact", wang_params)
-    bw_postsyn_1 = nest.Create("iaf_bw_2001_exact", wang_params)
-    bw_postsyn_2 = nest.Create("iaf_bw_2001_exact", wang_params)
-    cond_exp_postsyn = nest.Create("iaf_cond_exp", cond_exp_params)
+    bw_presyn = nest.Create("iaf_bw_2001_exact", params=wang_params)
+    bw_postsyn_1 = nest.Create("iaf_bw_2001_exact", params=wang_params)
+    bw_postsyn_2 = nest.Create("iaf_bw_2001_exact", params=wang_params)
+    cond_exp_postsyn = nest.Create("iaf_cond_exp", params=cond_exp_params)
 
     receptor_types = bw_presyn.receptor_types
 
-    pg = nest.Create("poisson_generator", {"rate": 50.0})
-    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+    pg = nest.Create("poisson_generator", params={"rate": 50.0})
+    sr = nest.Create("spike_recorder", params={"time_in_steps": True})
 
     mm_presyn, mm_bw1, mm_bw2 = nest.Create(
         "multimeter", n=3, params={"record_from": ["V_m", "s_AMPA", "s_GABA"], "interval": 0.1, "time_in_steps": True}
     )
-    mm_ce = nest.Create("multimeter", {"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
+    mm_ce = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1, "time_in_steps": True})
 
     # for post-synaptic iaf_bw_2001_exact
     ampa_syn_spec = {"weight": w_ex, "receptor_type": receptor_types["AMPA"]}
@@ -169,5 +169,5 @@ def test_connect_NMDA_after_simulate():
 
     nest.Connect(presyn, postsyn, syn_spec=nmda_syn_spec)
     nest.Simulate(1.0)
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(postsyn, presyn, syn_spec=nmda_syn_spec)

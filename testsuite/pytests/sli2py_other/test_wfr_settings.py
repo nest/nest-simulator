@@ -48,21 +48,21 @@ def test_set_wfr_after_node_creation_raises():
 
     nest.Create("iaf_psc_alpha")
 
-    with pytest.raises(nest.kernel.NESTErrors.KernelException):
+    with pytest.raises(nest.NESTErrors.KernelException):
         nest.set(use_wfr=True)
 
 
 def test_wfr_comm_interval_lower_than_resolution_raises():
     """Ensure that ``wfr_comm_interval`` cannot be set lower than the resolution."""
 
-    with pytest.raises(nest.kernel.NESTErrors.KernelException):
+    with pytest.raises(nest.NESTErrors.KernelException):
         nest.set(resolution=0.1, wfr_comm_interval=0.05)
 
 
 def test_wfr_comm_interval_cannot_be_set_when_use_wfr_false():
     """Ensure that ``wfr_comm_interval`` cannot be set if ``use_wfr=False``."""
 
-    with pytest.raises(nest.kernel.NESTErrors.KernelException):
+    with pytest.raises(nest.NESTErrors.KernelException):
         nest.set(use_wfr=False, wfr_comm_interval=0.5)
 
 

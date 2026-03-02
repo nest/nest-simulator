@@ -26,21 +26,30 @@ This test ensures that calling various setters with incorrect properties correct
 import nest
 import pytest
 
+pytestmark = pytest.mark.skipif_missing_threads
 
-@pytest.mark.skipif_missing_threads
-def test_setters_raise_error_on_bad_properties():
+
+@pytest.fixture(autouse=True)
+def set_kernel():
     nest.ResetKernel()
     nest.local_num_threads = 4
 
+
+def test_set_bad_property_on_default_raises():
     # test defaults
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("iaf_psc_alpha", {"tau_m": -10})
 
+
+def test_set_bad_property_on_neuron_raises():
     # test neuron
     n = nest.Create("iaf_psc_alpha")
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         n.set({"tau_m": -10})
 
+
+def test_set_bad_property_on_synapse_raises():
     # test synapse
-    with pytest.raises(nest.kernel.NESTErrors.BadDelay):
+    n = nest.Create("iaf_psc_alpha")
+    with pytest.raises(nest.NESTErrors.BadDelay):
         nest.Connect(n, n, syn_spec={"delay": -10})

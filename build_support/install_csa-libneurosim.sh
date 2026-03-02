@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 NEUROSIM_INSTALL_PATH="${1:-${HOME}/.cache/libneurosim.install}"

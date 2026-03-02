@@ -30,7 +30,6 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "nest.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
@@ -120,8 +119,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
@@ -152,9 +151,9 @@ private:
     Parameters_( const Parameters_&, Buffers_& );
 
     //!< Store current values in dictionary
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_&, Node* );
+    void set( const Dictionary&, Buffers_&, Node* );
     //!< Align rate time to grid if necessary and insert it into rate_times_
     void assert_valid_rate_time_and_insert( const double t );
   };
@@ -208,14 +207,14 @@ inhomogeneous_poisson_generator::send_test_event( Node& target,
 
 
 inline void
-inhomogeneous_poisson_generator::get_status( DictionaryDatum& d ) const
+inhomogeneous_poisson_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
+inhomogeneous_poisson_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

@@ -26,13 +26,15 @@
 #include "config.h"
 #ifdef HAVE_LIBNEUROSIM
 
+// External includes:
+#include <neurosim/connection_generator.h>
+
 // C++ includes:
 #include <map>
 #include <vector>
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "nest_datums.h"
 
 namespace nest
 {
@@ -78,8 +80,8 @@ public:
   ConnectionGeneratorBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     ThirdOutBuilder*,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const Dictionary&,
+    const std::vector< Dictionary >& );
 
 protected:
   void connect_();
@@ -101,8 +103,8 @@ protected:
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
 
 private:
-  ConnectionGeneratorDatum cg_;
-  DictionaryDatum params_map_;
+  std::shared_ptr< ConnectionGenerator > cg_;
+  Dictionary params_map_;
 };
 
 } // namespace nest

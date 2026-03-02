@@ -32,8 +32,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -105,7 +103,7 @@ Model::mem_capacity()
 }
 
 void
-Model::set_status( DictionaryDatum d )
+Model::set_status( const Dictionary& d )
 {
   try
   {
@@ -113,14 +111,14 @@ Model::set_status( DictionaryDatum d )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
+    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.what() ) );
   }
 }
 
-DictionaryDatum
+Dictionary
 Model::get_status()
 {
-  DictionaryDatum d = get_status_();
+  Dictionary d = get_status_();
 
   std::vector< long > tmp( memory_.size() );
   for ( size_t t = 0; t < tmp.size(); ++t )
@@ -128,24 +126,24 @@ Model::get_status()
     tmp[ t ] = memory_[ t ].size();
   }
 
-  ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_node_model( type_id_ )->get_name() );
+  d[ names::instantiations ] = tmp;
+  d[ names::type_id ] = kernel().model_manager.get_node_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].capacity();
   }
 
-  ( *d )[ names::capacity ] = Token( tmp );
+  d[ names::capacity ] = tmp;
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].capacity() - memory_[ t ].size();
   }
 
-  ( *d )[ names::available ] = Token( tmp );
+  d[ names::available ] = tmp;
 
-  ( *d )[ names::model ] = LiteralDatum( get_name() );
+  d[ names::model ] = get_name();
   return d;
 }
 

@@ -27,7 +27,7 @@ import nest
 import numpy as np
 
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import is_iterable, model_deprecation_warning
+from .hl_api_helper import deprecated, is_iterable, model_deprecation_warning
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection, Parameter
 

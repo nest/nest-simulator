@@ -453,7 +453,7 @@ class TestGrowthCurve(unittest.TestCase):
             ]
         )
 
-        local_pop_as_list = list(local_nodes)
+        local_pop_as_list = list(self.pop[self.pop.local])
         for count, n in enumerate(self.pop):
             loc = self.se_nest[local_pop_as_list.index(n), 30]
             ex = expected[count]

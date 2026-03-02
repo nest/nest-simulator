@@ -168,7 +168,6 @@ print_paths () {
     echo "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
 }
 
-
 echo "================================================================================"
 echo
 echo "  NEST testsuite"
@@ -177,7 +176,7 @@ echo "  Sysinfo: $(uname -s -r -m)"
 echo
 echo "  NEST version ....... $(get_build_info version)"
 echo "  PREFIX ............. $PREFIX"
-if test -n "${HAVE_MUSIC}" = "True"; then
+if test "${HAVE_MUSIC}" = "True"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
     echo "  MUSIC executable ... ${MUSIC} (version ${MUSIC_VERSION})"
 fi
@@ -192,6 +191,7 @@ if test "${HAVE_MPI}" = "True"; then
     echo "  Running MPI tests .. yes"
     echo "         launcher .... ${MPI_LAUNCHER}"
     echo "         version ..... ${MPI_LAUNCHER_VERSION}"
+    echo "         cmdline ..... ${MPI_LAUNCHER_CMDLINE}"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi

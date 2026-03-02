@@ -151,8 +151,8 @@ def message(
 ):
     frame = inspect.stack()[1]
 
-    function = function if function is not None else frame.function
-    filename = filename if filename is not None else frame.filename
-    lineno = lineno if lineno is not None else frame.lineno
+    function = function or frame.function
+    filename = filename or frame.filename
+    lineno = lineno or frame.lineno
 
     nestkernel.llapi_message(severity, function, message, filename, lineno)

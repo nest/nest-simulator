@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_rate_proxy_receiver.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
+import nest
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+mrip = nest.Create("music_rate_in_proxy", params={"port_name": "rate_in", "music_channel": 0})
+neuron = nest.Create("lin_rate_ipn", params={"sigma": 0.0})
+# To let receiving neuron reach equilibrium
+mm = nest.Create("multimeter", params={"interval": 0.1, "record_from": ["rate"], "start": 400.0})
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
+nest.Connect(mrip, neuron, "one_to_one", syn_spec={"synapse_model": "rate_connection_instantaneous"})
+nest.Connect(mm, neuron)
 
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Simulate(500)
 
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+rates = mm.events["rate"]
+
+# Test that all rates are equal to the drive rate, 1.5, in the sender
+assert min(rates) == max(rates)
+assert max(rates) == 1.5

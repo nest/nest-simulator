@@ -1,4 +1,4 @@
-% clocktest.music
+% test_event_proxies_issue-696.music
 %
 % This file is part of NEST.
 %
@@ -17,12 +17,12 @@
 % You should have received a copy of the GNU General Public License
 % along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-stoptime=1.0
-[from]
+[sender]
   np=1
-  binary=clocksource
-[to]
-  np=1
-  binary=./conttest.py
+  binary=./test_event_proxies_issue-696_sender.py
 
-from.clock -> to.contdata [1]
+[receiver]
+  np=1
+  binary=./test_event_proxies_issue-696_receiver.py
+
+sender.out -> receiver.in [11]

@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_event_proxies_issue-696_receiver.py
 #
 # This file is part of NEST.
 #
@@ -16,27 +19,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+import nest
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
+n_neurons = 11
+
+neurons = nest.Create("iaf_psc_alpha", n_neurons)
+
+# We need a range of [0, N-1] here, not a list of neuron ids. We therefore use list(range(n_neurons)) instead of
+# neurons.neuron_id.
+inputs = nest.Create(
+    "music_event_in_proxy", n_neurons, params={"port_name": ["in"] * n_neurons, "music_channel": list(range(n_neurons))}
 )
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+nest.Connect(inputs, neurons, "one_to_one", {"weight": 750.0})
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
-
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
-
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Simulate(1)

@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_message_receiver.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
+import nest
+import numpy as np
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+ref_times = [30.0, 70.0, 90.0]
+ref_messages = ["First", "Second", "Third"]
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
+mmip = nest.Create("music_message_in_proxy", params={"port_name": "msgdata"})
 
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Simulate(100)
 
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+np.testing.assert_allclose(mmip.data["messages_times"], ref_times)
+np.testing.assert_equal(mmip.data["messages"], ref_messages)

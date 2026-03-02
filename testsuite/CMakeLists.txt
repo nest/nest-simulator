@@ -25,6 +25,7 @@ set( TESTSUBDIRS
 
 add_subdirectory( regressiontests )
 add_subdirectory( cpptests )
+add_subdirectory( sli2py_music )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite

@@ -282,6 +282,8 @@ nest::gif_psc_exp::init_buffers_()
 void
 nest::gif_psc_exp::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();

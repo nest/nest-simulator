@@ -39,7 +39,6 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
-#include "dictutils.h"
 
 void
 nest::register_correlomatrix_detector( const std::string& name )

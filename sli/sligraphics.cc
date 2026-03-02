@@ -25,7 +25,9 @@
 // C++ includes:
 #include <cctype> // for isspace
 #include <cstdio>
+#include <cstring>
 #include <iostream>
+#include <string>
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -134,9 +136,14 @@ void
 SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in, char* magic ) const
 {
   // reads in the magic number which determines the file format
+  auto magicStr = std::string {};
   try
   {
-    *in >> magic;
+    *in >> magicStr;
+    if ( magicStr.size() == 2 )
+    {
+      std::memcpy( magic, magicStr.c_str(), 2 );
+    }
   }
   catch ( std::exception& e )
   {
@@ -188,7 +195,8 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
 
   try
   {
-    if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
+    auto magicStr = std::string( magic, 2 );
+    if ( magicStr == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
       while ( *in >> tmp and not in->eof() )
@@ -196,8 +204,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
         image.push_back( static_cast< long >( tmp ) );
       }
     }
-    else if ( std::string( magic ) == std::string( "P5" )
-      or std::string( magic ) == std::string( "P6" ) ) // Raw PGM (resp. PPM)
+    else if ( magicStr == std::string( "P5" ) or magicStr == std::string( "P6" ) ) // Raw PGM (resp. PPM)
     {
       if ( maxval > 255 )
       {
@@ -216,7 +223,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     }
     else
     {
-      throw std::string( "image read error:" ) + std::string( magic ) + std::string( ": Unsupported file type." );
+      throw std::string( "image read error:" ) + magicStr + std::string( ": Unsupported file type." );
     }
   }
   catch ( std::exception& e )

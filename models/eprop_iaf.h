@@ -230,24 +230,26 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
-``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
+``activation_interval``         ms                                              3000.0 Interval between two
+                                                                                       activations
+``c_reg``                               :math:`c_\text{reg}`                       0.0 Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
                                                                     representable      e-prop update between two
                                                                     by a ``long``      spikes
                                                                     type in C++
-``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
+``f_target``                    Hz      :math:`f^\text{target}`                   10.0 Target firing rate of
                                                                                        rate regularization
-``kappa``                               :math:`\kappa`                          0.97   Low-pass filter of the
+``kappa``                               :math:`\kappa`                            0.97 Low-pass filter of the
                                                                                        eligibility trace
-``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
+``kappa_reg``                           :math:`\kappa_\text{reg}`                 0.97 Low-pass filter of the
                                                                                        firing rate for
                                                                                        regularization
-``beta``                                :math:`\beta`                            1.0   Width scaling of
+``beta``                                :math:`\beta`                              1.0 Width scaling of
                                                                                        surrogate gradient /
                                                                                        pseudo-derivative of
                                                                                        membrane voltage
-``gamma``                               :math:`\gamma`                           0.3   Height scaling of
+``gamma``                               :math:`\gamma`                             0.3 Height scaling of
                                                                                        surrogate gradient /
                                                                                        pseudo-derivative of
                                                                                        membrane voltage
@@ -300,9 +302,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 .. start_surrogate-gradient-references
 
@@ -352,7 +355,7 @@ void register_eprop_iaf( const std::string& name );
  *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * Korcsak-Gorzo et al. (2025).
  */
 class eprop_iaf : public EpropArchivingNodeRecurrent< false >
 {
@@ -397,11 +400,13 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf >;
@@ -455,8 +460,14 @@ private:
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
 
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
+    //! If True, the neuron is an ignore-and-fire neuron.
+    bool ignore_and_fire_;
+
+    //! Time offset of the first forced spike within each second (ms).
+    double firing_phase_;
+
+    //! Rate for forced firing mode (spikes/s).
+    double firing_rate_;
 
     //! Default constructor.
     Parameters_();
@@ -524,6 +535,12 @@ private:
   //! Structure of internal variables.
   struct Variables_
   {
+    //! Current state counter holding the remaining steps until the next forced spike.
+    long firing_phase_steps_;
+
+    //! Number of simulation steps between two consecutive forced spikes.
+    long firing_interval_steps_;
+
     //! Propagator matrix entry for evolving the membrane voltage (mathematical symbol "alpha" in user documentation).
     double P_v_m_;
 
@@ -532,9 +549,6 @@ private:
 
     //! Total refractory steps.
     int RefractoryCounts_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -574,6 +588,13 @@ private:
 
   //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf > recordablesMap_;
+
+  inline void
+  calc_initial_variables_()
+  {
+    V_.firing_interval_steps_ = Time( Time::ms( 1. / P_.firing_rate_ * 1000. ) ).get_steps();
+    V_.firing_phase_steps_ = Time( Time::ms( P_.firing_phase_ / P_.firing_rate_ * 1000. ) ).get_steps();
+  }
 };
 
 inline long
@@ -586,12 +607,6 @@ inline bool
 eprop_iaf::is_eprop_recurrent_node() const
 {
   return true;
-}
-
-inline long
-eprop_iaf::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
 }
 
 inline size_t
@@ -649,6 +664,7 @@ eprop_iaf::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 inline void
 eprop_iaf::get_status( DictionaryDatum& d ) const
 {
+  EpropArchivingNode::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
@@ -657,6 +673,7 @@ eprop_iaf::get_status( DictionaryDatum& d ) const
 inline void
 eprop_iaf::set_status( const DictionaryDatum& d )
 {
+  EpropArchivingNode::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;
@@ -667,6 +684,11 @@ eprop_iaf::set_status( const DictionaryDatum& d )
 
   P_ = ptmp;
   S_ = stmp;
+
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 } // namespace nest

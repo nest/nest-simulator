@@ -37,15 +37,26 @@ namespace nest
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
+  , ActivationEventNode()
   , eprop_indegree_( 0 )
+  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
 template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
+  , ActivationEventNode( n )
   , eprop_indegree_( n.eprop_indegree_ )
+  , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {
+}
+
+template < typename HistEntryT >
+void
+EpropArchivingNode< HistEntryT >::register_synapse()
+{
+  ++eprop_indegree_;
 }
 
 template < typename HistEntryT >
@@ -60,7 +71,7 @@ EpropArchivingNode< HistEntryT >::register_eprop_connection()
 
   if ( it_hist == update_history_.end() or it_hist->t_ != t_first_entry )
   {
-    update_history_.insert( it_hist, HistEntryEpropUpdate( t_first_entry, 1 ) );
+    update_history_.emplace_back( t_first_entry, 1 );
   }
   else
   {
@@ -72,7 +83,8 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
-  const long eprop_isi_trace_cutoff )
+  const bool activation,
+  const bool previous_event_was_activation )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -80,32 +92,35 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   }
 
   const long shift = model_dependent_history_shift_();
+  const long t_curr_update_shifted = t_current_update + shift;
+  const long t_prev_update_shifted = t_previous_update + shift;
 
-  const auto it_hist_curr = get_update_history( t_current_update + shift );
-
-  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
+  if ( not activation )
   {
-    ++it_hist_curr->access_counter_;
-  }
-  else
-  {
-    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+    auto it_hist_curr = get_update_history( t_curr_update_shifted );
 
-    if ( not history_shift_required_() )
+    if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_curr_update_shifted )
     {
-      erase_used_eprop_history( eprop_isi_trace_cutoff );
+      ++it_hist_curr->access_counter_;
+    }
+    else
+    {
+      update_history_.emplace_back( t_curr_update_shifted, 1 );
     }
   }
 
-  const auto it_hist_prev = get_update_history( t_previous_update + shift );
-
-  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
+  if ( not previous_event_was_activation )
   {
-    // If an entry exists for the previous update time, decrement its access counter
-    --it_hist_prev->access_counter_;
-    if ( it_hist_prev->access_counter_ == 0 )
+    auto it_hist_prev = get_update_history( t_prev_update_shifted );
+
+    if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_prev_update_shifted )
     {
-      update_history_.erase( it_hist_prev );
+      // If an entry exists for the previous update time, decrement its access counter
+      --it_hist_prev->access_counter_;
+      if ( it_hist_prev->access_counter_ == 0 )
+      {
+        update_history_.erase( it_hist_prev );
+      }
     }
   }
 }
@@ -154,32 +169,89 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
   }
   // erase no longer needed entries before the earliest current update
-  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
+  eprop_history_.erase( eprop_history_.begin(), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, const long t_spike_previous )
 {
-  if ( eprop_history_.empty()     // nothing to remove
-    or update_history_.size() < 2 // no time markers to check
-  )
+  auto it_hist = get_update_history( t_spike );
+
+  if ( it_hist != update_history_.end() and it_hist->t_ == t_spike )
+  {
+    ++it_hist->access_counter_;
+  }
+  else
+  {
+    update_history_.emplace( it_hist, t_spike, 1 );
+  }
+
+  if ( t_spike_previous > 0 )
+  {
+    auto it_hist_prev = get_update_history( t_spike_previous );
+
+    if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_spike_previous )
+    {
+      if ( it_hist_prev->access_counter_ > 0 )
+      {
+        --it_hist_prev->access_counter_;
+      }
+      if ( it_hist_prev->access_counter_ == 0 )
+      {
+        update_history_.erase( it_hist_prev );
+      }
+    }
+
+    const long cutoff = get_eprop_isi_trace_cutoff();
+
+    const long erase_candidate_begin = t_spike_previous - 1;
+    const long erase_candidate_end = erase_candidate_begin + cutoff;
+
+    long erase_begin = erase_candidate_begin;
+    long erase_end = erase_candidate_end;
+
+    const long search_begin = std::max( 0L, erase_candidate_begin - cutoff );
+    const long search_end = erase_candidate_end;
+
+    auto it_search_begin = get_update_history( search_begin );
+    auto it_search_end = std::lower_bound( it_search_begin, update_history_.end(), search_end + 1 );
+
+    for ( auto it = it_search_begin; it != it_search_end and erase_begin < erase_end; ++it )
+    {
+      const long required_begin = it->t_ - 1;
+      const long required_end = required_begin + cutoff;
+
+      if ( required_begin >= erase_candidate_begin and required_begin <= erase_candidate_end )
+      {
+        erase_end = std::min( erase_end, required_begin );
+      }
+      if ( required_end >= erase_candidate_begin and required_end <= erase_candidate_end )
+      {
+        erase_begin = std::max( erase_begin, required_end );
+      }
+    }
+
+    const auto it_erase_begin = get_eprop_history( erase_begin );
+    const auto it_erase_end = get_eprop_history( erase_end );
+    if ( it_erase_begin < it_erase_end )
+    {
+      eprop_history_.erase( it_erase_begin, it_erase_end );
+    }
+  }
+
+  if ( update_history_.empty() or eprop_history_.empty() )
   {
     return;
   }
 
-  const long t_prev = ( update_history_.end() - 2 )->t_;
-  const long t_curr = ( update_history_.end() - 1 )->t_;
+  const long time_keep = update_history_.front().t_ - 1;
+  auto it_keep = get_eprop_history( time_keep );
 
-  if ( t_prev + eprop_isi_trace_cutoff < t_curr )
+  if ( it_keep != eprop_history_.end() and it_keep->t_ == time_keep and it_keep != eprop_history_.begin() )
   {
-    // erase no longer needed entries to be ignored by trace cutoff
-    eprop_history_.erase( get_eprop_history( t_prev + eprop_isi_trace_cutoff ), get_eprop_history( t_curr ) );
+    eprop_history_.erase( eprop_history_.begin(), it_keep );
   }
-
-  // erase no longer needed entries before the earliest current update
-  eprop_history_.erase(
-    get_eprop_history( std::numeric_limits< long >::min() ), get_eprop_history( update_history_.begin()->t_ - 1 ) );
 }
 
 template < typename HistEntryT >
@@ -187,6 +259,57 @@ inline double
 EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
 {
   return Time::get_resolution().get_ms() * eprop_history_.size();
+}
+
+template < typename HistEntryT >
+inline void
+EpropArchivingNode< HistEntryT >::get_status( DictionaryDatum& d ) const
+{
+  if ( get_name().find( "bsshslm_2020" ) == std::string::npos )
+  {
+    def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+  }
+
+  if ( get_name().find( "readout" ) == std::string::npos )
+  {
+    def< double >( d, names::activation_interval, activation_interval_ );
+  }
+}
+
+template < typename HistEntryT >
+inline void
+EpropArchivingNode< HistEntryT >::set_status( const DictionaryDatum& d )
+{
+  const std::string node_name = get_name();
+  const bool is_readout = node_name.find( "readout" ) != std::string::npos;
+  const bool is_bsshslm_2020 = node_name.find( "bsshslm_2020" ) != std::string::npos;
+
+  if ( not is_readout )
+  {
+    ActivationEventNode::set_status( d );
+  }
+
+  if ( not is_bsshslm_2020 )
+  {
+    updateValue< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+
+    if ( not is_readout and activation_interval_ < eprop_isi_trace_cutoff_ )
+    {
+      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_isi_trace_cutoff required." );
+    }
+  }
+  else
+  {
+    if ( not is_readout and activation_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
+    {
+      throw BadProperty( "Interval between activation events activation_interval ≥ eprop_update_interval required." );
+    }
+  }
 }
 
 } // namespace nest

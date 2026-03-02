@@ -87,6 +87,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
+  , ignore_and_fire_( false )
+  , firing_phase_( 1.0 )
+  , firing_rate_( 10.0 )
 {
 }
 
@@ -135,6 +138,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
+  def< bool >( d, names::ignore_and_fire, ignore_and_fire_ );
+  def< double >( d, names::phase, firing_phase_ );
+  def< double >( d, names::rate, firing_rate_ );
 }
 
 double
@@ -162,6 +168,9 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
+  updateValueParam< bool >( d, names::ignore_and_fire, ignore_and_fire_, node );
+  updateValueParam< double >( d, names::phase, firing_phase_, node );
+  updateValueParam< double >( d, names::rate, firing_rate_, node );
 
   if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
@@ -213,6 +222,15 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
+  if ( firing_phase_ <= -1.0 or firing_phase_ > 1.0 )
+  {
+    throw BadProperty( "Firing phase must be > -1 and <= 1." );
+  }
+
+  if ( firing_rate_ <= -1.0 )
+  {
+    throw BadProperty( "Firing rate must be > -1." );
+  }
   return delta_EL;
 }
 
@@ -255,6 +273,10 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020()
   , B_( *this )
 {
   recordablesMap_.create();
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adapt_bsshslm_2020& n )
@@ -263,6 +285,10 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adap
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  if ( P_.ignore_and_fire_ )
+  {
+    calc_initial_variables_();
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -293,7 +319,6 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
   V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
-
 
 /* ----------------------------------------------------------------
  * Update function
@@ -344,15 +369,45 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
-    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
+    if ( P_.ignore_and_fire_ )
     {
-      count_spike();
+      if ( V_.firing_phase_steps_ == 0 )
+      {
+        count_spike();
 
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
 
-      S_.z_ = 1.0;
-      S_.r_ = V_.RefractoryCounts_;
+        S_.z_ = 1.0;
+        S_.r_ = V_.RefractoryCounts_;
+        set_last_event_time( t );
+        V_.firing_phase_steps_ = V_.firing_interval_steps_ - 1;
+      }
+      else
+      {
+        --V_.firing_phase_steps_;
+      }
+    }
+    else
+    {
+      if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
+      {
+        count_spike();
+
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+
+        S_.z_ = 1.0;
+        S_.r_ = V_.RefractoryCounts_;
+        set_last_event_time( t );
+      }
+      else if ( is_activation_event_due( t ) )
+      {
+        SpikeEvent se;
+        se.set_activation();
+        kernel().event_delivery_manager.send( *this, se, lag );
+        set_last_event_time( t );
+      }
     }
 
     append_new_eprop_history_entry( t );
@@ -423,43 +478,39 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e = 0.0;       // eligibility trace
   double e_bar = 0.0;   // low-pass filtered eligibility trace
   double epsilon = 0.0; // adaptive component of eligibility vector
   double grad = 0.0;    // gradient value to be calculated
-  double L = 0.0;       // learning signal
-  double psi = 0.0;     // surrogate gradient
   double sum_e = 0.0;   // sum of eligibility traces
-  double z = 0.0;       // spiking variable
   double z_bar = 0.0;   // low-pass filtered spiking variable
 
-  for ( long presyn_isi : presyn_isis )
+  for ( const long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    double z = 1.0; // set spiking variable to 1 for each incoming spike
 
-    for ( long t = 0; t < presyn_isi; ++t )
+    for ( long t = 0; t < presyn_isi; ++t, ++eprop_hist_it )
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      psi = eprop_hist_it->surrogate_gradient_;
-      L = eprop_hist_it->learning_signal_;
+      const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
+      const double L = eprop_hist_it->learning_signal_;      // learning signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
+      const double e = psi * ( z_bar - P_.adapt_beta_ * epsilon ); // eligibility trace
       epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+
       grad += L * e_bar;
       sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
 
-      ++eprop_hist_it;
+      z = 0.0; // set spiking variable to 0 between spikes
     }
   }
   presyn_isis.clear();
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const auto firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  const double firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
 
   grad += firing_rate_reg * sum_e;
 

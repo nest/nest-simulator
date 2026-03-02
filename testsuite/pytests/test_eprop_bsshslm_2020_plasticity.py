@@ -342,8 +342,8 @@ def test_eprop_regression():
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -513,6 +513,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
+        "activation_interval": 3 * duration["sequence"],
     }
 
     params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
@@ -534,6 +535,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
+        "activation_interval": 3 * duration["sequence"],
     }
 
     params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
@@ -782,8 +784,8 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -830,7 +832,7 @@ def test_unsupported_surrogate_gradient(source_model):
         ("eprop_iaf_bsshslm_2020", np.hstack([np.arange(x, y) for x, y in [[1, 3], [1, 61], [21, 61], [41, 48]]])),
         (
             "eprop_readout_bsshslm_2020",
-            np.hstack([np.arange(x, y) for x, y in [[1, 4], [2, 22], [21, 61], [21, 61], [41, 47]]]),
+            np.hstack([np.arange(x, y) for x, y in [[1, 4], [1, 21], [20, 60], [20, 60], [40, 46]]]),
         ),
     ],
 )
@@ -918,6 +920,6 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
     eprop_history_duration = events_mm_rec["eprop_history_duration"]
     senders = events_mm_rec["senders"]
 
-    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
+    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in np.unique(senders)])[0]
 
     assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

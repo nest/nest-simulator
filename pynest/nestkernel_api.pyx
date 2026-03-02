@@ -920,3 +920,9 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
     cdef string syn_model_string = synapse_model.encode('UTF-8')
 
     connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+
+def llapi_message( severity, function, msg, fname, lineno ):
+    cdef string function_str = function.encode('UTF-8')
+    cdef string msg_str = msg.encode('UTF-8')
+    cdef string fname_str = fname.encode('UTF-8')
+    message(severity, function_str, msg_str, fname_str, lineno)

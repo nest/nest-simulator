@@ -23,6 +23,7 @@
 Functions to get information on NEST.
 """
 
+import inspect
 import os
 import textwrap
 import webbrowser
@@ -39,7 +40,7 @@ from .hl_api_helper import (
 )
 from .hl_api_types import to_json
 
-__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel"]
+__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel", "message"]
 
 
 VerbosityLevel = nestkernel.VerbosityLevel
@@ -143,3 +144,15 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
 )
 def SetStatus(nodes_or_conns, params, val=None):
     nodes_or_conns.set(params if val is None else {params: val})
+
+
+def message(
+    message, severity=nest.NestModule.ll_api.nestkernel.VerbosityLevel.INFO, function=None, filename=None, lineno=None
+):
+    frame = inspect.stack()[1]
+
+    function = function if function is not None else frame.function
+    filename = filename if filename is not None else frame.filename
+    lineno = lineno if lineno is not None else frame.lineno
+
+    nestkernel.llapi_message(severity, function, message, filename, lineno)

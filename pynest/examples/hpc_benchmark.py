@@ -223,14 +223,14 @@ def build_network(logger):
     nest.resolution = params["dt"]
     nest.overwrite_files = True
 
-    print("Creating excitatory population.")
+    nest.message("Creating excitatory population.")
     E_neurons = nest.Create("iaf_psc_alpha", NE, params=model_params)
 
-    print("Creating inhibitory population.")
+    nest.message("Creating inhibitory population.")
     I_neurons = nest.Create("iaf_psc_alpha", NI, params=model_params)
 
     if brunel_params["randomize_Vm"]:
-        print("Randomizing membrane potentials.")
+        nest.message("Randomizing membrane potentials.")
 
         random_vm = nest.random.normal(brunel_params["mean_potential"], brunel_params["sigma_potential"])
         E_neurons.V_m = random_vm
@@ -241,7 +241,7 @@ def build_network(logger):
     # number of incomining inhibitory connections
     CI = int(1.0 * NI / params["scale"])
 
-    print("Creating excitatory stimulus generator.")
+    nest.message("Creating excitatory stimulus generator.")
 
     # Convert synapse weight from mV to pA
     conversion_factor = convert_synapse_weight(model_params["tau_m"], model_params["tau_syn_ex"], model_params["C_m"])
@@ -254,7 +254,7 @@ def build_network(logger):
 
     E_stimulus = nest.Create("poisson_generator", 1, {"rate": nu_ext * CE * 1000.0})
 
-    print("Creating excitatory spike recorder.")
+    nest.message("Creating excitatory spike recorder.")
 
     if params["record_spikes"]:
         recorder_label = os.path.join(brunel_params["filestem"], "alpha_" + str(stdp_params["alpha"]) + "_spikes")
@@ -274,14 +274,14 @@ def build_network(logger):
     stdp_params["weight"] = JE_pA
     nest.SetDefaults("stdp_pl_synapse_hom_hpc", stdp_params)
 
-    print("Connecting stimulus generators.")
+    nest.message("Connecting stimulus generators.")
 
     # Connect Poisson generator to neuron
 
     nest.Connect(E_stimulus, E_neurons, {"rule": "all_to_all"}, {"synapse_model": "syn_ex"})
     nest.Connect(E_stimulus, I_neurons, {"rule": "all_to_all"}, {"synapse_model": "syn_ex"})
 
-    print("Connecting excitatory -> excitatory population.")
+    nest.message("Connecting excitatory -> excitatory population.")
 
     nest.Connect(
         E_neurons,
@@ -290,7 +290,7 @@ def build_network(logger):
         {"synapse_model": "stdp_pl_synapse_hom_hpc"},
     )
 
-    print("Connecting inhibitory -> excitatory population.")
+    nest.message("Connecting inhibitory -> excitatory population.")
 
     nest.Connect(
         I_neurons,
@@ -299,7 +299,7 @@ def build_network(logger):
         {"synapse_model": "syn_in"},
     )
 
-    print("Connecting excitatory -> inhibitory population.")
+    nest.message("Connecting excitatory -> inhibitory population.")
 
     nest.Connect(
         E_neurons,
@@ -308,7 +308,7 @@ def build_network(logger):
         {"synapse_model": "syn_ex"},
     )
 
-    print("Connecting inhibitory -> inhibitory population.")
+    nest.message("Connecting inhibitory -> inhibitory population.")
 
     nest.Connect(
         I_neurons,
@@ -336,7 +336,7 @@ def build_network(logger):
             )
             exit(1)
 
-        print("Connecting spike recorders.")
+        nest.message("Connecting spike recorders.")
         nest.Connect(E_neurons[:nrec], E_recorder, "all_to_all", "static_synapse_hpc")
 
     # read out time used for building

@@ -33,7 +33,8 @@ nest.Connect(generators, neurons, "one_to_one", {"delay": 0.1})
 
 meop = nest.Create("music_event_out_proxy", params={"port_name": "out"})
 
-
+# We need a range of [0, N-1] here, not a list of neuron ids. We therefore use list(range(n_neurons)) instead of
+# neurons.neuron_id.
 nest.Connect(neurons, meop, "all_to_all", {"music_channel": [list(range(n_neurons))]})
 
 nest.Simulate(1)

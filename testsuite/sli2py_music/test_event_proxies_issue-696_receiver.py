@@ -24,6 +24,9 @@ import nest
 n_neurons = 11
 
 neurons = nest.Create("iaf_psc_alpha", n_neurons)
+
+# We need a range of [0, N-1] here, not a list of neuron ids. We therefore use list(range(n_neurons)) instead of
+# neurons.neuron_id.
 inputs = nest.Create(
     "music_event_in_proxy", n_neurons, params={"port_name": ["in"] * n_neurons, "music_channel": list(range(n_neurons))}
 )

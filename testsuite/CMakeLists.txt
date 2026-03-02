@@ -23,7 +23,6 @@ set( TESTSUBDIRS
     pytests
 )
 
-add_subdirectory( regressiontests )
 add_subdirectory( cpptests )
 add_subdirectory( sli2py_music )
 

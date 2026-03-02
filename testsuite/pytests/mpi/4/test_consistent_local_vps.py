@@ -41,5 +41,5 @@ def test_consistent_local_vps():
     local_nrns = nrns[nrns.local]
 
     vp_direct = list(local_nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
+    vp_indirect = [local_vps[t] for t in local_nrns.thread]
     assert vp_direct == vp_indirect

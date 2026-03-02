@@ -128,6 +128,7 @@ include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-fno-semantic-interposition" COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
 if(COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
     add_compile_options("-fno-semantic-interposition")
+    add_link_options("-fno-semantic-interposition")
 endif()
 
 # optional profile-guided optimization

@@ -805,7 +805,8 @@ Position< D, T >::length() const
 }
 
 template < int D, class T >
-Position< D, T >::operator std::string() const
+Position< D, T >::
+operator std::string() const
 {
   std::stringstream ss;
   ss << *this;

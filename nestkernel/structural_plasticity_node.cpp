@@ -63,8 +63,8 @@ nest::StructuralPlasticityNode::get_status( DictionaryDatum& d ) const
   synaptic_elements_d = DictionaryDatum( new Dictionary );
   def< DictionaryDatum >( d, names::synaptic_elements, synaptic_elements_d );
   for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     synaptic_element_d = DictionaryDatum( new Dictionary );
     def< DictionaryDatum >( synaptic_elements_d, it->first, synaptic_element_d );
@@ -116,8 +116,8 @@ nest::StructuralPlasticityNode::set_status( const DictionaryDatum& d )
     const DictionaryDatum synaptic_elements_dict = getValue< DictionaryDatum >( d, names::synaptic_elements_param );
 
     for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-          it != synaptic_elements_map_.end();
-          ++it )
+      it != synaptic_elements_map_.end();
+      ++it )
     {
       if ( synaptic_elements_dict->known( it->first ) )
       {
@@ -214,8 +214,8 @@ nest::StructuralPlasticityNode::get_synaptic_elements() const
   std::map< Name, double > n_map;
 
   for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     n_map.insert( std::pair< Name, double >( it->first, get_synaptic_elements( it->first ) ) );
   }
@@ -228,8 +228,8 @@ nest::StructuralPlasticityNode::update_synaptic_elements( double t )
   assert( t >= Ca_t_ );
 
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     it->second.update( t, Ca_t_, Ca_minus_, tau_Ca_ );
   }
@@ -242,8 +242,8 @@ void
 nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 {
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     it->second.decay_z_vacant();
   }

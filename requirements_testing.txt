@@ -21,6 +21,7 @@ pytest-mypy
 pytest-cov
 data-science-types
 terminaltables
+pre-commit
 pycodestyle
 pydocstyle
 rstcheck

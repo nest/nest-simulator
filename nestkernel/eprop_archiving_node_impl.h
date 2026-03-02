@@ -292,13 +292,6 @@ EpropArchivingNode< HistEntryT >::set_status( const Dictionary& d )
     {
       throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
     }
-
-    if ( not is_readout and flush_event_send_interval_ < eprop_isi_trace_cutoff_ )
-    {
-      throw BadProperty(
-        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
-        "eprop_isi_trace_cutoff required." );
-    }
   }
   else
   {

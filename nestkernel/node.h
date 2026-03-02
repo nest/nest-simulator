@@ -869,7 +869,9 @@ public:
     WeightOptimizer* optimizer,
     bool is_flush_event,
     bool previous_was_flush_event,
-    double& sum_grad );
+    double& sum_grad,
+    long& remaining_steps_until_cutoff,
+    long& decay_steps );
 
   /**
    * Compute gradient change for eprop synapses.

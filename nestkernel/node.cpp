@@ -569,7 +569,9 @@ nest::Node::compute_gradient( const long,
   WeightOptimizer*,
   bool,
   bool,
-  double& )
+  double&,
+  long&,
+  long& )
 {
   throw IllegalConnection( "The target node does not support compute_gradient()." );
 }

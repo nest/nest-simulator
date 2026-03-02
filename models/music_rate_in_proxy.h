@@ -155,7 +155,7 @@ private:
   struct Parameters_
   {
     std::string port_name_; //!< the name of MUSIC port to connect to
-    int channel_;           //!< the MUSIC channel of the port
+    long channel_;          //!< the MUSIC channel of the port
 
     Parameters_(); //!< Sets default parameter values
 

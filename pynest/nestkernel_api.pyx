@@ -199,17 +199,15 @@ cdef object Dictionary_to_pydict(Dictionary cdict):
 
 
 cdef is_list_tuple_ndarray_of_float(v):
-    list_of_float = type(v) is list and len(v) > 0 and type(v[0]) is float
-    tuple_of_float = type(v) is tuple and len(v) > 0 and type(v[0]) is float
+    list_or_tuple_of_float = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (float, numpy.floating))
     ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
-    return list_of_float or tuple_of_float or ndarray_of_float
+    return list_or_tuple_of_float or ndarray_of_float
 
 
 cdef is_list_tuple_ndarray_of_int(v):
-    list_of_int = type(v) is list and len(v) > 0 and type(v[0]) is int
-    tuple_of_int = type(v) is tuple and len(v) > 0 and type(v[0]) is int
+    list_or_tuple_of_int = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (int, numpy.integer))
     ndarray_of_int = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
-    return list_of_int or tuple_of_int or ndarray_of_int
+    return list_or_tuple_of_int or ndarray_of_int
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.

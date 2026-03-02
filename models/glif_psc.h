@@ -30,8 +30,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard thershold
 
 Short description
@@ -62,6 +60,8 @@ The five GLIF models are:
   and after-spike currents (LIF_R_ASC)
 * **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
   after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
+
+Remarks:
 
 GLIF model mechanism setting is based on three parameters
 (``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
@@ -227,8 +227,8 @@ public:
   size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
   size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
@@ -282,8 +282,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    void get( Dictionary& ) const;
+    double set( const Dictionary&, Node* );
   };
 
   struct State_
@@ -302,8 +302,8 @@ private:
 
     State_( const Parameters_& );
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -434,7 +434,7 @@ nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, size_t recept
 }
 
 inline void
-glif_psc::get_status( DictionaryDatum& d ) const
+glif_psc::get_status( Dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -443,11 +443,11 @@ glif_psc::get_status( DictionaryDatum& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ nest::names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-glif_psc::set_status( const DictionaryDatum& d )
+glif_psc::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

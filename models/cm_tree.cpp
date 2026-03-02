@@ -49,7 +49,7 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
 
 nest::Compartment::Compartment( const long compartment_index,
   const long parent_index,
-  const DictionaryDatum& compartment_params )
+  const Dictionary& compartment_params )
   : xx_( 0.0 )
   , yy_( 0.0 )
   , comp_index( compartment_index )
@@ -71,17 +71,17 @@ nest::Compartment::Compartment( const long compartment_index,
   , n_passed( 0 )
   , compartment_currents( v_comp )
 {
-  compartment_params->clear_access_flags();
+  compartment_params.init_access_flags();
 
-  updateValue< double >( compartment_params, names::C_m, ca );
-  updateValue< double >( compartment_params, names::g_C, gc );
-  updateValue< double >( compartment_params, names::g_L, gl );
-  updateValue< double >( compartment_params, names::e_L, el );
-  updateValue< double >( compartment_params, names::v_comp, v_comp );
+  compartment_params.update_value( names::C_m, ca );
+  compartment_params.update_value( names::g_C, gc );
+  compartment_params.update_value( names::g_L, gl );
+  compartment_params.update_value( names::e_L, el );
+  compartment_params.update_value( names::v_comp, v_comp );
 
   compartment_currents = CompartmentCurrents( v_comp, compartment_params );
 
-  ALL_ENTRIES_ACCESSED( *compartment_params, "compartment_params", "Unread dictionary entries: " );
+  compartment_params.all_entries_accessed( "compartment_params", "Unread dictionary entries: " );
 }
 
 void
@@ -100,13 +100,13 @@ nest::Compartment::pre_run_hook()
   currents.clear();
 }
 
-std::map< Name, double* >
+std::map< std::string, double* >
 nest::Compartment::get_recordables()
 {
-  std::map< Name, double* > recordables = compartment_currents.get_recordables( comp_index );
+  std::map< std::string, double* > recordables = compartment_currents.get_recordables( comp_index );
 
   recordables.insert( recordables.begin(), recordables.end() );
-  recordables[ Name( "v_comp" + std::to_string( comp_index ) ) ] = &v_comp;
+  recordables[ "v_comp" + std::to_string( comp_index ) ] = &v_comp;
 
   return recordables;
 }
@@ -174,7 +174,7 @@ nest::CompTree::add_compartment( const long parent_index )
 }
 
 void
-nest::CompTree::add_compartment( const long parent_index, const DictionaryDatum& compartment_params )
+nest::CompTree::add_compartment( const long parent_index, const Dictionary& compartment_params )
 {
   Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );
@@ -346,10 +346,10 @@ nest::CompTree::set_syn_buffers( std::vector< RingBuffer >& syn_buffers )
 /**
  * Returns a map of variable names and pointers to the recordables
  */
-std::map< Name, double* >
+std::map< std::string, double* >
 nest::CompTree::get_recordables()
 {
-  std::map< Name, double* > recordables;
+  std::map< std::string, double* > recordables;
 
   /**
    * add recordables for all compartments, suffixed by compartment_idx,
@@ -357,7 +357,7 @@ nest::CompTree::get_recordables()
    */
   for ( auto compartment_it = compartments_.begin(); compartment_it != compartments_.end(); ++compartment_it )
   {
-    std::map< Name, double* > recordables_comp = ( *compartment_it )->get_recordables();
+    std::map< std::string, double* > recordables_comp = ( *compartment_it )->get_recordables();
     recordables.insert( recordables_comp.begin(), recordables_comp.end() );
   }
   return recordables;

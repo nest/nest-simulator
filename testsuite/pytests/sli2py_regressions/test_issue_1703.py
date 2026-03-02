@@ -52,7 +52,7 @@ def test_issue_1703(nest_first):
     my_env = os.environ.copy()
     exit_code = subprocess.call(cmd, env=my_env)
 
-    if nest.ll_api.sli_func("statusdict/have_music ::") and not nest_first:
+    if nest.build_info["have_music"] and not nest_first:
         # MUSIC will raise an error only if MPI4Py has been loaded before it
         assert exit_code == EXIT_CODE_ERROR
     else:

@@ -27,10 +27,11 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "string_utils.h"
+#include "string_util.h"
 
 // Includes from nestkernel:
 #include "connection_label.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "target_identifier.h"
@@ -41,15 +42,16 @@ namespace nest
 
 template < class ModelT >
 size_t
-ModelManager::register_node_model( const Name& name, std::string deprecation_info )
+ModelManager::register_node_model( const std::string& name, std::string deprecation_info )
 {
-  if ( modeldict_->known( name ) )
+  if ( modeldict_.known( name ) )
   {
-    std::string msg = String::compose( "A model called '%1' already exists. Please choose a different name!", name );
+    const std::string msg =
+      String::compose( "A model called '%1' already exists. Please choose a different name!", name );
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString(), deprecation_info );
+  Model* model = new GenericModel< ModelT >( name, deprecation_info );
   return register_node_model_( model );
 }
 
@@ -80,7 +82,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
 {
   kernel().vp_manager.assert_single_threaded();
 
-  if ( synapsedict_->known( name ) )
+  if ( synapsedict_.known( name ) )
   {
     std::string msg =
       String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
@@ -92,11 +94,11 @@ ModelManager::register_specific_connection_model_( const std::string& name )
   {
     const std::string msg = String::compose(
       "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
-    LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
+    LOG( VerbosityLevel::ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
 
-  synapsedict_->insert( name, new_syn_id );
+  synapsedict_[ name ] = new_syn_id;
 
 #pragma omp parallel
   {

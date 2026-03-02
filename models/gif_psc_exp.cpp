@@ -29,14 +29,9 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
 #include "iaf_propagator.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
-#include "compose.hpp"
 #include "numerics.h"
 
 namespace nest
@@ -109,57 +104,49 @@ nest::gif_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::gif_psc_exp::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::g_L, g_L_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::Delta_V, Delta_V_ );
-  def< double >( d, names::V_T_star, V_T_star_ );
-  def< double >( d, names::lambda_0, lambda_0_ * 1000.0 ); // convert to 1/s
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::tau_syn_ex, tau_ex_ );
-  def< double >( d, names::tau_syn_in, tau_in_ );
-
-  ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-  def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
-
-  ArrayDatum q_sfa_list_ad( q_sfa_ );
-  def< ArrayDatum >( d, names::q_sfa, q_sfa_list_ad );
-
-  ArrayDatum tau_stc_list_ad( tau_stc_ );
-  def< ArrayDatum >( d, names::tau_stc, tau_stc_list_ad );
-
-  ArrayDatum q_stc_list_ad( q_stc_ );
-  def< ArrayDatum >( d, names::q_stc, q_stc_list_ad );
+  d[ names::I_e ] = I_e_;
+  d[ names::E_L ] = E_L_;
+  d[ names::g_L ] = g_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::Delta_V ] = Delta_V_;
+  d[ names::V_T_star ] = V_T_star_;
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::t_ref ] = t_ref_;
+  d[ names::tau_syn_ex ] = tau_ex_;
+  d[ names::tau_syn_in ] = tau_in_;
+  d[ names::tau_sfa ] = tau_sfa_;
+  d[ names::q_sfa ] = q_sfa_;
+  d[ names::tau_stc ] = tau_stc_;
+  d[ names::q_stc ] = q_stc_;
 }
 
 void
-nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::E_L, E_L_, node );
-  updateValueParam< double >( d, names::g_L, g_L_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
-  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::E_L, E_L_, node );
+  update_value_param( d, names::g_L, g_L_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::Delta_V, Delta_V_, node );
+  update_value_param( d, names::V_T_star, V_T_star_, node );
 
-  if ( updateValueParam< double >( d, names::lambda_0, lambda_0_, node ) )
+  if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::tau_syn_ex, tau_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_in_, node );
 
-  updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
-  updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
-  updateValue< std::vector< double > >( d, names::tau_stc, tau_stc_ );
-  updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
+  d.update_value( names::tau_sfa, tau_sfa_ );
+  d.update_value( names::q_sfa, q_sfa_ );
+  d.update_value( names::tau_stc, tau_stc_ );
+  d.update_value( names::q_stc, q_stc_ );
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
@@ -221,17 +208,17 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
+nest::gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  def< double >( d, names::V_m, V_ );     // Membrane potential
-  def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
-  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
+  d[ names::V_m ] = V_;     // Membrane potential
+  d[ names::E_sfa ] = sfa_; // Adaptive threshold potential
+  d[ names::I_stc ] = stc_; // Spike-triggered current
 }
 
 void
-nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::gif_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, V_, node );
+  update_value_param( d, names::V_m, V_, node );
 }
 
 nest::gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )

@@ -124,7 +124,7 @@ For implementation details see the
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -230,8 +230,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -275,8 +275,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -319,8 +319,8 @@ private:
 
     State_( const Parameters_& ); //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, Node* node );
 
   }; // State_
 
@@ -414,7 +414,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_g_receptor_name( size_t receptor );
+  std::string get_g_receptor_name( size_t receptor );
   void insert_conductance_recordables( size_t first = 0 );
 };
 
@@ -448,13 +448,13 @@ aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t
 }
 
 inline void
-aeif_cond_beta_multisynapse::get_status( DictionaryDatum& d ) const
+aeif_cond_beta_multisynapse::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 } // namespace

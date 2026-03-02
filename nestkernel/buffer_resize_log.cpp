@@ -22,6 +22,9 @@
 
 #include "buffer_resize_log.h"
 
+// Includes from libnestutil
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_names.h"
@@ -53,14 +56,16 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 }
 
 void
-BufferResizeLog::to_dict( DictionaryDatum& events ) const
+BufferResizeLog::to_dict( Dictionary& events ) const
 {
-  initialize_property_intvector( events, names::times );
-  append_property( events, names::times, time_steps_ );
-  initialize_property_intvector( events, "global_max_spikes_sent" );
-  append_property( events, "global_max_spikes_sent", global_max_spikes_sent_ );
-  initialize_property_intvector( events, "new_buffer_size" );
-  append_property( events, "new_buffer_size", new_buffer_size_ );
+  auto& times = events.get_vector< int >( names::times );
+  times.insert( times.end(), time_steps_.begin(), time_steps_.end() );
+
+  auto& gmss = events.get_vector< int >( names::global_max_spikes_sent );
+  gmss.insert( gmss.end(), global_max_spikes_sent_.begin(), global_max_spikes_sent_.end() );
+
+  auto& nbs = events.get_vector< int >( names::new_buffer_size );
+  nbs.insert( nbs.end(), new_buffer_size_.begin(), new_buffer_size_.end() );
 }
 
 }

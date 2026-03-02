@@ -74,10 +74,10 @@ def test_connect():
     assert nest.min_delay == 2.0 and nest.max_delay == 6.0
 
 
-def test_setstatus_min_delay():
+def test_set_min_delay():
     """
     Test that min_delay is changed after setting the status of the synapse.
     """
     conn = nest.GetConnections(source=pytest.n1, target=pytest.n2, synapse_model="static_synapse")
-    nest.SetStatus(conn, {"delay": 0.1})
+    conn.set({"delay": 0.1})
     assert nest.min_delay == 0.1 and nest.max_delay == 2.0

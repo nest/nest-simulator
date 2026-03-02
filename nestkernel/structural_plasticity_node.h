@@ -33,8 +33,6 @@
 #include "node.h"
 #include "synaptic_element.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -63,24 +61,24 @@ public:
    * actual vacant and connected elements is an integer truncated from this
    * value
    */
-  double get_synaptic_elements( Name n ) const override;
+  double get_synaptic_elements( std::string n ) const override;
 
   /**
    * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
-  int get_synaptic_elements_vacant( Name n ) const override;
+  int get_synaptic_elements_vacant( std::string n ) const override;
 
   /**
    * Get the number of synaptic element of type n which are currently
    * connected
    */
-  int get_synaptic_elements_connected( Name n ) const override;
+  int get_synaptic_elements_connected( std::string n ) const override;
 
   /**
    * Get the number of all synaptic elements for the current Node
    */
-  std::map< Name, double > get_synaptic_elements() const override;
+  std::map< std::string, double > get_synaptic_elements() const override;
 
   /**
    * Change the number of synaptic elements in the node depending on the
@@ -97,10 +95,10 @@ public:
   /**
    * Change the number of connected synaptic elements by n
    */
-  void connect_synaptic_element( Name name, int n ) override;
+  void connect_synaptic_element( std::string name, int n ) override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   /**
    * Retrieve the current value of tau_Ca which defines the exponential decay
@@ -148,7 +146,7 @@ private:
   /**
    * Map of the synaptic elements
    */
-  std::map< Name, SynapticElement > synaptic_elements_map_;
+  std::map< std::string, SynapticElement > synaptic_elements_map_;
 };
 
 inline double

@@ -30,9 +30,6 @@
 #include "connector_model.h"
 #include "nest_names.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -52,52 +49,53 @@ quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
 
 template < typename targetidentifierT >
 void
-quantal_stp_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+quantal_stp_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::dU, U_ );
-  def< double >( d, names::u, u_ );
-  def< double >( d, names::tau_rec, tau_rec_ );
-  def< double >( d, names::tau_fac, tau_fac_ );
-  def< int >( d, names::n, n_ );
-  def< int >( d, names::a, a_ );
+  d[ names::weight ] = weight_;
+  d[ names::dU ] = U_;
+  d[ names::u ] = u_;
+  d[ names::tau_rec ] = tau_rec_;
+  d[ names::tau_fac ] = tau_fac_;
+  d[ names::n ] = n_;
+  d[ names::a ] = a_;
 }
 
 
 template < typename targetidentifierT >
 void
-quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+quantal_stp_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, names::dU, U_ );
+  d.update_value( names::weight, weight_ );
+
+  d.update_value( names::dU, U_ );
+  d.update_value( names::u, u_ );
+  d.update_value( names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_fac, tau_fac_ );
+  d.update_integer_value( names::n, n_ );
+  d.update_integer_value( names::a, a_ );
+
   if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "'U' must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::u, u_ );
   if ( u_ > 1.0 or u_ < 0.0 )
   {
     throw BadProperty( "'u' must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "'tau_rec' must be > 0." );
   }
 
-  updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "'tau_fac' must be >= 0." );
   }
-
-  updateValue< long >( d, names::n, n_ );
-  updateValue< long >( d, names::a, a_ );
 }
 
 } // of namespace nest

@@ -20,7 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 import nest
 import numpy as np
-import pytest
 
 
 def run_simulation(model, simcommand):
@@ -41,8 +40,7 @@ def run_simulation(model, simcommand):
     simcommand()
 
     # Retrieve spike times from the spike recorder
-    events = nest.GetStatus(sr, "events")[0]
-    return events["times"]
+    return sr.events["times"]
 
 
 def test_ticket_452():

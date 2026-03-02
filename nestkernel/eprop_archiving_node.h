@@ -29,9 +29,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// sli
-#include "dictdatum.h"
-
 namespace nest
 {
 /**

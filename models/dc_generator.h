@@ -110,8 +110,8 @@ public:
 
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   StimulationDevice::Type get_type() const override;
 
@@ -137,8 +137,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -207,16 +207,16 @@ dc_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-dc_generator::get_status( DictionaryDatum& d ) const
+dc_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-dc_generator::set_status( const DictionaryDatum& d )
+dc_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

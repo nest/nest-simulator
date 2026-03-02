@@ -104,8 +104,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
@@ -129,8 +129,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;             //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -166,14 +166,14 @@ poisson_generator::send_test_event( Node& target, size_t receptor_type, synindex
 }
 
 inline void
-poisson_generator::get_status( DictionaryDatum& d ) const
+poisson_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-poisson_generator::set_status( const DictionaryDatum& d )
+poisson_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

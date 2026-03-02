@@ -55,28 +55,27 @@ EpropSynapseBSSHSLM2020CommonProperties::~EpropSynapseBSSHSLM2020CommonPropertie
 }
 
 void
-EpropSynapseBSSHSLM2020CommonProperties::get_status( DictionaryDatum& d ) const
+EpropSynapseBSSHSLM2020CommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< bool >( d, names::average_gradient, average_gradient_ );
-  def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
-  DictionaryDatum optimizer_dict = new Dictionary;
+  d[ names::average_gradient ] = average_gradient_;
+  Dictionary optimizer_dict;
   optimizer_cp_->get_status( optimizer_dict );
-  ( *d )[ names::optimizer ] = optimizer_dict;
+  d[ names::optimizer ] = optimizer_dict;
 }
 
 void
-EpropSynapseBSSHSLM2020CommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+EpropSynapseBSSHSLM2020CommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  updateValue< bool >( d, names::average_gradient, average_gradient_ );
+  d.update_value( names::average_gradient, average_gradient_ );
 
-  if ( d->known( names::optimizer ) )
+  if ( d.known( names::optimizer ) )
   {
-    DictionaryDatum optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
+    const Dictionary& optimizer_dict = d.get< Dictionary >( names::optimizer );
 
     std::string new_optimizer;
-    const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
+    const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
       if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )

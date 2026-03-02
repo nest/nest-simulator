@@ -26,6 +26,7 @@ import math
 import unittest
 
 import nest
+import numpy as np
 
 
 def _round_up(simtime):
@@ -37,12 +38,11 @@ def _round_up(simtime):
     return res * math.ceil(float(simtime) / float(res))
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
     def setUp(self):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
@@ -64,8 +64,9 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2 * self.delay))
 
         # get spike from parrot neuron
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_time = events["times"][events["senders"] == self.parrot[0].get("global_id")]
+        times = self.spikes.events["times"]
+        senders = self.spikes.events["senders"]
+        post_time = times[senders == self.parrot.global_id]
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
@@ -79,8 +80,9 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2.0 * self.delay))
 
         # get spike from parrot neuron, assert it was ignored
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_time = events["times"][events["senders"] == self.parrot.get("global_id")]
+        times = self.spikes.events["times"]
+        senders = self.spikes.events["senders"]
+        post_time = times[senders == self.parrot.global_id]
         assert len(post_time) == 0, "Parrot neuron failed to ignore spike arriving on port 1"
 
     def test_ParrotNeuronOutgoingMultiplicity(self):
@@ -97,14 +99,14 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         nest.Simulate(_round_up(self.spike_time + 2.0 * self.delay))
 
         # get spikes from parrot neuron, assert two were transmitted
-        events = nest.GetStatus(self.spikes)[0]["events"]
-        post_times = events["times"][events["senders"] == self.parrot.get("global_id")]
+        times = self.spikes.events["times"]
+        senders = self.spikes.events["senders"]
+        post_times = times[senders == self.parrot.global_id]
         assert (
             len(post_times) == 2 and post_times[0] == post_times[1]
         ), "Parrot neuron failed to correctly repeat multiple spikes."
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
     """Check parrot_neuron spike repetition properties"""
 
@@ -138,7 +140,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
         # spikes than time steps
         assert spikes_expected - 3 * spikes_std > 10.0 * t_sim / resolution, "Internal inconsistency: too few spikes."
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = resolution
         nest.rng_seed = 123
@@ -153,12 +155,11 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         nest.Simulate(_round_up(t_sim))
 
-        n_spikes = nest.GetStatus(spike_rec)[0]["n_events"]
+        n_spikes = spike_rec.n_events
         assert n_spikes > spikes_expected - 3 * spikes_std, "parrot_neuron loses spikes."
         assert n_spikes < spikes_expected + 3 * spikes_std, "parrot_neuron adds spikes."
 
 
-@nest.ll_api.check_stack
 class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
     """
     Check STDP protocol between two parrot_neurons_ps connected by a
@@ -172,7 +173,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
         """Set up a network with pre-post spike pairings with
         t_post - t_pre = dt"""
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # set pre and postsynaptic spike times
@@ -231,10 +232,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
 
         dt = 10.0
         w_pre, w_post = self.run_protocol(dt)
-        assert (
-            w_pre < w_post
-        ), "Parrot neuron STDP potentiation protocol \
-            failed to elicit positive weight changes."
+        assert w_pre < w_post, "Parrot neuron STDP potentiation protocol failed to elicit positive weight changes."
 
     def test_ParrotNeuronSTDPProtocolDepression(self):
         """Check post-pre spike pairings between parrot_neurons decrement
@@ -242,10 +240,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
 
         dt = -10.0
         w_pre, w_post = self.run_protocol(dt)
-        assert (
-            w_pre > w_post
-        ), "Parrot neuron STDP potentiation protocol \
-            failed to elicit negative weight changes."
+        assert w_pre > w_post, "Parrot neuron STDP potentiation protocol failed to elicit negative weight changes."
 
 
 def suite():

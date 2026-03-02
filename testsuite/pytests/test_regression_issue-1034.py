@@ -51,7 +51,7 @@ class PostTraceTester:
         self.sim_time_ = self.max_t_sp_ + 5 * self.delay_
 
     def run_post_trace_test_nest_(self, show_all_nest_trace_samples=False):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
 
         nest.ResetKernel()
         nest.resolution = self.resolution_
@@ -94,7 +94,7 @@ class PostTraceTester:
         trace_nest_t = []
         t = nest.biological_time
         trace_nest_t.append(t)
-        post_tr = nest.GetStatus(post_parrot_ps)[0]["post_trace"]
+        post_tr = post_parrot_ps.post_trace
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
@@ -106,7 +106,7 @@ class PostTraceTester:
             )
             if show_all_nest_trace_samples or nearby_pre_spike:
                 trace_nest_t.append(t)
-                post_tr = nest.GetStatus(post_parrot_ps)[0]["post_trace"]
+                post_tr = post_parrot_ps.post_trace
                 trace_nest.append(post_tr)
                 print("[py] Received NEST trace: " + str(post_tr) + " at time t = " + str(t))
 

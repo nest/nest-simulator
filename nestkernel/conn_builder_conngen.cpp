@@ -27,8 +27,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -36,30 +34,31 @@ namespace nest
 ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
-  , cg_( ConnectionGeneratorDatum() )
+  , cg_()
   , params_map_()
 {
   assert( third_out == nullptr );
 
-  updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
+  conn_spec.update_value( "cg", cg_ );
+
   if ( cg_->arity() != 0 )
   {
-    if ( not conn_spec->known( "params_map" ) )
+    if ( not conn_spec.known( "params_map" ) )
     {
       throw BadProperty( "A params_map has to be given if the ConnectionGenerator has values." );
     }
 
-    updateValue< DictionaryDatum >( conn_spec, "params_map", params_map_ );
+    conn_spec.update_value( "params_map", params_map_ );
 
-    for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
+    for ( auto& [ key, value ] : params_map_ )
     {
-      it->second.set_access_flag();
+      params_map_.mark_as_accessed( key );
     }
 
-    if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay ) )
+    if ( syn_specs[ 0 ].known( names::weight ) or syn_specs[ 0 ].known( names::delay ) )
     {
       throw BadProperty(
         "Properties weight and delay cannot be specified in syn_spec if the ConnectionGenerator has values." );
@@ -96,13 +95,13 @@ ConnectionGeneratorBuilder::connect_()
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map_->known( names::weight ) or not params_map_->known( names::delay ) )
+    if ( not params_map_.known( names::weight ) or not params_map_.known( names::delay ) )
     {
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
-    const size_t d_idx = ( *params_map_ )[ names::delay ];
-    const size_t w_idx = ( *params_map_ )[ names::weight ];
+    const size_t d_idx = params_map_.get< size_t >( names::delay );
+    const size_t w_idx = params_map_.get< size_t >( names::weight );
 
     const bool d_idx_is_0_or_1 = d_idx == 0 or ( d_idx == 1 );
     const bool w_idx_is_0_or_1 = w_idx == 0 or ( w_idx == 1 );
@@ -135,7 +134,7 @@ ConnectionGeneratorBuilder::connect_()
   }
   else
   {
-    LOG( M_ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
+    LOG( VerbosityLevel::ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
     throw DimensionMismatch();
   }
 }

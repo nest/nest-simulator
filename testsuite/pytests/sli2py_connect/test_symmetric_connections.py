@@ -58,7 +58,7 @@ def setup_nodes():
 def test_make_symmetric_fails_with_all_to_all(setup_nodes):
     """Check that make_symmetric flag cannot be used with all_to_all rule."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented"):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(
             set1,
             set2,
@@ -70,7 +70,7 @@ def test_make_symmetric_fails_with_all_to_all(setup_nodes):
 def test_make_symmetric_fails_with_fixed_indegree(setup_nodes):
     """Check that make_symmetric flag cannot be used with fixed_indegree rule."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented"):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(
             set1,
             set2,
@@ -82,7 +82,7 @@ def test_make_symmetric_fails_with_fixed_indegree(setup_nodes):
 def test_make_symmetric_fails_with_fixed_outdegree(setup_nodes):
     """Check that make_symmetric flag cannot be used with fixed_outdegree rule."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented"):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(
             set1,
             set2,
@@ -94,7 +94,7 @@ def test_make_symmetric_fails_with_fixed_outdegree(setup_nodes):
 def test_make_symmetric_fails_with_fixed_total_number(setup_nodes):
     """Check that make_symmetric flag cannot be used with fixed_total_number rule."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented"):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(
             set1,
             set2,
@@ -148,7 +148,7 @@ def test_make_symmetric_works_one_to_one(setup_nodes):
 def test_make_symmetric_fails_with_random_parameters_weight(setup_nodes):
     """Check that make_symmetric flag cannot be used with random weight parameters."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented|BadProperty"):
+    with pytest.raises((nest.NESTErrors.NotImplemented, nest.NESTErrors.BadProperty)):
         nest.Connect(
             set1,
             set2,
@@ -163,7 +163,7 @@ def test_make_symmetric_fails_with_random_parameters_weight(setup_nodes):
 def test_make_symmetric_fails_with_random_parameters_alpha(setup_nodes):
     """Check that make_symmetric flag cannot be used with random alpha parameters."""
     set1, set2 = setup_nodes
-    with pytest.raises(nest.kernel.NESTError, match="NotImplemented|BadProperty"):
+    with pytest.raises((nest.NESTErrors.NotImplemented, nest.NESTErrors.BadProperty)):
         nest.Connect(
             set1,
             set2,
@@ -225,13 +225,13 @@ def test_make_symmetric_works_with_array_parameters(setup_nodes):
         assert fwd_alphas[i] == bck_alphas[match_idx]
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_without_make_symmetric_one_to_one():
     """Check that connections requiring symmetric cannot be created without make_symmetric=true for one_to_one."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
     set2 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set2,
@@ -240,13 +240,13 @@ def test_requires_symmetric_fails_without_make_symmetric_one_to_one():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_without_make_symmetric_fixed_indegree():
     """Check that connections requiring symmetric cannot be created without make_symmetric for fixed_indegree."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
     set2 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set2,
@@ -255,13 +255,13 @@ def test_requires_symmetric_fails_without_make_symmetric_fixed_indegree():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_without_make_symmetric_fixed_outdegree():
     """Check that connections requiring symmetric cannot be created without make_symmetric for fixed_outdegree."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
     set2 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set2,
@@ -270,13 +270,13 @@ def test_requires_symmetric_fails_without_make_symmetric_fixed_outdegree():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_without_make_symmetric_fixed_total_number():
     """Check that connections requiring symmetric cannot be created without make_symmetric for fixed_total_number."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
     set2 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set2,
@@ -285,13 +285,13 @@ def test_requires_symmetric_fails_without_make_symmetric_fixed_total_number():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_all_to_all_different_sources_targets():
     """Check that all-to-all connection can only be created with sources == targets."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
     set2 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set2,
@@ -300,14 +300,12 @@ def test_requires_symmetric_fails_all_to_all_different_sources_targets():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_all_to_all_array_weights():
     """Check that all-to-all connection fails with array weights."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(
-        nest.kernel.NESTError, match="BadProperty|requires_symmetric|wrong type|One-dimensional parameter arrays"
-    ):
+    with pytest.raises((nest.NESTErrors.BadProperty, TypeError)):
         nest.Connect(
             set1,
             set1,
@@ -316,12 +314,12 @@ def test_requires_symmetric_fails_all_to_all_array_weights():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_fails_all_to_all_random_weights():
     """Check that all-to-all connection fails with random weights."""
     nest.ResetKernel()
     set1 = nest.Create("hh_psc_alpha_gap", 2)
-    with pytest.raises(nest.kernel.NESTError, match="BadProperty|requires_symmetric"):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.Connect(
             set1,
             set1,
@@ -330,7 +328,7 @@ def test_requires_symmetric_fails_all_to_all_random_weights():
         )
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_passes_all_to_all_scalar():
     """Check that all-to-all connection works with scalar weights when sources == targets."""
     nest.ResetKernel()
@@ -344,7 +342,7 @@ def test_requires_symmetric_passes_all_to_all_scalar():
     # Test passes if no exception is raised
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_requires_symmetric_passes_all_to_all_scalar_weight():
     """Check that all-to-all connection works with scalar weight when sources == targets."""
     nest.ResetKernel()

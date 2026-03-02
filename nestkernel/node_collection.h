@@ -31,15 +31,12 @@
 #include <vector>
 
 // Includes from libnestuil:
-#include "lockptr.h"
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 // Includes from thirdparty:
 #include "compose.hpp"
@@ -67,15 +64,19 @@ public:
   NodeCollectionMetadata() = default;
   virtual ~NodeCollectionMetadata() = default;
 
-  virtual void set_status( const DictionaryDatum&, bool ) = 0;
+  virtual void set_status( const Dictionary&, bool ) = 0;
 
   /**
    * Retrieve status information sliced according to slicing of node collection
    *
    * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
    *  This is used by NodeCollectionMetadata::operator==() which does not have access to the NodeCollection.
+   *
+   * @note This method is provided both accepting a naked pointer and a NodeCollectionPTR to allow calling
+   * from node collection itself, passing this, and with pointer provided from outside.
    */
-  virtual void get_status( DictionaryDatum&, NodeCollection const* ) const = 0;
+  virtual void get_status( Dictionary&, NodeCollection const* const ) const = 0;
+  virtual void get_status( Dictionary&, const NodeCollectionPTR ) const = 0;
 
   virtual void set_first_node_id( size_t ) = 0;
   virtual size_t get_first_node_id() const = 0;
@@ -580,28 +581,6 @@ public:
   virtual ~NodeCollection() = default;
 
   /**
-   * Create a NodeCollection from a vector of node IDs.
-   *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
-   *
-   * @param node_ids Vector of node IDs from which to create the NodeCollection
-   * @return a NodeCollection pointer to the created NodeCollection
-   */
-  static NodeCollectionPTR create( const IntVectorDatum& node_ids );
-
-  /**
-   * Create a NodeCollection from an array of node IDs.
-   *
-   * Results in a primitive if the node IDs are homogeneous and
-   * contiguous, or a composite otherwise.
-   *
-   * @param node_ids Array of node IDs from which to create the NodeCollection
-   * @return a NodeCollection pointer to the created NodeCollection
-   */
-  static NodeCollectionPTR create( const TokenArray& node_ids );
-
-  /**
    * Create a NodeCollection from a single node ID.
    *
    * Results in a primitive unconditionally.
@@ -708,13 +687,13 @@ public:
   virtual const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
-   * Method that creates an ArrayDatum filled with node IDs from the NodeCollection; for debugging
+   * Method that creates a vector filled with node IDs from the NodeCollection; for debugging
    *
    * @param selection is "all", "rank" or "thread"
    *
-   * @return an ArrayDatum containing node IDs ; if thread, separate thread sections by "0 thread# 0"
+   * @return an vector containing node IDs ; if thread, separate thread sections by "0 thread# 0"
    */
-  ArrayDatum to_array( const std::string& selection ) const;
+  std::vector< size_t > to_array( const std::string& selection ) const;
 
   /**
    * Get the size of the NodeCollection.
@@ -793,7 +772,7 @@ public:
   /**
    * Collect metadata into dictionary.
    */
-  void get_metadata_status( DictionaryDatum& ) const;
+  void get_metadata_status( Dictionary& ) const;
 
   /**
    * return the first stored ID (i.e, ID at index zero) inside the NodeCollection

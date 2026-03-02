@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_event_proxies_receiver.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,22 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
+import nest
+import numpy as np
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+# create voltmeter first to ensure same GID in sender and receiver
+vm = nest.Create("voltmeter", params={"label": "receiver", "record_to": "memory"})
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
+meip = nest.Create("music_event_in_proxy", params={"port_name": "spikes_in", "music_channel": 0})
 
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+n = nest.Create("iaf_psc_alpha")
 
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Connect(meip, n, "one_to_one", syn_spec={"weight": 750.0})
+
+nest.Connect(vm, n)
+
+nest.Simulate(10)
+
+reference_vms = [-70.000, -70.000, -70.000, -68.156, -61.917, -70.000, -70.000, -70.000, -65.205]
+
+np.testing.assert_allclose(reference_vms, vm.events["V_m"], atol=1e-3)

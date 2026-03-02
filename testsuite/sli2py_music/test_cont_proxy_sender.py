@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_cont_proxy_sender.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+import nest
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
+mcoproxy = nest.Create("music_cont_out_proxy")
+mcoproxy.port_name = "voltage_out"
+mcoproxy.record_from = ["V_m"]
 
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+n1 = nest.Create("iaf_cond_exp", params={"I_e": 300.0})
+n2 = nest.Create("iaf_cond_exp", params={"I_e": 600.0})
+n = n1 + n2
 
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+mcoproxy.targets = n
+
+nest.Simulate(20)

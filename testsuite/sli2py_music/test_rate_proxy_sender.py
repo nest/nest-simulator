@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_rate_proxy_sender.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
+import nest
+
+rate_neuron = nest.Create("lin_rate_ipn", params={"rate": 1.5, "mu": 1.5, "sigma": 0.0})
+
+mrop = nest.Create("music_rate_out_proxy", params={"port_name": "rate_out"})
+
+nest.Connect(
+    rate_neuron, mrop, "one_to_one", syn_spec={"synapse_model": "rate_connection_instantaneous", "music_channel": 0}
 )
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
-
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
-
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
-
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Simulate(500)

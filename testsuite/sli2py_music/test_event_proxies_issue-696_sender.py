@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# test_event_proxies_issue-696_sender.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
+import nest
 
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
+nest.local_num_threads = 10
+nest.resolution = 0.1
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
+n_neurons = 11
+generators = nest.Create("spike_generator", n_neurons, params={"spike_times": [0.1, 0.2, 0.3]})
+neurons = nest.Create("parrot_neuron", n_neurons)
 
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+nest.Connect(generators, neurons, "one_to_one", {"delay": 0.1})
 
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+meop = nest.Create("music_event_out_proxy", params={"port_name": "out"})
+
+# We need a range of [0, N-1] here, not a list of neuron ids. We therefore use list(range(n_neurons)) instead of
+# neurons.neuron_id.
+nest.Connect(neurons, meop, "all_to_all", {"music_channel": [list(range(n_neurons))]})
+
+nest.Simulate(1)

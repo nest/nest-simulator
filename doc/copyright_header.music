@@ -1,4 +1,4 @@
-% clocktest.music
+% {{file_name}}
 %
 % This file is part of NEST.
 %
@@ -16,13 +16,3 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
-stoptime=1.0
-[from]
-  np=1
-  binary=clocksource
-[to]
-  np=1
-  binary=./conttest.py
-
-from.clock -> to.contdata [1]

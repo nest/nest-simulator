@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# empty.py
 #
 # This file is part of NEST.
 #
@@ -17,26 +20,4 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    regressiontests
-    cpptests
-    pytests
-)
-
-add_subdirectory( regressiontests )
-add_subdirectory( cpptests )
-
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    USE_SOURCE_PERMISSIONS
-)
-
-install( PROGRAMS
-    do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
-
-install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-)
+# This file is intentionally left blank.

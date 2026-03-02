@@ -18,13 +18,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( TESTSUBDIRS
-    regressiontests
-    cpptests
     pytests
+    cpptests
+    sli2py_music
 )
 
-add_subdirectory( regressiontests )
 add_subdirectory( cpptests )
+add_subdirectory( sli2py_music )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite

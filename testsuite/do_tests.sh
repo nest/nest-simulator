@@ -140,8 +140,7 @@ if test "${HAVE_MPI}" = "True"; then
     MPI_LAUNCHER="$(get_build_info mpiexec)"
     MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
     # TODO PyNEST-NG The two PREFLAGS variables are double up, as is some code further down relating to it. Sort out.
-    MPI_LAUNCHER_PREFLAGS="$(get_build_info mpiexec_preflags)"
-    MPIEXEC_PREFLAGS="--prefix $(python -c 'import sys; print(sys.prefix)')"
+    MPI_LAUNCHER_PREFLAGS="$(get_build_info mpiexec_preflags) --prefix $(python -c 'import sys; print(sys.prefix)')"
     # OpenMPI requires --oversubscribe to allow more processes than available cores
     #
     # ShellCheck warns about "SC2076 (warning): Remove quotes from right-hand side of =~ to match as a regex rather than literally.",
@@ -150,7 +149,6 @@ if test "${HAVE_MPI}" = "True"; then
     if [[ "${MPI_LAUNCHER_VERSION}" =~ "(OpenRTE)" ]] ||  [[ "${MPI_LAUNCHER_VERSION}" =~ "(Open MPI)" ]]; then
 	if [[ ! "$(get_build_info mpiexec_preflags)" =~ "--oversubscribe" ]]; then
 	    MPI_LAUNCHER_PREFLAGS="${MPI_LAUNCHER_PREFLAGS} --oversubscribe"
-        MPIEXEC_PREFLAGS="--oversubscribe $MPIEXEC_PREFLAGS"
 	fi
     fi
     MPI_LAUNCHER_NUMPROC_FLAG="$(get_build_info mpiexec_numproc_flag)"
@@ -170,7 +168,6 @@ print_paths () {
     echo "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
 }
 
-
 echo "================================================================================"
 echo
 echo "  NEST testsuite"
@@ -179,7 +176,7 @@ echo "  Sysinfo: $(uname -s -r -m)"
 echo
 echo "  NEST version ....... $(get_build_info version)"
 echo "  PREFIX ............. $PREFIX"
-if test -n "${HAVE_MUSIC}" = "True"; then
+if test "${HAVE_MUSIC}" = "True"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
     echo "  MUSIC executable ... ${MUSIC} (version ${MUSIC_VERSION})"
 fi
@@ -194,6 +191,7 @@ if test "${HAVE_MPI}" = "True"; then
     echo "  Running MPI tests .. yes"
     echo "         launcher .... ${MPI_LAUNCHER}"
     echo "         version ..... ${MPI_LAUNCHER_VERSION}"
+    echo "         cmdline ..... ${MPI_LAUNCHER_CMDLINE}"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -264,7 +262,7 @@ if test "${MUSIC}"; then
 
         # Calculate the total number of processes from the '.music' file.
         np="$(($(sed -n 's/np=//p' "${music_file}" | paste -sd'+' -)))"
-        test_command="${MPI_LAUNCHER} ${MPIEXEC_PREFLAGS} -np ${np} ${MUSIC} ${test_name}"
+        test_command="${MPI_LAUNCHER_CMDLINE} ${np} ${MUSIC} ${test_name}"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi

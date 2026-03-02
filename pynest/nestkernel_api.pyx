@@ -199,17 +199,15 @@ cdef object Dictionary_to_pydict(Dictionary cdict):
 
 
 cdef is_list_tuple_ndarray_of_float(v):
-    list_of_float = type(v) is list and len(v) > 0 and type(v[0]) is float
-    tuple_of_float = type(v) is tuple and len(v) > 0 and type(v[0]) is float
+    list_or_tuple_of_float = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (float, numpy.floating))
     ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
-    return list_of_float or tuple_of_float or ndarray_of_float
+    return list_or_tuple_of_float or ndarray_of_float
 
 
 cdef is_list_tuple_ndarray_of_int(v):
-    list_of_int = type(v) is list and len(v) > 0 and type(v[0]) is int
-    tuple_of_int = type(v) is tuple and len(v) > 0 and type(v[0]) is int
+    list_or_tuple_of_int = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (int, numpy.integer))
     ndarray_of_int = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
-    return list_of_int or tuple_of_int or ndarray_of_int
+    return list_or_tuple_of_int or ndarray_of_int
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
@@ -922,3 +920,9 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
     cdef string syn_model_string = synapse_model.encode('UTF-8')
 
     connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+
+def llapi_message( severity, function, msg, fname, lineno ):
+    cdef string function_str = function.encode('UTF-8')
+    cdef string msg_str = msg.encode('UTF-8')
+    cdef string fname_str = fname.encode('UTF-8')
+    message(severity, function_str, msg_str, fname_str, lineno)

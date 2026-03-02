@@ -79,6 +79,15 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
       {
         nc = d.get< NodeCollectionPTR >( key );
       }
+      else if ( is_type< std::vector< long > >( value ) )
+      {
+        const std::vector< long >& nodes_long = d.get< std::vector< long > >( key );
+        std::vector< size_t > nodes_size_t;
+        nodes_size_t.reserve( nodes_long.size() );
+        std::copy( nodes_long.begin(), nodes_long.end(), std::back_inserter( nodes_size_t ) );
+
+        nc = NodeCollection::create( nodes_size_t );
+      }
       else
       {
         throw TypeMismatch( "NodeCollection", debug_type( d.at( key ) ) );

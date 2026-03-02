@@ -104,6 +104,11 @@ for dirpath, _, fnames in os.walk(source_dir):
         continue
 
     for fname in fnames:
+        # Symbolic links may point to files of different names, so we do not
+        # check the name of the link.
+        if os.path.islink(os.path.join(dirpath, fname)):
+            continue
+
         if any([regex.search(fname) for regex in exclude_file_regex]):
             continue
 
@@ -125,7 +130,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                     print("Unable to decode bytes in '{0}': {1}".format(tested_file, err))
                     total_errors += 1
                     break
-                if extension == "py" and line_src.strip() == "#!/usr/bin/env python3":
+                if extension == "py" and line_src.strip() == "#!/usr/bin/env python":
                     line_src = source_file.readline()
                 line_exp = template_line.replace("{{file_name}}", fname)
                 if line_src != line_exp:

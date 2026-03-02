@@ -46,6 +46,18 @@ try:
 except ImportError:
     HAVE_PANDAS = False
 
+# A NumPy2 conformant implementation of NodeCollection.__array__() must have the signature
+# __array__(object, dtype=None, copy=None), where copy is passed on to numpy.array(..., copy=copy).
+# Numpy 1 does not support the value None for copy, so we determine here which default value to use.
+# This avoids checks at runtime. See also
+#   https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+#   https://numpy.org/doc/2.0/reference/generated/numpy.array.html#numpy-array
+try:
+    numpy.array(1, copy=None)
+    _ARRAY_COPY_DEFAULT = None
+except ValueError:
+    _ARRAY_COPY_DEFAULT = True
+
 __all__ = [
     "CollocatedSynapses",
     "Compartments",
@@ -569,7 +581,7 @@ class NodeCollection:
         """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
         return len(self) > 0
 
-    def __array__(self, dtype=None, copy=None):
+    def __array__(self, dtype=None, copy=_ARRAY_COPY_DEFAULT):
         """Convert the NodeCollection to a NumPy array."""
 
         return numpy.array(self.tolist(), dtype=dtype, copy=copy)

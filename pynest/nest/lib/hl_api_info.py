@@ -23,6 +23,7 @@
 Functions to get information on NEST.
 """
 
+import inspect
 import os
 import textwrap
 import webbrowser
@@ -39,7 +40,7 @@ from .hl_api_helper import (
 )
 from .hl_api_types import to_json
 
-__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel"]
+__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel", "message"]
 
 
 VerbosityLevel = nestkernel.VerbosityLevel
@@ -143,3 +144,29 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
 )
 def SetStatus(nodes_or_conns, params, val=None):
     nodes_or_conns.set(params if val is None else {params: val})
+
+
+def message(
+    message,
+    severity=nest.NestModule.ll_api.nestkernel.VerbosityLevel.INFO,
+    *,
+    function=None,
+    filename=None,
+    lineno=None,
+):
+    """
+    Issue message via NEST logging mechanism.
+
+    Calling function, the name of the source code file and the pertaining line number are added automatically if not
+    explicitly given. These values are only displayed by the NEST logging mechanism if verbosity is DEBUG or ALL.
+
+    When setting the severity of the issue, pass `severity=nest.VerbosityLevel.WARNING` and similar. Default is `INFO`.
+    """
+
+    frame = inspect.stack()[1]
+
+    function = function or frame.function
+    filename = filename or frame.filename
+    lineno = lineno or frame.lineno
+
+    nestkernel.llapi_message(severity, function, message, filename, lineno)

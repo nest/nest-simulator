@@ -169,8 +169,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
     s = unlink( src->c_str() );
     if ( s ) // failed to remove old link: undo everything
     {
-      int t = unlink( dst->c_str() );
-      assert( t == 0 ); // link was just created after all!
+      assert( unlink( dst->c_str() ) == 0 ); // link was just created after all!
     };
   };
   i->OStack.pop( 2 );

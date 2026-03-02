@@ -804,7 +804,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 }
 
 template <>
-void
+[[gnu::always_inline]] void
 EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
 {
   e.set_sender_node_id( source.get_node_id() );
@@ -1124,7 +1124,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 EventDeliveryManager::write_toggle() const
 {
   return kernel::manager< SimulationManager >.get_slice() % 2;
@@ -1208,7 +1208,7 @@ EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
   kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
 
-long
+[[gnu::always_inline]] long
 EventDeliveryManager::get_slice_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
@@ -1217,7 +1217,7 @@ EventDeliveryManager::get_slice_modulo( long d )
   return slice_moduli_[ d ];
 }
 
-long
+[[gnu::always_inline]] long
 EventDeliveryManager::get_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
@@ -1226,39 +1226,39 @@ EventDeliveryManager::get_modulo( long d )
   return moduli_[ d ];
 }
 
-size_t
+[[gnu::always_inline]] size_t
 EventDeliveryManager::read_toggle() const
 {
   // define in terms of write_toggle() to ensure consistency
   return 1 - write_toggle();
 }
 
-void
+[[gnu::always_inline]] void
 EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
 {
   off_grid_spiking_ = off_grid_spiking;
 }
 
-bool
+[[gnu::always_inline]] bool
 EventDeliveryManager::get_off_grid_communication() const
 {
   return off_grid_spiking_;
 }
 
-void
+[[gnu::always_inline]] void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
 }
 
-bool
+[[gnu::always_inline]] bool
 EventDeliveryManager::is_marked_for_removal_( const Target& target )
 {
 
   return target.is_processed();
 }
 
-void
+[[gnu::always_inline]] void
 EventDeliveryManager::reset_spike_register_( const size_t tid )
 {
 

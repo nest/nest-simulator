@@ -925,7 +925,7 @@ ConnectionManager::connect_( Node& source,
   }
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::connect_to_device_( Node& source,
   Node& target,
   const size_t s_node_id,
@@ -941,7 +941,7 @@ ConnectionManager::connect_to_device_( Node& source,
   increase_connection_count( tid, syn_id );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::connect_from_device_( Node& source,
   Node& target,
   const size_t tid,
@@ -1696,7 +1696,7 @@ ConnectionManager::deliver_secondary_events( const size_t tid,
   return done;
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::compress_secondary_send_buffer_pos( const size_t tid )
 {
   target_table_.compress_secondary_send_buffer_pos( tid );
@@ -1740,13 +1740,13 @@ ConnectionManager::resize_connections()
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::sync_has_primary_connections()
 {
   has_primary_connections_ = kernel::manager< MPIManager >.any_true( has_primary_connections_ );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = kernel::manager< MPIManager >.any_true( secondary_connections_exist_ );
@@ -1769,7 +1769,7 @@ ConnectionManager::set_connections_have_changed()
   connections_have_changed_ = true;
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::unset_connections_have_changed()
 {
   connections_have_changed_ = false;
@@ -1930,46 +1930,46 @@ ConnectionManager::initialize_iteration_state()
   }
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, Event& e )
 {
   target_table_devices_.send_to_device(
     tid, source_node_id, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e )
 {
   target_table_devices_.send_to_device(
     tid, source_node_id, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event& e )
 {
   target_table_devices_.send_from_device( tid, ldid, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
 }
 
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::valid_connection_rule( std::string rule_name )
 {
   return connruledict_->known( rule_name );
 }
 
-long
+[[gnu::always_inline]] long
 ConnectionManager::get_min_delay() const
 {
   return min_delay_;
 }
 
-long
+[[gnu::always_inline]] long
 ConnectionManager::get_max_delay() const
 {
   return max_delay_;
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::clean_source_table( const size_t tid )
 {
   if ( not keep_source_table_ )
@@ -1978,7 +1978,7 @@ ConnectionManager::clean_source_table( const size_t tid )
   }
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::clear_source_table( const size_t tid )
 {
   if ( not keep_source_table_ )
@@ -1987,85 +1987,85 @@ ConnectionManager::clear_source_table( const size_t tid )
   }
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::get_keep_source_table() const
 {
   return keep_source_table_;
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::is_source_table_cleared() const
 {
   return source_table_.is_cleared();
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::resize_target_table_devices_to_number_of_neurons()
 {
   target_table_devices_.resize_to_number_of_neurons();
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::resize_target_table_devices_to_number_of_synapse_types()
 {
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::reject_last_target_data( const size_t tid )
 {
   source_table_.reject_last_target_data( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::save_source_table_entry_point( const size_t tid )
 {
   source_table_.save_entry_point( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::no_targets_to_process( const size_t tid )
 {
   source_table_.no_targets_to_process( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::reset_source_table_entry_point( const size_t tid )
 {
   source_table_.reset_entry_point( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::restore_source_table_entry_point( const size_t tid )
 {
   source_table_.restore_entry_point( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::prepare_target_table( const size_t tid )
 {
   target_table_.prepare( tid );
 }
 
-const std::vector< Target >&
+[[gnu::always_inline]] const std::vector< Target >&
 ConnectionManager::get_remote_targets_of_local_node( const size_t tid, const size_t lid ) const
 {
   return target_table_.get_targets( tid, lid );
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::connections_have_changed() const
 {
   return connections_have_changed_;
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
 {
   target_table_.add_target( tid, target_rank, target_data );
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::get_next_target_data( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
@@ -2075,7 +2075,7 @@ ConnectionManager::get_next_target_data( const size_t tid,
   return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
-const std::vector< size_t >&
+[[gnu::always_inline]] const std::vector< size_t >&
 ConnectionManager::get_secondary_send_buffer_positions( const size_t tid,
   const size_t lid,
   const synindex syn_id ) const
@@ -2083,7 +2083,7 @@ ConnectionManager::get_secondary_send_buffer_positions( const size_t tid,
   return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 ConnectionManager::get_secondary_recv_buffer_position( const size_t tid,
   const synindex syn_id,
   const size_t lcid ) const
@@ -2091,55 +2091,55 @@ ConnectionManager::get_secondary_recv_buffer_position( const size_t tid,
   return secondary_recv_buffer_pos_[ tid ][ syn_id ][ lcid ];
 }
 
-size_t
+[[gnu::always_inline]] size_t
 ConnectionManager::get_num_connections_( const size_t tid, const synindex syn_id ) const
 {
   return connections_[ tid ][ syn_id ]->size();
 }
 
-size_t
+[[gnu::always_inline]] size_t
 ConnectionManager::get_source_node_id( const size_t tid, const synindex syn_index, const size_t lcid )
 {
   return source_table_.get_node_id( tid, syn_index, lcid );
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::has_primary_connections() const
 {
   return has_primary_connections_;
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::secondary_connections_exist() const
 {
   return secondary_connections_exist_;
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::use_compressed_spikes() const
 {
   return use_compressed_spikes_;
 }
 
-double
+[[gnu::always_inline]] double
 ConnectionManager::get_stdp_eps() const
 {
   return stdp_eps_;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 ConnectionManager::get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
 {
   return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
 }
 
-bool
+[[gnu::always_inline]] bool
 ConnectionManager::get_device_connected( const size_t tid, const size_t lcid ) const
 {
   return target_table_devices_.is_device_connected( tid, lcid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::send( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
@@ -2149,7 +2149,7 @@ ConnectionManager::send( const size_t tid,
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::restructure_connection_tables( const size_t tid )
 {
   assert( not source_table_.is_cleared() );
@@ -2157,7 +2157,7 @@ ConnectionManager::restructure_connection_tables( const size_t tid )
   source_table_.reset_processed_flags( tid );
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::set_source_has_more_targets( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
@@ -2166,13 +2166,13 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
 }
 
-const std::vector< SpikeData >&
+[[gnu::always_inline]] const std::vector< SpikeData >&
 ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
 {
   return compressed_spike_data_[ syn_id ][ idx ];
 }
 
-void
+[[gnu::always_inline]] void
 ConnectionManager::clear_compressed_spike_data_map()
 {
   source_table_.clear_compressed_spike_data_map();

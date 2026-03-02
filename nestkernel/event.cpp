@@ -166,56 +166,48 @@ SICEvent::operator()()
 void
 Event::set_rport( size_t rp )
 {
-
   rp_ = rp;
 }
 
 void
 Event::set_port( size_t p )
 {
-
   p_ = p;
 }
 
 size_t
 Event::get_rport() const
 {
-
   return rp_;
 }
 
 size_t
 Event::get_port() const
 {
-
   return p_;
 }
 
 void
 Event::set_offset( double t )
 {
-
   offset_ = t;
 }
 
 double
 Event::get_offset() const
 {
-
   return offset_;
 }
 
 void
 Event::set_delay_steps( long d )
 {
-
   d_ = d;
 }
 
 long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-
   if ( stamp_steps_ == 0 )
   {
     stamp_steps_ = stamp_.get_steps();

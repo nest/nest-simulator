@@ -310,7 +310,6 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-
     // evolve membrane potential
     S_.V_m_ = S_.V_m_ * V_.P22_expm1_ + S_.V_m_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_
       + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;

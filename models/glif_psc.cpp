@@ -474,7 +474,6 @@ glif_psc::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory, integrate voltage and currents
@@ -576,25 +575,26 @@ glif_psc::update( Time const& origin, const long from, const long to )
       S_.U_ = v_old;
       S_.threshold_ = S_.threshold_spike_ + S_.threshold_voltage_ + P_.th_inf_;
     }
-
-    // alpha shape PSCs
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-
-      // Apply spikes delivered in this step: The spikes arriving at T+1 have an
-      // immediate effect on the state of the neuron
-      S_.y1_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
-    }
-
-    // Update any external currents
-    S_.I_ = B_.currents_.get_value( lag );
-
-    // Save voltage
-    B_.logger_.record_data( origin.get_steps() + lag );
-    v_old = S_.U_;
   }
+
+  // alpha shape PSCs
+  for ( size_t i = 0; i < P_.n_receptors_(); i++ )
+  {
+    S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
+    S_.y1_[ i ] *= V_.P11_[ i ];
+
+    // Apply spikes delivered in this step: The spikes arriving at T+1 have an
+    // immediate effect on the state of the neuron
+    S_.y1_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
+  }
+
+  // Update any external currents
+  S_.I_ = B_.currents_.get_value( lag );
+
+  // Save voltage
+  B_.logger_.record_data( origin.get_steps() + lag );
+  v_old = S_.U_;
+}
 }
 
 } // namespace nest

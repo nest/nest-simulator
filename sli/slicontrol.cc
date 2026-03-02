@@ -1032,8 +1032,7 @@ void
 Forallindexed_aFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc );
+  assert( dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() ) );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
   i->EStack.push_move( i->OStack.pick( 1 ) ); // push object
@@ -1059,8 +1058,7 @@ void
 Forallindexed_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc );
+  assert( dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() ) );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
   i->EStack.push_move( i->OStack.pick( 1 ) ); // push object
@@ -1086,8 +1084,7 @@ void
 Forall_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc );
+  assert( dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() ) );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
   i->EStack.push_move( i->OStack.pick( 1 ) ); // push object

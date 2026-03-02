@@ -123,7 +123,14 @@ include(CheckIPOSupported)
 check_ipo_supported()
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-# --- PGO Configuration Start ---
+# prevent semantic interposition to enable inlining of functions that could otherwise be overridden via LD_PRELOAD
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-fno-semantic-interposition" COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
+if(COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
+    add_compile_options("-fno-semantic-interposition")
+endif()
+
+# optional profile-guided optimization
 set(PGO_MODE "OFF" CACHE STRING "Control Profile Guided Optimization: OFF, GENERATE, USE")
 
 if(PGO_MODE STREQUAL "GENERATE")
@@ -136,7 +143,6 @@ elseif(PGO_MODE STREQUAL "USE")
     add_compile_options(-fprofile-use -fprofile-correction)
     add_link_options(-fprofile-use -fprofile-correction)
 endif()
-# --- PGO Configuration End ---
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )

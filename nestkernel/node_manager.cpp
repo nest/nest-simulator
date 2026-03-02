@@ -431,27 +431,27 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
   return std::move( nodecollection );
 }
 
-bool
+[[gnu::always_inline]] bool
 NodeManager::is_local_node( Node* n ) const
 {
   return kernel::manager< VPManager >.is_local_vp( n->get_vp() );
 }
 
-bool
+[[gnu::always_inline]] bool
 NodeManager::is_local_node_id( size_t node_id ) const
 {
   const size_t vp = kernel::manager< VPManager >.node_id_to_vp( node_id );
   return kernel::manager< VPManager >.is_local_vp( vp );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 NodeManager::get_max_num_local_nodes() const
 {
   return static_cast< size_t >(
     ceil( static_cast< double >( size() ) / kernel::manager< VPManager >.get_num_virtual_processes() ) );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 NodeManager::get_num_thread_local_devices( size_t t ) const
 {
   return num_thread_local_devices_[ t ];
@@ -616,7 +616,7 @@ NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bo
   }
 }
 
-void
+[[gnu::always_inline]] void
 NodeManager::prepare_node_( Node* n )
 {
   // Frozen nodes are initialized and calibrated, so that they
@@ -789,56 +789,48 @@ NodeManager::set_status( const DictionaryDatum& )
 void
 NodeManager::set_have_nodes_changed( const bool changed )
 {
-
   have_nodes_changed_ = changed;
 }
 
-bool
+[[gnu::always_inline]] bool
 NodeManager::have_nodes_changed() const
 {
-
   return have_nodes_changed_;
 }
 
-const SparseNodeArray&
+[[gnu::always_inline]] const SparseNodeArray&
 NodeManager::get_local_nodes( size_t t ) const
 {
-
   return local_nodes_[ t ];
 }
 
-bool
+[[gnu::always_inline]] bool
 NodeManager::wfr_is_used() const
 {
-
   return wfr_is_used_;
 }
 
-const std::vector< Node* >&
+[[gnu::always_inline]] const std::vector< Node* >&
 NodeManager::get_wfr_nodes_on_thread( size_t t ) const
 {
-
   return wfr_nodes_vec_.at( t );
 }
 
-Node*
+[[gnu::always_inline]] Node*
 NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
 {
-
   return local_nodes_[ t ].get_node_by_index( thread_local_id );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 NodeManager::size() const
 {
-
   return local_nodes_[ 0 ].get_max_node_id();
 }
 
-size_t
+[[gnu::always_inline]] size_t
 NodeManager::get_num_active_nodes()
 {
-
   return num_active_nodes_;
 }
 

@@ -584,7 +584,6 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:

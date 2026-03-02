@@ -584,7 +584,6 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -642,7 +641,6 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 
       if ( rate > 0.0 )
       {
-
         if ( P_.t_ref > 0.0 )
         {
           // Draw random number and compare to prob to have a spike

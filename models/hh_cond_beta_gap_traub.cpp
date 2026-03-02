@@ -492,7 +492,6 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     // B_.lag is needed by hh_cond_beta_gap_traub_dynamics to
     // determine the current section
     B_.lag_ = lag;

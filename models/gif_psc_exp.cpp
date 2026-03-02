@@ -325,7 +325,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -350,7 +349,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
-
       S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_
         + S_.I_syn_ex_ * V_.P21ex_ + S_.I_syn_in_ * V_.P21in_;
 
@@ -362,7 +360,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
         // hazard function is computed by 1 - exp(- lambda * dt)
         if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
-
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
           {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];

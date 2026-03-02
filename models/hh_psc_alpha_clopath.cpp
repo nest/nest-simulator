@@ -419,7 +419,6 @@ nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const l
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
     const double U_old = S_.y_[ State_::V_M ];
 

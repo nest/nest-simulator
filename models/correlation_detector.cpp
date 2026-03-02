@@ -279,7 +279,6 @@ nest::correlation_detector::handle( SpikeEvent& e )
 
   if ( device_.is_active( stamp ) )
   {
-
     const long spike_i = stamp.get_steps();
     const size_t other = 1 - sender; // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];

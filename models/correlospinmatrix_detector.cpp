@@ -321,7 +321,6 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
   if ( device_.is_active( stamp ) )
   {
-
     // The following logic implements the decoding
     // A single spike signals a transition to 0 state, two spikes in same time
     // step signal the transition to 1 state.

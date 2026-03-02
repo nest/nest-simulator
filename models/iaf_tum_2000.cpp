@@ -44,7 +44,6 @@ nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
 
 namespace nest
 {
-
 void
 register_iaf_tum_2000( const std::string& name )
 {
@@ -212,7 +211,6 @@ nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) cons
 void
 nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-
   double x = x_;
   double y = y_;
   updateValue< double >( d, names::x, x );

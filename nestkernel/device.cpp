@@ -154,42 +154,36 @@ nest::Device::pre_run_hook()
 long
 nest::Device::get_t_max_() const
 {
-
   return V_.t_max_;
 }
 
 long
 nest::Device::get_t_min_() const
 {
-
   return V_.t_min_;
 }
 
 nest::Time const&
 nest::Device::get_stop() const
 {
-
   return P_.stop_;
 }
 
 nest::Time const&
 nest::Device::get_start() const
 {
-
   return P_.start_;
 }
 
 nest::Time const&
 nest::Device::get_origin() const
 {
-
   return P_.origin_;
 }
 
 void
 nest::Device::set_status( const DictionaryDatum& d )
 {
-
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
 
@@ -200,7 +194,6 @@ nest::Device::set_status( const DictionaryDatum& d )
 void
 nest::Device::get_status( DictionaryDatum& d ) const
 {
-
   P_.get( d );
 }
 

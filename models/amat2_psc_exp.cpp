@@ -369,7 +369,6 @@ nest::amat2_psc_exp::update( Time const& origin, const long from, const long to 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-
     // evolve voltage dependency (6,7)
     S_.V_th_v_ = ( P_.I_e_ + S_.i_0_ ) * V_.P70_ + S_.I_syn_ex_ * V_.P71_ + S_.I_syn_in_ * V_.P72_ + S_.V_m_ * V_.P73_
       + S_.V_th_dv_ * V_.P76_ + S_.V_th_v_ * V_.P77_;

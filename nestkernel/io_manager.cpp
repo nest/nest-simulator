@@ -338,7 +338,6 @@ IOManager::enroll_recorder( const Name backend_name, const RecordingDevice& devi
 void
 nest::IOManager::enroll_stimulator( const Name backend_name, StimulationDevice& device, const DictionaryDatum& params )
 {
-
   if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )
   {
     return;

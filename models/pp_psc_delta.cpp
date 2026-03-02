@@ -363,13 +363,11 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
     double q_temp_ = 0;
     for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
     {
-
       S_.q_elems_[ i ] = V_.Q33_[ i ] * S_.q_elems_[ i ];
 
       q_temp_ += S_.q_elems_[ i ];

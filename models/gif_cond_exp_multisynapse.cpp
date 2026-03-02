@@ -484,7 +484,6 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -539,17 +538,14 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
 
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
-
       const double lambda = P_.lambda_0_ * std::exp( ( S_.y_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
-
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
         if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
-
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
           {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];

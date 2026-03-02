@@ -356,7 +356,6 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
 
       do
       {
-
         if ( S_.is_refractory_ )
         {
           // move time to time of event

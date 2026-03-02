@@ -389,7 +389,6 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:

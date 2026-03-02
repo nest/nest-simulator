@@ -359,7 +359,6 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // remember membrane potential at beginning of step

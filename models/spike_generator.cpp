@@ -424,7 +424,6 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   // For the input backend
   if ( not input_spikes.empty() )
   {
-
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();

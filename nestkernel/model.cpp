@@ -150,34 +150,30 @@ Model::get_status()
   return d;
 }
 
-std::string
+[[gnu::always_inline]] std::string
 Model::get_name() const
 {
-
   return name_;
 }
 
 Node*
 Model::create( size_t t )
 {
-
   assert( t < memory_.size() );
   Node* n = create_();
   memory_[ t ].emplace_back( n );
   return n;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 Model::get_type_id() const
 {
-
   return type_id_;
 }
 
-void
+[[gnu::always_inline]] void
 Model::set_type_id( size_t id )
 {
-
   type_id_ = id;
 }
 

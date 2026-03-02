@@ -471,7 +471,6 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     // B_.lag is needed by hh_psc_alpha_gap_dynamics to
     // determine the current section
     B_.lag_ = lag;

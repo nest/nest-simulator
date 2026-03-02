@@ -391,7 +391,6 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
     const double U_old = S_.y_[ State_::V_M ];
 

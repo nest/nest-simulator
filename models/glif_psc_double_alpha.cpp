@@ -524,12 +524,10 @@ nest::glif_psc_double_alpha::pre_run_hook()
 void
 nest::glif_psc_double_alpha::update( Time const& origin, const long from, const long to )
 {
-
   double v_old = S_.U_;
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory, integrate voltage and currents

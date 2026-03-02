@@ -299,7 +299,6 @@ nest::iaf_psc_exp_htum::update( Time const& origin, const long from, const long 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
     {
       S_.V_m_ =

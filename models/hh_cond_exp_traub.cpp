@@ -389,7 +389,6 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double tt = 0.0; // it's all relative!
     V_.U_old_ = S_.y_[ State_::V_M ];
 

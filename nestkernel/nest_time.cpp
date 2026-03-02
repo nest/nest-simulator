@@ -375,7 +375,7 @@ Time::get_ms() const
   return Range::MS_PER_TIC * tics;
 }
 
-long
+[[gnu::always_inline]] long
 Time::get_steps() const
 {
   if ( is_pos_inf() )
@@ -400,13 +400,13 @@ Time::get_steps() const
  * ld_round, which is different from ms_stamp --> Time mapping, which rounds
  * up. See #903.
  */
-double
+[[gnu::always_inline]] double
 Time::delay_steps_to_ms( long steps )
 {
   return steps * Range::MS_PER_STEP;
 }
 
-long
+[[gnu::always_inline]] long
 Time::delay_ms_to_steps( double ms )
 {
   return ld_round( ms * Range::STEPS_PER_MS );

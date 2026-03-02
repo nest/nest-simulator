@@ -147,8 +147,22 @@ def SetStatus(nodes_or_conns, params, val=None):
 
 
 def message(
-    message, severity=nest.NestModule.ll_api.nestkernel.VerbosityLevel.INFO, function=None, filename=None, lineno=None
+    message,
+    severity=nest.NestModule.ll_api.nestkernel.VerbosityLevel.INFO,
+    *,
+    function=None,
+    filename=None,
+    lineno=None,
 ):
+    """
+    Issue message via NEST logging mechanism.
+
+    Calling function, the name of the source code file and the pertaining line number are added automatically if not
+    explicitly given. These values are only displayed by the NEST logging mechanism if verbosity is DEBUG or ALL.
+
+    When setting the severity of the issue, pass `severity=nest.VerbosityLevel.WARNING` and similar. Default is `INFO`.
+    """
+
     frame = inspect.stack()[1]
 
     function = function or frame.function

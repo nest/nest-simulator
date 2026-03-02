@@ -305,55 +305,67 @@ eprop_readout::compute_gradient( const long t_spike,
   WeightOptimizer* optimizer,
   const bool is_flush_event,
   const bool previous_was_flush_event,
-  double& gradient )
+  double& gradient,
+  long& remaining_steps_until_cutoff,
+  long& decay_steps )
 {
   const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto& opt_cp = *ecp.optimizer_cp_;
   const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const long cutoff_end = t_spike_previous + get_eprop_isi_trace_cutoff();
-  const long t_compute_until = std::min( cutoff_end, t_spike );
+  const long isi_steps = t_spike - t_spike_previous;
+  remaining_steps_until_cutoff = previous_was_flush_event ? remaining_steps_until_cutoff : get_eprop_isi_trace_cutoff();
 
+  double z_current_buffer = 0.0; // spike that triggered current computation
   if ( not previous_was_flush_event )
   {
-    gradient = 0.0;                // gradient used for the weight update (to be calculated)
-    double z_current_buffer = 1.0; // spike that triggered current computation
-    auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
+    gradient = 0.0; // gradient used for the weight update (to be calculated)
+    z_current_buffer = 1.0;
+  }
 
-    for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
+  const long t_begin = t_spike_previous - 1;
+  auto eprop_hist_it = get_eprop_history( t_begin );
+  const long t_steps = std::min( remaining_steps_until_cutoff, isi_steps );
+  const long t_end = t_begin + t_steps;
+
+  for ( long t = t_begin; t < t_end; ++t, ++eprop_hist_it )
+  {
+    assert( t == eprop_hist_it->t_ );
+
+    const double z = z_previous_buffer; // spiking variable
+    z_previous_buffer = z_current_buffer;
+    z_current_buffer = 0.0;
+
+    const double E = eprop_hist_it->error_signal_; // error signal
+
+    z_bar = V_.P_v_m_ * z_bar + z;
+    const double gradient_increment = E * z_bar;
+
+    if ( optimize_each_step )
     {
-      const double z = z_previous_buffer; // spiking variable
-      z_previous_buffer = z_current_buffer;
-      z_current_buffer = 0.0;
-
-      const double E = eprop_hist_it->error_signal_; // error signal
-
-      z_bar = V_.P_v_m_ * z_bar + z;
-
-      const double gradient_increment = E * z_bar;
-
-      if ( optimize_each_step )
-      {
-        gradient = gradient_increment;
-        weight = optimizer->optimized_weight( opt_cp, t, gradient, weight );
-      }
-      else
-      {
-        gradient += gradient_increment;
-      }
+      gradient = gradient_increment;
+      weight = optimizer->optimized_weight( opt_cp, t + 1, gradient, weight );
+    }
+    else
+    {
+      gradient += gradient_increment;
     }
   }
 
-  const long trace_decay_interval = t_spike - ( previous_was_flush_event ? t_spike_previous : t_compute_until );
+  remaining_steps_until_cutoff -= t_steps;
+  const long remaining_steps_until_event = isi_steps - t_steps;
 
-  if ( trace_decay_interval > 0 )
+  decay_steps += remaining_steps_until_event;
+
+  if ( not is_flush_event and decay_steps > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, trace_decay_interval );
+    z_bar *= std::pow( V_.P_v_m_, decay_steps );
+    decay_steps = 0;
   }
 
-  if ( not( is_flush_event or optimize_each_step ) )
+  if ( not is_flush_event and not optimize_each_step )
   {
-    weight = optimizer->optimized_weight( opt_cp, t_compute_until, gradient, weight );
+    weight = optimizer->optimized_weight( opt_cp, t_end + remaining_steps_until_event, gradient, weight );
   }
 }
 

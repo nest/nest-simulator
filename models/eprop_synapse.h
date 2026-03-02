@@ -344,6 +344,12 @@ private:
   //! Sum of gradients.
   double gradient_ = 0.0;
 
+  //! Remaining computation steps.
+  long remaining_steps_until_cutoff_ = 0;
+
+  //! Decay steps for the eligibility trace.
+  long decay_steps_ = 0;
+
   /**
    *  Optimizer
    *
@@ -416,6 +422,8 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
   gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -434,6 +442,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , epsilon_( es.epsilon_ )
   , z_previous_buffer_( es.z_previous_buffer_ )
   , gradient_( es.gradient_ )
+  , remaining_steps_until_cutoff_( es.remaining_steps_until_cutoff_ )
+  , decay_steps_( es.decay_steps_ )
   , optimizer_( es.optimizer_ )
 {
   // Move operator, therefore we must null the optimizer pointer in the source of the move.
@@ -462,6 +472,8 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
   gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
@@ -509,11 +521,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   const long t_spike = e.get_stamp().get_steps();
   const bool is_flush_event = e.is_flush_event();
 
-  if ( previous_was_flush_event_ and is_flush_event )
-  {
-    return false;
-  }
-
   if ( t_spike_previous_ != 0 )
   {
     target->compute_gradient( t_spike,
@@ -528,7 +535,9 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       optimizer_,
       is_flush_event,
       previous_was_flush_event_,
-      gradient_ );
+      gradient_,
+      remaining_steps_until_cutoff_,
+      decay_steps_ );
   }
 
   target->erase_used_eprop_history( t_spike, t_spike_previous_ );

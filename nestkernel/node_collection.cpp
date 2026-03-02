@@ -1488,21 +1488,18 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
 bool
 NodeCollectionComposite::valid_idx_( const size_t part_idx, const size_t element_idx ) const
 {
-
   return part_idx < last_part_ or ( part_idx == last_part_ and element_idx <= last_elem_ );
 }
 
 bool
 NodeCollectionComposite::contains( const size_t node_id ) const
 {
-
   return get_nc_index( node_id ) != -1;
 }
 
 bool
 NodeCollectionComposite::empty() const
 {
-
   // Composite NodeCollections can never be empty.
   return false;
 }
@@ -1510,21 +1507,18 @@ NodeCollectionComposite::empty() const
 bool
 NodeCollectionComposite::is_range() const
 {
-
   return false;
 }
 
 NodeCollectionMetadataPTR
 NodeCollectionComposite::get_metadata() const
 {
-
   return parts_[ 0 ].get_metadata();
 }
 
 void
 NodeCollectionComposite::set_metadata( NodeCollectionMetadataPTR meta )
 {
-
   for ( auto& part : parts_ )
   {
     part.set_metadata( meta );
@@ -1534,21 +1528,18 @@ NodeCollectionComposite::set_metadata( NodeCollectionMetadataPTR meta )
 size_t
 NodeCollectionComposite::stride() const
 {
-
   return stride_;
 }
 
 size_t
 NodeCollectionComposite::size() const
 {
-
   return size_;
 }
 
 NodeCollection::const_iterator
 NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
-
   // The unique end() element of a composite NC is given by one past the last element
   // This is the (potentially non-existing) next element irrespective of stride and step
   return nc_const_iterator(
@@ -1558,21 +1549,18 @@ NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 NodeCollection::const_iterator
 NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 {
-
   return nc_const_iterator( cp, *this, first_part_, first_elem_, stride_ );
 }
 
 bool
 NodeCollectionPrimitive::has_proxies() const
 {
-
   return not nodes_have_no_proxies_;
 }
 
 long
 NodeCollectionPrimitive::get_nc_index( const size_t neuron_id ) const
 {
-
   if ( neuron_id < first_ or last_ < neuron_id )
   {
     return -1;
@@ -1586,49 +1574,42 @@ NodeCollectionPrimitive::get_nc_index( const size_t neuron_id ) const
 bool
 NodeCollectionPrimitive::empty() const
 {
-
   return last_ == 0;
 }
 
 bool
 NodeCollectionPrimitive::is_range() const
 {
-
   return true;
 }
 
 NodeCollectionMetadataPTR
 NodeCollectionPrimitive::get_metadata() const
 {
-
   return metadata_;
 }
 
 void
 NodeCollectionPrimitive::set_metadata( NodeCollectionMetadataPTR meta )
 {
-
   metadata_ = meta;
 }
 
 bool
 NodeCollectionPrimitive::contains( const size_t node_id ) const
 {
-
   return first_ <= node_id and node_id <= last_;
 }
 
 size_t
 NodeCollectionPrimitive::stride() const
 {
-
   return 1;
 }
 
 size_t
 NodeCollectionPrimitive::size() const
 {
-
   // empty NC has first_ == last_ == 0, need to handle that special
   return std::min( last_, last_ - first_ + 1 );
 }
@@ -1636,7 +1617,6 @@ NodeCollectionPrimitive::size() const
 NodeCollection::const_iterator
 NodeCollectionPrimitive::end( NodeCollectionPTR cp ) const
 {
-
   // The unique end() element of a primitive NC is given by (part 0, element size()) )
   return nc_const_iterator( cp, *this, /* offset */ size(), /* stride */ 1, nc_const_iterator::NCIteratorKind::END );
 }
@@ -1644,14 +1624,12 @@ NodeCollectionPrimitive::end( NodeCollectionPTR cp ) const
 NodeCollection::const_iterator
 NodeCollectionPrimitive::begin( NodeCollectionPTR cp ) const
 {
-
   return nc_const_iterator( cp, *this, /* offset */ 0, /* stride */ 1 );
 }
 
 bool
 NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 {
-
   // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
   // operator==() of *metadata_, and to let it handle typechecking.
   const bool eq_metadata =
@@ -1663,7 +1641,6 @@ NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 bool
 NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
-
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
   // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
   // rhs_ptr will be a null pointer.
@@ -1679,7 +1656,6 @@ NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 size_t
 NodeCollectionPrimitive::operator[]( const size_t idx ) const
 {
-
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )
   {
@@ -1691,63 +1667,54 @@ NodeCollectionPrimitive::operator[]( const size_t idx ) const
 size_t
 nc_const_iterator::get_step_size() const
 {
-
   return step_;
 }
 
 std::pair< size_t, size_t >
 nc_const_iterator::get_part_offset() const
 {
-
   return { part_idx_, element_idx_ };
 }
 
 bool
 nc_const_iterator::operator>=( const nc_const_iterator& rhs ) const
 {
-
   return not( *this < rhs );
 }
 
 bool
 nc_const_iterator::operator>( const nc_const_iterator& rhs ) const
 {
-
   return not( *this <= rhs );
 }
 
 bool
 nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
 {
-
   return ( *this < rhs or *this == rhs );
 }
 
 bool
 nc_const_iterator::operator<( const nc_const_iterator& rhs ) const
 {
-
   return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
 }
 
 bool
 nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
 {
-
   return not( *this == rhs );
 }
 
 bool
 nc_const_iterator::operator==( const nc_const_iterator& rhs ) const
 {
-
   return part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_;
 }
 
 nc_const_iterator
 nc_const_iterator::operator++( int )
 {
-
   nc_const_iterator tmp = *this;
   ++( *this );
   return tmp;
@@ -1756,7 +1723,6 @@ nc_const_iterator::operator++( int )
 nc_const_iterator&
 nc_const_iterator::operator++()
 {
-
   ( *this ) += 1;
   return *this;
 }
@@ -1764,7 +1730,6 @@ nc_const_iterator::operator++()
 nc_const_iterator
 nc_const_iterator::operator+( const size_t n ) const
 {
-
   nc_const_iterator it = *this;
   return it += n;
 }
@@ -1772,7 +1737,6 @@ nc_const_iterator::operator+( const size_t n ) const
 nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
-
   assert( kind_ != NCIteratorKind::END );
 
   if ( n == 0 )
@@ -1808,7 +1772,6 @@ nc_const_iterator::operator+=( const size_t n )
 size_t
 NodeCollection::get_last() const
 {
-
   assert( size() > 0 );
   return ( *( begin() + ( size() - 1 ) ) ).node_id;
 }
@@ -1816,21 +1779,18 @@ NodeCollection::get_last() const
 size_t
 NodeCollection::get_first() const
 {
-
   return ( *begin() ).node_id;
 }
 
 void
 NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
-
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
 
 bool
 NodeCollection::operator!=( NodeCollectionPTR rhs ) const
 {
-
   return not( *this == rhs );
 }
 

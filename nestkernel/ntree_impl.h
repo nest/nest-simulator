@@ -169,7 +169,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 {
-
   // If we are on the last subntree, move up
   while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
   {
@@ -302,7 +301,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
 {
-
   // There are two states: the initial state, and "all in". In the
   // all in state, we are in a subtree which is completely inside
   // the mask. The allin_top_ is the top of this subtree. When
@@ -409,7 +407,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::first_leaf_inside_()
 {
-
   allin_top_ = ntree_;
 
   while ( not ntree_->is_leaf() )

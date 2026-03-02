@@ -445,7 +445,6 @@ ModelManager::compare_model_by_id_( const int a, const int b )
 void
 ModelManager::memory_info() const
 {
-
   std::cout.setf( std::ios::left );
   std::vector< size_t > idx( node_models_.size() );
 
@@ -489,7 +488,6 @@ ModelManager::create_proxynode_( size_t t, int model_id )
 Node*
 ModelManager::get_proxy_node( size_t tid, size_t node_id )
 {
-
   const int model_id = kernel::manager< ModelRangeManager >.get_model_id( node_id );
   Node* proxy = proxy_nodes_[ tid ].at( model_id );
   proxy->set_node_id_( node_id );

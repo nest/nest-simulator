@@ -87,21 +87,18 @@ nest::SliceRingBuffer::discard_events()
 bool
 nest::SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
 {
-
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }
 
 bool
 nest::SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
-
   return not( *this > b );
 }
 
 bool
 nest::SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 {
-
   return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
@@ -119,7 +116,6 @@ nest::SliceRingBuffer::get_next_spike( const long req_stamp,
   double& weight,
   bool& end_of_refract )
 {
-
   end_of_refract = false;
   if ( deliver_->empty() or refract_ <= deliver_->back() )
   {
@@ -170,7 +166,6 @@ nest::SliceRingBuffer::get_next_spike( const long req_stamp,
 void
 nest::SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 {
-
   // We require that only one refractory-return pseudo-event is stored per
   // time step.
   //
@@ -189,7 +184,6 @@ nest::SliceRingBuffer::add_spike( const long rel_delivery,
   const double ps_offset,
   const double weight )
 {
-
   const long idx = kernel::manager< EventDeliveryManager >.get_slice_modulo( rel_delivery );
   assert( static_cast< size_t >( idx ) < queue_.size() );
   assert( ps_offset >= 0 );

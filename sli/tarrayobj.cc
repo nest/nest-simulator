@@ -238,7 +238,6 @@ TokenArrayObj::reserve( size_t new_capacity )
 void
 TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
 {
-
   // This algorithm is taken from the HP STL implementation.
   if ( first < middle and middle < last )
   {
@@ -682,7 +681,6 @@ TokenArrayObj::valid() const
 std::ostream&
 operator<<( std::ostream& out, const TokenArrayObj& a )
 {
-
   for ( Token* i = a.begin(); i < a.end(); ++i )
   {
     out << *i << ' ';

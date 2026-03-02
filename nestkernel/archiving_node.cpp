@@ -278,7 +278,6 @@ nest::ArchivingNode::clear_history()
 double
 ArchivingNode::get_spiketime_ms() const
 {
-
   return last_spike_;
 }
 

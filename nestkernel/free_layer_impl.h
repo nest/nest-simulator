@@ -282,7 +282,6 @@ template < int D >
 void
 FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
-
   communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
@@ -299,7 +298,6 @@ void
 FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
   NodeCollectionPTR node_collection )
 {
-
   communicate_positions_( std::back_inserter( vec ), node_collection );
 
   // Sort vector to ensure consistent results

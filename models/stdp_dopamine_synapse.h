@@ -361,7 +361,6 @@ template < typename targetidentifierT >
 void
 stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );

@@ -634,7 +634,6 @@ nest::SourceTable::dump_compressed_spike_data(
 void
 nest::SourceTable::clear_compressed_spike_data_map()
 {
-
   for ( auto& source_index_map : compressed_spike_data_map_ )
   {
     source_index_map.clear();
@@ -644,7 +643,6 @@ nest::SourceTable::clear_compressed_spike_data_map()
 size_t
 nest::SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const
 {
-
   assert( source_node_id < 72057594037927936 );
   assert( syn_id < invalid_synindex );
   // syn_id is maximally 256, so shifting node ID by 8 bits and storing
@@ -655,7 +653,6 @@ nest::SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, 
 size_t
 nest::SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
 {
-
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
@@ -677,7 +674,6 @@ nest::SourceTable::get_source_node_ids( const size_t tid,
   const std::vector< size_t >& source_lcids,
   std::vector< size_t >& sources )
 {
-
   for ( std::vector< size_t >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
   {
     sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_node_id() );
@@ -687,7 +683,6 @@ nest::SourceTable::get_source_node_ids( const size_t tid,
 void
 nest::SourceTable::disable_connection( const size_t tid, const synindex syn_id, const size_t lcid )
 {
-
   // disabling a source changes its node ID to 2^62 -1
   // source here
   assert( not sources_[ tid ][ syn_id ][ lcid ].is_disabled() );
@@ -697,7 +692,6 @@ nest::SourceTable::disable_connection( const size_t tid, const synindex syn_id, 
 void
 nest::SourceTable::no_targets_to_process( const size_t tid )
 {
-
   current_positions_[ tid ].tid = -1;
   current_positions_[ tid ].syn_id = -1;
   current_positions_[ tid ].lcid = -1;
@@ -706,7 +700,6 @@ nest::SourceTable::no_targets_to_process( const size_t tid )
 void
 nest::SourceTable::reset_processed_flags( const size_t tid )
 {
-
   for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
   {
     for ( BlockVector< Source >::iterator iit = it->begin(); iit != it->end(); ++iit )
@@ -719,7 +712,6 @@ nest::SourceTable::reset_processed_flags( const size_t tid )
 void
 nest::SourceTable::reset_entry_point( const size_t tid )
 {
-
   // Since we read the source table backwards, we need to set saved
   // values to the biggest possible value. These will be used to
   // initialize current_positions_ correctly upon calling
@@ -747,7 +739,6 @@ nest::SourceTable::reset_entry_point( const size_t tid )
 void
 nest::SourceTable::restore_entry_point( const size_t tid )
 {
-
   current_positions_[ tid ] = saved_positions_[ tid ];
   saved_entry_point_.set_false( tid );
 }
@@ -755,7 +746,6 @@ nest::SourceTable::restore_entry_point( const size_t tid )
 void
 nest::SourceTable::save_entry_point( const size_t tid )
 {
-
   if ( saved_entry_point_[ tid ].is_false() )
   {
     saved_positions_[ tid ].tid = current_positions_[ tid ].tid;
@@ -783,7 +773,6 @@ nest::SourceTable::save_entry_point( const size_t tid )
 void
 nest::SourceTable::reject_last_target_data( const size_t tid )
 {
-
   // The last target data returned by get_next_target_data() could not
   // be inserted into MPI buffer due to overflow. We hence need to
   // correct the processed flag of the last entry (see
@@ -798,7 +787,6 @@ nest::SourceTable::reject_last_target_data( const size_t tid )
 void
 nest::SourceTable::clear( const size_t tid )
 {
-
   for ( std::vector< BlockVector< Source > >::iterator it = sources_[ tid ].begin(); it != sources_[ tid ].end(); ++it )
   {
     it->clear();
@@ -806,11 +794,9 @@ nest::SourceTable::clear( const size_t tid )
   sources_[ tid ].clear();
   is_cleared_.set_true( tid );
 }
-
 void
 nest::SourceTable::add_source( const size_t tid, const synindex syn_id, const size_t node_id, const bool is_primary )
 {
-
   const Source src( node_id, is_primary );
   sources_[ tid ][ syn_id ].push_back( src );
 }
@@ -818,13 +804,11 @@ nest::SourceTable::add_source( const size_t tid, const synindex syn_id, const si
 size_t
 nest::CSDMapEntry::get_target_thread() const
 {
-
   return target_thread_;
 }
 
 size_t
 nest::CSDMapEntry::get_source_index() const
 {
-
   return source_index_;
 }

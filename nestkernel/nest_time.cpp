@@ -189,13 +189,13 @@ Time::reset_to_defaults()
 // Resolution: set tics per ms, steps per ms
 /////////////////////////////////////////////////////////////
 
-Time
+[[gnu::always_inline]] Time
 Time::get_resolution()
 {
   return Time( Range::TICS_PER_STEP );
 }
 
-bool
+[[gnu::always_inline]] bool
 Time::resolution_is_default()
 {
   return Range::TICS_PER_STEP == Range::TICS_PER_STEP_DEFAULT;
@@ -205,26 +205,26 @@ Time::resolution_is_default()
 // Common zero-ary or unary operations
 /////////////////////////////////////////////////////////////
 
-void
+[[gnu::always_inline]] void
 Time::set_to_zero()
 {
   tics = 0;
 }
 
-void
+[[gnu::always_inline]] void
 Time::advance()
 {
   tics += Range::TICS_PER_STEP;
   range();
 }
 
-Time
+[[gnu::always_inline]] Time
 Time::succ() const
 {
   return tic( tics + Range::TICS_PER_STEP );
 } // check range
 
-Time
+[[gnu::always_inline]] Time
 Time::pred() const
 {
   return tic( tics - Range::TICS_PER_STEP );
@@ -235,13 +235,13 @@ Time::pred() const
 /////////////////////////////////////////////////////////////
 
 
-bool
+[[gnu::always_inline]] bool
 Time::is_finite() const
 {
   return tics != LIM_POS_INF.tics and tics != LIM_NEG_INF.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 Time::is_neg_inf() const
 {
   // Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
@@ -251,19 +251,19 @@ Time::is_neg_inf() const
   return tics <= LIM_NEG_INF.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 Time::is_pos_inf() const
 {
   return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
 }
 
-bool
+[[gnu::always_inline]] bool
 Time::is_grid_time() const
 {
   return ( tics % Range::TICS_PER_STEP ) == 0;
 }
 
-bool
+[[gnu::always_inline]] bool
 Time::is_step() const
 {
   return tics > 0 and is_grid_time();
@@ -280,27 +280,27 @@ Time::is_multiple_of( const Time& divisor ) const
 /////////////////////////////////////////////////////////////
 
 
-Time
+[[gnu::always_inline]] Time
 Time::max()
 {
   return Time( LIM_MAX.tics );
 }
-Time
+[[gnu::always_inline]] Time
 Time::min()
 {
   return Time( LIM_MIN.tics );
 }
-double
+[[gnu::always_inline]] double
 Time::get_ms_per_tic()
 {
   return Range::MS_PER_TIC;
 }
-Time
+[[gnu::always_inline]] Time
 Time::neg_inf()
 {
   return Time( LIM_NEG_INF.tics );
 }
-Time
+[[gnu::always_inline]] Time
 Time::pos_inf()
 {
   return Time( LIM_POS_INF.tics );
@@ -321,7 +321,7 @@ Time::range()
   tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
 }
 
-void
+[[gnu::always_inline]] void
 Time::calibrate()
 {
   range();
@@ -343,23 +343,25 @@ Time::operator+=( const Time& t )
 /////////////////////////////////////////////////////////////
 
 
-tic_t
+[[gnu::always_inline]] tic_t
 Time::get_tics() const
 {
   return tics;
 }
-tic_t
+
+[[gnu::always_inline]] tic_t
 Time::get_tics_per_step()
 {
   return Range::TICS_PER_STEP;
 }
-double
+
+[[gnu::always_inline]] double
 Time::get_tics_per_ms()
 {
   return Range::TICS_PER_MS;
 }
 
-double
+[[gnu::always_inline]] double
 Time::get_ms() const
 {
   if ( is_pos_inf() )
@@ -416,49 +418,49 @@ Time::delay_ms_to_steps( double ms )
 
 namespace nest
 {
-bool
+[[gnu::always_inline]] bool
 operator==( const Time& t1, const Time& t2 )
 {
   return t1.tics == t2.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator!=( const Time& t1, const Time& t2 )
 {
   return t1.tics != t2.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator<( const Time& t1, const Time& t2 )
 {
   return t1.tics < t2.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator>( const Time& t1, const Time& t2 )
 {
   return t1.tics > t2.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator<=( const Time& t1, const Time& t2 )
 {
   return t1.tics <= t2.tics;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator>=( const Time& t1, const Time& t2 )
 {
   return t1.tics >= t2.tics;
 }
 
-Time
+[[gnu::always_inline]] Time
 operator+( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics + t2.tics ); // check range
 }
 
-Time
+[[gnu::always_inline]] Time
 operator-( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics - t2.tics ); // check range
@@ -483,7 +485,7 @@ operator*( const long factor, const Time& t )
   }
 }
 
-Time
+[[gnu::always_inline]] Time
 operator*( const Time& t, long factor )
 {
   return factor * t;

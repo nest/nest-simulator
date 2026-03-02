@@ -1505,7 +1505,6 @@ Search_aFunction::execute( SLIInterpreter* i ) const
 void
 IrepeatanyFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* loopcount = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
 
   if ( loopcount->get() > 0 )

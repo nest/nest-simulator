@@ -73,7 +73,6 @@ template <>
 double
 getValue< double >( const Token& t )
 {
-
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
   {

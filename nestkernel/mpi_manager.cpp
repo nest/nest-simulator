@@ -805,7 +805,6 @@ MPIManager::communicate_Alltoallv_( void* send_buffer,
 void
 MPIManager::communicate_recv_counts_secondary_events()
 {
-
   communicate_Alltoall(
     recv_counts_secondary_events_in_int_per_rank_, send_counts_secondary_events_in_int_per_rank_, 1 );
 
@@ -1152,42 +1151,36 @@ MPIManager::get_process_id_of_node_id( const size_t ) const
 double
 MPIManager::time_communicate_alltoallv( int, int ) const
 {
-
   return 0.0;
 }
 
 double
 MPIManager::time_communicate_alltoall( int, int ) const
 {
-
   return 0.0;
 }
 
 double
 MPIManager::time_communicate_offgrid( int, int ) const
 {
-
   return 0.0;
 }
 
 double
 MPIManager::time_communicatev( int, int )
 {
-
   return 0.0;
 }
 
 double
 MPIManager::time_communicate( int, int ) const
 {
-
   return 0.0;
 }
 
 bool
 MPIManager::any_true( const bool my_bool ) const
 {
-
   return my_bool;
 }
 
@@ -1231,7 +1224,6 @@ MPIManager::adaptive_target_buffers() const
 bool
 MPIManager::increase_buffer_size_target_data()
 {
-
   assert( adaptive_target_buffers_ );
   if ( buffer_size_target_data_ >= max_buffer_size_target_data_ )
   {
@@ -1257,7 +1249,6 @@ MPIManager::increase_buffer_size_target_data()
 void
 MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
-
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
   buffer_size_spike_data_ = buffer_size;
 
@@ -1269,7 +1260,6 @@ MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 void
 MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 {
-
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
   if ( buffer_size <= max_buffer_size_target_data_ )
   {
@@ -1288,7 +1278,6 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 size_t
 MPIManager::get_recv_buffer_size_secondary_events_in_int() const
 {
-
   return recv_displacements_secondary_events_in_int_per_rank_
            [ recv_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + recv_counts_secondary_events_in_int_per_rank_[ recv_counts_secondary_events_in_int_per_rank_.size() - 1 ];
@@ -1297,7 +1286,6 @@ MPIManager::get_recv_buffer_size_secondary_events_in_int() const
 size_t
 MPIManager::get_send_buffer_size_secondary_events_in_int() const
 {
-
   return send_displacements_secondary_events_in_int_per_rank_
            [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];

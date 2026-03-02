@@ -44,61 +44,61 @@ Source::Source( const std::uint64_t node_id, const bool primary )
   assert( node_id <= MAX_NODE_ID );
 }
 
-std::uint64_t
+[[gnu::always_inline]] std::uint64_t
 Source::get_node_id() const
 {
   return node_id_;
 }
 
-void
+[[gnu::always_inline]] void
 Source::set_processed( const bool processed )
 {
   processed_ = processed;
 }
 
-bool
+[[gnu::always_inline]] bool
 Source::is_processed() const
 {
   return processed_;
 }
 
-void
+[[gnu::always_inline]] void
 Source::set_primary( const bool primary )
 {
   primary_ = primary;
 }
 
-bool
+[[gnu::always_inline]] bool
 Source::is_primary() const
 {
   return primary_;
 }
 
-void
+[[gnu::always_inline]] void
 Source::disable()
 {
   disabled_ = true;
 }
 
-bool
+[[gnu::always_inline]] bool
 Source::is_disabled() const
 {
   return disabled_;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator<( const Source& lhs, const Source& rhs )
 {
   return lhs.node_id_ < rhs.node_id_;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator>( const Source& lhs, const Source& rhs )
 {
   return rhs < lhs;
 }
 
-bool
+[[gnu::always_inline]] bool
 operator==( const Source& lhs, const Source& rhs )
 {
   return lhs.node_id_ == rhs.node_id_;

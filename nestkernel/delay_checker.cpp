@@ -285,34 +285,29 @@ nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_del
 void
 nest::DelayChecker::enable_delay_update()
 {
-
   freeze_delay_update_ = false;
 }
 
 void
 nest::DelayChecker::DelayChecker::freeze_delay_update()
 {
-
   freeze_delay_update_ = true;
 }
 
 bool
 nest::DelayChecker::DelayChecker::get_user_set_delay_extrema() const
 {
-
   return user_set_delay_extrema_;
 }
 
 const nest::Time&
 nest::DelayChecker::DelayChecker::get_max_delay() const
 {
-
   return max_delay_;
 }
 
 const nest::Time&
 nest::DelayChecker::DelayChecker::get_min_delay() const
 {
-
   return min_delay_;
 }

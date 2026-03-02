@@ -1254,14 +1254,12 @@ EventDeliveryManager::send_to_node( Event& e )
 [[gnu::always_inline]] bool
 EventDeliveryManager::is_marked_for_removal_( const Target& target )
 {
-
   return target.is_processed();
 }
 
 [[gnu::always_inline]] void
 EventDeliveryManager::reset_spike_register_( const size_t tid )
 {
-
   emitted_spikes_register_[ tid ]->clear();
   off_grid_emitted_spikes_register_[ tid ]->clear();
 }

@@ -53,25 +53,25 @@ TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
   }
 }
 
-Node*
+[[gnu::always_inline]] Node*
 TargetIdentifierPtrRport::get_target_ptr( const size_t ) const
 {
   return target_;
 }
 
-size_t
+[[gnu::always_inline]] size_t
 TargetIdentifierPtrRport::get_rport() const
 {
   return rport_;
 }
 
-void
+[[gnu::always_inline]] void
 TargetIdentifierPtrRport::set_target( Node* target )
 {
   target_ = target;
 }
 
-void
+[[gnu::always_inline]] void
 TargetIdentifierPtrRport::set_rport( size_t rprt )
 {
   rport_ = rprt;
@@ -98,14 +98,14 @@ TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
   }
 }
 
-Node*
+[[gnu::always_inline]] Node*
 TargetIdentifierIndex::get_target_ptr( const size_t tid ) const
 {
   assert( target_ != invalid_targetindex );
   return kernel::manager< NodeManager >.thread_lid_to_node( tid, target_ );
 }
 
-size_t
+[[gnu::always_inline]] size_t
 TargetIdentifierIndex::get_rport() const
 {
   return 0;
@@ -127,7 +127,7 @@ TargetIdentifierIndex::set_target( Node* target )
   target_ = target_lid;
 }
 
-void
+[[gnu::always_inline]] void
 TargetIdentifierIndex::set_rport( size_t rprt )
 {
   if ( rprt != 0 )

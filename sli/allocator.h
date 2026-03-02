@@ -154,7 +154,6 @@ public:
 inline void*
 pool::alloc()
 {
-
   if ( not head )
   {
     grow( block_size );

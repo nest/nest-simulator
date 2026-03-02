@@ -47,7 +47,6 @@ SeeAlso: addtotrie, cva_t
 void
 TrieFunction::execute( SLIInterpreter* i ) const
 {
-
   if ( i->OStack.load() < 1 )
   {
     i->raiseerror( i->StackUnderflowError );

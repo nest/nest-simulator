@@ -669,7 +669,6 @@ FlushFunction::execute( SLIInterpreter* i ) const
 void
 EndlFunction::execute( SLIInterpreter* i ) const
 {
-
   // call: ostream -> ostream
 
   i->assert_stack_load( 1 );
@@ -697,7 +696,6 @@ EndlFunction::execute( SLIInterpreter* i ) const
 void
 EndsFunction::execute( SLIInterpreter* i ) const
 {
-
   // call: ostream -> ostream
 
   i->assert_stack_load( 1 );

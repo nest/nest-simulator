@@ -199,7 +199,6 @@ SLIInterpreter::initdictionaries()
 void
 SLIInterpreter::initbuiltins()
 {
-
   createcommand( ilookup_name, &SLIInterpreter::ilookupfunction );
   createcommand( ipop_name, &SLIInterpreter::ilookupfunction );
   createcommand( isetcallback_name, &SLIInterpreter::isetcallbackfunction );
@@ -612,7 +611,6 @@ SLIInterpreter::raiseerror( std::exception& err )
 void
 SLIInterpreter::raiseerror( Name cmd, Name err )
 {
-
   // All error related symbols are now in their correct dictionary,
   // the error dictionary $errordict ( see Bug #4)
 

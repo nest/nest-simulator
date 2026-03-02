@@ -125,7 +125,6 @@ nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
 void
 nest::StimulationDevice::set_status( const DictionaryDatum& d )
 {
-
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
 

@@ -3764,7 +3764,6 @@ SLIArrayModule::Put_dv_i_dFunction::execute( SLIInterpreter* i ) const
 void
 SLIArrayModule::Put_iv_i_iFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* val = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   if ( not val )
   {
@@ -3955,7 +3954,6 @@ SLIArrayModule::Forall_ivFunction::execute( SLIInterpreter* i ) const
 void
 SLIArrayModule::Iforall_ivFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
   ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
@@ -4031,7 +4029,6 @@ SLIArrayModule::Forall_dvFunction::execute( SLIInterpreter* i ) const
 void
 SLIArrayModule::Iforall_dvFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
   ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );

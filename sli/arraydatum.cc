@@ -144,7 +144,6 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostr
   std::string prefix,
   int line ) const
 {
-
   Token* i = this->begin();
 
   if ( line == 0 )

@@ -175,7 +175,6 @@ Remarks: This command does not exit the SLI interpreter! Use quit instead.
 void
 ExitFunction::execute( SLIInterpreter* i ) const
 {
-
   static Token mark = i->baselookup( i->mark_name );
 
   size_t n = 1;
@@ -330,7 +329,6 @@ SeeAlso: for, loop, exit
 void
 RepeatFunction::execute( SLIInterpreter* i ) const
 {
-
   // level  1  0
   // stack: n proc repeat
   if ( i->OStack.load() >= 2 )
@@ -434,7 +432,6 @@ SeeAlso: stopped, raiseerror
 void
 StopFunction::execute( SLIInterpreter* i ) const
 {
-
   size_t load = i->EStack.load();
   NameDatum istopped( i->istopped_name );
 
@@ -659,7 +656,6 @@ ParsestdinFunction::execute( SLIInterpreter* i ) const
 void
 IparseFunction::execute( SLIInterpreter* i ) const
 {
-
   // Estack: handle  iparse
   // pick      1         0
 
@@ -830,7 +826,6 @@ SeeAlso: load, def
 void
 LookupFunction::execute( SLIInterpreter* i ) const
 {
-
   if ( i->OStack.load() < 1 )
   {
     i->raiseerror( i->StackUnderflowError );

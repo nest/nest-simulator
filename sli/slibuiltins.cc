@@ -207,7 +207,6 @@ IrepeatFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IforFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
   ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
@@ -272,7 +271,6 @@ IforFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IforallarrayFunction::execute( SLIInterpreter* i ) const
 {
-
   IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
   ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );

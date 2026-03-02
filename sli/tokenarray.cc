@@ -164,7 +164,6 @@ TokenArray::valid() const
 std::ostream&
 operator<<( std::ostream& out, const TokenArray& a )
 {
-
   for ( Token* t = a.begin(); t < a.end(); ++t )
   {
     out << *t << ' ';

@@ -44,7 +44,6 @@ nest::SendBufferPosition::SendBufferPosition()
 void
 nest::TargetSendBufferPosition::increase( const size_t rank )
 {
-
   ++idx_[ rank_to_index_( rank ) ];
   ++num_target_data_written_;
 }
@@ -52,42 +51,36 @@ nest::TargetSendBufferPosition::increase( const size_t rank )
 bool
 nest::TargetSendBufferPosition::are_all_chunks_filled() const
 {
-
   return num_target_data_written_ == send_recv_count_per_rank_ * idx_.size();
 }
 
 bool
 nest::TargetSendBufferPosition::is_chunk_filled( const size_t rank ) const
 {
-
   return idx( rank ) == end( rank );
 }
 
 unsigned int
 nest::TargetSendBufferPosition::end( const size_t rank ) const
 {
-
   return end_[ rank_to_index_( rank ) ];
 }
 
 unsigned int
 nest::TargetSendBufferPosition::begin( const size_t rank ) const
 {
-
   return begin_[ rank_to_index_( rank ) ];
 }
 
 unsigned int
 nest::TargetSendBufferPosition::idx( const size_t rank ) const
 {
-
   return idx_[ rank_to_index_( rank ) ];
 }
 
 size_t
 nest::TargetSendBufferPosition::rank_to_index_( const size_t rank ) const
 {
-
   assert( begin_rank_ <= rank );
   assert( rank < end_rank_ );
   return rank % max_size_;
@@ -101,7 +94,6 @@ nest::TargetSendBufferPosition::TargetSendBufferPosition( const AssignedRanks& a
   , num_target_data_written_( 0 )
   , send_recv_count_per_rank_( send_recv_count_per_rank )
 {
-
   idx_.resize( assigned_ranks.size );
   begin_.resize( assigned_ranks.size );
   end_.resize( assigned_ranks.size );
@@ -119,34 +111,29 @@ nest::TargetSendBufferPosition::TargetSendBufferPosition( const AssignedRanks& a
 void
 nest::SendBufferPosition::increase( const size_t rank )
 {
-
   ++idx_[ rank ];
 }
 
 bool
 nest::SendBufferPosition::is_chunk_filled( const size_t rank ) const
 {
-
   return idx_[ rank ] == end_[ rank ];
 }
 
 size_t
 nest::SendBufferPosition::end( const size_t rank ) const
 {
-
   return end_[ rank ];
 }
 
 size_t
 nest::SendBufferPosition::begin( const size_t rank ) const
 {
-
   return begin_[ rank ];
 }
 
 size_t
 nest::SendBufferPosition::idx( const size_t rank ) const
 {
-
   return idx_[ rank ];
 }

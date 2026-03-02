@@ -708,21 +708,18 @@ nest::SPManager::disable_structural_plasticity()
 double
 SPManager::get_structural_plasticity_update_interval() const
 {
-
   return structural_plasticity_update_interval_;
 }
 
 bool
 SPManager::is_structural_plasticity_enabled() const
 {
-
   return structural_plasticity_enabled_;
 }
 
 GrowthCurve*
 SPManager::new_growth_curve( Name name )
 {
-
   const long nc_id = ( *growthcurvedict_ )[ name ];
   return growthcurve_factories_.at( nc_id )->create();
 }

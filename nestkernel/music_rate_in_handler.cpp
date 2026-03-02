@@ -82,7 +82,6 @@ MusicRateInHandler::register_channel( int channel, nest::Node* mp )
 void
 MusicRateInHandler::publish_port()
 {
-
   if ( not published_ )
   {
     MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();

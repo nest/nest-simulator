@@ -417,7 +417,6 @@ nest::MPIPortsFileMissing::message() const
 std::string
 nest::MPIErrorCode::message() const
 {
-
   char errmsg[ 256 ];
   int len;
 

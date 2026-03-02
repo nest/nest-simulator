@@ -293,7 +293,6 @@ SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction()
 void
 SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) const
 {
-
   i->EStack.pop(); // pop yourself
   i->assert_stack_load( 2 );
 

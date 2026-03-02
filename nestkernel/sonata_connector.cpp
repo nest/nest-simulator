@@ -60,7 +60,6 @@ SonataConnector::~SonataConnector()
 void
 SonataConnector::connect()
 {
-
   // clang-format off
   /*
   Structure of SONATA edge files:
@@ -381,7 +380,6 @@ SonataConnector::sequential_chunkwise_connector_()
 void
 SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset )
 {
-
   // Read subsets
   std::vector< unsigned long > src_node_id_data_subset( hyperslab_size );
   std::vector< unsigned long > tgt_node_id_data_subset( hyperslab_size );
@@ -506,7 +504,6 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
 hsize_t
 SonataConnector::get_nrows_( H5::DataSet dataset )
 {
-
   H5::DataSpace dspace = dataset.getSpace();
   hsize_t dims_out[ 1 ];
   dspace.getSimpleExtentDims( dims_out, NULL );
@@ -518,7 +515,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
 hsize_t
 SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names )
 {
-
   // Retrieve names of all first level datasets and groups of the population group
   std::vector< std::string > member_names;
   H5Literate( pop_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &member_names );

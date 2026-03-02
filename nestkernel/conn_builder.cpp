@@ -1854,7 +1854,6 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   , N_( ( *conn_spec )[ names::N ] )
 {
-
   // check for potential errors
 
   // verify that total number of connections is not larger than

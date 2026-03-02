@@ -24,6 +24,7 @@
 #define EPROP_ARCHIVING_NODE_H
 
 // nestkernel
+#include "activation_event_node.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -38,8 +39,8 @@ namespace nest
  * @brief Base class implementing archiving for node models supporting e-prop plasticity.
  *
  * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
- * according to Bellec et al. (2020) and supporting additional biological features described in Korcsak-Gorzo,
- * Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * according to Bellec et al. (2020) and supporting additional biological features described in
+ * Korcsak-Gorzo et al. (2025).
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
@@ -50,9 +51,8 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node
+class EpropArchivingNode : public Node, public ActivationEventNode
 {
-
 public:
   /**
    * Constructs a new EpropArchivingNode object.
@@ -62,16 +62,17 @@ public:
   /**
    * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
    *
-   * @param other The other object to copy.
+   * @param n The other object to copy.
    */
-  EpropArchivingNode( const EpropArchivingNode& other );
+  EpropArchivingNode( const EpropArchivingNode& n );
 
+  void register_synapse() override;
   void register_eprop_connection() override;
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0 ) override;
-
+    const bool activation,
+    const bool previous_event_was_activation ) override;
   /**
    * Retrieves the update history entry for a specific time step.
    *
@@ -94,7 +95,7 @@ public:
    * Erases e-prop history entries for update intervals during which no spikes were sent to the target neuron,
    * and any entries older than the earliest time stamp required by the first update in the history.
    */
-  void erase_used_eprop_history();
+  void erase_used_eprop_history() override;
 
   /**
    * @brief Erases the used eprop history.
@@ -104,7 +105,7 @@ public:
    *
    * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
    */
-  void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
+  void erase_used_eprop_history( const long t_spike, const long t_spike_previous ) override;
 
   /**
    * @brief Retrieves eprop history size.
@@ -112,6 +113,21 @@ public:
    * Retrieves the size of the eprop history buffer.
    */
   double get_eprop_history_duration() const;
+
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& d ) override;
+
+  /**
+   * @brief Retrieves the eprop ISI trace cutoff.
+   *
+   * Retrieves the time interval from the previous spike until the cutoff of
+   * e-prop update computation between two spikes (ms).
+   */
+  double
+  get_eprop_isi_trace_cutoff() const
+  {
+    return Time( Time::ms( eprop_isi_trace_cutoff_ ) ).get_steps();
+  }
 
 protected:
   //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
@@ -126,6 +142,9 @@ protected:
 
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
+
+  //! Time interval from the previous spike until the cutoff of e-prop update computation between two spikes (ms).
+  double eprop_isi_trace_cutoff_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;

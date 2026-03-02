@@ -217,9 +217,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 Sends
 +++++
@@ -558,6 +559,7 @@ eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t 
 inline void
 eprop_readout_bsshslm_2020::get_status( DictionaryDatum& d ) const
 {
+  EpropArchivingNode::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
@@ -572,6 +574,7 @@ eprop_readout_bsshslm_2020::get_status( DictionaryDatum& d ) const
 inline void
 eprop_readout_bsshslm_2020::set_status( const DictionaryDatum& d )
 {
+  EpropArchivingNode::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

@@ -212,7 +212,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
-
   return delta_EL;
 }
 
@@ -294,7 +293,6 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
-
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */
@@ -353,6 +351,14 @@ eprop_iaf_adapt_bsshslm_2020::update( Time const& origin, const long from, const
 
       S_.z_ = 1.0;
       S_.r_ = V_.RefractoryCounts_;
+      set_last_event_time( t );
+    }
+    else if ( is_activation_event_due( t ) )
+    {
+      SpikeEvent se;
+      se.set_activation();
+      kernel().event_delivery_manager.send( *this, se, lag );
+      set_last_event_time( t );
     }
 
     append_new_eprop_history_entry( t );
@@ -423,43 +429,39 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e = 0.0;       // eligibility trace
   double e_bar = 0.0;   // low-pass filtered eligibility trace
   double epsilon = 0.0; // adaptive component of eligibility vector
   double grad = 0.0;    // gradient value to be calculated
-  double L = 0.0;       // learning signal
-  double psi = 0.0;     // surrogate gradient
   double sum_e = 0.0;   // sum of eligibility traces
-  double z = 0.0;       // spiking variable
   double z_bar = 0.0;   // low-pass filtered spiking variable
 
-  for ( long presyn_isi : presyn_isis )
+  for ( const long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    double z = 1.0; // set spiking variable to 1 for each incoming spike
 
-    for ( long t = 0; t < presyn_isi; ++t )
+    for ( long t = 0; t < presyn_isi; ++t, ++eprop_hist_it )
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      psi = eprop_hist_it->surrogate_gradient_;
-      L = eprop_hist_it->learning_signal_;
+      const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
+      const double L = eprop_hist_it->learning_signal_;      // learning signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
+      const double e = psi * ( z_bar - P_.adapt_beta_ * epsilon ); // eligibility trace
       epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+
       grad += L * e_bar;
       sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
 
-      ++eprop_hist_it;
+      z = 0.0; // set spiking variable to 0 between spikes
     }
   }
   presyn_isis.clear();
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const auto firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  const double firing_rate_reg = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
 
   grad += firing_rate_reg * sum_e;
 

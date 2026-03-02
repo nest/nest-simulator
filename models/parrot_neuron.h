@@ -24,6 +24,7 @@
 #define PARROT_NEURON_H
 
 // Includes from nestkernel:
+#include "activation_event_node.h"
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
@@ -63,6 +64,17 @@ and postsynaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, for example, a
 ``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
 
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+======================= ==== ======= ================================
+Parameter               Unit Default Description
+======================= ==== ======= ================================
+``activation_interval`` ms    3000.0 Interval between two activations
+======================= ==== ======= ================================
+
 Receives
 ++++++++
 
@@ -82,7 +94,7 @@ EndUserDocs */
 
 void register_parrot_neuron( const std::string& name );
 
-class parrot_neuron : public ArchivingNode
+class parrot_neuron : public ArchivingNode, public ActivationEventNode
 {
 
 public:

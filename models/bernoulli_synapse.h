@@ -175,9 +175,9 @@ public:
     return send_spike;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -195,21 +195,21 @@ constexpr ConnectionModelProperties bernoulli_synapse< targetidentifierT >::prop
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+bernoulli_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::p_transmit, p_transmit_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::p_transmit ] = p_transmit_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+bernoulli_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::p_transmit, p_transmit_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::p_transmit, p_transmit_ );
 
   if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {

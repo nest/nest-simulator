@@ -72,7 +72,7 @@ def test_ticket_451_rejects_impossible_random_connect_requests(conn_spec, use_fi
 
     sources, targets = (first, nodes) if use_first_as_source else (nodes, first)
 
-    with pytest.raises(nest.kernel.NESTError, match=error_pattern):
+    with pytest.raises(nest.NESTErrors.BadProperty, match=error_pattern):
         nest.Connect(sources, targets, conn_spec)
 
 

@@ -44,8 +44,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
 
 namespace nest
 {
@@ -87,7 +85,7 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 ============ ========  ========================================================
  interval    ms        Recording interval
@@ -151,8 +149,8 @@ public:
 
   SignalType sends_signal() const;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 
@@ -180,25 +178,25 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
 
-    Time interval_;                   //!< sampling interval, in ms
-    std::string port_name_;           //!< the name of MUSIC port to connect to
-    std::vector< Name > record_from_; //!< recordables to record from
-    NodeCollectionPTR targets_;       //!< nodes to be observed
+    Time interval_;                          //!< sampling interval, in ms
+    std::string port_name_;                  //!< the name of MUSIC port to connect to
+    std::vector< std::string > record_from_; //!< recordables to record from
+    NodeCollectionPTR targets_;              //!< nodes to be observed
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
+    void get( Dictionary& ) const;                                              //!< Store current values in Dictionary
+    void set( const Dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    State_();                           //!< Sets default state value
-    State_( const State_& );            //!< Copy constructor for state values
-    bool published_;                    //!< indicates whether this node has been published
-                                        //!< already with MUSIC
-    size_t port_width_;                 //!< the width of the MUSIC port
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    State_();                      //!< Sets default state value
+    State_( const State_& );       //!< Copy constructor for state values
+    bool published_;               //!< indicates whether this node has been published
+                                   //!< already with MUSIC
+    size_t port_width_;            //!< the width of the MUSIC port
+    void get( Dictionary& ) const; //!< Store current values in Dictionary
   };
 
   // ------------------------------------------------------------

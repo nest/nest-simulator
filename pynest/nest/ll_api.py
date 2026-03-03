@@ -25,18 +25,10 @@ Low-level API of PyNEST Module
 
 # Since this is a low level module, we need some more trickery, thus:
 # pylint: disable=wrong-import-position
-
-import functools
-import inspect
+import atexit
 import keyword
 import os
 import sys
-
-# This is a workaround for readline import errors encountered with Anaconda
-# Python running on Ubuntu, when invoked from the terminal
-# "python -c 'import nest'"
-if "linux" in sys.platform and "Anaconda" in sys.version:
-    import readline  # noqa: F401
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
@@ -50,215 +42,13 @@ except ImportError:
 # yet other libraries.
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
-from . import pynestkernel as kernel  # noqa pylint: disable=no-name-in-module
+from . import nestkernel_api as nestkernel  # noqa
 
 __all__ = [
-    "check_stack",
-    "connect_arrays",
     "set_communicator",
-    "get_debug",
-    "set_debug",
-    "sli_func",
-    "sli_pop",
-    "sli_push",
-    "sli_run",
-    "spp",
-    "sps",
-    "sr",
-    "stack_checker",
-    "take_array_index",
+    # 'take_array_index',
+    "KernelAttribute",
 ]
-
-
-engine = kernel.NESTEngine()
-
-sli_push = sps = engine.push
-sli_pop = spp = engine.pop
-take_array_index = engine.take_array_index
-connect_arrays = engine.connect_arrays
-
-
-def catching_sli_run(cmd):
-    """Send a command string to the NEST kernel to be executed, catch
-    SLI errors and re-raise them in Python.
-
-    Parameters
-    ----------
-    cmd : str
-        The SLI command to be executed.
-    Raises
-    ------
-    kernel.NESTError
-        SLI errors are bubbled to the Python API as NESTErrors.
-    """
-
-    engine.run("{%s} runprotected" % cmd)
-    if not sli_pop():
-        errorname = sli_pop()
-        message = sli_pop()
-        commandname = sli_pop()
-        engine.run("clear")
-
-        exceptionCls = getattr(kernel.NESTErrors, errorname)
-        raise exceptionCls(commandname, message)
-
-
-sli_run = sr = catching_sli_run
-
-
-def sli_func(func, *args, **kwargs):
-    """Convenience function for executing an SLI command func with
-    arguments args.
-
-    This executes the SLI sequence:
-    ``sli_push(args); sli_run(func); y=sli_pop()``
-
-    Parameters
-    ----------
-    func : str
-        Function to call
-    *args
-        Arbitrary number of arguments to pass to the SLI function
-    **kwargs
-        namespace : str
-            The sli code is executed in the given SLI namespace.
-        litconv : bool
-            Convert string args beginning with / to literals.
-
-    Returns
-    -------
-    The function may have multiple return values. The number of return values
-    is determined by the SLI function that was called.
-
-    Examples
-    --------
-    r,q = sli_func('dup rollu add',2,3)
-    r   = sli_func('add',2,3)
-    r   = sli_func('add pop',2,3)
-    """
-
-    # check for namespace
-    slifun = "sli_func"  # version not converting to literals
-    if "namespace" in kwargs:
-        func = f'{kwargs["namespace"]} using {func} endusing'
-    elif "litconv" in kwargs:
-        if kwargs["litconv"]:
-            slifun = "sli_func_litconv"
-    elif kwargs:
-        raise kernel.NESTErrors.PyNESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
-
-    sli_push(args)  # push array of arguments on SLI stack
-    sli_push(func)  # push command string
-    sli_run(slifun)  # SLI support code to execute func on args
-    result = sli_pop()  # return value is an array
-
-    if not result:
-        return None
-    if len(result) == 1:  # 1 return value is no tuple
-        return result[0]
-    return result
-
-
-__debug = False
-
-
-def get_debug():
-    """Return the current value of the debug flag of the low-level API.
-
-    Returns
-    -------
-    bool:
-        current value of the debug flag
-    """
-
-    return __debug
-
-
-def set_debug(dbg=True):
-    """Set the debug flag of the low-level API.
-
-    Parameters
-    ----------
-    dbg : bool, optional
-        Value to set the debug flag to
-    """
-
-    global __debug
-    __debug = dbg
-
-
-def stack_checker(f):
-    """Decorator to add stack checks to functions using PyNEST's
-    low-level API.
-
-    This decorator works only on functions. See
-    check_stack() for the generic version for functions and
-    classes.
-
-    Parameters
-    ----------
-    f : function
-        Function to decorate
-
-    Returns
-    -------
-    function:
-        Decorated function
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    @functools.wraps(f)
-    def stack_checker_func(*args, **kwargs):
-        if not get_debug():
-            return f(*args, **kwargs)
-        else:
-            sr("count")
-            stackload_before = spp()
-            result = f(*args, **kwargs)
-            sr("count")
-            num_leftover_elements = spp() - stackload_before
-            if num_leftover_elements != 0:
-                eargs = (f.__name__, num_leftover_elements)
-                etext = "Function '%s' left %i elements on the stack."
-                raise kernel.NESTError(etext % eargs)
-            return result
-
-    return stack_checker_func
-
-
-def check_stack(thing):
-    """Convenience wrapper for applying the stack_checker decorator to
-    all class methods of the given class, or to a given function.
-
-    If the object cannot be decorated, it is returned unchanged.
-
-    Parameters
-    ----------
-    thing : function or class
-        Description
-
-    Returns
-    -------
-    function or class
-        Decorated function or class
-
-    Raises
-    ------
-    ValueError
-    """
-
-    if inspect.isfunction(thing):
-        return stack_checker(thing)
-    elif inspect.isclass(thing):
-        for name, mtd in inspect.getmembers(thing, predicate=inspect.ismethod):
-            if name.startswith("test_"):
-                setattr(thing, name, stack_checker(mtd))
-        return thing
-    else:
-        raise ValueError("unable to decorate {0}".format(thing))
 
 
 initialized = False
@@ -273,13 +63,56 @@ def set_communicator(comm):
 
     Raises
     ------
-    kernel.NESTError
+    ModuleNotFoundError
     """
 
     if "mpi4py" not in sys.modules:
-        raise kernel.NESTError("set_communicator: mpi4py not loaded.")
+        raise ModuleNotFoundError("No module named 'mpi4py'.")
 
-    engine.set_communicator(comm)
+    # TODO-PYNEST-NG: set_communicator — who needs this?
+    # engine.set_communicator(comm)
+
+
+class KernelAttribute:
+    """
+    Descriptor that dispatches attribute access to the nest kernel.
+    """
+
+    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
+        self._readonly = readonly
+        self._localonly = localonly
+        self._default = default
+
+        readonly = readonly and "**read only**"
+        localonly = localonly and "**local only**"
+
+        self.__doc__ = (
+            description
+            + ("." if default is None else f", defaults to ``{default}``.")
+            + ("\n\n" if readonly or localonly else "")
+            + ", ".join(c for c in (readonly, localonly) if c)
+            + f"\n\n:type: {typehint}"
+        )
+
+    def __set_name__(self, cls, name):
+        self._name = name
+        self._full_status = name == "kernel_status"
+
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+
+        status_root = nestkernel.llapi_get_kernel_status()
+
+        if self._full_status:
+            return status_root
+        else:
+            return status_root[self._name]
+
+    def __set__(self, instance, value):
+        if self._readonly:
+            raise AttributeError(f"`{self._name}` is a read only kernel attribute.")
+        nestkernel.llapi_set_kernel_status({self._name: value})
 
 
 def init(argv):
@@ -298,13 +131,13 @@ def init(argv):
 
     Raises
     ------
-    kernel.NESTError.PyNESTError
+    RuntimeError
     """
 
     global initialized
 
     if initialized:
-        raise kernel.NESTErrors.PyNESTError("NEST already initialized.")
+        raise RuntimeError("NEST is already initialized.")
 
     # Some commandline arguments of NEST and Python have the same
     # name, but different meaning. To avoid unintended behavior, we
@@ -318,41 +151,40 @@ def init(argv):
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
         nest_argv.remove("--debug")
-    if "--sli-debug" in nest_argv:
-        nest_argv.remove("--sli-debug")
-        nest_argv.append("--debug")
 
     if "PYNEST_DEBUG" in os.environ and "--debug" not in nest_argv:
         nest_argv.append("--debug")
 
-    path = os.path.dirname(__file__)
-    initialized = engine.init(nest_argv, path)
+    nestkernel.init(nest_argv)
+    initialized = True
 
-    if initialized:
-        if not quiet:
-            engine.run("pywelcome")
+    if not quiet:
+        print("NEST initialized successfully!")
 
-        # Dirty hack to get tab-completion for models in IPython.
-        try:
-            __IPYTHON__
-        except NameError:
-            pass
-        else:
-            from .lib.hl_api_simulation import GetKernelStatus  # noqa
-
-            keyword_lists = (
-                "connection_rules",
-                "node_models",
-                "recording_backends",
-                "rng_types",
-                "stimulation_backends",
-                "synapse_models",
-            )
-            for kwl in keyword_lists:
-                keyword.kwlist += GetKernelStatus(kwl)
-
+    # Dirty hack to get tab-completion for models in IPython.
+    try:
+        __IPYTHON__
+    except NameError:
+        pass
     else:
-        raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
+        from .lib.hl_api_simulation import GetKernelStatus  # noqa
+
+        keyword_lists = (
+            "connection_rules",
+            "node_models",
+            "recording_backends",
+            "rng_types",
+            "stimulation_backends",
+            "synapse_models",
+        )
+        for kwl in keyword_lists:
+            keyword.kwlist += GetKernelStatus(kwl)
+
+
+@atexit.register
+def shutdown():
+    """Ensures that MPI_Finalize() is called if needed."""
+    nestkernel.llapi_shutdown_nest(0)
 
 
 init(sys.argv)

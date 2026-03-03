@@ -25,7 +25,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class TestChangingTicBase(unittest.TestCase):
     eps = 1e-7  # Tolerance value
 
@@ -61,12 +60,12 @@ class TestChangingTicBase(unittest.TestCase):
                 continue
             try:
                 reference[model] = nest.GetDefaults(model)
-            except nest.kernel.NESTError:
+            except nest.NESTError:
                 # If we can't get the defaults, we ignore the model.
                 pass
 
         # Change the tic-base.
-        nest.set(resolution=0.5, tics_per_ms=1500.0)
+        nest.set(resolution=0.5, tics_per_ms=1500)
 
         # At this point, Time objects in models should have been updated to
         # account for the new tic-base. Values in model defaults should therefore
@@ -76,10 +75,12 @@ class TestChangingTicBase(unittest.TestCase):
         for model in reference.keys():
             model_reference = reference[model]
             model_defaults = nest.GetDefaults(model)
+
             # Remove entries where the item contains more than one value, as this causes issues when comparing.
             array_keys = [
                 key for key, value in model_defaults.items() if isinstance(value, (list, tuple, dict, np.ndarray))
             ]
+
             for key in array_keys:
                 del model_defaults[key]
                 del model_reference[key]
@@ -91,6 +92,7 @@ class TestChangingTicBase(unittest.TestCase):
 
                 # value may not be a number, so we test for equality first.
                 # If it's not equal to the reference value, we assume it is a number.
+
                 if value != model_reference[key] and abs(value - model_reference[key]) > self.eps:
                     print(value - model_reference[key])
                     keydiff.append([key, model_reference[key], value])
@@ -105,9 +107,9 @@ class TestChangingTicBase(unittest.TestCase):
 
     def _assert_ticbase_change_raises_and_reset(self, after_call):
         """Assert that changing tic-base raises a NESTError, and reset the kernel"""
-        with self.assertRaises(nest.kernel.NESTError, msg=f'after calling "{after_call}"'):
+        with self.assertRaises(nest.NESTError, msg=f'after calling "{after_call}"'):
             # For co-dependent properties, we use `set()` instead of kernel attributes
-            nest.set(resolution=0.5, tics_per_ms=1500.0)
+            nest.set(resolution=0.5, tics_per_ms=1500)
         nest.ResetKernel()
 
     def test_prohibit_change_tic_base(self):

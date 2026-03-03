@@ -27,13 +27,10 @@ import nest
 import numpy as np
 import scipy.stats
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_MPI, "NEST was compiled without MPI")
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
-@nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestAllToAll(connect_test_base.ConnectTestBase):
     # specify connection pattern
     rule = "all_to_all"
@@ -128,7 +125,10 @@ class TestAllToAll(connect_test_base.ConnectTestBase):
             M = M.flatten()
             unique, counts = np.unique(M, return_counts=True)
             frequencies = np.asarray((unique, counts)).T
-            self.assertTrue(np.array_equal(frequencies[:, 0], np.arange(1, n_rport + 1)), "Missing or invalid rports")
+            self.assertTrue(
+                np.array_equal(frequencies[:, 0], np.arange(1, n_rport + 1)),
+                "Missing or invalid rports",
+            )
             chi, p = scipy.stats.chisquare(frequencies[:, 1])
             self.assertGreater(p, self.pval)
 

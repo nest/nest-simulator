@@ -28,17 +28,18 @@
 #include <limits>
 
 // Includes from nestkernel:
+#include "generic_factory.h"
 #include "nest_names.h"
 #include "nest_types.h"
-#include "nestmodule.h"
+#include "node.h"
 #include "node_collection.h"
 #include "random_generators.h"
 
-// Includes from libnestutil:
-#include "dictutils.h"
 
 namespace nest
 {
+class Parameter;
+using ParameterPTR = std::shared_ptr< Parameter >;
 
 class AbstractLayer;
 
@@ -95,10 +96,9 @@ public:
 
   /**
    * Applies a parameter on a single-node ID NodeCollection and given array of positions.
-   *
-   * @returns array of result values, one per position in the TokenArray.
+   * @returns array of result values, one per position in the vector.
    */
-  std::vector< double > apply( const NodeCollectionPTR&, const TokenArray& );
+  std::vector< double > apply( const NodeCollectionPTR&, const std::vector< std::vector< double > >& );
 
   /**
    * Check if the Parameter is based on spatial properties.
@@ -148,9 +148,9 @@ public:
    * The dictionary must include the following entry:
    * value - constant value of this parameter
    */
-  ConstantParameter( const DictionaryDatum& d )
+  ConstantParameter( const Dictionary& d )
   {
-    value_ = getValue< double >( d, "value" );
+    value_ = d.get< double >( "value" );
     returns_int_only_ = value_is_integer_( value_ );
   }
 
@@ -187,12 +187,12 @@ public:
    * min - minimum value
    * max - maximum value
    */
-  UniformParameter( const DictionaryDatum& d )
+  UniformParameter( const Dictionary& d )
     : lower_( 0.0 )
     , range_( 1.0 )
   {
-    updateValue< double >( d, names::min, lower_ );
-    updateValue< double >( d, names::max, range_ );
+    d.update_value( names::min, lower_ );
+    d.update_value( names::max, range_ );
     if ( lower_ >= range_ )
     {
       throw BadProperty(
@@ -229,11 +229,11 @@ public:
    * The dictionary can include the following entries:
    * max - maximum value
    */
-  UniformIntParameter( const DictionaryDatum& d )
+  UniformIntParameter( const Dictionary& d )
     : Parameter( false, true )
     , max_( 1.0 )
   {
-    updateValue< long >( d, names::max, max_ );
+    d.update_integer_value( names::max, max_ );
     if ( max_ <= 0 )
     {
       throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
@@ -268,7 +268,7 @@ public:
    * mean - mean value
    * std - standard deviation
    */
-  NormalParameter( const DictionaryDatum& d );
+  NormalParameter( const Dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -295,7 +295,7 @@ public:
    * mean - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
-  LognormalParameter( const DictionaryDatum& d );
+  LognormalParameter( const Dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -321,10 +321,10 @@ public:
    * The dictionary can include the following entries:
    * beta - the scale parameter
    */
-  ExponentialParameter( const DictionaryDatum& d )
+  ExponentialParameter( const Dictionary& d )
     : beta_( 1.0 )
   {
-    updateValue< double >( d, names::beta, beta_ );
+    d.update_value( names::beta, beta_ );
     if ( beta_ < 0 )
     {
       throw BadProperty( "nest::ExponentialParameter: beta ≥ 0 required." );
@@ -360,12 +360,12 @@ public:
    *                     from the presynaptic or postsynaptic node in a connection.
    *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
-  NodePosParameter( const DictionaryDatum& d )
+  NodePosParameter( const Dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
-    bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
+    bool dimension_specified = d.update_integer_value( names::dimension, dimension_ );
     if ( not dimension_specified )
     {
       throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
@@ -374,7 +374,7 @@ public:
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    updateValue< long >( d, names::synaptic_endpoint, synaptic_endpoint_ );
+    d.update_integer_value( names::synaptic_endpoint, synaptic_endpoint_ );
     if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
       throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
@@ -417,7 +417,7 @@ public:
   }
 
 private:
-  int dimension_;
+  long dimension_;
   int synaptic_endpoint_;
 
   double get_node_pos_( Node* node ) const;
@@ -430,11 +430,11 @@ private:
 class SpatialDistanceParameter : public Parameter
 {
 public:
-  SpatialDistanceParameter( const DictionaryDatum& d )
+  SpatialDistanceParameter( const Dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
   {
-    updateValue< long >( d, names::dimension, dimension_ );
+    d.update_integer_value( names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
@@ -469,7 +469,7 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  ProductParameter( const std::shared_ptr< Parameter > m1, const std::shared_ptr< Parameter > m2 )
+  ProductParameter( const ParameterPTR m1, const ParameterPTR m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
     , parameter1_( m1 )
     , parameter2_( m2 )
@@ -504,8 +504,8 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const parameter1_;
-  std::shared_ptr< Parameter > const parameter2_;
+  ParameterPTR const parameter1_;
+  ParameterPTR const parameter2_;
 };
 
 /**
@@ -519,7 +519,7 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  QuotientParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
+  QuotientParameter( ParameterPTR m1, ParameterPTR m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
     , parameter1_( m1 )
     , parameter2_( m2 )
@@ -554,8 +554,8 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const parameter1_;
-  std::shared_ptr< Parameter > const parameter2_;
+  ParameterPTR const parameter1_;
+  ParameterPTR const parameter2_;
 };
 
 /**
@@ -569,7 +569,7 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  SumParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
+  SumParameter( ParameterPTR m1, ParameterPTR m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
     , parameter1_( m1 )
     , parameter2_( m2 )
@@ -604,8 +604,8 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const parameter1_;
-  std::shared_ptr< Parameter > const parameter2_;
+  ParameterPTR const parameter1_;
+  ParameterPTR const parameter2_;
 };
 
 /**
@@ -619,7 +619,7 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  DifferenceParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2 )
+  DifferenceParameter( ParameterPTR m1, ParameterPTR m2 )
     : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
     , parameter1_( m1 )
     , parameter2_( m2 )
@@ -654,8 +654,8 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const parameter1_;
-  std::shared_ptr< Parameter > const parameter2_;
+  ParameterPTR const parameter1_;
+  ParameterPTR const parameter2_;
 };
 
 /**
@@ -677,13 +677,13 @@ public:
    *              1: >
    *
    */
-  ComparingParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2, const DictionaryDatum& d )
+  ComparingParameter( ParameterPTR m1, ParameterPTR m2, const Dictionary& d )
     : Parameter( m1->is_spatial() or m2->is_spatial(), true )
     , parameter1_( m1 )
     , parameter2_( m2 )
     , comparator_( -1 )
   {
-    if ( not updateValue< long >( d, names::comparator, comparator_ ) )
+    if ( not d.update_integer_value( names::comparator, comparator_ ) )
     {
       throw BadParameter( "A comparator has to be specified." );
     }
@@ -722,8 +722,8 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const parameter1_;
-  std::shared_ptr< Parameter > const parameter2_;
+  ParameterPTR const parameter1_;
+  ParameterPTR const parameter2_;
 
 private:
   bool
@@ -761,9 +761,7 @@ public:
    * Construct the choice of two given parameters, based on a third.
    * Copies are made of the supplied Parameter objects.
    */
-  ConditionalParameter( std::shared_ptr< Parameter > condition,
-    std::shared_ptr< Parameter > if_true,
-    std::shared_ptr< Parameter > if_false )
+  ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false )
     : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
       if_true->returns_int_only() and if_false->returns_int_only() )
     , condition_( condition )
@@ -814,9 +812,9 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const condition_;
-  std::shared_ptr< Parameter > const if_true_;
-  std::shared_ptr< Parameter > const if_false_;
+  ParameterPTR const condition_;
+  ParameterPTR const if_true_;
+  ParameterPTR const if_false_;
 };
 
 
@@ -830,7 +828,7 @@ public:
    * Construct a min parameter. A copy is made of the supplied Parameter
    * object.
    */
-  MinParameter( std::shared_ptr< Parameter > p, const double other_value )
+  MinParameter( ParameterPTR p, const double other_value )
     : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
     , p_( p )
     , other_value_( other_value )
@@ -865,7 +863,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   double other_value_;
 };
 
@@ -880,7 +878,7 @@ public:
    * Construct a max parameter. A copy is made of the supplied Parameter
    * object.
    */
-  MaxParameter( std::shared_ptr< Parameter > p, const double other_value )
+  MaxParameter( ParameterPTR p, const double other_value )
     : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
     , p_( p )
     , other_value_( other_value )
@@ -914,7 +912,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   double other_value_;
 };
 
@@ -929,7 +927,7 @@ public:
    * Construct a redrawing parameter. A copy is made of the supplied Parameter
    * object.
    */
-  RedrawParameter( std::shared_ptr< Parameter > p, const double min, const double max );
+  RedrawParameter( ParameterPTR p, const double min, const double max );
 
   RedrawParameter( const RedrawParameter& p )
     : Parameter( p )
@@ -951,7 +949,7 @@ public:
     Node* node ) override;
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   double min_;
   double max_;
   const size_t max_redraws_;
@@ -968,7 +966,7 @@ public:
    * Construct the exponential of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  ExpParameter( std::shared_ptr< Parameter > p )
+  ExpParameter( ParameterPTR p )
     : Parameter( p->is_spatial() )
     , p_( p )
   {
@@ -1000,7 +998,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
 };
 
 
@@ -1014,7 +1012,7 @@ public:
    * Construct the sine of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  SinParameter( std::shared_ptr< Parameter > p )
+  SinParameter( ParameterPTR p )
     : Parameter( p->is_spatial() )
     , p_( p )
   {
@@ -1046,7 +1044,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
 };
 
 /**
@@ -1059,7 +1057,7 @@ public:
    * Construct the exponential of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  CosParameter( std::shared_ptr< Parameter > p )
+  CosParameter( ParameterPTR p )
     : Parameter( p->is_spatial() )
     , p_( p )
   {
@@ -1091,7 +1089,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
 };
 
 
@@ -1105,7 +1103,7 @@ public:
   /**
    * Construct the parameter. A copy is made of the supplied Parameter object.
    */
-  PowParameter( std::shared_ptr< Parameter > p, const double exponent )
+  PowParameter( ParameterPTR p, const double exponent )
     : Parameter( p->is_spatial(), p->returns_int_only() )
     , p_( p )
     , exponent_( exponent )
@@ -1139,7 +1137,7 @@ public:
   }
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   const double exponent_;
 };
 
@@ -1159,7 +1157,7 @@ public:
    *
    * A copy is made of the supplied Parameter objects.
    */
-  DimensionParameter( std::shared_ptr< Parameter > px, std::shared_ptr< Parameter > py )
+  DimensionParameter( ParameterPTR px, ParameterPTR py )
     : Parameter( true )
     , num_dimensions_( 2 )
     , px_( px )
@@ -1168,9 +1166,7 @@ public:
   {
   }
 
-  DimensionParameter( std::shared_ptr< Parameter > px,
-    std::shared_ptr< Parameter > py,
-    std::shared_ptr< Parameter > pz )
+  DimensionParameter( ParameterPTR px, ParameterPTR py, ParameterPTR pz )
     : Parameter( true )
     , num_dimensions_( 3 )
     , px_( px )
@@ -1223,9 +1219,9 @@ public:
 
 protected:
   int num_dimensions_;
-  std::shared_ptr< Parameter > const px_;
-  std::shared_ptr< Parameter > const py_;
-  std::shared_ptr< Parameter > const pz_;
+  ParameterPTR const px_;
+  ParameterPTR const py_;
+  ParameterPTR const pz_;
 };
 
 
@@ -1242,7 +1238,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  ExpDistParameter( const DictionaryDatum& d );
+  ExpDistParameter( const Dictionary& d );
 
   ExpDistParameter( const ExpDistParameter& p )
     : Parameter( p )
@@ -1268,7 +1264,7 @@ public:
     Node* node ) override;
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   const double inv_beta_;
 };
 
@@ -1286,7 +1282,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GaussianParameter( const DictionaryDatum& d );
+  GaussianParameter( const Dictionary& d );
 
   GaussianParameter( const GaussianParameter& p )
     : Parameter( p )
@@ -1312,7 +1308,7 @@ public:
     Node* node ) override;
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   const double mean_;
   const double inv_two_std2_;
 };
@@ -1331,7 +1327,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  Gaussian2DParameter( const DictionaryDatum& d );
+  Gaussian2DParameter( const Dictionary& d );
 
   Gaussian2DParameter( const Gaussian2DParameter& p )
     : Parameter( p )
@@ -1361,8 +1357,8 @@ public:
     Node* node ) override;
 
 protected:
-  std::shared_ptr< Parameter > const px_;
-  std::shared_ptr< Parameter > const py_;
+  ParameterPTR const px_;
+  ParameterPTR const py_;
   const double mean_x_;
   const double mean_y_;
   const double x_term_const_;
@@ -1378,7 +1374,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GaborParameter( const DictionaryDatum& d );
+  GaborParameter( const Dictionary& d );
 
   /**
    * Copy constructor.
@@ -1436,7 +1432,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GammaParameter( const DictionaryDatum& d );
+  GammaParameter( const Dictionary& d );
 
   GammaParameter( const GammaParameter& p )
     : Parameter( p )
@@ -1463,7 +1459,7 @@ public:
     Node* node ) override;
 
 protected:
-  std::shared_ptr< Parameter > const p_;
+  ParameterPTR const p_;
   const double kappa_;
   const double inv_theta_;
   const double delta_;
@@ -1505,41 +1501,35 @@ Parameter::value_is_integer_( const double value ) const
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > multiply_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second );
+ParameterPTR multiply_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the quotient of one parameter with another.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > divide_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second );
+ParameterPTR divide_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the sum of one parameter with another.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > add_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second );
+ParameterPTR add_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create the difference between one parameter and another.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > subtract_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second );
+ParameterPTR subtract_parameter( const ParameterPTR first, const ParameterPTR second );
 
 /**
  * Create comparison of one parameter with another.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second,
-  const DictionaryDatum& d );
+ParameterPTR compare_parameter( const ParameterPTR first, const ParameterPTR second, const Dictionary& d );
 
 /**
  * Create a parameter that chooses between two other parameters,
@@ -1550,71 +1540,67 @@ std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter
  * evaluate as true.
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > conditional_parameter( const std::shared_ptr< Parameter > condition,
-  const std::shared_ptr< Parameter > if_true,
-  const std::shared_ptr< Parameter > if_false );
+ParameterPTR
+conditional_parameter( const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false );
 
 /**
  * Create parameter whose value is the minimum of a given parameter's value and the given value.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > min_parameter( const std::shared_ptr< Parameter > parameter, const double other );
+ParameterPTR min_parameter( const ParameterPTR parameter, const double other );
 
 /**
  * Create parameter whose value is the maximum of a given parameter's value and the given value.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > max_parameter( const std::shared_ptr< Parameter > parameter, const double other );
+ParameterPTR max_parameter( const ParameterPTR parameter, const double other );
 
 /**
  * Create parameter redrawing the value if the value of a parameter is outside the set limits.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter >
-redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min, const double max );
+ParameterPTR redraw_parameter( const ParameterPTR parameter, const double min, const double max );
 
 /**
  * Create the exponential of a parameter.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > exp_parameter( const std::shared_ptr< Parameter > parameter );
+ParameterPTR exp_parameter( const ParameterPTR parameter );
 
 /**
  * Create the sine of a parameter.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > sin_parameter( const std::shared_ptr< Parameter > parameter );
+ParameterPTR sin_parameter( const ParameterPTR parameter );
 
 /**
  * Create the cosine of a parameter.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > cos_parameter( const std::shared_ptr< Parameter > parameter );
+ParameterPTR cos_parameter( const ParameterPTR parameter );
 
 /**
  * Create a parameter raised to the power of an exponent.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent );
+ParameterPTR pow_parameter( const ParameterPTR parameter, const double exponent );
 
 /**
  * Create a parameter that can generate position vectors from a given set of parameters.
  *
  * @returns a new dynamically allocated parameter.
  */
-std::shared_ptr< Parameter > dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
-  const std::shared_ptr< Parameter > y_parameter );
+ParameterPTR dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter );
 
-std::shared_ptr< Parameter > dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
-  const std::shared_ptr< Parameter > y_parameter,
-  const std::shared_ptr< Parameter > z_parameter );
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter );
 
 
 } // namespace nest

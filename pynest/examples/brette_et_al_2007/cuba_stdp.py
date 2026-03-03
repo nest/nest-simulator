@@ -112,7 +112,7 @@ Nrec = 500  # number of neurons per population to record from
 # Build and run simulation
 
 nest.ResetKernel()
-nest.set_verbosity("M_INFO")
+nest.verbosity = nest.VerbosityLevel.INFO
 
 # Set kernel parameters
 nest.SetKernelStatus(
@@ -217,8 +217,8 @@ nest.Simulate(simtime)
 
 # Get timing from kernel status
 kernel_status = nest.GetKernelStatus()
-build_time = kernel_status["network_build_time"]
-sim_time = kernel_status["simulation_time"]
+build_time = kernel_status["time_construction_create"] + kernel_status["time_construction_connect"]
+sim_time = kernel_status["time_simulate"]
 
 # Calculate number of synapses
 N = NE + NI

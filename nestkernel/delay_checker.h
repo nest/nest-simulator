@@ -26,8 +26,8 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+#include "dictionary.h"
+
 
 namespace nest
 {
@@ -86,8 +86,8 @@ public:
 
   void calibrate( const TimeConverter& tc );
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( Dictionary& d ) const;
+  void set_status( const Dictionary& d );
 
 private:
   Time min_delay_;              //!< Minimal delay of all created synapses.

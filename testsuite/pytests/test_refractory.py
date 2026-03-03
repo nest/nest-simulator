@@ -140,7 +140,7 @@ class TestRefractoryCase(unittest.TestCase):
             Value of the simulated refractory period.
         """
 
-        spike_times = nest.GetStatus(sr, "events")[0]["times"]
+        spike_times = sr.events["times"]
 
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution
@@ -148,13 +148,13 @@ class TestRefractoryCase(unittest.TestCase):
         elif model in neurons_interspike_ps + neurons_eprop:
             return spike_times[1] - spike_times[0]
         else:
-            Vr = nest.GetStatus(neuron, "V_reset")[0]
-            times = nest.GetStatus(vm, "events")[0]["times"]
+            Vr = neuron.V_reset
+            times = vm.events["times"]
 
             # Index of the 2nd spike
             idx_max = np.argwhere(times == spike_times[1])[0][0]
             name_Vm = "V_m.s" if model in mc_models else "V_m"
-            Vs = nest.GetStatus(vm, "events")[0][name_Vm]
+            Vs = vm.events[name_Vm]
 
             # Get the index at which the first spike occurred
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
@@ -194,12 +194,12 @@ class TestRefractoryCase(unittest.TestCase):
             # trigger almost immediate spiking => t_ref almost equals
             # interspike
             if model in neurons_interspike_ps + neurons_eprop:
-                nest.SetStatus(cg, "amplitude", 10000000.0)
+                cg.amplitude = 10000000.0
             elif model == "ht_neuron":
                 # ht_neuron use too long time with a very large amplitude
-                nest.SetStatus(cg, "amplitude", 2000.0)
+                cg.amplitude = 2000.0
             elif model in neurons_interspike:
-                nest.SetStatus(cg, "amplitude", 15000.0)
+                cg.amplitude = 15000.0
 
             # Connect them and simulate
             nest.Connect(vm, neuron)
@@ -212,7 +212,7 @@ class TestRefractoryCase(unittest.TestCase):
             t_ref_sim = self.compute_reftime(model, sr, vm, neuron)
 
             if model in neurons_with_clamping:
-                t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]
+                t_ref_sim = t_ref_sim - neuron.t_clamp
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps + neurons_eprop:
@@ -234,11 +234,6 @@ class TestRefractoryCase(unittest.TestCase):
                         model, t_ref, t_ref_sim
                     ),
                 )
-
-
-# --------------------------------------------------------------------------- #
-#  Run the comparisons
-# --------------------------------------------------------------------------- #
 
 
 def suite():

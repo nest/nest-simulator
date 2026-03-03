@@ -33,7 +33,7 @@ def extract_dict_a_from_b(a, b):
 class TestStructuralPlasticityManager(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity("M_INFO")
+        nest.verbosity = nest.VerbosityLevel.INFO
         self.exclude_synapse_model = [
             "stdp_dopamine_synapse",
             "stdp_dopamine_synapse_lbl",
@@ -135,7 +135,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 )
                 nest.EnableStructuralPlasticity()
                 nest.Simulate(10.0)
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status:
                     assert st_neuron["SE1"]["z_connected"] == 10
                     assert st_neuron["SE2"]["z_connected"] == 10

@@ -50,18 +50,20 @@ Consistent use of allow_offgrid_times
 Functions related to creation and retrieval of nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------------------+-------------------------------------+
-| NEST 2.x                        | NEST 3.0                            |
-+=================================+=====================================+
-| nest.Create(model, n=1, params= | nest.Create(model, n=1, params=     |
-| None) *returns*                 | None) *returns*                     |
-| list                            | :darkgreen:`nest.NodeCollection`    |
-+---------------------------------+-------------------------------------+
-| nest.GetLid(gid) *returns*      | :green:`nest.GetLocalNodeConnection(|
-| list                            | nest.NodeConnection)`               |
-|                                 | *returns the MPI local nodes*       |
-|                                 | *in a new* nest.NodeCollection.     |
-+---------------------------------+-------------------------------------+
++---------------------------------+--------------------------------------+
+| NEST 2.x                        | NEST 3.0                             |
++=================================+======================================+
+| nest.Create(model, n=1, params= | nest.Create(model, n=1, params=      |
+| None) *returns*                 | None) *returns*                      |
+| list                            | :darkgreen:`nest.NodeCollection`     |
++---------------------------------+--------------------------------------+
+| nest.GetLid(gid) *returns*      | :green:`nc[nc.local]` gives a *new*  |
+| list                            | `nest.NodeCollection` with only nodes|
+|                                 | from the calling MPI rank. This      |
+|                                 | function is deprecated, because      |
+|                                 | rank-specific code is inherently     |
+|                                 | error-prone.                         |
++---------------------------------+--------------------------------------+
 
 .. _conn_ref:
 

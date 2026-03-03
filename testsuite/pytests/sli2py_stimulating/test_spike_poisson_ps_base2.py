@@ -70,7 +70,7 @@ def test_spike_poisson_ps_base2():
     def transmission(h):
         """Run simulation with given resolution and return spike times and offsets."""
         nest.ResetKernel()
-        tics_per_ms = 2.0 ** (-min_exponent)
+        tics_per_ms = 2 ** (-min_exponent)
         nest.set(tics_per_ms=tics_per_ms, resolution=h)
 
         sp = nest.Create("spike_recorder", params={"time_in_steps": True})

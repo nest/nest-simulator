@@ -19,18 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Test if Set/GetStatus work properly
-"""
-
 import unittest
 
 import nest
 
 
-@nest.ll_api.check_stack
 class StatusTestCase(unittest.TestCase):
-    """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
+    """Tests of Get/SetDefaults, and Get/SetKernelStatus via get/set"""
 
     def test_kernel_attributes(self):
         """Test nest attribute access of kernel attributes"""
@@ -88,7 +83,7 @@ class StatusTestCase(unittest.TestCase):
             self.assertIsInstance(model_status, dict)
             self.assertGreater(len(model_status), 1)
 
-            self.assertRaises(TypeError, nest.GetDefaults, model, 42)
+            self.assertRaises(KeyError, nest.GetDefaults, model, 42)
 
             if "V_m" in model_status:
                 test_value = nest.GetDefaults(model, "V_m")
@@ -114,107 +109,7 @@ class StatusTestCase(unittest.TestCase):
                 self.assertEqual(nest.GetDefaults(model, "V_m"), v_m)
 
                 self.assertRaisesRegex(
-                    nest.kernel.NESTError, "DictError", nest.SetDefaults, model, "nonexistent_status_key", 0
-                )
-
-    def test_GetStatus(self):
-        """GetStatus"""
-
-        for model in nest.node_models:
-            if "V_m" in nest.GetDefaults(model):
-                nest.ResetKernel()
-
-                n = nest.Create(model)
-
-                d = nest.GetStatus(n)
-                self.assertIsInstance(d, tuple)
-                self.assertIsInstance(d[0], dict)
-                self.assertGreater(len(d[0]), 1)
-
-                v1 = nest.GetStatus(n)[0]["V_m"]
-                v2 = nest.GetStatus(n, "V_m")[0]
-                self.assertEqual(v1, v2)
-
-                n = nest.Create(model, 10)
-                d = nest.GetStatus(n, "V_m")
-                self.assertEqual(len(d), len(n))
-                self.assertIsInstance(d[0], float)
-
-                test_keys = ("V_m",) * 3
-                d = nest.GetStatus(n, test_keys)
-                self.assertEqual(len(d), len(n))
-                self.assertEqual(len(d[0]), len(test_keys))
-
-    def test_SetStatus(self):
-        """SetStatus with dict"""
-
-        for model in nest.node_models:
-            if "V_m" in nest.GetDefaults(model):
-                nest.ResetKernel()
-                n = nest.Create(model)
-                nest.SetStatus(n, {"V_m": 1.0})
-                self.assertEqual(nest.GetStatus(n, "V_m")[0], 1.0)
-
-    def test_SetStatusList(self):
-        """SetStatus with list"""
-
-        for model in nest.node_models:
-            if "V_m" in nest.GetDefaults(model):
-                nest.ResetKernel()
-                n = nest.Create(model)
-                nest.SetStatus(n, [{"V_m": 2.0}])
-                self.assertEqual(nest.GetStatus(n, "V_m")[0], 2.0)
-
-    def test_SetStatusParam(self):
-        """SetStatus with parameter"""
-
-        for model in nest.node_models:
-            if "V_m" in nest.GetDefaults(model):
-                nest.ResetKernel()
-                n = nest.Create(model)
-                nest.SetStatus(n, "V_m", 3.0)
-                self.assertEqual(nest.GetStatus(n, "V_m")[0], 3.0)
-
-    def test_SetStatusVth_E_L(self):
-        """SetStatus of reversal and threshold potential"""
-
-        excluded = ["a2eif_cond_exp_HW", "mat2_psc_exp", "amat2_psc_exp"]
-        models = nest.node_models + nest.synapse_models
-
-        for model in [m for m in models if m not in excluded]:
-            if all(key in nest.GetDefaults(model) for key in ("V_th", "E_L")):
-                nest.ResetKernel()
-
-                neuron1 = nest.Create(model)
-                neuron2 = nest.Create(model)
-
-                # must not depend on the order
-                new_EL = -90.0
-                new_Vth = -10.0
-
-                if "V_reset" in nest.GetDefaults(model):
-                    nest.SetStatus(neuron1 + neuron2, {"V_reset": new_EL})
-
-                nest.SetStatus(neuron1, {"E_L": new_EL})
-                nest.SetStatus(neuron2, {"V_th": new_Vth})
-                nest.SetStatus(neuron1, {"V_th": new_Vth})
-                nest.SetStatus(neuron2, {"E_L": new_EL})
-                vth1, vth2 = nest.GetStatus(neuron1 + neuron2, "V_th")
-                self.assertEqual(vth1, vth2)
-
-    def test_SetStatusV_th_smaller_V_reset(self):
-        """SetStatus of reversal and threshold potential
-        check if error is raised if V_reset > V_th"""
-
-        for model in nest.node_models + nest.synapse_models:
-            if all(key in nest.GetDefaults(model) for key in ("V_th", "V_reset")):
-                nest.ResetKernel()
-
-                neuron = nest.Create(model)
-
-                # should raise exception
-                self.assertRaisesRegex(
-                    nest.kernel.NESTError, "BadProperty", nest.SetStatus, neuron, {"V_reset": 10.0, "V_th": 0.0}
+                    nest.NESTError, "Unaccessed", nest.SetDefaults, model, "nonexistent_status_key", 0
                 )
 
 

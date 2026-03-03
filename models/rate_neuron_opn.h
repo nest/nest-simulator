@@ -147,8 +147,8 @@ public:
   {
   }
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -195,9 +195,9 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -213,14 +213,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, Node* node );
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -351,19 +351,19 @@ rate_neuron_opn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr,
 
 template < class TNonlinearities >
 inline void
-rate_neuron_opn< TNonlinearities >::get_status( DictionaryDatum& d ) const
+rate_neuron_opn< TNonlinearities >::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
 }
 
 template < class TNonlinearities >
 inline void
-rate_neuron_opn< TNonlinearities >::set_status( const DictionaryDatum& d )
+rate_neuron_opn< TNonlinearities >::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

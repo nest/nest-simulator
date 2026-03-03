@@ -53,11 +53,11 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
-  void set_recording_backend_status( std::string, const DictionaryDatum& );
-  DictionaryDatum get_recording_backend_status( std::string );
+  void set_recording_backend_status( std::string, const Dictionary& );
+  Dictionary get_recording_backend_status( std::string );
 
   /**
    * The prefix for files written by devices.
@@ -105,13 +105,12 @@ public:
   void prepare() override;
 
   template < class RecordingBackendT >
-  void register_recording_backend( Name );
-
+  void register_recording_backend( const std::string& );
   template < class StimulationBackendT >
-  void register_stimulation_backend( const Name );
+  void register_stimulation_backend( const std::string& );
 
-  bool is_valid_recording_backend( const Name ) const;
-  bool is_valid_stimulation_backend( const Name ) const;
+  bool is_valid_recording_backend( const std::string& ) const;
+  bool is_valid_stimulation_backend( const std::string& ) const;
 
   /**
    * Send device data to a given recording backend.
@@ -130,26 +129,26 @@ public:
    * \param double_values a vector of doubles to be written
    * \param long_values a vector of longs to be written
    */
-  void write( const Name backend_name,
+  void write( const std::string&,
+    const RecordingDevice&,
+    const Event&,
+    const std::vector< double >&,
+    const std::vector< long >& );
+
+  void enroll_recorder( const std::string&, const RecordingDevice&, const Dictionary& );
+  void enroll_stimulator( const std::string&, StimulationDevice&, const Dictionary& );
+
+  void set_recording_value_names( const std::string& backend_name,
     const RecordingDevice& device,
-    const Event& event,
-    const std::vector< double >& double_values,
-    const std::vector< long >& long_values );
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names );
 
-  void enroll_recorder( const Name, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_stimulator( const Name, StimulationDevice&, const DictionaryDatum& );
-
-  void set_recording_value_names( const Name backend_name,
-    const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
-
-  void check_recording_backend_device_status( const Name, const DictionaryDatum& );
-  void get_recording_backend_device_defaults( const Name, DictionaryDatum& );
-  void get_recording_backend_device_status( const Name, const RecordingDevice&, DictionaryDatum& );
+  void check_recording_backend_device_status( const std::string&, const Dictionary& );
+  void get_recording_backend_device_defaults( const std::string&, Dictionary& );
+  void get_recording_backend_device_status( const std::string&, const RecordingDevice&, Dictionary& );
 
 private:
-  void set_data_path_prefix_( const DictionaryDatum& );
+  void set_data_path_prefix_( const Dictionary& );
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -158,12 +157,12 @@ private:
   /**
    * A mapping from names to registered recording backends.
    */
-  std::map< Name, RecordingBackend* > recording_backends_;
+  std::map< std::string, RecordingBackend* > recording_backends_;
 
   /**
    * A mapping from names to registered stimulation backends
    */
-  std::map< Name, StimulationBackend* > stimulation_backends_;
+  std::map< std::string, StimulationBackend* > stimulation_backends_;
 };
 
 } // namespace nest

@@ -34,17 +34,11 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 void
 nest::register_poisson_generator_ps( const std::string& name )
 {
   register_node_model< poisson_generator_ps >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -62,22 +56,22 @@ nest::poisson_generator_ps::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator_ps::Parameters_::get( DictionaryDatum& d ) const
+nest::poisson_generator_ps::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::dead_time ] = dead_time_;
+  d[ names::rate ] = rate_;
+  d[ names::dead_time ] = dead_time_;
 }
 
 void
-nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::poisson_generator_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::dead_time, dead_time_, node );
+  update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
 
   if ( rate_ < 0.0 )
   {
@@ -295,9 +289,9 @@ nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< doub
     {
       throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    Dictionary d;
+    d[ names::dead_time ] = input_param[ 0 ];
+    d[ names::rate ] = input_param[ 1 ];
     ptmp.set( d, this );
   }
 

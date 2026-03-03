@@ -30,6 +30,7 @@ and comparing traces.
 """
 
 import nest
+import numpy as np
 import pytest
 
 
@@ -39,8 +40,8 @@ def _get_network_state(nc):
 
     nest.Connect(nc, neuron)
     nest.Connect(voltmeter, neuron)
-    nest.Simulate(1000)
-    volts = voltmeter.get("events")["V_m"]
+    nest.Simulate(1000.0)
+    volts = voltmeter.events["V_m"]
 
     return (volts, nc.get())
 

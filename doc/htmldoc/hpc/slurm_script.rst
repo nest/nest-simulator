@@ -29,7 +29,7 @@ In this example, we are using 1 node, which contains 2 sockets and 64 cores per 
 
 .. code-block:: sh
 
-   #!/bin/bash -l
+   #!/usr/bin/env bash -l
    #SBATCH --job-name=<job-name>
    #SBATCH --account=<account-name>
    #SBATCH --partition=<partition-type>
@@ -66,7 +66,7 @@ Let's break this script down line by line.
 
 ::
 
-  #!/bin/bash -l
+  #!/usr/bin/env bash -l
 
 You are submitting a shell script to Slurm. The "shebang" line must be the first line of shell script
 

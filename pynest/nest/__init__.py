@@ -513,10 +513,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
             module = importlib.import_module("." + module_name, __name__)
         except ImportError as e:
             if optional:
-                raise ImportError(
-                    f"This functionality requires the optional module \
-                    {module_name}.{optional_hint}"
-                ) from None
+                raise ImportError(f"This functionality requires the optional module \
+                    {module_name}.{optional_hint}") from None
             else:
                 raise e from None
         setattr(cls, module_name, module)

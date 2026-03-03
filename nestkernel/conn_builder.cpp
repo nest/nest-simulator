@@ -64,9 +64,9 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const Dictionary& third_conn_spec,
   const std::map< std::string, std::vector< Dictionary > >& syn_specs )
   : third_in_builder_( new ThirdInBuilder( sources,
-    third,
-    third_conn_spec,
-    const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
+      third,
+      third_conn_spec,
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
   , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
       targets,

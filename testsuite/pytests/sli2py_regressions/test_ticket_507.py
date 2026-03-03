@@ -26,6 +26,7 @@ Test ported from SLI regression test
 Ensure that spike_generator throws exception on SetStatus if off-grid times are set,
 unless precise_times is set.
 """
+
 import nest
 import pytest
 

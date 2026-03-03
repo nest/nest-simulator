@@ -56,6 +56,7 @@ population: Collection of neurons coding for a single digit in a cell
 
 :Authors: J Gille, S Furber, A Rowley
 """
+
 import logging
 import pickle
 

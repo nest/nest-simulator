@@ -28,6 +28,7 @@ correctly. The following things are tested:
   * Does default node distribution (modulo) work as expected?
   * Are spikes transmitted between threads as expected?
 """
+
 import nest
 import numpy as np
 import numpy.testing as nptest

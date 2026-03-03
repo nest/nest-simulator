@@ -91,7 +91,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
     param_dicts_.resize( syn_params_dvd.size() );
     auto param_dict = param_dicts_.begin();
     for ( auto syn_param_it = syn_params_dvd.begin(); syn_param_it < syn_params_dvd.end();
-          ++syn_param_it, ++param_dict )
+      ++syn_param_it, ++param_dict )
     {
       extract_params_( *syn_param_it, *param_dict );
     }

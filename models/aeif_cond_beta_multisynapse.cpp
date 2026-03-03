@@ -322,8 +322,8 @@ aeif_cond_beta_multisynapse::State_::get( Dictionary& d ) const
   std::vector< double > g;
 
   for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
-        ++i )
+    i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
+    ++i )
   {
     dg.push_back( y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
     g.push_back( y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );

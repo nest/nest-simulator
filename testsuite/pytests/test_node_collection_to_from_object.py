@@ -23,7 +23,6 @@
 Test ``NodeCollection`` to and from object functionality.
 """
 
-
 import nest
 import numpy as np
 import numpy.testing as nptest

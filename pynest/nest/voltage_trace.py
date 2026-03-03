@@ -64,8 +64,7 @@ def from_file(fname, title=None, grayscale=False):
         line_style = ""
 
     if len(data.shape) == 1:
-        print("INFO: only found 1 column in the file. \
-            Assuming that only one neuron was recorded.")
+        print("INFO: only found 1 column in the file. Assuming that only one neuron was recorded.")
         plotid = plt.plot(data, line_style)
         plt.xlabel("Time (steps of length interval)")
 

@@ -25,7 +25,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateCopyModelTestCase(unittest.TestCase):
     """
     Test whether a rate connection created by copy model behaves
@@ -42,7 +41,7 @@ class RateCopyModelTestCase(unittest.TestCase):
         simtime = 100.0
         dt = 0.001
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = dt
         nest.use_wfr = True
@@ -79,10 +78,10 @@ class RateCopyModelTestCase(unittest.TestCase):
         nest.Simulate(simtime)
 
         # make sure rates are identical
-        events = nest.GetStatus(multimeter)[0]["events"]
+        events = multimeter.events
         senders = events["senders"]
-        rate_1 = np.array(events["rate"][np.where(senders == rate_neuron_1.get("global_id"))])
-        rate_2 = np.array(events["rate"][np.where(senders == rate_neuron_2.get("global_id"))])
+        rate_1 = events["rate"][np.where(senders == rate_neuron_1.global_id)]
+        rate_2 = events["rate"][np.where(senders == rate_neuron_2.global_id)]
         assert np.sum(np.abs(rate_2 - rate_1)) < 1e-12
 
 

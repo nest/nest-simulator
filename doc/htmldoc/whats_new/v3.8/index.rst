@@ -43,4 +43,4 @@ NEST performance benchmarks
 You can now view results of this release in benchmarks of
 strong and weak scaling at various network sizes in our docs.
 
-* :ref:`nest_benchmark_results`
+* :doc:`NEST performance benchmarks <benchmarks:index>`

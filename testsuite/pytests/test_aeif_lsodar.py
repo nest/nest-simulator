@@ -52,7 +52,7 @@ Details:
   recorded variables and the reference is smaller than a given tolerance.
 """
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.build_info["have_gsl"]
 path = os.path.abspath(os.path.dirname(__file__))
 
 # --------------------------------------------------------------------------- #
@@ -229,16 +229,18 @@ class AEIFTestCase(unittest.TestCase):
         V_lim = (params["V_th"] + params["V_peak"]) / 2.0
 
         for model, mm in iter(multimeters.items()):
-            dmm = nest.GetStatus(mm, "events")[0]
+            dmm = mm.events
             for record in recordables:
+                reference_record = np.array(reference[record])
+                dmm_record = dmm[record]
                 # ignore places where a divide by zero would occur
-                rds = np.abs(reference[record] - dmm[record])
-                nonzero = np.where(~np.isclose(reference[record], 0.0))[0]
+                rds = np.abs(reference_record - dmm_record)
+                nonzero = np.where(~np.isclose(reference_record, 0.0))[0]
                 if np.any(nonzero):
-                    rds = rds[nonzero] / np.abs(reference[record][nonzero])
+                    rds = rds[nonzero] / np.abs(reference_record[nonzero])
                 # ignore events around spike times for V if it diverges
                 if record == "V_m" and params["Delta_T"] > 0.0:
-                    spiking = dmm[record] > V_lim
+                    spiking = dmm_record > V_lim
                     rds = rds[~spiking]
                 rel_diff[model][record] = np.average(rds)
         return rel_diff
@@ -271,13 +273,14 @@ class AEIFTestCase(unittest.TestCase):
         multimeters = {model: nest.Create("multimeter") for model in models}
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
-            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": ["V_m", "w"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m", "w"]})
             nest.Connect(mm, neurons[model])
         nest.Simulate(simtime)
 
         # relative differences: interpolate LSODAR to match NEST times
         mm0 = next(iter(multimeters.values()))
-        nest_times = nest.GetStatus(mm0, "events")[0]["times"]
+
+        nest_times = mm0.events["times"]
         reference = {"V_m": V_interp(nest_times), "w": w_interp(nest_times)}
 
         rel_diff = self.compute_difference(multimeters, aeif_param, reference, ["V_m", "w"])
@@ -311,13 +314,13 @@ class AEIFTestCase(unittest.TestCase):
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[: syn_type.index("_")]
-            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": recordables[syn_type]})
+            mm.set({"interval": nest.resolution, "record_from": recordables[syn_type]})
             nest.Connect(mm, neurons[model])
             weight = 80.0 if key == "psc" else 1.0
             nest.Connect(pn, neurons[model], syn_spec={"weight": weight})
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[: syn_type.index("_")]
-            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": recordables[syn_type]})
+            mm.set({"interval": nest.resolution, "record_from": recordables[syn_type]})
             nest.Connect(mm, refs[syn_type])
             weight = 80.0 if key == "psc" else 1.0
             nest.Connect(pn, refs[syn_type], syn_spec={"weight": weight})
@@ -326,7 +329,7 @@ class AEIFTestCase(unittest.TestCase):
         # compute the relative differences and assert tolerance
         for model in neurons:
             syn_type = di_syn_types[model]
-            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            ref_data = ref_mm[syn_type].events
             key = syn_type[: syn_type.index("_")]
             rel_diff = self.compute_difference({model: multimeters[model]}, aeif_DT0, ref_data, recordables[syn_type])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
@@ -349,11 +352,11 @@ class AEIFTestCase(unittest.TestCase):
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
-            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": ["V_m"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m"]})
             nest.Connect(mm, neurons[model])
             nest.Connect(dcg, neurons[model])
         for syn_type, mm in iter(ref_mm.items()):
-            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": ["V_m"]})
+            mm.set({"interval": nest.resolution, "record_from": ["V_m"]})
             nest.Connect(mm, refs[syn_type])
             nest.Connect(dcg, refs[syn_type])
         nest.Simulate(simtime)
@@ -361,7 +364,7 @@ class AEIFTestCase(unittest.TestCase):
         # compute the relative differences and assert tolerance
         for model in neurons:
             syn_type = di_syn_types[model]
-            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            ref_data = ref_mm[syn_type].events
             rel_diff = self.compute_difference({model: multimeters[model]}, aeif_DT0, ref_data, ["V_m"])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 

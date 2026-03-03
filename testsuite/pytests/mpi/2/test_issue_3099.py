@@ -50,4 +50,4 @@ def test_set_status_weight(conns):
     """Test that operation does not cause MPI deadlock."""
 
     if conns:
-        nest.SetStatus(conns, "weight", 2.5)
+        conns.weight = 2.5

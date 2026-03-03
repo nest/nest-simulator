@@ -125,24 +125,24 @@ nest::RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 }
 
 void
-nest::RandomManager::get_status( DictionaryDatum& d )
+nest::RandomManager::get_status( Dictionary& d )
 {
-  ArrayDatum rng_types;
+  std::vector< std::string > rng_types;
   for ( auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
   {
     rng_types.push_back( rng->first );
   }
 
-  def< ArrayDatum >( d, names::rng_types, rng_types );
-  def< long >( d, names::rng_seed, base_seed_ );
-  def< std::string >( d, names::rng_type, current_rng_type_ );
+  d[ names::rng_types ] = rng_types;
+  d[ names::rng_seed ] = static_cast< long >( base_seed_ ); // casting to avoid checking for exotic types
+  d[ names::rng_type ] = current_rng_type_;
 }
 
 void
-nest::RandomManager::set_status( const DictionaryDatum& d )
+nest::RandomManager::set_status( const Dictionary& d )
 {
   long rng_seed;
-  bool rng_seed_updated = updateValue< long >( d, names::rng_seed, rng_seed );
+  bool rng_seed_updated = d.update_value( names::rng_seed, rng_seed );
 
   if ( rng_seed_updated )
   {
@@ -155,7 +155,7 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
   }
 
   std::string rng_type;
-  bool rng_type_updated = updateValue< std::string >( d, names::rng_type, rng_type );
+  bool rng_type_updated = d.update_value( names::rng_type, rng_type );
 
   if ( rng_type_updated )
   {

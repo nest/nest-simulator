@@ -33,8 +33,6 @@
 #include "nest_names.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "connection_creator.h"
@@ -65,16 +63,16 @@ public:
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary, respects slicing of given NodeCollection
    * @param d Dictionary.
    *
-   * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
+   * @note If passing nullptr-valued NodeCollectionPTR, full metadata irrespective of any slicing is returned.
    */
-  virtual void get_status( DictionaryDatum&, NodeCollection const* ) const = 0;
+  virtual void get_status( Dictionary&, NodeCollection const* const ) const = 0;
 
   virtual unsigned int get_num_dimensions() const = 0;
 
@@ -133,7 +131,7 @@ public:
    * parameters.
    * @returns pointer to NodeCollection for new layer
    */
-  static NodeCollectionPTR create_layer( const DictionaryDatum& );
+  static NodeCollectionPTR create_layer( const Dictionary& );
 
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
@@ -144,7 +142,7 @@ public:
    * @param node_collection NodeCollection of the layer
    * @returns nodes in layer inside mask.
    */
-  virtual std::vector< size_t > get_global_nodes( const MaskDatum& mask,
+  virtual std::vector< size_t > get_global_nodes( const MaskPTR mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection ) = 0;
@@ -172,7 +170,7 @@ public:
   virtual void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model ) = 0;
+    const std::string& syn_model ) = 0;
 
   void set_node_collection( NodeCollectionPTR );
   NodeCollectionPTR get_node_collection();
@@ -234,10 +232,10 @@ public:
    *
    * @param d Dictionary with named parameter settings.
    */
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
 
   //! Retrieve status, slice according to node collection if given
-  void get_status( DictionaryDatum&, NodeCollection const* ) const override;
+  void get_status( Dictionary&, NodeCollection const* const ) const override;
 
   unsigned int
   get_num_dimensions() const override
@@ -359,7 +357,7 @@ public:
 
   std::vector< std::pair< Position< D >, size_t > >* get_global_positions_vector( NodeCollectionPTR node_collection );
 
-  virtual std::vector< std::pair< Position< D >, size_t > > get_global_positions_vector( const MaskDatum& mask,
+  virtual std::vector< std::pair< Position< D >, size_t > > get_global_positions_vector( const MaskPTR mask,
     const Position< D >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection );
@@ -367,7 +365,7 @@ public:
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
    */
-  std::vector< size_t > get_global_nodes( const MaskDatum& mask,
+  std::vector< size_t > get_global_nodes( const MaskPTR mask,
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection ) override;
@@ -411,7 +409,7 @@ public:
   void dump_connections( std::ostream& out,
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
-    const Token& syn_model ) override;
+    const std::string& syn_model ) override;
 
 protected:
   /**
@@ -468,7 +466,7 @@ public:
    *                        periodic b.c.
    * @param node_collection NodeCollection of the layer
    */
-  MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized, NodeCollectionPTR node_collection );
+  MaskedLayer( Layer< D >& layer, const MaskPTR mask, bool allow_oversized, NodeCollectionPTR node_collection );
 
   /**
    * Constructor for applying "converse" mask to layer.
@@ -483,7 +481,7 @@ public:
    * @param node_collection NodeCollection of the layer
    */
   MaskedLayer( Layer< D >& layer,
-    const MaskDatum& mask,
+    const MaskPTR mask,
     bool allow_oversized,
     Layer< D >& target,
     NodeCollectionPTR node_collection );
@@ -519,7 +517,7 @@ protected:
   void check_mask_( Layer< D >& layer, bool allow_oversized );
 
   std::shared_ptr< Ntree< D, size_t > > ntree_;
-  MaskDatum mask_;
+  MaskPTR mask_;
 };
 
 inline void
@@ -537,7 +535,7 @@ AbstractLayer::get_node_collection()
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
+  const MaskPTR maskd,
   bool allow_oversized,
   NodeCollectionPTR node_collection )
   : mask_( maskd )
@@ -549,7 +547,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
+  const MaskPTR maskd,
   bool allow_oversized,
   Layer< D >& target,
   NodeCollectionPTR node_collection )
@@ -559,7 +557,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
     target.get_periodic_mask(), target.get_lower_left(), target.get_extent(), node_collection );
 
   check_mask_( target, allow_oversized );
-  mask_ = new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) );
+  mask_ = MaskPTR( new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) ) );
 }
 
 template < int D >

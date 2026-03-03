@@ -41,8 +41,6 @@
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -207,62 +205,62 @@ nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta_clopath::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th_max, V_th_max );
-  def< double >( d, names::V_th_rest, V_th_rest );
-  def< double >( d, names::tau_V_th, tau_V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::I_sp, I_sp );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::tau_z, tau_z );
-  def< double >( d, names::tau_u_bar_plus, tau_u_bar_plus );
-  def< double >( d, names::tau_u_bar_minus, tau_u_bar_minus );
-  def< double >( d, names::tau_u_bar_bar, tau_u_bar_bar );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
-  def< double >( d, names::V_clamp, V_clamp_ );
-  def< double >( d, names::t_clamp, t_clamp_ );
+  d[ names::C_m ] = C_m;
+  d[ names::V_th_max ] = V_th_max;
+  d[ names::V_th_rest ] = V_th_rest;
+  d[ names::tau_V_th ] = tau_V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::I_sp ] = I_sp;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::tau_z ] = tau_z;
+  d[ names::tau_u_bar_plus ] = tau_u_bar_plus;
+  d[ names::tau_u_bar_minus ] = tau_u_bar_minus;
+  d[ names::tau_u_bar_bar ] = tau_u_bar_bar;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::V_clamp ] = V_clamp_;
+  d[ names::t_clamp ] = t_clamp_;
 }
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_psc_delta_clopath::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th_max, V_th_max, node );
-  updateValueParam< double >( d, names::V_th_rest, V_th_rest, node );
-  updateValueParam< double >( d, names::tau_V_th, tau_V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_th_max, V_th_max, node );
+  update_value_param( d, names::V_th_rest, V_th_rest, node );
+  update_value_param( d, names::tau_V_th, tau_V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::I_sp, I_sp, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
-  updateValueParam< double >( d, names::tau_z, tau_z, node );
-  updateValueParam< double >( d, names::tau_u_bar_plus, tau_u_bar_plus, node );
-  updateValueParam< double >( d, names::tau_u_bar_minus, tau_u_bar_minus, node );
-  updateValueParam< double >( d, names::tau_u_bar_bar, tau_u_bar_bar, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::I_sp, I_sp, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::tau_z, tau_z, node );
+  update_value_param( d, names::tau_u_bar_plus, tau_u_bar_plus, node );
+  update_value_param( d, names::tau_u_bar_minus, tau_u_bar_minus, node );
+  update_value_param( d, names::tau_u_bar_bar, tau_u_bar_bar, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
-  updateValueParam< double >( d, names::V_clamp, V_clamp_, node );
-  updateValueParam< double >( d, names::t_clamp, t_clamp_, node );
+  update_value_param( d, names::V_clamp, V_clamp_, node );
+  update_value_param( d, names::t_clamp, t_clamp_, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -326,23 +324,23 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta_clopath::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::w, y_[ W ] );
-  def< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ] );
-  def< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ] );
-  def< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ] );
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::w ] = y_[ W ];
+  d[ names::u_bar_plus ] = y_[ U_BAR_PLUS ];
+  d[ names::u_bar_minus ] = y_[ U_BAR_MINUS ];
+  d[ names::u_bar_bar ] = y_[ U_BAR_BAR ];
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_psc_delta_clopath::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
-  updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
-  updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
-  updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
+  update_value_param( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
+  update_value_param( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
+  update_value_param( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
 }
 
 nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )

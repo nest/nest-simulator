@@ -145,7 +145,7 @@ def test_tripartite_raises():
     post = nest.Create("parrot_neuron", n_post)
     third = nest.Create("parrot_neuron", n_third)
 
-    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+    with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"}, {"rule": "one_to_one"})
 
 
@@ -155,7 +155,7 @@ def test_tripartite_rejects_make_symmetric():
     post = nest.Create("parrot_neuron", n_post)
     third = nest.Create("parrot_neuron", n_third)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.TripartiteConnect(
             pre,
             post,

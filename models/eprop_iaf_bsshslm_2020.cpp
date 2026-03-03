@@ -37,9 +37,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -112,56 +109,55 @@ eprop_iaf_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_bsshslm_2
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_bsshslm_2020::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::f_target, f_target_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::gamma, gamma_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
-  def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ );
+  d[ names::C_m ] = C_m_;
+  d[ names::c_reg ] = c_reg_;
+  d[ names::E_L ] = E_L_;
+  d[ names::f_target ] = f_target_;
+  d[ names::beta ] = beta_;
+  d[ names::gamma ] = gamma_;
+  d[ names::I_e ] = I_e_;
+  d[ names::regular_spike_arrival ] = regular_spike_arrival_;
+  d[ names::surrogate_gradient_function ] = surrogate_gradient_function_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::V_min ] = V_min_ + E_L_;
+  d[ names::V_th ] = V_th_ + E_L_;
 }
 
 double
-eprop_iaf_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
-  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
+  V_th_ -= update_value_param( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
+  V_min_ -= update_value_param( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::c_reg, c_reg_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::c_reg, c_reg_, node );
 
-  if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
+  if ( update_value_param( d, names::f_target, f_target_, node ) )
   {
     f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
   }
 
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::gamma, gamma_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
-
-  if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::gamma, gamma_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::regular_spike_arrival, regular_spike_arrival_, node );
+  if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
     eprop_iaf_bsshslm_2020* nrn = dynamic_cast< eprop_iaf_bsshslm_2020* >( node );
     assert( nrn );
     nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
 
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -197,17 +193,17 @@ eprop_iaf_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-eprop_iaf_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_bsshslm_2020::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
-  def< double >( d, names::learning_signal, learning_signal_ );
+  d[ names::V_m ] = v_m_ + p.E_L_;
+  d[ names::surrogate_gradient ] = surrogate_gradient_;
+  d[ names::learning_signal ] = learning_signal_;
 }
 
 void
-eprop_iaf_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_bsshslm_2020::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------

@@ -43,7 +43,7 @@ SPManager::SPManager()
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
   , growthcurve_factories_()
-  , growthcurvedict_( new Dictionary() )
+  , growthcurvedict_()
 {
 }
 
@@ -82,54 +82,53 @@ SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
       delete gcf;
     }
     growthcurve_factories_.clear();
-    growthcurvedict_->clear();
+    growthcurvedict_.clear();
   }
 }
 
 void
-SPManager::get_status( DictionaryDatum& d )
+SPManager::get_status( Dictionary& d )
 {
-  DictionaryDatum sp_synapses = DictionaryDatum( new Dictionary() );
-  DictionaryDatum sp_synapse;
-  def< DictionaryDatum >( d, names::structural_plasticity_synapses, sp_synapses );
+  Dictionary sp_synapses;
+
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
-    sp_synapse = DictionaryDatum( new Dictionary() );
-    def< std::string >( sp_synapse, names::pre_synaptic_element, ( *i )->get_pre_synaptic_element_name() );
-    def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
+    Dictionary sp_synapse_params;
     const std::string model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
-    def< std::string >( sp_synapse, names::synapse_model, model );
-    def< bool >( sp_synapse, names::allow_autapses, ( *i )->allows_autapses() );
-    def< bool >( sp_synapse, names::allow_multapses, ( *i )->allows_multapses() );
+    sp_synapse_params[ names::synapse_model ] = model;
+    sp_synapse_params[ names::pre_synaptic_element ] = ( *i )->get_pre_synaptic_element_name();
+    sp_synapse_params[ names::post_synaptic_element ] = ( *i )->get_post_synaptic_element_name();
+    sp_synapse_params[ names::allow_autapses ] = ( *i )->allows_autapses();
+    sp_synapse_params[ names::allow_multapses ] = ( *i )->allows_multapses();
 
-    def< DictionaryDatum >( sp_synapses, ( *i )->get_name(), sp_synapse );
+    sp_synapses[ ( *i )->get_name() ] = sp_synapse_params;
   }
 
-  def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+  d[ names::structural_plasticity_synapses ] = sp_synapses;
+  d[ names::structural_plasticity_update_interval ] = structural_plasticity_update_interval_;
 
-  ArrayDatum growth_curves;
-  for ( auto const& element : *growthcurvedict_ )
+  std::vector< std::string > growth_curves;
+  for ( auto const& element : growthcurvedict_ )
   {
-    growth_curves.push_back( new LiteralDatum( element.first ) );
+    growth_curves.push_back( element.first );
   }
-  def< ArrayDatum >( d, names::growth_curves, growth_curves );
+  d[ names::growth_curves ] = growth_curves;
 }
 
 void
-SPManager::set_status( const DictionaryDatum& d )
+SPManager::set_status( const Dictionary& d )
 {
-  updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+  d.update_value< double >( names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
 
-  if ( not d->known( names::structural_plasticity_synapses ) )
+  if ( not d.known( names::structural_plasticity_synapses ) )
   {
     return;
   }
 
-  // Configure synapses model updated during the simulation.
-  Token synmodel;
-  DictionaryDatum syn_specs;
-  DictionaryDatum syn_spec;
-  DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
+  Dictionary syn_specs;
+  Dictionary syn_spec;
+  Dictionary conn_spec;
+
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -139,22 +138,22 @@ SPManager::set_status( const DictionaryDatum& d )
   }
   sp_conn_builders_.clear();
 
-  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
-  for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
+  d.update_value< Dictionary >( names::structural_plasticity_synapses, syn_specs );
+  for ( auto& [ key, entry ] : syn_specs )
   {
-    syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
-    if ( syn_spec->known( names::allow_autapses ) )
+    const auto syn_spec = syn_specs.get< Dictionary >( key );
+    if ( syn_spec.known( names::allow_autapses ) )
     {
-      def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_spec, names::allow_autapses ) );
+      conn_spec[ names::allow_autapses ] = syn_spec.get< bool >( names::allow_autapses );
     }
-    if ( syn_spec->known( names::allow_multapses ) )
+    if ( syn_spec.known( names::allow_multapses ) )
     {
-      def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_spec, names::allow_multapses ) );
+      conn_spec[ names::allow_multapses ] = syn_spec.get< bool >( names::allow_multapses );
     }
 
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, /* third_out */ nullptr, conn_spec, { syn_spec } );
-    conn_builder->set_name( i->first.toString() );
+    conn_builder->set_name( key );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
@@ -239,8 +238,8 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
 void
 SPManager::disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  DictionaryDatum& conn_spec,
-  DictionaryDatum& syn_spec )
+  const Dictionary& conn_spec,
+  const std::vector< Dictionary >& syn_specs )
 {
   // probably not strictly necessarye here, but does nothing if all is up to date
   kernel().node_manager.update_thread_local_node_data();
@@ -255,34 +254,40 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
 
   BipartiteConnBuilder* cb = nullptr;
-  conn_spec->clear_access_flags();
-  syn_spec->clear_access_flags();
+  conn_spec.init_access_flags();
 
-  if ( not conn_spec->known( names::rule ) )
+  if ( not conn_spec.known( names::rule ) )
   {
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
   }
-  const std::string rule_name = ( *conn_spec )[ names::rule ];
+  const std::string rule_name = conn_spec.get< std::string >( names::rule );
 
   if ( not kernel().connection_manager.valid_connection_rule( rule_name ) )
   {
     throw BadProperty( "Unknown connectivity rule: " + rule_name );
   }
 
+  if ( syn_specs.size() != 1 )
+  {
+    throw BadProperty( "Disconnect() only accepts a single synapse specification, no collocated synapses." );
+  }
+
+  syn_specs[ 0 ].init_access_flags();
+
   if ( not sp_conn_builders_.empty() )
   { // Implement a getter for sp_conn_builders_
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
-      std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
-      if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( synModel ) )
+      const std::string syn_model = syn_specs[ 0 ].get< std::string >( names::synapse_model );
+      if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name,
           sources,
           targets,
           /* third_out */ nullptr,
           conn_spec,
-          { syn_spec } );
+          syn_specs );
         cb->set_synaptic_element_names(
           ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
@@ -295,13 +300,14 @@ SPManager::disconnect( NodeCollectionPTR sources,
       targets,
       /* third_out */ nullptr,
       conn_spec,
-      { syn_spec } );
+      syn_specs );
   }
   assert( cb );
 
-  // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );
-  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
+  // At this point, all entries in conn_spec and syn_spec have been checked
+  conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );
+
+  syn_specs[ 0 ].all_entries_accessed( "Disconnect", "syn_spec" );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();

@@ -34,10 +34,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 using namespace nest;
 
 nest::RecordablesMap< nest::glif_psc > nest::glif_psc::recordablesMap_;
@@ -119,45 +115,44 @@ nest::glif_psc::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
+nest::glif_psc::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_th, th_inf_ + E_L_ );
-  def< double >( d, names::g, G_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::V_reset, V_reset_ + E_L_ );
+  d[ names::V_th ] = th_inf_ + E_L_;
+  d[ names::g ] = G_;
+  d[ names::E_L ] = E_L_;
+  d[ names::C_m ] = C_m_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::V_reset ] = V_reset_ + E_L_;
 
-  def< double >( d, names::th_spike_add, th_spike_add_ );
-  def< double >( d, names::th_spike_decay, th_spike_decay_ );
-  def< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
-  def< double >( d, names::voltage_reset_add, voltage_reset_add_ );
+  d[ names::th_spike_add ] = th_spike_add_;
+  d[ names::th_spike_decay ] = th_spike_decay_;
+  d[ names::voltage_reset_fraction ] = voltage_reset_fraction_;
+  d[ names::voltage_reset_add ] = voltage_reset_add_;
 
-  def< double >( d, names::th_voltage_index, th_voltage_index_ );
-  def< double >( d, names::th_voltage_decay, th_voltage_decay_ );
+  d[ names::th_voltage_index ] = th_voltage_index_;
+  d[ names::th_voltage_decay ] = th_voltage_decay_;
 
-  def< std::vector< double > >( d, names::asc_init, asc_init_ );
-  def< std::vector< double > >( d, names::asc_decay, asc_decay_ );
-  def< std::vector< double > >( d, names::asc_amps, asc_amps_ );
-  def< std::vector< double > >( d, names::asc_r, asc_r_ );
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
-  def< bool >( d, names::has_connections, has_connections_ );
-  def< bool >( d, names::spike_dependent_threshold, has_theta_spike_ );
-  def< bool >( d, names::after_spike_currents, has_asc_ );
-  def< bool >( d, names::adapting_threshold, has_theta_voltage_ );
+  d[ names::asc_init ] = asc_init_;
+  d[ names::asc_decay ] = asc_decay_;
+  d[ names::asc_amps ] = asc_amps_;
+  d[ names::asc_r ] = asc_r_;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::has_connections ] = has_connections_;
+  d[ names::spike_dependent_threshold ] = has_theta_spike_;
+  d[ names::after_spike_currents ] = has_asc_;
+  d[ names::adapting_threshold ] = has_theta_voltage_;
 }
 
 double
-nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::glif_psc::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -166,7 +161,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_th, th_inf_, node ) )
+  if ( update_value_param( d, names::V_th, th_inf_, node ) )
   {
     th_inf_ -= E_L_;
   }
@@ -175,27 +170,27 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
     th_inf_ -= delta_EL;
   }
 
-  updateValueParam< double >( d, names::g, G_, node );
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::g, G_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
 
-  updateValueParam< double >( d, names::th_spike_add, th_spike_add_, node );
-  updateValueParam< double >( d, names::th_spike_decay, th_spike_decay_, node );
-  updateValueParam< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
-  updateValueParam< double >( d, names::voltage_reset_add, voltage_reset_add_, node );
+  update_value_param( d, names::th_spike_add, th_spike_add_, node );
+  update_value_param( d, names::th_spike_decay, th_spike_decay_, node );
+  update_value_param( d, names::voltage_reset_fraction, voltage_reset_fraction_, node );
+  update_value_param( d, names::voltage_reset_add, voltage_reset_add_, node );
 
-  updateValueParam< double >( d, names::th_voltage_index, th_voltage_index_, node );
-  updateValueParam< double >( d, names::th_voltage_decay, th_voltage_decay_, node );
+  update_value_param( d, names::th_voltage_index, th_voltage_index_, node );
+  update_value_param( d, names::th_voltage_decay, th_voltage_decay_, node );
 
-  updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
-  updateValue< std::vector< double > >( d, names::asc_decay, asc_decay_ );
-  updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
-  updateValue< std::vector< double > >( d, names::asc_r, asc_r_ );
+  d.update_value( names::asc_init, asc_init_ );
+  d.update_value( names::asc_decay, asc_decay_ );
+  d.update_value( names::asc_amps, asc_amps_ );
+  d.update_value( names::asc_r, asc_r_ );
 
   // set model mechanisms
-  updateValueParam< bool >( d, names::spike_dependent_threshold, has_theta_spike_, node );
-  updateValueParam< bool >( d, names::after_spike_currents, has_asc_, node );
-  updateValueParam< bool >( d, names::adapting_threshold, has_theta_voltage_, node );
+  update_value_param( d, names::spike_dependent_threshold, has_theta_spike_, node );
+  update_value_param( d, names::after_spike_currents, has_asc_, node );
+  update_value_param( d, names::adapting_threshold, has_theta_voltage_, node );
 
   // check model mechanisms parameter
   if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
@@ -282,7 +277,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
 
   const size_t old_n_receptors = this->n_receptors_();
-  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ ) )
+  if ( d.update_value( names::tau_syn, tau_syn_ ) )
   {
     if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
@@ -303,18 +298,18 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::glif_psc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::glif_psc::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, U_ + p.E_L_ );
-  def< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
-  def< double >( d, names::threshold_spike, threshold_spike_ );
-  def< double >( d, names::threshold_voltage, threshold_voltage_ );
+  d[ names::V_m ] = U_ + p.E_L_;
+  d[ names::ASCurrents ] = ASCurrents_;
+  d[ names::threshold_spike ] = threshold_spike_;
+  d[ names::threshold_voltage ] = threshold_voltage_;
 }
 
 void
-nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::glif_psc::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, U_, node ) )
+  if ( update_value_param( d, names::V_m, U_, node ) )
   {
     U_ -= p.E_L_;
   }
@@ -323,7 +318,7 @@ nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, dou
     U_ -= delta_EL;
   }
 
-  bool asc_flag = updateValue< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
+  bool asc_flag = d.update_value( names::ASCurrents, ASCurrents_ );
   if ( asc_flag and not p.has_asc_ )
   {
     throw BadProperty( "After spike currents are not supported or settable in the current model mechanisms." );
@@ -339,13 +334,12 @@ nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, dou
     }
   }
 
-  if ( updateValueParam< double >( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
+  if ( update_value_param( d, names::threshold_spike, threshold_spike_, node ) and not p.has_theta_spike_ )
   {
     throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
   }
 
-  if ( updateValueParam< double >( d, names::threshold_voltage, threshold_voltage_, node )
-    and not p.has_theta_voltage_ )
+  if ( update_value_param( d, names::threshold_voltage, threshold_voltage_, node ) and not p.has_theta_voltage_ )
   {
     throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
   }

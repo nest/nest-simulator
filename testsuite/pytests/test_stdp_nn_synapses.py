@@ -29,7 +29,6 @@ import numpy as np
 import pytest
 
 
-@nest.ll_api.check_stack
 class TestSTDPNNSynapses:
     """
     Test the weight change by STDP
@@ -89,9 +88,6 @@ class TestSTDPNNSynapses:
         np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            err_msg=synapse_model + " test: "
-            "Resulting synaptic weight %e "
-            "differs from expected %e" % (weight_by_nest, weight_reproduced_independently),
         )
 
     def do_the_nest_simulation(self):
@@ -100,7 +96,7 @@ class TestSTDPNNSynapses:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by STDP.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.resolution
 
@@ -156,10 +152,12 @@ class TestSTDPNNSynapses:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys="events")[0]
-        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
-        weight = nest.GetStatus(plastic_synapse_of_interest, keys="weight")[0]
+        all_spikes = spike_recorder.events
+        times = all_spikes["times"]
+        senders = all_spikes["senders"]
+        pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
+        weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)
 
     def reproduce_weight_drift(self, _pre_spikes, _post_spikes, _initial_weight):

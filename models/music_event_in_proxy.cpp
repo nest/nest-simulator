@@ -27,13 +27,6 @@
 // External includes:
 #include <music.hh>
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
@@ -71,30 +64,30 @@ nest::music_event_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_event_in_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_event_in_proxy::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::music_channel ] = channel_;
-  ( *d )[ names::port_name ] = port_name_;
+  d[ names::music_channel ] = channel_;
+  d[ names::port_name ] = port_name_;
 }
 
 void
-nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_event_in_proxy::Parameters_::set( const Dictionary& d, State_& s )
 {
   if ( not s.registered_ )
   {
-    updateValue< long >( d, names::music_channel, channel_ );
-    updateValue< string >( d, names::port_name, port_name_ );
+    d.update_value( names::music_channel, channel_ );
+    d.update_value( names::port_name, port_name_ );
   }
 }
 
 void
-nest::music_event_in_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_event_in_proxy::State_::get( Dictionary& d ) const
 {
-  ( *d )[ names::registered ] = registered_;
+  d[ names::registered ] = registered_;
 }
 
 void
-nest::music_event_in_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_event_in_proxy::State_::set( const Dictionary&, const Parameters_& )
 {
 }
 
@@ -143,14 +136,14 @@ nest::music_event_in_proxy::pre_run_hook()
 }
 
 void
-nest::music_event_in_proxy::get_status( DictionaryDatum& d ) const
+nest::music_event_in_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 }
 
 void
-nest::music_event_in_proxy::set_status( const DictionaryDatum& d )
+nest::music_event_in_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, S_ );     // throws if BadProperty

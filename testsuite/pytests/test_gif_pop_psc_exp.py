@@ -77,7 +77,7 @@ class TestGifPopPscExp:
 
         nest.Simulate(T)
 
-        nspike = vm.get("events")["n_events"][start_step:]
+        nspike = vm.events["n_events"][start_step:]
 
         mean_nspike = np.mean(nspike)
         mean_rate = mean_nspike / pop_size / res * 1000.0  # convert to mean rate

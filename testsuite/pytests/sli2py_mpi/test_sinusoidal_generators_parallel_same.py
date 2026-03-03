@@ -59,13 +59,14 @@ def test_sinusoidal_generator_with_spike_recorder(gen_model, num_threads):
     total_num_nrns = nest.total_num_virtual_procs * nrns_per_vp
 
     parrots = nest.Create("parrot_neuron", total_num_nrns)
+
+    nest.SetDefaults(gen_model, {"individual_spike_trains": False})
     gen = nest.Create(
         gen_model,
         params={
             "rate": 100,
-            "amplitude": 50.0,
-            "frequency": 10.0,
-            "individual_spike_trains": False,
+            "amplitude": 50,
+            "frequency": 10,
         },
     )
     srec = nest.Create(
@@ -80,4 +81,4 @@ def test_sinusoidal_generator_with_spike_recorder(gen_model, num_threads):
     nest.Connect(gen, parrots)
     nest.Connect(parrots, srec)
 
-    nest.Simulate(200.0)
+    nest.Simulate(200)

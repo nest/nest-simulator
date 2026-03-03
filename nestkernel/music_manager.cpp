@@ -126,7 +126,7 @@ MUSICManager::music_finalize()
 
 #ifdef HAVE_MUSIC
 
-MPI::Intracomm
+MPI_Comm
 MUSICManager::communicator()
 {
   return music_setup->communicator();

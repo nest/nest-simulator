@@ -100,7 +100,8 @@ public:
    * Erases e-prop history entries between the last and penultimate updates if they exceed the inter-spike
    * interval trace cutoff and any entries older than the earliest time stamp required by the first update.
    *
-   * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
+   * @param t_spike The time step of the current spike.
+   * @param t_spike_previous The time step of the previous spike.
    */
   void erase_used_eprop_history( const long t_spike, const long t_spike_previous ) override;
 

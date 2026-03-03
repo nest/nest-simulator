@@ -184,12 +184,12 @@ you now have
    with pytest.raises(nest.NESTErrors.IllegalConnection):
 
 
-Changes to neuron and synapse models
-++++++++++++++++++++++++++++++++++++
+Changes to neuron and synapse models (for developers)
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-Where changes are necessary in code for neuron or synapse models, they will
-likely be limited to slightly different notation in the ``set()`` and ``get()`` methods to use the new
+When developing C++ level implementations of neuron or synapse models,
+required changes in code will likely be limited to slightly different
+notation in the ``set()`` and ``get()`` methods to use the new
 ``Dictionary`` class. As an example, consider ``aeif_cond_alpha``:
 
 Old NEST

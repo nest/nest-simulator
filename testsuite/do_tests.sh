@@ -23,8 +23,7 @@
 # Central entry point for the complete NEST test suite. The tests
 # ensure a correctly working installation of NEST.
 #
-# The test suite consists of SLI and Python scripts that use the
-# respective language's native `unittest` library to assert certain
+# The test suite consists of Python scripts that use the `pytest` library to assert certain
 # invariants and thus ensure a correctly working installation of NEST.
 #
 set -euo pipefail
@@ -140,7 +139,8 @@ HAVE_MUSIC=${MUSIC:+True}
 if test "${HAVE_MPI}" = "True"; then
     MPI_LAUNCHER="$(get_build_info mpiexec)"
     MPI_LAUNCHER_VERSION="$($MPI_LAUNCHER --version | head -n1)"
-    MPI_LAUNCHER_PREFLAGS="$(get_build_info mpiexec_preflags)"
+    # TODO PyNEST-NG The two PREFLAGS variables are double up, as is some code further down relating to it. Sort out.
+    MPI_LAUNCHER_PREFLAGS="$(get_build_info mpiexec_preflags) --prefix $(python -c 'import sys; print(sys.prefix)')"
     # OpenMPI requires --oversubscribe to allow more processes than available cores
     #
     # ShellCheck warns about "SC2076 (warning): Remove quotes from right-hand side of =~ to match as a regex rather than literally.",
@@ -168,7 +168,6 @@ print_paths () {
     echo "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
 }
 
-
 echo "================================================================================"
 echo
 echo "  NEST testsuite"
@@ -177,7 +176,7 @@ echo "  Sysinfo: $(uname -s -r -m)"
 echo
 echo "  NEST version ....... $(get_build_info version)"
 echo "  PREFIX ............. $PREFIX"
-if test -n "${HAVE_MUSIC}" = "True"; then
+if test "${HAVE_MUSIC}" = "True"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
     echo "  MUSIC executable ... ${MUSIC} (version ${MUSIC_VERSION})"
 fi
@@ -192,6 +191,7 @@ if test "${HAVE_MPI}" = "True"; then
     echo "  Running MPI tests .. yes"
     echo "         launcher .... ${MPI_LAUNCHER}"
     echo "         version ..... ${MPI_LAUNCHER_VERSION}"
+    echo "         cmdline ..... ${MPI_LAUNCHER_CMDLINE}"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -207,6 +207,143 @@ HEADLINE="NEST $(get_build_info version) testsuite log"
     printf '%0.s=' $(seq 1 ${#HEADLINE})
     echo "Running tests from ${TEST_BASEDIR}"
 } >"${TEST_LOGFILE}"
+
+
+echo
+echo "Phase 6: Running MUSIC tests"
+echo "----------------------------"
+if test "${MUSIC}"; then
+    junit_open '06_musictests'
+
+    # Create a temporary directory with a unique name.
+    BASEDIR="$PWD"
+    TMPDIR_MUSIC="$(mktemp -d)"
+
+    TESTDIR="${TEST_BASEDIR}/sli2py_music/"
+
+    # Initialize tracking variables to avoid 'unbound variable' errors under set -u
+    JUNIT_TESTS=0
+    JUNIT_SKIPS=0
+    JUNIT_FAILURES=0
+    TIME_TOTAL=0
+
+    # shellcheck disable=SC2044
+    for test_name in $(find "${TESTDIR}" -maxdepth 1 -name '*.music' -printf '%f\n'); do
+        music_file="${TESTDIR}/${test_name}"
+
+        # Collect the list of Python files from the '.music' file.
+        py_files=()
+
+        # Use sed to strip leading spaces and 'binary=', leaving only the file path.
+        # We pipe to grep to ensure we only capture lines containing '.py'.
+        readarray -t raw_py_files < <(sed -n 's/^[[:space:]]*binary=\(.*\)/\1/p' "${music_file}" | grep '\.py' || true)
+        if [ ${#raw_py_files[@]} -gt 0 ]; then
+            for raw_file in "${raw_py_files[@]}"; do
+                # Construct the full path.
+                # ${raw_file#./} removes any leading './' so we don't end up with messy paths like '/dir/./file.py'
+                f="${TESTDIR}${raw_file#./}"
+
+                # Check if the file exists and append it to our final array
+                if test -f "${f}"; then
+                    py_files+=("${f}")
+                fi
+            done
+        else
+            echo "No python files found in music file ${music_file}"
+        fi
+
+        # Check if there is an accompanying shell script for the test.
+        sh_file="${TESTDIR}/$(basename "${music_file}" ".music").sh"
+        if test ! -f "${sh_file}"; then sh_file=""; fi
+
+        # Check if there is an accompanying input data file
+        input_file="${TESTDIR}/$(basename "${music_file}" ".music")0.dat"
+        if test ! -f "${input_file}"; then input_file=""; fi
+
+        # Calculate the total number of processes from the '.music' file.
+        np="$(($(sed -n 's/np=//p' "${music_file}" | paste -sd'+' -)))"
+        test_command="${MPI_LAUNCHER_CMDLINE} ${np} ${MUSIC} ${test_name}"
+
+        proc_txt="processes"
+        if test $np -eq 1; then proc_txt="process"; fi
+        echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
+        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
+
+        # Copy everything to TMPDIR_MUSIC.
+        # Note that variables might also be empty, so test for file existence first.
+        # We double-quote "${py_files[@]}" so bash expands it to individual, safe arguments.
+        for filename in "${music_file}" "${sh_file}" "${input_file}" "${py_files[@]}"; do
+            if test -n "${filename}" && test -e "${filename}"; then
+                cp "${filename}" "${TMPDIR_MUSIC}"
+            fi
+        done
+
+        # Create the runner script in TMPDIR_MUSIC.
+        cd "${TMPDIR_MUSIC}"
+        {
+            echo "#!/usr/bin/env sh"
+            echo "set +e"
+            echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\""
+            echo "timeout 5m ${test_command} > ${TEST_OUTFILE} 2>&1 < /dev/null"
+            echo "RET=\$?"
+            echo "if [ \$RET -eq 124 ]; then echo 'TIMEOUT_ERROR' >> ${TEST_OUTFILE}; fi"
+            if test -n "${sh_file}"; then
+                chmod 755 "$(basename "${sh_file}")"
+                echo "./$(basename "${sh_file}")"
+            fi
+            echo "echo \$RET > exit_code"
+        } >"runner.sh"
+
+        # Run the script and measure execution time. Copy the output to the logfile.
+        music_path="$(dirname "${MUSIC}")"
+        chmod 755 "runner.sh"
+        TIME_ELAPSED="$(PATH="$PATH:${music_path}" time_cmd ./runner.sh )"
+        TIME_TOTAL="$(( TIME_TOTAL + TIME_ELAPSED ))"
+        sed -e 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
+
+        # Retrieve the exit code. This is either the one of the mpirun call
+        # or of the accompanying shell script if present.
+        exit_code="$(cat exit_code)"
+
+        # Count the total number of tests, the tests skipped, and the tests with error.
+        # The values will be stored in the XML report at 'junit_close'.
+        # Test failures and diagnostic information are also stored in the xml-report file
+        # with 'unit_write'.
+        JUNIT_TESTS="$(( JUNIT_TESTS + 1 ))"
+        if test -z "$(echo "${test_name}" | grep failure)"; then
+            if test "$exit_code" -eq 0; then
+                echo "Success"
+            elif [ "$exit_code" -ge 200 ] && [ "$exit_code" -le 215 ]; then
+                echo "Skipped"
+                JUNIT_SKIPS="$(( JUNIT_SKIPS + 1 ))"
+            else
+                echo "Failure"
+                JUNIT_FAILURES="$(( JUNIT_FAILURES + 1 ))"
+                junit_write "musictests" "${test_name}" "failure" "$(cat "${TEST_OUTFILE}")"
+            fi
+        else
+            if test "$exit_code" -ne 0; then
+                echo "Success (expected failure)"
+            elif [ "$exit_code" -ge 200 ] && [ "$exit_code" -le 215 ]; then
+                echo "Skipped"
+                JUNIT_SKIPS="$(( JUNIT_SKIPS + 1 ))"
+            else
+                echo "Failure (test failed to fail)"
+                JUNIT_FAILURES="$(( JUNIT_FAILURES + 1 ))"
+                junit_write "musictests" "${test_name}" "failure" "$(cat "${TEST_OUTFILE}")"
+            fi
+        fi
+
+        cd "${BASEDIR}"
+    done
+
+    junit_close
+else
+    echo "  Not running MUSIC tests because NEST was compiled without support"
+    echo "  for it."
+fi
+
+
 
 echo
 echo "Phase 7: Running PyNEST tests"
@@ -239,14 +376,14 @@ if test "${PYTHON}"; then
     if test "${HAVE_MPI}" = "True"; then
         if test "${MPI_LAUNCHER}"; then
 
-	    if test "${INFO_OS:-}" = "Darwin"; then
-		# ref https://stackoverflow.com/a/752893
-		# Note that on GNU systems an additional '-r' would be needed for
-		# xargs, which is not available here.
+      if test "${INFO_OS:-}" = "Darwin"; then
+   # ref https://stackoverflow.com/a/752893
+   # Note that on GNU systems an additional '-r' would be needed for
+   # xargs, which is not available here.
                 proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
-	    else
+      else
                 proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
-	    fi
+      fi
 
         # Loop over subdirectories whose names are the number of mpi procs to use
         for numproc in ${proc_nums}; do

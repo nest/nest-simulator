@@ -1,4 +1,7 @@
-# testsuite/regressiontests/sli2py_ignore/CMakeLists.txt
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# test_rate_proxy_sender.py
 #
 # This file is part of NEST.
 #
@@ -17,12 +20,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# add regressiontests files
-file( GLOB scripts RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.sli )
+import nest
 
-foreach( script ${scripts} )
-  add_test( NAME regressiontests/sli2py_ignore/${script}
-    COMMAND ${CMAKE_INSTALL_FULL_BINDIR}/nest
-    ${CMAKE_INSTALL_FULL_DOCDIR}/regressiontests/sli2py_ignore/${script} # use the installed version
-  )
-endforeach()
+rate_neuron = nest.Create("lin_rate_ipn", params={"rate": 1.5, "mu": 1.5, "sigma": 0.0})
+
+mrop = nest.Create("music_rate_out_proxy", params={"port_name": "rate_out"})
+
+nest.Connect(
+    rate_neuron, mrop, "one_to_one", syn_spec={"synapse_model": "rate_connection_instantaneous", "music_channel": 0}
+)
+
+nest.Simulate(500)

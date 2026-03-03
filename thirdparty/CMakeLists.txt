@@ -42,6 +42,10 @@ set( thirdparty_headers
     Random123/features/gccfeatures.h
     )
 
+if(NOT "${SKBUILD}" STREQUAL "") 
+  set( CMAKE_INSTALL_INCLUDEDIR "nest/include")
+endif()
+
 
 install( FILES randutils.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
 install( DIRECTORY Random123/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest/Random123

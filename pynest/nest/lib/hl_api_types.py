@@ -46,6 +46,18 @@ try:
 except ImportError:
     HAVE_PANDAS = False
 
+# A NumPy2 conformant implementation of NodeCollection.__array__() must have the signature
+# __array__(object, dtype=None, copy=None), where copy is passed on to numpy.array(..., copy=copy).
+# Numpy 1 does not support the value None for copy, so we determine here which default value to use.
+# This avoids checks at runtime. See also
+#   https://numpy.org/doc/stable/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword
+#   https://numpy.org/doc/2.0/reference/generated/numpy.array.html#numpy-array
+try:
+    numpy.array(1, copy=None)
+    _ARRAY_COPY_DEFAULT = None
+except ValueError:
+    _ARRAY_COPY_DEFAULT = True
+
 __all__ = [
     "CollocatedSynapses",
     "Compartments",
@@ -569,7 +581,7 @@ class NodeCollection:
         """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
         return len(self) > 0
 
-    def __array__(self, dtype=None, copy=None):
+    def __array__(self, dtype=None, copy=_ARRAY_COPY_DEFAULT):
         """Convert the NodeCollection to a NumPy array."""
 
         return numpy.array(self.tolist(), dtype=dtype, copy=copy)
@@ -931,7 +943,7 @@ class SynapseCollection:
             return
 
         if isinstance(params, (list, tuple)) and self.__len__() != len(params):
-            raise TypeError(f"status dict must be a dict, or a list of dicts of length {self.__len__()}")
+            raise TypeError(f"Status dict must be a dict, or a list of dicts of length {self.__len__()}")
 
         if kwargs and params is None:
             params = kwargs
@@ -1068,7 +1080,7 @@ class Parameter:
         """Parameters must be created using the CreateParameter command."""
         if not isinstance(datum, nestkernel.ParameterObject):
             raise TypeError(
-                "expected low-level parameter object; use the 'CreateParameter()' function to create a 'Parameter'."
+                "Expected low-level parameter object; use the 'CreateParameter()' function to create a 'Parameter'."
             )
         self._datum = datum
 

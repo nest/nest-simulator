@@ -80,6 +80,16 @@ To install the latest development version directly from the NEST GitHub reposito
 
    pip install git+https://github.com/nest/nest-simulator.git
 
+You can also install with extras using the ``#egg=`` syntax:
+
+.. code-block:: bash
+
+   # Install with all extras
+   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[full]"
+
+   # Install with specific extras
+   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[sonata,server]"
+
 .. note::
 
    Installing from GitHub installs the latest development version which may be less stable than the released versions on PyPI.
@@ -97,6 +107,10 @@ To install from a local copy of the NEST repository:
 
    # Install in editable mode (recommended for development)
    pip install -e .
+
+   # Install with extras
+   pip install -e ".[full]"
+   pip install -e ".[sonata,server]"
 
 
 .. note::

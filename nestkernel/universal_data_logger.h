@@ -273,9 +273,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
-  , next_rec_step_( -1 )
-  ,  // flag as uninitialized
-  node_access_()
+  , next_rec_step_( -1 )  // flag as uninitialized
+  , node_access_()
   , data_()
   , next_rec_( 2, 0 )
 {

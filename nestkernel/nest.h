@@ -289,6 +289,8 @@ create_mask( const std::string& name, const Dictionary& d )
   return mask;
 }
 
+void message( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t );
+
 } // namespace nest
 
 #endif /* NEST_H */

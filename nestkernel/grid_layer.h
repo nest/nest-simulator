@@ -297,10 +297,6 @@ template < int D >
 void
 GridLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
-  //  constexpr std::insert_iterator< Ntree< D, size_t > > ins1( std::insert_iterator( tree, tree.end() ) );
-  //  insert_global_positions_( ins1, node_collection );
-
-  //  auto ins2 = std::inserter( tree, tree.end() );
   auto ins2 = std::back_inserter( tree );
   insert_global_positions_( ins2, node_collection );
 }

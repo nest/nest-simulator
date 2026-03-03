@@ -203,6 +203,8 @@ cdef extern from "nest.h" namespace "nest":
     vector[double] apply( const ParameterPTR param, const NodeCollectionPTR nc ) except +custom_exception_handler
     vector[double] apply( const ParameterPTR param, const Dictionary& positions ) except +custom_exception_handler
 
+    void message( const VerbosityLevel, const string&, const string&, const string&, const size_t );
+
 
 # PYNEST-NG-FUTURE: Move these global functions to nest.h?
 cdef extern from "spatial.h" namespace "nest":

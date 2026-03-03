@@ -47,13 +47,24 @@ References
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting.
 
+import sys
+
 import matplotlib.pyplot as plt
 import nest
 from nest import visualization, voltage_trace
 
 ###############################################################################
-# Next, we check for the availability of the CSA Python module. If it does
-# not import, we exit with an error message.
+# Next, we check for the availability of libneuronsim and the CSA Python module.
+# If either does not import, we exit with an error message.
+
+if not nest.build_info["have_libneurosim"]:
+    print(
+        "This example requires CSA to be installed in order to run.\n"
+        + "Please make sure you compiled NEST using\n"
+        + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
+        + "and CSA and libneurosim are available."
+    )
+    sys.exit(1)
 
 try:
     import csa
@@ -66,8 +77,6 @@ except ImportError:
         + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
         + "and CSA and libneurosim are available."
     )
-    import sys
-
     sys.exit(1)
 
 ###############################################################################

@@ -181,7 +181,7 @@ print(80 * "*")
 def index():
     return jsonify(
         {
-            "nest": nest.__version__,
+            "nest": nest.build_info["version"],
             "mpi": mpi_comm is not None,
         }
     )

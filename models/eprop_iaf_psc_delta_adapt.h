@@ -85,7 +85,7 @@ The spike state variable is expressed by a Heaviside function:
   z_j^t = H \left( v_j^t - A_j^t \right) \,. \\
 
 If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
-emitted and the membrane voltage is reset to :math:`v_\text{reset}. After the time step
+emitted and the membrane voltage is reset to :math:`v_\text{reset}`. After the time step
 of the spike emission, the neuron is not able to spike for an absolute refractory period
 :math:`t_\text{ref}` during which the membrane potential stays clamped to the reset voltage
 :math:`v_\text{reset}`, thus

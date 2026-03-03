@@ -111,13 +111,14 @@ cdef object any_vector_to_list(EmptyList cvec):
     return []
 
 
-cdef object dict_vector_to_list(vector[Dictionary] cvec):
+cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
         tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
+
 
 def make_tuple_or_ndarray(operand):
         if len(operand) > 0 and isinstance(operand[0], numbers.Number):
@@ -192,17 +193,15 @@ cdef object any_to_pyobj(any_type operand):
 
 
 cdef is_list_tuple_ndarray_of_float(v):
-    list_of_float = type(v) is list and len(v) > 0 and type(v[0]) is float
-    tuple_of_float = type(v) is tuple and len(v) > 0 and type(v[0]) is float
+    list_or_tuple_of_float = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (float, numpy.floating))
     ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
-    return list_of_float or tuple_of_float or ndarray_of_float
+    return list_or_tuple_of_float or ndarray_of_float
 
 
 cdef is_list_tuple_ndarray_of_int(v):
-    list_of_int = type(v) is list and len(v) > 0 and type(v[0]) is int
-    tuple_of_int = type(v) is tuple and len(v) > 0 and type(v[0]) is int
+    list_or_tuple_of_int = isinstance(v, (list, tuple)) and len(v) > 0 and isinstance(v[0], (int, numpy.integer))
     ndarray_of_int = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
-    return list_of_int or tuple_of_int or ndarray_of_int
+    return list_or_tuple_of_int or ndarray_of_int
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
@@ -407,7 +406,7 @@ def llapi_make_nodecollection(object node_ids):
     return nest.NodeCollection(obj)
 
 
-def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+cdef (Dictionary, vector[Dictionary]) _prepare_arguments_dis_connect(object conn_params, object synapse_params):
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
 
@@ -423,9 +422,13 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
     elif synapse_params is not None:
         syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
 
-    connect(pre.thisptr, post.thisptr,
-            pydict_to_Dictionary(conn_params),
-            syn_param_vec)
+    return pydict_to_Dictionary(conn_params), syn_param_vec
+
+def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+    cdef Dictionary conn_params_dict
+    cdef vector[Dictionary] syn_params_vec
+    conn_params_dict, syn_param_vec = _prepare_arguments_dis_connect(conn_params, synapse_params)
+    connect(pre.thisptr, post.thisptr, conn_params_dict, syn_param_vec)
 
 
 def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post, NodeCollectionObject third,
@@ -444,26 +447,10 @@ def llapi_connect_tripartite(NodeCollectionObject pre, NodeCollectionObject post
 
 
 def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
-    conn_params = conn_params if conn_params is not None else {}
-    synapse_params = synapse_params if synapse_params is not None else {}
-
-    if ("rule" in conn_params and conn_params["rule"] is None) or "rule" not in conn_params:
-        conn_params["rule"] = "all_to_all"
-
-    if synapse_params is dict and "synapse_model" not in synapse_params:
-        synapse_params["synapse_model"] = "static_synapse"
-
-    # Pass synapse specs as vector/collocated synapse for consistency with Connect().
-    # This simplifies the C++ level because ConnBuilder() constructors expect vectors of synapse specs.
-    cdef vector[Dictionary] syn_param_vec
-    if isinstance(synapse_params, nest.CollocatedSynapses):
-        syn_param_vec = pylist_to_dictvec(synapse_params.syn_specs)
-    elif synapse_params is not None:
-        syn_param_vec.push_back(pydict_to_Dictionary(synapse_params))
-
-    disconnect(pre.thisptr, post.thisptr,
-            pydict_to_Dictionary(conn_params),
-            syn_param_vec)
+    cdef Dictionary conn_params_dict
+    cdef vector[Dictionary] syn_params_vec
+    conn_params_dict, syn_params_vec = _prepare_arguments_dis_connect(conn_params, synapse_params)
+    disconnect(pre.thisptr, post.thisptr, conn_params_dict, syn_params_vec)
 
 
 def llapi_disconnect_syncoll(object conns):
@@ -872,7 +859,7 @@ def llapi_set_connection_status(object conns, object params):
 
 
 def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
-    """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
+    """Calls connect_arrays function, passing pointers to the NumPy arrays"""
 
     if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
         raise TypeError('sources must be a 1-dimensional NumPy array of integers')
@@ -936,3 +923,9 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
     cdef string syn_model_string = synapse_model.encode('UTF-8')
 
     connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+
+def llapi_message( severity, function, msg, fname, lineno ):
+    cdef string function_str = function.encode('UTF-8')
+    cdef string msg_str = msg.encode('UTF-8')
+    cdef string fname_str = fname.encode('UTF-8')
+    message(severity, function_str, msg_str, fname_str, lineno)

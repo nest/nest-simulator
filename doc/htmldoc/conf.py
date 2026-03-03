@@ -217,6 +217,7 @@ intersphinx_mapping = {
     "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
     "tvb": ("https://docs.thevirtualbrain.org/", None),
     "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
+    "benchmarks": ("https://performance-benchmarks.readthedocs.io/en/latest", None),
 }
 
 suppress_warnings = ["config.cache"]

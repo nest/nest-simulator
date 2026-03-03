@@ -600,7 +600,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const Dictionary& d
   ConnectionBase::set_status( d, cm );
   if ( d.known( names::optimizer ) and optimizer_ )
   {
-    // We must pass here if called by SetDefaults. In that case, the user will get and error
+    // We must pass here if called by SetDefaults. In that case, the user will get an error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
     optimizer_->set_status( d.get< Dictionary >( names::optimizer ) );
   }

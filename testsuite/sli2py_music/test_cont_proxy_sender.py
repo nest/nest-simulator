@@ -1,4 +1,7 @@
-# testsuite/regressiontests/CMakeLists.txt
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# test_cont_proxy_sender.py
 #
 # This file is part of NEST.
 #
@@ -17,12 +20,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# add regressiontests files
-file( GLOB scripts RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.sli )
 
-foreach ( script ${scripts} )
-  add_test( NAME regressiontests/${script}
-      COMMAND ${CMAKE_INSTALL_FULL_BINDIR}/nest
-      ${CMAKE_INSTALL_FULL_DOCDIR}/regressiontests/${script} # use the installed version
-      )
-endforeach ()
+import nest
+
+mcoproxy = nest.Create("music_cont_out_proxy")
+mcoproxy.port_name = "voltage_out"
+mcoproxy.record_from = ["V_m"]
+
+n1 = nest.Create("iaf_cond_exp", params={"I_e": 300.0})
+n2 = nest.Create("iaf_cond_exp", params={"I_e": 600.0})
+n = n1 + n2
+
+mcoproxy.targets = n
+
+nest.Simulate(20)

@@ -193,7 +193,7 @@ likely be limited to slightly different notation in the ``set()`` and ``get()`` 
 ``Dictionary`` class. As an example, consider ``aeif_cond_alpha``:
 
 Old NEST
-........
+^^^^^^^^
 
 .. code-block:: C++
 
@@ -214,7 +214,7 @@ Old NEST
    }
 
 New NEST
-........
+^^^^^^^^
 
 .. code-block:: C++
 

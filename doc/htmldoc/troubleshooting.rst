@@ -127,18 +127,25 @@ This error message means something in your environment is not set correctly, dep
 
    Type ``python`` or ``ipython`` in the terminal. The python version that is used will be displayed.
 
-   If the Python version displayed is 2.X, you need to run  ``python3`` or ``ipython3`` instead of ``python`` or ``ipython``.
+   If the Python version displayed is 2.X, you need update your system.
 
+   In case ``python`` return "command not found", consider one of the following:
+   1. Make sure your environment (venv, virtualenv, mamba, …) is correctly loaded
+   2. If you want to run with your system Python, make sure you have a
+      corresponding symlink in place (e.g. by installing ``sudo apt install
+      python-is-python3``)
 
 If your Python version is correct and you still have the same error, then try one of the following options:
 
-2a. If you compiled NEST from source
+2a. If you compiled NEST from source and installed into a non-standard location
 
-    * Your path variables may not be set correctly, in that case run:
+    * Make sure the installed NEST can be found by Python by adding the install
+    path to your ``PYTHONPATH`` variable. Find the path corresponding to your
+    installation and run a command in the following format:
 
           .. code-block:: bash
 
-              source <nest_install_dir>/bin/nest_vars.sh
+              export PYTHONPATH="<nest_install_dir>/lib/python.../site-packages"
 
 
 

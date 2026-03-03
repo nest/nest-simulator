@@ -22,7 +22,6 @@ if(NOT "${SKBUILD}" STREQUAL "")
       nest-server
       nest-server-mpi
       ${PROJECT_BINARY_DIR}/bin/nest-config
-      ${PROJECT_BINARY_DIR}/bin/nest_vars.sh
       DESTINATION ${SKBUILD_SCRIPTS_DIR}
       )
 else()
@@ -30,7 +29,6 @@ else()
       nest-server
       nest-server-mpi
       ${PROJECT_BINARY_DIR}/bin/nest-config
-      ${PROJECT_BINARY_DIR}/bin/nest_vars.sh
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       )
 endif()

@@ -59,11 +59,6 @@ Or install NEST with `NESTML <https://nestml.readthedocs.io/en/latest/index.html
     sudo apt install nest python3-nestml
     python3 -m pip install --upgrade odetoolbox pygsl antlr4-python3-runtime==4.10
 
-3. Set the environment
-
-.. code-block:: bash
-
-    source /usr/bin/nest_vars.sh
 
 --------
 

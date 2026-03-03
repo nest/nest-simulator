@@ -107,8 +107,6 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
 fi
 
 # source helpers to set environment variables and make functions available
-# shellcheck source=bin/nest_vars.sh.in
-. "${PREFIX}/bin/nest_vars.sh"
 # shellcheck source=testsuite/junit_xml.sh
 . "$(dirname "$0")/junit_xml.sh"
 # shellcheck source=testsuite/run_test.sh

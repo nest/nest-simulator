@@ -30,7 +30,7 @@ jobs:
 
       - name: "Run clang-format..."
         run: |
-          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
+          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*" -not -path "./cmake/CheckFiles/*")
           diff -u <(cat ${files}) <(clang-format ${files})
 
   shellcheck:

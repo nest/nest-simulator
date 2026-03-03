@@ -69,16 +69,16 @@ RecordablesMap< iaf_psc_exp_ps_lossless >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                       // ms
-  , tau_ex_( 2.0 )                                       // ms
-  , tau_in_( 2.0 )                                       // ms
-  , c_m_( 250.0 )                                        // pF
-  , t_ref_( 2.0 )                                        // ms
-  , E_L_( -70.0 )                                        // mV
-  , I_e_( 0.0 )                                          // pA
-  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
-  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
+  : tau_m_( 10.0 )                                        // ms
+  , tau_ex_( 2.0 )                                        // ms
+  , tau_in_( 2.0 )                                        // ms
+  , c_m_( 250.0 )                                         // pF
+  , t_ref_( 2.0 )                                         // ms
+  , E_L_( -70.0 )                                         // mV
+  , I_e_( 0.0 )                                           // pA
+  , U_th_( -55.0 - E_L_ )                                 // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() )  // mV
+  , U_reset_( -70.0 - E_L_ )                              // mV, rel to E_L_
 {
 }
 
@@ -210,7 +210,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const Dictionary& d, Node* node
 void
 nest::iaf_psc_exp_ps_lossless::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = y2_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = y2_ + p.E_L_;  // Membrane potential
   d[ names::is_refractory ] = is_refractory_;
   d[ names::t_spike ] = Time( Time::step( last_spike_step_ ) ).get_ms();
   d[ names::offset ] = last_spike_offset_;
@@ -265,7 +265,7 @@ nest::iaf_psc_exp_ps_lossless::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
-  B_.currents_.clear(); // includes resize
+  B_.currents_.clear();  // includes resize
   B_.logger_.reset();
 }
 
@@ -289,7 +289,7 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
   V_.P21_in_ = propagator_in_.evaluate( V_.h_ms_ );
 
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.refractory_steps_ >= 0 );  // since t_ref_ >= 0, this can only fail in error
 
   V_.a1_ = P_.tau_m_ * P_.tau_ex_;
   V_.a2_ = P_.tau_m_ * ( P_.tau_m_ - P_.tau_ex_ );
@@ -397,7 +397,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double last_offset = V_.h_ms_; // start of step
+      double last_offset = V_.h_ms_;  // start of step
 
       do
       {
@@ -425,17 +425,17 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
         // handle event
         if ( end_of_refract )
         {
-          S_.is_refractory_ = false; // return from refractoriness
+          S_.is_refractory_ = false;  // return from refractoriness
         }
         else
         {
           if ( ev_weight >= 0.0 )
           {
-            S_.I_syn_ex_ += ev_weight; // exc. spike input
+            S_.I_syn_ex_ += ev_weight;  // exc. spike input
           }
           else
           {
-            S_.I_syn_in_ += ev_weight; // inh. spike input
+            S_.I_syn_in_ += ev_weight;  // inh. spike input
           }
         }
 
@@ -448,7 +448,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( last_offset > 0 ) // not at end of step, do remainder
+      if ( last_offset > 0 )  // not at end of step, do remainder
       {
         const double spike_time_max = is_spike_( last_offset );
         propagate_( last_offset );
@@ -457,7 +457,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, spike_time_max );
         }
       }
-    } // else
+    }  // else
 
     // Set new input current. The current change occurs at the
     // end of the interval and thus must come AFTER the threshold-
@@ -466,7 +466,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
-  } // for
+  }  // for
 }
 
 // function handles exact spike times
@@ -560,7 +560,7 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, 
 void
 nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const long lag, const double spike_offs )
 {
-  assert( S_.y2_ >= P_.U_th_ ); // ensure we are superthreshold
+  assert( S_.y2_ >= P_.U_th_ );  // ensure we are superthreshold
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;

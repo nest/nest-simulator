@@ -148,5 +148,5 @@ ArchivingNode::get_spiketime_ms() const
   return last_spike_;
 }
 
-} // of namespace
+}  // of namespace
 #endif

@@ -140,7 +140,7 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
     const size_t tid = kernel().vp_manager.get_thread_id();
     connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
     secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
-  } // of omp parallel
+  }  // of omp parallel
 
   source_table_.initialize();
   target_table_.initialize();
@@ -644,7 +644,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   param_dicts.reserve( kernel().vp_manager.get_num_threads() );
   for ( size_t i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
   {
-    param_dicts.emplace_back(); // Adds empty dict for thread i, filled below
+    param_dicts.emplace_back();  // Adds empty dict for thread i, filled below
     for ( auto& param_key : p_keys )
     {
       // Check that the parameter exists for the synapse model.
@@ -699,7 +699,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       auto d = delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
-      int index_counter = 0; // Index of the current connection, for connection parameters
+      int index_counter = 0;  // Index of the current connection, for connection parameters
 
       for ( ; s != sources + n; ++s, ++t, ++index_counter )
       {
@@ -741,7 +741,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
           {
             const auto rtype_as_long = static_cast< long >( *param );
 
-            if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
+            if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 )  // To avoid rounding errors
             {
               const std::string msg =
                 String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first );
@@ -766,7 +766,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised )
@@ -1010,8 +1010,8 @@ nest::ConnectionManager::disconnect( const size_t tid,
 
   const auto lcid = find_connection( tid, syn_id, snode_id, tnode_id );
 
-  if ( lcid == invalid_index ) // this function should only be called
-                               // with a valid connection
+  if ( lcid == invalid_index )  // this function should only be called
+                                // with a valid connection
   {
     throw InexistentConnection();
   }
@@ -1773,7 +1773,7 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.resize_compressible_sources();
-    } // of omp single; implicit barrier
+    }  // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
     kernel().get_omp_synchronization_construction_stopwatch().start();
@@ -1782,7 +1782,7 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
-    } // of omp single; implicit barrier
+    }  // of omp single; implicit barrier
   }
 }
 
@@ -1802,7 +1802,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
 
   if ( syn_id >= csd_maps.size() )
   {
-    return true; // this thread has previously written all its targets
+    return true;  // this thread has previously written all its targets
   }
 
   do
@@ -1831,7 +1831,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
-        return false; // there is data left to communicate
+        return false;  // there is data left to communicate
       }
 
       TargetData next_target_data;
@@ -1845,7 +1845,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
       {
         TargetDataFields& target_fields = next_target_data.target_data;
         target_fields.set_syn_id( syn_id );
-        target_fields.set_tid( 0 ); // meaningless, use 0 as fill
+        target_fields.set_tid( 0 );  // meaningless, use 0 as fill
         target_fields.set_lcid( source_2_idx->second.get_source_index() );
       }
       else
@@ -1867,7 +1867,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
       send_buffer_position.increase( source_rank );
 
       ++source_2_idx;
-    } // end while
+    }  // end while
 
     ++syn_id;
     if ( syn_id < csd_maps.size() )

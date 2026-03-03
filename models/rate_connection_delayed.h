@@ -150,7 +150,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -180,6 +180,6 @@ rate_connection_delayed< targetidentifierT >::get_secondary_event()
   return std::make_unique< DelayedRateConnectionEvent >();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_CONNECTION_DELAYED_H */

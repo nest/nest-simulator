@@ -70,20 +70,20 @@ RecordablesMap< pp_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::pp_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )    // ms
-  , c_m_( 250.0 )     // pF
-  , dead_time_( 1.0 ) // ms
+  : tau_m_( 10.0 )     // ms
+  , c_m_( 250.0 )      // pF
+  , dead_time_( 1.0 )  // ms
   , dead_time_random_( 0 )
   , dead_time_shape_( 1 )
   , with_reset_( 1 )
-  , tau_sfa_( 34.0 ) // ms
-  , q_sfa_( 0.0 )    // mV, reasonable default is 7 mV [2]
+  , tau_sfa_( 34.0 )  // ms
+  , q_sfa_( 0.0 )     // mV, reasonable default is 7 mV [2]
   , multi_param_( 1 )
-  , c_1_( 0.0 )             // Hz / mV
-  , c_2_( 1.238 )           // Hz / mV
-  , c_3_( 0.25 )            // 1.0 / mV
-  , I_e_( 0.0 )             // pA
-  , t_ref_remaining_( 0.0 ) // ms
+  , c_1_( 0.0 )              // Hz / mV
+  , c_2_( 1.238 )            // Hz / mV
+  , c_3_( 0.25 )             // 1.0 / mV
+  , I_e_( 0.0 )              // pA
+  , t_ref_remaining_( 0.0 )  // ms
 {
   tau_sfa_.clear();
   q_sfa_.clear();
@@ -222,8 +222,8 @@ nest::pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::pp_psc_delta::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m ] = y3_;  // Membrane potential
-  d[ names::E_sfa ] = q_; // Adaptive threshold potential
+  d[ names::V_m ] = y3_;   // Membrane potential
+  d[ names::E_sfa ] = q_;  // Adaptive threshold potential
 }
 
 void
@@ -279,9 +279,9 @@ nest::pp_psc_delta::init_state_()
 void
 nest::pp_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear();   //!< includes resize
-  B_.currents_.clear(); //!< includes resize
-  B_.logger_.reset();   //!< includes resize
+  B_.spikes_.clear();    //!< includes resize
+  B_.currents_.clear();  //!< includes resize
+  B_.logger_.reset();    //!< includes resize
   ArchivingNode::clear_history();
 }
 
@@ -404,7 +404,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
-        if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
+        if ( n_spikes > 0 )  // Is there a spike? Then set the new dead time.
         {
           // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
@@ -440,10 +440,10 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           {
             S_.y3_ = 0.0;
           }
-        } // S_.y3_ = P_.V_reset_;
-      } // if (rate > 0.0)
+        }  // S_.y3_ = P_.V_reset_;
+      }  // if (rate > 0.0)
     }
-    else // Neuron is within dead time
+    else  // Neuron is within dead time
     {
       --S_.r_;
     }
@@ -487,4 +487,4 @@ nest::pp_psc_delta::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

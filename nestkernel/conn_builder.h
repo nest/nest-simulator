@@ -216,10 +216,10 @@ protected:
    */
   bool loop_over_targets_() const;
 
-  NodeCollectionPTR sources_; //!< Population to connect from
-  NodeCollectionPTR targets_; //!< Population to connect to
+  NodeCollectionPTR sources_;  //!< Population to connect from
+  NodeCollectionPTR targets_;  //!< Population to connect to
 
-  ThirdOutBuilder* third_out_; //!< To be triggered when primary connection is created
+  ThirdOutBuilder* third_out_;  //!< To be triggered when primary connection is created
 
   bool allow_autapses_;
   bool allow_multapses_;
@@ -381,9 +381,9 @@ private:
     {
     }
 
-    size_t source_gid; //!< GID of source node to connect from
-    size_t third_gid;  //!< GID of third-factor node to connect to
-    size_t third_rank; //!< Rank of third-factor node (stored locally as it is needed multiple times)
+    size_t source_gid;  //!< GID of source node to connect from
+    size_t third_gid;   //!< GID of third-factor node to connect to
+    size_t third_rank;  //!< Rank of third-factor node (stored locally as it is needed multiple times)
   };
 
   //! Container for register source-third connections, one per thread via pointer for collision free operation in
@@ -524,7 +524,7 @@ private:
   connect_() override
   {
     assert( false );
-  } //!< only call third_connect()
+  }  //!< only call third_connect()
 
   /**
    * For block pool, return index of first pool element for given target node.
@@ -533,10 +533,10 @@ private:
    */
   size_t get_first_pool_index_( const size_t target_index ) const;
 
-  double p_;                 //!< probability of creating a third-factor connection
-  bool random_pool_;         //!< random or block pool?
-  size_t pool_size_;         //!< number of nodes per pool
-  size_t targets_per_third_; //!< number of target nodes per third-factor node
+  double p_;                  //!< probability of creating a third-factor connection
+  bool random_pool_;          //!< random or block pool?
+  size_t pool_size_;          //!< number of nodes per pool
+  size_t targets_per_third_;  //!< number of target nodes per third-factor node
 
   /**
    * Type for single pool of third-factor nodes
@@ -557,7 +557,7 @@ private:
    * The pools are deleted when the ConnBuilder is destroyed at the end of the connect call.
    * We store a pointer instead of the map itself to ensure that the map is in thread-local memory.
    */
-  std::vector< TgtPoolMap_* > pools_; // outer: threads
+  std::vector< TgtPoolMap_* > pools_;  // outer: threads
 };
 
 
@@ -727,7 +727,7 @@ protected:
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterPTR p_; //!< connection probability
+  ParameterPTR p_;  //!< connection probability
 };
 
 class PoissonBuilder : public BipartiteConnBuilder
@@ -744,7 +744,7 @@ protected:
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterPTR pairwise_avg_num_conns_; //!< Mean number of connections
+  ParameterPTR pairwise_avg_num_conns_;  //!< Mean number of connections
 };
 
 class SymmetricBernoulliBuilder : public BipartiteConnBuilder
@@ -766,7 +766,7 @@ protected:
   void connect_() override;
 
 private:
-  double p_; //!< connection probability
+  double p_;  //!< connection probability
 };
 
 class SPBuilder : public BipartiteConnBuilder
@@ -860,6 +860,6 @@ BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip 
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

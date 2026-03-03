@@ -23,8 +23,8 @@
 #include "event_delivery_manager.h"
 
 // C++ includes:
-#include <algorithm> // rotate
-#include <numeric>   // accumulate
+#include <algorithm>  // rotate
+#include <numeric>    // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -111,7 +111,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     {
       off_grid_emitted_spikes_register_[ tid ] = new std::vector< OffGridSpikeDataWithRank >();
     }
-  } // of omp parallel
+  }  // of omp parallel
 }
 
 void
@@ -122,7 +122,7 @@ EventDeliveryManager::finalize( const bool )
   {
     delete vec_spikedata_ptr;
   }
-  emitted_spikes_register_.clear(); // remove stale pointers
+  emitted_spikes_register_.clear();  // remove stale pointers
 
   for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
   {
@@ -692,7 +692,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         }
       }
     }
-    else // compressed spikes
+    else  // compressed spikes
     {
       for ( size_t i = 0; i < num_batches; ++i )
       {
@@ -768,8 +768,8 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
-    } // if-else not compressed
-  } // for rank
+    }  // if-else not compressed
+  }  // for rank
 }
 
 
@@ -799,7 +799,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp master; (no barrier)
+    }  // of omp master; (no barrier)
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -827,7 +827,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       sw_communicate_target_data_.start();
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
-    } // of omp master (no barriers!)
+    }  // of omp master (no barriers!)
 #pragma omp barrier
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
@@ -842,7 +842,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       }
 #pragma omp barrier
     }
-  } // of while
+  }  // of while
 
   kernel().connection_manager.clear_source_table( tid );
 }
@@ -871,7 +871,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp master; no barrier
+    }  // of omp master; no barrier
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -898,7 +898,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       sw_communicate_target_data_.start();
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
-    } // of omp master (no barrier)
+    }  // of omp master (no barrier)
 #pragma omp barrier
 
     // Up to here, gather_completed_checker_ just has local info: has this thread been able to write
@@ -913,13 +913,13 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #pragma omp master
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
-      } // of omp master (no barrier)
+      }  // of omp master (no barrier)
       kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
       kernel().get_omp_synchronization_construction_stopwatch().stop();
     }
 
-  } // of while
+  }  // of while
 
   kernel().connection_manager.clear_source_table( tid );
 }
@@ -956,7 +956,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   {
     valid_next_target_data = kernel().connection_manager.get_next_target_data(
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
-    if ( valid_next_target_data ) // add valid entry to MPI buffer
+    if ( valid_next_target_data )  // add valid entry to MPI buffer
     {
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -970,7 +970,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
-        if ( send_buffer_position.are_all_chunks_filled() ) // buffer is full
+        if ( send_buffer_position.are_all_chunks_filled() )  // buffer is full
         {
           return is_source_table_read;
         }
@@ -985,7 +985,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         send_buffer_position.increase( source_rank );
       }
     }
-    else // all connections have been processed
+    else  // all connections have been processed
     {
       // mark end of valid data for each rank
       for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
@@ -1000,8 +1000,8 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         }
       }
       return is_source_table_read;
-    } // of else
-  } // of while(true)
+    }  // of else
+  }  // of while(true)
 }
 
 bool
@@ -1084,4 +1084,4 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
-} // of namespace nest
+}  // of namespace nest

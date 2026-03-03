@@ -822,6 +822,6 @@ operator<<( std::ostream& os, const Position< D, T >& pos )
   return os;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

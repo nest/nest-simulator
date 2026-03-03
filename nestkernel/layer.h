@@ -437,8 +437,8 @@ protected:
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
-  Position< D > extent_;      //!< size of layer
-  std::bitset< D > periodic_; //!< periodic b.c.
+  Position< D > extent_;       //!< size of layer
+  std::bitset< D > periodic_;  //!< periodic b.c.
 
   /**
    * Global position information for a single layer
@@ -688,6 +688,6 @@ Layer< D >::clear_vector_cache_() const
   cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

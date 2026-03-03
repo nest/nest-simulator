@@ -224,14 +224,14 @@ protected:
   {
     static const tic_t tics = tic_t_max / Range::INF_MARGIN + 1;
     static const long steps = delay_max;
-#define LIM_POS_INF_ms DBL_MAX // because C++ bites
+#define LIM_POS_INF_ms DBL_MAX  // because C++ bites
   } LIM_POS_INF;
 
   static struct LimitNegInf
   {
     static const tic_t tics = -tic_t_max / Range::INF_MARGIN - 1;
     static const long steps = -delay_max;
-#define LIM_NEG_INF_ms ( -DBL_MAX ) // c++ bites
+#define LIM_NEG_INF_ms ( -DBL_MAX )  // c++ bites
   } LIM_NEG_INF;
 
   /////////////////////////////////////////////////////////////
@@ -358,12 +358,12 @@ public:
   succ() const
   {
     return tic( tics + Range::TICS_PER_STEP );
-  } // check range
+  }  // check range
   Time
   pred() const
   {
     return tic( tics - Range::TICS_PER_STEP );
-  } // check range
+  }  // check range
 
   /////////////////////////////////////////////////////////////
   // Subtypes of Time (bool tests)
@@ -387,7 +387,7 @@ public:
   bool
   is_pos_inf() const
   {
-    return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
+    return tics >= LIM_POS_INF.tics;  // see comment for is_neg_inf()
   }
 
   bool
@@ -593,13 +593,13 @@ operator>=( const Time& t1, const Time& t2 )
 inline Time
 operator+( const Time& t1, const Time& t2 )
 {
-  return Time::tic( t1.tics + t2.tics ); // check range
+  return Time::tic( t1.tics + t2.tics );  // check range
 }
 
 inline Time
 operator-( const Time& t1, const Time& t2 )
 {
-  return Time::tic( t1.tics - t2.tics ); // check range
+  return Time::tic( t1.tics - t2.tics );  // check range
 }
 
 inline Time
@@ -609,7 +609,7 @@ operator*( const long factor, const Time& t )
   // if no overflow:
   if ( t.tics == 0 or n / t.tics == factor )
   {
-    return Time::tic( n ); // check range
+    return Time::tic( n );  // check range
   }
   if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
   {
@@ -626,7 +626,7 @@ operator*( const Time& t, long factor )
 {
   return factor * t;
 }
-} // namespace
+}  // namespace
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );
 

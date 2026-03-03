@@ -53,7 +53,7 @@ RecordablesMap< step_current_generator >::create()
 
 nest::step_current_generator::Parameters_::Parameters_()
   : amp_time_stamps_()
-  , amp_values_() // pA
+  , amp_values_()  // pA
   , allow_offgrid_amp_times_( false )
 {
 }
@@ -81,7 +81,7 @@ nest::step_current_generator::Parameters_::operator=( const Parameters_& p )
 }
 
 nest::step_current_generator::State_::State_()
-  : I_( 0.0 ) // pA
+  : I_( 0.0 )  // pA
 {
 }
 
@@ -213,7 +213,7 @@ nest::step_current_generator::Parameters_::set( const Dictionary& d, Buffers_& b
 
   if ( times_changed or values_changed )
   {
-    b.idx_ = 0; // reset if we got new data
+    b.idx_ = 0;  // reset if we got new data
   }
 }
 
@@ -326,7 +326,7 @@ nest::step_current_generator::handle( DataLoggingRequest& e )
 void
 nest::step_current_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   assert( time_amplitude.size() % 2 == 0 );
 

@@ -266,4 +266,4 @@ nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
   Ca_minus_ += beta_Ca_;
 }
 
-} // of namespace nest
+}  // of namespace nest

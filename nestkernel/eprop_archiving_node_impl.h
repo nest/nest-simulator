@@ -125,8 +125,8 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
 {
-  if ( eprop_history_.empty()  // nothing to remove
-    or update_history_.empty() // no time markers to check
+  if ( eprop_history_.empty()   // nothing to remove
+    or update_history_.empty()  // no time markers to check
   )
   {
     return;
@@ -158,8 +158,8 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
 {
-  if ( eprop_history_.empty()     // nothing to remove
-    or update_history_.size() < 2 // no time markers to check
+  if ( eprop_history_.empty()      // nothing to remove
+    or update_history_.size() < 2  // no time markers to check
   )
   {
     return;
@@ -186,6 +186,6 @@ EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
   return Time::get_resolution().get_ms() * eprop_history_.size();
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_ARCHIVING_NODE_IMPL_H
+#endif  // EPROP_ARCHIVING_NODE_IMPL_H

@@ -579,4 +579,4 @@ get_layer_status( NodeCollectionPTR )
   return {};
 }
 
-} // namespace nest
+}  // namespace nest

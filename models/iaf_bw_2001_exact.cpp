@@ -69,20 +69,20 @@ RecordablesMap< iaf_bw_2001_exact >::create()
  * --------------------------------------------------------------------------- */
 
 nest::iaf_bw_2001_exact::Parameters_::Parameters_()
-  : E_L( -70.0 )          // mV
-  , E_ex( 0.0 )           // mV
-  , E_in( -70.0 )         // mV
-  , V_th( -55.0 )         // mV
-  , V_reset( -60.0 )      // mV
-  , C_m( 500.0 )          // pF
-  , g_L( 25.0 )           // nS
-  , t_ref( 2.0 )          // ms
-  , tau_AMPA( 2.0 )       // ms
-  , tau_GABA( 5.0 )       // ms
-  , tau_rise_NMDA( 2.0 )  // ms
-  , tau_decay_NMDA( 100 ) // ms
-  , alpha( 0.5 )          // 1 / ms
-  , conc_Mg2( 1 )         // mM
+  : E_L( -70.0 )           // mV
+  , E_ex( 0.0 )            // mV
+  , E_in( -70.0 )          // mV
+  , V_th( -55.0 )          // mV
+  , V_reset( -60.0 )       // mV
+  , C_m( 500.0 )           // pF
+  , g_L( 25.0 )            // nS
+  , t_ref( 2.0 )           // ms
+  , tau_AMPA( 2.0 )        // ms
+  , tau_GABA( 5.0 )        // ms
+  , tau_rise_NMDA( 2.0 )   // ms
+  , tau_decay_NMDA( 100 )  // ms
+  , alpha( 0.5 )           // 1 / ms
+  , conc_Mg2( 1 )          // mM
   , gsl_error_tol( 1e-3 )
 {
 }
@@ -90,13 +90,13 @@ nest::iaf_bw_2001_exact::Parameters_::Parameters_()
 nest::iaf_bw_2001_exact::State_::State_( const Parameters_& p )
   : state_vec_size( 0 )
   , ode_state_( nullptr )
-  , num_ports_( SynapseTypes::GABA ) // only AMPA/GABA for now, add NMDA later
+  , num_ports_( SynapseTypes::GABA )  // only AMPA/GABA for now, add NMDA later
   , r_( 0 )
 {
   ode_state_ = new double[ s_NMDA_base ];
   assert( ode_state_ );
 
-  ode_state_[ V_m ] = p.E_L; // initialize to reversal potential
+  ode_state_[ V_m ] = p.E_L;  // initialize to reversal potential
   ode_state_[ s_AMPA ] = 0.0;
   ode_state_[ s_GABA ] = 0.0;
 
@@ -223,7 +223,7 @@ nest::iaf_bw_2001_exact::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_bw_2001_exact::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = ode_state_[ V_m ]; // Membrane potential
+  d[ names::V_m ] = ode_state_[ V_m ];  // Membrane potential
   d[ names::s_AMPA ] = ode_state_[ s_AMPA ];
   d[ names::s_GABA ] = ode_state_[ s_GABA ];
 }
@@ -324,14 +324,14 @@ nest::iaf_bw_2001_exact::init_buffers_()
 
   for ( auto& sb : B_.spikes_ )
   {
-    sb.clear(); // includes resize
+    sb.clear();  // includes resize
   }
 
-  B_.currents_.clear(); // includes resize
+  B_.currents_.clear();  // includes resize
 
   B_.weights_.resize( S_.num_ports_ - SynapseTypes::GABA + 1, 0.0 );
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 
   if ( B_.s_ == nullptr )
@@ -454,11 +454,11 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,              // system of ODE
-        &t,                    // from t
-        B_.step_,              // to t <= step
-        &B_.integration_step_, // integration step size
-        S_.ode_state_ );       // neuronal state
+        &B_.sys_,               // system of ODE
+        &t,                     // from t
+        B_.step_,               // to t <= step
+        &B_.integration_step_,  // integration step size
+        S_.ode_state_ );        // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
@@ -473,7 +473,7 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
     for ( size_t i = NMDA - 1; i < B_.spikes_.size(); ++i )
     // i starts at 2, runs through all NMDA spikes
     {
-      const size_t si = i - ( NMDA - 1 ); // index which starts at 0
+      const size_t si = i - ( NMDA - 1 );  // index which starts at 0
 
       assert( si >= 0 );
       assert( State_::s_NMDA_base + si * 2 <= S_.state_vec_size );
@@ -486,7 +486,7 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
     {
       // neuron is absolute refractory
       --S_.r_;
-      S_.ode_state_[ State_::V_m ] = P_.V_reset; // clamp potential
+      S_.ode_state_[ State_::V_m ] = P_.V_reset;  // clamp potential
     }
     else if ( S_.ode_state_[ State_::V_m ] >= P_.V_th )
     {
@@ -558,4 +558,4 @@ nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

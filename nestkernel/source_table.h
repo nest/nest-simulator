@@ -531,6 +531,6 @@ SourceTable::clear_compressed_spike_data_map()
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_TABLE_H */

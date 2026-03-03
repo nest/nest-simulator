@@ -188,15 +188,15 @@ eprop_readout::eprop_readout( const eprop_readout& n )
 void
 eprop_readout::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_readout::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
 
@@ -313,10 +313,10 @@ eprop_readout::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double L = 0.0;                // error signal
-  double grad = 0.0;             // gradient
+  double z = 0.0;                 // spiking variable
+  double z_current_buffer = 1.0;  // buffer containing the spike that triggered the current integration
+  double L = 0.0;                 // error signal
+  double grad = 0.0;              // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
@@ -359,4 +359,4 @@ eprop_readout::compute_gradient( const long t_spike,
   }
 }
 
-} // namespace nest
+}  // namespace nest

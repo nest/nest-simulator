@@ -58,11 +58,11 @@ RecordablesMap< noise_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::noise_generator::Parameters_::Parameters_()
-  : mean_( 0.0 )    // pA
-  , std_( 0.0 )     // pA / sqrt(s)
-  , std_mod_( 0.0 ) // pA / sqrt(s)
-  , freq_( 0.0 )    // Hz
-  , phi_deg_( 0.0 ) // degree
+  : mean_( 0.0 )     // pA
+  , std_( 0.0 )      // pA / sqrt(s)
+  , std_mod_( 0.0 )  // pA / sqrt(s)
+  , freq_( 0.0 )     // Hz
+  , phi_deg_( 0.0 )  // degree
   , dt_( get_default_dt() )
   , num_targets_( 0 )
 {
@@ -75,7 +75,7 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   , freq_( p.freq_ )
   , phi_deg_( p.phi_deg_ )
   , dt_( p.dt_ )
-  , num_targets_( 0 ) // we do not copy connections
+  , num_targets_( 0 )  // we do not copy connections
 {
   if ( dt_.is_step() )
   {
@@ -107,8 +107,8 @@ nest::noise_generator::Parameters_::operator=( const Parameters_& p )
 
 nest::noise_generator::State_::State_()
   : y_0_( 0.0 )
-  , y_1_( 0.0 )   // pA
-  , I_avg_( 0.0 ) // pA
+  , y_1_( 0.0 )    // pA
+  , I_avg_( 0.0 )  // pA
 {
 }
 
@@ -367,7 +367,7 @@ nest::noise_generator::handle( DataLoggingRequest& e )
 void
 nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_;
 
   // For the input backend

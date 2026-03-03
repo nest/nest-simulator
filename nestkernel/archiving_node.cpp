@@ -272,4 +272,4 @@ nest::ArchivingNode::clear_history()
 }
 
 
-} // of namespace nest
+}  // of namespace nest

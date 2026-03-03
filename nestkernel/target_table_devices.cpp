@@ -82,7 +82,7 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
     target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
     sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
-  } // end omp parallel
+  }  // end omp parallel
 }
 
 void

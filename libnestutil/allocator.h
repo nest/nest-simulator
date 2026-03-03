@@ -63,8 +63,8 @@ class pool
   class chunk
   {
     const size_t csize;
-    chunk( const chunk& );            //!< not implemented
-    chunk& operator=( const chunk& ); //!< not implemented
+    chunk( const chunk& );             //!< not implemented
+    chunk& operator=( const chunk& );  //!< not implemented
 
   public:
     chunk* next;
@@ -93,18 +93,18 @@ class pool
   size_t initial_block_size;
   size_t growth_factor;
 
-  size_t block_size;     //!< number of elements per chunk
-  size_t el_size;        //!< sizeof an element
-  size_t instantiations; //!< number of instantiated elements
-  size_t total;          //!< total number of allocated elements
-  size_t capacity;       //!< number of free elements
-  chunk* chunks;         //!< linked list of memory chunks
-  link* head;            //!< head of free list
+  size_t block_size;      //!< number of elements per chunk
+  size_t el_size;         //!< sizeof an element
+  size_t instantiations;  //!< number of instantiated elements
+  size_t total;           //!< total number of allocated elements
+  size_t capacity;        //!< number of free elements
+  chunk* chunks;          //!< linked list of memory chunks
+  link* head;             //!< head of free list
 
-  bool initialized_; //!< True if the pool is initialized.
+  bool initialized_;  //!< True if the pool is initialized.
 
-  void grow( size_t ); //!< make pool larger by n elements
-  void grow();         //!< make pool larger
+  void grow( size_t );  //!< make pool larger by n elements
+  void grow();          //!< make pool larger
 
 
 public:
@@ -120,7 +120,7 @@ public:
   explicit pool( size_t n, size_t initial = 100, size_t growth = 1 );
   void init( size_t n, size_t initial = 100, size_t growth = 1 );
 
-  ~pool(); //!< deallocate ALL memory
+  ~pool();  //!< deallocate ALL memory
 
   /**
     Increase the pools capacity (free slots) by n.
@@ -138,8 +138,8 @@ public:
     return total - instantiations;
   }
 
-  inline void* alloc();        //!< allocate one element
-  inline void free( void* p ); //!< put element back into the pool
+  inline void* alloc();         //!< allocate one element
+  inline void free( void* p );  //!< put element back into the pool
   size_t
   size_of() const
   {

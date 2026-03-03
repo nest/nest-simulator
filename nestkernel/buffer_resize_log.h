@@ -44,9 +44,9 @@ public:
   void to_dict( Dictionary& ) const;
 
 private:
-  std::vector< long > time_steps_;             //!< Time of resize event in steps
-  std::vector< long > global_max_spikes_sent_; //!< Spike number that triggered resize
-  std::vector< long > new_buffer_size_;        //!< Buffer size after resize
+  std::vector< long > time_steps_;              //!< Time of resize event in steps
+  std::vector< long > global_max_spikes_sent_;  //!< Spike number that triggered resize
+  std::vector< long > new_buffer_size_;         //!< Buffer size after resize
 };
 
 }

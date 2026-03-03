@@ -164,6 +164,6 @@ nest::RandomManager::get_vp_specific_rng( size_t tid ) const
   return vp_specific_rngs_[ tid ];
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* RANDOM_MANAGER_H */

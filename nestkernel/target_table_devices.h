@@ -261,6 +261,6 @@ TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) c
   return false;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

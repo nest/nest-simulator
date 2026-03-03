@@ -1599,6 +1599,6 @@ ParameterPTR
 dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter );
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif

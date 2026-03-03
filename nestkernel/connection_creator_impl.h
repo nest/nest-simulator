@@ -238,7 +238,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
-  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() )  // MaskedLayer will be freed by PoolWrapper d'tor
   {
     pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
   }
@@ -274,14 +274,14 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
             connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, source );
           }
         }
-      } // for target_begin
+      }  // for target_begin
     }
     catch ( ... )
     {
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised_ )
@@ -311,7 +311,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   //     connection conditionally
 
   PoolWrapper_< D > pool;
-  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() )  // MaskedLayer will be freed by PoolWrapper d'tor
   {
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
@@ -360,14 +360,14 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
           connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, target );
         }
 
-      } // end for
+      }  // end for
     }
     catch ( ... )
     {
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised_ )
@@ -395,7 +395,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
-  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() )  // MaskedLayer will be freed by PoolWrapper d'tor
   {
     pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
   }
@@ -432,13 +432,13 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
             connect_to_target_poisson_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
           }
         }
-      } // for target_begin
+      }  // for target_begin
     }
     catch ( ... )
     {
       exceptions_raised_.at( thread_id ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised_ )
@@ -897,6 +897,6 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

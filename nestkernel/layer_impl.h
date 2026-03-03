@@ -83,7 +83,7 @@ Layer< D >::set_status( const Dictionary& d )
   {
     if ( d.get< bool >( names::edge_wrap ) )
     {
-      periodic_ = ( 1 << D ) - 1; // All dimensions periodic
+      periodic_ = ( 1 << D ) - 1;  // All dimensions periodic
     }
   }
 }
@@ -311,8 +311,8 @@ Layer< D >::dump_connections( std::ostream& out,
   std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
 
   // Iterate over connectome and write every connection, looking up source position only if source neuron changes
-  size_t previous_source_node_id = 0; // dummy initial value, cannot be node_id of any node
-  Position< D > source_pos;           // dummy value
+  size_t previous_source_node_id = 0;  // dummy initial value, cannot be node_id of any node
+  Position< D > source_pos;            // dummy value
   for ( const auto& conn : connectome )
   {
     const size_t source_node_id = conn.get_source_node_id();
@@ -323,7 +323,7 @@ Layer< D >::dump_connections( std::ostream& out,
       const auto it = std::find_if( src_vec->begin(),
         src_vec->end(),
         [ source_node_id ]( const std::pair< Position< D >, size_t >& p ) { return p.second == source_node_id; } );
-      assert( it != src_vec->end() ); // internal error if node not found
+      assert( it != src_vec->end() );  // internal error if node not found
 
       source_pos = it->first;
       previous_source_node_id = source_node_id;
@@ -360,7 +360,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     return;
   }
 
-  try // Try to cast to GridMask
+  try  // Try to cast to GridMask
   {
     const GridMask< D >& grid_mask = dynamic_cast< const GridMask< D >& >( *mask_ );
 
@@ -405,7 +405,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 
     // Not a grid mask
 
-    try // Try to cast to correct dimension Mask
+    try  // Try to cast to correct dimension Mask
     {
       const Mask< D >& mask = dynamic_cast< const Mask< D >& >( *mask_ );
 
@@ -433,6 +433,6 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

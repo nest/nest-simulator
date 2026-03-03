@@ -37,8 +37,6 @@
 
 #include "logging.h"
 
-#include <format>
-
 class dictionary_;
 class Dictionary;
 

@@ -54,9 +54,9 @@ def test_all_locals_included(network):
 
 def test_consistency(network):
     """
-    Test that we get the same results as with GetLocalNodeCollection.
+    Test that we get the same results as with NodeCollection.local.
     """
 
     nodes, lnodes = network
-    lc = nest.GetLocalNodeCollection(nodes)
+    lc = nodes[nodes.local]
     assert set(n.global_id for n in lc) == set(n.global_id for n in lnodes)

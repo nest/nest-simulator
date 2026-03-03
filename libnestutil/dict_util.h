@@ -41,7 +41,7 @@ template < typename T >
 bool
 update_value_param( Dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
-  assert( node != nullptr ); // PYNEST-NG-FUTURE: Receive node as const Node&, but that needs many changes throughout
+  assert( node != nullptr );
   const auto it = d.find( key );
   if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second.item ) )
   {

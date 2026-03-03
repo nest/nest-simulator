@@ -30,14 +30,6 @@ import numpy as np
 from .. import nestkernel_api as nestkernel
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 
-__all__ = [
-    "_connect_layers_needed",
-    "_connect_spatial",
-    "_process_conn_spec",
-    "_process_spatial_projections",
-    "_process_syn_spec",
-]
-
 
 def _process_conn_spec(conn_spec):
     """Processes the connectivity specifications from None, string or dictionary to a dictionary."""

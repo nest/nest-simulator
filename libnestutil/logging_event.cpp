@@ -22,9 +22,12 @@
 
 #include "logging_event.h"
 
+#include "kernel_manager.h"
+
 // C++ includes:
 #include <cassert>
 #include <ctime>
+#include <iomanip>
 
 nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   const std::string& fctn,
@@ -43,6 +46,11 @@ nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   time( const_cast< time_t* >( &time_stamp ) );
 }
 
+nest::VerbosityLevel
+nest::LoggingEvent::nest_verbosity_level() const
+{
+  return kernel().logging_manager.verbosity();
+}
 namespace nest
 {
 
@@ -87,10 +95,15 @@ operator<<( std::ostream& out, const LoggingEvent& e )
     break;
   }
   // print time and day
-  out << "[" << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "." << ptm->tm_mday << " " << ptm->tm_hour << ":"
-      << ptm->tm_min << ":" << ptm->tm_sec << " ";
+  out << "[" << ptm->tm_year + 1900 << "-" << std::setfill( '0' ) << std::setw( 2 ) << ptm->tm_mon + 1 << "-"
+      << std::setw( 2 ) << ptm->tm_mday << " " << std::setw( 2 ) << ptm->tm_hour << ":" << std::setw( 2 ) << ptm->tm_min
+      << ":" << std::setw( 2 ) << ptm->tm_sec;
 
-  out << e.file_name << ":" << e.line_number << " @ " << e.function << "] : " << e.message;
+  if ( e.nest_verbosity_level() <= VerbosityLevel::DEBUG )
+  {
+    out << " " << e.file_name << ":" << e.line_number << " @ " << e.function;
+  }
+  out << "] " << e.message;
 
   return out;
 }

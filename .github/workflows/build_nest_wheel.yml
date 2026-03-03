@@ -1,0 +1,318 @@
+name: Build NEST simulator wheels
+
+on:
+  push:
+    branches: [master, pynest-ng, hep_pynest-ng]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        # TODO: Conditional matrix: fewer builds for PRs, full builds for releases/pushes
+        # os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-24.04"]') || fromJSON('["macos-15-intel", "macos-15", "ubuntu-24.04"]') }}
+        os: ["macos-15-intel", "macos-15", "ubuntu-24.04"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        with:
+          package-dir: .
+          output-dir: wheelhouse
+          config-file: "{package}/pyproject.toml"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    name: Upload wheels to pypi
+    needs: [test_local_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+    # Only run on releases or manual workflow dispatch from non-fork branches
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.repository.fork == false) || (github.event_name == 'push' && github.event.repository.fork == false)
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          # unpacks all CIBW artifacts into dist/
+          pattern: cibw-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: false
+          verbose: true
+          # only for test pypi
+          repository-url: https://test.pypi.org/legacy/
+
+  test_local_wheels:
+    name: Test local wheels on ${{ matrix.os }}
+    needs: [build_wheels]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false  # Continue testing all platforms even if one fails
+      matrix:
+        # Test only on key platforms for speed
+        include:
+          - os: ubuntu-latest
+            name-suffix: "ubuntu"
+            artifact-os: "ubuntu-24.04"
+          - os: macos-15
+            name-suffix: "macos-arm"
+            artifact-os: "macos-15"
+    steps:
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-wheels-${{ matrix.artifact-os }}-*
+          path: wheelhouse
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install local wheel and test
+        run: |
+          # Create and activate virtual environment
+          python -m venv test_venv
+          . test_venv/bin/activate
+          python -m pip install --upgrade pip
+
+          # Get system info for wheel selection
+          PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          ARCH=$(uname -m)
+          OS=$(uname -s)
+          echo "Testing on Python $PYTHON_VERSION, OS: $OS, Architecture: $ARCH"
+
+          # Find compatible wheel with fallback chain
+          wheel_file=$(
+            find wheelhouse -name "*.whl" | {
+              if [ "$OS" = "Darwin" ]; then
+                # macOS: prefer architecture-specific, fallback to any macOS
+                grep "cp${PYTHON_VERSION}.*macosx.*${ARCH}" | head -1 || \
+                grep "cp${PYTHON_VERSION}.*macosx" | head -1
+              else
+                # Linux: prefer manylinux, avoid musllinux on glibc systems
+                grep "cp${PYTHON_VERSION}.*manylinux" | head -1 || \
+                grep -v musllinux | grep "cp${PYTHON_VERSION}" | head -1
+              fi
+            } || find wheelhouse -name "nest_simulator-*.whl" | head -1
+          )
+
+          # Validate that the wheel file exists before installing
+          if [ -z "$wheel_file" ] || [ ! -f "$wheel_file" ]; then
+            echo "::error::No compatible wheel file found for this platform (Python $PYTHON_VERSION, OS: $OS, ARCH: $ARCH)."
+            echo "Available wheels:"
+            find wheelhouse -name "*.whl" || echo "None found"
+            exit 1
+          fi
+          echo "Selected wheel: $(basename "$wheel_file")"
+
+          # Install wheel and dependencies
+          python -m pip install "$wheel_file" numpy matplotlib cython
+
+          # Test import
+          python -c "import nest; print('Local wheel test successful:', nest.help())"
+
+  test_uploaded_package:
+    name: Test uploaded package on ${{ matrix.os }}
+    needs: [upload_pypi]
+    runs-on: ${{ matrix.os }}
+    # TODO: Only run comprehensive tests on releases or manual dispatch
+    # if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name-suffix: "ubuntu"
+          - os: ubuntu-latest
+            container: debian:latest
+            name-suffix: "debian"
+          # - os: ubuntu-latest
+          #  container: alpine:latest
+          #  name-suffix: "alpine"
+          # - os: ubuntu-latest
+          #   container: rockylinux:8
+          #   name-suffix: "rocky8"
+          - os: ubuntu-latest
+            container: fedora:latest
+            name-suffix: "fedora"
+          - os: macos-15-intel
+            name-suffix: "macos-intel"
+          - os: macos-15
+            name-suffix: "macos-arm"
+    container: ${{ matrix.container }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-${{ matrix.name-suffix || 'default' }}-pip-test-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.name-suffix || 'default' }}-pbuildsip-test-
+            ${{ runner.os }}-pip-
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          # Check if we're in a container (root user) or native runner (needs sudo)
+          SUDO_CMD=""
+          if [ "$EUID" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+            SUDO_CMD="sudo"
+          fi
+
+          if command -v apt-get >/dev/null 2>&1; then
+            $SUDO_CMD apt-get update
+            $SUDO_CMD apt-get install -y python3 python3-pip openmpi-bin libopenmpi-dev
+          elif command -v apk >/dev/null 2>&1; then
+            $SUDO_CMD apk update
+            $SUDO_CMD apk add python3 py3-pip openmpi openmpi-dev build-base gcompat
+            $SUDO_CMD apk add gcc musl-dev python3-dev libffi-dev openssl-dev make
+          elif command -v yum >/dev/null 2>&1; then
+            $SUDO_CMD yum update -y
+            $SUDO_CMD yum install -y python3 python3-pip openmpi-devel gcc-c++ make
+          elif command -v dnf >/dev/null 2>&1; then
+            $SUDO_CMD dnf update -y
+            $SUDO_CMD dnf install -y python3 python3-pip openmpi-devel gcc-c++ make
+          fi
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install open-mpi
+
+      - name: Check Alpine compatibility
+        if: matrix.container == 'alpine:latest'
+        run: |
+          echo "Checking for musllinux wheel compatibility on Alpine Linux..."
+          # Alpine uses musl libc, not glibc - we need musllinux wheels
+          # Since we're installing from TestPyPI, we can't check local wheels
+          # Instead, we'll let pip handle compatibility and catch glibc errors
+
+      - name: Install and test package and multithreading
+        run: |
+          # Create and activate virtual environment
+          python -m venv test_venv
+          . test_venv/bin/activate
+          python -m pip install --upgrade pip
+
+          # For Alpine (musl), try to install and handle glibc incompatibility gracefully
+          if [ "${{ matrix.container }}" = "alpine:latest" ]; then
+            echo "Installing on Alpine Linux (musl libc)..."
+            TMP_ERR=$(mktemp)
+            # TODO: use pip install --no-binary :all: nest_simulator after pypi upload
+            if ! python -m pip install --index-url https://test.pypi.org/simple/ \
+              --extra-index-url https://pypi.org/simple nest-simulator 2> "$TMP_ERR"; then
+              echo "::warning::Package installation failed on Alpine - likely due to glibc/musl incompatibility"
+              echo "pip install error output:"
+              cat "$TMP_ERR"
+              echo "This is expected if only manylinux (glibc) wheels are available."
+              echo "Skipping Alpine test as no musllinux wheels are available."
+              exit 0
+            fi
+          else
+            # TODO: use pip install nest_simulator after pypi upload
+            python -m pip install --index-url https://test.pypi.org/simple/ \
+              --extra-index-url https://pypi.org/simple nest-simulator
+          fi
+          python -c "import nest; print('NEST import successful:', nest.nest.help())"
+          python -c "
+          import nest
+          import time
+          import os
+
+          print('=== OpenMP Multithreading Test ===')
+
+          # Set available threads
+          max_threads = min(os.cpu_count() or 1, 4)  # Limit to 4 for CI
+          nest.local_num_threads = max_threads
+
+          print(f'Available CPU cores: {os.cpu_count()}')
+          print(f'NEST threads set to: {nest.local_num_threads}')
+          print(f'OpenMP max threads: {os.environ.get(\"OMP_NUM_THREADS\", \"not set\")}')
+
+          # Simple network simulation to test threading
+          nest.ResetKernel()
+
+          # Create neurons
+          n_neurons = 1000
+          neurons = nest.Create('iaf_psc_alpha', n_neurons)
+
+          # Create noise generator
+          noise = nest.Create('poisson_generator', params={'rate': 1000.0})
+
+          # Connect with some probability
+          nest.Connect(noise, neurons, {'rule': 'pairwise_bernoulli', 'p': 0.1})
+          nest.Connect(neurons, neurons, {'rule': 'pairwise_bernoulli', 'p': 0.01})
+
+          # Record spikes
+          spikedetector = nest.Create('spike_recorder')
+          nest.Connect(neurons[:100], spikedetector)  # Record from subset
+
+          print(f'Created network with {n_neurons} neurons using {nest.local_num_threads} thread(s)')
+
+          # Run simulation and measure time
+          start_time = time.time()
+          nest.Simulate(100.0)  # 100ms simulation
+          end_time = time.time()
+
+          # Get results and print summary
+          events = spikedetector.events
+          n_spikes = len(events['times'])
+          sim_time = end_time - start_time
+
+          print(f'Simulation completed in {sim_time:.3f}s')
+          print(f'Recorded {n_spikes} spikes')
+          print(f'OpenMP multithreading test successful with {nest.local_num_threads} thread(s)!')
+          "

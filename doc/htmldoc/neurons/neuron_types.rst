@@ -496,7 +496,7 @@ The following non-linearity types are available:
   *  :doc:`/models/tanh_rate`
   *  :doc:`/models/threshold_lin_rate`
 
-Where is Non-linearity applied? 
+Where is Non-linearity applied?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 

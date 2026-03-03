@@ -32,9 +32,6 @@
 #include "connector_model.h"
 #include "event.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -164,12 +161,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -319,31 +316,31 @@ stdp_nn_symm_synapse< targetidentifierT >::stdp_nn_symm_synapse()
 
 template < typename targetidentifierT >
 void
-stdp_nn_symm_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_nn_symm_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::mu_plus, mu_plus_ );
-  def< double >( d, names::mu_minus, mu_minus_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::lambda ] = lambda_;
+  d[ names::alpha ] = alpha_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-stdp_nn_symm_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_symm_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::mu_plus, mu_plus_ );
-  updateValue< double >( d, names::mu_minus, mu_minus_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
   if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )

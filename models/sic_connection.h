@@ -86,7 +86,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -124,9 +124,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -143,29 +143,29 @@ constexpr ConnectionModelProperties sic_connection< targetidentifierT >::propert
 
 template < typename targetidentifierT >
 void
-sic_connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+sic_connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 sic_connection< targetidentifierT >::get_secondary_event()
 {
-  return new SICEvent();
+  return std::make_unique< SICEvent >();
 }
 
 template < typename targetidentifierT >
 void
-sic_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+sic_connection< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 } // namespace

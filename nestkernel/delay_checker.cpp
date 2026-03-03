@@ -103,25 +103,25 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
 
     std::string msg = String::compose(
       "Minimum and maximum delays were changed to %1 ms and %2 ms.", min_delay_.get_ms(), max_delay_.get_ms() );
-    LOG( M_INFO, "DelayChecker::set_min_max_delay_", msg );
+    LOG( VerbosityLevel::INFO, "DelayChecker::set_min_max_delay_", msg );
   }
 }
 
 void
-nest::DelayChecker::get_status( DictionaryDatum& d ) const
+nest::DelayChecker::get_status( Dictionary& d ) const
 {
-  ( *d )[ names::min_delay ] = get_min_delay().get_ms();
-  ( *d )[ names::max_delay ] = get_max_delay().get_ms();
+  d[ names::min_delay ] = get_min_delay().get_ms();
+  d[ names::max_delay ] = get_max_delay().get_ms();
 }
 
 void
-nest::DelayChecker::set_status( const DictionaryDatum& d )
+nest::DelayChecker::set_status( const Dictionary& d )
 {
   double min_d_tmp = 0.0;
-  bool min_delay_updated = updateValue< double >( d, names::min_delay, min_d_tmp );
+  bool min_delay_updated = d.update_value( names::min_delay, min_d_tmp );
 
   double max_d_tmp = 0.0;
-  bool max_delay_updated = updateValue< double >( d, names::max_delay, max_d_tmp );
+  bool max_delay_updated = d.update_value( names::max_delay, max_d_tmp );
 
   if ( min_delay_updated xor max_delay_updated )
   {

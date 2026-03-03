@@ -105,23 +105,17 @@ nest::multimeter::Buffers_::Buffers_()
 }
 
 void
-nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
+nest::multimeter::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::interval ] = interval_.get_ms();
-  ( *d )[ names::offset ] = offset_.get_ms();
-  ArrayDatum ad;
-  for ( size_t j = 0; j < record_from_.size(); ++j )
-  {
-    ad.push_back( LiteralDatum( record_from_[ j ] ) );
-  }
-  ( *d )[ names::record_from ] = ad;
+  d[ names::interval ] = interval_.get_ms();
+  d[ names::offset ] = offset_.get_ms();
+  d[ names::record_from ] = record_from_;
 }
 
 void
-nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const Dictionary& d, const Buffers_& b, Node* node )
 {
-  if ( b.has_targets_
-    and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )
+  if ( b.has_targets_ and ( d.known( names::interval ) or d.known( names::offset ) or d.known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -129,31 +123,26 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
       "to nodes." );
   }
 
-  double v;
-  if ( updateValueParam< double >( d, names::interval, v, node ) )
+  double interval_ms;
+  if ( update_value_param( d, names::interval, interval_ms, node ) )
   {
-    if ( Time( Time::ms( v ) ) < Time::get_resolution() )
+    interval_ = Time( Time::ms( interval_ms ) );
+    if ( interval_ < Time::get_resolution() )
     {
-      throw BadProperty(
-        "The sampling interval must be at least as long "
-        "as the simulation resolution." );
+      throw BadProperty( "The sampling interval must be at least as long as the simulation resolution." );
     }
 
-    // see if we can represent interval as multiple of step
-    interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
     if ( not interval_.is_multiple_of( Time::get_resolution() ) )
     {
-      throw BadProperty(
-        "The sampling interval must be a multiple of "
-        "the simulation resolution" );
+      throw BadProperty( "The sampling interval must be a multiple of the simulation resolution." );
     }
   }
 
-  if ( updateValueParam< double >( d, names::offset, v, node ) )
+  if ( update_value_param( d, names::offset, interval_ms, node ) )
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
-    if ( v != 0 and Time( Time::ms( v ) ) < Time::get_resolution() )
+    if ( interval_ms != 0 and Time( Time::ms( interval_ms ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "
@@ -161,7 +150,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
     }
 
     // see if we can represent offset as multiple of step
-    offset_ = Time::step( Time( Time::ms( v ) ).get_steps() );
+    offset_ = Time::step( Time( Time::ms( interval_ms ) ).get_steps() );
     if ( not offset_.is_multiple_of( Time::get_resolution() ) )
     {
       throw BadProperty(
@@ -170,17 +159,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
     }
   }
 
-  // extract data
-  if ( d->known( names::record_from ) )
-  {
-    record_from_.clear();
-
-    ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
-    for ( Token* t = ad.begin(); t != ad.end(); ++t )
-    {
-      record_from_.push_back( Name( getValue< std::string >( *t ) ) );
-    }
-  }
+  d.update_value( names::record_from, record_from_ );
 }
 
 void
@@ -247,10 +226,9 @@ multimeter::get_type() const
 voltmeter::voltmeter()
   : multimeter()
 {
-  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
-  ArrayDatum ad;
-  ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  ( *vmdict )[ names::record_from ] = ad;
+  Dictionary vmdict;
+  const std::vector< std::string > ad = { names::V_m };
+  vmdict[ names::record_from ] = ad;
   set_status( vmdict );
 }
 

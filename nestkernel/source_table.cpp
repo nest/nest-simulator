@@ -163,8 +163,40 @@ nest::SourceTable::get_node_id( const size_t tid, const synindex syn_id, const s
 }
 
 size_t
+nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
+{
+  const auto source_begin = sources_[ tid ][ syn_id ].begin();
+  const auto source_end = sources_[ tid ][ syn_id ].end();
+
+  auto first_source_match = source_begin;
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    // Binary search for first entry matching snode_id; is_primary is ignored
+    const Source requested_source { snode_id, /* is_primary */ true };
+    first_source_match = std::lower_bound( source_begin, source_end, requested_source );
+  }
+
+  // Linear search for first non-disabled connection
+  const auto first_enabled = std::find_if( first_source_match,
+    source_end,
+    [ &snode_id ]( const Source& src ) { return src.get_node_id() == snode_id and not src.is_disabled(); } );
+  if ( first_enabled != source_end )
+  {
+    // lcid is iterator difference
+    return first_enabled - source_begin;
+  }
+  else
+  {
+    // no enabled entry with this snode ID found
+    return invalid_index;
+  }
+}
+
+size_t
 nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn_id )
 {
+  assert( kernel().connection_manager.use_compressed_spikes() );
+
   if ( sources_[ tid ].size() <= syn_id )
   {
     return invalid_index; // no source table entry for this synapse model
@@ -246,7 +278,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
           ++cit )
     {
       const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
-      const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid ).size();
+      const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid )->size();
 
       buffer_pos_of_source_node_id_syn_id.insert(
         std::make_pair( pack_source_node_id_and_syn_id( cit->first, cit->second ),
@@ -282,10 +314,10 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
 {
   const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
-  return not( source.is_processed()
-    or source.is_disabled()
-    // is this thread responsible for this part of the MPI buffer?
-    or source_rank < rank_start or rank_end <= source_rank );
+  // Check if thread is responsible for this part of the MPI buffer
+  const bool responsible = source_rank < rank_start or rank_end <= source_rank;
+
+  return not( source.is_processed() or source.is_disabled() or responsible );
 }
 
 bool

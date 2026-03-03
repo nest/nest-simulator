@@ -138,7 +138,7 @@ MusicEventHandler::publish_port()
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     }
     msg += ".";
-    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 

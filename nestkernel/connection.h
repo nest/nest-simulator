@@ -39,12 +39,6 @@
 #include "spikecounter.h"
 #include "syn_id_delay.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 
@@ -80,11 +74,11 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  set_status( const DictionaryDatum& ) override
+  set_status( const Dictionary& ) override
   {
   }
   void
-  get_status( DictionaryDatum& ) const override
+  get_status( Dictionary& ) const override
   {
   }
   void
@@ -134,12 +128,12 @@ public:
    * To prevent erronous calls of this function on primary connections, the base class implementation
    * below just contains `assert(false)`.
    */
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
@@ -147,7 +141,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Check syn_spec dictionary for parameters that are not allowed with the
@@ -161,7 +155,7 @@ public:
    *
    * @see ConnectorModel::check_synapse_params
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const Dictionary& d ) const;
 
   /**
    * Calibrate the delay of this connection to the desired resolution.
@@ -350,18 +344,18 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+Connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
-  def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
+  d[ names::delay ] = syn_id_delay_.get_delay_ms();
   target_.get_status( d );
 }
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& )
 {
   double delay;
-  if ( updateValue< double >( d, names::delay, delay ) )
+  if ( d.update_value( names::delay, delay ) )
   {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
@@ -371,7 +365,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
+Connection< targetidentifierT >::check_synapse_params( const Dictionary& ) const
 {
 }
 
@@ -399,7 +393,7 @@ Connection< targetidentifierT >::trigger_update_weight( const size_t,
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 Connection< targetidentifierT >::get_secondary_event()
 {
   assert( false and "Non-primary connections have to provide get_secondary_event()" );

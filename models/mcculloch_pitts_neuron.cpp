@@ -38,15 +38,15 @@ register_mcculloch_pitts_neuron( const std::string& name )
 
 
 void
-gainfunction_mcculloch_pitts::get( DictionaryDatum& d ) const
+gainfunction_mcculloch_pitts::get( Dictionary& d ) const
 {
-  def< double >( d, names::theta, theta_ );
+  d[ names::theta ] = theta_;
 }
 
 void
-gainfunction_mcculloch_pitts::set( const DictionaryDatum& d, Node* node )
+gainfunction_mcculloch_pitts::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::theta, theta_, node );
+  update_value_param( d, names::theta, theta_, node );
 }
 
 /*

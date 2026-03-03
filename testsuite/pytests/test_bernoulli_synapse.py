@@ -54,7 +54,7 @@ class TestBernoulliSynapse:
         margin = 3 * (N_spikes * p * (1 - p)) ** 0.5
 
         # build
-        sg = nest.Create("spike_generator", {"spike_times": np.arange(1, N_spikes).astype(float)})
+        sg = nest.Create("spike_generator", params={"spike_times": np.arange(1, N_spikes).astype(float)})
         pre = nest.Create("parrot_neuron")
         post = nest.Create("parrot_neuron")
         sr = nest.Create("spike_recorder")
@@ -73,7 +73,7 @@ class TestBernoulliSynapse:
         nest.Simulate(2.0 + N_spikes)
 
         # get number of spikes transmitted
-        N_spikes_transmitted = len(sr.get("events")["times"])
+        N_spikes_transmitted = len(sr.events["times"])
 
         # mean value of spikes to be received with transmission probability p
         mean = N_spikes * p
@@ -88,8 +88,8 @@ class TestBernoulliSynapse:
         pre = nest.Create("parrot_neuron")
         post = nest.Create("parrot_neuron")
 
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse", "p_transmit": -0.1})
 
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse", "p_transmit": 1.1})

@@ -105,7 +105,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -141,9 +141,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -166,35 +166,35 @@ constexpr ConnectionModelProperties gap_junction< targetidentifierT >::propertie
 
 template < typename targetidentifierT >
 void
-gap_junction< targetidentifierT >::get_status( DictionaryDatum& d ) const
+gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 gap_junction< targetidentifierT >::get_secondary_event()
 {
-  return new GapJunctionEvent();
+  return std::make_unique< GapJunctionEvent >();
 }
 
 template < typename targetidentifierT >
 void
-gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+gap_junction< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
+  if ( d.known( names::delay ) )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 } // namespace

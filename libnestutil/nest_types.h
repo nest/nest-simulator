@@ -92,7 +92,7 @@ constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
-constexpr uint8_t NUM_BITS_NODE_ID = 62U;
+constexpr uint8_t NUM_BITS_NODE_ID = 61U;
 
 // Maximally allowed values for bitfields
 
@@ -129,7 +129,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
 /**
  *  For enumerations of synapse types.
  */
-typedef unsigned int synindex;
+typedef size_t synindex;
 const synindex invalid_synindex = MAX_SYN_ID;
 
 /**

@@ -23,21 +23,25 @@ import unittest
 
 import nest
 
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
-    have_mpi4py = True
-except ImportError:
-    have_mpi4py = False
+    HAVE_MPI4PY = True
+except (ImportError, RuntimeError):
+    HAVE_MPI4PY = False
 
-have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
+have_mpi = nest.build_info["have_mpi"]
+test_with_mpi = have_mpi and HAVE_MPI4PY and nest.num_processes > 1
 
 
 class TestDisconnectSingle(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity("M_ERROR")
+        nest.verbosity = nest.VerbosityLevel.ERROR
         if test_with_mpi:
             self.comm = MPI.COMM_WORLD
             self.rank = self.comm.Get_rank()
@@ -111,7 +115,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
-                with self.assertRaises(nest.NESTErrors.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
 
     def test_disconnect_synapsecollection(self):

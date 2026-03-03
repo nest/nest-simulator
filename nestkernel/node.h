@@ -40,10 +40,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
-#include "weight_optimizer.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -54,7 +51,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class WeightOptimizer;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -181,15 +178,14 @@ public:
 
   /**
    * Return the element type of the node.
-   *
-   * The returned Name is a free label describing the class of network
+   * The returned string is a free label describing the class of network
    * elements a node belongs to. Currently used values are "neuron",
    * "recorder", "stimulator", and "other", which are all defined as
-   * static Name objects in the names namespace.
+   * static string objects in the names namespace.
    * This function is overwritten with a corresponding value in the
    * derived classes
    */
-  virtual Name get_element_type() const;
+  virtual std::string get_element_type() const;
 
   /**
    * Return global Network ID.
@@ -284,33 +280,37 @@ public:
   }
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$.
+   * Advance the state of the node in time through the given interval.
    *
-   * n->update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1, ie, emitting events with time stamps
-   * T+from+1 .. T+to.
+   * This method advances the state of the node through the interval
+   * ``(origin+from, origin+to]``, which is at most ``min_delay`` long.
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * - Precondition: State of the node corresponds to the time ``origin+from``.
+   * - Postcondition: State of the node corresponds to the time ``origin+to``.
+   *
+   * Each step between ``from`` and ``to`` corresponds to one simulation timestep (``nest.resolution``).
+   *
+   * If events are emitted, they have time stamps in the interval
+   * ``T+from+1 .. T+to``.
+   *
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual void update( Time const&, const long, const long ) = 0;
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
-   *
-   * n->wfr_update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1.
+   * Advance the state of the node in time through the given interval (see
+   * Node::update() for more details).
    *
    * Does not emit spikes, does not log state variables.
    *
    * throws UnexpectedEvent if not reimplemented in derived class
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual bool wfr_update( Time const&, const long, const long );
@@ -339,7 +339,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the node by setting
@@ -348,7 +348,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( Dictionary& ) const = 0;
 
 public:
   /**
@@ -711,7 +711,7 @@ public:
    * @ingroup SP_functions
    */
   virtual double
-  get_synaptic_elements( Name ) const
+  get_synaptic_elements( std::string ) const
   {
     return 0.0;
   }
@@ -722,7 +722,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_vacant( Name ) const
+  get_synaptic_elements_vacant( std::string ) const
   {
     return 0;
   }
@@ -734,7 +734,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_connected( Name ) const
+  get_synaptic_elements_connected( std::string ) const
   {
     return 0;
   }
@@ -745,10 +745,10 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< Name, double >
+  virtual std::map< std::string, double >
   get_synaptic_elements() const
   {
-    return std::map< Name, double >();
+    return std::map< std::string, double >();
   }
 
   /**
@@ -775,12 +775,11 @@ public:
    * Is used to update the number of connected
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
-   *
-   * @param type Name, name of the synaptic element to connect
+   * @param type std::string, name of the synaptic element to connect
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ) {};
+  virtual void connect_synaptic_element( std::string, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -965,10 +964,10 @@ public:
    *
    *  get_status_base() first gets a dictionary with the basic
    *  information of an element, using get_status_dict_(). It then
-   *  calls the custom function get_status(DictionaryDatum) with
+   *  calls the custom function get_status(dictionary) with
    *  the created status dictionary as argument.
    */
-  DictionaryDatum get_status_base();
+  Dictionary get_status_base();
 
   /**
    * Set status dictionary of a node.
@@ -976,7 +975,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  void set_status_base( const Dictionary& );
 
   /**
    * Returns true if node is model prototype.
@@ -1039,7 +1038,7 @@ private:
    * permanent status dictionary which is then returned by
    * get_status_dict_().
    */
-  virtual DictionaryDatum get_status_dict_();
+  virtual Dictionary get_status_dict_();
 
 protected:
   /**
@@ -1173,7 +1172,7 @@ Node::is_proxy() const
   return false;
 }
 
-inline Name
+inline std::string
 Node::get_element_type() const
 {
   return names::neuron;

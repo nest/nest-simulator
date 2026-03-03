@@ -25,12 +25,16 @@ import nest
 import numpy as np
 import scipy.stats
 
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
-    haveMPI4Py = True
-except ImportError:
-    haveMPI4Py = False
+    HAVE_MPI4PY = True
+except (ImportError, RuntimeError):
+    HAVE_MPI4PY = False
 
 
 class ConnectTestBase(unittest.TestCase):
@@ -76,14 +80,14 @@ class ConnectTestBase(unittest.TestCase):
             N2 = self.N2
         self.pop1 = nest.Create("iaf_psc_alpha", N1)
         self.pop2 = nest.Create("iaf_psc_alpha", N2)
-        nest.set_verbosity("M_FATAL")
+        nest.verbosity = nest.VerbosityLevel.FATAL
         nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
 
     def setUpNetworkOnePop(self, conn_dict=None, syn_dict=None, N=None):
         if N is None:
             N = self.N1
         self.pop = nest.Create("iaf_psc_alpha", N)
-        nest.set_verbosity("M_FATAL")
+        nest.verbosity = nest.VerbosityLevel.FATAL
         nest.Connect(self.pop, self.pop, conn_dict, syn_dict)
 
     def testWeightSetting(self):
@@ -103,7 +107,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"delay": d0}
         self.setUpNetwork(self.conn_dict, syn_params)
         connections = nest.GetConnections(self.pop1, self.pop2)
-        nest_delays = connections.get("delay")
+        nest_delays = connections.delay
         # all delays need to be equal
         self.assertTrue(all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
@@ -118,7 +122,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"synapse_model": "static_synapse", "receptor_type": rtype}
         nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        ports = conns.get("receptor")
+        ports = conns.receptor
         self.assertTrue(all_equal(ports))
         self.assertTrue(ports[0] == rtype)
 
@@ -127,7 +131,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"synapse_model": "test_syn"}
         self.setUpNetwork(self.conn_dict, syn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        syns = conns.get("synapse_model")
+        syns = conns.synapse_model
         self.assertTrue(all_equal(syns))
         self.assertTrue(syns[0] == syn_params["synapse_model"])
 
@@ -135,10 +139,10 @@ class ConnectTestBase(unittest.TestCase):
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        self.assertTrue(all(x == self.w0 for x in conns.get("weight")))
-        self.assertTrue(all(x == self.d0 for x in conns.get("delay")))
-        self.assertTrue(all(x == self.r0 for x in conns.get("receptor")))
-        self.assertTrue(all(x == self.syn0 for x in conns.get("synapse_model")))
+        self.assertTrue(all(x == self.w0 for x in conns.weight))
+        self.assertTrue(all(x == self.d0 for x in conns.delay))
+        self.assertTrue(all(x == self.r0 for x in conns.receptor))
+        self.assertTrue(all(x == self.syn0 for x in conns.synapse_model))
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
@@ -246,7 +250,7 @@ class ConnectTestBase(unittest.TestCase):
             self.pop2 = nest.Create("iaf_psc_exp_multisynapse", self.N2, {"tau_syn": [0.2, 0.5]})
             nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
             conns = nest.GetConnections(self.pop1, self.pop2)
-            conn_params = conns.get("receptor")
+            conn_params = conns.receptor
             self.assertTrue(all_equal(conn_params))
             self.assertTrue(conn_params[0] == syn_params["receptor_type"])
             self.setUp()
@@ -309,7 +313,7 @@ def gather_data(data_array):
     None otherwise.
 
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
         if MPI.COMM_WORLD.Get_rank() == 0:
             if isinstance(data_array, list):
@@ -327,7 +331,7 @@ def bcast_data(data):
     """
     Broadcasts data from the root MPI node to all other nodes.
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data = MPI.COMM_WORLD.bcast(data, root=0)
     return data
 
@@ -340,7 +344,7 @@ def is_array(data):
 
 
 def mpi_barrier():
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         MPI.COMM_WORLD.Barrier()
 
 
@@ -377,9 +381,9 @@ def get_connectivity_matrix(pop1, pop2):
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for source, target in zip(connections.sources(), connections.targets()):
         M[index_dic[target]][index_dic[source]] += 1
     return M
@@ -394,14 +398,14 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
-    sources = connections.get("source")
-    targets = connections.get("target")
+    sources = connections.source
+    targets = connections.target
     weights = connections.get(label)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for counter, weight in enumerate(weights):
         source_id = sources[counter]
         target_id = targets[counter]

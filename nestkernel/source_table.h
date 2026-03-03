@@ -137,7 +137,6 @@ private:
    */
   static const size_t min_deleted_elements_ = 1000000;
 
-
   /**
    * Returns whether this Source object should be considered when
    * constructing MPI buffers for communicating connections.
@@ -297,8 +296,12 @@ public:
     std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
-   * Finds the first entry in sources_ at the given thread id and
-   * synapse type that is equal to snode_id.
+   * Finds the first non-disabled entry in sources_ at the given thread id and synapse type that has sender equal to
+   * snode_id.
+   *
+   * @returns local connection id (lcid) or `invalid_index`
+   *
+   * @note For compressed spikes, it uses binary search, otherwise linear search.
    */
   size_t find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const;
 
@@ -468,30 +471,6 @@ SourceTable::no_targets_to_process( const size_t tid )
   current_positions_[ tid ].tid = -1;
   current_positions_[ tid ].syn_id = -1;
   current_positions_[ tid ].lcid = -1;
-}
-
-inline size_t
-SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
-{
-  // binary search in sorted sources
-  const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
-  const BlockVector< Source >::const_iterator end = sources_[ tid ][ syn_id ].end();
-  BlockVector< Source >::const_iterator it = std::lower_bound( begin, end, Source( snode_id, true ) );
-
-  // source found by binary search could be disabled, iterate through
-  // sources until a valid one is found
-  while ( it != end )
-  {
-    if ( it->get_node_id() == snode_id and not it->is_disabled() )
-    {
-      const size_t lcid = it - begin;
-      return lcid;
-    }
-    ++it;
-  }
-
-  // no enabled entry with this snode ID found
-  return invalid_index;
 }
 
 inline void

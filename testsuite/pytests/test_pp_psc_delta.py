@@ -57,13 +57,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
             "t_ref_remaining": 0.0,
         }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]["events"]["times"]
+        spikes = sr.events["times"]
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1.0 / (1.0 / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -106,13 +106,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
             "t_ref_remaining": 0.0,
         }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]["events"]["times"]
+        spikes = sr.events["times"]
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1.0 / (1.0 / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -166,13 +166,13 @@ class PpPscDeltaTestCase(unittest.TestCase):
             "t_ref_remaining": 0.0,
         }
 
-        nest.SetStatus(nrn, params)
+        nrn.set(params)
 
         sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]["events"]["times"]
+        spikes = sr.events["times"]
 
         # This could fail due to bad luck. However, if it passes once,
         # then it should always do so, since the random numbers are
@@ -187,6 +187,72 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         self.assertLessEqual(-1.0, isi_corr)
         self.assertLessEqual(isi_corr, 0.0)
+
+    def test_compare_adaptation_and_self_inhibition(self):
+        """
+        Check if threshold adaptation with membrane time constant corresponds to an
+        inhibitory self-connection.
+        """
+
+        # test parameters
+        d = 0.001
+        lam = 10.0
+        T = 200000.0
+        tau_m = 25.0
+        J_self = 50.0
+        J_adapt = 0.1
+        err = 0.2
+
+        common_params = {
+            "tau_m": tau_m,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": False,
+            "dead_time_shape": 1,
+            "with_reset": False,
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 1.0,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
+
+        nest.ResetKernel()
+
+        # create a neuron where adaptation does the reset, and one where a
+        # synapse does.
+        nrn1 = nest.Create(
+            "pp_psc_delta", params={**common_params, "tau_sfa": [300.0, tau_m], "q_sfa": [J_adapt, J_self]}
+        )
+        nrn2 = nest.Create(
+            "pp_psc_delta",
+            params={
+                **common_params,
+                "tau_sfa": 300.0,
+                "q_sfa": J_adapt,
+            },
+        )
+
+        sr1 = nest.Create("spike_recorder")
+        sr2 = nest.Create("spike_recorder")
+
+        nest.Connect(nrn1, sr1)
+        nest.Connect(nrn2, sr2)
+
+        # Set up self-inhibitory connection for nrn2
+        nest.Connect(nrn2, nrn2, syn_spec={"weight": -1.0 * J_self, "delay": 1.0})
+
+        nest.Simulate(T)
+
+        n1 = sr1.n_events
+        n2 = sr2.n_events
+
+        ratio = float(n1) / float(n2)
+
+        # This could fail due to bad luck. However, if it passes once,
+        # then it should always do so, since the random numbers are
+        # reproducible in NEST.
+        assert 1 - err < ratio < 1 + err
 
 
 def suite():

@@ -35,9 +35,6 @@
 #include "node.h"
 #include "recording_backend.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -156,7 +153,7 @@ public:
 
   using Device::pre_run_hook;
   using Node::pre_run_hook;
-  void pre_run_hook( const std::vector< Name >&, const std::vector< Name >& );
+  void pre_run_hook( const std::vector< std::string >&, const std::vector< std::string >& );
 
   bool is_active( Time const& T ) const override;
 
@@ -172,8 +169,8 @@ public:
 
   const std::string& get_label() const;
 
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) const override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) const override;
 
 protected:
   void write( const Event&, const std::vector< double >&, const std::vector< long >& );
@@ -182,14 +179,13 @@ protected:
 private:
   struct Parameters_
   {
-    std::string label_; //!< A user-defined label for symbolic device names.
-    Name record_to_;    //!< The name of the recording backend to use
+    std::string label_;     //!< A user-defined label for symbolic device names.
+    std::string record_to_; //!< The name of the recording backend to use
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
-    Parameters_& operator=( const Parameters_& ) = default;
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   } P_;
 
   struct State_
@@ -197,11 +193,11 @@ private:
     size_t n_events_; //!< The number of events recorded by the device.
 
     State_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   } S_;
 
-  DictionaryDatum backend_params_;
+  Dictionary backend_params_;
 };
 
 } // namespace

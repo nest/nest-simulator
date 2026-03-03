@@ -112,7 +112,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -152,9 +152,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double )
@@ -181,26 +181,26 @@ constexpr ConnectionModelProperties diffusion_connection< targetidentifierT >::p
 
 template < typename targetidentifierT >
 void
-diffusion_connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+diffusion_connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::drift_factor, drift_factor_ );
-  def< double >( d, names::diffusion_factor, diffusion_factor_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::drift_factor ] = drift_factor_;
+  d[ names::diffusion_factor ] = diffusion_factor_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+diffusion_connection< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
+  if ( d.known( names::delay ) )
   {
     throw BadProperty( "diffusion_connection has no delay." );
   }
   // If the parameter weight is set, we throw a BadProperty
-  if ( d->known( names::weight ) )
+  if ( d.known( names::weight ) )
   {
     throw BadProperty(
       "Please use the parameters drift_factor and "
@@ -208,16 +208,16 @@ diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d,
   }
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::drift_factor, drift_factor_ );
-  updateValue< double >( d, names::diffusion_factor, diffusion_factor_ );
+  d.update_value( names::drift_factor, drift_factor_ );
+  d.update_value( names::diffusion_factor, diffusion_factor_ );
 }
 
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 diffusion_connection< targetidentifierT >::get_secondary_event()
 {
-  return new DiffusionConnectionEvent();
+  return std::make_unique< DiffusionConnectionEvent >();
 }
 
 } // namespace

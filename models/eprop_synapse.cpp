@@ -52,26 +52,26 @@ EpropSynapseCommonProperties::~EpropSynapseCommonProperties()
 }
 
 void
-EpropSynapseCommonProperties::get_status( DictionaryDatum& d ) const
+EpropSynapseCommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
-  DictionaryDatum optimizer_dict = new Dictionary;
+  d[ names::optimizer ] = optimizer_cp_->get_name();
+  Dictionary optimizer_dict;
   optimizer_cp_->get_status( optimizer_dict );
-  ( *d )[ names::optimizer ] = optimizer_dict;
+  d[ names::optimizer ] = optimizer_dict;
 }
 
 void
-EpropSynapseCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+EpropSynapseCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  if ( d->known( names::optimizer ) )
+  if ( d.known( names::optimizer ) )
   {
-    DictionaryDatum optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
+    Dictionary optimizer_dict = d.get< Dictionary >( names::optimizer );
 
     std::string new_optimizer;
-    const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
+    const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
       if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
@@ -108,7 +108,6 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( cons
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 template <>
@@ -117,7 +116,6 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const s
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
-  C_[ lcid ].delete_optimizer();
 }
 
 
@@ -136,7 +134,10 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
 {
   for ( auto& c : C_ )
   {
-    c.delete_optimizer();
+    if ( not c.is_disabled() )
+    {
+      c.delete_optimizer();
+    }
   }
   C_.clear();
 }

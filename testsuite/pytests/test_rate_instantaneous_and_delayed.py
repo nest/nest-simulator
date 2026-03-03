@@ -25,7 +25,6 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
     """
     Test whether delayed rate connections have same properties as
@@ -43,7 +42,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         simtime = 100.0
         dt = 0.001
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = dt
         nest.use_wfr = True
@@ -62,30 +61,22 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 
         nest.Connect(multimeter, neurons, "all_to_all", {"delay": 10.0})
 
-        nest.Connect(
-            rate_neuron_drive,
-            rate_neuron_1,
-            "all_to_all",
-            {"synapse_model": "rate_connection_instantaneous", "weight": weight},
-        )
+        syn_spec = {"synapse_model": "rate_connection_instantaneous", "weight": weight}
+        nest.Connect(rate_neuron_drive, rate_neuron_1, "all_to_all", syn_spec)
 
-        nest.Connect(
-            rate_neuron_drive,
-            rate_neuron_2,
-            "all_to_all",
-            {"synapse_model": "rate_connection_delayed", "delay": delay, "weight": weight},
-        )
+        syn_spec = {"synapse_model": "rate_connection_delayed", "delay": delay, "weight": weight}
+        nest.Connect(rate_neuron_drive, rate_neuron_2, "all_to_all", syn_spec)
 
         # simulate
         nest.Simulate(simtime)
 
         # make sure shifted rates are identical
-        events = nest.GetStatus(multimeter)[0]["events"]
+        events = multimeter.events
         senders = events["senders"]
 
-        rate_1 = np.array(events["rate"][np.where(senders == rate_neuron_1.get("global_id"))])
-        times_2 = np.array(events["times"][np.where(senders == rate_neuron_2.get("global_id"))])
-        rate_2 = np.array(events["rate"][np.where(senders == rate_neuron_2.get("global_id"))])
+        rate_1 = events["rate"][np.where(senders == rate_neuron_1.global_id)]
+        times_2 = events["times"][np.where(senders == rate_neuron_2.global_id)]
+        rate_2 = events["rate"][np.where(senders == rate_neuron_2.global_id)]
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]

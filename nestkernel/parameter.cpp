@@ -34,10 +34,10 @@ namespace nest
 {
 
 std::vector< double >
-Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
+Parameter::apply( const NodeCollectionPTR& nc, const std::vector< std::vector< double > >& positions )
 {
   std::vector< double > result;
-  result.reserve( token_array.size() );
+  result.reserve( positions.size() );
   RngPtr rng = get_rank_synced_rng();
 
   // Get source layer from the NodeCollection
@@ -62,9 +62,8 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
-  for ( auto&& token : token_array )
+  for ( auto& target_pos : positions )
   {
-    std::vector< double > target_pos = getValue< std::vector< double > >( token );
     if ( target_pos.size() != source_pos.size() )
     {
       throw BadProperty(
@@ -78,12 +77,12 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   return result;
 }
 
-NormalParameter::NormalParameter( const DictionaryDatum& d )
+NormalParameter::NormalParameter( const Dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
+  d.update_value( names::mean, mean_ );
+  d.update_value( names::std, std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::NormalParameter: std > 0 required." );
@@ -104,12 +103,12 @@ NormalParameter::value( RngPtr rng, Node* node )
 }
 
 
-LognormalParameter::LognormalParameter( const DictionaryDatum& d )
+LognormalParameter::LognormalParameter( const Dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
+  d.update_value( names::mean, mean_ );
+  d.update_value( names::std, std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::LognormalParameter: std > 0 required." );
@@ -200,7 +199,7 @@ SpatialDistanceParameter::value( RngPtr,
   }
 }
 
-RedrawParameter::RedrawParameter( const std::shared_ptr< Parameter > p, const double min, const double max )
+RedrawParameter::RedrawParameter( const ParameterPTR p, const double min, const double max )
   : Parameter( p->is_spatial() )
   , p_( p )
   , min_( min )
@@ -255,12 +254,12 @@ RedrawParameter::value( RngPtr rng,
 }
 
 
-ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
+ExpDistParameter::ExpDistParameter( const Dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
+  , inv_beta_( 1.0 / d.get< double >( "beta" ) )
 {
-  const auto beta = getValue< double >( d, "beta" );
+  const auto beta = d.get< double >( "beta" );
   if ( beta <= 0 )
   {
     throw BadProperty( "beta > 0 required for exponential distribution parameter, got beta=" + std::to_string( beta ) );
@@ -277,13 +276,13 @@ ExpDistParameter::value( RngPtr rng,
   return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
 }
 
-GaussianParameter::GaussianParameter( const DictionaryDatum& d )
+GaussianParameter::GaussianParameter( const Dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , mean_( getValue< double >( d, "mean" ) )
-  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
+  , mean_( d.get< double >( "mean" ) )
+  , inv_two_std2_( 1.0 / ( 2 * d.get< double >( "std" ) * d.get< double >( "std" ) ) )
 {
-  const auto std = getValue< double >( d, "std" );
+  const auto std = d.get< double >( "std" );
   if ( std <= 0 )
   {
     throw BadProperty( "std > 0 required for gaussian distribution parameter, got std=" + std::to_string( std ) );
@@ -302,25 +301,25 @@ GaussianParameter::value( RngPtr rng,
 }
 
 
-Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
+Gaussian2DParameter::Gaussian2DParameter( const Dictionary& d )
   : Parameter( true )
-  , px_( getValue< ParameterDatum >( d, "x" ) )
-  , py_( getValue< ParameterDatum >( d, "y" ) )
-  , mean_x_( getValue< double >( d, "mean_x" ) )
-  , mean_y_( getValue< double >( d, "mean_y" ) )
+  , px_( d.get< ParameterPTR >( "x" ) )
+  , py_( d.get< ParameterPTR >( "y" ) )
+  , mean_x_( d.get< double >( "mean_x" ) )
+  , mean_y_( d.get< double >( "mean_y" ) )
   , x_term_const_( 1.
-      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-        * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
+      / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
+        * d.get< double >( "std_x" ) ) )
   , y_term_const_( 1.
-      / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-        * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
-  , xy_term_const_( getValue< double >( d, "rho" )
-      / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) ) * getValue< double >( d, "std_x" )
-        * getValue< double >( d, "std_y" ) ) )
+      / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_y" )
+        * d.get< double >( "std_y" ) ) )
+  , xy_term_const_( d.get< double >( "rho" )
+      / ( ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
+        * d.get< double >( "std_y" ) ) )
 {
-  const auto rho = getValue< double >( d, "rho" );
-  const auto std_x = getValue< double >( d, "std_x" );
-  const auto std_y = getValue< double >( d, "std_y" );
+  const auto rho = d.get< double >( "rho" );
+  const auto std_x = d.get< double >( "std_x" );
+  const auto std_y = d.get< double >( "std_y" );
   if ( rho >= 1 or rho <= -1 )
   {
     throw BadProperty(
@@ -351,26 +350,26 @@ Gaussian2DParameter::value( RngPtr rng,
 }
 
 
-GaborParameter::GaborParameter( const DictionaryDatum& d )
+GaborParameter::GaborParameter( const Dictionary& d )
   : Parameter( true )
-  , px_( getValue< ParameterDatum >( d, "x" ) )
-  , py_( getValue< ParameterDatum >( d, "y" ) )
-  , cos_( std::cos( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
-  , sin_( std::sin( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
-  , gamma_( getValue< double >( d, "gamma" ) )
-  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
-  , lambda_( getValue< double >( d, "lam" ) )
-  , psi_( getValue< double >( d, "psi" ) )
+  , px_( d.get< ParameterPTR >( "x" ) )
+  , py_( d.get< ParameterPTR >( "y" ) )
+  , cos_( std::cos( d.get< double >( "theta" ) * numerics::pi / 180. ) )
+  , sin_( std::sin( d.get< double >( "theta" ) * numerics::pi / 180. ) )
+  , gamma_( d.get< double >( "gamma" ) )
+  , inv_two_std2_( 1.0 / ( 2 * d.get< double >( "std" ) * d.get< double >( "std" ) ) )
+  , lambda_( d.get< double >( "lam" ) )
+  , psi_( d.get< double >( "psi" ) )
 {
-  const auto gamma = getValue< double >( d, "gamma" );
-  const auto std = getValue< double >( d, "std" );
+  const auto gamma = d.get< double >( "gamma" );
+  const auto std = d.get< double >( "std" );
   if ( std <= 0 )
   {
-    throw BadProperty( "std > 0 required for gabor function parameter, got std=" + std::to_string( std ) );
+    throw BadProperty( String::compose( "std > 0 required for gabor function parameter, got std=%1", std ) );
   }
   if ( gamma <= 0 )
   {
-    throw BadProperty( "gamma > 0 required for gabor function parameter, got gamma=" + std::to_string( gamma ) );
+    throw BadProperty( String::compose( "gamma > 0 required for gabor function parameter, got gamma=%1", gamma ) );
   }
 }
 
@@ -395,18 +394,18 @@ GaborParameter::value( RngPtr rng,
 }
 
 
-GammaParameter::GammaParameter( const DictionaryDatum& d )
+GammaParameter::GammaParameter( const Dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , kappa_( getValue< double >( d, "kappa" ) )
-  , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
+  , p_( d.get< ParameterPTR >( "x" ) )
+  , kappa_( d.get< double >( "kappa" ) )
+  , inv_theta_( 1.0 / d.get< double >( "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
   if ( kappa_ <= 0 )
   {
     throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
   }
-  const auto theta = getValue< double >( d, "theta" );
+  const auto theta = d.get< double >( "theta" );
   if ( theta <= 0 )
   {
     throw BadProperty( "theta > 0 required for gamma distribution parameter, got theta=" + std::to_string( theta ) );
@@ -425,100 +424,94 @@ GammaParameter::value( RngPtr rng,
 }
 
 
-std::shared_ptr< Parameter >
-multiply_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+multiply_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new ProductParameter( first, second ) );
+  return ParameterPTR( new ProductParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-divide_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+divide_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new QuotientParameter( first, second ) );
+  return ParameterPTR( new QuotientParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-add_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+add_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new SumParameter( first, second ) );
+  return ParameterPTR( new SumParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-subtract_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+ParameterPTR
+subtract_parameter( const ParameterPTR first, const ParameterPTR second )
 {
-  return std::shared_ptr< Parameter >( new DifferenceParameter( first, second ) );
+  return ParameterPTR( new DifferenceParameter( first, second ) );
 }
 
-std::shared_ptr< Parameter >
-compare_parameter( const std::shared_ptr< Parameter > first,
-  const std::shared_ptr< Parameter > second,
-  const DictionaryDatum& d )
+ParameterPTR
+compare_parameter( const ParameterPTR first, const ParameterPTR second, const Dictionary& d )
 {
-  return std::shared_ptr< Parameter >( new ComparingParameter( first, second, d ) );
+  return ParameterPTR( new ComparingParameter( first, second, d ) );
 }
 
-std::shared_ptr< Parameter >
-conditional_parameter( const std::shared_ptr< Parameter > condition,
-  const std::shared_ptr< Parameter > if_true,
-  const std::shared_ptr< Parameter > if_false )
+ParameterPTR
+conditional_parameter( const ParameterPTR condition, const ParameterPTR if_true, const ParameterPTR if_false )
 {
-  return std::shared_ptr< Parameter >( new ConditionalParameter( condition, if_true, if_false ) );
+  return ParameterPTR( new ConditionalParameter( condition, if_true, if_false ) );
 }
 
-std::shared_ptr< Parameter >
-min_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+ParameterPTR
+min_parameter( const ParameterPTR parameter, const double other )
 {
-  return std::shared_ptr< Parameter >( new MinParameter( parameter, other ) );
+  return ParameterPTR( new MinParameter( parameter, other ) );
 }
 
-std::shared_ptr< Parameter >
-max_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+ParameterPTR
+max_parameter( const ParameterPTR parameter, const double other )
 {
-  return std::shared_ptr< Parameter >( new MaxParameter( parameter, other ) );
+  return ParameterPTR( new MaxParameter( parameter, other ) );
 }
 
-std::shared_ptr< Parameter >
-redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min, const double max )
+ParameterPTR
+redraw_parameter( const ParameterPTR parameter, const double min, const double max )
 {
-  return std::shared_ptr< Parameter >( new RedrawParameter( parameter, min, max ) );
+  return ParameterPTR( new RedrawParameter( parameter, min, max ) );
 }
 
-std::shared_ptr< Parameter >
-exp_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+exp_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new ExpParameter( parameter ) );
+  return ParameterPTR( new ExpParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-sin_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+sin_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new SinParameter( parameter ) );
+  return ParameterPTR( new SinParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-cos_parameter( const std::shared_ptr< Parameter > parameter )
+ParameterPTR
+cos_parameter( const ParameterPTR parameter )
 {
-  return std::shared_ptr< Parameter >( new CosParameter( parameter ) );
+  return ParameterPTR( new CosParameter( parameter ) );
 }
 
-std::shared_ptr< Parameter >
-pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent )
+ParameterPTR
+pow_parameter( const ParameterPTR parameter, const double exponent )
 {
-  return std::shared_ptr< Parameter >( new PowParameter( parameter, exponent ) );
+  return ParameterPTR( new PowParameter( parameter, exponent ) );
 }
 
-std::shared_ptr< Parameter >
-dimension_parameter( const std::shared_ptr< Parameter > x_parameter, const std::shared_ptr< Parameter > y_parameter )
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter )
 {
-  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter ) );
+  return ParameterPTR( new DimensionParameter( x_parameter, y_parameter ) );
 }
 
-std::shared_ptr< Parameter >
-dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
-  const std::shared_ptr< Parameter > y_parameter,
-  const std::shared_ptr< Parameter > z_parameter )
+ParameterPTR
+dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter )
 {
-  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
+  return ParameterPTR( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
 } // namespace nest

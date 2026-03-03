@@ -49,19 +49,19 @@ register_rate_transformer_threshold_lin( const std::string& name )
 
 
 void
-nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const
+nonlinearities_threshold_lin_rate::get( Dictionary& d ) const
 {
-  def< double >( d, names::g, g_ );
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::alpha, alpha_ );
+  d[ names::g ] = g_;
+  d[ names::theta ] = theta_;
+  d[ names::alpha ] = alpha_;
 }
 
 void
-nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_threshold_lin_rate::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g, g_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::alpha, alpha_, node );
+  update_value_param( d, names::g, g_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::alpha, alpha_, node );
 }
 
 /*

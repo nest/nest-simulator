@@ -77,6 +77,3 @@ Notes
 * To install Guest Additions, select **Devices** > **Insert Guest Additions CD image...**  (top left of the VirtualBox Window). Then, open a terminal (Ctrl+Alt+t), go to "/media/nest/VBOXADDITIONS.../" and run "sudo bash VboxLinuxAdditions.run".
 
 * To set the correct language layout for your keyboard (e.g., from "US" to "DE"), open a terminal and type: "sudo dpkg-reconfigure keyboard-configuration". After setting the correct keyboard map you have to reboot the system to activate the changes.
-
-
-

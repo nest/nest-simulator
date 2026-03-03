@@ -25,12 +25,16 @@ import numpy as np
 import pytest
 import scipy.stats
 
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
-    haveMPI4Py = True
-except ImportError:
-    haveMPI4Py = False
+    HAVE_MPI4PY = True
+except (ImportError, RuntimeError):
+    HAVE_MPI4PY = False
 
 
 def setup_network(
@@ -209,7 +213,7 @@ def gather_data(data_array):
         available, the original array is returned.
 
     """
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
         if MPI.COMM_WORLD.Get_rank() == 0:
             if isinstance(data_array, list):
@@ -263,7 +267,7 @@ def chi_squared_check(degrees, expected):
 
 def mpi_barrier():
     """Forms a barrier for MPI processes until all of them call the function."""
-    if haveMPI4Py:
+    if HAVE_MPI4PY:
         MPI.COMM_WORLD.Barrier()
 
 
@@ -342,7 +346,7 @@ def test_statistics(p_primary):
     nr_threads = 2
 
     # set NEST verbosity
-    nest.set_verbosity("M_FATAL")
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # here we test
     # 1. p_primary yields the correct indegree and outdegree
@@ -406,7 +410,7 @@ def test_autapses_true(autapses):
     }
 
     # set NEST verbosity
-    nest.set_verbosity("M_FATAL")
+    nest.verbosity = nest.VerbosityLevel.FATAL
 
     # create the network
     pop_primay = nest.Create("aeif_cond_alpha_astro", N)

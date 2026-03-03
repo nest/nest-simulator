@@ -27,7 +27,6 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "dictdatum.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -35,13 +34,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "lockptrdatum.h"
 
 // Includes from standard library
 #include <algorithm>
@@ -185,44 +177,44 @@ nest::iaf_bw_2001::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001& n )
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_bw_2001::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::V_reset, V_reset );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::t_ref, t_ref );
-  def< double >( d, names::tau_AMPA, tau_AMPA );
-  def< double >( d, names::tau_GABA, tau_GABA );
-  def< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
-  def< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
-  def< double >( d, names::alpha, alpha );
-  def< double >( d, names::conc_Mg2, conc_Mg2 );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
+  d[ names::E_L ] = E_L;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::V_th ] = V_th;
+  d[ names::V_reset ] = V_reset;
+  d[ names::C_m ] = C_m;
+  d[ names::g_L ] = g_L;
+  d[ names::t_ref ] = t_ref;
+  d[ names::tau_AMPA ] = tau_AMPA;
+  d[ names::tau_GABA ] = tau_GABA;
+  d[ names::tau_decay_NMDA ] = tau_decay_NMDA;
+  d[ names::tau_rise_NMDA ] = tau_rise_NMDA;
+  d[ names::alpha ] = alpha;
+  d[ names::conc_Mg2 ] = conc_Mg2;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
 }
 
 void
-nest::iaf_bw_2001::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_bw_2001::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_reset, V_reset, node );
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::t_ref, t_ref, node );
-  updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
-  updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
-  updateValueParam< double >( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
-  updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
-  updateValueParam< double >( d, names::alpha, alpha, node );
-  updateValueParam< double >( d, names::conc_Mg2, conc_Mg2, node );
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_reset, V_reset, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::tau_AMPA, tau_AMPA, node );
+  update_value_param( d, names::tau_GABA, tau_GABA, node );
+  update_value_param( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
+  update_value_param( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
+  update_value_param( d, names::alpha, alpha, node );
+  update_value_param( d, names::conc_Mg2, conc_Mg2, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset >= V_th )
   {
@@ -255,24 +247,24 @@ nest::iaf_bw_2001::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_bw_2001::State_::get( DictionaryDatum& d ) const
+nest::iaf_bw_2001::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_m ] ); // Membrane potential
-  def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
-  def< double >( d, names::s_GABA, y_[ s_GABA ] );
-  def< double >( d, names::s_NMDA, y_[ s_NMDA ] );
-  def< double >( d, names::I_NMDA, I_NMDA_ );
-  def< double >( d, names::I_AMPA, I_AMPA_ );
-  def< double >( d, names::I_GABA, I_GABA_ );
+  d[ names::V_m ] = y_[ V_m ]; // Membrane potential
+  d[ names::s_AMPA ] = y_[ s_AMPA ];
+  d[ names::s_GABA ] = y_[ s_GABA ];
+  d[ names::s_NMDA ] = y_[ s_NMDA ];
+  d[ names::I_NMDA ] = I_NMDA_;
+  d[ names::I_AMPA ] = I_AMPA_;
+  d[ names::I_GABA ] = I_GABA_;
 }
 
 void
-nest::iaf_bw_2001::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_bw_2001::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_m ], node );
-  updateValueParam< double >( d, names::s_AMPA, y_[ s_AMPA ], node );
-  updateValueParam< double >( d, names::s_GABA, y_[ s_GABA ], node );
-  updateValueParam< double >( d, names::s_NMDA, y_[ s_NMDA ], node );
+  update_value_param( d, names::V_m, y_[ V_m ], node );
+  update_value_param( d, names::s_AMPA, y_[ s_AMPA ], node );
+  update_value_param( d, names::s_GABA, y_[ s_GABA ], node );
+  update_value_param( d, names::s_NMDA, y_[ s_NMDA ], node );
 }
 
 /* ---------------------------------------------------------------------------

@@ -37,18 +37,16 @@
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
+#include "connection_id.h"
 #include "connection_label.h"
 #include "connector_model.h"
 #include "event.h"
-#include "nest_datums.h"
 #include "nest_names.h"
 #include "node.h"
 #include "source.h"
+#include "source_table.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -71,7 +69,7 @@ public:
   virtual ~ConnectorBase() {};
 
   /**
-   * Return syn_id_ of the synapse type of this Connector (index in
+   * Return syn_id_ of the synapse type of this Connector (size_t in
    * list of synapse prototypes).
    */
   virtual synindex get_syn_id() const = 0;
@@ -85,13 +83,13 @@ public:
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
-  virtual void get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const = 0;
+  virtual void get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const = 0;
 
   /**
    * Set status of the connection at position lcid according to the
    * dictionary dict.
    */
-  virtual void set_synapse_status( const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
+  virtual void set_synapse_status( const size_t tid, const Dictionary& dict, ConnectorModel& cm ) = 0;
 
   /**
    * Add ConnectionID with given source_node_id and lcid to conns. If
@@ -192,14 +190,16 @@ public:
   virtual size_t find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const = 0;
 
   /**
-   * Return lcid of first connection where the node ID of the target
-   * matches target_node_id; consider only the connections with lcids
-   * given in matching_lcids. If there is no match, the function returns
-   * invalid_index.
+   * Return lcid of first connection matching source and target node id and that
+   * is not disabled.
+   *
+   * Intended for use with unsorted (uncompressed) connections.
    */
-  virtual size_t find_matching_target( const size_t tid,
-    const std::vector< size_t >& matching_lcids,
-    const size_t target_node_id ) const = 0;
+  virtual size_t find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const = 0;
 
   /**
    * Disable the transfer of events through the connection at position
@@ -247,7 +247,7 @@ public:
   }
 
   void
-  get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const override
+  get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const override
   {
     assert( lcid < C_.size() );
 
@@ -255,11 +255,11 @@ public:
 
     // get target node ID here, where tid is available
     // necessary for hpc synapses using TargetIdentifierIndex
-    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_node_id() );
+    dict[ names::target ] = C_[ lcid ].get_target( tid )->get_node_id();
   }
 
   void
-  set_synapse_status( const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) override
+  set_synapse_status( const size_t lcid, const Dictionary& dict, ConnectorModel& cm ) override
   {
     assert( lcid < C_.size() );
 
@@ -293,8 +293,7 @@ public:
         const size_t current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
         if ( current_target_node_id == target_node_id or target_node_id == 0 )
         {
-          conns.push_back(
-            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+          conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }
       }
     }
@@ -316,8 +315,7 @@ public:
         if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
           != target_neuron_node_ids.end() )
         {
-          conns.push_back(
-            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+          conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }
       }
     }
@@ -466,6 +464,10 @@ public:
   size_t
   find_first_target( const size_t tid, const size_t start_lcid, const size_t target_node_id ) const override
   {
+    // TODO: Once #3544 is merged, activate this assertion. It is currently
+    //       commented out to avoid circular inclusions.
+    // assert( kernel().connection_manager.use_compressed_spikes() );
+
     size_t lcid = start_lcid;
     while ( true )
     {
@@ -484,15 +486,18 @@ public:
   }
 
   size_t
-  find_matching_target( const size_t tid,
-    const std::vector< size_t >& matching_lcids,
-    const size_t target_node_id ) const override
+  find_enabled_connection( const size_t tid,
+    const size_t syn_id,
+    const size_t source_node_id,
+    const size_t target_node_id,
+    const SourceTable& source_table ) const override
   {
-    for ( size_t i = 0; i < matching_lcids.size(); ++i )
+    for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_node_id() == target_node_id )
+      if ( source_table.get_node_id( tid, syn_id, lcid ) == source_node_id
+        and C_[ lcid ].get_target( tid )->get_node_id() == target_node_id and not C_[ lcid ].is_disabled() )
       {
-        return matching_lcids[ i ];
+        return lcid;
       }
     }
 

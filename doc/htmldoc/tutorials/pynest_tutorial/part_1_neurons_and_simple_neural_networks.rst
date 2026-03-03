@@ -93,11 +93,9 @@ prompted for.
 
 If you want to obtain more information about a particular command, you
 may use Python's standard help system, which will return the help text
-(docstring) explaining the use of this particular function. There is a
-help system within NEST as well. You can open the help pages in a
-browser using ``nest.helpdesk()`` and you can get the help page for a
-particular NEST object (like a synapse or neuron model) using
-``nest.help('object')``.
+(docstring) explaining the use of this particular function. You can get
+the help page for a particular NEST object (like a synapse or neuron model)
+using ``nest.help('object')``.
 
 Creating nodes
 --------------
@@ -144,9 +142,9 @@ to see which properties a neuron has, you may ask it for its status.
 This will print out the corresponding dictionary in the Python console.
 Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
-documentation of the model through the helpdesk. If you already know
-which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
+online documentation. If you already know which properties you are interested
+in, you can specify a key, or a list of keys, as an optional argument to
+:py:meth:`~.NodeCollection.get`:
 
 ::
 

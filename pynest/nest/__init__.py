@@ -21,9 +21,9 @@
 
 r"""PyNEST - Python interface for the NEST Simulator
 
-* ``nest.helpdesk()`` opens the NEST documentation in your browser.
-
 * ``nest.__version__`` displays the NEST version.
+
+* ``nest.build_info`` provides detailed information about the NEST build.
 
 * ``nest.node_models`` shows all available neuron and device models.
 

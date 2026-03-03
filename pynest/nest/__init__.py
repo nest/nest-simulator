@@ -115,6 +115,9 @@ class NestModule(types.ModuleType):
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
 
+        # Add version for backward compatibility
+        self.__version__ = NestModule.ll_api.nestkernel.llapi_get_kernel_status()["build_info"]["version"]
+
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error
 
@@ -145,7 +148,11 @@ class NestModule(types.ModuleType):
     kernel_status = KernelAttribute("dict", "Get the complete kernel status", readonly=True)
     resolution = KernelAttribute("float", "The resolution of the simulation (in ms)", default=0.1)
     biological_time = KernelAttribute("float", "The current simulation time (in ms)")
-    build_info = KernelAttribute("dict", "Information about the build and compile configuration of NEST", readonly=True)
+    build_info = KernelAttribute(
+        "dict",
+        "Information about the build and compile configuration of NEST",
+        readonly=True,
+    )
     memory_size = KernelAttribute("int", "Memory size of NEST process in kB (-1 if unavailable)", readonly=True)
     to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
     max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
@@ -535,4 +542,7 @@ globals().update(_module.__dict__)
 # Since these references are deleted, flake8 complains with an error
 # `F821 undefined name` where these variables are used. Hence we mark all those
 # lines with a `# noqa`
-del _rel_import_star, _lazy_module_property, _module, _original_module_attrs
+del _rel_import_star, _lazy_module_property, _original_module_attrs
+
+
+del _module

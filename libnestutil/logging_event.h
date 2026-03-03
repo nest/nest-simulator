@@ -45,6 +45,8 @@ public:
 
   friend std::ostream& operator<<( std::ostream&, const LoggingEvent& );
 
+  VerbosityLevel nest_verbosity_level() const;
+
 public:
   const std::string& message;
   const std::string& function;

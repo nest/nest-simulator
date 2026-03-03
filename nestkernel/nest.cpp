@@ -767,4 +767,14 @@ create_doughnut( const Dictionary& d )
   return new DifferenceMask< 2 >( outer_circle, inner_circle );
 }
 
+void
+message( const VerbosityLevel level,
+  const std::string& function,
+  const std::string& message,
+  const std::string& file,
+  const size_t line )
+{
+  nest::kernel().logging_manager.publish_log( level, function, message, file, line );
+}
+
 } // namespace nest

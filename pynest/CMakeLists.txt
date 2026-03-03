@@ -19,10 +19,8 @@
 
 if ( HAVE_PYTHON )
 
-  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
-  # or Python_EXECUTABLE set properly.
   execute_process(
-    COMMAND "python3" "${PROJECT_SOURCE_DIR}/pynest/generate_exception_header.py"
+    COMMAND ${Python_EXECUTABLE} "${PROJECT_SOURCE_DIR}/pynest/generate_exception_header.py"
     "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
@@ -62,15 +60,24 @@ if ( HAVE_PYTHON )
   target_compile_definitions( nestkernel_api PRIVATE
     -D_IS_PYNEST
   )
-
-  install( DIRECTORY nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
-    PATTERN "versionchecker.py.in" EXCLUDE
-  )
-
-  install( DIRECTORY examples/
+  # TODO PYNEST NG: Do changes only for the new pip installation
+  if(NOT "${SKBUILD}" STREQUAL "")
+    install( DIRECTORY nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+      DESTINATION ./nest
+      PATTERN "versionchecker.py.in" EXCLUDE
+    )
+    install( DIRECTORY examples/
+      DESTINATION ./nest/doc/examples/pynest
+    )
+    install( TARGETS nestkernel_api DESTINATION ./nest )
+  else()
+    install( DIRECTORY nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      PATTERN "versionchecker.py.in" EXCLUDE
+    )
+    install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
-  )
-
-  install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
+    )
+    install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
+  endif()
 endif ()

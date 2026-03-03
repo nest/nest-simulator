@@ -80,6 +80,8 @@ public:
    */
   bool dict_miss_is_error() const;
 
+  VerbosityLevel verbosity() const;
+
 private:
   /**
    * Delivers a LoggingEvent to all registered clients.
@@ -101,6 +103,12 @@ inline bool
 LoggingManager::dict_miss_is_error() const
 {
   return dict_miss_is_error_;
+}
+
+inline VerbosityLevel
+LoggingManager::verbosity() const
+{
+  return logging_level_;
 }
 
 } // namespace nest

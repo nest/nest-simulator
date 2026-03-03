@@ -82,8 +82,9 @@
 // Includes from nestkernel:
 #include "growth_curve.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
+
 
 namespace nest
 {
@@ -122,14 +123,14 @@ public:
    *
    * @param d to write data
    */
-  void get( DictionaryDatum& d ) const;
+  void get( Dictionary& d ) const;
 
   /**
    * Set values from a dictionary.
    *
    * @param d to take data from
    */
-  void set( const DictionaryDatum& d );
+  void set( const Dictionary& d );
 
 
   /**

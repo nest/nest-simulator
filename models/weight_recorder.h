@@ -104,7 +104,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -126,8 +126,8 @@ public:
   Type get_type() const override;
   SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void pre_run_hook() override;
@@ -135,14 +135,14 @@ private:
 
   struct Parameters_
   {
-    NodeCollectionDatum senders_;
-    NodeCollectionDatum targets_;
+    NodeCollectionPTR senders_;
+    NodeCollectionPTR targets_;
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary& );
   };
 
   Parameters_ P_;

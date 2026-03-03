@@ -27,9 +27,6 @@
 #include "kernel_manager.h"
 #include "model_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 
 namespace nest
 {
@@ -93,11 +90,10 @@ proxynode::sends_signal() const
 }
 
 void
-proxynode::get_status( DictionaryDatum& d ) const
+proxynode::get_status( Dictionary& d ) const
 {
-  const Model* model = kernel::manager< ModelManager >.get_node_model( model_id_ );
-  const Name element_type = model->get_prototype().get_element_type();
-  ( *d )[ names::element_type ] = LiteralDatum( element_type );
+  const Model* model = kernel().model_manager.get_node_model( model_id_ );
+  d[ names::element_type ] = model->get_prototype().get_element_type();
 }
 
 bool

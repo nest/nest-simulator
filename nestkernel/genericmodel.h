@@ -92,8 +92,8 @@ public:
   void deprecation_warning( const std::string& ) override;
 
 private:
-  void set_status_( DictionaryDatum ) override;
-  DictionaryDatum get_status_() override;
+  void set_status_( const Dictionary& ) override;
+  Dictionary get_status_() override;
 
   size_t get_element_size() const override;
 

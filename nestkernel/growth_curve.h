@@ -36,8 +36,8 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {
@@ -52,27 +52,27 @@ public:
   virtual ~GrowthCurve()
   {
   }
-  virtual void get( DictionaryDatum& d ) const = 0;
-  virtual void set( const DictionaryDatum& d ) = 0;
+  virtual void get( Dictionary& d ) const = 0;
+  virtual void set( const Dictionary& d ) = 0;
   virtual double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
-  is( Name n )
+  is( std::string n )
   {
     return n == name_;
   }
-  Name
+  std::string
   get_name()
   {
     return name_;
   }
 
 protected:
-  GrowthCurve( const Name name )
+  GrowthCurve( const std::string name )
     : name_( name )
   {
   }
-  const Name name_;
+  const std::string name_;
 };
 
 /** @BeginDocumentation
@@ -132,8 +132,9 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
@@ -221,8 +222,9 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
@@ -298,8 +300,9 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 

@@ -26,10 +26,6 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-
-#include "kernel_manager.h"
 #include "mpi_manager.h"
 
 #ifdef _OPENMP
@@ -59,8 +55,8 @@ public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
 
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  virtual void set_status( const Dictionary& ) override;
+  virtual void get_status( Dictionary& ) override;
 
   /**
    * Gets ID of local thread.

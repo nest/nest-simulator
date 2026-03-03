@@ -39,14 +39,13 @@
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
+#include "connection_id.h"
 #include "connection_label.h"
 #include "event.h"
-#include "node.h"
+#include "nest_names.h"
 #include "source.h"
 #include "source_table.h"
 #include "spikecounter.h"
-
-#include "block_vector.h"
 
 
 namespace nest
@@ -73,7 +72,7 @@ public:
   virtual ~ConnectorBase() {};
 
   /**
-   * Return syn_id_ of the synapse type of this Connector (index in
+   * Return syn_id_ of the synapse type of this Connector (size_t in
    * list of synapse prototypes).
    */
   virtual synindex get_syn_id() const = 0;
@@ -87,13 +86,13 @@ public:
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
-  virtual void get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const = 0;
+  virtual void get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const = 0;
 
   /**
    * Set status of the connection at position lcid according to the
    * dictionary dict.
    */
-  virtual void set_synapse_status( const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
+  virtual void set_synapse_status( const size_t tid, const Dictionary& dict, ConnectorModel& cm ) = 0;
 
   /**
    * Add ConnectionID with given source_node_id and lcid to conns. If
@@ -240,8 +239,8 @@ public:
   synindex get_syn_id() const override;
   size_t size() const override;
 
-  void get_synapse_status( size_t tid, size_t lcid, DictionaryDatum& dict ) const override;
-  void set_synapse_status( size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) override;
+  void get_synapse_status( size_t tid, size_t lcid, Dictionary& dict ) const override;
+  void set_synapse_status( size_t lcid, const Dictionary& dict, ConnectorModel& cm ) override;
 
   void push_back( const ConnectionT& c );
   void push_back( ConnectionT&& c );

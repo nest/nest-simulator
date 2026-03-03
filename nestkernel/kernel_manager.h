@@ -23,9 +23,6 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-// Includes from sli:
-#include "dictdatum.h"
-
 #include <fstream>
 
 #include "manager_interface.h"
@@ -154,7 +151,8 @@
 
  Miscellaneous
  dict_miss_is_error                    booltype    - Whether missed dictionary entries are treated as errors.
-
+ build_info                   dicttype - Various information about the NEST build
+ memory_size         integertype - Memory occupied by NEST process in kB (-1 if not available for OS)
  SeeAlso: Simulate, Node
 */
 
@@ -176,6 +174,8 @@ class KernelManager : public ManagerInterface
 
   KernelManager( KernelManager const& );  // do not implement
   void operator=( KernelManager const& ); // do not implement
+
+  Dictionary get_build_info_();
 
 public:
   KernelManager();
@@ -217,8 +217,8 @@ public:
    */
   void change_number_of_threads( size_t new_num_threads );
 
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   void prepare() override;
   void cleanup() override;
@@ -236,6 +236,9 @@ public:
   void write_to_dump( const std::string& msg );
 
 private:
+  size_t get_memsize_linux_() const;  //!< return VmSize in kB
+  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
@@ -249,6 +252,24 @@ namespace kernel
 template < class T >
 inline T manager;
 
+}
+
+inline RngPtr
+get_rank_synced_rng()
+{
+  return kernel::manager< RandomManager >.get_rank_synced_rng();
+}
+
+inline RngPtr
+get_vp_synced_rng( size_t tid )
+{
+  return kernel::manager< RandomManager >.get_vp_synced_rng( tid );
+}
+
+inline RngPtr
+get_vp_specific_rng( size_t tid )
+{
+  return kernel::manager< RandomManager >.get_vp_specific_rng( tid );
 }
 
 } // namespace nest

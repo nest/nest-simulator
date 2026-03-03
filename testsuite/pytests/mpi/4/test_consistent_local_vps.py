@@ -37,8 +37,9 @@ def test_consistent_local_vps():
     local_vps = list(nest.GetLocalVPs())
 
     # Use thread-vp mapping of neurons to check mapping in kernel
-    nrns = nest.GetLocalNodeCollection(nest.Create("iaf_psc_delta", 2 * n_vp))
+    nrns = nest.Create("iaf_psc_delta", 2 * n_vp)
+    local_nrns = nrns[nrns.local]
 
-    vp_direct = list(nrns.vp)
-    vp_indirect = [local_vps[t] for t in nrns.thread]
+    vp_direct = list(local_nrns.vp)
+    vp_indirect = [local_vps[t] for t in local_nrns.thread]
     assert vp_direct == vp_indirect

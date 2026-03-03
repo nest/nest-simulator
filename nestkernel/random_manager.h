@@ -34,7 +34,6 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "dictdatum.h"
 #include "nest_types.h"
 #include "random_generators.h"
 
@@ -58,8 +57,8 @@ public:
    */
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Get rank-synchronized random number generator.

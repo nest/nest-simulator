@@ -39,8 +39,6 @@
 #include "secondary_event_impl.h"
 #include "weight_optimizer.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -51,7 +49,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class WeightOptimizer;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -178,15 +176,14 @@ public:
 
   /**
    * Return the element type of the node.
-   *
-   * The returned Name is a free label describing the class of network
+   * The returned string is a free label describing the class of network
    * elements a node belongs to. Currently used values are "neuron",
    * "recorder", "stimulator", and "other", which are all defined as
-   * static Name objects in the names namespace.
+   * static string objects in the names namespace.
    * This function is overwritten with a corresponding value in the
    * derived classes
    */
-  virtual Name get_element_type() const;
+  virtual std::string get_element_type() const;
 
   /**
    * Return global Network ID.
@@ -331,7 +328,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the node by setting
@@ -340,7 +337,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( Dictionary& ) const = 0;
 
 public:
   /**
@@ -698,14 +695,14 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double get_synaptic_elements( Name ) const;
+  virtual double get_synaptic_elements( std::string ) const;
 
   /**
    * Get the number of vacant synaptic element for the current Node
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_vacant( Name ) const;
+  virtual int get_synaptic_elements_vacant( std::string ) const;
 
   /**
    * Get the number of connected synaptic element for the current Node
@@ -713,7 +710,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int get_synaptic_elements_connected( Name ) const;
+  virtual int get_synaptic_elements_connected( std::string ) const;
 
   /**
    * Get the number of all synaptic elements for the current Node at time t
@@ -721,7 +718,7 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< Name, double > get_synaptic_elements() const;
+  virtual std::map< std::string, double > get_synaptic_elements() const;
 
   /**
    * Triggers the update of all SynapticElements
@@ -747,12 +744,11 @@ public:
    * Is used to update the number of connected
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
-   *
-   * @param type Name, name of the synaptic element to connect
+   * @param type std::string, name of the synaptic element to connect
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ) {};
+  virtual void connect_synaptic_element( std::string, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -928,10 +924,10 @@ public:
    *
    *  get_status_base() first gets a dictionary with the basic
    *  information of an element, using get_status_dict_(). It then
-   *  calls the custom function get_status(DictionaryDatum) with
+   *  calls the custom function get_status(dictionary) with
    *  the created status dictionary as argument.
    */
-  DictionaryDatum get_status_base();
+  Dictionary get_status_base();
 
   /**
    * Set status dictionary of a node.
@@ -939,7 +935,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  void set_status_base( const Dictionary& );
 
   /**
    * Returns true if node is model prototype.
@@ -1002,7 +998,7 @@ private:
    * permanent status dictionary which is then returned by
    * get_status_dict_().
    */
-  virtual DictionaryDatum get_status_dict_();
+  virtual Dictionary get_status_dict_();
 
 protected:
   /**

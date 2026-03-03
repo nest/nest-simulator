@@ -33,7 +33,7 @@ CommonPropertiesHomW::CommonPropertiesHomW()
 }
 
 void
-CommonPropertiesHomW::get_status( DictionaryDatum& d ) const
+CommonPropertiesHomW::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -42,14 +42,19 @@ CommonPropertiesHomW::get_status( DictionaryDatum& d ) const
 double
 CommonPropertiesHomW::get_weight() const
 {
-  return weight_;
+  assert( not growthcurvedict_.known( name ) );
+  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
+  assert( nc );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( nc );
+  growthcurvedict_[ name ] = id;
 }
 
 void
-CommonPropertiesHomW::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+CommonPropertiesHomW::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.updateValue( names::weight, weight_ );
 }
 
 } // namespace nest

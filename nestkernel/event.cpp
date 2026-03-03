@@ -339,7 +339,7 @@ ConductanceEvent::clone() const
 }
 
 
-[[gnu::always_inline]] const std::vector< Name >&
+[[gnu::always_inline]] const std::vector< std::string >&
 DataLoggingRequest::record_from() const
 {
   // During simulation, events are created without recordables
@@ -372,7 +372,9 @@ DataLoggingRequest::clone() const
   return new DataLoggingRequest( *this );
 }
 
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const Time& rec_offset, const std::vector< Name >& recs )
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const Time& rec_offset,
+  const std::vector< std::string >& recs )
   : Event()
   , recording_interval_( rec_int )
   , recording_offset_( rec_offset )
@@ -380,7 +382,7 @@ DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const Time& rec_off
 {
 }
 
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< std::string >& recs )
   : Event()
   , recording_interval_( rec_int )
   , record_from_( &recs )
@@ -506,4 +508,4 @@ DataLoggingReply::DataLoggingReply( const DataLoggingReply::Container& info )
 {
 }
 
-} // namespace nest
+} // std::stringspace nest

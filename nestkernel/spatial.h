@@ -30,13 +30,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "booldatum.h"
-#include "dictdatum.h"
-#include "iostreamdatum.h"
-#include "token.h"
-
 // Includes from spatial:
 #include "free_layer.h"
 #include "layer.h"
@@ -57,9 +50,19 @@ public:
   {
   }
 
-  void set_status( const DictionaryDatum&, bool ) override {};
+  void set_status( const Dictionary&, bool ) override {};
 
-  void get_status( DictionaryDatum& d, NodeCollection const* nc ) const override;
+  void
+  get_status( Dictionary& d, NodeCollection const* const nc ) const override
+  {
+    layer_->get_status( d, nc );
+  }
+
+  void
+  get_status( Dictionary& d, const NodeCollectionPTR nc ) const override
+  {
+    get_status( d, nc.get() );
+  }
 
   //! Returns pointer to object with layer representation
   const AbstractLayerPTR get_layer() const;
@@ -78,26 +81,29 @@ private:
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
-NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
-ArrayDatum get_position( NodeCollectionPTR layer_nc );
+NodeCollectionPTR create_layer( const Dictionary& layer_dict );
+std::vector< std::vector< double > > get_position( NodeCollectionPTR layer_nc );
 std::vector< double > get_position( const size_t node_id );
-ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
-ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
+std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
+std::vector< std::vector< double > > displacement( NodeCollectionPTR layer_nc,
+  const std::vector< std::vector< double > >& point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
-std::vector< double > distance( NodeCollectionPTR layer_nc, const ArrayDatum point );
-std::vector< double > distance( const ArrayDatum conns );
-MaskDatum create_mask( const DictionaryDatum& mask_dict );
-BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
-MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& dict );
-void dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out );
-void dump_layer_connections( const Token& syn_model,
-  NodeCollectionPTR source_layer_nc,
-  NodeCollectionPTR target_layer_nc,
-  OstreamDatum& out_file );
-DictionaryDatum get_layer_status( NodeCollectionPTR layer_nc );
+std::vector< double > distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >& point );
+std::vector< double > distance( const std::vector< ConnectionID >& conns );
+MaskPTR create_mask( const Dictionary& mask_dict );
+NodeCollectionPTR
+select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask );
+bool inside( const std::vector< double >& point, const MaskPTR mask );
+MaskPTR intersect_mask( const MaskPTR mask1, const MaskPTR mask2 );
+MaskPTR union_mask( const MaskPTR mask1, const MaskPTR mask2 );
+MaskPTR minus_mask( const MaskPTR mask1, const MaskPTR mask2 );
+void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& dict );
+void dump_layer_nodes( NodeCollectionPTR layer_nc, const std::string& filename );
+void dump_layer_connections( const NodeCollectionPTR source_layer,
+  const NodeCollectionPTR target_layer,
+  const std::string& synapse_model,
+  const std::string& filename );
+Dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 
 #endif /* SPATIAL_H */

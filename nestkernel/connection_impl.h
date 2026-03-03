@@ -65,7 +65,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
 
 template < typename targetidentifierT >
 void
-Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+Connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
   def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
   target_.get_status( d );
@@ -73,10 +73,10 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& )
 {
   double delay;
-  if ( updateValue< double >( d, names::delay, delay ) )
+  if ( d.update_value( names::delay, delay ) )
   {
     kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
     syn_id_delay_.set_delay_ms( delay );
@@ -86,7 +86,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
 
 template < typename targetidentifierT >
 void
-Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
+Connection< targetidentifierT >::check_synapse_params( const Dictionary& ) const
 {
 }
 

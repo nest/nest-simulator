@@ -161,9 +161,9 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
-Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
-  const Name& walltime_name,
-  const Name& cputime_name ) const
+Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
+  const std::string& walltime_name,
+  const std::string& cputime_name ) const
 {
   if constexpr ( enable_timer )
   {
@@ -175,19 +175,19 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
         walltime_timer_.end(),
         wall_times.begin(),
         []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
-      def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
+      d[ walltime_name ] = wall_times;
 
       std::vector< double > cpu_times( cputime_timer_.size() );
       std::transform( cputime_timer_.begin(),
         cputime_timer_.end(),
         cpu_times.begin(),
         []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
-      def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
+      d[ cputime_name ] = cpu_times;
     }
     else
     {
-      def< double >( d, walltime_name, walltime_timer_.elapsed() );
-      def< double >( d, cputime_name, cputime_timer_.elapsed() );
+      d[ walltime_name ] = walltime_timer_.elapsed();
+      d[ cputime_name ] = cputime_timer_.elapsed();
     } // use_timer_array
   }   // enable_timer
 }

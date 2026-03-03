@@ -153,7 +153,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -174,8 +174,8 @@ public:
 
   SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -234,14 +234,14 @@ private:
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+    bool set( const Dictionary&, const correlospinmatrix_detector&, Node* );
 
     Time get_default_delta_tau();
   };
@@ -284,12 +284,12 @@ private:
 
     State_(); //!< initialize default state
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
+    void set( const Dictionary&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -312,7 +312,7 @@ correlospinmatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_typ
 }
 
 inline void
-correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
+nest::correlospinmatrix_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -320,7 +320,7 @@ correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-correlospinmatrix_detector::set_status( const DictionaryDatum& d )
+nest::correlospinmatrix_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );

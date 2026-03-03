@@ -38,8 +38,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-class Token;
-
 namespace nest
 {
 class Time;
@@ -264,10 +262,6 @@ public:
       : t( t )
     {
     }
-
-    static double fromtoken( const Token& t );
-    explicit ms( const Token& t )
-      : t( fromtoken( t ) ) {};
   };
 
   struct ms_stamp

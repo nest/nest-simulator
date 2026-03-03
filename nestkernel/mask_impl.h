@@ -31,7 +31,7 @@ namespace nest
 {
 
 template < int D >
-BoxMask< D >::BoxMask( const DictionaryDatum& d )
+BoxMask< D >::BoxMask( const Dictionary& d )
 {
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
@@ -178,7 +178,7 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
 }
 
 template < int D >
-BallMask< D >::BallMask( const DictionaryDatum& d )
+BallMask< D >::BallMask( const Dictionary& d )
 {
   radius_ = getValue< double >( d, names::radius );
   if ( radius_ <= 0 )
@@ -195,7 +195,7 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
 }
 
 template < int D >
-EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
+EllipseMask< D >::EllipseMask( const Dictionary& d )
 {
   major_axis_ = getValue< double >( d, names::major_axis );
   minor_axis_ = getValue< double >( d, names::minor_axis );
@@ -377,16 +377,16 @@ BoxMask< D >::clone() const
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 BoxMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
-  def< std::vector< double > >( maskd, names::lower_left, lower_left_.get_vector() );
-  def< std::vector< double > >( maskd, names::upper_right, upper_right_.get_vector() );
-  def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
-  def< double >( maskd, names::polar_angle, polar_angle_ );
+  Dictionary d;
+  Dictionary maskd;
+  d[ get_name() ] = maskd;
+  maskd[ names::lower_left ] = lower_left_.get_vector();
+  maskd[ names::upper_right ] = upper_right_.get_vector();
+  maskd[ names::azimuth_angle ] = azimuth_angle_;
+  maskd[ names::polar_angle ] = polar_angle_;
   return d;
 }
 
@@ -453,14 +453,14 @@ BallMask< D >::clone() const
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 BallMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
-  def< double >( maskd, names::radius, radius_ );
-  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
+  Dictionary d;
+  Dictionary maskd;
+  maskd[ names::radius ] = radius_;
+  maskd[ names::anchor ] = center_.get_vector();
+  d[ get_name() ] = maskd;
   return d;
 }
 
@@ -531,18 +531,18 @@ EllipseMask< D >::clone() const
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 EllipseMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
-  def< double >( maskd, names::major_axis, major_axis_ );
-  def< double >( maskd, names::minor_axis, minor_axis_ );
-  def< double >( maskd, names::polar_axis, polar_axis_ );
-  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
-  def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
-  def< double >( maskd, names::polar_angle, polar_angle_ );
+  Dictionary d;
+  Dictionary maskd;
+  maskd[ names::major_axis ] = major_axis_;
+  maskd[ names::minor_axis ] = minor_axis_;
+  maskd[ names::polar_axis ] = polar_axis_;
+  maskd[ names::anchor ] = center_.get_vector();
+  maskd[ names::azimuth_angle ] = azimuth_angle_;
+  maskd[ names::polar_angle ] = polar_angle_;
+  d[ get_name() ] = maskd;
   return d;
 }
 
@@ -751,11 +751,11 @@ AnchoredMask< D >::clone() const
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 AnchoredMask< D >::get_dict() const
 {
-  DictionaryDatum d = m_->get_dict();
-  def< std::vector< double > >( d, names::anchor, anchor_.get_vector() );
+  Dictionary d = m_->get_dict();
+  d[ names::anchor ] = anchor_.get_vector();
   return d;
 }
 }

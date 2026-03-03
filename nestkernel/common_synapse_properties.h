@@ -23,8 +23,8 @@
 #ifndef COMMON_SYNAPSE_PROPERTIES_H
 #define COMMON_SYNAPSE_PROPERTIES_H
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from nestkernel:
+#include "connector_model.h"
 
 
 namespace nest
@@ -58,12 +58,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
 
   /**
@@ -86,7 +86,6 @@ private:
   weight_recorder* weight_recorder_;
 };
 
-
 } // of namespace nest
 
-#endif
+#endif /* #ifndef COMMON_SYNAPSE_PROPERTIES_H */

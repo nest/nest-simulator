@@ -135,17 +135,17 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Issue warning if delay is given in syn_spec.
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const Dictionary& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -263,7 +263,7 @@ cont_delay_synapse< targetidentifierT >::cont_delay_synapse()
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+cont_delay_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
@@ -274,16 +274,16 @@ cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+cont_delay_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
   // set delay if mentioned
   double delay;
 
-  if ( updateValue< double >( d, names::delay, delay ) )
+  if ( d.update_value( names::delay, delay ) )
   {
 
     const double h = Time::get_resolution().get_ms();
@@ -310,11 +310,11 @@ cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, C
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+cont_delay_synapse< targetidentifierT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
-  if ( syn_spec->known( names::delay ) )
+  if ( syn_spec.known( names::delay ) )
   {
-    LOG( M_WARNING,
+    LOG( VerbosityLevel.WARNING,
       "Connect",
       "The delay will be rounded to the next multiple of the time step. "
       "To use a more precise time delay it needs to be defined within "

@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <memory>
 #include <vector>
 
 // Includes from nestkernel:
@@ -35,9 +36,6 @@
 #include "nest_types.h"
 #include "spike_data.h"
 #include "vp_manager.h"
-
-// Includes from sli:
-#include "name.h"
 
 namespace nest
 {
@@ -548,11 +546,11 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
-  DataLoggingRequest( const Time&, const std::vector< Name >& );
+  DataLoggingRequest( const Time&, const std::vector< std::string >& );
 
   /** Create event for given time interval, offset for interval start,
    *  and vector of recordables. */
-  DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
+  DataLoggingRequest( const Time&, const Time&, const std::vector< std::string >& );
 
   DataLoggingRequest* clone() const override;
 
@@ -565,7 +563,7 @@ public:
   const Time& get_recording_offset() const;
 
   /** Access to vector of recordables. */
-  const std::vector< Name >& record_from() const;
+  const std::vector< std::string >& record_from() const;
 
 private:
   //! Interval between two recordings, first is step 1
@@ -578,7 +576,7 @@ private:
    * @note This pointer shall be nullptr unless the event is sent by a connection
    * routine.
    */
-  std::vector< Name > const* const record_from_;
+  std::vector< std::string > const* const record_from_;
 };
 
 

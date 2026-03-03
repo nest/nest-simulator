@@ -30,9 +30,6 @@
 // Includes from models:
 #include "weight_recorder.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-
 namespace nest
 {
 
@@ -46,25 +43,24 @@ CommonSynapseProperties::~CommonSynapseProperties()
 }
 
 void
-CommonSynapseProperties::get_status( DictionaryDatum& d ) const
+CommonSynapseProperties::get_status( Dictionary& d ) const
 {
-  const NodeCollectionDatum wr = NodeCollectionDatum( NodeCollection::create( weight_recorder_ ) );
-  def< NodeCollectionDatum >( d, names::weight_recorder, wr );
+  d[ names::weight_recorder ] = NodeCollection::create( weight_recorder_ );
 }
 
 void
-CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
+CommonSynapseProperties::set_status( const Dictionary& d, ConnectorModel& )
 {
-  NodeCollectionDatum wr_datum;
-  if ( updateValue< NodeCollectionDatum >( d, names::weight_recorder, wr_datum ) )
+  NodeCollectionPTR wr_nc;
+  if ( d.update_value( names::weight_recorder, wr_nc ) )
   {
-    if ( wr_datum->size() != 1 )
+    if ( wr_nc->size() != 1 )
     {
       throw BadProperty( "Property weight_recorder must be a single element NodeCollection" );
     }
 
     const size_t tid = kernel::manager< VPManager >.get_thread_id();
-    Node* wr_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *wr_datum )[ 0 ], tid );
+    Node* wr_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *wr_nc )[ 0 ], tid );
     weight_recorder* wr = dynamic_cast< weight_recorder* >( wr_node );
     if ( not wr )
     {

@@ -43,13 +43,13 @@ TargetIdentifierPtrRport::TargetIdentifierPtrRport()
 }
 
 void
-TargetIdentifierPtrRport::get_status( DictionaryDatum& d ) const
+TargetIdentifierPtrRport::get_status( Dictionary& d ) const
 {
   // Do nothing if called on synapse prototype
   if ( target_ )
   {
-    def< long >( d, names::rport, rport_ );
-    def< long >( d, names::target, target_->get_node_id() );
+    d[ names::rport ] = rport_;
+    d[ names::target ] = target_->get_node_id();
   }
 }
 
@@ -88,13 +88,13 @@ TargetIdentifierIndex::TargetIdentifierIndex()
 }
 
 void
-TargetIdentifierIndex::get_status( DictionaryDatum& d ) const
+TargetIdentifierIndex::get_status( Dictionary& d ) const
 {
   // Do nothing if called on synapse prototype
   if ( target_ != invalid_targetindex )
   {
-    def< long >( d, names::rport, 0 );
-    def< long >( d, names::target, target_ );
+    d[ names::rport ] = 0;
+    d[ names::target ] = target_;
   }
 }
 

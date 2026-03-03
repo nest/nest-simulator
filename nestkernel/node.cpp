@@ -32,11 +32,6 @@
 #include "model_manager.h"
 #include "node_manager.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "namedatum.h"
-
 namespace nest
 {
 Node::Node()
@@ -125,10 +120,10 @@ Node::get_model_() const
   return *kernel::manager< ModelManager >.get_node_model( model_id_ );
 }
 
-DictionaryDatum
+Dictionary
 Node::get_status_dict_()
 {
-  return DictionaryDatum( new Dictionary );
+  return {};
 }
 
 [[gnu::always_inline]] void
@@ -144,26 +139,26 @@ Node::get_local_device_id() const
   return invalid_index;
 }
 
-DictionaryDatum
+Dictionary
 Node::get_status_base()
 {
-  DictionaryDatum dict = get_status_dict_();
+  Dictionary dict = get_status_dict_();
 
   // add information available for all nodes
-  ( *dict )[ names::local ] = kernel::manager< NodeManager >.is_local_node( this );
-  ( *dict )[ names::model ] = LiteralDatum( get_name() );
-  ( *dict )[ names::model_id ] = get_model_id();
-  ( *dict )[ names::global_id ] = get_node_id();
-  ( *dict )[ names::vp ] = get_vp();
-  ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
+  dict[ names::local ] = kernel().node_manager.is_local_node( this );
+  dict[ names::model ] = get_name();
+  dict[ names::model_id ] = get_model_id();
+  dict[ names::global_id ] = get_node_id();
+  dict[ names::vp ] = get_vp();
+  dict[ names::element_type ] = get_element_type();
 
   // add information available only for local nodes
   if ( not is_proxy() )
   {
-    ( *dict )[ names::frozen ] = is_frozen();
-    ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
-    ( *dict )[ names::thread_local_id ] = get_thread_lid();
-    ( *dict )[ names::thread ] = get_thread();
+    dict[ names::frozen ] = is_frozen();
+    dict[ names::node_uses_wfr ] = node_uses_wfr();
+    dict[ names::thread_local_id ] = get_thread_lid();
+    dict[ names::thread ] = get_thread();
   }
 
   // now call the child class' hook
@@ -173,7 +168,7 @@ Node::get_status_base()
 }
 
 void
-Node::set_status_base( const DictionaryDatum& dict )
+Node::set_status_base( const Dictionary& dict )
 {
   try
   {
@@ -182,10 +177,10 @@ Node::set_status_base( const DictionaryDatum& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
+      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.what() ) );
   }
 
-  updateValue< bool >( dict, names::frozen, frozen_ );
+  dict.update_value( names::frozen, frozen_ );
 }
 
 /**
@@ -666,7 +661,7 @@ Node::get_node_id() const
   return node_id_;
 }
 
-Name
+std::string
 Node::get_element_type() const
 {
   return names::neuron;
@@ -726,26 +721,26 @@ Node::is_frozen() const
   return frozen_;
 }
 
-std::map< Name, double >
+std::map< std::string, double >
 Node::get_synaptic_elements() const
 {
-  return std::map< Name, double >();
+  return std::map< std::string, double >();
 }
 
 int
-Node::get_synaptic_elements_connected( Name ) const
+Node::get_synaptic_elements_connected( std::string ) const
 {
   return 0;
 }
 
 int
-Node::get_synaptic_elements_vacant( Name ) const
+Node::get_synaptic_elements_vacant( std::string ) const
 {
   return 0;
 }
 
 double
-Node::get_synaptic_elements( Name ) const
+Node::get_synaptic_elements( std::string ) const
 {
   return 0.0;
 }

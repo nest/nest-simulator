@@ -29,9 +29,6 @@
 // nestkernel
 #include "histentry.h"
 
-// sli
-#include "dictdatum.h"
-
 namespace nest
 {
 

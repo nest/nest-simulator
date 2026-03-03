@@ -26,56 +26,46 @@
 #include "kernel_manager.h"
 #include "nest_names.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-#include "tokenutils.h"
 
 nest::ConnParameter*
-nest::ConnParameter::create( const Token& t, const size_t nthreads )
+nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
 {
   // single double
-  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( dd )
+  if ( is_type< double >( value ) )
   {
-    return new ScalarDoubleParameter( *dd, nthreads );
+    return new ScalarDoubleParameter( boost::any_cast< double >( value ), nthreads );
   }
 
   // single integer
-  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( id )
+  if ( is_type< long >( value ) )
   {
-    return new ScalarIntegerParameter( *id, nthreads );
+    return new ScalarIntegerParameter( boost::any_cast< long >( value ), nthreads );
   }
 
   // array of doubles
-  DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
-  if ( dvd )
+  if ( is_type< std::vector< double > >( value ) )
   {
-    return new ArrayDoubleParameter( **dvd, nthreads );
+    return new ArrayDoubleParameter( boost::any_cast< std::vector< double > >( value ), nthreads );
   }
 
   // Parameter
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
+  if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
   {
-    return new ParameterConnParameterWrapper( *pd, nthreads );
+    return new ParameterConnParameterWrapper( boost::any_cast< ParameterPTR >( value ), nthreads );
   }
 
-  // array of integer
-  IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
-  if ( ivd )
+  // array of longs
+  if ( is_type< std::vector< long > >( value ) )
   {
-    return new ArrayIntegerParameter( **ivd, nthreads );
+    return new ArrayLongParameter( boost::any_cast< std::vector< long > >( value ), nthreads );
   }
 
-  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + t.datum()->gettypename().toString() );
+  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + value.type().name() );
 }
 
 
-nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
-  : parameter_( pd.get() )
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( ParameterPTR p, const size_t )
+  : parameter_( p )
 {
 }
 

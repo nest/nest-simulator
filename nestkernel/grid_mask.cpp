@@ -26,14 +26,14 @@ namespace nest
 {
 
 template <>
-Name
+std::string
 GridMask< 2 >::get_name()
 {
   return names::grid;
 }
 
 template <>
-Name
+std::string
 GridMask< 3 >::get_name()
 {
   return names::grid3d;

@@ -23,7 +23,11 @@
 #ifndef MASK_H
 #define MASK_H
 
+// C++ includes:
+#include <memory>
+
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -31,18 +35,13 @@
 #include "nest_names.h"
 #include "nestmodule.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
-
 // Includes from spatial:
 #include "position_impl.h"
 
 namespace nest
 {
 class AbstractMask;
-
-typedef sharedPtrDatum< AbstractMask, &NestModule::MaskType > MaskDatum;
+using MaskPTR = std::shared_ptr< AbstractMask >;
 
 
 /**
@@ -63,7 +62,7 @@ public:
   /**
    * @returns a dictionary with the definition for this mask.
    */
-  virtual DictionaryDatum
+  virtual Dictionary
   get_dict() const
   {
     throw KernelException( "Can not convert mask to dict" );
@@ -217,7 +216,7 @@ public:
    * polar_angle   - Rotation angle in degrees from z-axis (double), the polar
    *                 angle does not apply in 2D, optional
    */
-  BoxMask( const DictionaryDatum& );
+  BoxMask( const Dictionary& );
 
   BoxMask( const Position< D >& lower_left,
     const Position< D >& upper_right,
@@ -247,14 +246,14 @@ public:
 
   Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 protected:
   /**
@@ -323,7 +322,7 @@ public:
    * "radius" with a double value and optionally the key "anchor" (the
    * center position) with an array of doubles.
    */
-  BallMask( const DictionaryDatum& );
+  BallMask( const Dictionary& );
 
   ~BallMask() override
   {
@@ -348,14 +347,14 @@ public:
 
   Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 protected:
   Position< D > center_;
@@ -428,7 +427,7 @@ public:
    * "polar_angle" with a double, an array of doubles, a double and a double,
    * respectively.
    */
-  EllipseMask( const DictionaryDatum& );
+  EllipseMask( const Dictionary& );
 
   ~EllipseMask() override
   {
@@ -453,14 +452,14 @@ public:
 
   Box< D > get_bbox() const override;
 
-  DictionaryDatum get_dict() const override;
+  Dictionary get_dict() const override;
 
   Mask< D >* clone() const override;
 
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
 private:
   void create_bbox_();
@@ -709,7 +708,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  DictionaryDatum get_dict() const;
+  Dictionary get_dict() const;
 
   Mask< D >* clone() const;
 

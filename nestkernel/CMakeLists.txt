@@ -21,6 +21,7 @@ set ( nestkernel_sources
       universal_data_logger.h
       recordables_map.h
       archiving_node.h archiving_node.cpp
+      buffer_resize_log.h buffer_resize_log.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h
       eprop_archiving_node.h eprop_archiving_node_impl.h
@@ -47,9 +48,7 @@ set ( nestkernel_sources
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager.cpp model_manager_impl.h
-      nest_datums.h nest_datums.cpp
       nest_names.cpp nest_names.h
-      nestmodule.h nestmodule.cpp
       nest_time.h nest_time.cpp
       nest_timeconverter.h nest_timeconverter.cpp
       modelrange.h modelrange.cpp
@@ -91,9 +90,7 @@ set ( nestkernel_sources
       sp_manager.h sp_manager.cpp
       delay_checker.h delay_checker.cpp
       random_manager.h random_manager.cpp
-      event_delivery_manager.h
-      event_delivery_manager_impl.h
-      event_delivery_manager.cpp
+      event_delivery_manager.h event_delivery_manager_impl.h event_delivery_manager.cpp
       node_manager.h node_manager.cpp
       logging_manager.h logging_manager.cpp
       recording_backend.h recording_backend.cpp
@@ -127,48 +124,51 @@ set ( nestkernel_sources
       stopwatch.h
       )
 
-
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
-       ${nestkernel_sources}
-       recording_backend_sionlib.h recording_backend_sionlib.cpp
-       )
+    ${nestkernel_sources}
+    recording_backend_sionlib.h recording_backend_sionlib.cpp
+  )
 endif ()
 
 if ( HAVE_MPI )
-  set( nestkernel_sources
+  set(nestkernel_sources
     ${nestkernel_sources}
     recording_backend_mpi.h recording_backend_mpi.cpp
     stimulation_backend_mpi.h stimulation_backend_mpi.cpp
   )
 endif ()
 
-
 # Prevent problems with Mamba path substitution (see #2348)
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
-
 add_library( nestkernel STATIC ${nestkernel_sources} )
-set_target_properties( nestkernel
-    PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
-    )
+
+if ( APPLE )
+  set_target_properties( nestkernel PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup" )
+endif ()
+
+set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib models
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
-    )
+  nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+)
 
 target_include_directories( nestkernel PRIVATE
-    ${PROJECT_SOURCE_DIR}/thirdparty
-    ${PROJECT_SOURCE_DIR}/libnestutil
-    ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/models
-    ${PROJECT_SOURCE_DIR}/sli
-    ${PROJECT_SOURCE_DIR}/nestkernel
-    ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-    )
+  ${PROJECT_SOURCE_DIR}/thirdparty
+  ${PROJECT_SOURCE_DIR}/libnestutil
+  ${PROJECT_BINARY_DIR}/libnestutil
+  ${PROJECT_SOURCE_DIR}/models
+  ${PROJECT_SOURCE_DIR}/nestkernel
+  ${PROJECT_SOURCE_DIR}/nestkernel/spatial
+)
 
-FILTER_HEADERS("${nestkernel_sources}" install_headers )
+FILTER_HEADERS( "${nestkernel_sources}" install_headers )
+
+if(NOT "${SKBUILD}" STREQUAL "")
+  set( CMAKE_INSTALL_INCLUDEDIR "nest/include")
+endif()
+
 install( FILES ${install_headers}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
+)

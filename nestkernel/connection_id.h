@@ -23,9 +23,8 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
+#include "dictionary.h"
+
 
 namespace nest
 {
@@ -36,10 +35,9 @@ public:
   ConnectionID();
   ConnectionID( long source_node_id, long target_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
-  ConnectionID( const ConnectionID& );
+  ConnectionID( const ConnectionID& ) = default;
 
-  DictionaryDatum get_dict() const;
-  ArrayDatum to_ArrayDatum() const;
+  Dictionary get_dict() const;
   bool operator==( const ConnectionID& c ) const;
   void print_me( std::ostream& out ) const;
   long get_source_node_id() const;

@@ -33,11 +33,6 @@
 
 #include "connection_manager.h"
 #include "kernel_manager.h"
-#include "mask.h"
-#include "nest.h"
-#include "nestmodule.h"
-#include "node_manager.h"
-#include "position.h"
 
 namespace nest
 {
@@ -258,12 +253,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
-    kernel::manager< VPManager >.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const int thread_id = kernel::manager< VPManager >.get_thread_id();
+    const int tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->begin();
@@ -271,7 +265,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         if ( not tgt->is_proxy() )
         {
@@ -279,30 +273,28 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
           if ( mask_.get() )
           {
-            connect_to_target_(
-              pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
+            connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, tid, source );
           }
           else
           {
-            connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+            connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, source );
           }
         }
       } // for target_begin
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( thread_id ) =
-        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // omp parallel
+
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel::manager< VPManager >.get_num_threads(); ++thr )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( thr ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -336,8 +328,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
-    kernel::manager< VPManager >.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
   // We only need to check the first in the NodeCollection
   Node* const first_in_tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_nc->operator[]( 0 ) );
@@ -348,7 +339,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
 #pragma omp parallel
   {
-    const int thread_id = kernel::manager< VPManager >.get_thread_id();
+    const int tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->thread_local_begin();
@@ -356,7 +347,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         assert( not tgt->is_proxy() );
 
@@ -366,30 +357,30 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
         {
           // We do the same as in the target driven case, except that we calculate displacements in the target layer.
           // We therefore send in target as last parameter.
-          connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, target );
+          connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, tid, target );
         }
         else
         {
           // We do the same as in the target driven case, except that we calculate displacements in the target layer.
           // We therefore send in target as last parameter.
-          connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
+          connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, target );
         }
 
       } // end for
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at the end of the catch block.
-      exceptions_raised_.at( thread_id ) =
-        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // omp parallel
+
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel::manager< VPManager >.get_num_threads(); ++thr )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( thr ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -419,8 +410,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_(
-    kernel::manager< VPManager >.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -450,20 +440,18 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
         }
       } // for target_begin
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( thread_id ) =
-        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( thread_id ) = std::current_exception();
     }
   } // omp parallel
+
   // check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel::manager< VPManager >.get_num_threads(); ++thr )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( thr ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }

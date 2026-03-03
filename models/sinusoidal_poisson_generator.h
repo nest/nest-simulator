@@ -151,8 +151,8 @@ public:
 
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   //! Model can be switched between proxies (single spike train) and not
   bool
@@ -168,7 +168,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::stimulator;
@@ -211,14 +211,14 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_poisson_generator&, Node* );
+    void set( const Dictionary&, const sinusoidal_poisson_generator&, Node* );
   };
 
   struct State_
@@ -231,7 +231,7 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -311,16 +311,16 @@ sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, size_
 }
 
 inline void
-sinusoidal_poisson_generator::get_status( DictionaryDatum& d ) const
+sinusoidal_poisson_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   StimulationDevice::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
+sinusoidal_poisson_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

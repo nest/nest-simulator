@@ -25,6 +25,9 @@
 
 #include "eprop_archiving_node.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
 namespace nest
 {
 

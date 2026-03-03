@@ -27,6 +27,7 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+
 #include "node_manager.h"
 
 void
@@ -65,7 +66,7 @@ nest::spike_recorder::get_type() const
 }
 
 void
-nest::spike_recorder::get_status( DictionaryDatum& d ) const
+nest::spike_recorder::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
 
@@ -87,7 +88,7 @@ nest::spike_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_recorder::set_status( const DictionaryDatum& d )
+nest::spike_recorder::set_status( const Dictionary& d )
 {
   RecordingDevice::set_status( d );
 }

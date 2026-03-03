@@ -30,8 +30,6 @@
 // Includes from nestkernel:
 #include "node.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -138,7 +136,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  void set_status( DictionaryDatum );
+  void set_status( const Dictionary& );
 
   /**
    * Export properties of the prototype node by setting
@@ -147,7 +145,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  DictionaryDatum get_status();
+  Dictionary get_status();
 
   virtual size_t send_test_event( Node&, size_t, synindex, bool ) = 0;
 
@@ -202,9 +200,9 @@ public:
   size_t get_type_id() const;
 
 private:
-  virtual void set_status_( DictionaryDatum ) = 0;
+  virtual void set_status_( const Dictionary& ) = 0;
 
-  virtual DictionaryDatum get_status_() = 0;
+  virtual Dictionary get_status_() = 0;
 
 
   /**

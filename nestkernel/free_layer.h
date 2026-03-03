@@ -32,8 +32,6 @@
 #include "nest_names.h"
 #include "node_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 // Includes from spatial:
 #include "layer.h"
@@ -49,8 +47,8 @@ class FreeLayer : public Layer< D >
 {
 public:
   Position< D > get_position( size_t sind ) const override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum&, NodeCollection const* ) const override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary&, NodeCollection const* const ) const override;
 
 protected:
   /**

@@ -27,9 +27,6 @@
 #include "histentry.h"
 #include "node.h"
 
-// sli
-#include "dictdatum.h"
-
 namespace nest
 {
 /**

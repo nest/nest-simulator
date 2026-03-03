@@ -316,10 +316,10 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
 {
   const size_t source_rank = kernel::manager< MPIManager >.get_process_id_of_node_id( source.get_node_id() );
 
-  return not( source.is_processed()
-    or source.is_disabled()
-    // is this thread responsible for this part of the MPI buffer?
-    or source_rank < rank_start or rank_end <= source_rank );
+  // Check if thread is responsible for this part of the MPI buffer
+  const bool responsible = source_rank < rank_start or rank_end <= source_rank;
+
+  return not( source.is_processed() or source.is_disabled() or responsible );
 }
 
 bool

@@ -155,12 +155,12 @@ nest::ModelRangeManager::is_in_range( size_t node_id ) const
 }
 
 void
-nest::ModelRangeManager::get_status( DictionaryDatum& )
+nest::ModelRangeManager::get_status( Dictionary& )
 {
 }
 
 void
-nest::ModelRangeManager::set_status( const DictionaryDatum& )
+nest::ModelRangeManager::set_status( const Dictionary& )
 {
 }
 

@@ -39,8 +39,7 @@ Debugging and quality control
 -----------------------------
 
 Use the ``assert`` macro intensively to check program invariants.
-Create expressive unit-tests using one of the supplied SLI and Python unit-testing
-infrastructure or the C++ testing framework based on Boost.
+Create expressive tests using `Pytest <https://pytest.org/>`_ or the C++ testing framework based on Boost.
 
 Compiler
 --------
@@ -715,7 +714,7 @@ For example, the ``stopwatch.h`` file could look like:
       }
 
       void
-      get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
+      get_status( Dictionary& d, const Name& walltime_name, const Name& cputime_name ) const
       {
         def< double >( d, walltime_name, walltime_timer_.elapsed() );
         def< double >( d, cputime_name, cputime_timer_.elapsed() );
@@ -767,7 +766,7 @@ For example, the ``stopwatch.h`` file could look like:
       {
       }
       void
-      get_status( DictionaryDatum&, const Name&, const Name& ) const
+      get_status( Dictionary&, const Name&, const Name& ) const
       {
       }
 
@@ -809,7 +808,7 @@ For example, the ``stopwatch.h`` file could look like:
       {
       }
       void
-      get_status( DictionaryDatum&, const Name&, const Name& ) const
+      get_status( Dictionary&, const Name&, const Name& ) const
       {
       }
 
@@ -844,7 +843,7 @@ For example, the ``stopwatch.h`` file could look like:
         std::ostream& os = std::cout ) const;
 
       void
-      get_status( DictionaryDatum& d, const Name& walltime_name, const Name& cputime_name ) const
+      get_status( Dictionary& d, const Name& walltime_name, const Name& cputime_name ) const
       {
         std::vector< double > wall_times( walltime_timers_.size() );
         std::transform( walltime_timers_.begin(),

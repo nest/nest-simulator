@@ -23,10 +23,7 @@
 #ifndef CONNECTION_LABEL_H
 #define CONNECTION_LABEL_H
 
-#include "dictdatum.h"
-#include "dictutils.h"
-#include "exceptions.h"
-#include "nest_names.h"
+#include "dictionary.h"
 
 namespace nest
 {
@@ -39,6 +36,43 @@ class ConnectorModel;
  * @see ConnectionLabel
  */
 const static long UNLABELED_CONNECTION = -1;
+
+/**
+ * The class ConnectionLabel enables synapse model to be labeled by a positive
+ * integer.
+ *
+ * The label can be set / retrieved with the `names::synapse_label`
+ * property in the parameter dictionary of `Set/GetStatus` or `Connect`.
+ * Using the `GetConnections` function, synapses with the same label can be
+ * specified.
+ *
+ * The name of synapse models, which can be labeled, end with '_lbl'.
+ * @see nest::ConnectionManager::get_connections
+ */
+template < typename ConnectionT >
+class ConnectionLabel : public ConnectionT
+{
+public:
+  ConnectionLabel();
+
+  /**
+   * Get all properties of this connection and put them into a dictionary.
+   */
+  void get_status( Dictionary& d ) const;
+
+  /**
+   * Set properties of this connection from the values given in dictionary.
+   *
+   * @note Target and Rport cannot be changed after a connection has been
+   * created.
+   */
+  void set_status( const Dictionary& d, ConnectorModel& cm );
+
+  long get_label() const;
+
+private:
+  long label_;
+};
 
 } // namespace nest
 

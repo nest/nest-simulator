@@ -35,8 +35,6 @@
 #include "logging.h"
 #include "logging_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -61,12 +59,12 @@ MUSICManager::finalize( const bool )
 }
 
 void
-MUSICManager::set_status( const DictionaryDatum& )
+MUSICManager::set_status( const Dictionary& )
 {
 }
 
 void
-MUSICManager::get_status( DictionaryDatum& )
+MUSICManager::get_status( Dictionary& )
 {
 }
 
@@ -84,7 +82,7 @@ MUSICManager::enter_runtime( double h_min_delay )
 {
   publish_music_in_ports_();
   std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
-  LOG( M_INFO, "MUSICManager::enter_runtime", msg );
+  LOG( VerbosityLevel::INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
   // std::cout << "nest::MPIManager::enter_runtime\n";

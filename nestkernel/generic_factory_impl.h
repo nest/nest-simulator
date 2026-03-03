@@ -30,7 +30,7 @@ namespace nest
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
+GenericFactory< BaseT >::create( const Name& name, const Dictionary& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
@@ -58,7 +58,7 @@ GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction cre
 template < class BaseT >
 template < class T >
 BaseT*
-GenericFactory< BaseT >::new_from_dict_( const DictionaryDatum& d )
+GenericFactory< BaseT >::new_from_dict_( const Dictionary& d )
 {
   return new T( d );
 }

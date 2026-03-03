@@ -39,11 +39,11 @@ GridLayer< D >::get_dims() const
 
 template < int D >
 void
-GridLayer< D >::set_status( const DictionaryDatum& d )
+GridLayer< D >::set_status( const Dictionary& d )
 {
   std::vector< long > new_dims( D );
 
-  updateValue< std::vector< long > >( d, names::shape, new_dims );
+  d.update_value( names::shape, new_dims );
 
   size_t new_size = 1;
   for ( int i = 0; i < D; ++i )
@@ -75,7 +75,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+GridLayer< D >::get_status( Dictionary& d, NodeCollection const* nc ) const
 {
   Layer< D >::get_status( d, nc );
 
@@ -163,7 +163,8 @@ template < int D >
 void
 GridLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
-  insert_global_positions_( std::inserter( tree, tree.end() ), node_collection );
+  auto ins2 = std::back_inserter( tree );
+  insert_global_positions_( ins2, node_collection );
 }
 
 template < int D >

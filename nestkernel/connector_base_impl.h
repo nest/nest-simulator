@@ -71,7 +71,7 @@ Connector< ConnectionT >::size() const
 
 template < typename ConnectionT >
 void
-Connector< ConnectionT >::get_synapse_status( const size_t tid, const size_t lcid, DictionaryDatum& dict ) const
+Connector< ConnectionT >::get_synapse_status( const size_t tid, const size_t lcid, Dictionary& dict ) const
 {
   assert( lcid < C_.size() );
 
@@ -79,12 +79,12 @@ Connector< ConnectionT >::get_synapse_status( const size_t tid, const size_t lci
 
   // get target node ID here, where tid is available
   // necessary for hpc synapses using TargetIdentifierIndex
-  def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_node_id() );
+  dict[ names::target ] = C_[ lcid ].get_target( tid )->get_node_id();
 }
 
 template < typename ConnectionT >
 void
-Connector< ConnectionT >::set_synapse_status( const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm )
+Connector< ConnectionT >::set_synapse_status( const size_t lcid, const Dictionary& dict, ConnectorModel& cm )
 {
   assert( lcid < C_.size() );
 
@@ -121,8 +121,7 @@ Connector< ConnectionT >::get_connection( const size_t source_node_id,
       const size_t current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
       if ( current_target_node_id == target_node_id or target_node_id == 0 )
       {
-        conns.push_back(
-          ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+        conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
       }
     }
   }
@@ -145,8 +144,7 @@ Connector< ConnectionT >::get_connection_with_specified_targets( const size_t so
       if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
         != target_neuron_node_ids.end() )
       {
-        conns.push_back(
-          ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
+        conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
       }
     }
   }

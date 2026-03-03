@@ -40,10 +40,10 @@ def simulator(num_threads):
 
     nest.local_num_threads = num_threads
 
-    stim1 = nest.Create("dc_generator", {"amplitude": 1500.0})
-    stim2 = nest.Create("dc_generator", {"amplitude": 1000.0})
-    nrn1 = nest.Create("iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0})
-    nrn2 = nest.Create("iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0})
+    stim1 = nest.Create("dc_generator", params={"amplitude": 1500.0})
+    stim2 = nest.Create("dc_generator", params={"amplitude": 1000.0})
+    nrn1 = nest.Create("iaf_psc_alpha", params={"C_m": 100.0, "tau_m": 10.0})
+    nrn2 = nest.Create("iaf_psc_alpha", params={"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0})
     dopa = nest.Create("iaf_cond_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0})
     vt = nest.Create("volume_transmitter")
 

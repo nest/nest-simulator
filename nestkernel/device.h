@@ -29,8 +29,6 @@
 #include "nest_types.h"
 #include "node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -74,8 +72,8 @@ public:
   /** Set internal variables before calls to SimulationManager::run() */
   virtual void pre_run_hook();
 
-  virtual void get_status( DictionaryDatum& ) const;
-  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( Dictionary& ) const;
+  virtual void set_status( const Dictionary& );
 
   /**
    *  Returns true if the device is active at the given time stamp.
@@ -125,12 +123,12 @@ private:
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void set( const Dictionary& ); //!< Set values from dictionary
 
   private:
     //! Update given Time parameter including error checking
-    static void update_( const DictionaryDatum&, const Name&, Time& );
+    static void update_( const Dictionary&, const std::string&, Time& );
   };
 
 

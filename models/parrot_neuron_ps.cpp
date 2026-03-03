@@ -22,18 +22,12 @@
 
 #include "parrot_neuron_ps.h"
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from nestkernel:
-#include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-#include "event_delivery_manager.h"
-#include "nest_impl.h"
 
 namespace nest
 {
@@ -94,13 +88,13 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 }
 
 void
-parrot_neuron_ps::get_status( DictionaryDatum& d ) const
+parrot_neuron_ps::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron_ps::set_status( const DictionaryDatum& d )
+parrot_neuron_ps::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 }

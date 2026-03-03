@@ -53,7 +53,7 @@ def test_issue_737_threads_rejects_multithreaded_parameters(parameter_name, use_
         syn_model = "stdp_dopamine_synapse"
         nest.SetDefaults(syn_model, {"volume_transmitter": vt})
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTErrors.NotImplemented):
         nest.Connect(
             neuron,
             neuron,

@@ -23,9 +23,6 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
-// Includes from sli:
-#include "dictdatum.h"
-
 // Includes from spatial:
 #include "mask.h"
 #include "position.h"
@@ -45,7 +42,7 @@ public:
    * shape - size in grid coordinates
              (length 2 for 2D layers or length 3 for 3D layers)
    */
-  GridMask( const DictionaryDatum& d );
+  GridMask( const Dictionary& d );
 
   bool
   inside( const std::vector< double >& ) const override
@@ -55,7 +52,7 @@ public:
 
   void set_anchor( const Position< D, int >& );
 
-  DictionaryDatum get_dict() const override;
+  Dictionary get_dict() const override;
 
   GridMask< D >*
   clone() const
@@ -66,7 +63,7 @@ public:
   /**
    * @returns the name of this mask type.
    */
-  static Name get_name();
+  static std::string get_name();
 
   AbstractMask*
   intersect_mask( const AbstractMask& ) const override

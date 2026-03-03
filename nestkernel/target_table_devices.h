@@ -32,8 +32,6 @@
 #include "event.h"
 #include "nest_types.h"
 
-// Includes from SLI:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -82,7 +80,7 @@ public:
     const size_t s_node_id,
     const size_t tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const Dictionary& p,
     const double d,
     const double w );
 
@@ -93,7 +91,7 @@ public:
     Node& target,
     const size_t tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const Dictionary& p,
     const double d,
     const double w );
 
@@ -167,7 +165,7 @@ public:
   void get_synapse_status_to_device( const size_t tid,
     const size_t source_node_id,
     const synindex syn_id,
-    DictionaryDatum& dict,
+    Dictionary& dict,
     const size_t lcid ) const;
 
   /**
@@ -176,7 +174,7 @@ public:
   void get_synapse_status_from_device( const size_t tid,
     const size_t ldid,
     const synindex syn_id,
-    DictionaryDatum& dict,
+    Dictionary& dict,
     const size_t lcid ) const;
 
   /**
@@ -186,7 +184,7 @@ public:
     const size_t source_node_id,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& dict,
+    const Dictionary& dict,
     const size_t lcid );
 
   /**
@@ -196,7 +194,7 @@ public:
     const size_t ldid,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& dict,
+    const Dictionary& dict,
     const size_t lcid );
 
   /**

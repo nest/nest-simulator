@@ -119,6 +119,7 @@ nest.local_num_threads = 4
 # recorded by a spike recorder. After simulating, a raster plot of the spikes
 # is created.
 
+nest.SetDefaults("sinusoidal_gamma_generator", {"individual_spike_trains": True})
 g = nest.Create(
     "sinusoidal_gamma_generator",
     params={
@@ -127,7 +128,6 @@ g = nest.Create(
         "frequency": 10.0,
         "phase": 0.0,
         "order": 3.0,
-        "individual_spike_trains": True,
     },
 )
 p = nest.Create("parrot_neuron", 20)
@@ -155,6 +155,7 @@ plt.title("Individual spike trains for each target")
 nest.ResetKernel()
 nest.local_num_threads = 4
 
+nest.SetDefaults("sinusoidal_gamma_generator", {"individual_spike_trains": False})
 g = nest.Create(
     "sinusoidal_gamma_generator",
     params={
@@ -163,7 +164,6 @@ g = nest.Create(
         "frequency": 10.0,
         "phase": 0.0,
         "order": 3.0,
-        "individual_spike_trains": False,
     },
 )
 p = nest.Create("parrot_neuron", 20)

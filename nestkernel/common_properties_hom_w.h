@@ -39,14 +39,14 @@ class CommonPropertiesHomW : public CommonSynapseProperties
 public:
   CommonPropertiesHomW();
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   double get_weight() const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
 private:
   // data members common to all connections

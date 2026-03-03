@@ -42,10 +42,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 
 namespace nest
 {
@@ -94,12 +90,12 @@ public:
   CompartmentCurrents compartment_currents;
 
   Compartment( const long compartment_index, const long parent_index );
-  Compartment( const long compartment_index, const long parent_index, const DictionaryDatum& compartment_params );
+  Compartment( const long compartment_index, const long parent_index, const Dictionary& compartment_params );
   ~Compartment() {};
 
   // initialization
   void pre_run_hook();
-  std::map< Name, double* > get_recordables();
+  std::map< std::string, double* > get_recordables();
 
   //! matrix construction
   void construct_matrix_element( const long lag );
@@ -177,7 +173,7 @@ public:
 
   //! add a compartment to the tree structure
   void add_compartment( const long parent_index );
-  void add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
+  void add_compartment( const long parent_index, const Dictionary& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
 
   //! initialize the tree for simulation
@@ -191,7 +187,7 @@ public:
   void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
 
   //! make all state variables accessible for recording
-  std::map< Name, double* > get_recordables();
+  std::map< std::string, double* > get_recordables();
 
   //! get a compartment pointer from the tree
   Compartment* get_compartment( const long compartment_index ) const;

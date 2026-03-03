@@ -29,9 +29,9 @@ namespace nest
 {
 
 template < int D >
-GridMask< D >::GridMask( const DictionaryDatum& d )
+GridMask< D >::GridMask( const Dictionary& d )
 {
-  std::vector< long > shape = getValue< std::vector< long > >( d, names::shape );
+  std::vector< long > shape = d.get< std::vector< long > >( names::shape );
 
   if ( D == 2 )
   {
@@ -48,12 +48,12 @@ GridMask< D >::GridMask( const DictionaryDatum& d )
 }
 
 template < int D >
-DictionaryDatum
+Dictionary
 GridMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
+  Dictionary d;
+  Dictionary maskd;
+  d[ get_name() ] = maskd;
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
@@ -64,7 +64,7 @@ GridMask< D >::get_dict() const
     long shape_z = lower_right_[ 2 ] - upper_left_[ 2 ];
     shape_dim.push_back( shape_z );
   }
-  def< std::vector< long > >( maskd, names::shape, shape_dim );
+  maskd[ names::shape ] = shape_dim;
 
   return d;
 }

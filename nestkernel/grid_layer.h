@@ -26,6 +26,9 @@
 // Includes from spatial:
 #include "layer.h"
 
+// Includes from C++
+#include <iterator>
+
 namespace nest
 {
 
@@ -148,8 +151,8 @@ public:
 
   Position< D, size_t > get_dims() const;
 
-  void set_status( const DictionaryDatum& d ) override;
-  void get_status( DictionaryDatum& d, NodeCollection const* ) const override;
+  void set_status( const Dictionary& d ) override;
+  void get_status( Dictionary& d, NodeCollection const* const ) const override;
 
 protected:
   Position< D, size_t > dims_; ///< number of nodes in each direction.

@@ -458,41 +458,41 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 }
 
 template <>
-Name
+std::string
 BoxMask< 2 >::get_name()
 {
   return names::rectangular;
 }
 
 template <>
-Name
+std::string
 BoxMask< 3 >::get_name()
 {
   return names::box;
 }
 
 template <>
-Name
+std::string
 BallMask< 2 >::get_name()
 {
   return names::circular;
 }
 
 template <>
-Name
+std::string
 BallMask< 3 >::get_name()
 {
   return names::spherical;
 }
 template <>
-Name
+std::string
 EllipseMask< 2 >::get_name()
 {
   return names::elliptical;
 }
 
 template <>
-Name
+std::string
 EllipseMask< 3 >::get_name()
 {
   return names::ellipsoidal;

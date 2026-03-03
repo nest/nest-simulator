@@ -150,16 +150,16 @@ GenericModel< ElementT >::sends_signal() const
 
 template < typename ElementT >
 void
-GenericModel< ElementT >::set_status_( DictionaryDatum d )
+GenericModel< ElementT >::set_status_( Dictionary d )
 {
   proto_.set_status( d );
 }
 
 template < typename ElementT >
-DictionaryDatum
+Dictionary
 GenericModel< ElementT >::get_status_()
 {
-  DictionaryDatum d = proto_.get_status_base();
+  Dictionary d = proto_.get_status_base();
   ( *d )[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
@@ -203,7 +203,7 @@ GenericModel< ElementT >::deprecation_warning( const std::string& caller )
 
   if ( not deprecation_info_.empty() )
   {
-    LOG( M_DEPRECATED, caller, "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
+    LOG( VerbosityLevel::DEPRECATED, caller, "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
   }
 
   deprecation_warning_issued_ = true;

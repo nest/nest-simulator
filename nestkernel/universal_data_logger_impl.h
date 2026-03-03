@@ -77,11 +77,10 @@ UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequ
   , data_()
   , next_rec_( 2, 0 )
 {
-  const std::vector< Name >& recvars = req.record_from();
+  const std::vector< std::string >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+    typename RecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ] );
 
     if ( rec == rmap.end() )
     {
@@ -155,11 +154,10 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLogg
   , data_()
   , next_rec_( 2, 0 )
 {
-  const std::vector< Name >& recvars = req.record_from();
+  const std::vector< std::string >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ].toString() );
+    typename DynamicRecordablesMap< HostNode >::const_iterator rec = rmap.find( recvars[ j ] );
 
     if ( rec == rmap.end() )
     {

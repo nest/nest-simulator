@@ -224,15 +224,14 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         w_pre, w_post = self.run_protocol(dt)
         assert w_pre < w_post, "Parrot neuron STDP potentiation \
             protocol failed to elicit positive weight changes."
-
+        assert w_pre < w_post, "Parrot neuron STDP potentiation protocol failed to elicit positive weight changes."
     def test_ParrotNeuronSTDPProtocolDepression(self):
         """Check post-pre spike pairings between parrot_neurons
         decrement weights."""
 
         dt = -10.0
         w_pre, w_post = self.run_protocol(dt)
-        assert w_pre > w_post, "Parrot neuron STDP potentiation \
-        protocol failed to elicit negative weight changes."
+        assert w_pre > w_post, "Parrot neuron STDP potentiation protocol failed to elicit negative weight changes."
 
 
 def suite():

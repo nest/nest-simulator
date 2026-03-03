@@ -80,7 +80,7 @@ To install the latest development version directly from the NEST GitHub reposito
 
    pip install git+https://github.com/nest/nest-simulator.git
 
-You can also install with extras using the ``#egg=`` syntax:
+You can also install with extra packages using the ``#egg=`` syntax:
 
 .. code-block:: bash
 

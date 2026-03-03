@@ -152,7 +152,6 @@ debug_dict_types( const Dictionary& dict )
   return s;
 }
 
-// TODO-PYNEST-NG: Check if we can remove these somehow
 std::ostream&
 operator<<( std::ostream& os, const std::vector< std::vector< long > >& )
 {
@@ -220,219 +219,16 @@ operator<<( std::ostream& os, const Dictionary& dict )
  */
 template < typename T >
 bool
-equal_as_( const boost::any& first, const boost::any& second )
+equal_as_( const any_type& first, const any_type& second )
 {
   // Compiler will short-circuit to false if not same type
-  return is_type< T >( first ) and is_type< T >( second )
-    and boost::any_cast< T >( first ) == boost::any_cast< T >( second );
+  return is_type< T >( first ) and is_type< T >( second ) and std::get< T >( first ) == std::get< T >( second );
 }
 
 bool
 dictionary_::operator==( const dictionary_& other ) const
 {
-  if ( is_type< int >( first ) )
-  {
-    if ( not is_type< int >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< int >( first );
-    const auto other_value = boost::any_cast< int >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< long >( first ) )
-  {
-    if ( not is_type< long >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< long >( first );
-    const auto other_value = boost::any_cast< long >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< size_t >( first ) )
-  {
-    if ( not is_type< size_t >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< size_t >( first );
-    const auto other_value = boost::any_cast< size_t >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< double >( first ) )
-  {
-    if ( not is_type< double >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< double >( first );
-    const auto other_value = boost::any_cast< double >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< bool >( first ) )
-  {
-    if ( not is_type< bool >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< bool >( first );
-    const auto other_value = boost::any_cast< bool >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::string >( first ) )
-  {
-    if ( not is_type< std::string >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::string >( first );
-    const auto other_value = boost::any_cast< std::string >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< int > >( first ) )
-  {
-    if ( not is_type< std::vector< int > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< int > >( first );
-    const auto other_value = boost::any_cast< std::vector< int > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< double > >( first ) )
-  {
-    if ( not is_type< std::vector< double > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< double > >( first );
-    const auto other_value = boost::any_cast< std::vector< double > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< std::vector< double > > >( first ) )
-  {
-    if ( not is_type< std::vector< std::vector< double > > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< std::vector< double > > >( first );
-    const auto other_value = boost::any_cast< std::vector< std::vector< double > > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< std::string > >( first ) )
-  {
-    if ( not is_type< std::vector< std::string > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< std::string > >( first );
-    const auto other_value = boost::any_cast< std::vector< std::string > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::vector< size_t > >( first ) )
-  {
-    if ( not is_type< std::vector< size_t > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::vector< size_t > >( first );
-    const auto other_value = boost::any_cast< std::vector< size_t > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< Dictionary >( first ) )
-  {
-    if ( not is_type< Dictionary >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< Dictionary >( first );
-    const auto other_value = boost::any_cast< Dictionary >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else if ( is_type< std::shared_ptr< nest::Parameter > >( first ) )
-  {
-    if ( not is_type< std::shared_ptr< nest::Parameter > >( second ) )
-    {
-      return false;
-    }
-    const auto this_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( first );
-    const auto other_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( second );
-    if ( this_value != other_value )
-    {
-      return false;
-    }
-  }
-  else
-  {
-    std::string msg = std::string( "Unsupported type in Dictionary::value_equal(): " ) + debug_type( first );
-    throw nest::TypeMismatch( msg );
-  }
-  return true;
-}
-
-
-bool
-Dictionary::operator==( const Dictionary& other ) const
-{
-  if ( size() != other.size() )
-  {
-    return false;
-  }
-  // Iterate elements in the other Dictionary
-  for ( const auto& [ other_key, other_entry ] : other )
-  {
-    // Check if it exists in this Dictionary
-    if ( not known( other_key ) )
-    {
-      return false;
-    }
-
-    // Check for equality
-    const auto& this_entry = maptype_::at( other_key );
-    if ( not value_equal( this_entry.item, other_entry.item ) )
-    {
-      return false;
-    }
-  }
-  // All elements are equal
-  return true;
+  return static_cast< const maptype_& >( *this ) == static_cast< const maptype_& >( other );
 }
 
 void

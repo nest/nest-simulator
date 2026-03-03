@@ -177,7 +177,7 @@ cdef object any_to_pyobj(any_type operand):
         # return get[vector[string]](operand)
         return list(map(lambda x: x.decode("utf-8"), get[vector[string]](operand)))
     if holds_alternative[vector[Dictionary]](operand):
-        return dict_vector_to_list(get[vector[Dictionary]](operand))
+        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
     if holds_alternative[EmptyList](operand):
         # PYNEST-NG: This will create a Python list first and then convert to
         # either tuple or numpy array, which will copy the data element-wise.
@@ -254,15 +254,6 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             raise AttributeError(f'when converting Python Dictionary: value of key ({key}) is not a known type, got {typename}')
 
     return cdict
-
-
-cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
-    cdef tmp = []
-    cdef vector[Dictionary].iterator it = cvec.begin()
-    while it != cvec.end():
-        tmp.append(dictionary_to_pydict(deref(it)))
-        inc(it)
-    return tmp
 
 
 cdef EmptyList empty_any_vec():

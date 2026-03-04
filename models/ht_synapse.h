@@ -183,14 +183,14 @@ public:
   }
 
 private:
-  double weight_; //!< Synaptic weight
+  double weight_;  //!< Synaptic weight
 
-  double tau_P_;   //!< Time constant for recovery [ms]
-  double delta_P_; //!< Fractional decrease in pool size per spike
+  double tau_P_;    //!< Time constant for recovery [ms]
+  double delta_P_;  //!< Fractional decrease in pool size per spike
 
-  double p_; //!< Current pool size
+  double p_;  //!< Current pool size
 
-  double t_lastspike_; //!< Time point of last spike emitted
+  double t_lastspike_;  //!< Time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -275,6 +275,6 @@ ht_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel
   }
 }
 
-} // namespace
+}  // namespace
 
-#endif // HT_SYNAPSE_H
+#endif  // HT_SYNAPSE_H

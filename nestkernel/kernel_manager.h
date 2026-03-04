@@ -196,8 +196,8 @@ private:
 
   static KernelManager* kernel_manager_instance_;
 
-  KernelManager( KernelManager const& );  // do not implement
-  void operator=( KernelManager const& ); // do not implement
+  KernelManager( KernelManager const& );   // do not implement
+  void operator=( KernelManager const& );  // do not implement
 
   Dictionary get_build_info_();
 
@@ -308,14 +308,14 @@ public:
   }
 
 private:
-  size_t get_memsize_linux_() const;  //!< return VmSize in kB
-  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+  size_t get_memsize_linux_() const;   //!< return VmSize in kB
+  size_t get_memsize_darwin_() const;  //!< return resident_size in kB
 
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
-  bool initialized_;   //!< true if the kernel is initialized
-  std::ofstream dump_; //!< for FULL_LOGGING output
+  bool initialized_;    //!< true if the kernel is initialized
+  std::ofstream dump_;  //!< for FULL_LOGGING output
 
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
@@ -342,7 +342,7 @@ get_vp_specific_rng( size_t tid )
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
 
-} // namespace nest
+}  // namespace nest
 
 inline nest::KernelManager&
 nest::KernelManager::get_kernel_manager()

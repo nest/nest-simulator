@@ -261,27 +261,27 @@ private:
    */
   struct Parameters_
   {
-    double g_Na;         //!< Sodium Conductance in nS
-    double g_K;          //!< Potassium Conductance in nS
-    double g_L;          //!< Leak Conductance in nS
-    double C_m;          //!< Membrane Capacitance in pF
-    double E_Na;         //!< Sodium Reversal Potential in mV
-    double E_K;          //!< Potassium Reversal Potential in mV
-    double E_L;          //!< Leak Reversal Potential in mV
-    double V_T;          //!< Voltage offset for dynamics in mV
-    double E_ex;         //!< Excitatory reversal Potential in mV
-    double E_in;         //!< Inhibitory reversal Potential in mV
-    double tau_rise_ex;  //!< Excitatory Synaptic Rise Time Constant in ms
-    double tau_decay_ex; //!< Excitatory Synaptic Decay Time Constant in ms
-    double tau_rise_in;  //!< Inhibitory Synaptic Rise Time Constant in ms
-    double tau_decay_in; //!< Inhibitory Synaptic Decay Time Constant in ms
-    double t_ref_;       //!< Refractory time in ms
-    double I_e;          //!< External Current in pA
+    double g_Na;          //!< Sodium Conductance in nS
+    double g_K;           //!< Potassium Conductance in nS
+    double g_L;           //!< Leak Conductance in nS
+    double C_m;           //!< Membrane Capacitance in pF
+    double E_Na;          //!< Sodium Reversal Potential in mV
+    double E_K;           //!< Potassium Reversal Potential in mV
+    double E_L;           //!< Leak Reversal Potential in mV
+    double V_T;           //!< Voltage offset for dynamics in mV
+    double E_ex;          //!< Excitatory reversal Potential in mV
+    double E_in;          //!< Inhibitory reversal Potential in mV
+    double tau_rise_ex;   //!< Excitatory Synaptic Rise Time Constant in ms
+    double tau_decay_ex;  //!< Excitatory Synaptic Decay Time Constant in ms
+    double tau_rise_in;   //!< Inhibitory Synaptic Rise Time Constant in ms
+    double tau_decay_in;  //!< Inhibitory Synaptic Decay Time Constant in ms
+    double t_ref_;        //!< Refractory time in ms
+    double I_e;           //!< External Current in pA
 
     Parameters_();
 
-    void get( Dictionary& ) const;        //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* ); //!< Set values from dicitonary
+    void get( Dictionary& ) const;         //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* );  //!< Set values from dicitonary
   };
 
 public:
@@ -297,19 +297,19 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      HH_M,   // 1
-      HH_H,   // 2
-      HH_N,   // 3
-      DG_EXC, // 4
-      G_EXC,  // 5
-      DG_INH, // 6
-      G_INH,  // 7
+      HH_M,    // 1
+      HH_H,    // 2
+      HH_N,    // 3
+      DG_EXC,  // 4
+      G_EXC,   // 5
+      DG_INH,  // 6
+      G_INH,   // 7
       STATE_VEC_SIZE
     };
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    int r_;  //!< number of refractory steps remaining
 
     State_( const Parameters_& p );
     State_( const State_& s );
@@ -342,7 +342,7 @@ public:
 
     //! refractory time in steps
     int refractory_counts_;
-    double U_old_; // for spike-detection
+    double U_old_;  // for spike-detection
   };
 
   // ----------------------------------------------------------------
@@ -352,7 +352,7 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( hh_cond_beta_gap_traub& ); //!< Sets buffer pointers to 0
+    Buffers_( hh_cond_beta_gap_traub& );  //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_cond_beta_gap_traub& );
 
@@ -365,16 +365,16 @@ public:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     // remembers current lag for piecewise interpolation
     long lag_;
@@ -426,9 +426,9 @@ hh_cond_beta_gap_traub::update( Time const& origin, const long from, const long 
 inline bool
 hh_cond_beta_gap_traub::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr_update
+  State_ old_state = S_;  // save state before wfr_update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -498,10 +498,10 @@ hh_cond_beta_gap_traub::get_status( Dictionary& d ) const
 inline void
 hh_cond_beta_gap_traub::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -516,8 +516,8 @@ hh_cond_beta_gap_traub::set_status( const Dictionary& d )
   pre_run_hook();
 }
 
-} // namespace
+}  // namespace
 
 
-#endif // HAVE_GSL
-#endif // HH_COND_BETA_GAP_TRAUB_H
+#endif  // HAVE_GSL
+#endif  // HH_COND_BETA_GAP_TRAUB_H

@@ -24,7 +24,6 @@ receiving input from a mip_generator. Compares resulting correlation
 to known value.
 """
 
-
 import nest
 import numpy.testing as nptest
 import pytest

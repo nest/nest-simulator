@@ -361,6 +361,6 @@ stdp_synapse_hom< targetidentifierT >::set_status( const Dictionary& d, Connecto
   d.update_value( names::Kplus, Kplus_ );
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_HOM_H
+#endif  // of #ifndef STDP_SYNAPSE_HOM_H

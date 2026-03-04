@@ -298,29 +298,29 @@ private:
    */
   struct Parameters_
   {
-    double V_th;                //!< Threshold Potential in mV
-    double V_reset;             //!< Reset Potential in mV
-    double t_ref;               //!< Refractory period in ms
-    double g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments,
-                                //!< in nS
-    double g_L[ NCOMP ];        //!< Leak Conductance in nS
-    double C_m[ NCOMP ];        //!< Membrane Capacitance in pF
-    double E_ex[ NCOMP ];       //!< Excitatory reversal Potential in mV
-    double E_in[ NCOMP ];       //!< Inhibitory reversal Potential in mV
-    double E_L[ NCOMP ];        //!< Leak reversal Potential (aka resting potential)
-                                //!< in mV
-    double tau_synE[ NCOMP ];   //!< Synaptic Time Constant Excitatory Synapse
-                                //!< in ms
-    double tau_synI[ NCOMP ];   //!< Synaptic Time Constant for Inhibitory
-                                //!< Synapse in ms
-    double I_e[ NCOMP ];        //!< Constant Current in pA
+    double V_th;                 //!< Threshold Potential in mV
+    double V_reset;              //!< Reset Potential in mV
+    double t_ref;                //!< Refractory period in ms
+    double g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments,
+                                 //!< in nS
+    double g_L[ NCOMP ];         //!< Leak Conductance in nS
+    double C_m[ NCOMP ];         //!< Membrane Capacitance in pF
+    double E_ex[ NCOMP ];        //!< Excitatory reversal Potential in mV
+    double E_in[ NCOMP ];        //!< Inhibitory reversal Potential in mV
+    double E_L[ NCOMP ];         //!< Leak reversal Potential (aka resting potential)
+                                 //!< in mV
+    double tau_synE[ NCOMP ];    //!< Synaptic Time Constant Excitatory Synapse
+                                 //!< in ms
+    double tau_synI[ NCOMP ];    //!< Synaptic Time Constant for Inhibitory
+                                 //!< Synapse in ms
+    double I_e[ NCOMP ];         //!< Constant Current in pA
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
-    Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
+    Parameters_();                                 //!< Sets default parameter values
+    Parameters_( const Parameters_& );             //!< needed to copy C-arrays
+    Parameters_& operator=( const Parameters_& );  //!< needed to copy C-arrays
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
 
@@ -354,9 +354,9 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    int r_;  //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
@@ -386,7 +386,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& ); //!< Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& );  //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
 
@@ -400,16 +400,16 @@ private:
     std::vector< RingBuffer > currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input currents injected by CurrentEvent.
@@ -418,7 +418,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double I_stim_[ NCOMP ]; //!< External Stimulus in pA
+    double I_stim_[ NCOMP ];  //!< External Stimulus in pA
   };
 
   // Internal variables ---------------------------------------------
@@ -565,10 +565,10 @@ iaf_cond_alpha_mc::get_status( Dictionary& d ) const
 inline void
 iaf_cond_alpha_mc::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -581,8 +581,8 @@ iaf_cond_alpha_mc::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL
 
-#endif // IAF_COND_ALPHA_MC_H
+#endif  // IAF_COND_ALPHA_MC_H

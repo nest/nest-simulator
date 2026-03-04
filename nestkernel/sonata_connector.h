@@ -309,7 +309,7 @@ private:
 };
 
 
-} // namespace nest
+}  // namespace nest
 
-#endif // ifdef HAVE_HDF5
-#endif /* ifdef SONATA_CONNECTOR_H */
+#endif  // ifdef HAVE_HDF5
+#endif  /* ifdef SONATA_CONNECTOR_H */

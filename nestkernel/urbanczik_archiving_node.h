@@ -141,6 +141,6 @@ UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_in( int comp )
   return urbanczik_params->tau_syn_in[ comp ];
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef URBANCZIK_ARCHIVING_NODE_H */

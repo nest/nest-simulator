@@ -153,17 +153,17 @@ private:
 
   struct Parameters_
   {
-    double amp_;     //!< Amplitude of sine-current
-    double offset_;  //!< Offset of sine-current
-    double freq_;    //!< Standard frequency in Hz
-    double phi_deg_; //!< Phase of sine current (0-360 deg)
+    double amp_;      //!< Amplitude of sine-current
+    double offset_;   //!< Offset of sine-current
+    double freq_;     //!< Standard frequency in Hz
+    double phi_deg_;  //!< Phase of sine current (0-360 deg)
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
@@ -172,12 +172,12 @@ private:
   {
     double y_0_;
     double y_1_;
-    double I_; //!< Instantaneous current value; used for recording current
-               //!< Required to handle current values when device is inactive
+    double I_;  //!< Instantaneous current value; used for recording current
+                //!< Required to handle current values when device is inactive
 
-    State_(); //!< Sets default parameter values
+    State_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
   };
 
   // ------------------------------------------------------------
@@ -258,8 +258,8 @@ ac_generator::get_status( Dictionary& d ) const
 inline void
 ac_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // State_ is read-only
 
@@ -284,6 +284,6 @@ ac_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
-} // namespace
+}  // namespace
 
-#endif // AC_GENERATOR_H
+#endif  // AC_GENERATOR_H

@@ -96,4 +96,4 @@ proxynode::get_status( Dictionary& d ) const
 }
 
 
-} // namespace
+}  // namespace

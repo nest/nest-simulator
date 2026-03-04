@@ -67,14 +67,14 @@ RecordablesMap< iaf_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                  // ms
-  , c_m_( 250.0 )                                   // pF
-  , t_ref_( 2.0 )                                   // ms
-  , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA
-  , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
-  , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
-  , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
+  : tau_m_( 10.0 )                                   // ms
+  , c_m_( 250.0 )                                    // pF
+  , t_ref_( 2.0 )                                    // ms
+  , E_L_( -70.0 )                                    // mV
+  , I_e_( 0.0 )                                      // pA
+  , V_th_( -55.0 - E_L_ )                            // mV, rel to E_L_
+  , V_min_( -std::numeric_limits< double >::max() )  // relative E_L_-55.0-E_L_
+  , V_reset_( -70.0 - E_L_ )                         // mV, rel to E_L_
   , with_refr_input_( false )
 {
 }
@@ -94,9 +94,9 @@ nest::iaf_psc_delta::State_::State_()
 void
 nest::iaf_psc_delta::Parameters_::get( Dictionary& d ) const
 {
-  d[ names::E_L ] = E_L_; // Resting potential
+  d[ names::E_L ] = E_L_;  // Resting potential
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = V_th_ + E_L_; // threshold value
+  d[ names::V_th ] = V_th_ + E_L_;  // threshold value
   d[ names::V_reset ] = V_reset_ + E_L_;
   d[ names::V_min ] = V_min_ + E_L_;
   d[ names::C_m ] = c_m_;
@@ -170,7 +170,7 @@ nest::iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_psc_delta::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = y3_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = y3_ + p.E_L_;  // Membrane potential
 }
 
 void
@@ -224,9 +224,9 @@ nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
 void
 nest::iaf_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -290,7 +290,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
     }
-    else // neuron is absolute refractory
+    else  // neuron is absolute refractory
     {
       // read spikes from buffer and accumulate them, discounting
       // for decay until end of refractory period
@@ -359,4 +359,4 @@ nest::iaf_psc_delta::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

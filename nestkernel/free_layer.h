@@ -115,7 +115,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
 {
   Layer< D >::set_status( d );
 
-  Position< D > max_point; // for each dimension, the largest value of the positions, aka upper right
+  Position< D > max_point;  // for each dimension, the largest value of the positions, aka upper right
 
   for ( int d = 0; d < D; ++d )
   {
@@ -216,7 +216,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
     this->extent_ = d.get< std::vector< double > >( names::extent );
 
     Position< D > center = ( max_point + this->lower_left_ ) / 2;
-    auto lower_left_point = this->lower_left_; // save lower-left-most point
+    auto lower_left_point = this->lower_left_;  // save lower-left-most point
     this->lower_left_ = center - this->extent_ / 2;
 
     // check if all points are inside the specified layer extent
@@ -404,6 +404,6 @@ FreeLayer< D >::lid_to_position_id_( size_t lid ) const
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

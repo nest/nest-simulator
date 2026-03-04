@@ -51,14 +51,14 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   return ret;
 }
 
-#else // #if defined( HAVE_LIBNEUROSIM )
+#else  // #if defined( HAVE_LIBNEUROSIM )
 
 #define CYTHON_isConnectionGenerator( x ) 0
 #define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
 
-#endif // #if defined( HAVE_LIBNEUROSIM )
+#endif  // #if defined( HAVE_LIBNEUROSIM )
 
 #define CYTHON_DEREF( x ) ( *x )
 #define CYTHON_ADDR( x ) ( &x )
 
-#endif // #ifndef PYNESTKERNEL_AUX_H
+#endif  // #ifndef PYNESTKERNEL_AUX_H

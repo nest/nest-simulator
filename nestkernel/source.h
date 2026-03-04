@@ -40,11 +40,11 @@ namespace nest
 class Source
 {
 private:
-  uint64_t node_id_ : NUM_BITS_NODE_ID; //!< node ID of source
-  bool processed_ : 1;                  //!< whether this target has already been moved
-                                        //!< to the MPI buffer
-  bool primary_ : 1;                    //!< source of primary connection
-  bool disabled_ : 1;                   //!< connection has been disabled
+  uint64_t node_id_ : NUM_BITS_NODE_ID;  //!< node ID of source
+  bool processed_ : 1;                   //!< whether this target has already been moved
+                                         //!< to the MPI buffer
+  bool primary_ : 1;                     //!< source of primary connection
+  bool disabled_ : 1;                    //!< connection has been disabled
 
 public:
   Source();
@@ -160,6 +160,6 @@ operator==( const Source& lhs, const Source& rhs )
   return ( lhs.node_id_ == rhs.node_id_ );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_H */

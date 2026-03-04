@@ -37,7 +37,7 @@ void
 create_exceptions()
 {
   std::string kernel_exn_name = "KernelException";
-  PyObject* base_class = nullptr; // will be nullptr for KernelException
+  PyObject* base_class = nullptr;  // will be nullptr for KernelException
   nest_exceptions.insert( nest_exceptions.begin(), kernel_exn_name );
 
   for ( auto name : nest_exceptions )
@@ -60,7 +60,7 @@ custom_exception_handler()
   {
     if ( PyErr_Occurred() )
     {
-      ; // let the latest Python exn pass through and ignore the current one
+      ;  // let the latest Python exn pass through and ignore the current one
     }
     else
     {

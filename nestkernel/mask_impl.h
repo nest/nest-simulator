@@ -510,6 +510,6 @@ AnchoredMask< D >::get_dict() const
   return d;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

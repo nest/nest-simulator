@@ -78,8 +78,8 @@ struct DictEntry_
   {
   }
 
-  boost::any item;       //!< actual item stored
-  mutable bool accessed; //!< initally false, set to true once entry is accessed
+  boost::any item;        //!< actual item stored
+  mutable bool accessed;  //!< initally false, set to true once entry is accessed
 };
 
 class Dictionary : public std::map< std::string, DictEntry_ >
@@ -93,7 +93,7 @@ private:
   // automatic hashing of keys (currently strings) which might make
   // lookups more efficient
   using maptype_ = std::map< std::string, DictEntry_ >;
-  using maptype_::maptype_; // Inherit constructors
+  using maptype_::maptype_;  // Inherit constructors
 
   /**
    * @brief Cast the specified non-vector value to the specified type.

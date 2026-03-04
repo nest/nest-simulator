@@ -129,7 +129,7 @@ This error message means something in your environment is not set correctly, dep
 
    If the Python version displayed is 2.X, you need update your system.
 
-   In case ``python`` return "command not found", consider one of the following:
+   In case ``python`` returns "command not found", consider one of the following:
    1. Make sure your environment (venv, virtualenv, mamba, …) is correctly loaded
    2. If you want to run with your system Python, make sure you have a
       corresponding symlink in place (e.g. by installing ``sudo apt install

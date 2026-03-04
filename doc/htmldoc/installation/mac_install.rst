@@ -116,7 +116,7 @@ to the following line:
 
 .. code-block:: sh
 
-   export PYTHONPATH="<nest_install_dir>/lib/python3.14/site-packages"
+   export PYTHONPATH="<nest_install_dir>/lib/python..../site-packages"
 
 Troubleshooting
 ---------------

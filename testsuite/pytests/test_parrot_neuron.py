@@ -225,6 +225,7 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         assert w_pre < w_post, "Parrot neuron STDP potentiation \
             protocol failed to elicit positive weight changes."
         assert w_pre < w_post, "Parrot neuron STDP potentiation protocol failed to elicit positive weight changes."
+
     def test_ParrotNeuronSTDPProtocolDepression(self):
         """Check post-pre spike pairings between parrot_neurons
         decrement weights."""

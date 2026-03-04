@@ -44,11 +44,7 @@ nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
 #ifdef HAVE_MPI
 
 // Variable to hold the MPI communicator to use.
-#ifdef HAVE_MUSIC
 extern MPI_Comm comm;
-#else  /* #ifdef HAVE_MUSIC */
-extern MPI_Comm comm;
-#endif /* #ifdef HAVE_MUSIC */
 
 template < typename T >
 struct MPI_Type

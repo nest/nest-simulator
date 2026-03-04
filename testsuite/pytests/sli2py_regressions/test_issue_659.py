@@ -33,7 +33,7 @@ def test_run_without_prepare():
     Test that calling Run without Prepare results in an error.
     """
     nest.ResetKernel()
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Run(10.0)
 
 

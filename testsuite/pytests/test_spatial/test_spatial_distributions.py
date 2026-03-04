@@ -346,7 +346,7 @@ class SpatialTester:
 
         # Target nodes
         connections = nest.GetConnections(source=self._driver)
-        target_array = np.array(connections.target)
+        target_array = connections.target
 
         # Convert lt node IDs to a NumPy array
         lt_array = np.array(self._lt.tolist())

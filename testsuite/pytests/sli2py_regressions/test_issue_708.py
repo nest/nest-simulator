@@ -28,51 +28,38 @@ import nest
 import pytest
 
 
-@pytest.mark.skipif_without_gsl
+@pytest.mark.skipif_missing_gsl
 def test_copymodel_with_secondary_events():
     """
     Test that CopyModel works with connection types that use secondary events.
     """
-    nest.ResetKernel()
 
-    neuron_in = nest.Create("hh_psc_alpha_gap")
-    neuron_out1 = nest.Create("hh_psc_alpha_gap")
-    neuron_out2 = nest.Create("hh_psc_alpha_gap")
-    vm1 = nest.Create("voltmeter")
-    vm2 = nest.Create("voltmeter")
+    neuron_in = nest.Create("hh_psc_alpha_gap", params={"I_e": 200.0})
+    neurons_out = nest.Create("hh_psc_alpha_gap", n=2)
 
-    nest.CopyModel("gap_junction", "syn0")
-    nest.CopyModel("gap_junction", "syn1")
-
-    nest.SetStatus(neuron_in, {"I_e": 200.0})
-    nest.SetStatus(vm1, {"interval": 1.0})
-    nest.SetStatus(vm2, {"interval": 1.0})
+    nest.CopyModel("gap_junction", "syn0", {"weight": 5.0})
+    nest.CopyModel("gap_junction", "syn1", {"weight": 10.0})
 
     nest.Connect(
         neuron_in,
-        neuron_out1,
+        neurons_out[0],
         conn_spec={"rule": "one_to_one", "make_symmetric": True},
-        syn_spec={"synapse_model": "syn0", "weight": 10.0},
+        syn_spec={"synapse_model": "syn0"},
     )
 
     nest.Connect(
         neuron_in,
-        neuron_out2,
+        neurons_out[1],
         conn_spec={"rule": "one_to_one", "make_symmetric": True},
-        syn_spec={"synapse_model": "syn1", "weight": 10.0},
+        syn_spec={"synapse_model": "syn1"},
     )
 
-    nest.Connect(vm1, neuron_out1)
-    nest.Connect(vm2, neuron_out2)
+    V_m_ini = neurons_out.V_m
 
     nest.Simulate(10.0)
 
-    # Check that neuron_out1 received the input
-    events_vm1 = nest.GetStatus(vm1, "events")[0]
-    V_m_vm1 = events_vm1["V_m"]
-    assert V_m_vm1[8] > -6.960401e01
+    # Check that both neurons have become depolarized due to input from neuron_in
+    assert all(neurons_out.V_m > V_m_ini)
 
-    # Check that neuron_out2 received the input
-    events_vm2 = nest.GetStatus(vm2, "events")[0]
-    V_m_vm2 = events_vm2["V_m"]
-    assert V_m_vm2[8] > -6.960401e01
+    # Check stronger effect on second neuron due to larger weight
+    assert neurons_out[1].V_m > neurons_out[0].V_m

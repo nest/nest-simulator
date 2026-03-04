@@ -116,8 +116,7 @@ class MPITestWrapper:
     MULTI_LABEL = "multi-{}"
     OTHER_LABEL = "other-{}-{}.dat"
 
-    RUNNER_TEMPLATE = textwrap.dedent(
-        """\
+    RUNNER_TEMPLATE = textwrap.dedent("""\
         SPIKE_LABEL = '{spike_lbl}'
         MULTI_LABEL = '{multi_lbl}'
         OTHER_LABEL = '{other_lbl}'
@@ -126,8 +125,7 @@ class MPITestWrapper:
 
         if __name__ == '__main__':
             {fname}({params})
-        """
-    )
+        """)
 
     def __init__(self, procs_lst, debug=False, specific_assert=None):
         """

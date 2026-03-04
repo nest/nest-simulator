@@ -31,7 +31,7 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
 
         nest.ResetKernel()
         nest.CopyModel("static_synapse", "synapse_ex")
-        nest.SetDefaults("synapse_ex", {"weight": 1, "delay": 1.0})
+        nest.SetDefaults("synapse_ex", {"weight": 1.0, "delay": 1.0})
         nest.structural_plasticity_synapses = {
             "synapse_ex": {
                 "synapse_model": "synapse_ex",
@@ -49,7 +49,7 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
 
         nest.ResetKernel()
         nest.CopyModel("static_synapse", "synapse_ex")
-        nest.SetDefaults("synapse_ex", {"weight": 1, "delay": 1.0})
+        nest.SetDefaults("synapse_ex", {"weight": 1.0, "delay": 1.0})
         nest.structural_plasticity_synapses = {
             "synapse_ex": {
                 "synapse_model": "synapse_ex",

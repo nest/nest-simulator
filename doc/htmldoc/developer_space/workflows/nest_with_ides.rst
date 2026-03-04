@@ -123,9 +123,6 @@ Requirements and limitations
 * Assumes a suitable compiler (GCC/Clang/etc.) is installed.
 * Assumes CMake version 3.15 or newer is installed.
 * C++ debugging assumes GDB is installed if on Linux, and Xcode and LLDB is installed if on macOS.
-* Debugging C++ from VS Code is only possible with a SLI script. It is probably possible to launch
-  the Python debugger, then attach a C++ debugging instance to that process, but that is left
-  as an exercise for the reader.
 * Tested with VS Code 1.53.2.
 
 Preparations
@@ -225,25 +222,6 @@ documentation on Python debugging in VS Code, see the
 #. The debug configuration defaults to the current open Python file. Go back to the Python script and start the
    debugger by selecting the debug configuration from the dropdown in the Run pane (you can also use
    the hotkey ``F5``).
-#. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
-
-Running a SLI script with a debugger
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The steps below give a rough guide to how you can run NEST with GDB in VS Code. For more detailed
-documentation on C++ debugging in VS Code, see the
-`VS Code C++ debugging documentation <https://code.visualstudio.com/docs/cpp/cpp-debug>`_.
-
-#. In the Side Bar, open the **Run** pane, or press ``Ctrl+Shift+D``.
-#. Add a debug config by either
-
-   * selecting **Add configuration...** from the dropdown menu, or
-   * clicking the ``Create a launch.json file`` link, if the ``launch.json`` doesn't exist
-#. Choose the template for ``C/C++ (gdb) launch`` (or ``C/C++ (lldb) launch`` if on macOS) and
-
-   * change the entry for ``program`` to ``"${workspaceFolder}/../build/install/bin/nest"``
-   * add ``"${file}"`` to the ``args`` list
-#. Open your SLI script and start debugging by selecting the debug configuration from the dropdown in the Run pane.
 #. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
 
 Xcode Workflow
@@ -375,7 +353,6 @@ Also add the generated files:
   .. code-block::
 
     <somebase>/NEST/build/libnestutil/config.h
-    <somebase>/NEST/build/libnestutil/sliconfig.h
 
 3. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 

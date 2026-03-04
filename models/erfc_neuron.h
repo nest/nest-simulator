@@ -149,8 +149,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
   bool operator()( RngPtr rng, double h );
 };
@@ -168,7 +168,7 @@ void register_erfc_neuron( const std::string& name );
 template <>
 void RecordablesMap< erfc_neuron >::create();
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef ERFC_NEURON_H */

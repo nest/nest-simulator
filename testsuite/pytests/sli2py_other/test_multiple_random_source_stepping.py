@@ -42,8 +42,8 @@ def run_sim(interval, steppings):
 
     nest.ResetKernel()
 
-    pg1 = nest.Create("poisson_generator_ps", {"rate": 1000.0})
-    pg2 = nest.Create("poisson_generator_ps", {"rate": 1000.0})
+    pg1 = nest.Create("poisson_generator_ps", params={"rate": 1000.0})
+    pg2 = nest.Create("poisson_generator_ps", params={"rate": 1000.0})
     sr1 = nest.Create("spike_recorder")
     sr2 = nest.Create("spike_recorder")
     nest.Connect(pg1, sr1)

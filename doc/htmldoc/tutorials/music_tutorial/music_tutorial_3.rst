@@ -19,7 +19,7 @@ divided into a setup phase and a runtime phase. You can see the setup below.
 
 .. code-block:: cpp
 
-    MPI::Intracomm comm;
+    MPI_Comm comm;
 
     int main(int argc, char **argv)
     {
@@ -170,7 +170,7 @@ communications and clean up after itself before exiting.
 
 .. code-block:: cpp
 
-    MPI::Intracomm comm;
+    MPI_Comm comm;
     FILE *fout;
 
     struct eventtype  {

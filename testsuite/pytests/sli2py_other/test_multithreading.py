@@ -28,6 +28,7 @@ correctly. The following things are tested:
   * Does default node distribution (modulo) work as expected?
   * Are spikes transmitted between threads as expected?
 """
+
 import nest
 import numpy as np
 import numpy.testing as nptest
@@ -55,7 +56,7 @@ def test_transmitted_spikes_btw_threads():
     num_threads = 4
     nest.local_num_threads = num_threads
 
-    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [1.0]})
     pA = nest.Create("parrot_neuron", num_threads)
     pB = nest.Create("parrot_neuron", num_threads)
     sr = nest.Create("spike_recorder")
@@ -67,7 +68,7 @@ def test_transmitted_spikes_btw_threads():
     t_sim = 1.0 + 3 * 1.0
     nest.Simulate(t_sim)
 
-    sr_times = sr.get("events")["times"]
+    sr_times = sr.events["times"]
 
     excepted = [3] * (num_threads**2)
 

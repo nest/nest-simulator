@@ -31,9 +31,6 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -61,12 +58,12 @@ DynamicRecordablesMap< iaf_psc_exp_multisynapse >::create( iaf_psc_exp_multisyna
   host.insert_current_recordables();
 }
 
-Name
+std::string
 iaf_psc_exp_multisynapse::get_i_syn_name( size_t elem )
 {
   std::stringstream i_syn_name;
   i_syn_name << "I_syn_" << elem + 1;
-  return Name( i_syn_name.str() );
+  return i_syn_name.str();
 }
 
 void
@@ -91,14 +88,14 @@ iaf_psc_exp_multisynapse::get_data_access_functor( size_t elem )
  * ---------------------------------------------------------------- */
 
 iaf_psc_exp_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )             // in ms
-  , C_( 250.0 )              // in pF
-  , refractory_time_( 2.0 )  // in ms
-  , E_L_( -70.0 )            // in mV
-  , I_e_( 0.0 )              // in pA
-  , V_reset_( -70.0 - E_L_ ) // in mV
-  , Theta_( -55.0 - E_L_ )   // relative E_L_
-  , tau_syn_( 1, 2.0 )       // in ms
+  : Tau_( 10.0 )              // in ms
+  , C_( 250.0 )               // in pF
+  , refractory_time_( 2.0 )   // in ms
+  , E_L_( -70.0 )             // in mV
+  , I_e_( 0.0 )               // in pA
+  , V_reset_( -70.0 - E_L_ )  // in mV
+  , Theta_( -55.0 - E_L_ )    // relative E_L_
+  , tau_syn_( 1, 2.0 )        // in ms
   , has_connections_( false )
 {
 }
@@ -116,32 +113,30 @@ iaf_psc_exp_multisynapse::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
+iaf_psc_exp_multisynapse::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ ); // resting potential
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, Theta_ + E_L_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + E_L_ );
-  def< double >( d, names::C_m, C_ );
-  def< double >( d, names::tau_m, Tau_ );
-  def< double >( d, names::t_ref, refractory_time_ );
-  def< int >( d, names::n_synapses, n_receptors_() );
-  def< bool >( d, names::has_connections, has_connections_ );
-
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
+  d[ names::E_L ] = E_L_;  // resting potential
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = Theta_ + E_L_;  // threshold value
+  d[ names::V_reset ] = V_reset_ + E_L_;
+  d[ names::C_m ] = C_;
+  d[ names::tau_m ] = Tau_;
+  d[ names::t_ref ] = refractory_time_;
+  d[ names::n_synapses ] = n_receptors_();
+  d[ names::has_connections ] = has_connections_;
+  d[ names::tau_syn ] = tau_syn_;
 }
 
 double
-iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+iaf_psc_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -149,7 +144,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node
   {
     V_reset_ -= delta_EL;
   }
-  if ( updateValueParam< double >( d, names::V_th, Theta_, node ) )
+  if ( update_value_param( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -158,10 +153,10 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node
     Theta_ -= delta_EL;
   }
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_, node );
-  updateValueParam< double >( d, names::tau_m, Tau_, node );
-  updateValueParam< double >( d, names::t_ref, refractory_time_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_, node );
+  update_value_param( d, names::tau_m, Tau_, node );
+  update_value_param( d, names::t_ref, refractory_time_, node );
 
   if ( C_ <= 0 )
   {
@@ -172,7 +167,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node
     throw BadProperty( "Membrane time constant must be strictly positive." );
   }
   const size_t old_n_receptors = this->n_receptors_();
-  if ( updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ ) )
+  if ( d.update_value( "tau_syn", tau_syn_ ) )
   {
     if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
@@ -203,18 +198,18 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node
 }
 
 void
-iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+iaf_psc_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
 }
 
 void
-iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_exp_multisynapse::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   // If the dictionary contains a value for the membrane potential, V_m, adjust
   // it with the resting potential, E_L_. If not, adjust the membrane potential
   // with the provided change in resting potential.
-  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -263,8 +258,8 @@ iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse( const iaf_psc_exp_multisynap
 void
 iaf_psc_exp_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
 
   B_.logger_.reset();
 
@@ -307,9 +302,9 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.refractory_steps_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.refractory_steps_ == 0 )  // neuron not refractory, so evolve V
     {
-      S_.V_m_ = S_.V_m_ * V_.P22_ + ( P_.I_e_ + S_.I_const_ ) * V_.P20_; // not sure about this
+      S_.V_m_ = S_.V_m_ * V_.P22_ + ( P_.I_e_ + S_.I_const_ ) * V_.P20_;  // not sure about this
 
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
@@ -318,7 +313,7 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
     }
     else
     {
-      --S_.refractory_steps_; // neuron is absolute refractory
+      --S_.refractory_steps_;  // neuron is absolute refractory
     }
 
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
@@ -327,10 +322,10 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
       S_.i_syn_[ i ] *= V_.P11_syn_[ i ];
 
       // collect spikes
-      S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // not sure about this
+      S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag );  // not sure about this
     }
 
-    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.Theta_ )  // threshold crossing
     {
       S_.refractory_steps_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
@@ -388,12 +383,12 @@ iaf_psc_exp_multisynapse::handle( DataLoggingRequest& e )
 }
 
 void
-iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
+iaf_psc_exp_multisynapse::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -405,7 +400,7 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.tau_syn_.size() > P_.tau_syn_.size() ) // Number of receptors increased
+  if ( ptmp.tau_syn_.size() > P_.tau_syn_.size() )  // Number of receptors increased
   {
     for ( size_t i_syn = P_.tau_syn_.size(); i_syn < ptmp.tau_syn_.size(); ++i_syn )
     {
@@ -415,7 +410,7 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
     }
   }
   else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size(); ++i_syn )
     {
       recordablesMap_.erase( get_i_syn_name( i_syn ) );
@@ -427,4 +422,4 @@ iaf_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace

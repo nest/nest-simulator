@@ -23,7 +23,6 @@
 Test ``iaf_psc_exp_multisynapse`` recordables and simulated PSCs against expectation.
 """
 
-
 import nest
 import numpy as np
 import numpy.testing as nptest

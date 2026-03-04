@@ -29,7 +29,7 @@ __author__ = "naveau"
 class TestDisconnect(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-        nest.set_verbosity("M_ERROR")
+        nest.verbosity = nest.VerbosityLevel.ERROR
         self.exclude_synapse_model = [
             "stdp_dopamine_synapse",
             "stdp_dopamine_synapse_lbl",
@@ -87,7 +87,7 @@ class TestDisconnect(unittest.TestCase):
 
                 # Test if the connected synaptic elements before the simulation
                 # are correct
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status:
                     self.assertEqual(10, st_neuron["SE1"]["z_connected"])
                     self.assertEqual(10, st_neuron["SE2"]["z_connected"])
@@ -101,7 +101,7 @@ class TestDisconnect(unittest.TestCase):
                 conndictionary = {"rule": "all_to_all"}
                 syndictionary = {"synapse_model": syn_model}
                 nest.Disconnect(src_neurons, tgt_neurons, conn_spec=conndictionary, syn_spec=syndictionary)
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status[0:5]:
                     self.assertEqual(5, st_neuron["SE1"]["z_connected"])
                     self.assertEqual(10, st_neuron["SE2"]["z_connected"])
@@ -134,7 +134,7 @@ class TestDisconnect(unittest.TestCase):
 
                 # Test if the connected synaptic elements before the simulation
                 # are correct
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status:
                     self.assertEqual(10, st_neuron["SE1"]["z_connected"])
                     self.assertEqual(10, st_neuron["SE2"]["z_connected"])
@@ -148,7 +148,7 @@ class TestDisconnect(unittest.TestCase):
                 conndictionary = {"rule": "one_to_one"}
                 syndictionary = {"synapse_model": syn_model}
                 nest.Disconnect(src_neurons, tgt_neurons, conn_spec=conndictionary, syn_spec=syndictionary)
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status[0:5]:
                     self.assertEqual(9, st_neuron["SE1"]["z_connected"])
                     self.assertEqual(10, st_neuron["SE2"]["z_connected"])
@@ -199,7 +199,7 @@ class TestDisconnect(unittest.TestCase):
 
                 # Test if the connected synaptic elements before the simulation
                 # are correct
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 for st_neuron in status:
                     self.assertEqual(2, st_neuron["SE1"]["z_connected"])
                     self.assertEqual(2, st_neuron["SE2"]["z_connected"])
@@ -210,7 +210,7 @@ class TestDisconnect(unittest.TestCase):
                 conns = nest.GetConnections(neurons[srcId], neurons[targId], syn_model)
                 assert conns
                 nest.Disconnect(neurons[srcId], neurons[targId], syn_spec=syn_dict)
-                status = nest.GetStatus(neurons, "synaptic_elements")
+                status = neurons.synaptic_elements
                 self.assertEqual(1, status[srcId]["SE1"]["z_connected"])
                 self.assertEqual(2, status[srcId]["SE2"]["z_connected"])
                 self.assertEqual(2, status[targId]["SE1"]["z_connected"])

@@ -24,7 +24,6 @@
 Tests whether max_delay and min_delay is updated correctly.
 """
 
-
 import nest
 import pytest
 

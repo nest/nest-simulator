@@ -47,9 +47,6 @@
 #include "urbanczik_archiving_node.h"
 #include "urbanczik_archiving_node_impl.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
 
 namespace nest
 {
@@ -88,21 +85,21 @@ private:
     NCOMP
   };
 
-  double phi_max;    //!< Parameter of the rate function
-  double rate_slope; //!< Parameter of the rate function
-  double beta;       //!< Parameter of the rate function
-  double theta;      //!< Parameter of the rate function
+  double phi_max;     //!< Parameter of the rate function
+  double rate_slope;  //!< Parameter of the rate function
+  double beta;        //!< Parameter of the rate function
+  double theta;       //!< Parameter of the rate function
   double phi( double u ) const;
   double h( double u ) const;
 
 public:
   // The Urbanczik parameters need to be public within this class as they are passed to the GSL solver
-  double g_conn[ NCOMP ];     //!< Conductances connecting compartments in nS
-  double g_L[ NCOMP ];        //!< Leak Conductance in nS
-  double C_m[ NCOMP ];        //!< Capacity of the membrane in pF
-  double E_L[ NCOMP ];        //!< Reversal Potential in mV
-  double tau_syn_ex[ NCOMP ]; //!< Rise time of excitatory synaptic conductance in ms
-  double tau_syn_in[ NCOMP ]; //!< Rise time of inhibitory synaptic conductance in ms
+  double g_conn[ NCOMP ];      //!< Conductances connecting compartments in nS
+  double g_L[ NCOMP ];         //!< Leak Conductance in nS
+  double C_m[ NCOMP ];         //!< Capacity of the membrane in pF
+  double E_L[ NCOMP ];         //!< Reversal Potential in mV
+  double tau_syn_ex[ NCOMP ];  //!< Rise time of excitatory synaptic conductance in ms
+  double tau_syn_in[ NCOMP ];  //!< Rise time of inhibitory synaptic conductance in ms
 };
 
 /* BeginUserDocs: neuron, point process, conductance-based, stochastic
@@ -126,7 +123,7 @@ from a current generator. Additionally, an external (rheobase) current can be
 set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
-the receptor types given in the receptor_types entry of the state dictionary.
+the receptor types given in the receptor_types entry of the state Dictionary.
 Note that in contrast to the single-compartment models, all
 synaptic weights must be positive numbers! The distinction between excitatory
 and inhibitory synapses is made explicitly by specifying the receptor type of
@@ -191,8 +188,8 @@ See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary. Parameters
-for each compartment are collected in a sub-dictionary; these sub-dictionaries
+The following parameters can be set in the status Dictionary. Parameters
+for each compartment are collected in a sub-Dictionary; these sub-dictionaries
 are called "soma" and "dendritic", respectively. In the list below,
 these parameters are marked with an asterisk.
 
@@ -279,8 +276,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -367,22 +364,22 @@ private:
    */
   struct Parameters_
   {
-    double t_ref;         //!< Refractory period in ms
-    double E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
-    double E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
-    double I_e[ NCOMP ];  //!< Constant Current in pA
+    double t_ref;          //!< Refractory period in ms
+    double E_ex[ NCOMP ];  //!< Excitatory reversal Potential in mV
+    double E_in[ NCOMP ];  //!< Inhibitory reversal Potential in mV
+    double I_e[ NCOMP ];   //!< Constant Current in pA
 
     pp_cond_exp_mc_urbanczik_parameters urbanczik_params;
 
     /** Dead time in ms. */
     double dead_time_;
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
-    Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
+    Parameters_();                                 //!< Sets default parameter values
+    Parameters_( const Parameters_& );             //!< needed to copy C-arrays
+    Parameters_& operator=( const Parameters_& );  //!< needed to copy C-arrays
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
+    void set( const Dictionary& );  //!< Set values from Dictionary
   };
 
 
@@ -407,7 +404,7 @@ public:
       V_M = 0,
       G_EXC,
       G_INH,
-      I_EXC, // in the paper it is I_dnd which accounts for both excitation and inhibition
+      I_EXC,  // in the paper it is I_dnd which accounts for both excitation and inhibition
       I_INH,
       STATE_VEC_COMPS
     };
@@ -417,15 +414,15 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    int r_;  //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_& );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -450,7 +447,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( pp_cond_exp_mc_urbanczik& ); //!< Sets buffer pointers to 0
+    Buffers_( pp_cond_exp_mc_urbanczik& );  //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& );
 
@@ -464,17 +461,17 @@ private:
     std::vector< RingBuffer > currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input currents injected by CurrentEvent.
@@ -483,7 +480,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double I_stim_[ NCOMP ]; //!< External Stimulus in pA
+    double I_stim_[ NCOMP ];  //!< External Stimulus in pA
   };
 
   // Internal variables ---------------------------------------------
@@ -495,9 +492,9 @@ private:
   {
     int RefractoryCounts_;
 
-    double h_;                          //!< simulation time step in ms
-    RngPtr rng_;                        //!< random number generator of my own thread
-    poisson_distribution poisson_dist_; //!< poisson distribution
+    double h_;                           //!< simulation time step in ms
+    RngPtr rng_;                         //!< random number generator of my own thread
+    poisson_distribution poisson_dist_;  //!< poisson distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -528,10 +525,9 @@ private:
   Buffers_ B_;
 
   //! Table of compartment names
-  static std::vector< Name > comp_names_;
+  static std::vector< std::string > comp_names_;
 
-  //! Dictionary of receptor types, leads to seg fault on exit, see #328
-  // static DictionaryDatum receptor_dict_;
+  // Dictionary of receptor types, leads to seg fault on exit, see #328
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< pp_cond_exp_mc_urbanczik > recordablesMap_;
@@ -613,38 +609,38 @@ pp_cond_exp_mc_urbanczik::handles_test_event( DataLoggingRequest& dlr, size_t re
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::get_status( DictionaryDatum& d ) const
+pp_cond_exp_mc_urbanczik::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   /**
-   * @todo dictionary construction should be done only once for
+   * @todo Dictionary construction should be done only once for
    * static member in default c'tor, but this leads to
    * a seg fault on exit, see #328
    */
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
-  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
-  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
+  Dictionary receptor_dict_;
+  receptor_dict_[ names::soma_exc ] = static_cast< long >( SOMA_EXC );
+  receptor_dict_[ names::soma_inh ] = static_cast< long >( SOMA_INH );
+  receptor_dict_[ names::soma_curr ] = static_cast< long >( I_SOMA );
 
-  ( *receptor_dict_ )[ names::dendritic_exc ] = DEND_EXC;
-  ( *receptor_dict_ )[ names::dendritic_inh ] = DEND_INH;
-  ( *receptor_dict_ )[ names::dendritic_curr ] = I_DEND;
+  receptor_dict_[ names::dendritic_exc ] = static_cast< long >( DEND_EXC );
+  receptor_dict_[ names::dendritic_inh ] = static_cast< long >( DEND_INH );
+  receptor_dict_[ names::dendritic_curr ] = static_cast< long >( I_DEND );
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict_;
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
+pp_cond_exp_mc_urbanczik::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, ptmp );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -657,8 +653,8 @@ pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
 
-#endif // HAVE_GSL
-#endif // PP_COND_EXP_MC_URBANCZIK_H
+#endif  // HAVE_GSL
+#endif  // PP_COND_EXP_MC_URBANCZIK_H

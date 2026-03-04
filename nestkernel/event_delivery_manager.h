@@ -35,7 +35,7 @@
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
 #include "event.h"
-#include "mpi_manager.h" // OffGridSpike
+#include "mpi_manager.h"  // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -45,8 +45,6 @@
 #include "target_table.h"
 #include "vp_manager.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -65,8 +63,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Standard routine for sending events.
@@ -370,8 +368,8 @@ private:
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
-                          //!< the grid
+  bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
+                           //!< the grid
 
   /**
    * Table of pre-computed modulos.
@@ -453,9 +451,9 @@ private:
    */
   size_t global_max_spikes_per_rank_;
 
-  double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_spare_; //!< leave this fraction more space than minimally needed
-  double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
+  double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_spare_;  //!< leave this fraction more space than minimally needed
+  double send_recv_buffer_grow_extra_;    //!< when growing, add this fraction extra space
 
   /**
    * Log all resize events.
@@ -531,6 +529,6 @@ EventDeliveryManager::get_slice_modulo( long d )
   return slice_moduli_[ d ];
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_H */

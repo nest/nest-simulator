@@ -37,8 +37,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -51,8 +49,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    *  Check for errors in time before run
@@ -190,42 +188,42 @@ public:
   bool get_eprop_reset_neurons_on_update() const;
 
 private:
-  void call_update_(); //!< actually run simulation, aka wrap update_
-  void update_();      //! actually perform simulation
+  void call_update_();  //!< actually run simulation, aka wrap update_
+  void update_();       //! actually perform simulation
   bool wfr_update_( Node* );
-  void advance_time_();   //!< Update time to next time step
-  void print_progress_(); //!< TODO: Remove, replace by logging!
+  void advance_time_();    //!< Update time to next time step
+  void print_progress_();  //!< TODO: Remove, replace by logging!
 
-  Time clock_;                     //!< SimulationManager clock, updated once per slice
-  long slice_;                     //!< current update slice
-  long to_do_;                     //!< number of pending steps
-  long to_do_total_;               //!< number of requested steps in current simulation
-  long from_step_;                 //!< update clock_+from_step<=T<clock_+to_step_
-  long to_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
-  long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)
-  bool prepared_;                  //!< Indicates whether the SimulationManager is in a prepared
-                                   //!< state
-  bool simulating_;                //!< true if simulation in progress
-  bool simulated_;                 //!< indicates whether the SimulationManager has already been
-                                   //!< simulated for sometime
-  bool inconsistent_state_;        //!< true after exception during update_
-                                   //!< simulation must not be resumed
-  bool print_time_;                //!< Indicates whether time should be printed during
-                                   //!< simulations (or not)
-  bool use_wfr_;                   //!< Indicates wheter waveform relaxation is used
-  double wfr_comm_interval_;       //!< Desired waveform relaxation communication
-                                   //!< interval (in ms)
-  double wfr_tol_;                 //!< Convergence tolerance of waveform relaxation method
-  long wfr_max_iterations_;        //!< maximal number of iterations used for waveform
-                                   //!< relaxation
-  size_t wfr_interpolation_order_; //!< interpolation order for waveform
-                                   //!< relaxation method
-  double update_time_limit_;       //!< throw exception if single update cycle takes longer
-                                   //!< than update_time_limit_ (seconds, default inf)
-  double min_update_time_;         //!< shortest update time seen so far (seconds)
-  double max_update_time_;         //!< longest update time seen so far (seconds)
+  Time clock_;                      //!< SimulationManager clock, updated once per slice
+  long slice_;                      //!< current update slice
+  long to_do_;                      //!< number of pending steps
+  long to_do_total_;                //!< number of requested steps in current simulation
+  long from_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  long to_step_;                    //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_;           //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;             //!< Wall-clock time at the end of time slice
+  long t_real_;                     //!< Accumulated wall-clock time spent simulating (in us)
+  bool prepared_;                   //!< Indicates whether the SimulationManager is in a prepared
+                                    //!< state
+  bool simulating_;                 //!< true if simulation in progress
+  bool simulated_;                  //!< indicates whether the SimulationManager has already been
+                                    //!< simulated for sometime
+  bool inconsistent_state_;         //!< true after exception during update_
+                                    //!< simulation must not be resumed
+  bool print_time_;                 //!< Indicates whether time should be printed during
+                                    //!< simulations (or not)
+  bool use_wfr_;                    //!< Indicates wheter waveform relaxation is used
+  double wfr_comm_interval_;        //!< Desired waveform relaxation communication
+                                    //!< interval (in ms)
+  double wfr_tol_;                  //!< Convergence tolerance of waveform relaxation method
+  long wfr_max_iterations_;         //!< maximal number of iterations used for waveform
+                                    //!< relaxation
+  size_t wfr_interpolation_order_;  //!< interpolation order for waveform
+                                    //!< relaxation method
+  double update_time_limit_;        //!< throw exception if single update cycle takes longer
+                                    //!< than update_time_limit_ (seconds, default inf)
+  double min_update_time_;          //!< shortest update time seen so far (seconds)
+  double max_update_time_;          //!< longest update time seen so far (seconds)
 
   // private stop watches for benchmarking purposes
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_simulate_;
@@ -289,14 +287,14 @@ SimulationManager::run_duration() const
 inline Time
 SimulationManager::run_start_time() const
 {
-  assert( not simulating_ ); // implicit due to using get_time()
+  assert( not simulating_ );  // implicit due to using get_time()
   return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
 }
 
 inline Time
 SimulationManager::run_end_time() const
 {
-  assert( not simulating_ ); // implicit due to using get_time()
+  assert( not simulating_ );  // implicit due to using get_time()
   return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 

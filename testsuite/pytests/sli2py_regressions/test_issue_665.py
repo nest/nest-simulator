@@ -94,5 +94,5 @@ def test_connect_recorder_layer(connspec, pass_expected):
         sources = nest.GetConnections(target=rec_layer).get("source")
         assert sorted(sources) == list(nrn_layer.global_id)
     else:
-        with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+        with pytest.raises(nest.NESTErrors.IllegalConnection):
             nest.Connect(nrn_layer, rec_layer, connspec)

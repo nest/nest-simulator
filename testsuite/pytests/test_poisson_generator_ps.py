@@ -31,7 +31,6 @@ problem. Therefore, failure of this script indicates that the configuration is n
 portable.
 """
 
-
 import nest
 import numpy as np
 import pytest

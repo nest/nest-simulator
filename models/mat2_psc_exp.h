@@ -104,6 +104,19 @@ The following parameters can be set in the status dictionary:
                       relative to E_L as in [3]_)
 ============ =======  ========================================================
 
+The following state variables can be read out with the multimeter device:
+
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
+
+Remarks:
+
+tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
+degenerate case of the ODE describing the model [1]_. For very similar values,
+numerics will be unstable.
+
 References
 ++++++++++
 
@@ -173,8 +186,8 @@ public:
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -227,14 +240,14 @@ private:
         Called omega in [3]_. */
     double omega_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    double set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -245,27 +258,27 @@ private:
   struct State_
   {
     // state variables
-    double i_0_;      //!< synaptic dc input current, variable 0
-    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
-    double V_m_;      //!< membrane potential, variable 2
+    double i_0_;       //!< synaptic dc input current, variable 0
+    double i_syn_ex_;  //!< postsynaptic current for exc. inputs, variable 1
+    double i_syn_in_;  //!< postsynaptic current for inh. inputs, variable 1
+    double V_m_;       //!< membrane potential, variable 2
     //! short time adaptive threshold (related to tau_1_), variable 1
     double V_th_1_;
     //! long time adaptive threshold (related to tau_2_), variable 2
     double V_th_2_;
 
-    int r_; //!< total refractory counter (no spikes can be generated)
+    int r_;  //!< total refractory counter (no spikes can be generated)
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -275,8 +288,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& );  //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -303,7 +316,7 @@ private:
     //    double PSCInitialValue_;
 
     // time evolution operator of membrane potential
-    double P20_; // constant currents
+    double P20_;  // constant currents
     double P11ex_;
     double P11in_;
     double P21ex_;
@@ -392,22 +405,22 @@ mat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-mat2_psc_exp::get_status( DictionaryDatum& d ) const
+mat2_psc_exp::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-mat2_psc_exp::set_status( const DictionaryDatum& d )
+mat2_psc_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -420,6 +433,6 @@ mat2_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // MAT2_PSC_EXP_H
+#endif  // MAT2_PSC_EXP_H

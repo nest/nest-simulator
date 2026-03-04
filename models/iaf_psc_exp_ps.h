@@ -191,8 +191,8 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -313,14 +313,14 @@ private:
         Relative to resting potential. */
     double U_reset_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -330,25 +330,25 @@ private:
    */
   struct State_
   {
-    double y0_;    //!< External input current
-    double y1_ex_; //!< Excitatory synaptic current
-    double y1_in_; //!< Inhibitory synaptic current
-    double y2_;    //!< Membrane potential (relative to resting potential)
+    double y0_;     //!< External input current
+    double y1_ex_;  //!< Excitatory synaptic current
+    double y1_in_;  //!< Inhibitory synaptic current
+    double y2_;     //!< Membrane potential (relative to resting potential)
 
-    bool is_refractory_;       //!< True while refractory
-    long last_spike_step_;     //!< Time stamp of most recent spike
-    double last_spike_offset_; //!< Offset of most recent spike
+    bool is_refractory_;        //!< True while refractory
+    long last_spike_step_;      //!< Time stamp of most recent spike
+    double last_spike_offset_;  //!< Offset of most recent spike
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -379,18 +379,18 @@ private:
    */
   struct Variables_
   {
-    double h_ms_;           //!< Time resolution [ms]
-    long refractory_steps_; //!< Refractory time in steps
-    double expm1_tau_m_;    //!< expm1(-h/tau_m)
-    double exp_tau_ex_;     //!< exp(-h/tau_ex)
-    double exp_tau_in_;     //!< exp(-h/tau_in)
-    double P20_;            //!< Progagator matrix element, 2nd row
-    double P21_in_;         //!< Progagator matrix element, 2nd row
-    double P21_ex_;         //!< Progagator matrix element, 2nd row
-    double y0_before_;      //!< y0_ at beginning of ministep
-    double y1_ex_before_;   //!< y1_ at beginning of ministep
-    double y1_in_before_;   //!< y1_ at beginning of ministep
-    double y2_before_;      //!< y2_ at beginning of ministep
+    double h_ms_;            //!< Time resolution [ms]
+    long refractory_steps_;  //!< Refractory time in steps
+    double expm1_tau_m_;     //!< expm1(-h/tau_m)
+    double exp_tau_ex_;      //!< exp(-h/tau_ex)
+    double exp_tau_in_;      //!< exp(-h/tau_in)
+    double P20_;             //!< Progagator matrix element, 2nd row
+    double P21_in_;          //!< Progagator matrix element, 2nd row
+    double P21_ex_;          //!< Progagator matrix element, 2nd row
+    double y0_before_;       //!< y0_ at beginning of ministep
+    double y1_ex_before_;    //!< y1_ at beginning of ministep
+    double y1_in_before_;    //!< y1_ at beginning of ministep
+    double y2_before_;       //!< y2_ at beginning of ministep
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -459,22 +459,22 @@ iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, size_t receptor_typ
 }
 
 inline void
-iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
+iaf_psc_exp_ps::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
+iaf_psc_exp_ps::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -487,6 +487,6 @@ iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_PSC_EXP_PS_H
+#endif  // IAF_PSC_EXP_PS_H

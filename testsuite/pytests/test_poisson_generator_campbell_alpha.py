@@ -29,7 +29,6 @@ tau_m / C_m * nu * J / tau_syn_ex * int_0^inf t * exp(1-t/tau_syn_ex)
 where nu is the rate of the poisson generator.
 """
 
-
 import nest
 import numpy as np
 import pytest

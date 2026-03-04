@@ -26,9 +26,6 @@
 #include "eprop_archiving_node_recurrent.h"
 #include "kernel_manager.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -217,7 +214,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
   const long shift = Time::get_resolution().get_steps();
 
   const double f_av = n_spikes_ / update_interval;
-  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+  const double f_target_ = f_target * dt;  // convert from spikes/ms to spikes/step
   const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval;
 
   firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
@@ -238,7 +235,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
 
   const double dt = Time::get_resolution().get_ms();
 
-  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+  const double f_target_ = f_target * dt;  // convert from spikes/ms to spikes/step
 
   f_av_ = kappa_reg * f_av_ + ( 1.0 - kappa_reg ) * z / dt;
 
@@ -300,4 +297,4 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
 }
 
 
-} // namespace nest
+}  // namespace nest

@@ -802,11 +802,8 @@ stdp_facetshw_synapse_hom< targetidentifierT >::get_status( Dictionary& d ) cons
   d[ names::init_flag ] = init_flag_;
   d[ names::synapse_id ] = synapse_id_;
   d[ names::next_readout_time ] = next_readout_time_;
-  // useful to get conversion before activity, but weight_per_lut_entry_ not
-  // known here
-  // def<unsigned int>(d, "discrete_weight",
-  // entry_to_weight_(weight_to_entry_(weight_,
-  // weight_per_lut_entry_), weight_per_lut_entry_));
+  // useful to get conversion before activity, but weight_per_lut_entry_ not known here
+  // d["discrete_weight"] = entry_to_weight_(weight_to_entry_(weight_, weight_per_lut_entry_), weight_per_lut_entry_);
 }
 
 template < typename targetidentifierT >

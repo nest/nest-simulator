@@ -23,9 +23,8 @@
 #ifndef COMMON_SYNAPSE_PROPERTIES_H
 #define COMMON_SYNAPSE_PROPERTIES_H
 
-// Includes from nestkernel:
-#include "connector_model.h"
-
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {

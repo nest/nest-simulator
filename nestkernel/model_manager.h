@@ -27,12 +27,16 @@
 #include <string>
 
 // Includes from nestkernel:
-#include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
 #include "manager_interface.h"
 #include "model.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "secondary_event.h"
+
+#include <memory>
 
 
 namespace nest
@@ -73,9 +77,18 @@ public:
    *        num_connections and the min_ and max_delay setting in
    *        ConnectorBase was moved out to the ConnectionManager
    */
-  ConnectorModel& get_connection_model( synindex syn_id, size_t thread_id );
+  ConnectorModel&
+  get_connection_model( synindex syn_id, size_t thread_id )
+  {
+    assert_valid_syn_id( syn_id, thread_id );
+    return *( connection_models_[ thread_id ][ syn_id ] );
+  }
 
-  const std::vector< ConnectorModel* >& get_connection_models( size_t tid );
+  const std::vector< ConnectorModel* >&
+  get_connection_models( size_t tid )
+  {
+    return connection_models_[ tid ];
+  }
 
   /**
    * Register a node-model prototype.
@@ -139,7 +152,12 @@ public:
   /**
    * @return The Model registered with the given model ID
    */
-  Model* get_node_model( size_t ) const;
+  Model*
+  get_node_model( size_t m ) const
+  {
+    assert( m < node_models_.size() );
+    return node_models_[ m ];
+  }
 
   /**
    * @return The numeric ID of a given synapse model
@@ -149,15 +167,24 @@ public:
 
   Dictionary get_connector_defaults( synindex syn_id ) const;
 
-  void set_connector_defaults( synindex syn_id, const Dictionary& d );
-
   /**
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
-  void assert_valid_syn_id( synindex syn_id, size_t t ) const;
+  void
+  assert_valid_syn_id( synindex syn_id, size_t t ) const
+  {
+    if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
+    {
+      throw UnknownSynapseType( syn_id );
+    }
+  }
 
-  bool are_model_defaults_modified() const;
+  bool
+  are_model_defaults_modified() const
+  {
+    return model_defaults_modified_;
+  }
 
   size_t get_num_connection_models() const;
 
@@ -166,7 +193,12 @@ public:
    */
   void memory_info() const;
 
-  std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
+  std::unique_ptr< SecondaryEvent >
+  get_secondary_event_prototype( const synindex syn_id, const size_t tid )
+  {
+    assert_valid_syn_id( syn_id, tid );
+    return get_connection_model( syn_id, tid ).get_secondary_event();
+  }
 
 private:
   /**

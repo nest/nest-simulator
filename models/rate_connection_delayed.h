@@ -25,6 +25,7 @@
 #define RATE_CONNECTION_DELAYED_H
 
 #include "connection.h"
+#include "nest_names.h"
 
 namespace nest
 {

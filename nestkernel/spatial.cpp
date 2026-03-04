@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "exceptions.h"
+#include "grid_mask.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "nest.h"
@@ -518,7 +519,7 @@ minus_mask( const MaskPTR mask1, const MaskPTR mask2 )
 void
 connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const Dictionary& connection_dict )
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
@@ -530,10 +531,10 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   kernel::manager< NodeManager >.update_thread_local_node_data();
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
-  kernel().connection_manager.set_connections_have_changed();
+  kernel::manager< ConnectionManager >.set_connections_have_changed();
   source->connect( source_nc, target, target_nc, connector );
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 void
@@ -575,9 +576,15 @@ get_layer_status( NodeCollectionPTR )
 }
 
 void
-LayerMetadata::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
+LayerMetadata::get_status( Dictionary& d, NodeCollection const* nc ) const
 {
   layer_->get_status( d, nc );
+}
+
+void
+LayerMetadata::get_status( Dictionary& d, const NodeCollectionPTR nc ) const
+{
+  get_status( d, nc.get() );
 }
 
 const AbstractLayerPTR
@@ -613,13 +620,13 @@ LayerMetadata::operator==( const NodeCollectionMetadataPTR rhs ) const
     return false;
   }
   // Compare status dictionaries of this layer and rhs layer
-  DictionaryDatum dict( new Dictionary() );
-  DictionaryDatum rhs_dict( new Dictionary() );
+  Dictionary dict;
+  Dictionary rhs_dict;
 
   // Since we do not have access to the node collection here, we
   // compare based on all metadata, irrespective of any slicing
   get_status( dict, /* nc */ nullptr );
   rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
-  return *dict == *rhs_dict;
+  return dict == rhs_dict;
 }
 } // namespace nest

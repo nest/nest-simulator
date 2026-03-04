@@ -24,6 +24,7 @@
 #define GAP_JUNCTION_H
 
 #include "connection.h"
+#include "nest_names.h"
 
 namespace nest
 {
@@ -168,9 +169,7 @@ template < typename targetidentifierT >
 void
 gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
 {
-  // We have to include the delay here to prevent
-  // errors due to internal calls of
-  // this function in SLI/pyNEST
+  // We have to include the delay here to prevent errors due to internal calls of this function in pyNEST
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = sizeof( *this );

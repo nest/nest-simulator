@@ -92,7 +92,7 @@ proxynode::sends_signal() const
 void
 proxynode::get_status( Dictionary& d ) const
 {
-  const Model* model = kernel().model_manager.get_node_model( model_id_ );
+  const Model* model = kernel::manager< ModelManager >.get_node_model( model_id_ );
   d[ names::element_type ] = model->get_prototype().get_element_type();
 }
 

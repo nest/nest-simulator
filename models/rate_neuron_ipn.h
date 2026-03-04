@@ -45,10 +45,6 @@
 #include "dict_util.h"
 #include "numerics.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -464,7 +460,7 @@ rate_neuron_ipn< TNonlinearities >::Parameters_::set( const Dictionary& d, Node*
   // Check for old names
   if ( update_value_param( d, names::mean, mu_, node ) )
   {
-    LOG( VerbosityLevel.WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
@@ -472,7 +468,7 @@ rate_neuron_ipn< TNonlinearities >::Parameters_::set( const Dictionary& d, Node*
 
   if ( update_value_param( d, names::std, sigma_, node ) )
   {
-    LOG( VerbosityLevel.WARNING,
+    LOG( VerbosityLevel::WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );

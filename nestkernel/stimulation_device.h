@@ -23,13 +23,14 @@
 #ifndef STIMULATION_DEVICE_H
 #define STIMULATION_DEVICE_H
 
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "dictionary.h"
+
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
 #include "nest_types.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
 
 // From standard library:
 #include <string>

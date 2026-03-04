@@ -101,9 +101,9 @@ protected:
 };
 
 template <>
-Name GridMask< 2 >::get_name();
+std::string GridMask< 2 >::get_name();
 template <>
-Name GridMask< 3 >::get_name();
+std::string GridMask< 3 >::get_name();
 
 } // namespace nest
 

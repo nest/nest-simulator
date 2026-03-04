@@ -59,6 +59,7 @@
 #include "node.h"
 #include "node_manager.h"
 #include "simulation_manager.h"
+#include "sonata_connector.h"
 #include "sp_manager.h"
 
 namespace nest
@@ -191,7 +192,7 @@ ConnectionManager::set_status( const Dictionary& d )
   }
 
   d.update_value( names::keep_source_table, keep_source_table_ );
-  if ( not keep_source_table_ and kernel().sp_manager.is_structural_plasticity_enabled() )
+  if ( not keep_source_table_ and kernel::manager< SPManager >.is_structural_plasticity_enabled() )
   {
     throw KernelException(
       "If structural plasticity is enabled, keep_source_table can not be set "
@@ -246,7 +247,8 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
 
   Dictionary dict;
   dict[ names::source ] = source_node_id;
-  dict[ names::synapse_model ] = kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name();
+  dict[ names::synapse_model ] =
+    kernel::manager< ModelManager >.get_connection_model( syn_id, /* thread */ 0 ).get_name();
   dict[ names::target_thread ] = tid;
   dict[ names::synapse_id ] = syn_id;
   dict[ names::port ] = lcid;
@@ -438,9 +440,9 @@ ConnectionManager::connect( NodeCollectionPTR sources,
   const Dictionary& conn_spec,
   const std::vector< Dictionary >& syn_specs )
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
-  kernel().node_manager.update_thread_local_node_data();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   if ( sources->empty() )
   {
@@ -483,7 +485,7 @@ ConnectionManager::connect( NodeCollectionPTR sources,
 
   cb.connect();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 void
@@ -617,7 +619,7 @@ ConnectionManager::connect_arrays( long* sources,
   size_t n,
   const std::string& syn_model )
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   kernel::manager< NodeManager >.update_thread_local_node_data();
 
@@ -642,8 +644,8 @@ ConnectionManager::connect_arrays( long* sources,
 
   // Dictionary holding additional synapse parameters, passed to the connect call.
   std::vector< Dictionary > param_dicts;
-  param_dicts.reserve( kernel().vp_manager.get_num_threads() );
-  for ( size_t i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
+  param_dicts.reserve( kernel::manager< VPManager >.get_num_threads() );
+  for ( size_t i = 0; i < kernel::manager< VPManager >.get_num_threads(); ++i )
   {
     param_dicts.emplace_back(); // Adds empty dict for thread i, filled below
     for ( auto& param_key : p_keys )
@@ -687,7 +689,7 @@ ConnectionManager::connect_arrays( long* sources,
   set_connections_have_changed();
 
   // Vector for storing exceptions raised by threads.
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -778,16 +780,16 @@ ConnectionManager::connect_arrays( long* sources,
     }
   }
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 void
 ConnectionManager::connect_sonata( const Dictionary& graph_specs, const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
-  kernel().node_manager.update_thread_local_node_data();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   SonataConnector sonata_connector( graph_specs, hyberslab_size );
 
@@ -796,7 +798,7 @@ ConnectionManager::connect_sonata( const Dictionary& graph_specs, const long hyb
   set_connections_have_changed();
   sonata_connector.connect();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 #else
   throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
 #endif
@@ -810,7 +812,7 @@ ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   const Dictionary& third_conn_spec,
   const std::map< std::string, std::vector< Dictionary > >& syn_specs )
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  kernel::manager< ConnectionManager >.sw_construction_connect.start();
 
   if ( sources->empty() )
   {
@@ -865,7 +867,7 @@ ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
   cb.connect();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  kernel::manager< ConnectionManager >.sw_construction_connect.stop();
 }
 
 
@@ -1134,12 +1136,12 @@ ConnectionManager::get_connections( const Dictionary& params )
   {
     const std::string synmodel_name = params.get< std::string >( names::synapse_model );
     // The following throws UnknownSynapseType for invalid synmodel_name
-    size_t syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
+    size_t syn_id = kernel::manager< ModelManager >.get_synapse_model_id( synmodel_name );
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else
   {
-    for ( size_t syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
+    for ( size_t syn_id = 0; syn_id < kernel::manager< ModelManager >.get_num_connection_models(); ++syn_id )
     {
       get_connections( connectome, source_a, target_a, syn_id, synapse_label );
     }
@@ -1941,7 +1943,7 @@ ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event&
 [[gnu::always_inline]] bool
 ConnectionManager::valid_connection_rule( std::string rule_name )
 {
-  return connruledict_->known( rule_name );
+  return connruledict_.known( rule_name );
 }
 
 [[gnu::always_inline]] long

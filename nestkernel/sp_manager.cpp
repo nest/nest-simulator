@@ -100,7 +100,8 @@ SPManager::get_status( Dictionary& d )
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
     Dictionary sp_synapse_params;
-    const std::string model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
+    const std::string model =
+      kernel::manager< ModelManager >.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
     sp_synapse_params[ names::synapse_model ] = model;
     sp_synapse_params[ names::pre_synaptic_element ] = ( *i )->get_pre_synaptic_element_name();
     sp_synapse_params[ names::post_synaptic_element ] = ( *i )->get_post_synaptic_element_name();
@@ -287,7 +288,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
       const std::string syn_model = syn_specs[ 0 ].get< std::string >( names::synapse_model );
-      if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( syn_model ) )
+      if ( ( *i )->get_synapse_model() == kernel::manager< ModelManager >.get_synapse_model_id( syn_model ) )
       {
         cb = kernel::manager< ConnectionManager >.get_conn_builder( rule_name,
           sources,

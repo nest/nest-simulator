@@ -132,7 +132,7 @@ NodeManager::add_node( size_t model_id, long n )
   kernel::manager< ModelRangeManager >.add_range( model_id, min_node_id, max_node_id );
 
   // clear any exceptions from previous call
-  std::vector< std::exception_ptr >( kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+  std::vector< std::exception_ptr >( kernel::manager< VPManager >.get_num_threads() ).swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
   append_node_collection_( nc_ptr );
@@ -163,7 +163,7 @@ NodeManager::add_node( size_t model_id, long n )
   // successfully
   if ( model->is_off_grid() )
   {
-    kernel().event_delivery_manager.set_off_grid_communication( true );
+    kernel::manager< EventDeliveryManager >.set_off_grid_communication( true );
     LOG( VerbosityLevel::INFO,
       "NodeManager::add_node",
       "Neuron models emitting precisely timed spikes exist: "
@@ -198,7 +198,7 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     try
     {
@@ -206,8 +206,8 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
-      const size_t vp = kernel().vp_manager.thread_to_vp( tid );
-      const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
+      const size_t vp = kernel::manager< VPManager >.thread_to_vp( tid );
+      const size_t min_node_id_vp = kernel::manager< VPManager >.node_id_to_vp( min_node_id );
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
@@ -240,7 +240,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       model.reserve_additional( tid, n_per_thread );
@@ -254,7 +254,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
         node->set_thread( tid );
-        node->set_vp( kernel().vp_manager.thread_to_vp( tid ) );
+        node->set_vp( kernel::manager< VPManager >.thread_to_vp( tid ) );
         node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
         node->set_initialized();
 
@@ -275,7 +275,7 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
 {
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       if ( tid == 0 )
@@ -289,7 +289,7 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
           node->set_node_id_( node_id );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
-          node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+          node->set_vp( kernel::manager< VPManager >.thread_to_vp( 0 ) );
           node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
           node->set_initialized();
 
@@ -340,11 +340,11 @@ NodeManager::clear_node_collection_container()
 NodeCollectionPTR
 NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
 {
-  std::vector< std::vector< size_t > > nodes_on_thread( kernel().vp_manager.get_num_threads() );
+  std::vector< std::vector< size_t > > nodes_on_thread( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     for ( auto node : get_local_nodes( tid ) )
     {
@@ -381,7 +381,7 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
   if ( not local_only )
   {
     std::vector< size_t > globalnodes;
-    kernel().mpi_manager.communicate( nodes, globalnodes );
+    kernel::manager< MPIManager >.communicate( nodes, globalnodes );
 
     for ( size_t i = 0; i < globalnodes.size(); ++i )
     {
@@ -608,11 +608,11 @@ NodeManager::prepare_nodes()
   size_t num_active_nodes = 0;     // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
-    size_t tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.

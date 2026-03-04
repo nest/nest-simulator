@@ -22,11 +22,8 @@
 
 #include "device.h"
 
-// C++ includes:
-#include <climits>
-#include <limits>
-
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
 #include "node.h"
@@ -82,7 +79,7 @@ nest::Device::Parameters_::get( Dictionary& d ) const
 void
 nest::Device::Parameters_::update_( const Dictionary& d, const std::string& name, Time& value )
 {
-  // We cannot update the Time values directly, since updateValue()
+  // We cannot update the Time values directly, since update_value()
   // doesn't support Time objects. We thus read the value in ms into
   // a double first and then update the time object if a value was
   // given.

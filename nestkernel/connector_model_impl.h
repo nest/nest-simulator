@@ -28,6 +28,7 @@
 #include "connector_model.h"
 #include "delay_checker.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "secondary_event_impl.h"
@@ -243,7 +244,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     // check delay
     double delay_in = 0.0;
 
-    if ( p.update_value( names::delay, delay ) )
+    if ( p.update_value( names::delay, delay_in ) )
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {

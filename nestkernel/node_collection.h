@@ -24,19 +24,11 @@
 #define NODE_COLLECTION_H
 
 // C++ includes:
-#include <ctime>
 #include <memory>
-#include <ostream>
-#include <stdexcept> // out_of_range
 #include <vector>
 
 // Includes from libnestuil:
 #include "dictionary.h"
-
-// Includes from nestkernel:
-#include "exceptions.h"
-#include "nest_types.h"
-
 
 // Includes from thirdparty:
 #include "compose.hpp"

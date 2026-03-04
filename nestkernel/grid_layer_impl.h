@@ -58,15 +58,15 @@ GridLayer< D >::set_status( const Dictionary& d )
     throw BadProperty( "Total size of layer must be unchanged." );
   }
 
-  if ( d->known( names::extent ) )
+  if ( d.known( names::extent ) )
   {
     Position< D > center = this->get_center();
-    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->extent_ = d.get< std::vector< double > >( names::extent );
     this->lower_left_ = center - this->extent_ / 2;
   }
-  if ( d->known( names::center ) )
+  if ( d.known( names::center ) )
   {
-    this->lower_left_ = getValue< std::vector< double > >( d, names::center );
+    this->lower_left_ = d.get< std::vector< double > >( names::center );
     this->lower_left_ -= this->extent_ / 2;
   }
 
@@ -79,7 +79,7 @@ GridLayer< D >::get_status( Dictionary& d, NodeCollection const* nc ) const
 {
   Layer< D >::get_status( d, nc );
 
-  ( *d )[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
+  d[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
 }
 
 template < int D >

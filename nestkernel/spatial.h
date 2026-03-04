@@ -52,17 +52,9 @@ public:
 
   void set_status( const Dictionary&, bool ) override {};
 
-  void
-  get_status( Dictionary& d, NodeCollection const* const nc ) const override
-  {
-    layer_->get_status( d, nc );
-  }
+  void get_status( Dictionary& d, NodeCollection const* const nc ) const override;
 
-  void
-  get_status( Dictionary& d, const NodeCollectionPTR nc ) const override
-  {
-    get_status( d, nc.get() );
-  }
+  void get_status( Dictionary& d, const NodeCollectionPTR nc ) const override;
 
   //! Returns pointer to object with layer representation
   const AbstractLayerPTR get_layer() const;

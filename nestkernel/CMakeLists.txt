@@ -48,7 +48,7 @@ set ( nestkernel_sources
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager.cpp model_manager_impl.h
-      nest_names.cpp nest_names.h
+      nest_names.h
       nest_time.h nest_time.cpp
       nest_timeconverter.h nest_timeconverter.cpp
       modelrange.h modelrange.cpp
@@ -65,13 +65,12 @@ set ( nestkernel_sources
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
-      target_identifier.h target_identifier.cpp
+      target_identifier.h
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_factory.cpp
-      conn_builder_factory_impl.h
       conn_builder_conngen.h conn_builder_conngen.cpp
       sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
@@ -104,7 +103,7 @@ set ( nestkernel_sources
       static_assert.h
       target_data.h target_data.cpp
       send_buffer_position.h send_buffer_position.cpp
-      source.h source.cpp
+      source.h
       source_table.h source_table.cpp
       source_table_position.h source_table_position.cpp
       spike_data.h spike_data.cpp

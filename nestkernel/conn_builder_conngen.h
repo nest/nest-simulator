@@ -33,6 +33,9 @@
 #include <map>
 #include <vector>
 
+// Includes from libnestutil:
+#include "dictionary.h"
+
 // Includes from nestkernel:
 #include "conn_builder.h"
 

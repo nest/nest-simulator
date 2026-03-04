@@ -27,6 +27,7 @@
 // Includes from nestkernel:
 #include "common_properties_hom_w.h"
 #include "connection.h"
+#include "nest_names.h"
 
 namespace nest
 {

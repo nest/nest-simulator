@@ -716,8 +716,8 @@ For example, the ``stopwatch.h`` file could look like:
       void
       get_status( Dictionary& d, const Name& walltime_name, const Name& cputime_name ) const
       {
-        def< double >( d, walltime_name, walltime_timer_.elapsed() );
-        def< double >( d, cputime_name, cputime_timer_.elapsed() );
+        d[walltime_name] = walltime_timer_.elapsed();
+        d[cputime_name] = cputime_timer_.elapsed();
       }
 
     private:
@@ -850,14 +850,14 @@ For example, the ``stopwatch.h`` file could look like:
           walltime_timers_.end(),
           wall_times.begin(),
           []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
-        def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
+        d[walltime_name] = wall_times;
 
         std::vector< double > cpu_times( cputime_timers_.size() );
         std::transform( cputime_timers_.begin(),
           cputime_timers_.end(),
           cpu_times.begin(),
           []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
-        def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
+        d[cputime_name] = cpu_times;
       }
 
     private:

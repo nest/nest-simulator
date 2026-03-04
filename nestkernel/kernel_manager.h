@@ -25,7 +25,10 @@
 
 #include <fstream>
 
+#include "dictionary.h"
 #include "manager_interface.h"
+#include "random_generators.h"
+#include "random_manager.h"
 
 /** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
@@ -249,6 +252,7 @@ private:
 namespace kernel
 {
 
+// This creates all managers exactly once and makes them accessible globally (including the KernelManager itself)
 template < class T >
 inline T manager;
 

@@ -87,7 +87,7 @@ UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequ
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ] );
     }
 
     node_access_.push_back( rec->second );
@@ -164,7 +164,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLogg
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ] );
     }
 
     node_access_.push_back( &( rec->second ) );

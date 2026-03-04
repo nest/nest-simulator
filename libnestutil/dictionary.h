@@ -31,8 +31,6 @@
 
 #include "exceptions.h"
 
-class Dictionary;
-
 /**
  * @brief Get the typename of the operand.
  *
@@ -40,8 +38,6 @@ class Dictionary;
  * @return std::string of the typename.
  */
 std::string debug_type( const boost::any& operand );
-
-std::string debug_dict_types( const Dictionary& dict );
 
 template < typename T >
 bool
@@ -412,5 +408,7 @@ std::vector< double > Dictionary::cast_value_< std::vector< double > >( const bo
  */
 template <>
 std::vector< double > Dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const;
+
+std::string debug_dict_types( const Dictionary& dict );
 
 #endif /* DICTIONARY_H_ */

@@ -184,7 +184,7 @@ private:
 class ArrayLongParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads );
+  ArrayLongParameter( const std::vector< long >& values, const size_t nthreads );
 
   void skip( size_t tid, size_t n_skip ) const override;
   size_t number_of_values() const override;

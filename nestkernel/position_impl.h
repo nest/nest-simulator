@@ -116,14 +116,6 @@ Position< D, T >::operator[]( int i ) const
   return x_[ i ];
 }
 
-template < int D, class T >
-Token
-Position< D, T >::getToken() const
-{
-  std::vector< T > result = get_vector();
-  return Token( result );
-}
-
 
 template < int D, class T >
 const std::vector< T >

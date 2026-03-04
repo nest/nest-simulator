@@ -25,6 +25,7 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "nest_names.h"
 
 namespace nest
 {

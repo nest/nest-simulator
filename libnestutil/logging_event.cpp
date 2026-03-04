@@ -25,6 +25,9 @@
 #include "kernel_manager.h"
 
 // C++ includes:
+#include "logging_manager.h"
+
+
 #include <cassert>
 #include <ctime>
 #include <iomanip>
@@ -49,7 +52,7 @@ nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
 nest::VerbosityLevel
 nest::LoggingEvent::nest_verbosity_level() const
 {
-  return kernel().logging_manager.verbosity();
+  return kernel::manager< LoggingManager >.verbosity();
 }
 namespace nest
 {

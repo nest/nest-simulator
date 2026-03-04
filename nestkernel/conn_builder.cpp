@@ -74,14 +74,14 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
     third,
     third_conn_spec,
     const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
-  , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
+  , third_out_builder_( kernel::manager< ConnectionManager >.get_third_conn_builder( third_rule,
       third,
       targets,
       third_in_builder_,
       third_conn_spec,
       // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
       const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_out ] ) )
-  , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
+  , primary_builder_( kernel::manager< ConnectionManager >.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
@@ -169,7 +169,8 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
     set_synapse_model_( syn_params, synapse_indx );
     set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+    Dictionary syn_defaults =
+      kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during connection setup
@@ -275,32 +276,6 @@ bool
 nest::BipartiteConnBuilder::supports_symmetric() const
 {
   return false;
-}
-
-//! Return true if rule automatically creates symmetric connectivity
-[[gnu::always_inline]] bool
-nest::BipartiteConnBuilder::is_symmetric() const
-{
-  return false;
-}
-
-[[gnu::always_inline]] bool
-nest::BipartiteConnBuilder::allows_autapses() const
-{
-  return allow_autapses_;
-}
-
-[[gnu::always_inline]] bool
-nest::BipartiteConnBuilder::allows_multapses() const
-{
-  return allow_multapses_;
-}
-
-//! Return true if rule is applicable only to nodes with proxies
-[[gnu::always_inline]] bool
-nest::BipartiteConnBuilder::requires_proxies() const
-{
-  return true;
 }
 
 void
@@ -567,7 +542,7 @@ nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, si
 void
 nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
 {
-  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
+  Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
@@ -582,19 +557,19 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_
   if ( not default_weight_and_delay_[ synapse_indx ] )
   {
     weights_[ synapse_indx ] = syn_params.known( names::weight )
-      ? ConnParameter::create( syn_params.at( names::weight ), kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::weight ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( syn_params.at( names::weight ), kernel::manager< VPManager >.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::weight ], kernel::manager< VPManager >.get_num_threads() );
     register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
     delays_[ synapse_indx ] = syn_params.known( names::delay )
-      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel::manager< VPManager >.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel::manager< VPManager >.get_num_threads() );
   }
   else if ( default_weight_[ synapse_indx ] )
   {
     delays_[ synapse_indx ] = syn_params.known( names::delay )
-      ? ConnParameter::create( syn_params.at( names::delay ), kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( syn_defaults[ names::delay ], kernel().vp_manager.get_num_threads() );
+      ? ConnParameter::create( syn_params.at( names::delay ), kernel::manager< VPManager >.get_num_threads() )
+      : ConnParameter::create( syn_defaults[ names::delay ], kernel::manager< VPManager >.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
@@ -614,7 +589,7 @@ nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
     if ( syn_params.known( param_name ) )
     {
       synapse_params_[ synapse_indx ][ param_name ] =
-        ConnParameter::create( syn_params.at( param_name ), kernel().vp_manager.get_num_threads() );
+        ConnParameter::create( syn_params.at( param_name ), kernel::manager< VPManager >.get_num_threads() );
       register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
@@ -1560,7 +1535,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume indegree is a scalar
-    const long value = conn_spec.get< long >( names::indegree );
+    const size_t value = conn_spec.get< size_t >( names::indegree );
     indegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
@@ -2397,7 +2372,7 @@ nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
-    Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( get_synapse_model() );
     const double delay = syn_defaults.get< double >( "delay" );
     d = Time( Time::ms( delay ) ).get_steps();
   }

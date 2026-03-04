@@ -27,7 +27,9 @@
 #include <string>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "manager_interface.h"
+#include "numerics.h"
 #include "stopwatch_impl.h"
 
 // Includes from nestkernel:

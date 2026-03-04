@@ -22,7 +22,6 @@
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
-#include "booldatum.h"
 #include "connection_creator_impl.h"
 #include "free_layer_impl.h"
 #include "grid_layer_impl.h"
@@ -32,245 +31,6 @@
 
 namespace nest
 {
-
-template < int D >
-void
-MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
-{
-  if ( not mask_.get() )
-  {
-    mask_ = new AllMask< D >();
-    return;
-  }
-
-  try // Try to cast to GridMask
-  {
-    const GridMask< D >& grid_mask = dynamic_cast< const GridMask< D >& >( *mask_ );
-
-    // If the above cast succeeds, then this is a grid mask
-
-    GridLayer< D >* grid_layer = dynamic_cast< GridLayer< D >* >( &layer );
-    if ( not grid_layer )
-    {
-      throw BadProperty( "Grid masks can only be used with grid layers." );
-    }
-
-    Position< D > ext = grid_layer->get_extent();
-    Position< D, size_t > dims = grid_layer->get_dims();
-
-    if ( not allow_oversized )
-    {
-      bool oversize = false;
-      for ( int i = 0; i < D; ++i )
-      {
-        oversize |= layer.get_periodic_mask()[ i ]
-          and ( grid_mask.get_lower_right()[ i ] - grid_mask.get_upper_left()[ i ] ) > static_cast< int >( dims[ i ] );
-      }
-      if ( oversize )
-      {
-        throw BadProperty(
-          "Mask size must not exceed layer size; set allow_oversized_mask to "
-          "override." );
-      }
-    }
-
-    Position< D > lower_left = ext / dims * grid_mask.get_upper_left() - ext / dims * 0.5;
-    Position< D > upper_right = ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
-
-    double y = lower_left[ 1 ];
-    lower_left[ 1 ] = -upper_right[ 1 ];
-    upper_right[ 1 ] = -y;
-
-    mask_ = new BoxMask< D >( lower_left, upper_right );
-  }
-  catch ( std::bad_cast& )
-  {
-
-    // Not a grid mask
-
-    try // Try to cast to correct dimension Mask
-    {
-      const Mask< D >& mask = dynamic_cast< const Mask< D >& >( *mask_ );
-
-      if ( not allow_oversized )
-      {
-        const Box< D > bb = mask.get_bbox();
-        bool oversize = false;
-        for ( int i = 0; i < D; ++i )
-        {
-          oversize |=
-            layer.get_periodic_mask()[ i ] and bb.upper_right[ i ] - bb.lower_left[ i ] > layer.get_extent()[ i ];
-        }
-        if ( oversize )
-        {
-          throw BadProperty(
-            "Mask size must not exceed layer size; set allow_oversized_mask to "
-            "override." );
-        }
-      }
-    }
-    catch ( std::bad_cast& )
-    {
-      throw BadProperty( "Mask is incompatible with layer." );
-    }
-  }
-}
-
-
-template < int D >
-inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
-  bool allow_oversized,
-  NodeCollectionPTR node_collection )
-  : mask_( maskd )
-{
-  ntree_ = layer.get_global_positions_ntree( node_collection );
-
-  check_mask_( layer, allow_oversized );
-}
-
-template < int D >
-inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  const MaskDatum& maskd,
-  bool allow_oversized,
-  Layer< D >& target,
-  NodeCollectionPTR node_collection )
-  : mask_( maskd )
-{
-  ntree_ = layer.get_global_positions_ntree(
-    target.get_periodic_mask(), target.get_lower_left(), target.get_extent(), node_collection );
-
-  check_mask_( target, allow_oversized );
-  mask_ = new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) );
-}
-
-template < int D >
-inline MaskedLayer< D >::~MaskedLayer()
-{
-}
-
-template < int D >
-inline typename Ntree< D, size_t >::masked_iterator
-MaskedLayer< D >::begin( const Position< D >& anchor )
-{
-  try
-  {
-    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
-  }
-  catch ( std::bad_cast& e )
-  {
-    throw BadProperty( "Mask is incompatible with layer." );
-  }
-}
-
-template < int D >
-inline typename Ntree< D, size_t >::masked_iterator
-MaskedLayer< D >::end()
-{
-  return ntree_->masked_end();
-}
-
-template < int D >
-inline Layer< D >::Layer()
-{
-  // Default center (0,0) and extent (1,1)
-  for ( int i = 0; i < D; ++i )
-  {
-    lower_left_[ i ] = -0.5;
-    extent_[ i ] = 1.0;
-  }
-}
-
-template < int D >
-inline Layer< D >::Layer( const Layer& other_layer )
-  : AbstractLayer( other_layer )
-  , lower_left_( other_layer.lower_left_ )
-  , extent_( other_layer.extent_ )
-  , periodic_( other_layer.periodic_ )
-{
-}
-
-template < int D >
-inline Layer< D >::~Layer()
-{
-  if ( cached_ntree_md_ == get_metadata() )
-  {
-    clear_ntree_cache_();
-  }
-
-  if ( cached_vector_md_ == get_metadata() )
-  {
-    clear_vector_cache_();
-  }
-}
-
-template < int D >
-inline Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos, const size_t to_lid ) const
-{
-  return compute_displacement( from_pos, get_position( to_lid ) );
-}
-
-template < int D >
-inline std::vector< double >
-Layer< D >::compute_displacement( const std::vector< double >& from_pos, const size_t to_lid ) const
-{
-  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
-}
-
-template < int D >
-inline double
-Layer< D >::compute_distance( const Position< D >& from_pos, const size_t lid ) const
-{
-  return compute_displacement( from_pos, lid ).length();
-}
-
-template < int D >
-inline double
-Layer< D >::compute_distance( const std::vector< double >& from_pos, const size_t lid ) const
-{
-  return compute_displacement( Position< D >( from_pos ), lid ).length();
-}
-
-template < int D >
-inline double
-Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
-{
-  double squared_displacement = 0;
-  for ( unsigned int i = 0; i < D; ++i )
-  {
-    const double displacement = compute_displacement( from_pos, to_pos, i );
-    squared_displacement += displacement * displacement;
-  }
-  return std::sqrt( squared_displacement );
-}
-
-template < int D >
-inline std::vector< double >
-Layer< D >::get_position_vector( const size_t sind ) const
-{
-  return get_position( sind ).get_vector();
-}
-
-template < int D >
-inline void
-Layer< D >::clear_ntree_cache_() const
-{
-  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >();
-  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
-}
-
-template < int D >
-inline void
-Layer< D >::clear_vector_cache_() const
-{
-  if ( cached_vector_ != 0 )
-  {
-    delete cached_vector_;
-  }
-  cached_vector_ = 0;
-  cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
-}
 
 template < int D >
 std::shared_ptr< Ntree< D, size_t > > Layer< D >::cached_ntree_;
@@ -587,6 +347,243 @@ Layer< D >::dump_connections( std::ostream& out,
   }
 }
 
+template < int D >
+void
+MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
+{
+  if ( not mask_.get() )
+  {
+    mask_ = MaskPTR( new AllMask< D >() );
+    return;
+  }
+
+  try // Try to cast to GridMask
+  {
+    const GridMask< D >& grid_mask = dynamic_cast< const GridMask< D >& >( *mask_ );
+
+    // If the above cast succeeds, then this is a grid mask
+
+    GridLayer< D >* grid_layer = dynamic_cast< GridLayer< D >* >( &layer );
+    if ( grid_layer == 0 )
+    {
+      throw BadProperty( "Grid masks can only be used with grid layers." );
+    }
+
+    Position< D > ext = grid_layer->get_extent();
+    Position< D, size_t > dims = grid_layer->get_dims();
+
+    if ( not allow_oversized )
+    {
+      bool oversize = false;
+      for ( int i = 0; i < D; ++i )
+      {
+        oversize |= layer.get_periodic_mask()[ i ]
+          and ( grid_mask.get_lower_right()[ i ] - grid_mask.get_upper_left()[ i ] ) > static_cast< int >( dims[ i ] );
+      }
+      if ( oversize )
+      {
+        throw BadProperty(
+          "Mask size must not exceed layer size; set allow_oversized_mask to "
+          "override." );
+      }
+    }
+
+    Position< D > lower_left = ext / dims * grid_mask.get_upper_left() - ext / dims * 0.5;
+    Position< D > upper_right = ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
+
+    const double y = lower_left[ 1 ];
+    lower_left[ 1 ] = -upper_right[ 1 ];
+    upper_right[ 1 ] = -y;
+
+    mask_ = MaskPTR( new BoxMask< D >( lower_left, upper_right ) );
+  }
+  catch ( std::bad_cast& )
+  {
+
+    // Not a grid mask
+
+    try // Try to cast to correct dimension Mask
+    {
+      const Mask< D >& mask = dynamic_cast< const Mask< D >& >( *mask_ );
+
+      if ( not allow_oversized )
+      {
+        const Box< D > bb = mask.get_bbox();
+        bool oversize = false;
+        for ( int i = 0; i < D; ++i )
+        {
+          oversize |=
+            layer.get_periodic_mask()[ i ] and bb.upper_right[ i ] - bb.lower_left[ i ] > layer.get_extent()[ i ];
+        }
+        if ( oversize )
+        {
+          throw BadProperty(
+            "Mask size must not exceed layer size; set allow_oversized_mask to "
+            "override." );
+        }
+      }
+    }
+    catch ( std::bad_cast& )
+    {
+      throw BadProperty( "Mask is incompatible with layer." );
+    }
+  }
+}
+
+template < int D >
+inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
+  const MaskPTR maskd,
+  bool allow_oversized,
+  NodeCollectionPTR node_collection )
+  : mask_( maskd )
+{
+  ntree_ = layer.get_global_positions_ntree( node_collection );
+
+  check_mask_( layer, allow_oversized );
+}
+
+template < int D >
+inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
+  const MaskPTR maskd,
+  bool allow_oversized,
+  Layer< D >& target,
+  NodeCollectionPTR node_collection )
+  : mask_( maskd )
+{
+  ntree_ = layer.get_global_positions_ntree(
+    target.get_periodic_mask(), target.get_lower_left(), target.get_extent(), node_collection );
+
+  check_mask_( target, allow_oversized );
+  mask_ = MaskPTR( new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) ) );
+}
+
+template < int D >
+inline MaskedLayer< D >::~MaskedLayer()
+{
+}
+
+template < int D >
+inline typename Ntree< D, size_t >::masked_iterator
+MaskedLayer< D >::begin( const Position< D >& anchor )
+{
+  try
+  {
+    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
+  }
+  catch ( std::bad_cast& e )
+  {
+    throw BadProperty( "Mask is incompatible with layer." );
+  }
+}
+
+template < int D >
+inline typename Ntree< D, size_t >::masked_iterator
+MaskedLayer< D >::end()
+{
+  return ntree_->masked_end();
+}
+
+template < int D >
+inline Layer< D >::Layer()
+{
+  // Default center (0,0) and extent (1,1)
+  for ( int i = 0; i < D; ++i )
+  {
+    lower_left_[ i ] = -0.5;
+    extent_[ i ] = 1.0;
+  }
+}
+
+template < int D >
+inline Layer< D >::Layer( const Layer& other_layer )
+  : AbstractLayer( other_layer )
+  , lower_left_( other_layer.lower_left_ )
+  , extent_( other_layer.extent_ )
+  , periodic_( other_layer.periodic_ )
+{
+}
+
+template < int D >
+inline Layer< D >::~Layer()
+{
+  if ( cached_ntree_md_ == get_metadata() )
+  {
+    clear_ntree_cache_();
+  }
+
+  if ( cached_vector_md_ == get_metadata() )
+  {
+    clear_vector_cache_();
+  }
+}
+
+template < int D >
+inline Position< D >
+Layer< D >::compute_displacement( const Position< D >& from_pos, const size_t to_lid ) const
+{
+  return compute_displacement( from_pos, get_position( to_lid ) );
+}
+
+template < int D >
+inline std::vector< double >
+Layer< D >::compute_displacement( const std::vector< double >& from_pos, const size_t to_lid ) const
+{
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const Position< D >& from_pos, const size_t lid ) const
+{
+  return compute_displacement( from_pos, lid ).length();
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const size_t lid ) const
+{
+  return compute_displacement( Position< D >( from_pos ), lid ).length();
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
+{
+  double squared_displacement = 0;
+  for ( unsigned int i = 0; i < D; ++i )
+  {
+    const double displacement = compute_displacement( from_pos, to_pos, i );
+    squared_displacement += displacement * displacement;
+  }
+  return std::sqrt( squared_displacement );
+}
+
+template < int D >
+inline std::vector< double >
+Layer< D >::get_position_vector( const size_t sind ) const
+{
+  return get_position( sind ).get_vector();
+}
+
+template < int D >
+inline void
+Layer< D >::clear_ntree_cache_() const
+{
+  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >();
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
+}
+
+template < int D >
+inline void
+Layer< D >::clear_vector_cache_() const
+{
+  if ( cached_vector_ )
+  {
+    delete cached_vector_;
+  }
+  cached_vector_ = 0;
+  cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
+}
 
 } // namespace nest
 

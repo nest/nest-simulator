@@ -53,7 +53,7 @@ AbstractLayer::create_layer( const Dictionary& layer_dict )
   AbstractLayer* layer_local = nullptr;
 
   auto element_name = layer_dict.get< std::string >( names::elements );
-  auto element_id = kernel().model_manager.get_node_model_id( element_name );
+  auto element_id = kernel::manager< ModelManager >.get_node_model_id( element_name );
 
   if ( layer_dict.known( names::positions ) )
   {

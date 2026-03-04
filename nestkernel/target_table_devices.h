@@ -26,11 +26,15 @@
 // C++ includes:
 #include <vector>
 
+// Includes from libnestutil:
+#include "dictionary.h"
+
 // Includes from nestkernel:
 #include "connection_id.h"
 #include "connector_base.h"
 #include "event.h"
 #include "nest_types.h"
+#include "secondary_event.h"
 
 
 namespace nest

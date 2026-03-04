@@ -31,7 +31,6 @@
 #include "kernel_manager.h"
 #include "model.h"
 #include "nest.h"
-#include "nestmodule.h"
 #include "target_identifier.h"
 
 // C++ includes

@@ -224,7 +224,7 @@ ModelManager::copy_connection_model_( const size_t old_id, const std::string& ne
 
 #pragma omp parallel
   {
-    const size_t thread_id = kernel().vp_manager.get_thread_id();
+    const size_t thread_id = kernel::manager< VPManager >.get_thread_id();
     connection_models_.at( thread_id ).push_back( get_connection_model( old_id, thread_id ).clone( new_name, new_id ) );
 
     kernel::manager< ConnectionManager >.resize_connections();
@@ -273,9 +273,9 @@ ModelManager::set_synapse_defaults_( size_t model_id, const Dictionary& params )
 {
   params.init_access_flags();
 
-  assert_valid_syn_id( model_id, kernel().vp_manager.get_thread_id() );
+  assert_valid_syn_id( model_id, kernel::manager< VPManager >.get_thread_id() );
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
@@ -343,7 +343,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     connection_models_[ t ][ syn_id ]->get_status( dict );
   }
 
-  dict[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  dict[ names::num_connections ] = kernel::manager< ConnectionManager >.get_num_connections( syn_id );
   dict[ names::element_type ] = std::string( "synapse" );
 
   return dict;
@@ -466,7 +466,7 @@ ModelManager::memory_info() const
   std::cout.unsetf( std::ios::left );
 }
 
-[[gnu::always_inline]] Node*
+Node*
 ModelManager::create_proxynode_( size_t t, int model_id )
 {
   Node* proxy = proxynode_model_->create( t );
@@ -482,48 +482,6 @@ ModelManager::get_proxy_node( size_t tid, size_t node_id )
   proxy->set_node_id_( node_id );
   proxy->set_vp( kernel::manager< VPManager >.node_id_to_vp( node_id ) );
   return proxy;
-}
-
-[[gnu::always_inline]] std::unique_ptr< SecondaryEvent >
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
-{
-  assert_valid_syn_id( syn_id, tid );
-  return get_connection_model( syn_id, tid ).get_secondary_event();
-}
-
-[[gnu::always_inline]] void
-ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
-{
-  if ( syn_id >= connection_models_[ t ].size() or not connection_models_[ t ][ syn_id ] )
-  {
-    throw UnknownSynapseType( syn_id );
-  }
-}
-
-[[gnu::always_inline]] const std::vector< ConnectorModel* >&
-ModelManager::get_connection_models( size_t tid )
-{
-  return connection_models_[ tid ];
-}
-
-[[gnu::always_inline]] ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
-{
-  assert_valid_syn_id( syn_id, thread_id );
-  return *( connection_models_[ thread_id ][ syn_id ] );
-}
-
-[[gnu::always_inline]] bool
-ModelManager::are_model_defaults_modified() const
-{
-  return model_defaults_modified_;
-}
-
-[[gnu::always_inline]] Model*
-ModelManager::get_node_model( size_t m ) const
-{
-  assert( m < node_models_.size() );
-  return node_models_[ m ];
 }
 
 } // namespace nest

@@ -23,8 +23,6 @@
 #ifndef CONNECTION_LABEL_IMPL_H
 #define CONNECTION_LABEL_IMPL_H
 
-#include "dictdatum.h"
-#include "dictutils.h"
 #include "exceptions.h"
 #include "nest_names.h"
 

@@ -26,7 +26,6 @@
 #include "dict_util.h"
 
 // Includes from nestkernel:
-#include "dictutils.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
 #include "simulation_manager.h"

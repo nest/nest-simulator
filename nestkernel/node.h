@@ -32,12 +32,11 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "deprecation_warning.h"
-#include "event.h"
+#include "dictionary.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "secondary_event_impl.h"
-#include "weight_optimizer.h"
+// #include "secondary_event_impl.h"
 
 
 /** @file node.h
@@ -46,10 +45,26 @@
 
 namespace nest
 {
-class Model;
+class DataLoggingReply;
 class ArchivingNode;
 class TimeConverter;
 class WeightOptimizer;
+class Model;
+class SpikeEvent;
+class WeightRecorderEvent;
+class RateEvent;
+class DataLoggingRequest;
+class CurrentEvent;
+class ConductanceEvent;
+class DoubleDataEvent;
+class DSSpikeEvent;
+class DSCurrentEvent;
+class GapJunctionEvent;
+class InstantaneousRateConnectionEvent;
+class DiffusionConnectionEvent;
+class DelayedRateConnectionEvent;
+class LearningSignalConnectionEvent;
+class SICEvent;
 
 /**
  * @defgroup user_interface Model developer interface.

@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
+#include "dictionary.h"
 #include "node.h"
 #include "node_manager.h"
 

@@ -28,9 +28,7 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
-#include "kernel_manager.h"
 #include "nest.h"
-#include "nestmodule.h"
 
 // Includes from spatial:
 #include "mask.h"

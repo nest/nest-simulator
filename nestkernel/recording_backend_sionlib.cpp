@@ -148,7 +148,7 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -167,8 +167,8 @@ nest::RecordingBackendSIONlib::open_files_()
     MPI_Comm local_comm = local_comm_;
 
     // This code is executed in a parallel region (opened above)!
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
     if ( not task )
     {
       t_start_ = kernel::manager< SimulationManager >.get_time().get_ms();
@@ -266,8 +266,8 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
 
     assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
@@ -671,8 +671,8 @@ nest::RecordingBackendSIONlib::post_step_hook()
     return;
   }
 
-  const size_t tid = kernel().vp_manager.get_thread_id();
-  const size_t task = kernel().vp_manager.thread_to_vp( tid );
+  const size_t tid = kernel::manager< VPManager >.get_thread_id();
+  const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;

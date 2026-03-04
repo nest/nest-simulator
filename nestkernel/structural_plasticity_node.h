@@ -23,13 +23,9 @@
 #ifndef STRUCTURAL_PLASTICITY_NODE_H
 #define STRUCTURAL_PLASTICITY_NODE_H
 
-// C++ includes:
-#include <algorithm>
-#include <deque>
-
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 #include "synaptic_element.h"
 

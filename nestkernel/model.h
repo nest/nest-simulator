@@ -106,7 +106,11 @@ public:
    * @see Model::Model()
    * @see Node::get_name()
    */
-  std::string get_name() const;
+  std::string
+  get_name() const
+  {
+    return name_;
+  }
 
   /**
    * Return the available memory. The result is given in number of elements,
@@ -195,9 +199,17 @@ public:
   /**
    * Set the model id on the prototype.
    */
-  void set_type_id( size_t id );
+  void
+  set_type_id( size_t id )
+  {
+    type_id_ = id;
+  }
 
-  size_t get_type_id() const;
+  size_t
+  get_type_id() const
+  {
+    return type_id_;
+  }
 
 private:
   virtual void set_status_( const Dictionary& ) = 0;

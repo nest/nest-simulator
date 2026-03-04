@@ -24,10 +24,17 @@
 #define NEST_H
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_id.h"
+#include "generic_factory.h"
 #include "kernel_manager.h"
+#include "mask.h"
+#include "parameter.h"
+
+#include <deque>
 
 namespace nest
 {

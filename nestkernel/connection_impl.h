@@ -67,7 +67,7 @@ template < typename targetidentifierT >
 void
 Connection< targetidentifierT >::get_status( Dictionary& d ) const
 {
-  def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
+  d[ names::delay ] = syn_id_delay_.get_delay_ms();
   target_.get_status( d );
 }
 

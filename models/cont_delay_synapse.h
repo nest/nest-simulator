@@ -267,9 +267,9 @@ cont_delay_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::delay, Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::delay ] = Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
@@ -314,7 +314,7 @@ cont_delay_synapse< targetidentifierT >::check_synapse_params( const Dictionary&
 {
   if ( syn_spec.known( names::delay ) )
   {
-    LOG( VerbosityLevel.WARNING,
+    LOG( VerbosityLevel::WARNING,
       "Connect",
       "The delay will be rounded to the next multiple of the time step. "
       "To use a more precise time delay it needs to be defined within "

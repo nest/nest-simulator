@@ -150,7 +150,7 @@ GenericModel< ElementT >::sends_signal() const
 
 template < typename ElementT >
 void
-GenericModel< ElementT >::set_status_( Dictionary d )
+GenericModel< ElementT >::set_status_( const Dictionary& d )
 {
   proto_.set_status( d );
 }
@@ -160,7 +160,7 @@ Dictionary
 GenericModel< ElementT >::get_status_()
 {
   Dictionary d = proto_.get_status_base();
-  ( *d )[ names::elementsize ] = sizeof( ElementT );
+  d[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
 

@@ -33,6 +33,7 @@
 
 #include "connection_manager.h"
 #include "kernel_manager.h"
+#include "node_manager.h"
 
 namespace nest
 {

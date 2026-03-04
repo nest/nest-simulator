@@ -24,6 +24,7 @@
 #define DIFFUSION_CONNECTION_H
 
 #include "connection.h"
+#include "nest_names.h"
 
 namespace nest
 {

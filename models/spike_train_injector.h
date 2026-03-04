@@ -30,6 +30,7 @@
 #include "connection.h"
 #include "device.h"
 #include "event.h"
+#include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"

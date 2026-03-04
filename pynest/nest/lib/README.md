@@ -3,7 +3,7 @@
 Definition of high-level API of PyNEST.
 
 This file defines the user-level functions of NEST's Python interface
-by mapping NEST/SLI commands to Python. Please try to follow these
+by mapping NEST commands to Python. Please try to follow these
 rules:
 
 1. SLI commands have the same name in Python. This means that most

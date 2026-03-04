@@ -22,6 +22,9 @@
 
 #include "common_properties_hom_w.h"
 
+#include "dictionary.h"
+#include "nest_names.h"
+
 
 namespace nest
 {
@@ -36,25 +39,20 @@ void
 CommonPropertiesHomW::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight ] = weight_;
 }
 
 double
 CommonPropertiesHomW::get_weight() const
 {
-  assert( not growthcurvedict_.known( name ) );
-  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
-  assert( nc );
-  const int id = growthcurve_factories_.size();
-  growthcurve_factories_.push_back( nc );
-  growthcurvedict_[ name ] = id;
+  return weight_;
 }
 
 void
 CommonPropertiesHomW::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  d.updateValue( names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 } // namespace nest

@@ -26,7 +26,7 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
-#include "nest_datums.h"
+#include "nest_names.h"
 #include "nest_types.h"
 #include "recording_device.h"
 

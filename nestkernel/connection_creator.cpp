@@ -199,7 +199,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   }
 
   Dictionary syn_dict;
-  // Using a lambda function here instead of updateValue because updateValue causes
+  // Using a lambda function here instead of update_value because update_value causes
   // problems when setting a value to a dictionary-entry in syn_dict.
   auto copy_long_if_known = [ &syn_dict, &dict ]( const std::string& name ) -> void
   {

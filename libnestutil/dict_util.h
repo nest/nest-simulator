@@ -23,12 +23,12 @@
 #ifndef DICT_UTIL_H
 #define DICT_UTIL_H
 
+#include "dictionary.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest.h"
 #include "node.h"
-
-#include "dictionary.h"
 
 namespace nest
 {

@@ -22,6 +22,8 @@
 
 #include "mask.h"
 
+#include "nest_names.h"
+
 // Explicit specializations behave as normal methods and must
 // be defined here to avoid duplicate symbols.
 

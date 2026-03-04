@@ -66,7 +66,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
   if ( this != &other )
   {
     // 1: allocate new memory and copy the elements
-    GrowthCurve* new_nc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
+    GrowthCurve* new_nc = kernel::manager< SPManager >.new_growth_curve( other.growth_curve_->get_name() );
     Dictionary nc_parameters;
 
     other.get( nc_parameters );

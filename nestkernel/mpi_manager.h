@@ -40,10 +40,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
-#include "nest_types.h"
 #include "spike_data.h"
-#include "target_data.h"
 
 
 namespace nest
@@ -62,8 +59,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const Dictionary& ) override;
-  void get_status( Dictionary& ) override;
+  virtual void set_status( const Dictionary& ) override;
+  virtual void get_status( Dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI

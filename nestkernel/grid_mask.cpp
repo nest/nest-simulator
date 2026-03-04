@@ -22,6 +22,8 @@
 
 #include "grid_mask.h"
 
+#include "nest_names.h"
+
 namespace nest
 {
 

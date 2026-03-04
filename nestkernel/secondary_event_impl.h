@@ -23,8 +23,9 @@
 #ifndef SECONDARY_EVENT_IMPL_H
 #define SECONDARY_EVENT_IMPL_H
 
-#include "event.h"
 #include "secondary_event.h"
+#include "vp_manager.h"
+
 #include <set>
 
 namespace nest
@@ -113,6 +114,43 @@ DataSecondaryEvent< DataType, Subclass >::set_coeff_length( const size_t coeff_l
   kernel::manager< VPManager >.assert_single_threaded();
   coeff_length_ = coeff_length;
 }
+
+inline void
+GapJunctionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline void
+InstantaneousRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline void
+DelayedRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline void
+DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline void
+LearningSignalConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline void
+SICEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
 }
 
 #endif

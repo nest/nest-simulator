@@ -27,35 +27,20 @@
 
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
 #include "exceptions.h"
+#include "grid_mask.h"
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model_manager.h"
+#include "model_manager_impl.h"
+#include "module_manager.h"
 #include "node_manager.h"
 #include "parameter.h"
-#include "random_manager.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"
-
-#include "sp_manager.h"
-#include "sp_manager_impl.h"
-
-#include "connector_model_impl.h"
-
-#include "conn_builder_conngen.h"
-
-#include "grid_mask.h"
 #include "spatial.h"
-
-#include "connection_manager_impl.h"
-
-#include "genericmodel_impl.h"
-#include "model_manager.h"
-#include "model_manager_impl.h"
-
-#include "config.h"
-#include "dictionary.h"
 
 namespace nest
 {
@@ -66,9 +51,8 @@ AbstractMask* create_doughnut( const Dictionary& d );
 void
 init_nest( int* argc, char** argv[] )
 {
-  KernelManager::create_kernel_manager();
-  kernel().mpi_manager.init_mpi( argc, argv );
-  kernel().initialize();
+  kernel::manager< MPIManager >.init_mpi( argc, argv );
+  kernel::manager< KernelManager >.initialize();
 
   // TODO: register_parameter() and register_mask() should be moved, see #3149
   register_parameter< ConstantParameter >( "constant" );
@@ -101,13 +85,13 @@ shutdown_nest( int exitcode )
   // We must MPI_Finalize before the KernelManager() destructor runs, because
   // both MusicManager and MPIManager may be involved, with mpi_finalize()
   // delegating to MusicManager, which is deleted long before MPIManager.
-  kernel().mpi_manager.mpi_finalize( exitcode );
+  kernel::manager< MPIManager >.mpi_finalize( exitcode );
 }
 
 void
 install_module( const std::string& module )
 {
-  kernel().module_manager.install( module );
+  kernel::manager< ModuleManager >.install( module );
 }
 
 void
@@ -119,13 +103,13 @@ reset_kernel()
 void
 enable_structural_plasticity()
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  kernel::manager< SPManager >.enable_structural_plasticity();
 }
 
 void
 disable_structural_plasticity()
 {
-  kernel().sp_manager.disable_structural_plasticity();
+  kernel::manager< SPManager >.disable_structural_plasticity();
 }
 
 void
@@ -138,7 +122,7 @@ std::string
 print_nodes_to_string()
 {
   std::stringstream string_stream;
-  kernel().node_manager.print( string_stream );
+  kernel::manager< NodeManager >.print( string_stream );
   return string_stream.str();
 }
 
@@ -162,7 +146,7 @@ void
 set_kernel_status( const Dictionary& dict )
 {
   dict.init_access_flags();
-  kernel().set_status( dict );
+  kernel::manager< KernelManager >.set_status( dict );
   dict.all_entries_accessed( "SetKernelStatus", "params" );
 }
 
@@ -172,7 +156,7 @@ get_kernel_status()
   assert( kernel::manager< KernelManager >.is_initialized() );
 
   Dictionary d;
-  kernel().get_status( d );
+  kernel::manager< KernelManager >.get_status( d );
 
   return d;
 }
@@ -227,7 +211,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
     // May consider ways to fix this.
     for ( auto const& node : *nc )
     {
-      kernel().node_manager.set_status( node.node_id, params[ 0 ] );
+      kernel::manager< NodeManager >.set_status( node.node_id, params[ 0 ] );
     }
   }
   else if ( nc->size() == params.size() )
@@ -235,7 +219,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
     size_t idx = 0;
     for ( auto const& node : *nc )
     {
-      kernel().node_manager.set_status( node.node_id, params[ idx ] );
+      kernel::manager< NodeManager >.set_status( node.node_id, params[ idx ] );
       ++idx;
     }
   }
@@ -253,7 +237,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary
   dict.init_access_flags();
   for ( auto& conn : conns )
   {
-    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+    kernel::manager< ConnectionManager >.set_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -276,7 +260,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const std::vecto
     const auto conn = conns[ i ];
     const auto dict = dicts[ i ];
     dict.init_access_flags();
-    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+    kernel::manager< ConnectionManager >.set_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -294,7 +278,7 @@ get_connection_status( const std::deque< ConnectionID >& conns )
 
   for ( auto& conn : conns )
   {
-    const auto d = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    const auto d = kernel::manager< ConnectionManager >.get_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -435,7 +419,7 @@ disconnect( NodeCollectionPTR sources,
   const Dictionary& connectivity,
   const std::vector< Dictionary >& synapse_params )
 {
-  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+  kernel::manager< SPManager >.disconnect( sources, targets, connectivity, synapse_params );
 }
 
 void
@@ -467,7 +451,7 @@ connect_arrays( long* sources,
 void
 connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
 {
-  kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
+  kernel::manager< ConnectionManager >.connect_sonata( graph_specs, hyperslab_size );
 }
 
 std::deque< ConnectionID >
@@ -475,7 +459,7 @@ get_connections( const Dictionary& dict )
 {
   dict.init_access_flags();
 
-  const auto& connectome = kernel().connection_manager.get_connections( dict );
+  const auto& connectome = kernel::manager< ConnectionManager >.get_connections( dict );
 
   dict.all_entries_accessed( "GetConnections", "params" );
 
@@ -490,8 +474,8 @@ disconnect( const std::deque< ConnectionID >& conns )
 
   for ( auto& conn : conns )
   {
-    const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
-    kernel().sp_manager.disconnect(
+    const auto target_node = kernel::manager< NodeManager >.get_node_or_proxy( conn.get_target_node_id() );
+    kernel::manager< SPManager >.disconnect(
       conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
   }
 }
@@ -540,7 +524,7 @@ cleanup()
 void
 synchronize()
 {
-  kernel().mpi_manager.synchronize();
+  kernel::manager< MPIManager >.synchronize();
 }
 
 void
@@ -782,7 +766,7 @@ message( const VerbosityLevel level,
   const std::string& file,
   const size_t line )
 {
-  nest::kernel().logging_manager.publish_log( level, function, message, file, line );
+  nest::kernel::manager< nest::LoggingManager >.publish_log( level, function, message, file, line );
 }
 
 } // namespace nest

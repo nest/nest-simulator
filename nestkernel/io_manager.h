@@ -174,11 +174,11 @@ private:
 
 template < class RecordingBackendT >
 void
-IOManager::register_recording_backend( const std::string name )
+IOManager::register_recording_backend( const std::string& name )
 {
   if ( recording_backends_.find( name ) != recording_backends_.end() )
   {
-    throw BackendAlreadyRegistered( name.toString() );
+    throw BackendAlreadyRegistered( name );
   }
 
   RecordingBackendT* recording_backend = new RecordingBackendT();
@@ -188,11 +188,11 @@ IOManager::register_recording_backend( const std::string name )
 
 template < class StimulationBackendT >
 void
-IOManager::register_stimulation_backend( const std::string name )
+IOManager::register_stimulation_backend( const std::string& name )
 {
   if ( stimulation_backends_.find( name ) != stimulation_backends_.end() )
   {
-    throw BackendAlreadyRegistered( name.toString() );
+    throw BackendAlreadyRegistered( name );
   }
 
   StimulationBackendT* stimulation_backend = new StimulationBackendT();

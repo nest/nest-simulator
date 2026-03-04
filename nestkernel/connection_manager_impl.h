@@ -28,8 +28,6 @@
 #include <string>
 
 #include "conn_builder_factory.h"
-#include "conn_builder_factory_impl.h"
-#include "dictdatum.h"
 
 namespace nest
 {

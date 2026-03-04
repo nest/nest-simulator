@@ -861,7 +861,7 @@ nest::SimulationManager::update_()
   bool update_time_limit_exceeded = false;
   // End of variables updated by master thread
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 // parallel section begins
 #pragma omp parallel

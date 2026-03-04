@@ -23,19 +23,12 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
-// C includes:
-#include <sys/time.h>
-
-// C++ includes:
-#include <vector>
-
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch_impl.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
-#include "nest_types.h"
 
 
 namespace nest

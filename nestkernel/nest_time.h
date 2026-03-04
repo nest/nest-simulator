@@ -29,11 +29,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <limits>
-#include <string>
-
-// Includes from libnestutil:
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "nest_types.h"

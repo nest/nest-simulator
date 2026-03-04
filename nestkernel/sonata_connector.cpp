@@ -406,7 +406,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
     read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
   // Retrieve the correct NodeCollections
   const auto nest_nodes = graph_specs_.get< Dictionary >( "nodes" );
@@ -563,7 +563,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
 void
 SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_id, int type_id )
 {
-  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
 
   for ( [[maybe_unused]] const auto& [ param_name, v_unused ] : syn_defaults )
@@ -576,7 +576,7 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
     if ( syn_dict.known( param_name ) )
     {
       synapse_params[ param_name ] = std::shared_ptr< ConnParameter >(
-        ConnParameter::create( syn_dict.at( param_name ), kernel().vp_manager.get_num_threads() ) );
+        ConnParameter::create( syn_dict.at( param_name ), kernel::manager< VPManager >.get_num_threads() ) );
     }
   }
 
@@ -584,12 +584,12 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
   // Now create Dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
   // TODO: See if nullptr can be changed to Dictionary
-  edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
+  edge_type_id_2_param_dicts_[ type_id ].resize( kernel::manager< VPManager >.get_num_threads() );
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
 #pragma omp parallel
   {
-    const auto tid = kernel().vp_manager.get_thread_id();
+    const auto tid = kernel::manager< VPManager >.get_thread_id();
 
     for ( auto param : synapse_params )
     {

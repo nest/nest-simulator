@@ -24,14 +24,12 @@
 #define ARCHIVING_NODE_H
 
 // C++ includes:
-#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "histentry.h"
 #include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 #include "structural_plasticity_node.h"
 
 

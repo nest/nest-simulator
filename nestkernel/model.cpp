@@ -128,7 +128,7 @@ Model::get_status()
   }
 
   d[ names::instantiations ] = tmp;
-  d[ names::type_id ] = kernel().model_manager.get_node_model( type_id_ )->get_name();
+  d[ names::type_id ] = kernel::manager< ModelManager >.get_node_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
@@ -148,12 +148,6 @@ Model::get_status()
   return d;
 }
 
-[[gnu::always_inline]] std::string
-Model::get_name() const
-{
-  return name_;
-}
-
 Node*
 Model::create( size_t t )
 {
@@ -161,18 +155,6 @@ Model::create( size_t t )
   Node* n = create_();
   memory_[ t ].emplace_back( n );
   return n;
-}
-
-[[gnu::always_inline]] size_t
-Model::get_type_id() const
-{
-  return type_id_;
-}
-
-[[gnu::always_inline]] void
-Model::set_type_id( size_t id )
-{
-  type_id_ = id;
 }
 
 } // namespace

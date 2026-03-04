@@ -27,7 +27,6 @@
 #include <utility>
 
 // Includes from nestkernel:
-#include "dictutils.h"
 #include "kernel_manager.h"
 #include "mpi_manager.h"
 #include "nest_names.h"

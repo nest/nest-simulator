@@ -78,7 +78,7 @@ nest::ParameterConnParameterWrapper::value_double( size_t, RngPtr rng, size_t, N
 void
 nest::ArrayDoubleParameter::skip( size_t tid, size_t n_skip ) const
 {
-  if ( next_[ tid ] < values_->end() )
+  if ( next_[ tid ] < values_.end() )
   {
     next_[ tid ] += n_skip;
   }
@@ -91,7 +91,7 @@ nest::ArrayDoubleParameter::skip( size_t tid, size_t n_skip ) const
 double
 nest::ArrayDoubleParameter::value_double( size_t tid, RngPtr, size_t, Node* ) const
 {
-  if ( next_[ tid ] != values_->end() )
+  if ( next_[ tid ] != values_.end() )
   {
     return *next_[ tid ]++;
   }
@@ -112,14 +112,14 @@ nest::ArrayDoubleParameter::reset() const
 {
   for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
   {
-    *it = values_->begin();
+    *it = values_.begin();
   }
 }
 
 void
-nest::ArrayIntegerParameter::skip( size_t tid, size_t n_skip ) const
+nest::ArrayLongParameter::skip( size_t tid, size_t n_skip ) const
 {
-  if ( next_[ tid ] < values_->end() )
+  if ( next_[ tid ] < values_.end() )
   {
     next_[ tid ] += n_skip;
   }
@@ -130,9 +130,9 @@ nest::ArrayIntegerParameter::skip( size_t tid, size_t n_skip ) const
 }
 
 long
-nest::ArrayIntegerParameter::value_int( size_t tid, RngPtr, size_t, Node* ) const
+nest::ArrayLongParameter::value_int( size_t tid, RngPtr, size_t, Node* ) const
 {
-  if ( next_[ tid ] != values_->end() )
+  if ( next_[ tid ] != values_.end() )
   {
     return *next_[ tid ]++;
   }
@@ -143,9 +143,9 @@ nest::ArrayIntegerParameter::value_int( size_t tid, RngPtr, size_t, Node* ) cons
 }
 
 double
-nest::ArrayIntegerParameter::value_double( size_t tid, RngPtr, size_t, Node* ) const
+nest::ArrayLongParameter::value_double( size_t tid, RngPtr, size_t, Node* ) const
 {
-  if ( next_[ tid ] != values_->end() )
+  if ( next_[ tid ] != values_.end() )
   {
     return static_cast< double >( *next_[ tid ]++ );
   }
@@ -156,11 +156,11 @@ nest::ArrayIntegerParameter::value_double( size_t tid, RngPtr, size_t, Node* ) c
 }
 
 void
-nest::ArrayIntegerParameter::reset() const
+nest::ArrayLongParameter::reset() const
 {
   for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
   {
-    *it = values_->begin();
+    *it = values_.begin();
   }
 }
 namespace nest
@@ -266,15 +266,15 @@ ScalarIntegerParameter::provides_long() const
 
 // ---- ArrayDoubleParameter ----
 ArrayDoubleParameter::ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
-  : values_( &values )
-  , next_( nthreads, values_->begin() )
+  : values_( values )
+  , next_( nthreads, values_.begin() )
 {
 }
 
 size_t
 ArrayDoubleParameter::number_of_values() const
 {
-  return values_->size();
+  return values_.size();
 }
 
 bool
@@ -283,27 +283,27 @@ ArrayDoubleParameter::is_array() const
   return true;
 }
 
-// ---- ArrayIntegerParameter ----
-ArrayIntegerParameter::ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads )
-  : values_( &values )
-  , next_( nthreads, values_->begin() )
+// ---- ArrayLongParameter ----
+ArrayLongParameter::ArrayLongParameter( const std::vector< long >& values, const size_t nthreads )
+  : values_( values )
+  , next_( nthreads, values_.begin() )
 {
 }
 
 size_t
-ArrayIntegerParameter::number_of_values() const
+ArrayLongParameter::number_of_values() const
 {
-  return values_->size();
+  return values_.size();
 }
 
 
 bool
-ArrayIntegerParameter::is_array() const
+ArrayLongParameter::is_array() const
 {
   return true;
 }
 bool
-ArrayIntegerParameter::provides_long() const
+ArrayLongParameter::provides_long() const
 {
   return true;
 }

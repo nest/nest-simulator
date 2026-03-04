@@ -23,9 +23,6 @@
 #ifndef TARGET_H
 #define TARGET_H
 
-// C++ includes:
-#include <cassert>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"

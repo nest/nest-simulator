@@ -749,6 +749,33 @@ protected:
    */
   void connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 };
+
+//! Return true if rule automatically creates symmetric connectivity
+inline bool
+BipartiteConnBuilder::is_symmetric() const
+{
+  return false;
+}
+
+inline bool
+BipartiteConnBuilder::allows_autapses() const
+{
+  return allow_autapses_;
+}
+
+inline bool
+BipartiteConnBuilder::allows_multapses() const
+{
+  return allow_multapses_;
+}
+
+//! Return true if rule is applicable only to nodes with proxies
+inline bool
+BipartiteConnBuilder::requires_proxies() const
+{
+  return true;
+}
+
 } // namespace nest
 
 #endif

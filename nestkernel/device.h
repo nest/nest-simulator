@@ -23,6 +23,8 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+// Includes from libnestutil:
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"

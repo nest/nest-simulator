@@ -126,13 +126,13 @@ Node::get_status_dict_()
   return {};
 }
 
-[[gnu::always_inline]] void
+void
 Node::set_local_device_id( const size_t )
 {
   assert( false and "set_local_device_id() called on a non-device node of type" );
 }
 
-[[gnu::always_inline]] size_t
+size_t
 Node::get_local_device_id() const
 {
   assert( false and "get_local_device_id() called on a non-device node." );
@@ -145,7 +145,7 @@ Node::get_status_base()
   Dictionary dict = get_status_dict_();
 
   // add information available for all nodes
-  dict[ names::local ] = kernel().node_manager.is_local_node( this );
+  dict[ names::local ] = kernel::manager< NodeManager >.is_local_node( this );
   dict[ names::model ] = get_name();
   dict[ names::model_id ] = get_model_id();
   dict[ names::global_id ] = get_node_id();

@@ -32,8 +32,6 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "nest_names.h"
-#include "nestmodule.h"
 
 // Includes from spatial:
 #include "position_impl.h"
@@ -738,17 +736,17 @@ bool EllipseMask< 2 >::inside( const Box< 2 >& b ) const;
 template <>
 bool EllipseMask< 3 >::inside( const Box< 3 >& b ) const;
 template <>
-Name BoxMask< 2 >::get_name();
+std::string BoxMask< 2 >::get_name();
 template <>
-Name BoxMask< 3 >::get_name();
+std::string BoxMask< 3 >::get_name();
 template <>
-Name BallMask< 2 >::get_name();
+std::string BallMask< 2 >::get_name();
 template <>
-Name BallMask< 3 >::get_name();
+std::string BallMask< 3 >::get_name();
 template <>
-Name EllipseMask< 2 >::get_name();
+std::string EllipseMask< 2 >::get_name();
 template <>
-Name EllipseMask< 3 >::get_name();
+std::string EllipseMask< 3 >::get_name();
 
 } // namespace nest
 

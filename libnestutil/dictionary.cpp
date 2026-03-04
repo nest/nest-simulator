@@ -21,8 +21,6 @@
  */
 
 #include <algorithm>
-#include <boost/any.hpp>
-#include <boost/core/demangle.hpp>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -32,7 +30,6 @@
 #include "dictionary.h"
 
 #include "kernel_manager.h"
-#include "parameter.h"
 
 /**
  * General vector streamer.
@@ -56,88 +53,90 @@ operator<<( std::ostream& os, const std::vector< T >& vec )
   return os << "]";
 }
 
+any_type&
+Dictionary::operator[]( const std::string& key ) const
+{
+  return ( **this )[ key ];
+}
+any_type&
+Dictionary::operator[]( std::string&& key ) const
+{
+  return ( **this )[ std::move( key ) ];
+}
+any_type&
+Dictionary::at( const std::string& key )
+{
+  return ( *this )->at( key );
+}
+const any_type&
+Dictionary::at( const std::string& key ) const
+{
+  return ( *this )->at( key );
+}
+
 template <>
 double
-Dictionary::cast_value_< double >( const boost::any& value, const std::string& key ) const
+dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const
 {
-  try
-  {
-    if ( is_type< double >( value ) )
+  return std::visit(
+    [ &key, debug_name = debug_type( value ) ]( auto&& arg ) -> double
     {
-      return boost::any_cast< double >( value );
-    }
-    if ( is_type< long >( value ) )
-    {
-      return static_cast< double >( boost::any_cast< long >( value ) );
-    }
-    if ( is_type< size_t >( value ) )
-    {
-      return static_cast< double >( boost::any_cast< size_t >( value ) );
-    }
-    if ( is_type< int >( value ) )
-    {
-      return static_cast< double >( boost::any_cast< int >( value ) );
-    }
-    throw boost::bad_any_cast(); // deflect to error handling below
-  }
-  catch ( const boost::bad_any_cast& )
-  {
-    const std::string msg =
-      std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type double.";
-    throw nest::TypeMismatch( msg );
-  }
+      using T = std::decay_t< decltype( arg ) >;
+      if constexpr ( std::is_arithmetic_v< T > )
+      {
+        return static_cast< double >( arg );
+      }
+      else
+      {
+        const std::string msg = String::compose( "Failed to cast '%1' from %2 to type double.", key, debug_name );
+        throw nest::TypeMismatch( msg );
+      }
+    },
+    value );
 }
 
 template <>
 std::vector< double >
-Dictionary::cast_value_< std::vector< double > >( const boost::any& value, const std::string& key ) const
+dictionary_::cast_value_< std::vector< double > >( const any_type& value, const std::string& key ) const
 {
-  return cast_vector_value_< double >( value, key );
-}
-
-
-template <>
-std::vector< double >
-Dictionary::cast_vector_value_< double >( const boost::any& value, const std::string& key ) const
-{
-  // PyNEST passes vector with element type any if and only if it needs to pass
-  // and empty vector, because the element type of empty lists cannot be inferred
-  // at the Python level. The assertion just double-checks that we never get a
-  // non-empty vector-of-any.
-  if ( value.type() == typeid( std::vector< boost::any > ) )
+  if ( std::holds_alternative< EmptyList >( value ) )
   {
-    assert( boost::any_cast< std::vector< boost::any > >( value ).empty() );
     return std::vector< double >();
   }
 
   try
   {
-    if ( is_type< std::vector< double > >( value ) )
+    if ( const std::vector< double >* v = std::get_if< std::vector< double > >( &value ) )
     {
-      return boost::any_cast< std::vector< double > >( value );
+      return *v;
     }
-    if ( is_type< std::vector< long > >( value ) )
+    if ( const std::vector< long >* v = std::get_if< std::vector< long > >( &value ) )
     {
-      const std::vector< long > vlong = boost::any_cast< std::vector< long > >( value );
       std::vector< double > res;
-      std::copy( vlong.begin(), vlong.end(), std::back_inserter( res ) );
+      std::copy( v->begin(), v->end(), std::back_inserter( res ) );
       return res;
     }
-    throw boost::bad_any_cast(); // deflect to error handling below
+    throw std::bad_variant_access(); // deflect to error handling below
   }
-  catch ( const boost::bad_any_cast& )
+  catch ( const std::bad_variant_access& )
   {
     const std::string msg =
-      std::string( "Failed to cast '" ) + key + "' from " + debug_type( value ) + " to type std::vector<double>.";
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, debug_type( value ) );
     throw nest::TypeMismatch( msg );
   }
 }
 
 
 std::string
-debug_type( const boost::any& operand )
+debug_type( const any_type& operand )
 {
-  return boost::core::demangle( operand.type().name() );
+  return std::visit(
+    []( auto&& arg ) -> std::string
+    {
+      using T = std::decay_t< decltype( arg ) >;
+      return boost::typeindex::type_id< T >().pretty_name();
+    },
+    operand );
 }
 
 std::string
@@ -154,11 +153,48 @@ debug_dict_types( const Dictionary& dict )
 }
 
 std::ostream&
+operator<<( std::ostream& os, const std::vector< std::vector< long > >& )
+{
+  os << "vector<vector<long>>";
+  return os;
+}
+std::ostream&
+operator<<( std::ostream& os, const std::vector< std::vector< double > >& )
+{
+  os << "vector<vector<double>>";
+  return os;
+}
+std::ostream&
+operator<<( std::ostream& os, const std::vector< std::vector< std::vector< long > > >& )
+{
+  os << "vector<vector<vector<long>>>";
+  return os;
+}
+std::ostream&
+operator<<( std::ostream& os, const std::vector< std::vector< std::vector< double > > >& )
+{
+  os << "vector<vector<vector<double>>>";
+  return os;
+}
+std::ostream&
+operator<<( std::ostream& os, const std::shared_ptr< nest::Parameter >& )
+{
+  os << "parameter";
+  return os;
+}
+std::ostream&
+operator<<( std::ostream& os, const nest::VerbosityLevel& )
+{
+  os << "verbosity level";
+  return os;
+}
+
+std::ostream&
 operator<<( std::ostream& os, const Dictionary& dict )
 {
   const auto max_key_length = std::max_element( dict.begin(),
     dict.end(),
-    []( const Dictionary::value_type s1, const Dictionary::value_type s2 ) {
+    []( const dictionary_::value_type s1, const dictionary_::value_type s2 ) {
       return s1.first.length() < s2.first.length();
     } )->first.length();
   const std::string pre_padding = "    ";
@@ -170,92 +206,10 @@ operator<<( std::ostream& os, const Dictionary& dict )
 
     const auto& item = kv.second.item;
 
-    if ( is_type< int >( item ) )
-    {
-      type = "int";
-      value_stream << boost::any_cast< int >( item ) << '\n';
-    }
-    else if ( is_type< unsigned int >( item ) )
-    {
-      type = "unsigned int";
-      value_stream << boost::any_cast< unsigned int >( item ) << '\n';
-    }
-    else if ( is_type< long >( item ) )
-    {
-      type = "long";
-      value_stream << boost::any_cast< long >( item ) << '\n';
-    }
-    else if ( is_type< size_t >( item ) )
-    {
-      type = "size_t";
-      value_stream << boost::any_cast< size_t >( item ) << '\n';
-    }
-    else if ( is_type< double >( item ) )
-    {
-      type = "double";
-      value_stream << boost::any_cast< double >( item ) << '\n';
-    }
-    else if ( is_type< bool >( item ) )
-    {
-      type = "bool";
-      const auto value = boost::any_cast< bool >( item );
-      value_stream << ( value ? "true" : "false" ) << '\n';
-    }
-    else if ( is_type< std::string >( item ) )
-    {
-      type = "std::string";
-      value_stream << "\"" << boost::any_cast< std::string >( item ) << "\"\n";
-    }
-    else if ( is_type< std::vector< int > >( item ) )
-    {
-      type = "std::vector<int>";
-      value_stream << boost::any_cast< std::vector< int > >( item ) << '\n';
-    }
-    else if ( is_type< std::vector< double > >( item ) )
-    {
-      type = "std::vector<double>";
-      value_stream << boost::any_cast< std::vector< double > >( item ) << '\n';
-    }
-    else if ( is_type< std::vector< std::vector< double > > >( item ) )
-    {
-      type = "vector<vector<double>>";
-      value_stream << "vector<vector<double>>" << '\n';
-    }
-    else if ( is_type< std::vector< std::string > >( item ) )
-    {
-      type = "std::vector<std::string>";
-      value_stream << boost::any_cast< std::vector< std::string > >( item ) << '\n';
-    }
-    else if ( is_type< std::vector< boost::any > >( item ) )
-    {
-      type = "vector<boost::any>";
-      value_stream << "vector<any>" << '\n';
-    }
-    else if ( is_type< Dictionary >( item ) )
-    {
-      type = "Dictionary";
-      value_stream << "Dictionary" << '\n';
-    }
-    else if ( is_type< std::shared_ptr< nest::Parameter > >( item ) )
-    {
-      type = "parameter";
-      value_stream << "parameter" << '\n';
-    }
-    else if ( is_type< std::shared_ptr< nest::NodeCollection > >( item ) )
-    {
-      type = "NodeCollection";
-      const auto nc = boost::any_cast< std::shared_ptr< nest::NodeCollection > >( item );
-      nc->print_me( value_stream );
-      value_stream << "\n";
-    }
-    else
-    {
-      throw nest::TypeMismatch( "Type is not known" );
-    }
-    const auto s = value_stream.str();
     const auto post_padding = max_key_length - kv.first.length() + 5;
-    os << pre_padding << kv.first << std::setw( post_padding ) << "(" << type << ")"
-       << " " << std::setw( 25 - type.length() ) << s;
+    os << pre_padding << kv.first << std::setw( post_padding ) << "(" << debug_type( item ) << ")"
+       << " " << std::setw( 25 - type.length() );
+    std::visit( [ &os ]( const auto& arg ) { os << arg; }, item );
   }
   return os << "}";
 }
@@ -265,65 +219,20 @@ operator<<( std::ostream& os, const Dictionary& dict )
  */
 template < typename T >
 bool
-equal_as_( const boost::any& first, const boost::any& second )
+equal_as_( const any_type& first, const any_type& second )
 {
   // Compiler will short-circuit to false if not same type
-  return is_type< T >( first ) and is_type< T >( second )
-    and boost::any_cast< T >( first ) == boost::any_cast< T >( second );
+  return is_type< T >( first ) and is_type< T >( second ) and std::get< T >( first ) == std::get< T >( second );
 }
 
 bool
-value_equal( const boost::any& first, const boost::any& second )
+dictionary_::operator==( const dictionary_& other ) const
 {
-  // Short-circuits as soon as an equal_as_() call evaluates to true
-  // clang-format off
-  return (
-       equal_as_< int >( first, second )
-    or equal_as_< long >( first, second )
-    or equal_as_< size_t >( first, second )
-    or equal_as_< double >( first, second )
-    or equal_as_< bool >( first, second )
-    or equal_as_< std::string >( first, second )
-    or equal_as_< std::vector< int > >( first, second )
-    or equal_as_< std::vector< double > >( first, second )
-    or equal_as_< std::vector< size_t > >( first, second )
-    or equal_as_< std::vector< std::string > >( first, second )
-    or equal_as_< std::vector< std::vector< double > > >( first, second )
-    or equal_as_< Dictionary >( first, second )
-    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second )
-  );
-  // clang-format on
-}
-
-bool
-Dictionary::operator==( const Dictionary& other ) const
-{
-  if ( size() != other.size() )
-  {
-    return false;
-  }
-  // Iterate elements in the other Dictionary
-  for ( const auto& [ other_key, other_entry ] : other )
-  {
-    // Check if it exists in this Dictionary
-    if ( not known( other_key ) )
-    {
-      return false;
-    }
-
-    // Check for equality
-    const auto& this_entry = maptype_::at( other_key );
-    if ( not value_equal( this_entry.item, other_entry.item ) )
-    {
-      return false;
-    }
-  }
-  // All elements are equal
-  return true;
+  return static_cast< const maptype_& >( *this ) == static_cast< const maptype_& >( other );
 }
 
 void
-Dictionary::register_access_( const DictEntry_& entry ) const
+dictionary_::register_access_( const DictEntry_& entry ) const
 {
   if ( not entry.accessed )
   {
@@ -334,8 +243,8 @@ Dictionary::register_access_( const DictEntry_& entry ) const
   }
 }
 
-boost::any&
-Dictionary::operator[]( const std::string& key )
+any_type&
+dictionary_::operator[]( const std::string& key )
 {
   auto& entry = maptype_::operator[]( key );
   // op[] inserts entry if key was not known before, so we are sure entry exists
@@ -343,8 +252,8 @@ Dictionary::operator[]( const std::string& key )
   return entry.item;
 }
 
-boost::any&
-Dictionary::operator[]( std::string&& key )
+any_type&
+dictionary_::operator[]( std::string&& key )
 {
   auto& entry = maptype_::operator[]( key );
   // op[] inserts entry if key was not known before, so we are sure entry exists
@@ -352,8 +261,8 @@ Dictionary::operator[]( std::string&& key )
   return entry.item;
 }
 
-boost::any&
-Dictionary::at( const std::string& key )
+any_type&
+dictionary_::at( const std::string& key )
 {
   auto& entry = maptype_::at( key );
   // at() throws if key is not know, so we are sure entry exists
@@ -361,8 +270,8 @@ Dictionary::at( const std::string& key )
   return entry.item;
 }
 
-const boost::any&
-Dictionary::at( const std::string& key ) const
+const any_type&
+dictionary_::at( const std::string& key ) const
 {
   const auto& entry = maptype_::at( key );
   // at() throws if key is not know, so we are sure entry exists
@@ -370,8 +279,8 @@ Dictionary::at( const std::string& key ) const
   return entry.item;
 }
 
-Dictionary::iterator
-Dictionary::find( const std::string& key )
+dictionary_::iterator
+dictionary_::find( const std::string& key )
 {
   const auto it = maptype_::find( key );
   if ( it != end() )
@@ -381,8 +290,8 @@ Dictionary::find( const std::string& key )
   return it;
 }
 
-Dictionary::const_iterator
-Dictionary::find( const std::string& key ) const
+dictionary_::const_iterator
+dictionary_::find( const std::string& key ) const
 {
   const auto it = maptype_::find( key );
   if ( it != end() )
@@ -393,7 +302,7 @@ Dictionary::find( const std::string& key ) const
 }
 
 void
-Dictionary::init_access_flags( const bool thread_local_dict ) const
+dictionary_::init_access_flags( const bool thread_local_dict ) const
 {
   if ( not thread_local_dict )
   {
@@ -406,7 +315,7 @@ Dictionary::init_access_flags( const bool thread_local_dict ) const
 }
 
 void
-Dictionary::all_entries_accessed( const std::string& where,
+dictionary_::all_entries_accessed( const std::string& where,
   const std::string& what,
   const bool thread_local_dict ) const
 {
@@ -421,7 +330,7 @@ Dictionary::all_entries_accessed( const std::string& where,
   }
 
   // Vector of elements in the Dictionary that are not accessed
-  std::vector< Dictionary::key_type > not_accessed_keys;
+  std::vector< key_type > not_accessed_keys;
 
   for ( const auto& [ key, entry ] : *this )
   {
@@ -435,8 +344,8 @@ Dictionary::all_entries_accessed( const std::string& where,
   {
     const auto missed = std::accumulate( not_accessed_keys.begin(),
       not_accessed_keys.end(),
-      Dictionary::key_type(), // creates empty instance of key type (string)
-      []( const Dictionary::key_type& a, const Dictionary::key_type& b ) { return a + " " + b; } );
+      key_type(), // creates empty instance of key type (string)
+      []( const key_type& a, const key_type& b ) { return a + " " + b; } );
 
     throw nest::UnaccessedDictionaryEntry( what, where, missed );
   }

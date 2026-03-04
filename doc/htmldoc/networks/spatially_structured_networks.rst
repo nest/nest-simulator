@@ -1519,7 +1519,7 @@ The ``Mask`` class has a few methods that must be overridden:
    class EllipticMask : public nest::Mask< 2 >
    {
    public:
-     EllipticMask( const dictionary& d )
+     EllipticMask( const Dictionary& d )
        : rx_( 1.0 )
        , ry_( 1.0 )
      {

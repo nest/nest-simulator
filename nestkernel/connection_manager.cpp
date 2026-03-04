@@ -22,9 +22,6 @@
 
 #include "connection_manager.h"
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
 #include <algorithm>
 #include <cassert>
@@ -41,7 +38,6 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connection_label.h"
@@ -49,19 +45,19 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "nest_types.h"
 #include "node.h"
-#include "sonata_connector.h"
 #include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
-#include "vp_manager_impl.h"
+
+#ifdef HAVE_HDF5
+#include "sonata_connector.h"
+#endif
 
 
 nest::ConnectionManager::ConnectionManager()

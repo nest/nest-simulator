@@ -164,7 +164,7 @@ What does this mean for you as a developer?
 The key changes from a developer perspective are that the entire SLI interpreter code has been
 removed, noticeably reducing compile times. We therefore no longer have the ``SLIModule`` concept.
 Also, ``Dictionary``, ``Datum``, and ``Token`` are a matter of the past. Instead, we now
-have class ``Dictionary`` based directly on ``std::map`` using ``boost::any`` to store entries of
+have class ``Dictionary`` based directly on ``std::map`` using ``any_type`` to store entries of
 arbitrary type. Instead of our own ``lockPTR``, we now use ``std::unique_ptr`` to manage objects with
 reference counting.
 

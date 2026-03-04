@@ -235,7 +235,7 @@ void copy_model( const std::string& oldmodname, const std::string& newmodname, c
 void set_model_defaults( const std::string& model_name, const Dictionary& );
 Dictionary get_model_defaults( const std::string& model_name );
 
-ParameterPTR create_parameter( const boost::any& );
+ParameterPTR create_parameter( const any_type& );
 ParameterPTR create_parameter( const double );
 ParameterPTR create_parameter( const long );
 ParameterPTR create_parameter( const Dictionary& param_dict );

@@ -353,8 +353,8 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
         const Dictionary node_status = get_status( node_id );
         for ( const auto& [ key, value ] : properties )
         {
-          // Break once we find a property that then node does not have or that has a different value
-          if ( not( node_status.known( key ) and value_equal( node_status.at( key ), value.item ) ) )
+          // Break once we find a property that the node does not have or that has a different value
+          if ( not( node_status.known( key ) and node_status.at( key ) == value.item ) )
           {
             match = false;
             break;

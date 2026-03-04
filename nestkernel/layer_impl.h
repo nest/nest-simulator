@@ -329,7 +329,7 @@ Layer< D >::dump_connections( std::ostream& out,
       previous_source_node_id = source_node_id;
     }
 
-    const Dictionary result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
+    const Dictionary& result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),

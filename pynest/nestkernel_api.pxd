@@ -37,35 +37,40 @@ cdef extern from "nestkernel_exceptions.h":
     cdef void create_exceptions()
     cdef void custom_exception_handler()
 
-
-cdef extern from "dictionary.h" namespace "boost":
-    cppclass any:
-        any()
-        any& operator=[T](T&)
-    T any_cast[T](any& operand)
-
 cdef extern from "dictionary.h":
+    cppclass any_type:
+        any_type()
+        any_type& operator=[T](T&)
+
+    cppclass EmptyList:
+        EmptyList()
+
     cppclass DictEntry_:
         DictEntry_()
-        DictEntry_(const any&)
-        any item
+        DictEntry_(const any_type&)
+        any_type item
         cbool accessed
+
+    cppclass dictionary_:
+        cppclass const_iterator:
+            pair[string, DictEntry_]& operator*()
+            const_iterator operator++()
+            bint operator==(const_iterator&)
+            bint operator!=(const_iterator&)
+
+cdef extern from "dictionary.h" namespace "std":
+    T get[T](any_type& operand)
+    cbool holds_alternative[T](const any_type&)
 
 cdef extern from "dictionary.h":
     cppclass Dictionary:
         Dictionary()
-        any& operator[](const string&)
-        cppclass const_iterator:
-            pair[string, DictEntry_]& operator*()
-            const_iterator operator++()
-            bint operator==(const const_iterator&)
-            bint operator!=(const const_iterator&)
-        const_iterator begin()
-        const_iterator end()
+        any_type& operator[](const string&)
+        dictionary_.const_iterator begin()
+        dictionary_.const_iterator end()
         cbool known(const string&)
-    string debug_type(const any&)
+    string debug_type(const any_type&)
     string debug_dict_types(const Dictionary&)
-    cbool is_type[T](const any&)
 
 
 cdef extern from "logging.h" namespace "nest":

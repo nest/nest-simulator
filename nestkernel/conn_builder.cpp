@@ -1403,7 +1403,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   auto indegree = conn_spec.at( names::indegree );
   if ( is_type< std::shared_ptr< nest::Parameter > >( indegree ) )
   {
-    indegree_ = boost::any_cast< ParameterPTR >( indegree );
+    indegree_ = std::get< ParameterPTR >( indegree );
     // TODO: Checks of parameter range
   }
   else
@@ -1567,7 +1567,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   auto outdegree = conn_spec.at( names::outdegree );
   if ( is_type< std::shared_ptr< nest::Parameter > >( outdegree ) )
   {
-    outdegree_ = boost::any_cast< ParameterPTR >( outdegree );
+    outdegree_ = std::get< ParameterPTR >( outdegree );
     // TODO: Checks of parameter range
   }
   else
@@ -1860,7 +1860,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   auto p = conn_spec.at( names::p );
   if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    p_ = boost::any_cast< ParameterPTR >( p );
+    p_ = std::get< ParameterPTR >( p );
     // TODO: Checks of parameter range
   }
   else
@@ -1976,7 +1976,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   auto p = conn_spec.at( names::pairwise_avg_num_conns );
   if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
   {
-    pairwise_avg_num_conns_ = boost::any_cast< ParameterPTR >( p );
+    pairwise_avg_num_conns_ = std::get< ParameterPTR >( p );
   }
   else
   {

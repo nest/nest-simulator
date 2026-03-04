@@ -26,11 +26,11 @@
 // C++ includes:
 #include <algorithm>
 #include <limits>
-#include <sstream>
+#include <vector>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "nest_names.h"
-
 
 // Includes from spatial:
 #include "layer.h"
@@ -142,7 +142,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
       positions_.reserve( num_local_nodes_ );
 
       auto nc_it = this->node_collection_->begin();
-      const auto pos = boost::any_cast< std::vector< std::vector< double > > >( positions );
+      const auto pos = std::get< std::vector< std::vector< double > > >( positions );
       for ( auto it = pos.begin(); it != pos.end(); ++it, ++nc_it )
       {
         assert( nc_it != this->node_collection_->end() );

@@ -265,11 +265,13 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
   }
 }
 
-void
-nc_const_iterator::print_me( std::ostream& out ) const
+std::ostream&
+operator<<( std::ostream& out, const nc_const_iterator& nc )
 {
-  out << "[[" << this << " pc: " << primitive_collection_ << ", cc: " << composite_collection_ << ", px: " << part_idx_
-      << ", ex: " << element_idx_ << "]]";
+  out << "[[" << &nc << " pc: " << nc.primitive_collection_ << ", cc: " << nc.composite_collection_
+      << ", px: " << nc.part_idx_ << ", ex: " << nc.element_idx_ << "]]";
+
+  return out;
 }
 
 NodeIDTriple
@@ -671,21 +673,23 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t stride ) const
   return sliced_nc;
 }
 
-void
-NodeCollectionPrimitive::print_me( std::ostream& out ) const
+std::ostream&
+operator<<( std::ostream& out, const NodeCollectionPrimitive& nc )
 {
   out << "NodeCollection(";
-  if ( empty() )
+  if ( nc.empty() )
   {
     out << "<empty>";
   }
   else
   {
-    std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
+    std::string metadata = nc.metadata_.get() ? nc.metadata_->get_type() : "None";
     out << "metadata=" << metadata << ", ";
-    print_primitive( out );
+    nc.print_primitive( out );
   }
   out << ")";
+
+  return out;
 }
 
 void
@@ -1342,14 +1346,14 @@ NodeCollectionComposite::has_proxies() const
     parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
 }
 
-void
-NodeCollectionComposite::print_me( std::ostream& out ) const
+std::ostream&
+operator<<( std::ostream& out, const NodeCollectionComposite& nc )
 {
-  std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
-  std::string nc = "NodeCollection(";
-  std::string space( nc.size(), ' ' );
+  std::string metadata = nc.parts_[ 0 ].get_metadata().get() ? nc.parts_[ 0 ].get_metadata()->get_type() : "None";
+  std::string nc_str = "NodeCollection(";
+  std::string space( nc_str.size(), ' ' );
 
-  if ( is_sliced_ )
+  if ( nc.is_sliced_ )
   {
     size_t current_part = 0;
     size_t current_offset = 0;
@@ -1357,19 +1361,19 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     size_t primitive_last = 0;
 
     size_t primitive_size = 0;
-    NodeIDTriple first_in_primitive = *begin();
+    NodeIDTriple first_in_primitive = *nc.begin();
 
     std::vector< std::string > string_vector;
 
-    out << nc << "metadata=" << metadata << ",";
+    out << nc_str << "metadata=" << metadata << ",";
 
-    const auto end_it = end();
-    for ( nc_const_iterator it = begin(); it < end_it; ++it )
+    const auto end_it = nc.end();
+    for ( nc_const_iterator it = nc.begin(); it < end_it; ++it )
     {
       std::tie( current_part, current_offset ) = it.get_part_offset();
       if ( current_part != previous_part ) // New primitive
       {
-        if ( it > begin() )
+        if ( it > nc.begin() )
         {
           // Need to count the primitive, so can't start at begin()
           out << "\n" + space
@@ -1383,9 +1387,9 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
           {
             out << "first=" << first_in_primitive.node_id << ", last=";
             out << primitive_last;
-            if ( stride_ > 1 )
+            if ( nc.stride_ > 1 )
             {
-              out << ", step=" << stride_ << ";";
+              out << ", step=" << nc.stride_ << ";";
             }
           }
         }
@@ -1411,19 +1415,19 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     {
       out << "first=" << first_in_primitive.node_id << ", last=";
       out << primitive_last;
-      if ( stride_ > 1 )
+      if ( nc.stride_ > 1 )
       {
-        out << ", step=" << stride_;
+        out << ", step=" << nc.stride_;
       }
     }
   }
   else
   {
     // Unsliced Composite NodeCollection
-    out << nc << "metadata=" << metadata << ",";
-    for ( auto it = parts_.begin(); it < parts_.end(); ++it )
+    out << nc_str << "metadata=" << metadata << ",";
+    for ( auto it = nc.parts_.begin(); it < nc.parts_.end(); ++it )
     {
-      if ( it == parts_.end() - 1 )
+      if ( it == nc.parts_.end() - 1 )
       {
         out << "\n" + space;
         it->print_primitive( out );
@@ -1437,6 +1441,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
   }
   out << ")";
+
+  return out;
 }
 
 } // namespace nest

@@ -107,20 +107,15 @@ cdef class MaskObject:
         self.thisptr = mask_ptr
 
 
-cdef object vec_of_any_to_list(vector[any] cvec):
-    cdef tmp = []
-    cdef vector[any].iterator it = cvec.begin()
-    while it != cvec.end():
-        tmp.append(any_to_pyobj(deref(it)))
-        inc(it)
-    return tmp
+cdef object any_vector_to_list(EmptyList cvec):
+    return []
 
 
 cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
-        tmp.append(Dictionary_to_pydict(deref(it)))
+        tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
 
@@ -131,63 +126,10 @@ def make_tuple_or_ndarray(operand):
         else:
             return tuple(operand)
 
-cdef object any_to_pyobj(any operand):
-    if is_type[int](operand):
-        return any_cast[int](operand)
-    if is_type[uint](operand):
-        return any_cast[uint](operand)
-    if is_type[long](operand):
-        return any_cast[long](operand)
-    if is_type[size_t](operand):
-        return any_cast[size_t](operand)
-    if is_type[uint64_t](operand):
-        return any_cast[uint64_t](operand)
-    if is_type[int64_t](operand):
-        return any_cast[int64_t](operand)
-    if is_type[double](operand):
-        return any_cast[double](operand)
-    if is_type[cbool](operand):
-        return any_cast[cbool](operand)
-    if is_type[std_string](operand):
-        return string_to_pystr(any_cast[std_string](operand))
-    if is_type[std_vector[int]](operand):
-        return numpy.array(any_cast[std_vector[int]](operand))
-    if is_type[std_vector[long]](operand):
-        return numpy.array(any_cast[std_vector[long]](operand))
-    if is_type[std_vector[size_t]](operand):
-        return numpy.array(any_cast[std_vector[size_t]](operand))
-    if is_type[std_vector[double]](operand):
-        return numpy.array(any_cast[std_vector[double]](operand))
-    if is_type[std_vector[std_vector[double]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[double]]](operand))
-    if is_type[std_vector[std_vector[std_vector[double]]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[std_vector[double]]]](operand))
-    if is_type[std_vector[std_vector[std_vector[long]]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[std_vector[long]]]](operand))
-    if is_type[std_vector[std_string]](operand):
-        # PYNEST-NG-FUTURE: Do we want to have this or are bytestrings fine?
-        # return any_cast[std_vector[std_string]](operand)
-        return list(map(lambda x: x.decode("utf-8"), any_cast[std_vector[std_string]](operand)))
-    if is_type[std_vector[Dictionary]](operand):
-        return vec_of_dict_to_list(any_cast[std_vector[Dictionary]](operand))
-    if is_type[std_vector[any]](operand):
-        # PYNEST-NG-FUTURE: This will create a Python list first and then convert to
-        # either tuple or numpy array, which will copy the data element-wise.
-        # Could we do this more effienctly?
-        return make_tuple_or_ndarray(vec_of_any_to_list(any_cast[std_vector[any]](operand)))
-    if is_type[Dictionary](operand):
-        return Dictionary_to_pydict(any_cast[Dictionary](operand))
-    if is_type[NodeCollectionPTR](operand):
-        obj = NodeCollectionObject()
-        obj._set_nc(any_cast[NodeCollectionPTR](operand))
-        return nest.NodeCollection(obj)
-    if is_type[VerbosityLevel](operand):
-        return any_cast[VerbosityLevel](operand)
-
-cdef object Dictionary_to_pydict(Dictionary cdict):
+cdef object dictionary_to_pydict(Dictionary cdict):
     cdef tmp = {}
 
-    cdef Dictionary.const_iterator it = cdict.begin()
+    cdef dictionary_.const_iterator it = cdict.begin()
     while it != cdict.end():
         key = string_to_pystr(deref(it).first)
         tmp[key] = any_to_pyobj(deref(it).second.item)
@@ -196,6 +138,58 @@ cdef object Dictionary_to_pydict(Dictionary cdict):
             raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second.item)))
         inc(it)
     return tmp
+
+cdef object any_to_pyobj(any_type operand):
+    if holds_alternative[int](operand):
+        return get[int](operand)
+    if holds_alternative[uint](operand):
+        return get[uint](operand)
+    if holds_alternative[long](operand):
+        return get[long](operand)
+    if holds_alternative[size_t](operand):
+        return get[size_t](operand)
+    if holds_alternative[uint64_t](operand):
+        return get[uint64_t](operand)
+    if holds_alternative[int64_t](operand):
+        return get[int64_t](operand)
+    if holds_alternative[double](operand):
+        return get[double](operand)
+    if holds_alternative[cbool](operand):
+        return get[cbool](operand)
+    if holds_alternative[string](operand):
+        return string_to_pystr(get[string](operand))
+    if holds_alternative[vector[int]](operand):
+        return numpy.array(get[vector[int]](operand))
+    if holds_alternative[vector[long]](operand):
+        return numpy.array(get[vector[long]](operand))
+    if holds_alternative[vector[size_t]](operand):
+        return numpy.array(get[vector[size_t]](operand))
+    if holds_alternative[vector[double]](operand):
+        return numpy.array(get[vector[double]](operand))
+    if holds_alternative[vector[vector[double]]](operand):
+        return numpy.array(get[vector[vector[double]]](operand))
+    if holds_alternative[vector[vector[vector[double]]]](operand):
+        return numpy.array(get[vector[vector[vector[double]]]](operand))
+    if holds_alternative[vector[vector[vector[long]]]](operand):
+        return numpy.array(get[vector[vector[vector[long]]]](operand))
+    if holds_alternative[vector[string]](operand):
+        # PYNEST-NG: Do we want to have this or are bytestrings fine?
+        # return get[vector[string]](operand)
+        return list(map(lambda x: x.decode("utf-8"), get[vector[string]](operand)))
+    if holds_alternative[vector[Dictionary]](operand):
+        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
+    if holds_alternative[EmptyList](operand):
+        # PYNEST-NG: This will create a Python list first and then convert to
+        # either tuple or numpy array, which will copy the data element-wise.
+        return make_tuple_or_ndarray(any_vector_to_list(get[EmptyList](operand)))
+    if holds_alternative[Dictionary](operand):
+        return dictionary_to_pydict(get[Dictionary](operand))
+    if holds_alternative[NodeCollectionPTR](operand):
+        obj = NodeCollectionObject()
+        obj._set_nc(get[NodeCollectionPTR](operand))
+        return nest.NodeCollection(obj)
+    if holds_alternative[VerbosityLevel](operand):
+        return get[VerbosityLevel](operand)
 
 
 cdef is_list_tuple_ndarray_of_float(v):
@@ -227,8 +221,8 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = <string>pystr_to_string(value)
         elif type(value) is list and len(value) == 0:
             # We cannot infer the intended element type from an empty list.
-            # We therefore pass an empty vector[any]. vector[any] will always be empty
-            # and an empty vector will always be vector[any] in the PyNEST interface.
+            # We therefore pass an empty EmptyList. EmptyList will always be empty
+            # and an empty vector will always be EmptyList in the PyNEST interface.
             cdict[pystr_to_string(key)] = empty_any_vec()
         elif is_list_tuple_ndarray_of_float(value):
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
@@ -262,8 +256,8 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
     return cdict
 
 
-cdef vector[any] empty_any_vec():
-    cdef vector[any] empty_vec
+cdef EmptyList empty_any_vec():
+    cdef EmptyList empty_vec
     return empty_vec
 
 
@@ -396,7 +390,7 @@ def llapi_distance(object conn):  # PYNEST-NG-FUTURE: should there be a SynapseC
 
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
-    # node_ids list is automatically converted to an std::vector
+    # node_ids list is automatically converted to an vector
     gids = make_nodecollection(node_ids)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
@@ -541,11 +535,11 @@ def llapi_to_string(NodeCollectionObject nc):
 
 def llapi_get_kernel_status():
     cdef Dictionary cdict = get_kernel_status()
-    return Dictionary_to_pydict(cdict)
+    return dictionary_to_pydict(cdict)
 
 
 def llapi_get_defaults(object model_name):
-    return Dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
+    return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
 
 
 def llapi_set_defaults(object model_name, object params):
@@ -592,7 +586,7 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef Dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:
-        return Dictionary_to_pydict(statuses)
+        return dictionary_to_pydict(statuses)
     elif isinstance(key, str):
         if not statuses.known(pystr_to_string(key)):
             raise KeyError(key)
@@ -631,7 +625,7 @@ def llapi_nc_find(NodeCollectionObject nc, long node_id):
 
 
 def llapi_get_nc_metadata(NodeCollectionObject nc):
-    return Dictionary_to_pydict(get_metadata(nc.thisptr))
+    return dictionary_to_pydict(get_metadata(nc.thisptr))
 
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):

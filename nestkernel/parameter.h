@@ -25,12 +25,10 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // Includes from nestkernel:
 #include "generic_factory.h"
 #include "nest_names.h"
-#include "nest_types.h"
 #include "node.h"
 #include "node_collection.h"
 #include "random_generators.h"
@@ -74,7 +72,13 @@ public:
    * @param node pointer to the node, used when the node position is relevant
    * @returns the value of the parameter.
    */
-  virtual double value( RngPtr rng, Node* node ) = 0;
+  // TODO-PYNEST-NG: We need to either make this non-abstract or add every single non-abstract parameter subclass to the
+  //  std::variant acceptec-types collection.
+  virtual double
+  value( RngPtr rng, Node* node )
+  {
+    return 0.;
+  }
 
   /**
    * Generates a value based on parameter specifications and arguments.
@@ -231,7 +235,7 @@ public:
    */
   UniformIntParameter( const Dictionary& d )
     : Parameter( false, true )
-    , max_( 1.0 )
+    , max_( 1 )
   {
     d.update_integer_value( names::max, max_ );
     if ( max_ <= 0 )
@@ -247,7 +251,7 @@ public:
   }
 
 private:
-  double max_;
+  long max_;
 };
 
 

@@ -26,8 +26,7 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
-#include <boost/any.hpp> // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
-#include <cstdlib>       // for div()
+#include <cstdlib> // for div()
 #include <string>
 #include <vector>
 
@@ -548,9 +547,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
   for ( const auto& [ syn_k, syn_v ] : edge_params )
   {
     const int type_id = std::stoi( syn_k );
-
-    // PYNEST-NG-FUTURE: Could avoid explicit any_cast here by adding extraction method to DictEntry_
-    const auto& d = boost::any_cast< Dictionary >( syn_v.item );
+    auto d = std::get< Dictionary >( syn_kv_pair.second.item );
 
     const auto& syn_name = d.get< std::string >( "synapse_model" );
 

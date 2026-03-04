@@ -34,10 +34,6 @@
 #include "sp_manager.h"
 #include "sp_manager_impl.h"
 
-#include "connector_model_impl.h"
-
-#include "conn_builder_conngen.h"
-
 #include "grid_mask.h"
 #include "spatial.h"
 
@@ -45,9 +41,7 @@
 
 #include "genericmodel_impl.h"
 #include "model_manager.h"
-#include "model_manager_impl.h"
 
-#include "config.h"
 #include "dictionary.h"
 
 namespace nest
@@ -140,7 +134,7 @@ pprint_to_string( NodeCollectionPTR nc )
 {
   assert( nc );
   std::stringstream stream;
-  nc->print_me( stream );
+  stream << nc;
   return stream.str();
 }
 
@@ -170,32 +164,98 @@ get_kernel_status()
   return d;
 }
 
+// TODO: Add the possibility to filter for specific keys
 Dictionary
 get_nc_status( NodeCollectionPTR nc )
 {
   Dictionary result;
+  const size_t num_nodes = nc->size();
+
   size_t node_index = 0;
-  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
+  for ( auto it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
-    for ( const auto& [ key, entry ] : node_status )
+
+    if ( node_index == 0 ) // schema definition step
     {
-      const auto p = result.find( key );
-      if ( p != result.end() )
+      for ( const auto& kv_pair : node_status )
       {
-        // key exists
-        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second.item );
-        v[ node_index ] = entry.item;
+        // Visit the variant to determine type T
+        std::visit(
+          [ &result, &kv_pair, num_nodes ]( const auto& val )
+          {
+            using T = std::decay_t< decltype( val ) >;
+
+            if constexpr ( not DictionarySchema::is_defined_scalar< T > )
+            {
+              // Logic for Vectors: Explicitly forbidden
+              throw std::runtime_error( String::compose(
+                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", kv_pair.first ) );
+            }
+            else
+            {
+              // Create vector<T> of size N
+              std::vector< T > vec( num_nodes );
+
+              // Assign the first value
+              vec[ 0 ] = val;
+
+              // Store in result
+              result[ kv_pair.first ] = std::move( vec );
+            }
+          },
+          kv_pair.second.item );
       }
-      else
+    }
+    else // Fill step (including validation)
+    {
+      for ( const auto& kv_pair : node_status )
       {
-        // key does not exist yet
-        auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
-        new_entry[ node_index ] = entry.item;
-        result[ key ] = new_entry;
+        auto map_it = result.find( kv_pair.first );
+
+        // Strict Key Existence Check
+        if ( map_it == result.end() )
+        {
+          throw std::runtime_error( String::compose( "Sparse data detected: New key '%1' found late at index %2.",
+            kv_pair.first,
+            std::to_string( node_index ) ) );
+        }
+
+        // We visit the input value and try to cast the existing vector to matching type.
+        std::visit(
+          [ &map_it, node_index, key = kv_pair.first ]( const auto& val )
+          {
+            using T = std::decay_t< decltype( val ) >;
+
+            if constexpr ( not DictionarySchema::is_defined_scalar< T > )
+            {
+              // Logic for Vectors: Explicitly forbidden
+              throw std::runtime_error( String::compose(
+                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", key ) );
+            }
+            else
+            {
+              try
+              {
+                // Throws std::bad_variant_access if Node N has a different type than Node 0 (e.g., int vs double)
+                auto& vec = std::get< std::vector< T > >( map_it->second.item );
+                vec[ node_index ] = val;
+              }
+              catch ( const std::bad_variant_access& )
+              {
+                throw std::runtime_error( String::compose(
+                  "Type mismatch detected for key '%1' at index %2. Retrieving node collection status data "
+                  "only works for homogeneous neuron models.",
+                  key,
+                  std::to_string( node_index ) ) );
+              }
+            }
+          },
+          kv_pair.second.item );
       }
     }
   }
+
   return result;
 }
 
@@ -591,30 +651,30 @@ get_model_defaults( const std::string& component )
 }
 
 ParameterPTR
-create_parameter( const boost::any& value )
+create_parameter( const any_type& value )
 {
-  if ( is_type< double >( value ) )
-  {
-    return create_parameter( boost::any_cast< double >( value ) );
-  }
-  else if ( is_type< int >( value ) )
-  {
-    return create_parameter( static_cast< long >( boost::any_cast< int >( value ) ) );
-  }
-  else if ( is_type< long >( value ) )
-  {
-    return create_parameter( boost::any_cast< long >( value ) );
-  }
-  else if ( is_type< Dictionary >( value ) )
-  {
-    return create_parameter( boost::any_cast< Dictionary >( value ) );
-  }
-  else if ( is_type< ParameterPTR >( value ) )
-  {
-    return boost::any_cast< ParameterPTR >( value );
-  }
-  throw BadProperty(
-    std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+  return std::visit(
+    [ &value ]( auto&& val ) -> ParameterPTR
+    {
+      using T = std::decay_t< decltype( val ) >;
+      if constexpr ( std::is_same_v< T, ParameterPTR > )
+      {
+        return val;
+      }
+      else if constexpr ( std::is_same_v< T, double > or std::is_same_v< T, long > or std::is_same_v< T, Dictionary& >
+        or std::is_same_v< T, int > )
+      {
+        // Convert int to long, otherwise keep the type (T) as is
+        using ArgT = std::conditional_t< std::is_same_v< T, int >, long, T >;
+        return create_parameter( static_cast< const ArgT& >( val ) );
+      }
+      else
+      {
+        throw BadProperty(
+          std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+      }
+    },
+    value );
 }
 
 ParameterPTR
@@ -640,10 +700,10 @@ create_parameter( const Dictionary& param_dict )
   {
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
-  const auto n = param_dict.begin()->first;
-  const auto pdict = param_dict.get< Dictionary >( n );
+  const std::string n = param_dict.begin()->first;
+  const Dictionary& pdict = param_dict.get< Dictionary >( n );
   pdict.init_access_flags();
-  auto parameter = create_parameter( n, pdict );
+  ParameterPTR parameter = create_parameter( n, pdict );
   pdict.all_entries_accessed( "create_parameter", "param" );
   return parameter;
 }

@@ -24,43 +24,42 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "nest_names.h"
 
 
 nest::ConnParameter*
-nest::ConnParameter::create( const boost::any& value, const size_t nthreads )
+nest::ConnParameter::create( const any_type& value, const size_t nthreads )
 {
   // single double
   if ( is_type< double >( value ) )
   {
-    return new ScalarDoubleParameter( boost::any_cast< double >( value ), nthreads );
+    return new ScalarDoubleParameter( std::get< double >( value ), nthreads );
   }
 
   // single integer
   if ( is_type< long >( value ) )
   {
-    return new ScalarIntegerParameter( boost::any_cast< long >( value ), nthreads );
+    return new ScalarIntegerParameter( std::get< long >( value ), nthreads );
   }
 
   // array of doubles
   if ( is_type< std::vector< double > >( value ) )
   {
-    return new ArrayDoubleParameter( boost::any_cast< std::vector< double > >( value ), nthreads );
+    return new ArrayDoubleParameter( std::get< std::vector< double > >( value ), nthreads );
   }
 
   // Parameter
   if ( is_type< std::shared_ptr< nest::Parameter > >( value ) )
   {
-    return new ParameterConnParameterWrapper( boost::any_cast< ParameterPTR >( value ), nthreads );
+    return new ParameterConnParameterWrapper( std::get< ParameterPTR >( value ), nthreads );
   }
 
   // array of longs
   if ( is_type< std::vector< long > >( value ) )
   {
-    return new ArrayLongParameter( boost::any_cast< std::vector< long > >( value ), nthreads );
+    return new ArrayLongParameter( std::get< std::vector< long > >( value ), nthreads );
   }
 
-  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + value.type().name() );
+  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + debug_type( value ) );
 }
 
 

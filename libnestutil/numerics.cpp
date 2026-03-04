@@ -164,6 +164,7 @@ mod_inverse( long a, long m )
   assert( 0 < a );
   assert( 2 <= m );
 
+  const long a_orig = a;
   const long m_orig = m;
 
   // If a ≥ m, the algorithm needs two extra rounds to transform this to

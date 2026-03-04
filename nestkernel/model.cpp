@@ -22,9 +22,6 @@
 
 #include "model.h"
 
-// C++ includes:
-#include <algorithm>
-
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -32,6 +29,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "nest_names.h"
 
 
 namespace nest

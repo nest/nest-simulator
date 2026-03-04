@@ -26,6 +26,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "node.h"
+#include "vp_manager.h"
 
 
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, size_t node_id )
@@ -171,54 +172,4 @@ nest::SparseNodeArray::get_node_by_node_id( size_t node_id ) const
   {
     return nullptr;
   }
-}
-[[gnu::always_inline]] size_t
-nest::SparseNodeArray::NodeEntry::get_node_id() const
-{
-  assert( node_id_ > 0 );
-  return node_id_;
-}
-
-[[gnu::always_inline]] nest::Node*
-nest::SparseNodeArray::NodeEntry::get_node() const
-{
-  assert( node_ );
-  return node_;
-}
-
-[[gnu::always_inline]] bool
-nest::SparseNodeArray::is_consistent_() const
-{
-  return nodes_.size() == 0 or global_max_node_id_ > 0;
-}
-
-[[gnu::always_inline]] size_t
-nest::SparseNodeArray::get_max_node_id() const
-{
-  return global_max_node_id_;
-}
-
-[[gnu::always_inline]] nest::Node*
-nest::SparseNodeArray::get_node_by_index( size_t idx ) const
-{
-  assert( idx < nodes_.size() );
-  return nodes_[ idx ].node_;
-}
-
-[[gnu::always_inline]] size_t
-nest::SparseNodeArray::size() const
-{
-  return nodes_.size();
-}
-
-[[gnu::always_inline]] nest::SparseNodeArray::const_iterator
-nest::SparseNodeArray::end() const
-{
-  return nodes_.end();
-}
-
-[[gnu::always_inline]] nest::SparseNodeArray::const_iterator
-nest::SparseNodeArray::begin() const
-{
-  return nodes_.begin();
 }

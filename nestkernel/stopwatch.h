@@ -31,10 +31,10 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 
+class Dictionary;
+
 namespace nest
 {
-
-class Dictionary;
 
 #ifdef TIMER_DETAILED
 constexpr bool use_detailed_timers = true;

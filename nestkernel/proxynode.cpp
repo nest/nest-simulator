@@ -26,6 +26,7 @@
 #include "connection.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "nest_names.h"
 
 
 namespace nest

@@ -33,18 +33,14 @@
 // C++ includes:
 #include <map>
 #include <set>
-#include <stdexcept>
 #include <vector>
 
 // Includes from libnestutil
 #include "block_vector.h"
 
 // Includes from nestkernel:
-// #include "conn_parameter.h"
-// #include "kernel_manager.h"
 #include "node_collection.h"
 #include "parameter.h"
-// #include "sp_manager.h"
 
 
 namespace nest

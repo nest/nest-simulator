@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "logging.h"
 #include "logging_manager.h"
 
 

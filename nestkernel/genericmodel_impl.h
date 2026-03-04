@@ -24,6 +24,8 @@
 #define GENERICMODEL_IMPL_H
 
 #include "genericmodel.h"
+#include "logging.h"
+#include "nest_names.h"
 
 namespace nest
 {

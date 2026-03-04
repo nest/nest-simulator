@@ -28,6 +28,7 @@
 
 #include "connector_model_impl.h"
 #include "genericmodel.h"
+#include "logging.h"
 #include "target_identifier.h"
 
 namespace nest

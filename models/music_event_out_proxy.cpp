@@ -30,6 +30,7 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
+#include "logging_manager.h"
 
 // Includes from nestkernel:
 #include "genericmodel_impl.h"

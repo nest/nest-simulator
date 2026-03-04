@@ -30,7 +30,11 @@
 #include "logging.h"
 #include "logging_manager.h"
 #include "recording_backend_mpi.h"
+
+#include "event.h"
+#include "nest_names.h"
 #include "recording_device.h"
+#include "vp_manager.h"
 
 nest::RecordingBackendMPI::RecordingBackendMPI()
   : enrolled_( false )

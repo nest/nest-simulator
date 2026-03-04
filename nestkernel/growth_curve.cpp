@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 #include "nest_time.h"
+#include "numerics.h"
 
 
 /* ----------------------------------------------------------------

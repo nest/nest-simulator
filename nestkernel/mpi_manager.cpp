@@ -1118,87 +1118,7 @@ MPIManager::communicate_recv_counts_secondary_events()
 
 #endif /* #ifdef HAVE_MPI  */
 
-[[gnu::always_inline]] size_t
-MPIManager::get_process_id_of_vp( const size_t vp ) const
-{
-  return vp % num_processes_;
-}
-
-#ifdef HAVE_MPI
-
-[[gnu::always_inline]] size_t
-MPIManager::get_process_id_of_node_id( const size_t node_id ) const
-{
-  return node_id % num_processes_;
-}
-
-#else
-
-size_t
-MPIManager::get_process_id_of_node_id( const size_t ) const
-{
-  return 0;
-}
-
-#endif /* HAVE_MPI */
-
 #ifndef HAVE_MPI
-
-double
-MPIManager::time_communicate_alltoallv( int, int ) const
-{
-  return 0.0;
-}
-
-double
-MPIManager::time_communicate_alltoall( int, int ) const
-{
-  return 0.0;
-}
-
-double
-MPIManager::time_communicate_offgrid( int, int ) const
-{
-  return 0.0;
-}
-
-double
-MPIManager::time_communicatev( int, int )
-{
-  return 0.0;
-}
-
-double
-MPIManager::time_communicate( int, int ) const
-{
-  return 0.0;
-}
-
-bool
-MPIManager::any_true( const bool my_bool ) const
-{
-  return my_bool;
-}
-
-void
-MPIManager::synchronize() const
-{
-}
-
-void
-MPIManager::communicate( std::vector< long >& )
-{
-}
-
-void
-MPIManager::communicate( std::vector< int >& )
-{
-}
-
-void
-MPIManager::mpi_abort( int ) const
-{
-}
 
 std::string
 MPIManager::get_processor_name()
@@ -1210,12 +1130,6 @@ MPIManager::get_processor_name()
 }
 
 #endif /* HAVE_MPI */
-
-[[gnu::always_inline]] bool
-MPIManager::adaptive_target_buffers() const
-{
-  return adaptive_target_buffers_;
-}
 
 bool
 MPIManager::increase_buffer_size_target_data()
@@ -1285,86 +1199,6 @@ MPIManager::get_send_buffer_size_secondary_events_in_int() const
   return send_displacements_secondary_events_in_int_per_rank_
            [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
     + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];
-}
-
-[[gnu::always_inline]] unsigned int
-MPIManager::get_send_recv_count_spike_data_per_rank() const
-{
-  return send_recv_count_spike_data_per_rank_;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_buffer_size_spike_data() const
-{
-  return buffer_size_spike_data_;
-}
-
-[[gnu::always_inline]] unsigned int
-MPIManager::get_send_recv_count_target_data_per_rank() const
-{
-  return send_recv_count_target_data_per_rank_;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_buffer_size_target_data() const
-{
-  return buffer_size_target_data_;
-}
-
-[[gnu::always_inline]] bool
-MPIManager::is_mpi_used() const
-{
-  return use_mpi_;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_rank() const
-{
-  return rank_;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_num_processes() const
-{
-  return num_processes_;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_done_marker_position_in_secondary_events_recv_buffer( const size_t source_rank ) const
-{
-  return get_recv_displacement_secondary_events_in_int( source_rank )
-    + get_recv_count_secondary_events_in_int( source_rank ) - 1;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_done_marker_position_in_secondary_events_send_buffer( const size_t target_rank ) const
-{
-  return get_send_displacement_secondary_events_in_int( target_rank )
-    + get_send_count_secondary_events_in_int( target_rank ) - 1;
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_send_displacement_secondary_events_in_int( const size_t target_rank ) const
-{
-  return send_displacements_secondary_events_in_int_per_rank_[ target_rank ];
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_send_count_secondary_events_in_int( const size_t target_rank ) const
-{
-  return send_counts_secondary_events_in_int_per_rank_[ target_rank ];
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_recv_displacement_secondary_events_in_int( const size_t source_rank ) const
-{
-  return recv_displacements_secondary_events_in_int_per_rank_[ source_rank ];
-}
-
-[[gnu::always_inline]] size_t
-MPIManager::get_recv_count_secondary_events_in_int( const size_t source_rank ) const
-{
-  return recv_counts_secondary_events_in_int_per_rank_[ source_rank ];
 }
 
 void

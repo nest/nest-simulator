@@ -32,6 +32,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "numerics.h"
 
 namespace nest
 {
@@ -410,9 +411,292 @@ public:
 // maybe make the zero visible for optimization.
 const Time TimeZero;
 
+
+/////////////////////////////////////////////////////////////
+// Resolution: set tics per ms, steps per ms
+/////////////////////////////////////////////////////////////
+
+inline Time
+Time::get_resolution()
+{
+  return Time( Range::TICS_PER_STEP );
+}
+
+inline bool
+Time::resolution_is_default()
+{
+  return Range::TICS_PER_STEP == Range::TICS_PER_STEP_DEFAULT;
+}
+
+/////////////////////////////////////////////////////////////
+// Common zero-ary or unary operations
+/////////////////////////////////////////////////////////////
+
+inline void
+Time::set_to_zero()
+{
+  tics = 0;
+}
+
+inline void
+Time::advance()
+{
+  tics += Range::TICS_PER_STEP;
+  range();
+}
+
+inline Time
+Time::succ() const
+{
+  return tic( tics + Range::TICS_PER_STEP );
+} // check range
+
+inline Time
+Time::pred() const
+{
+  return tic( tics - Range::TICS_PER_STEP );
+} // check range
+
+/////////////////////////////////////////////////////////////
+// Subtypes of Time (bool tests)
+/////////////////////////////////////////////////////////////
+
+inline bool
+Time::is_finite() const
+{
+  return tics != LIM_POS_INF.tics and tics != LIM_NEG_INF.tics;
+}
+
+inline bool
+Time::is_neg_inf() const
+{
+  // Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
+  // LIM_NEG_INF.tics represent negative infinity, any smaller
+  // value cannot be larger and thus must be infinity as well. to be on the safe side
+  // we use less-or-equal instead of just equal.
+  return tics <= LIM_NEG_INF.tics;
+}
+
+inline bool
+Time::is_pos_inf() const
+{
+  return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
+}
+
+inline bool
+Time::is_grid_time() const
+{
+  return ( tics % Range::TICS_PER_STEP ) == 0;
+}
+
+inline bool
+Time::is_step() const
+{
+  return tics > 0 and is_grid_time();
+}
+
+inline bool
+Time::is_multiple_of( const Time& divisor ) const
+{
+  assert( divisor.tics > 0 );
+  return ( tics % divisor.tics ) == 0;
+}
+
+/////////////////////////////////////////////////////////////
+// Singleton'ish types
+/////////////////////////////////////////////////////////////
+
+inline Time
+Time::max()
+{
+  return Time( LIM_MAX.tics );
+}
+inline Time
+Time::min()
+{
+  return Time( LIM_MIN.tics );
+}
+inline double
+Time::get_ms_per_tic()
+{
+  return Range::MS_PER_TIC;
+}
+inline Time
+Time::neg_inf()
+{
+  return Time( LIM_NEG_INF.tics );
+}
+inline Time
+Time::pos_inf()
+{
+  return Time( LIM_POS_INF.tics );
+}
+
+/////////////////////////////////////////////////////////////
+// Overflow checks & recalibrate after resolution setting
+/////////////////////////////////////////////////////////////
+
+inline void
+Time::range()
+{
+  if ( time_abs( tics ) < LIM_MAX.tics )
+  {
+    return;
+  }
+  tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
+}
+
+inline void
+Time::calibrate()
+{
+  range();
+}
+
+/////////////////////////////////////////////////////////////
+// Unary operators
+/////////////////////////////////////////////////////////////
+
+inline Time&
+Time::operator+=( const Time& t )
+{
+  tics += t.tics;
+  range();
+  return *this;
+}
+
+/////////////////////////////////////////////////////////////
+// Convert to external units
+/////////////////////////////////////////////////////////////
+
+inline tic_t
+Time::get_tics() const
+{
+  return tics;
+}
+
+inline tic_t
+Time::get_tics_per_step()
+{
+  return Range::TICS_PER_STEP;
+}
+
+inline double
+Time::get_tics_per_ms()
+{
+  return Range::TICS_PER_MS;
+}
+
+inline double
+Time::get_ms() const
+{
+  if ( is_pos_inf() )
+  {
+    return LIM_POS_INF_ms;
+  }
+  if ( is_neg_inf() )
+  {
+    return LIM_NEG_INF_ms;
+  }
+  return Range::MS_PER_TIC * tics;
+}
+
+inline long
+Time::get_steps() const
+{
+  if ( is_pos_inf() )
+  {
+    return LIM_POS_INF.steps;
+  }
+  if ( is_neg_inf() )
+  {
+    return LIM_NEG_INF.steps;
+  }
+
+  // round tics up to nearest step
+  // by adding TICS_PER_STEP-1 before division
+  return ( tics + Range::TICS_PER_STEP_RND ) * Range::TICS_PER_STEP_INV;
+}
+
+/**
+ * Convert between delays given in steps and milliseconds.
+ *
+ * This is not a reversible operation, since steps have a finite
+ * rounding resolution. This is not a truncation, but rounding as per
+ * ld_round, which is different from ms_stamp --> Time mapping, which rounds
+ * up. See #903.
+ */
+inline double
+Time::delay_steps_to_ms( long steps )
+{
+  return steps * Range::MS_PER_STEP;
+}
+
+inline long
+Time::delay_ms_to_steps( double ms )
+{
+  return ld_round( ms * Range::STEPS_PER_MS );
+}
+
+/////////////////////////////////////////////////////////////
+// Binary operators
+/////////////////////////////////////////////////////////////
+
+inline bool
+operator==( const Time& t1, const Time& t2 )
+{
+  return t1.tics == t2.tics;
+}
+
+inline bool
+operator!=( const Time& t1, const Time& t2 )
+{
+  return t1.tics != t2.tics;
+}
+
+inline bool
+operator<( const Time& t1, const Time& t2 )
+{
+  return t1.tics < t2.tics;
+}
+
+inline bool
+operator>( const Time& t1, const Time& t2 )
+{
+  return t1.tics > t2.tics;
+}
+
+inline bool
+operator<=( const Time& t1, const Time& t2 )
+{
+  return t1.tics <= t2.tics;
+}
+
+inline bool
+operator>=( const Time& t1, const Time& t2 )
+{
+  return t1.tics >= t2.tics;
+}
+
+inline Time
+operator+( const Time& t1, const Time& t2 )
+{
+  return Time::tic( t1.tics + t2.tics ); // check range
+}
+
+inline Time
+operator-( const Time& t1, const Time& t2 )
+{
+  return Time::tic( t1.tics - t2.tics ); // check range
+}
+
+inline Time
+operator*( const Time& t, long factor )
+{
+  return factor * t;
+}
+
 } // namespace
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );
-
 
 #endif

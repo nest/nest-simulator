@@ -23,12 +23,10 @@
 #ifndef MANAGER_INTERFACE_H
 #define MANAGER_INTERFACE_H
 
-// Includes from libnestutil:
+class Dictionary;
 
 namespace nest
 {
-
-class Dictionary;
 
 /**
  * Interface for kernel manager classes.

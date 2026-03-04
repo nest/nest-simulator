@@ -29,17 +29,30 @@
 
 // Includes from libnestutil:
 #include "dictionary.h"
-#include "logging.h"
 #include "manager_interface.h"
-
-
-// Inclused from nestkernel:
-#include "nest_names.h"
 
 namespace nest
 {
 
 class LoggingEvent;
+class LoggingDeliverer;
+
+typedef void ( *deliver_logging_event_ptr )( const LoggingEvent& e );
+
+//! Report only messages at levels higher than chosen level to user or logs. Default INFO.
+enum class VerbosityLevel
+{
+  ALL = 0,
+  DEBUG = 5,
+  STATUS = 7,
+  INFO = 10,
+  PROGRESS = 15,
+  DEPRECATED = 18,
+  WARNING = 20,
+  ERROR = 30,
+  FATAL = 40,
+  QUIET = 100
+};
 
 class LoggingManager : public ManagerInterface
 {

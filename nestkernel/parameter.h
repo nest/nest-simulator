@@ -31,6 +31,7 @@
 #include "node_collection.h"
 #include "random_generators.h"
 
+class Dictionary;
 
 namespace nest
 {
@@ -38,7 +39,6 @@ class Parameter;
 using ParameterPTR = std::shared_ptr< Parameter >;
 
 class AbstractLayer;
-class Dictionary;
 
 /**
  * Abstract base class for parameters.

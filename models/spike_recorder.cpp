@@ -29,6 +29,7 @@
 #include "nest_impl.h"
 
 #include "node_manager.h"
+#include "recording_backend.h"
 
 void
 nest::register_spike_recorder( const std::string& name )

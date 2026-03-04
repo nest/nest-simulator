@@ -28,8 +28,6 @@
 
 // Includes from nestkernel:
 #include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 
 
 namespace nest

@@ -24,6 +24,7 @@
 #define MPI_MANAGER_IMPL_H
 
 #include "mpi_manager.h"
+#include "target_data.h"
 
 namespace nest
 {

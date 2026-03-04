@@ -33,6 +33,7 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
+#include "nest_names.h"
 #include "parameter.h"
 #include "random_generators.h"
 

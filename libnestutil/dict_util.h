@@ -29,6 +29,7 @@
 #include "kernel_manager.h"
 #include "nest.h"
 #include "node.h"
+#include "vp_manager.h"
 
 namespace nest
 {

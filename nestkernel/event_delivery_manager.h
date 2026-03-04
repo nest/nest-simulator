@@ -473,6 +473,76 @@ void EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, 
 template <>
 void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long lag );
 
+template <>
+inline void
+EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
+{
+  e.set_sender_node_id( source.get_node_id() );
+  send_local_( source, e, lag );
+}
+
+inline size_t
+EventDeliveryManager::write_toggle() const
+{
+  return kernel::manager< SimulationManager >.get_slice() % 2;
+}
+
+inline long
+EventDeliveryManager::get_slice_modulo( long d )
+{
+  // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
+  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
+
+  return slice_moduli_[ d ];
+}
+
+inline long
+EventDeliveryManager::get_modulo( long d )
+{
+  // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
+  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
+
+  return moduli_[ d ];
+}
+
+inline size_t
+EventDeliveryManager::read_toggle() const
+{
+  // define in terms of write_toggle() to ensure consistency
+  return 1 - write_toggle();
+}
+
+inline void
+EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
+{
+  off_grid_spiking_ = off_grid_spiking;
+}
+
+inline bool
+EventDeliveryManager::get_off_grid_communication() const
+{
+  return off_grid_spiking_;
+}
+
+inline void
+EventDeliveryManager::send_to_node( Event& e )
+{
+  e();
+}
+
+inline bool
+EventDeliveryManager::is_marked_for_removal_( const Target& target )
+{
+  return target.is_processed();
+}
+
+inline void
+EventDeliveryManager::reset_spike_register_( const size_t tid )
+{
+  emitted_spikes_register_[ tid ]->clear();
+  off_grid_emitted_spikes_register_[ tid ]->clear();
+}
+
 } // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_H */

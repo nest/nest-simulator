@@ -24,15 +24,12 @@
 #define SOURCE_TABLE_H
 
 // C++ includes:
-#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <map>
-#include <set>
 #include <vector>
 
 // Includes from nestkernel:
-#include "mpi_manager.h"
 #include "nest_types.h"
 #include "per_thread_bool_indicator.h"
 #include "source.h"
@@ -41,7 +38,6 @@
 
 // Includes from libnestutil
 #include "block_vector.h"
-#include "vector_util.h"
 
 namespace nest
 {

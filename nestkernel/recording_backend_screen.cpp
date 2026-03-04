@@ -28,6 +28,9 @@
 
 #include "recording_backend_screen.h"
 
+#include "event.h"
+#include "vp_manager.h"
+
 #include <nest_names.h>
 
 void

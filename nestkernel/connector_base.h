@@ -23,9 +23,6 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
 #include <fstream>
 #include <vector>
@@ -40,9 +37,6 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_id.h"
-#include "connection_label.h"
-#include "event.h"
-#include "nest_names.h"
 #include "source.h"
 #include "source_table.h"
 #include "spikecounter.h"

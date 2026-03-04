@@ -36,7 +36,6 @@
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
-// #include "secondary_event_impl.h"
 
 
 /** @file node.h

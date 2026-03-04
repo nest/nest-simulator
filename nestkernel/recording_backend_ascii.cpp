@@ -35,6 +35,9 @@
 #include "logging_manager.h"
 #include "node_manager.h"
 #include "recording_backend_ascii.h"
+
+#include "event.h"
+#include "nest_names.h"
 #include "recording_device.h"
 #include "simulation_manager.h"
 

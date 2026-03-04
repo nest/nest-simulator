@@ -221,6 +221,57 @@ private:
   bool left_side_has_proxies_;
 };
 
+inline size_t
+SparseNodeArray::NodeEntry::get_node_id() const
+{
+  assert( node_id_ > 0 );
+  return node_id_;
+}
+
+inline Node*
+SparseNodeArray::NodeEntry::get_node() const
+{
+  assert( node_ );
+  return node_;
+}
+
+inline bool
+SparseNodeArray::is_consistent_() const
+{
+  return nodes_.size() == 0 or global_max_node_id_ > 0;
+}
+
+inline size_t
+SparseNodeArray::get_max_node_id() const
+{
+  return global_max_node_id_;
+}
+
+inline Node*
+SparseNodeArray::get_node_by_index( size_t idx ) const
+{
+  assert( idx < nodes_.size() );
+  return nodes_[ idx ].node_;
+}
+
+inline size_t
+SparseNodeArray::size() const
+{
+  return nodes_.size();
+}
+
+inline SparseNodeArray::const_iterator
+SparseNodeArray::end() const
+{
+  return nodes_.end();
+}
+
+inline SparseNodeArray::const_iterator
+SparseNodeArray::begin() const
+{
+  return nodes_.begin();
+}
+
 } // namespace nest
 
 

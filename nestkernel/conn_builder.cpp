@@ -891,13 +891,13 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   conn_spec.update_value( names::p, p_ );
 
   // PYTEST-NG: Consider cleaner scheme for handling size_t vs long
-  long pool_size_tmp = static_cast< long >( pool_size_ );
-  conn_spec.update_value( names::pool_size, pool_size_tmp );
+  size_t pool_size_tmp = pool_size_;
+  conn_spec.update_value( names::pool_size, pool_size_ );
   if ( pool_size_tmp < 1 or third->size() < pool_size_tmp )
   {
     throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
   }
-  pool_size_ = static_cast< size_t >( pool_size_tmp );
+  pool_size_ = pool_size_tmp;
 
   std::string pool_type;
   if ( conn_spec.update_value( names::pool_type, pool_type ) )

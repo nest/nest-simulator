@@ -22,6 +22,8 @@
 
 // Includes from nestkernel:
 #include "recording_backend_memory.h"
+
+#include "event.h"
 #include "recording_device.h"
 #include "simulation_manager.h"
 

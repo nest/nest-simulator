@@ -23,9 +23,6 @@
 #ifndef CONN_BUILDER_FACTORY_H
 #define CONN_BUILDER_FACTORY_H
 
-// C++ includes:
-#include <map>
-
 // Includes from nestkernel:
 #include "conn_builder.h"
 

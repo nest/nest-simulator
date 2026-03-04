@@ -40,6 +40,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "logging_manager.h"
+#include "nest_names.h"
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"

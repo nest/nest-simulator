@@ -31,6 +31,7 @@
 
 // Includes from thirdparty:
 #include "compose.hpp"
+#include "nest_names.h"
 
 
 nest::LoggingManager::LoggingManager()

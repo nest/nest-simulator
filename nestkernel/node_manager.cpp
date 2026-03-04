@@ -40,6 +40,7 @@
 #include "model_manager.h"
 #include "modelrange_manager.h"
 #include "node.h"
+#include "secondary_event_impl.h"
 #include "vp_manager.h"
 
 
@@ -402,32 +403,6 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
   return nodecollection;
 }
 
-[[gnu::always_inline]] bool
-NodeManager::is_local_node( Node* n ) const
-{
-  return kernel::manager< VPManager >.is_local_vp( n->get_vp() );
-}
-
-[[gnu::always_inline]] bool
-NodeManager::is_local_node_id( size_t node_id ) const
-{
-  const size_t vp = kernel::manager< VPManager >.node_id_to_vp( node_id );
-  return kernel::manager< VPManager >.is_local_vp( vp );
-}
-
-[[gnu::always_inline]] size_t
-NodeManager::get_max_num_local_nodes() const
-{
-  return static_cast< size_t >(
-    ceil( static_cast< double >( size() ) / kernel::manager< VPManager >.get_num_virtual_processes() ) );
-}
-
-[[gnu::always_inline]] size_t
-NodeManager::get_num_thread_local_devices( size_t t ) const
-{
-  return num_thread_local_devices_[ t ];
-}
-
 Node*
 NodeManager::get_node_or_proxy( size_t node_id, size_t t )
 {
@@ -587,15 +562,6 @@ NodeManager::set_status_single_node_( Node& target, const Dictionary& d, bool cl
     // but can have some execution time overhead.
     d.all_entries_accessed( "NodeManager::set_status", "params" );
   }
-}
-
-[[gnu::always_inline]] void
-NodeManager::prepare_node_( Node* n )
-{
-  // Frozen nodes are initialized and calibrated, so that they
-  // have ring buffers and can accept incoming spikes.
-  n->init();
-  n->pre_run_hook();
 }
 
 void
@@ -762,48 +728,6 @@ void
 NodeManager::set_have_nodes_changed( const bool changed )
 {
   have_nodes_changed_ = changed;
-}
-
-[[gnu::always_inline]] bool
-NodeManager::have_nodes_changed() const
-{
-  return have_nodes_changed_;
-}
-
-[[gnu::always_inline]] const SparseNodeArray&
-NodeManager::get_local_nodes( size_t t ) const
-{
-  return local_nodes_[ t ];
-}
-
-[[gnu::always_inline]] bool
-NodeManager::wfr_is_used() const
-{
-  return wfr_is_used_;
-}
-
-[[gnu::always_inline]] const std::vector< Node* >&
-NodeManager::get_wfr_nodes_on_thread( size_t t ) const
-{
-  return wfr_nodes_vec_.at( t );
-}
-
-[[gnu::always_inline]] Node*
-NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
-{
-  return local_nodes_[ t ].get_node_by_index( thread_local_id );
-}
-
-[[gnu::always_inline]] size_t
-NodeManager::size() const
-{
-  return local_nodes_[ 0 ].get_max_node_id();
-}
-
-[[gnu::always_inline]] size_t
-NodeManager::get_num_active_nodes()
-{
-  return num_active_nodes_;
 }
 
 } // namespace nest

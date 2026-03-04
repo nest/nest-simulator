@@ -25,6 +25,7 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "event_delivery_manager_impl.h"
+#include "recording_backend.h"
 
 namespace nest
 {

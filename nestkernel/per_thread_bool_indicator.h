@@ -25,12 +25,9 @@
 
 // C++ includes:
 #include <atomic>
-#include <cassert>
-#include <cstddef>
 #include <cstdint>
 
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "vp_manager.h"
 
 

@@ -34,9 +34,7 @@
 #include "device.h"
 #include "device_node.h"
 #include "kernel_manager.h"
-#include "nest_types.h"
 #include "node.h"
-#include "recording_backend.h"
 
 
 namespace nest

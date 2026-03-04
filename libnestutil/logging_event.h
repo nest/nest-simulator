@@ -25,11 +25,10 @@
 #define LOGGING_EVENT_H
 
 // C++ includes:
-#include <ostream>
 #include <string>
 
 // Includes from libnestutil:
-#include "logging.h"
+#include "logging_manager.h"
 
 namespace nest
 {

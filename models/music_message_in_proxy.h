@@ -43,6 +43,7 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
+#include "nest_names.h"
 #include "nest_types.h"
 
 

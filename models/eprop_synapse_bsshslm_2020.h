@@ -581,7 +581,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( Dictionary& d ) con
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::tau_m_readout ] = tau_m_readout_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 
   Dictionary optimizer_dict;
 

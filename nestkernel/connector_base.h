@@ -255,7 +255,7 @@ public:
 
     // get target node ID here, where tid is available
     // necessary for hpc synapses using TargetIdentifierIndex
-    dict[ names::target ] = C_[ lcid ].get_target( tid )->get_node_id();
+    dict[ names::target ] = std::vector< long >( C_[ lcid ].get_target( tid )->get_node_id() );
   }
 
   void

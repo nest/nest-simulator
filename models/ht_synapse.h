@@ -245,7 +245,7 @@ ht_synapse< targetidentifierT >::get_status( Dictionary& d ) const
   d[ names::tau_P ] = tau_P_;
   d[ names::delta_P ] = delta_P_;
   d[ names::P ] = p_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

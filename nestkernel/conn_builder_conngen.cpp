@@ -100,8 +100,8 @@ ConnectionGeneratorBuilder::connect_()
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
-    const size_t d_idx = params_map_.get< size_t >( names::delay );
-    const size_t w_idx = params_map_.get< size_t >( names::weight );
+    const size_t d_idx = params_map_.get< long >( names::delay );
+    const size_t w_idx = params_map_.get< long >( names::weight );
 
     const bool d_idx_is_0_or_1 = d_idx == 0 or ( d_idx == 1 );
     const bool w_idx_is_0_or_1 = w_idx == 0 or ( w_idx == 1 );

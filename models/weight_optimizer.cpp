@@ -54,7 +54,7 @@ void
 WeightOptimizerCommonProperties::get_status( Dictionary& d ) const
 {
   d[ names::optimizer ] = get_name();
-  d[ names::batch_size ] = batch_size_;
+  d[ names::batch_size ] = std::vector< long >( batch_size_ );
   d[ names::eta ] = eta_;
   d[ names::Wmin ] = Wmin_;
   d[ names::Wmax ] = Wmax_;

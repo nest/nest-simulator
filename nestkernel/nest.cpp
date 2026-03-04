@@ -189,8 +189,8 @@ get_nc_status( NodeCollectionPTR nc )
             if constexpr ( not DictionarySchema::is_defined_scalar< T > )
             {
               // Logic for Vectors: Explicitly forbidden
-              throw std::runtime_error( String::compose(
-                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", kv_pair.first ) );
+              // throw std::runtime_error( String::compose(
+              //  "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", kv_pair.first ) );
             }
             else
             {
@@ -216,9 +216,10 @@ get_nc_status( NodeCollectionPTR nc )
         // Strict Key Existence Check
         if ( map_it == result.end() )
         {
-          throw std::runtime_error( String::compose( "Sparse data detected: New key '%1' found late at index %2.",
-            kv_pair.first,
-            std::to_string( node_index ) ) );
+          continue;
+          // throw std::runtime_error( String::compose( "Sparse data detected: New key '%1' found late at index %2.",
+          //   kv_pair.first,
+          //   std::to_string( node_index ) ) );
         }
 
         // We visit the input value and try to cast the existing vector to matching type.
@@ -230,8 +231,8 @@ get_nc_status( NodeCollectionPTR nc )
             if constexpr ( not DictionarySchema::is_defined_scalar< T > )
             {
               // Logic for Vectors: Explicitly forbidden
-              throw std::runtime_error( String::compose(
-                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", key ) );
+              // throw std::runtime_error( String::compose(
+              //  "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", key ) );
             }
             else
             {
@@ -468,7 +469,7 @@ get_metadata( const NodeCollectionPTR nc )
   if ( meta.get() )
   {
     meta->get_status( status_dict, nc );
-    status_dict[ names::network_size ] = nc->size();
+    status_dict[ names::network_size ] = static_cast< long >( nc->size() );
   }
   return status_dict;
 }

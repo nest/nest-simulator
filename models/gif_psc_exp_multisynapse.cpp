@@ -114,7 +114,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
   d[ names::t_ref ] = t_ref_;
 
-  d[ names::n_receptors ] = n_receptors_();
+  d[ names::n_receptors ] = std::vector< long >( n_receptors_() );
   d[ names::has_connections ] = has_connections_;
 
   d[ names::tau_syn ] = tau_syn_;

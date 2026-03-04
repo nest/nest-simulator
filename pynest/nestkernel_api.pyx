@@ -142,16 +142,16 @@ cdef object dictionary_to_pydict(Dictionary cdict):
 cdef object any_to_pyobj(any_type operand):
     if holds_alternative[int](operand):
         return get[int](operand)
-    if holds_alternative[uint](operand):
-        return get[uint](operand)
+    #if holds_alternative[uint](operand):
+    #    return get[uint](operand)
     if holds_alternative[long](operand):
         return get[long](operand)
-    if holds_alternative[size_t](operand):
-        return get[size_t](operand)
-    if holds_alternative[uint64_t](operand):
-        return get[uint64_t](operand)
-    if holds_alternative[int64_t](operand):
-        return get[int64_t](operand)
+    #if holds_alternative[size_t](operand):
+    #    return get[size_t](operand)
+    #if holds_alternative[uint64_t](operand):
+    #    return get[uint64_t](operand)
+    #if holds_alternative[int64_t](operand):
+    #    return get[int64_t](operand)
     if holds_alternative[double](operand):
         return get[double](operand)
     if holds_alternative[cbool](operand):
@@ -162,8 +162,10 @@ cdef object any_to_pyobj(any_type operand):
         return numpy.array(get[vector[int]](operand))
     if holds_alternative[vector[long]](operand):
         return numpy.array(get[vector[long]](operand))
-    if holds_alternative[vector[size_t]](operand):
-        return numpy.array(get[vector[size_t]](operand))
+    if holds_alternative[vector[cbool]](operand):
+        return numpy.array(get[vector[cbool]](operand))
+    #if holds_alternative[vector[size_t]](operand):
+    #    return numpy.array(get[vector[size_t]](operand))
     if holds_alternative[vector[double]](operand):
         return numpy.array(get[vector[double]](operand))
     if holds_alternative[vector[vector[double]]](operand):
@@ -584,13 +586,14 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 
 
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
-    cdef Dictionary statuses = get_nc_status(nc.thisptr)
+    #cdef Dictionary statuses = get_nc_status(nc.thisptr)
+    statuses = dictionary_to_pydict( get_nc_status(nc.thisptr) )
     if key is None:
-        return dictionary_to_pydict(statuses)
+        return statuses #dictionary_to_pydict(statuses)
     elif isinstance(key, str):
-        if not statuses.known(pystr_to_string(key)):
+        if key not in statuses:    #.known(pystr_to_string(key)):
             raise KeyError(key)
-        value = any_to_pyobj(statuses[pystr_to_string(key)])
+        value = statuses[key]  #pystr_to_string(key)])
         # PYNEST-NG-FUTURE: This is backwards-compatible, but makes it harder
         # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value

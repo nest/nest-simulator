@@ -127,7 +127,7 @@ iaf_psc_alpha_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::tau_m ] = Tau_;
   d[ names::t_ref ] = refractory_time_;
   d[ names::V_min ] = LowerBound_ + E_L_;
-  d[ names::n_synapses ] = n_receptors_();
+  d[ names::n_synapses ] = std::vector< long >( n_receptors_() );
   d[ names::has_connections ] = has_connections_;
   d[ names::tau_syn ] = tau_syn_;
 }

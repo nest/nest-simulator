@@ -217,7 +217,7 @@ nest::ConnectionManager::get_status( Dictionary& dict )
   dict[ names::max_delay ] = Time( Time::step( max_delay_ ) ).get_ms();
 
   const size_t n = get_num_connections();
-  dict[ names::num_connections ] = n;
+  dict[ names::num_connections ] = static_cast< long >( n );
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
 
@@ -241,11 +241,11 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   Dictionary dict;
-  dict[ names::source ] = source_node_id;
+  dict[ names::source ] = static_cast< long >( source_node_id );
   dict[ names::synapse_model ] = kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name();
-  dict[ names::target_thread ] = tid;
-  dict[ names::synapse_id ] = syn_id;
-  dict[ names::port ] = lcid;
+  dict[ names::target_thread ] = static_cast< long >( tid );
+  dict[ names::synapse_id ] = static_cast< long >( syn_id );
+  dict[ names::port ] = static_cast< long >( lcid );
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -392,7 +392,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
     throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
   }
 
-  const size_t rule_id = connruledict_.get< size_t >( name );
+  const size_t rule_id = connruledict_.get< long >( name );
   BipartiteConnBuilder* cb =
     connbuilder_factories_.at( rule_id )->create( sources, targets, third_out, conn_spec, syn_specs );
   assert( cb );
@@ -412,7 +412,7 @@ nest::ConnectionManager::get_third_conn_builder( const std::string& name,
     throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
   }
 
-  const size_t rule_id = thirdconnruledict_.get< size_t >( name );
+  const size_t rule_id = thirdconnruledict_.get< long >( name );
   ThirdOutBuilder* cb =
     thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );
   assert( cb );

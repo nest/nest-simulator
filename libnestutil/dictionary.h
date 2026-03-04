@@ -72,13 +72,13 @@ struct DictionarySchemaBuilder
     >;
 };
 
-using DictionarySchema =
-  DictionarySchemaBuilder< size_t, long, int, unsigned int, double, bool, std::string, Dictionary >;
+using DictionarySchema = DictionarySchemaBuilder< int, long, double, bool, std::string, Dictionary >;
 
 using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeCollection >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
   EmptyList,
+  // std::vector< std::string >,
   std::vector< std::vector< long > >,
   std::vector< std::vector< double > >,
   std::vector< std::vector< std::vector< long > > >,

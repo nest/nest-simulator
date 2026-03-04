@@ -131,7 +131,7 @@ ModelManager::get_status( Dictionary& dict )
 
   // syn_ids start at 0. But because the maximal value is used as invalid_synindex,
   // we only have MAX_SYN_ID possible models.
-  dict[ names::max_num_syn_models ] = MAX_SYN_ID;
+  dict[ names::max_num_syn_models ] = static_cast< long >( MAX_SYN_ID );
 }
 
 void
@@ -144,12 +144,12 @@ ModelManager::copy_model( const std::string& old_name, const std::string& new_na
 
   if ( modeldict_.known( old_name ) )
   {
-    const size_t old_id = modeldict_.get< size_t >( old_name );
+    const size_t old_id = modeldict_.get< long >( old_name );
     copy_node_model_( old_id, new_name, params );
   }
   else if ( synapsedict_.known( old_name ) )
   {
-    const size_t old_id = synapsedict_.get< size_t >( old_name );
+    const size_t old_id = synapsedict_.get< long >( old_name );
     copy_connection_model_( old_id, new_name, params );
   }
   else
@@ -171,7 +171,7 @@ ModelManager::register_node_model_( Model* model )
   model->set_threads();
 
   node_models_.push_back( model );
-  modeldict_[ name ] = id;
+  modeldict_[ name ] = static_cast< long >( id );
 
 #pragma omp parallel
   {
@@ -193,7 +193,7 @@ ModelManager::copy_node_model_( const size_t old_id, const std::string& new_name
   new_model->set_model_id( new_id );
 
   node_models_.push_back( new_model );
-  modeldict_[ new_name ] = new_id;
+  modeldict_[ new_name ] = static_cast< long >( new_id );
 
   set_node_defaults_( new_id, params );
 
@@ -219,7 +219,7 @@ ModelManager::copy_connection_model_( const size_t old_id, const std::string& ne
     throw KernelException( "Synapse model count exceeded" );
   }
 
-  synapsedict_[ new_name ] = new_id;
+  synapsedict_[ new_name ] = static_cast< long >( new_id );
 
 #pragma omp parallel
   {
@@ -239,13 +239,13 @@ ModelManager::set_model_defaults( const std::string& name, const Dictionary& par
   size_t id;
   if ( modeldict_.known( name ) )
   {
-    id = modeldict_.get< size_t >( name );
+    id = modeldict_.get< long >( name );
     set_node_defaults_( id, params );
     return true;
   }
   else if ( synapsedict_.known( name ) )
   {
-    id = synapsedict_.get< synindex >( name );
+    id = synapsedict_.get< long >( name );
     set_synapse_defaults_( id, params );
     return true;
   }
@@ -311,7 +311,7 @@ ModelManager::get_node_model_id( const std::string model_name ) const
 {
   if ( modeldict_.known( model_name ) )
   {
-    return modeldict_.get< size_t >( model_name );
+    return modeldict_.get< long >( model_name );
   }
 
   throw UnknownModelName( model_name );
@@ -322,7 +322,7 @@ ModelManager::get_synapse_model_id( std::string model_name )
 {
   if ( synapsedict_.known( model_name ) )
   {
-    return synapsedict_.get< synindex >( model_name );
+    return synapsedict_.get< long >( model_name );
   }
 
   throw UnknownSynapseType( model_name );
@@ -342,7 +342,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     connection_models_[ t ][ syn_id ]->get_status( dict );
   }
 
-  dict[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  dict[ names::num_connections ] = static_cast< long >( kernel().connection_manager.get_num_connections( syn_id ) );
   dict[ names::element_type ] = std::string( "synapse" );
 
   return dict;

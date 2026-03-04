@@ -123,7 +123,7 @@ nest::SourceTable::clean( const size_t tid )
     for ( synindex syn_id = max_position.syn_id; syn_id < sources_[ tid ].size(); ++syn_id )
     {
       BlockVector< Source >& sources = sources_[ tid ][ syn_id ];
-      if ( max_position.syn_id == syn_id )
+      if ( max_position.syn_id == static_cast< long >( syn_id ) )
       {
         // we need to add 2 to max_position.lcid since
         // max_position.lcid + 1 can contain a valid entry which we
@@ -135,7 +135,7 @@ nest::SourceTable::clean( const size_t tid )
       }
       else
       {
-        assert( max_position.syn_id < syn_id );
+        assert( max_position.syn_id < static_cast< long >( syn_id ) );
         sources.clear();
       }
     }

@@ -96,11 +96,6 @@ SpikeEvent::SpikeEvent()
 {
 }
 
-void
-Event::set_drift_factor( double )
-{
-}
-
 Event::~Event()
 {
 }

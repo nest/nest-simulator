@@ -24,18 +24,13 @@
 #define SPIN_DETECTOR_H
 
 
-// C++ includes:
-#include <vector>
-
 // Includes from nestkernel:
-#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "nest_names.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "recording_device.h"
-
-#include <nest_names.h>
 
 namespace nest
 {

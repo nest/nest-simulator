@@ -281,12 +281,18 @@ public:
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( double );
+  virtual void
+  set_drift_factor( double )
+  {
+  }
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_diffusion_factor( double ) {};
+  virtual void
+  set_diffusion_factor( double )
+  {
+  }
 
   /**
    * Returns true if the pointer to the sender node is valid.
@@ -749,11 +755,6 @@ ConductanceEvent::operator()()
   receiver_->handle( *this );
 }
 
-inline void
-DoubleDataEvent::operator()()
-{
-  receiver_->handle( *this );
-}
 
 inline void
 DataLoggingRequest::operator()()
@@ -917,12 +918,6 @@ Event::sender_is_valid() const
   return sender_;
 }
 
-inline DoubleDataEvent*
-DoubleDataEvent::clone() const
-{
-  return new DoubleDataEvent( *this );
-}
-
 
 inline double
 ConductanceEvent::get_conductance() const
@@ -1062,6 +1057,19 @@ SpikeEvent::clone() const
 {
   return new SpikeEvent( *this );
 }
+
+inline void
+DoubleDataEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+inline DoubleDataEvent*
+DoubleDataEvent::clone() const
+{
+  return new DoubleDataEvent( *this );
+}
+
 
 }
 

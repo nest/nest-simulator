@@ -106,9 +106,11 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
     exit 1
 fi
 
+PYTHON_VERSION="$(python --version | cut -d' ' -f 2)"
+NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION%.*}/site-packages"
+export PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"
+
 # source helpers to set environment variables and make functions available
-NEST_PY_PATH="$(${PYTHON} -c "import sysconfig; print(sysconfig.get_path('platlib'))")"
-PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"
 # shellcheck source=testsuite/junit_xml.sh
 . "$(dirname "$0")/junit_xml.sh"
 # shellcheck source=testsuite/run_test.sh

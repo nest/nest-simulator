@@ -45,11 +45,16 @@ Synaptic dynamics are given by
 
 .. math::
 
-    P'(t) = ( 1 - P ) / \tau_P  \\
-    P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
-    P(t=0) = 1
+    \frac{dP(t)}{dt} &= \frac{1}{\tau_\mathrm{P}} \left( 1 - P \right)  \\
+    P(t=0) &= 1 \\
 
-:math:`w(t) = w_{max} \cdot P(t)`   is the resulting synaptic weight
+Upon the arrival of a presynaptic spike at time :math:`t_\mathrm{sp}`, the value of :math:`P` is updated as follows:
+
+.. math::
+
+    P \leftarrow (1 - \delta_\mathrm{P}) P
+
+:math:`w(t) = w_\mathrm{max} \cdot P(t)` is the resulting synaptic weight.
 
 For implementation details see:
 `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
@@ -70,7 +75,7 @@ The following parameters can be set in the status dictionary:
  tau_P    ms      Synaptic vesicle pool recovery time constant
  delta_P  real    Fractional change in vesicle pool on incoming spikes
                   (unitless)
- P        real    Current size of the vesicle pool [unitless, 0 <= P <= 1]
+ P        real    Current size of the vesicle pool (unitless, 0 <= P <= 1)
 ========  ======  =========================================================
 
 References

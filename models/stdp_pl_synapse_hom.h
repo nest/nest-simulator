@@ -71,7 +71,7 @@ References
 ++++++++++
 
 .. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
-       plasticity in balanced random networks. Neural Computation,
+       plasticity in balanced random netrks. Neural Computation,
        19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
 
 Transmits

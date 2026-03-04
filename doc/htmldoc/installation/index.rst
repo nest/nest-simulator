@@ -12,8 +12,7 @@ Install and run NEST
 
        You can ``pip install nest-simulator``
 
-       See our :ref`detailed instructions` including installing NEST with
-       |nestml| and |desktop|.
+       See our :ref`detailed instructions here <pip_install>`
 
        .. dropdown:: Other options for pre-packaged NEST
           :class-title: sd-font-weight-light sd-fs-7 sd-text-secondary

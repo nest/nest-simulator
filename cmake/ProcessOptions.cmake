@@ -173,9 +173,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
 
     # Note: "$ORIGIN" (on Linux) and "@loader_path" (on MacOS) are not CMake variables, but special keywords for the
     # Linux resp. the macOS dynamic loader. They refer to the path in which the object is located, e.g.
-    # ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest executables, ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all
-    # dynamic libraries except PyNEST (libnestkernel.so, etc.), and  something like
-    # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
+    # ``${CMAKE_INSTALL_PREFIX}/bin`` for helper scripts and  something like
+# ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``nestkernel_api.so``. The RPATH is relative to
     # this origin, so the binary ``bin/nest`` can find the files in the relative location ``../lib/nest``, and
     # similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities on all generated
     # objects.

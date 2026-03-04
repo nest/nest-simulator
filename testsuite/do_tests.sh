@@ -111,8 +111,6 @@ fi
 . "${PREFIX}/bin/nest_vars.sh"
 # shellcheck source=testsuite/junit_xml.sh
 . "$(dirname "$0")/junit_xml.sh"
-# shellcheck source=testsuite/run_test.sh
-. "$(dirname "$0")/run_test.sh"
 
 # Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
@@ -124,8 +122,6 @@ REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
-TEST_RETFILE="${REPORTDIR}/output.ret"
-TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
 get_build_info ()
 {

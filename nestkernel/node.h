@@ -80,23 +80,19 @@ class WeightOptimizer;
  * @ingroup user_interface
  */
 
-/** @BeginDocumentation
-
-   Name: Node - General properties of all nodes.
-
-   Parameters:
-   frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The node ID of the node (cf. local_id)
-   local      booltype    - Whether the node is available on the local process
-   model      literaltype - The model type the node was created from
-   state      integertype - The state of the node (see the help on elementstates
-                            for details)
-   thread     integertype - The id of the thread the node is assigned to (valid
-                            locally)
-   vp         integertype - The id of the virtual process the node is assigned
-                            to (valid globally)
-
-   SeeAlso: GetStatus, SetStatus, elementstates
+/**
+ * General properties of all nodes.
+ *
+ * Parameters:
+ * - frozen     (bool)   - Whether the node is updated during simulation
+ * - global_id  (int)    - The node ID of the node (cf. local_id)
+ * - local      (bool)   - Whether the node is available on the local process
+ * - model      (string) - The model type the node was created from
+ * - state      (int)    - The state of the node (see elementstates for details)
+ * - thread     (int)    - The id of the thread the node is assigned to (valid locally)
+ * - vp         (int)    - The id of the virtual process the node is assigned to (valid globally)
+ *
+ * @see GetStatus, SetStatus
  */
 
 class Node
@@ -172,7 +168,7 @@ public:
    *
    * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
-   * the model in the interpreter's model dictionary.
+   * the model in the NEST model registry.
    */
   std::string get_name() const;
 
@@ -319,14 +315,13 @@ public:
    * @defgroup status_interface Configuration interface.
    *
    * Functions and infrastructure, responsible for the configuration
-   * of Nodes from the SLI Interpreter level.
+   * of Nodes via the PyNEST API.
    *
-   * Each node can be configured from the SLI level through a named
-   * parameter interface. In order to change parameters, the user
-   * can specify name value pairs for each parameter. These pairs
-   * are stored in a data structure which is called Dictionary.
-   * Likewise, the user can query the configuration of any node by
-   * requesting a dictionary with name value pairs.
+   * Each node can be configured through a named parameter interface.
+   * In order to change parameters, the user can specify name-value pairs
+   * for each parameter. These pairs are stored in a data structure which
+   * is called Dictionary. Likewise, the user can query the configuration
+   * of any node by requesting a dictionary with name-value pairs.
    *
    * The configuration interface consists of four functions which
    * implement storage and retrieval of named parameter sets.

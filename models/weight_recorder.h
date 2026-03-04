@@ -168,6 +168,6 @@ weight_recorder::receives_signal() const
   return ALL;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef WEIGHT_RECORDER_H */

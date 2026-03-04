@@ -145,5 +145,5 @@ ClopathArchivingNode::get_theta_minus() const
   return theta_minus_;
 }
 
-} // of namespace
+}  // of namespace
 #endif

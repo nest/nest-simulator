@@ -576,6 +576,6 @@ eprop_readout::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_READOUT_H
+#endif  // EPROP_READOUT_H

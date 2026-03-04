@@ -191,8 +191,8 @@ mod_inverse( long a, long m )
   // ensure positive result
   s_1 = ( s_1 + m_orig ) % m_orig;
 
-  assert( m == 1 );                         // gcd() == 1 required
-  assert( ( a_orig * s_1 ) % m_orig == 1 ); // self-test
+  assert( m == 1 );                          // gcd() == 1 required
+  assert( ( a_orig * s_1 ) % m_orig == 1 );  // self-test
 
   return s_1;
 }
@@ -259,7 +259,7 @@ first_index( long period, long phase0, long step, long phase )
 
   if ( d_phase % d != 0 )
   {
-    return nest::invalid_index; // no solution exists
+    return nest::invalid_index;  // no solution exists
   }
 
   // Scale by GCD, since modular inverse requires gcd==1

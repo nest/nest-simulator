@@ -76,7 +76,7 @@ nest::MPIManager::get_process_id_of_node_id( const size_t node_id ) const
   return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
 
-#else // HAVE_MPI
+#else  // HAVE_MPI
 
 
 inline size_t

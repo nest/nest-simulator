@@ -58,6 +58,6 @@ update_value_param( Dictionary const& d, const std::string& key, T& value, nest:
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // DICT_UTIL_H
+#endif  // DICT_UTIL_H

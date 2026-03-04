@@ -571,6 +571,6 @@ eprop_iaf_bsshslm_2020::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_IAF_BSSHSLM_2020_H
+#endif  // EPROP_IAF_BSSHSLM_2020_H

@@ -169,7 +169,7 @@ nest::pulsepacket_generator::update( Time const& T, const long, const long to )
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
   {
-    return; // nothing left to do
+    return;  // nothing left to do
   }
 
   // determine next pulse-center times (around sdev*tolerance window)
@@ -234,7 +234,7 @@ nest::pulsepacket_generator::update( Time const& T, const long, const long to )
 void
 nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

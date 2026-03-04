@@ -47,7 +47,7 @@
 
 nest::RecordablesMap< nest::aeif_cond_alpha_astro > nest::aeif_cond_alpha_astro::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_aeif_cond_alpha_astro( const std::string& name )
@@ -131,22 +131,22 @@ nest::aeif_cond_alpha_astro_dynamics( double, const double y[], double f[], void
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha_astro::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV
-  , tau_syn_ex( 0.2 ) // ms
-  , tau_syn_in( 2.0 ) // ms
-  , I_e( 0.0 )        // pA
+  : V_peak_( 0.0 )     // mV
+  , V_reset_( -60.0 )  // mV
+  , t_ref_( 0.0 )      // ms
+  , g_L( 30.0 )        // nS
+  , C_m( 281.0 )       // pF
+  , E_ex( 0.0 )        // mV
+  , E_in( -85.0 )      // mV
+  , E_L( -70.6 )       // mV
+  , Delta_T( 2.0 )     // mV
+  , tau_w( 144.0 )     // ms
+  , a( 4.0 )           // nS
+  , b( 80.5 )          // pA
+  , V_th( -50.4 )      // mV
+  , tau_syn_ex( 0.2 )  // ms
+  , tau_syn_in( 2.0 )  // ms
+  , I_e( 0.0 )         // pA
   , gsl_error_tol( 1e-6 )
 {
 }
@@ -374,18 +374,18 @@ nest::aeif_cond_alpha_astro::~aeif_cond_alpha_astro()
 void
 nest::aeif_cond_alpha_astro::init_buffers_()
 {
-  B_.spike_exc_.clear();    // includes resize
-  B_.spike_inh_.clear();    // includes resize
-  B_.currents_.clear();     // includes resize
-  B_.sic_currents_.clear(); // includes resize
+  B_.spike_exc_.clear();     // includes resize
+  B_.spike_inh_.clear();     // includes resize
+  B_.currents_.clear();      // includes resize
+  B_.sic_currents_.clear();  // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.s_ )
   {
@@ -436,7 +436,7 @@ nest::aeif_cond_alpha_astro::pre_run_hook()
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak = P_.V_th;  // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
@@ -475,11 +475,11 @@ nest::aeif_cond_alpha_astro::update( Time const& origin, const long from, const 
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -500,7 +500,7 @@ nest::aeif_cond_alpha_astro::update( Time const& origin, const long from, const 
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;  // spike-driven adaptation
 
         /* Initialize refractory step counter.
          * - We need to add 1 to compensate for count-down immediately after
@@ -585,4 +585,4 @@ nest::aeif_cond_alpha_astro::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

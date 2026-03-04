@@ -221,18 +221,14 @@ class TestRefractoryCase(unittest.TestCase):
                     t_ref_sim,
                     places=3,
                     msg="""Error in model {}:
-                                       {} != {}""".format(
-                        model, t_ref, t_ref_sim
-                    ),
+                                       {} != {}""".format(model, t_ref, t_ref_sim),
                 )
             else:
                 self.assertAlmostEqual(
                     t_ref,
                     t_ref_sim,
                     msg="""Error in model {}:
-                                       {} != {}""".format(
-                        model, t_ref, t_ref_sim
-                    ),
+                                       {} != {}""".format(model, t_ref, t_ref_sim),
                 )
 
 

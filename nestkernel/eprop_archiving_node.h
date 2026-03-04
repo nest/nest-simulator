@@ -149,6 +149,6 @@ protected:
   const long delay_out_rec_ = 1;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_ARCHIVING_NODE_H
+#endif  // EPROP_ARCHIVING_NODE_H

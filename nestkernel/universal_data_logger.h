@@ -189,13 +189,13 @@ private:
     void init();
 
   private:
-    size_t multimeter_; //!< node ID of multimeter for which the logger works
-    size_t num_vars_;   //!< number of variables recorded
+    size_t multimeter_;  //!< node ID of multimeter for which the logger works
+    size_t num_vars_;    //!< number of variables recorded
 
-    Time recording_interval_; //!< interval between two recordings
-    Time recording_offset_;   //!< offset relative to which interval is calculated
-    long rec_int_steps_;      //!< interval in steps
-    long next_rec_step_;      //!< next time step at which to record
+    Time recording_interval_;  //!< interval between two recordings
+    Time recording_offset_;    //!< offset relative to which interval is calculated
+    long rec_int_steps_;       //!< interval in steps
+    long next_rec_step_;       //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
     std::vector< typename RecordablesMap< HostNode >::DataAccessFct > node_access_;
@@ -214,7 +214,7 @@ private:
     std::vector< size_t > next_rec_;
   };
 
-  HostNode& host_; //!< node to which logger belongs
+  HostNode& host_;  //!< node to which logger belongs
 
   /**
    * Data loggers, one per connected multimeter.
@@ -273,9 +273,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
-  , next_rec_step_( -1 )
-  , // flag as uninitialized
-  node_access_()
+  , next_rec_step_( -1 )  // flag as uninitialized
+  , node_access_()
   , data_()
   , next_rec_( 2, 0 )
 {
@@ -450,13 +449,13 @@ private:
     void init();
 
   private:
-    size_t multimeter_; //!< node ID of multimeter for which the logger works
-    size_t num_vars_;   //!< number of variables recorded
+    size_t multimeter_;  //!< node ID of multimeter for which the logger works
+    size_t num_vars_;    //!< number of variables recorded
 
-    Time recording_interval_; //!< interval between two recordings
-    Time recording_offset_;   //!< offset relative to which interval is calculated
-    long rec_int_steps_;      //!< interval in steps
-    long next_rec_step_;      //!< next time step at which to record
+    Time recording_interval_;  //!< interval between two recordings
+    Time recording_offset_;    //!< offset relative to which interval is calculated
+    long rec_int_steps_;       //!< interval in steps
+    long next_rec_step_;       //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
     std::vector< const typename DynamicRecordablesMap< HostNode >::DataAccessFct* > node_access_;
@@ -475,7 +474,7 @@ private:
     std::vector< size_t > next_rec_;
   };
 
-  HostNode& host_; //!< node to which logger belongs
+  HostNode& host_;  //!< node to which logger belongs
 
   /**
    * Data loggers, one per connected multimeter.
@@ -536,7 +535,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
   , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
   , next_rec_step_( -1 )
-  , // flag as uninitialized
+  ,  // flag as uninitialized
   node_access_()
   , data_()
   , next_rec_( 2, 0 )
@@ -568,6 +567,6 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
   recording_offset_ = req.get_recording_offset();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef UNIVERSAL_DATA_LOGGER_H */

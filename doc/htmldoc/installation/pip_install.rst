@@ -84,7 +84,7 @@ You can also install with extra packages using the ``#egg=`` syntax:
 
 .. code-block:: bash
 
-   # Install with all extras
+   # Install with all extras (see pyproject.toml to view what's installed)
    pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[full]"
 
    # Install with specific extras
@@ -108,7 +108,7 @@ To install from a local copy of the NEST repository:
    # Install in editable mode (recommended for development)
    pip install -e .
 
-   # Install with extras
+   # Install with extras (see pyproject.toml to view what's installed)
    pip install -e ".[full]"
    pip install -e ".[sonata,server]"
 

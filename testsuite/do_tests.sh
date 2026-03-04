@@ -107,7 +107,10 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
 fi
 
 # Set PATH (for cpptests) and PYTHONPATH (for Python tests)
-export PATH="${PREFIX}/bin"
+set -x
+export PATH="${PREFIX}/bin${PATH:+:$PATH}"
+echo "PATH: ${PATH}"
+
 PYTHON_VERSION="$(python --version | cut -d' ' -f 2)"
 NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION%.*}/site-packages"
 export PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"

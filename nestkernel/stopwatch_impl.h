@@ -52,7 +52,7 @@ Stopwatch< detailed_timer, threaded_timer >::start()
       walltime_timer_.start();
       cputime_timer_.start();
     }
-  } // use_timer_array
+  } // use_timer_array and enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >

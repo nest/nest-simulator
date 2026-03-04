@@ -64,8 +64,8 @@ operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
 
   return lhs.get_head() < rhs.get_head();
 }
-} // namespace tuples
-} // namespace boost
+}  // namespace tuples
+}  // namespace boost
 
 /**
  * @brief Helper class holding type definitions.

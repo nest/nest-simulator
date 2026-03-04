@@ -126,4 +126,4 @@ nest::UrbanczikArchivingNode< urbanczik_parameters >::write_urbanczik_history( T
   }
 }
 
-} // of namespace nest
+}  // of namespace nest

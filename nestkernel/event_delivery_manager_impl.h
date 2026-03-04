@@ -163,9 +163,9 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
   }
   else
   {
-    send_local_( source, e, 0 ); // need to pass lag (last argument), but not
-                                 // used in template specialization, so pass
-                                 // zero as dummy value
+    send_local_( source, e, 0 );  // need to pass lag (last argument), but not
+                                  // used in template specialization, so pass
+                                  // zero as dummy value
   }
 }
 
@@ -176,6 +176,6 @@ EventDeliveryManager::write_toggle() const
 }
 
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

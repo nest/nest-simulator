@@ -271,7 +271,7 @@ nest::music_cont_out_proxy::pre_run_hook()
       new MUSIC::PermutationIndex( &music_index_map.front(), music_index_map.size() );
 
     MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, music_perm_ind );
+      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI_DOUBLE, music_perm_ind );
 
     // Setup an array map
     MP->map( dmap );
@@ -292,7 +292,7 @@ nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the
@@ -311,7 +311,7 @@ nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 void
 nest::music_cont_out_proxy::set_status( const Dictionary& d )
 {
-  P_.set( d, *this, S_, B_ ); // throws if BadProperty
+  P_.set( d, *this, S_, B_ );  // throws if BadProperty
 }
 
 void

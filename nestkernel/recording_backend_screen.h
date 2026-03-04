@@ -134,14 +134,14 @@ private:
     void restore_cout_();
     std::ios::fmtflags old_fmtflags_;
     long old_precision_;
-    long precision_;     //!< Number of decimal places used when writing decimal values
-    bool time_in_steps_; //!< Should time be recorded in steps (ms if false)
+    long precision_;      //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_;  //!< Should time be recorded in steps (ms if false)
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > device_data_map;
   device_data_map device_data_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_BACKEND_SCREEN_H */

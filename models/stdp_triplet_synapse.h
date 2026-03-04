@@ -380,6 +380,6 @@ stdp_triplet_synapse< targetidentifierT >::set_status( const Dictionary& d, Conn
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_TRIPLET_SYNAPSE_H
+#endif  // of #ifndef STDP_TRIPLET_SYNAPSE_H

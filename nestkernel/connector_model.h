@@ -141,9 +141,9 @@ public:
   }
 
 protected:
-  std::string name_;                     //!< name of the ConnectorModel
-  bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
-  ConnectionModelProperties properties_; //!< connection properties
+  std::string name_;                      //!< name of the ConnectorModel
+  bool default_delay_needs_check_;        //!< indicates whether the default delay must be checked
+  ConnectionModelProperties properties_;  //!< connection properties
 };
 
 
@@ -219,8 +219,8 @@ private:
     ConnectionT& c,
     const size_t receptor_type );
 
-}; // GenericConnectorModel
+};  // GenericConnectorModel
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef CONNECTOR_MODEL_H */

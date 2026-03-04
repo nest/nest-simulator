@@ -151,12 +151,12 @@ public:
   {
   }
 
-  void get( Dictionary& ) const;        //!< Store current values in dictionary
-  void set( const Dictionary&, Node* ); //!< Set values from dictionary
+  void get( Dictionary& ) const;         //!< Store current values in dictionary
+  void set( const Dictionary&, Node* );  //!< Set values from dictionary
 
-  double input( double h );               // non-linearity on input
-  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
-  double mult_coupling_in( double rate ); // factor of multiplicative coupling
+  double input( double h );                // non-linearity on input
+  double mult_coupling_ex( double rate );  // factor of multiplicative coupling
+  double mult_coupling_in( double rate );  // factor of multiplicative coupling
 };
 
 inline double
@@ -189,7 +189,7 @@ void RecordablesMap< gauss_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_gauss >::create();
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef GAUSS_RATE_H */

@@ -786,7 +786,8 @@ Position< D, T >::length() const
 }
 
 template < int D, class T >
-Position< D, T >::operator std::string() const
+Position< D, T >::
+operator std::string() const
 {
   std::stringstream ss;
   ss << *this;
@@ -821,6 +822,6 @@ operator<<( std::ostream& os, const Position< D, T >& pos )
   return os;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

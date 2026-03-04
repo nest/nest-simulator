@@ -169,45 +169,45 @@ protected:
   void update( Time const&, const long, const long );
 
 private:
-  struct State_; //!< Forward declarations
+  struct State_;  //!< Forward declarations
 
   struct Buffers_;
 
   struct Parameters_
   {
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Copy constructor for parameter values
 
-    Time interval_;                          //!< sampling interval, in ms
-    std::string port_name_;                  //!< the name of MUSIC port to connect to
-    std::vector< std::string > record_from_; //!< recordables to record from
-    NodeCollectionPTR targets_;              //!< nodes to be observed
+    Time interval_;                           //!< sampling interval, in ms
+    std::string port_name_;                   //!< the name of MUSIC port to connect to
+    std::vector< std::string > record_from_;  //!< recordables to record from
+    NodeCollectionPTR targets_;               //!< nodes to be observed
 
-    void get( Dictionary& ) const;                                              //!< Store current values in Dictionary
-    void set( const Dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;                                               //!< Store current values in Dictionary
+    void set( const Dictionary&, const Node&, const State_&, const Buffers_& );  //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    State_();                      //!< Sets default state value
-    State_( const State_& );       //!< Copy constructor for state values
-    bool published_;               //!< indicates whether this node has been published
-                                   //!< already with MUSIC
-    size_t port_width_;            //!< the width of the MUSIC port
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    State_();                       //!< Sets default state value
+    State_( const State_& );        //!< Copy constructor for state values
+    bool published_;                //!< indicates whether this node has been published
+                                    //!< already with MUSIC
+    size_t port_width_;             //!< the width of the MUSIC port
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
   };
 
   // ------------------------------------------------------------
 
   struct Buffers_
   {
-    Buffers_();                  //!< Initializes default buffer
-    Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
-    bool has_targets_;           //!< Indicates whether the proxy is recording from any
-                                 //! neurons or not
-    std::vector< double > data_; //!< Recorded data
+    Buffers_();                   //!< Initializes default buffer
+    Buffers_( const Buffers_& );  //!< Copy constructor for the data buffer
+    bool has_targets_;            //!< Indicates whether the proxy is recording from any
+                                  //! neurons or not
+    std::vector< double > data_;  //!< Recorded data
   };
 
   // ------------------------------------------------------------
@@ -229,7 +229,7 @@ nest::music_cont_out_proxy::calibrate_time( const TimeConverter& tc )
   P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef HAVE_MUSIC */
 #endif /* #ifndef MUSIC_CONT_OUT_PROXY_H */

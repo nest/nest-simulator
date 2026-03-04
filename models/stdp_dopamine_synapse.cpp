@@ -106,4 +106,4 @@ STDPDopaCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::tau_plus, tau_plus_ );
 }
 
-} // of namespace nest
+}  // of namespace nest

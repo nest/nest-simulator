@@ -180,14 +180,14 @@ private:
     Parameters_();
     void get( Dictionary& ) const;
     void set( const Dictionary&, Node* node );
-    long deliver_interval_; //!< update interval in d_min time steps
+    long deliver_interval_;  //!< update interval in d_min time steps
   };
 
   //-----------------------------------------------
 
   struct Buffers_
   {
-    RingBuffer neuromodulatory_spikes_; //!< buffer to store incoming spikes
+    RingBuffer neuromodulatory_spikes_;  //!< buffer to store incoming spikes
     //! vector to store and deliver spikes
     std::vector< spikecounter > spikecounter_;
   };
@@ -217,8 +217,8 @@ volume_transmitter::get_status( Dictionary& d ) const
 inline void
 volume_transmitter::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -242,6 +242,6 @@ volume_transmitter::get_local_device_id() const
   return local_device_id_;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef VOLUME_TRANSMITTER_H */

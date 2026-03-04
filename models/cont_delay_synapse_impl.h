@@ -102,6 +102,6 @@ cont_delay_synapse< targetidentifierT >::check_synapse_params( const Dictionary&
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // #ifndef CONT_DELAY_SYNAPSE_IMPL_H
+#endif  // #ifndef CONT_DELAY_SYNAPSE_IMPL_H

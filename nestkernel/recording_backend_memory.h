@@ -157,21 +157,21 @@ private:
 
   private:
     void clear();
-    std::vector< long > senders_;                        //!< sender node IDs of the events
-    std::vector< double > times_ms_;                     //!< times of registered events in ms
-    std::vector< long > times_steps_;                    //!< times of registered events in steps
-    std::vector< double > times_offset_;                 //!< offsets of registered events if time_in_steps_
-    std::vector< std::string > double_value_names_;      //!< names for values of type double
-    std::vector< std::string > long_value_names_;        //!< names for values of type long
-    std::vector< std::vector< double > > double_values_; //!< recorded values of type double, one vector per value
-    std::vector< std::vector< long > > long_values_;     //!< recorded values of type long, one vector per value
-    bool time_in_steps_;                                 //!< Should time be recorded in steps (ms if false)
+    std::vector< long > senders_;                         //!< sender node IDs of the events
+    std::vector< double > times_ms_;                      //!< times of registered events in ms
+    std::vector< long > times_steps_;                     //!< times of registered events in steps
+    std::vector< double > times_offset_;                  //!< offsets of registered events if time_in_steps_
+    std::vector< std::string > double_value_names_;       //!< names for values of type double
+    std::vector< std::string > long_value_names_;         //!< names for values of type long
+    std::vector< std::vector< double > > double_values_;  //!< recorded values of type double, one vector per value
+    std::vector< std::vector< long > > long_values_;      //!< recorded values of type long, one vector per value
+    bool time_in_steps_;                                  //!< Should time be recorded in steps (ms if false)
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > device_data_map;
   device_data_map device_data_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_BACKEND_MEMORY_H */

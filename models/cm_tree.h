@@ -63,10 +63,10 @@ public:
   //! buffer for currents
   RingBuffer currents;
   //! electrical parameters
-  double ca; // compartment capacitance [uF]
-  double gc; // coupling conductance with parent (meaningless if root) [uS]
-  double gl; // leak conductance of compartment [uS]
-  double el; // leak current reversal potential [mV]
+  double ca;  // compartment capacitance [uF]
+  double gc;  // coupling conductance with parent (meaningless if root) [uS]
+  double gl;  // leak conductance of compartment [uS]
+  double el;  // leak current reversal potential [mV]
 
   //! voltage variable
   double v_comp;
@@ -102,7 +102,7 @@ public:
   inline void gather_input( const std::pair< double, double >& in );
   inline std::pair< double, double > io();
   inline double calc_v( const double v_in );
-}; // Compartment
+};  // Compartment
 
 
 /*
@@ -215,8 +215,8 @@ public:
 
   //! print function
   void print_tree() const;
-}; // CompTree
+};  // CompTree
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CM_TREE_H */

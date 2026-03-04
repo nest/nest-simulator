@@ -68,21 +68,21 @@ RecordablesMap< izhikevich >::create()
  * ---------------------------------------------------------------- */
 
 nest::izhikevich::Parameters_::Parameters_()
-  : a_( 0.02 )                                      // a
-  , b_( 0.2 )                                       // b
-  , c_( -65.0 )                                     // c without unit
-  , d_( 8.0 )                                       // d
-  , I_e_( 0.0 )                                     // pA
-  , V_th_( 30.0 )                                   // mV
-  , V_min_( -std::numeric_limits< double >::max() ) // mV
+  : a_( 0.02 )                                       // a
+  , b_( 0.2 )                                        // b
+  , c_( -65.0 )                                      // c without unit
+  , d_( 8.0 )                                        // d
+  , I_e_( 0.0 )                                      // pA
+  , V_th_( 30.0 )                                    // mV
+  , V_min_( -std::numeric_limits< double >::max() )  // mV
   , consistent_integration_( true )
 {
 }
 
 nest::izhikevich::State_::State_()
-  : v_( -65.0 )       // membrane potential
-  , u_( 0.2 * -65.0 ) // membrane recovery variable (b * V_m_init)
-  , I_( 0.0 )         // input current
+  : v_( -65.0 )        // membrane potential
+  , u_( 0.2 * -65.0 )  // membrane recovery variable (b * V_m_init)
+  , I_( 0.0 )          // input current
 {
 }
 
@@ -94,7 +94,7 @@ void
 nest::izhikevich::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = V_th_; // threshold value
+  d[ names::V_th ] = V_th_;  // threshold value
   d[ names::V_min ] = V_min_;
   d[ names::a ] = a_;
   d[ names::b ] = b_;
@@ -126,8 +126,8 @@ nest::izhikevich::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::izhikevich::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::U_m ] = u_; // Membrane potential recovery variable
-  d[ names::V_m ] = v_; // Membrane potential
+  d[ names::U_m ] = u_;  // Membrane potential recovery variable
+  d[ names::V_m ] = v_;  // Membrane potential
 }
 
 void
@@ -175,9 +175,9 @@ nest::izhikevich::izhikevich( const izhikevich& n )
 void
 nest::izhikevich::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
   ArchivingNode::clear_history();
 }
 

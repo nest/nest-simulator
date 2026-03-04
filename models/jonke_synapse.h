@@ -382,6 +382,6 @@ jonke_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorMo
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef JONKE_SYNAPSE_H
+#endif  // of #ifndef JONKE_SYNAPSE_H

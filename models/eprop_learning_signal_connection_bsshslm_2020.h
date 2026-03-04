@@ -230,6 +230,6 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_secondar
   return std::make_unique< LearningSignalConnectionEvent >();
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
+#endif  // EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H

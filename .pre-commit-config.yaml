@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -15,19 +15,19 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 8.0.1
     hooks:
       - id: isort
         args: ["--profile", "black", "--thirdparty", "nest"]
 
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 26.1.0
     hooks:
       - id: black
         language_version: python3
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         # explicitly add input files that are not "*.sh"
@@ -43,7 +43,7 @@ repos:
         ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.4
+    rev: v22.1.0
     hooks:
       - id: clang-format
         types_or: [c++]

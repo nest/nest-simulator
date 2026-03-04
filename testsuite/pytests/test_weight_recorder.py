@@ -48,9 +48,7 @@ class WeightRecorderTestCase(unittest.TestCase):
             """List A is not subset of list B
                                   and/or the items are not equal within
                                   a certain range of precision.
-                                  List A is {0} and list B is {1}""".format(
-                a, b
-            ),
+                                  List A is {0} and list B is {1}""".format(a, b),
         )
         raise self.failureException(msg)
 

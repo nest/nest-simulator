@@ -24,6 +24,7 @@ r"""Helper functions for the Sudoku solver
 
 :Authors: J Gille, S Furber, A Rowley
 """
+
 import matplotlib.patches as patch
 import numpy as np
 

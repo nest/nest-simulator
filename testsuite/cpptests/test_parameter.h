@@ -24,7 +24,7 @@
 #define TEST_PARAMETER_H
 
 // C++ includes
-#include <type_traits> // std::is_floating_point
+#include <type_traits>  // std::is_floating_point
 
 #include <boost/version.hpp>
 
@@ -38,7 +38,7 @@
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 
-#if BOOST_VERSION >= 105900 // test_redraw_value_impossible uses timeout, which is only available in Boost>=1.59.0
+#if BOOST_VERSION >= 105900  // test_redraw_value_impossible uses timeout, which is only available in Boost>=1.59.0
 
 /**
  * This test checks that an exception is thrown if the RedrawParameter exceeds the max number of redraws. In
@@ -88,8 +88,8 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
     // Test makes no sense if the return value of the Parameter is not floating point.
     static_assert( std::is_floating_point< decltype( value ) >::value, "Return type not floating point" );
     BOOST_REQUIRE_EQUAL( value, static_cast< long >( value ) );
-    BOOST_REQUIRE_LT( value, max ); // Require value < max
-    BOOST_REQUIRE_GE( value, 0 );   // Require value >= 0
+    BOOST_REQUIRE_LT( value, max );  // Require value < max
+    BOOST_REQUIRE_GE( value, 0 );    // Require value >= 0
   }
 }
 

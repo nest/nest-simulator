@@ -155,7 +155,7 @@ public:
   void get_status( Dictionary& d, NodeCollection const* const ) const override;
 
 protected:
-  Position< D, size_t > dims_; ///< number of nodes in each direction.
+  Position< D, size_t > dims_;  ///< number of nodes in each direction.
 
   template < class Ins >
   void insert_global_positions_( Ins iter, NodeCollectionPTR node_collection );
@@ -423,6 +423,6 @@ GridLayer< D >::get_global_positions_vector( const AbstractMask& mask,
   return positions;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

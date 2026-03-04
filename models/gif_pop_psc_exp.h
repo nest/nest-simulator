@@ -259,9 +259,9 @@ private:
     /** Binomial random number switch */
     bool BinoRand_;
 
-    Parameters_();                             //!< Sets default parameter values
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    Parameters_();                              //!< Sets default parameter values
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
   // ----------------------------------------------------------------
@@ -271,18 +271,18 @@ private:
    */
   struct State_
   {
-    double y0_;        // DC input current
-    double I_syn_ex_;  // synaptic current
-    double I_syn_in_;  // synaptic current
-    double V_m_;       // membrane potential
-    double n_expect_;  // expected spike number
-    double theta_hat_; // adapting threshold for non-refractory neurons
-    long n_spikes_;    // number of spikes
+    double y0_;         // DC input current
+    double I_syn_ex_;   // synaptic current
+    double I_syn_in_;   // synaptic current
+    double V_m_;        // membrane potential
+    double n_expect_;   // expected spike number
+    double theta_hat_;  // adapting threshold for non-refractory neurons
+    long n_spikes_;     // number of spikes
 
     // internal switch signaling that state vectors are initialized
     bool initialized_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
     void set( const Dictionary&, const Parameters_&, Node* );
@@ -315,37 +315,37 @@ private:
   struct Variables_
   {
 
-    double R_;      // membrane resistance
-    double P20_;    // membrane integration constant
-    double P22_;    // membrane integration constant
-    double P11_ex_; // synaptic integration constant
-    double P11_in_; // synaptic integration constant
-    int k_ref_;     // length of refractory period in time steps
+    double R_;       // membrane resistance
+    double P20_;     // membrane integration constant
+    double P22_;     // membrane integration constant
+    double P11_ex_;  // synaptic integration constant
+    double P11_in_;  // synaptic integration constant
+    int k_ref_;      // length of refractory period in time steps
 
-    std::vector< double > Q30_;       // QR adaptation integration constant
-    std::vector< double > Q30K_;      // QR adaptation integration constant
-    std::vector< double > theta_;     // adaptation kernel
-    std::vector< double > theta_tld_; // QR adaptation kernel
+    std::vector< double > Q30_;        // QR adaptation integration constant
+    std::vector< double > Q30K_;       // QR adaptation integration constant
+    std::vector< double > theta_;      // adaptation kernel
+    std::vector< double > theta_tld_;  // QR adaptation kernel
 
-    double h_; // simulation time step in ms
+    double h_;  // simulation time step in ms
     double min_double_;
 
-    RngPtr rng_; // random number generator of own thread
+    RngPtr rng_;  // random number generator of own thread
 
-    poisson_distribution poisson_dist_; //!< poisson distribution
-    binomial_distribution bino_dist_;   //!< binomial distribution
+    poisson_distribution poisson_dist_;  //!< poisson distribution
+    binomial_distribution bino_dist_;    //!< binomial distribution
 
-    double x_;                     // internal variable of population dynamics
-    double z_;                     // internal variable of population dynamics
-    double lambda_free_;           // hazard rate for non-refractory neurons
-    std::vector< double > m_;      // survival buffer
-    std::vector< double > n_;      // population activity buffer
-    std::vector< double > u_;      // mean of survivals
-    std::vector< double > v_;      // variance of survivals
-    std::vector< double > lambda_; // escape rates buffer
-    std::vector< double > g_;      // adaptation variables
+    double x_;                      // internal variable of population dynamics
+    double z_;                      // internal variable of population dynamics
+    double lambda_free_;            // hazard rate for non-refractory neurons
+    std::vector< double > m_;       // survival buffer
+    std::vector< double > n_;       // population activity buffer
+    std::vector< double > u_;       // mean of survivals
+    std::vector< double > v_;       // variance of survivals
+    std::vector< double > lambda_;  // escape rates buffer
+    std::vector< double > g_;       // adaptation variables
 
-    int k0_; // rotating index of history buffers
+    int k0_;  // rotating index of history buffers
   };
 
   // Access functions for UniversalDataLogger -----------------------
@@ -464,10 +464,10 @@ gif_pop_psc_exp::get_status( Dictionary& d ) const
 inline void
 gif_pop_psc_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -485,7 +485,7 @@ gif_pop_psc_exp::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
 
 #endif /* HAVE_GSL */

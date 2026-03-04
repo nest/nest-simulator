@@ -338,26 +338,26 @@ private:
    */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
+  std::vector< NodeCollectionPTR > node_collection_container_;  //!< a vector of the original/primitive NodeCollection
 
   std::vector< size_t >
-    node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
-                           //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
-                           //!< where each  element at position i in the nodeCollection_last_ is the last node ID
-                           //!< stored in the node_collection_container_ at position i.
+    node_collection_last_;  //!< Store the ID of the last element in each NodeCollection instance.
+                            //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
+                            //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                            //!< stored in the node_collection_container_ at position i.
 
-  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
-                                                      //!< use the waveform relaxation method
-  bool wfr_is_used_;                                  //!< there is at least one node that uses
-                                                      //!< waveform relaxation
+  std::vector< std::vector< Node* > > wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                                                       //!< use the waveform relaxation method
+  bool wfr_is_used_;                                   //!< there is at least one node that uses
+                                                       //!< waveform relaxation
 
-  size_t size_last_local_data_update_; //! Network size when local node data was last updated
-  size_t num_active_nodes_;            //!< number of nodes created by prepare_nodes
+  size_t size_last_local_data_update_;  //! Network size when local node data was last updated
+  size_t num_active_nodes_;             //!< number of nodes created by prepare_nodes
 
-  std::vector< size_t > num_thread_local_devices_; //!< stores number of thread local devices
+  std::vector< size_t > num_thread_local_devices_;  //!< stores number of thread local devices
 
-  bool have_nodes_changed_; //!< true if new nodes have been created
-                            //!< since startup or last call to simulate
+  bool have_nodes_changed_;  //!< true if new nodes have been created
+                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
   std::vector< std::exception_ptr > exceptions_raised_;
@@ -417,6 +417,6 @@ NodeManager::thread_local_data_is_up_to_date() const
   return size() == size_last_local_data_update_;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* NODE_MANAGER_H */

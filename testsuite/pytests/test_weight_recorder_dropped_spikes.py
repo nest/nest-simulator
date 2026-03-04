@@ -23,7 +23,6 @@
 Test that weight recorded records correctly also for synapses which drop spikes.
 """
 
-
 import nest
 import numpy as np
 

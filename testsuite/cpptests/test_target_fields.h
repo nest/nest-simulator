@@ -109,6 +109,6 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_set_get )
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* TEST_TARGET_FIELDS_H */

@@ -47,6 +47,7 @@ configuration, thus solving the puzzle.
 
 :Authors: J Gille, S Furber, A Rowley
 """
+
 import logging
 
 import nest

@@ -58,13 +58,13 @@ Configuration information
 +++++++++++++++++++++++++
 
 Various information about NEST capabilities and properties that were previously accessible
-in varied ways are now collected in the `nest.build_info` dictionary:
+in varied ways are now collected in the ``nest.build_info`` dictionary:
 
 .. code-block::
 
-   {'built':    'Dec  4 2025 05:31:32',
-    'datadir':    '<path>',
-    'docdir':    '<path>',
+   {'built': 'Dec  4 2025 05:31:32',
+    'datadir': '<path>',
+    'docdir': '<path>',
     'exitcode': 0,
     'have_boost': True,
     'have_gsl': True,
@@ -74,17 +74,17 @@ in varied ways are now collected in the `nest.build_info` dictionary:
     'have_music': False,
     'have_sionlib': False,
     'have_threads': True,
-    'host':    'arm64-apple-darwin',
-    'hostcpu':    'arm64',
-    'hostos':    'darwin',
-    'hostvendor':    'apple',
-    'mpiexec':    '/opt/homebrew/bin/mpiexec',
-    'mpiexec_max_numprocs':    '12',
-    'mpiexec_numproc_flag':    '-n',
-    'mpiexec_postflags':    '',
-    'mpiexec_preflags':    '',
+    'host': 'arm64-apple-darwin',
+    'hostcpu': 'arm64',
+    'hostos': 'darwin',
+    'hostvendor': 'apple',
+    'mpiexec': '/opt/homebrew/bin/mpiexec',
+    'mpiexec_max_numprocs': '12',
+    'mpiexec_numproc_flag': '-n',
+    'mpiexec_postflags': '',
+    'mpiexec_preflags': '',
     'ndebug': False,
-    'prefix':    '<path>',
+    'prefix': '<path>',
     'test_exitcodes': {'abort': 134,
      'exception': 125,
      'fatal': 127,
@@ -99,14 +99,36 @@ in varied ways are now collected in the `nest.build_info` dictionary:
      'success': 0,
      'unknownerror': 10,
      'userabort': 15},
-    'threads_model':    'openmp',
-    'version':    '3.9.0-post0.dev0'}
+    'threads_model': 'openmp',
+    'version': '3.9.0-post0.dev0'}
+
+
+Message mechanism
++++++++++++++++++
+
+The :py:func:`.message` function has received a slightly different user interface. Where you previously would write
+
+.. code-block:: python
+
+   nest.message("M_INFO", "Building network")
+
+you now simply write
+
+.. code-block:: python
+
+   nest.message("Building network")
+
+and the info-level severity is implicitly set. To control the severity-level of a message, use
+
+.. code-block:: python
+
+   nest.message("The next operation may take a very long time", nest.VerbosityLevel.WARNING)
 
 
 Deprecated functions
 ++++++++++++++++++++
 
-We have also deprecated ``nest.GetStatus()`` and ``nest.SetStatus()``, so over time you may want to replace
+We have deprecated :py:func:`.GetStatus` and :py:func:`.SetStatus`, so over time you may want to replace
 
 .. code-block:: python
 
@@ -118,7 +140,12 @@ with
 
    node_coll.get()
 
-and correspondingly for connection collections and use `nest.get()/set()` for kernel status parameters.
+and correspondingly for connection collections and use :py:func:`.get` and :py:func:`.set` for kernel status parameters.
+
+We also deprecated :py:func:`.GetLocalNodeCollection`, because working only on nodes local to a given MPI
+rank carries a high risk of writing incorrect code. If you think you need rank-specific code, rather get
+in touch with us to see if there is a better solution using (or extending) NEST's built-in mechanisms.
+
 
 No more SLI functions
 +++++++++++++++++++++
@@ -134,14 +161,15 @@ If you still have your network models implemented in SLI, it is time now to migr
 What does this mean for you as a developer?
 ...........................................
 
-The key change from a developer perspective are that the entire SLI interpreter code has been
+The key changes from a developer perspective are that the entire SLI interpreter code has been
 removed, noticeably reducing compile times. We therefore no longer have the ``SLIModule`` concept.
-Also, `Dictionary`, `Datum`, and `Token` are a matter of the past. Instead, we now
+Also, ``Dictionary``, ``Datum``, and ``Token`` are a matter of the past. Instead, we now
 have class ``Dictionary`` based directly on ``std::map`` using ``boost::any`` to store entries of
 arbitrary type. Instead of our own ``lockPTR``, we now use ``std::unique_ptr`` to manage objects with
-reference counting. Where changes are necessary in code for neuron or synapse models, they will
-likely be limited to slightly different notation in the ``set()/get()`` methods to support the new
-``Dictionary`` class.
+reference counting.
+
+Catching errors
++++++++++++++++
 
 To test whether certain errors are raised when writing tests, instead of
 
@@ -154,6 +182,57 @@ you now have
 .. code-block:: python
 
    with pytest.raises(nest.NESTErrors.IllegalConnection):
+
+
+Changes to neuron and synapse models (for developers)
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+When developing C++ level implementations of neuron or synapse models,
+required changes in code will likely be limited to slightly different
+notation in the ``set()`` and ``get()`` methods to use the new
+``Dictionary`` class. As an example, consider ``aeif_cond_alpha``:
+
+Old NEST
+^^^^^^^^
+
+.. code-block:: C++
+
+   void
+   nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
+   {
+     def< double >( d, names::C_m, C_m );
+     def< double >( d, names::V_th, V_th );
+     // ...
+   }
+
+   void
+   nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
+   {
+     updateValueParam< double >( d, names::V_th, V_th, node );
+     updateValueParam< double >( d, names::V_peak, V_peak_, node );
+     // ...
+   }
+
+New NEST
+^^^^^^^^
+
+.. code-block:: C++
+
+   void
+   nest::aeif_cond_alpha::Parameters_::get( Dictionary& d ) const
+   {
+     d[ names::C_m ] = C_m;
+     d[ names::V_th ] = V_th;
+     // ...
+   }
+
+   void
+   nest::aeif_cond_alpha::Parameters_::set( const Dictionary& d, Node* node )
+   {
+     update_value_param( d, names::V_th, V_th, node );
+     update_value_param( d, names::V_peak, V_peak_, node );
+     // ...
+   }
 
 
 Model improvements

@@ -161,4 +161,4 @@ AbstractLayer::get_metadata() const
   return node_collection_->get_metadata();
 }
 
-} // namespace nest
+}  // namespace nest

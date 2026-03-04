@@ -113,7 +113,7 @@ public:
 
   using Node::event_hook;
   using Node::handle;
-  using Node::handles_test_event; // new
+  using Node::handles_test_event;  // new
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
@@ -138,14 +138,14 @@ private:
    */
   struct Parameters_
   {
-    double p_copy_; //!< copy probability for each incoming spike
+    double p_copy_;  //!< copy probability for each incoming spike
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 
-    void get( Dictionary& ) const;             //!< Store current values in dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   struct Buffers_
@@ -198,8 +198,8 @@ spike_dilutor::get_status( Dictionary& d ) const
 inline void
 spike_dilutor::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -210,6 +210,6 @@ spike_dilutor::set_status( const Dictionary& d )
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

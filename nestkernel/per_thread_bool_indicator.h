@@ -175,6 +175,6 @@ private:
   std::atomic< int > are_true_ { 0 };
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* PER_THREAD_BOOL_INDICATOR_H */

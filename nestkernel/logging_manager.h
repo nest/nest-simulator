@@ -96,7 +96,7 @@ private:
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   VerbosityLevel logging_level_;
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
+  bool dict_miss_is_error_;  //!< whether to throw exception on missed dictionary entries
 };
 
 inline bool
@@ -111,6 +111,6 @@ LoggingManager::verbosity() const
   return logging_level_;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* ifndef LOGGING_MANAGER_H */

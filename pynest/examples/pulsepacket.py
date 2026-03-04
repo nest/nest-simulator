@@ -41,7 +41,6 @@ References
 
 """
 
-
 ###############################################################################
 # First, we import all necessary modules for simulation, analysis and
 # plotting.

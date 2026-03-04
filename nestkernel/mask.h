@@ -1004,6 +1004,6 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
   create_bbox_();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

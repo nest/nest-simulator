@@ -60,7 +60,7 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bi
 unsigned long
 nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr rng )
 {
-  unsigned long n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
+  unsigned long n_spikes;  // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
   {
     /*The binomial distribution converges towards the Poisson distribution as
@@ -106,11 +106,11 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr r
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 )      // Hz
-  , dead_time_( 0.0 ) // ms
+  : rate_( 0.0 )       // Hz
+  , dead_time_( 0.0 )  // ms
   , n_proc_( 1 )
-  , frequency_( 0.0 ) // Hz
-  , amplitude_( 0.0 ) // percentage
+  , frequency_( 0.0 )  // Hz
+  , amplitude_( 0.0 )  // percentage
   , num_targets_( 0 )
 {
 }
@@ -243,7 +243,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 
     if ( not StimulationDevice::is_active( t ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     // get current (time-dependent) hazard rate and store it.
@@ -277,7 +277,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
   unsigned long n_spikes =
     B_.age_distributions_[ prt ].update( V_.hazard_step_t_, get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -291,7 +291,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 void
 nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

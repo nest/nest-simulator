@@ -113,7 +113,7 @@ private:
   void
   pre_run_hook() override
   {
-  } // no variables
+  }  // no variables
 
   void update( Time const&, const long, const long ) override;
 
@@ -165,6 +165,6 @@ parrot_neuron::receives_signal() const
   return ALL;
 }
 
-} // namespace
+}  // namespace
 
-#endif // PARROT_NEURON_H
+#endif  // PARROT_NEURON_H

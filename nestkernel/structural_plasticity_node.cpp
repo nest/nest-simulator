@@ -58,8 +58,8 @@ nest::StructuralPlasticityNode::get_status( Dictionary& d ) const
 
   Dictionary synaptic_elements_d;
   for ( std::map< std::string, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     Dictionary synaptic_element_d;
     it->second.get( synaptic_element_d );
@@ -112,8 +112,8 @@ nest::StructuralPlasticityNode::set_status( const Dictionary& d )
     const Dictionary synaptic_elements_dict = d.get< Dictionary >( names::synaptic_elements_param );
 
     for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-          it != synaptic_elements_map_.end();
-          ++it )
+      it != synaptic_elements_map_.end();
+      ++it )
     {
       if ( synaptic_elements_dict.known( it->first ) )
       {
@@ -211,8 +211,8 @@ nest::StructuralPlasticityNode::get_synaptic_elements() const
   std::map< std::string, double > n_map;
 
   for ( std::map< std::string, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     n_map.insert( std::pair< std::string, double >( it->first, get_synaptic_elements( it->first ) ) );
   }
@@ -225,8 +225,8 @@ nest::StructuralPlasticityNode::update_synaptic_elements( double t )
   assert( t >= Ca_t_ );
 
   for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     it->second.update( t, Ca_t_, Ca_minus_, tau_Ca_ );
   }
@@ -239,8 +239,8 @@ void
 nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 {
   for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-        it != synaptic_elements_map_.end();
-        ++it )
+    it != synaptic_elements_map_.end();
+    ++it )
   {
     it->second.decay_z_vacant();
   }
@@ -266,4 +266,4 @@ nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
   Ca_minus_ += beta_Ca_;
 }
 
-} // of namespace nest
+}  // of namespace nest

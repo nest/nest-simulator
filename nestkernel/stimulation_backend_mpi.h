@@ -190,6 +190,6 @@ private:
   void clean_memory_input_data( std::vector< std::pair< int*, double* > >& data );
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STIMULATION_BACKEND_MPI_H */

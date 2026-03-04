@@ -23,7 +23,6 @@
 Test ``NodeCollection`` indexing and slicing.
 """
 
-
 import nest
 import numpy as np
 import pytest

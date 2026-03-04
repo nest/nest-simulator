@@ -147,4 +147,4 @@ Model::get_status()
   return d;
 }
 
-} // namespace
+}  // namespace

@@ -106,9 +106,12 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
     exit 1
 fi
 
+# Set PYTHONPATH
+PYTHON_VERSION="$(python -c "import sysconfig; print(sysconfig.get_python_version())")"
+NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION}/site-packages"
+export PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"
+
 # source helpers to set environment variables and make functions available
-# shellcheck source=bin/nest_vars.sh.in
-. "${PREFIX}/bin/nest_vars.sh"
 # shellcheck source=testsuite/junit_xml.sh
 . "$(dirname "$0")/junit_xml.sh"
 
@@ -414,9 +417,10 @@ echo
 echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
-if command -v run_all_cpptests >/dev/null 2>&1; then
+CPP_TEST_COMMAND="${PREFIX}/bin/run_all_cpptests"
+if command -v "${CPP_TEST_COMMAND}" >/dev/null 2>&1; then
     set +e
-    CPP_TEST_OUTPUT="$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )"
+    CPP_TEST_OUTPUT="$( "${CPP_TEST_COMMAND}" --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )"
     set -e
     echo "${CPP_TEST_OUTPUT}" | tail -2
 else

@@ -22,10 +22,9 @@
 # NOTE: This script requires bash version 4 or later.
 #       On macOS, you need to brew install bash for this script to work.
 
-# TODO-PYNEST-NG: What do we do about nest_vars.sh?
-if ! python3 -c "import nest" >/dev/null 2>&1; then
-    echo "ERROR: PyNEST is not available. Please make sure PYTHONPATH is set correctly"
-    echo "       by sourcing the script nest_vars.sh from your NEST installation."
+if ! /usr/bin/env python -c "import nest" >/dev/null 2>&1; then
+    echo "ERROR: PyNEST is not available. Please make sure NEST is installed in"
+    echo "       the current environment, or PYTHONPATH is set correctly."
     exit 1
 fi
 

@@ -87,10 +87,7 @@ We will refer to the full path of this directory by <nest_install_dir>.
    make install
    make installcheck
 
-For your convenience, a shell script setting all required environment variables is provided in
-``<nest_install_dir>/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires
-sourcing the script:
-
-.. code-block:: sh
-
-   source <nest_install_dir>/bin/nest_vars.sh
+If a non-standard ``<nest_install_dir>`` is used, the libraries cannot be found
+automatically. In this case add the corresponding
+``<nest_install_dir>/lib/python..../site-packages`` to variables such as
+``PYTHONPATH`` manually.

@@ -12,24 +12,26 @@ disable it, pass
 
    -Dwith-python=OFF
 
-as an argument to ``cmake``. By default, ``make install`` will install
-PyNEST to ``$(pyexecdir)``, which is often expanded as follows:
+as an argument to ``cmake``. By default, ``make install`` will install PyNEST
+into the currently active Python environment (system, or virtual).  This is
+usually under one of the prefixes in the list ``python -c "import sys;
+print(sys.path)"``, in a directory like ``$(pyexecdir)``, which is often
+expanded as follows:
 
 .. code-block::
 
    $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
-.. note::
+All required files will automatically be installed in the right location inside
+the environment, so no further setup is required.
 
-   Since NEST 3.0, support for Python 2 has been dropped. Please use
-   Python 3 instead.
+In very special cases, you may have specified a ``CMAKE_INSTALL_PREFIX``
+different from the current Python environment, which makes it necessary to set
+the ``PYTHONPATH`` variable explicitly to the corresponding ``site-packages``
+directory in the install location. Note however, that it is the users
+responsibility to keep the Python loaded at run-time in sync with the Python
+that was loaded at compile time.
 
-To make the PyNEST module available to the Python interpreter, source
-``nest_vars.sh`` from the NEST installation directory (``source
-<nest_install_dir>/bin/nest_vars.sh``). This will add the PyNEST installation
-path to the ``PYTHONPATH`` environment variable.
-
-For help on a NEST object OBJ in PyNEST, type ``nest.help(OBJ)``.
 
 References
 ----------

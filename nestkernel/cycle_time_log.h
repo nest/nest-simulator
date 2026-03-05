@@ -46,7 +46,7 @@ public:
 private:
   std::vector< double > cycle_update_time_;  //!< Time of one update cycle
   std::vector< double > communicate_time_;   // Time of communicate in current cycle
-  std::vector< long > local_spike_counter_;  // Local spike count in current cycle
+  std::vector< size_t > local_spike_counter_;  // Local spike count in current cycle
 };
 
 }

@@ -26,8 +26,8 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {
@@ -41,11 +41,11 @@ public:
   CycleTimeLog();
   void clear();
   void add_entry( double cycle_update_time, double communicate_time, long local_spike_counter );
-  void to_dict( DictionaryDatum& ) const;
+  void to_dict( Dictionary& ) const;
 
 private:
-  std::vector< double > cycle_update_time_;  //!< Time of one update cycle
-  std::vector< double > communicate_time_;   // Time of communicate in current cycle
+  std::vector< double > cycle_update_time_;    //!< Time of one update cycle
+  std::vector< double > communicate_time_;     // Time of communicate in current cycle
   std::vector< size_t > local_spike_counter_;  // Local spike count in current cycle
 };
 

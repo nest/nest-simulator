@@ -497,8 +497,8 @@ nest::SimulationManager::get_status( Dictionary& d )
 
 #ifdef CYCLE_TIMERS
   Dictionary log_events;
-  d[ names::cycle_time_log ] = log_events;
   cycle_time_log_.to_dict( log_events );
+  d[ names::cycle_time_log ] = log_events;
 #endif
 }
 

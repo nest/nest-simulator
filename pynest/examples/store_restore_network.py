@@ -236,8 +236,7 @@ class DemoPlot:
         self.comment.text(
             0,
             1,
-            textwrap.dedent(
-                """
+            textwrap.dedent("""
             Storing, loading and continuing a simulation of a balanced E-I network
             with STDP in excitatory synapses.
 
@@ -260,8 +259,7 @@ class DemoPlot:
             above but with different random seed yields different spike patterns (purple).
 
             Above: Distribution of excitatory synaptic weights at end of each sample
-            simulation. Green and red curves are identical and overlay to form brown curve."""
-            ),
+            simulation. Green and red curves are identical and overlay to form brown curve."""),
             transform=self.comment.transAxes,
             fontsize=8,
             verticalalignment="top",

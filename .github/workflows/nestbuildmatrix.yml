@@ -10,7 +10,7 @@ jobs:
   clang-format:
     runs-on: "ubuntu-22.04"
     env:
-      CLANG_REQUIRE_VERSION: 17.0.4
+      CLANG_REQUIRE_VERSION: 22.1.0
       CLANG_FORMAT_FILE: ".clang-format"
     steps:
       - name: Harden Runner
@@ -30,7 +30,7 @@ jobs:
 
       - name: "Run clang-format..."
         run: |
-          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
+          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*" -not -path "./cmake/CheckFiles/*")
           diff -u <(cat ${files}) <(clang-format ${files})
 
   shellcheck:
@@ -62,7 +62,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
-          python-version: 3.9
+          python-version: "3.10"
 
       - name: "Install dependencies"
         run: |
@@ -111,7 +111,7 @@ jobs:
 
       - name: "Run cppcheck..."
         run: |
-          cppcheck --enable=all --language=c++ --std=c++17 -i sli/ --suppressions-list=.cppcheck_suppressions ./
+          cppcheck --enable=all --language=c++ --std=c++20 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   rstcheck:
     runs-on: "ubuntu-22.04"
@@ -442,7 +442,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Run black..."
-        uses: psf/black@af0ba72a73598c76189d6dd1b21d8532255d5942  # 25.9.0
+        uses: psf/black@6305bf1ae645ab7541be4f5028a86239316178eb  # 26.1.0
         with:
           jupyter: true
 

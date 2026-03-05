@@ -74,10 +74,11 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
-  , step_( kind == NCIteratorKind::RANK_LOCAL ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
-                                              : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride,
-                                                    kernel::manager< VPManager >.get_num_virtual_processes() )
-                                                                                       : stride ) )
+  , step_( kind == NCIteratorKind::RANK_LOCAL
+        ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
+        : ( kind == NCIteratorKind::THREAD_LOCAL
+              ? std::lcm( stride, kernel::manager< VPManager >.get_num_virtual_processes() )
+              : stride ) )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
         ? kernel::manager< MPIManager >.get_rank()
@@ -108,10 +109,11 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
-  , step_( kind == NCIteratorKind::RANK_LOCAL ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
-                                              : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride,
-                                                    kernel::manager< VPManager >.get_num_virtual_processes() )
-                                                                                       : stride ) )
+  , step_( kind == NCIteratorKind::RANK_LOCAL
+        ? std::lcm( stride, kernel::manager< MPIManager >.get_num_processes() )
+        : ( kind == NCIteratorKind::THREAD_LOCAL
+              ? std::lcm( stride, kernel::manager< VPManager >.get_num_virtual_processes() )
+              : stride ) )
   , kind_( kind )
   , rank_or_vp_( kind == NCIteratorKind::RANK_LOCAL
         ? kernel::manager< MPIManager >.get_rank()
@@ -512,7 +514,7 @@ NodeCollection::to_array( const std::string& selection ) const
           node_ids.push_back( ( *it ).node_id );
         }
       }  // end critical
-    }    // end parallel
+    }  // end parallel
   }
   else
   {

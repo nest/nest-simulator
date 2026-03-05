@@ -167,7 +167,8 @@ operator<<( std::ostream& os, const Dictionary& dict )
 {
   const auto max_key_length = std::max_element( dict.begin(),
     dict.end(),
-    []( const Dictionary::value_type s1, const Dictionary::value_type s2 ) {
+    []( const Dictionary::value_type s1, const Dictionary::value_type s2 )
+    {
       return s1.first.length() < s2.first.length();
     } )->first.length();
   const std::string pre_padding = "    ";

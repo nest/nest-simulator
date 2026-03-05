@@ -298,7 +298,7 @@ void
 nest::CompTree::set_parents()
 {
   for ( auto compartment_idx_it = compartment_indices_.begin(); compartment_idx_it != compartment_indices_.end();
-        ++compartment_idx_it )
+    ++compartment_idx_it )
   {
     Compartment* comp_ptr = get_compartment( *compartment_idx_it );
     // will be nullptr if root
@@ -317,7 +317,7 @@ nest::CompTree::set_compartments()
   compartments_.clear();
 
   for ( auto compartment_idx_it = compartment_indices_.begin(); compartment_idx_it != compartment_indices_.end();
-        ++compartment_idx_it )
+    ++compartment_idx_it )
   {
     compartments_.push_back( get_compartment( *compartment_idx_it ) );
   }

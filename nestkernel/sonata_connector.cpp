@@ -455,7 +455,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
           weight );
 
       }  // end for
-    }    // end try
+    }  // end try
 
     catch ( ... )
     {

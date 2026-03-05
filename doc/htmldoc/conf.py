@@ -68,7 +68,12 @@ extensions = [
     "notfound.extension",
 ]
 
-autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
+autodoc_mock_imports = [
+    "nest.nestkernel_api",  # compiled binary
+    "flask",  # optional server dependencies not present during docs build
+    "flask_cors",
+    "RestrictedPython",
+]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
@@ -100,6 +105,9 @@ mermaid_version = "10.3.0"
 
 # disable require js - mermaid doesn't work if require.js is loaded before it
 nbsphinx_requirejs_path = ""
+# Never execute notebooks during the build; render stored cell outputs as-is.
+# nest is not importable in the docs environment (compiled kernel not present).
+nbsphinx_execute = "never"
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.

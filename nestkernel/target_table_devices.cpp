@@ -177,8 +177,8 @@ TargetTableDevices::get_connections_from_devices_( const size_t requested_source
   std::deque< ConnectionID >& conns ) const
 {
   for ( std::vector< size_t >::const_iterator it = sending_devices_node_ids_[ tid ].begin();
-        it != sending_devices_node_ids_[ tid ].end();
-        ++it )
+    it != sending_devices_node_ids_[ tid ].end();
+    ++it )
   {
     const size_t source_node_id = *it;
     if ( source_node_id > 0 and ( requested_source_node_id == source_node_id or requested_source_node_id == 0 ) )
@@ -281,8 +281,8 @@ TargetTableDevices::send_from_device( const size_t tid,
   const std::vector< ConnectorModel* >& cm )
 {
   for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
-        it != target_from_devices_[ tid ][ ldid ].end();
-        ++it )
+    it != target_from_devices_[ tid ][ ldid ].end();
+    ++it )
   {
     if ( *it )
     {
@@ -317,8 +317,8 @@ TargetTableDevices::send_to_device( const size_t tid,
 {
   const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
   for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
-        it != target_to_devices_[ tid ][ lid ].end();
-        ++it )
+    it != target_to_devices_[ tid ][ lid ].end();
+    ++it )
   {
     if ( *it )
     {

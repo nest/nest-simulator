@@ -61,8 +61,8 @@ MultiChannelInputBuffer< num_channels >::size() const
 template < unsigned int num_channels >
 MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
-    std::array< double, num_channels >() )
+      kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
+      std::array< double, num_channels >() )
 {
 }
 

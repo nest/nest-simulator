@@ -684,8 +684,8 @@ NodeManager::print( std::ostream& out ) const
   const double node_id_range_width = 6 + 2 * max_node_id_width;
 
   for ( std::vector< modelrange >::const_iterator it = kernel::manager< ModelRangeManager >.begin();
-        it != kernel::manager< ModelRangeManager >.end();
-        ++it )
+    it != kernel::manager< ModelRangeManager >.end();
+    ++it )
   {
     const size_t first_node_id = it->get_first_node_id();
     const size_t last_node_id = it->get_last_node_id();

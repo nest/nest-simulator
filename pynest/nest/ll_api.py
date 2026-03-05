@@ -159,7 +159,23 @@ def init(argv):
     initialized = True
 
     if not quiet:
-        print("NEST initialized successfully!")
+        build_info = nestkernel.llapi_get_kernel_status()["build_info"]
+        print(f"""
+             -- N E S T --
+
+ Copyright (C) 2004 The NEST Initiative
+
+ Version: {build_info["version"]}
+ Built  : {build_info["built"]}
+
+ This program is provided AS IS and comes with NO WARRANTY.
+ See the file LICENSE for details.
+
+ Problems or suggestions?
+   Visit https://www.nest-simulator.org
+
+ Type 'nest.help()' to find out more about NEST.
+""")
 
     # Dirty hack to get tab-completion for models in IPython.
     try:

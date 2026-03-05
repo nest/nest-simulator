@@ -903,7 +903,7 @@ ComparingParameter::compare_( double value_a, double value_b ) const
 
 ConditionalParameter::ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false )
   : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
-    if_true->returns_int_only() and if_false->returns_int_only() )
+      if_true->returns_int_only() and if_false->returns_int_only() )
   , condition_( condition )
   , if_true_( if_true )
   , if_false_( if_false )

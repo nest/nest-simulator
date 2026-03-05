@@ -79,8 +79,8 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin(); runner != history_.end()
-        and ( t_first_read - runner->t_ > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
-        ++runner )
+    and ( t_first_read - runner->t_ > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
+    ++runner )
   {
     ( runner->access_counter_ )++;
   }
@@ -277,12 +277,6 @@ ArchivingNode::clear_history()
   Kminus_ = 0.0;
   Kminus_triplet_ = 0.0;
   history_.clear();
-}
-
-double
-ArchivingNode::get_spiketime_ms() const
-{
-  return last_spike_;
 }
 
 }  // of namespace nest

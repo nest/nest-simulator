@@ -111,8 +111,6 @@ fi
 . "${PREFIX}/bin/nest_vars.sh"
 # shellcheck source=testsuite/junit_xml.sh
 . "$(dirname "$0")/junit_xml.sh"
-# shellcheck source=testsuite/run_test.sh
-. "$(dirname "$0")/run_test.sh"
 
 # Directory containing installed tests
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
@@ -124,8 +122,6 @@ REPORTDIR="${PWD}/$(mktemp -d test_report_XXX)"
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
-TEST_RETFILE="${REPORTDIR}/output.ret"
-TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
 get_build_info ()
 {
@@ -219,7 +215,7 @@ if test "${MUSIC}"; then
     BASEDIR="$PWD"
     TMPDIR_MUSIC="$(mktemp -d)"
 
-    TESTDIR="${TEST_BASEDIR}/sli2py_music/"
+    TESTDIR="${TEST_BASEDIR}/musictests/"
 
     # Initialize tracking variables to avoid 'unbound variable' errors under set -u
     JUNIT_TESTS=0
@@ -353,58 +349,58 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
+    # Run all tests except those in the mpi_direct and mpi_indirect subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
     ${PYTHON} -m pytest --verbose --timeout "${TIME_LIMIT}" --junit-xml="${XUNIT_FILE}" \
-	                --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+	                --ignore="${PYNEST_TEST_DIR}/mpi_direct" --ignore="${PYNEST_TEST_DIR}/mpi_indirect" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
 
     set -e
 
-    # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
+    # Run tests in the mpi_indirect subdirectory. The must be run without loading conftest.py.
     if test "${HAVE_MPI}" = "True" && test "${HAVE_OPENMP}" = "True" ; then
-        XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+        XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_indirect.xml"
         env
         set +e
         "${PYTHON}" -m pytest --verbose --timeout "${TIME_LIMIT}" --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-            "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+            "${PYNEST_TEST_DIR}/mpi_indirect" 2>&1 | tee -a "${TEST_LOGFILE}"
         set -e
     fi
 
-    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
+    # Run tests in the mpi_direct/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "True"; then
         if test "${MPI_LAUNCHER}"; then
 
-      if test "${INFO_OS:-}" = "Darwin"; then
-   # ref https://stackoverflow.com/a/752893
-   # Note that on GNU systems an additional '-r' would be needed for
-   # xargs, which is not available here.
-                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
-      else
-                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi/"; find ./* -maxdepth 0 -type d -printf "%f\n")
-      fi
+            if test "${INFO_OS:-}" = "Darwin"; then
+                # ref https://stackoverflow.com/a/752893
+                # Note that on GNU systems an additional '-r' would be needed for
+                # xargs, which is not available here.
+                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi_direct/"; find ./* -maxdepth 0 -type d -print0 | xargs -0 -n1 basename)
+            else
+                proc_nums=$(cd "${PYNEST_TEST_DIR}/mpi_direct/"; find ./* -maxdepth 0 -type d -printf "%f\n")
+            fi
 
-        # Loop over subdirectories whose names are the number of mpi procs to use
-        for numproc in ${proc_nums}; do
-            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-            PYTEST_ARGS="--verbose --timeout ${TIME_LIMIT} --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+            # Loop over subdirectories whose names are the number of mpi procs to use
+            for numproc in ${proc_nums}; do
+                XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_direct_${numproc}.xml"
+                PYTEST_ARGS="--verbose --timeout ${TIME_LIMIT} --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi_direct/${numproc}"
 
-		set +e
-		# Some doubling up of code here because trying to add the -m 'not requires...' to PYTEST_ARGS
-		# loses the essential quotes.
-		if test "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-False}" != "False"; then
-		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
-            # Double-quoting PYTEST_ARGS here does not work
-            # shellcheck disable=SC2086
-            ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
-		else
-		    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS}"
-            # Double-quoting PYTEST_ARGS here does not work
-            # shellcheck disable=SC2086
-            ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} 2>&1 | tee -a "${TEST_LOGFILE}"
-		fi
-		set -e
+                set +e
+                # Some doubling up of code here because trying to add the -m 'not requires...' to PYTEST_ARGS
+                # loses the essential quotes.
+                if test "${DO_TESTS_SKIP_TEST_REQUIRING_MANY_CORES:-False}" != "False"; then
+                    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores'"
+                    # Double-quoting PYTEST_ARGS here does not work
+                    # shellcheck disable=SC2086
+                    ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} -m 'not requires_many_cores' 2>&1 | tee -a "${TEST_LOGFILE}"
+                else
+                    echo "Running ${MPI_LAUNCHER_CMDLINE} ${numproc} ${PYTHON} -m pytest ${PYTEST_ARGS}"
+                    # Double-quoting PYTEST_ARGS here does not work
+                    # shellcheck disable=SC2086
+                    ${MPI_LAUNCHER_CMDLINE} "${numproc}" "${PYTHON}" -m pytest ${PYTEST_ARGS} 2>&1 | tee -a "${TEST_LOGFILE}"
+                fi
+                set -e
             done
         fi
     fi

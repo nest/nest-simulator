@@ -246,16 +246,12 @@ def generate_modelsmodule():
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
         file.write(copyright_header.replace("{{file_name}}", fname))
-        file.write(
-            dedent(
-                """
+        file.write(dedent("""
             #include "models.h"
 
             // Generated includes
             #include "config.h"
-        """
-            )
-        )
+        """))
 
         for model_type, guards_fnames in includes.items():
             file.write(f"\n// {model_type.capitalize()} models\n")

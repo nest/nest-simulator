@@ -107,8 +107,8 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
 fi
 
 # Set PYTHONPATH
-PYTHON_VERSION="$(python --version | cut -d' ' -f 2)"
-NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION%.*}/site-packages"
+PYTHON_VERSION="$(python -c "import sysconfig; print(sysconfig.get_python_version())")"
+NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION}/site-packages"
 export PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"
 
 # source helpers to set environment variables and make functions available

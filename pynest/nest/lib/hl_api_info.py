@@ -40,33 +40,10 @@ from .hl_api_helper import (
 )
 from .hl_api_types import to_json
 
-__all__ = ["GetStatus", "help", "helpdesk", "SetStatus", "VerbosityLevel", "message"]
+__all__ = ["GetStatus", "help", "SetStatus", "VerbosityLevel", "message"]
 
 
 VerbosityLevel = nestkernel.VerbosityLevel
-
-
-def helpdesk():
-    """Open the NEST documentation index in a browser.
-
-    This command opens the NEST documentation index page using the
-    system's default browser.
-
-    Please note that the help pages will only be available if you ran
-    ``make html`` prior to installing NEST. For more details, see
-    :ref:`doc_workflow`.
-
-    """
-
-    docdir = nestkernel.llapi_get_kernel_status()["build_info"]["docdir"]
-    help_fname = os.path.join(docdir, "html", "index.html")
-
-    if not os.path.isfile(help_fname):
-        msg = "Sorry, the help index cannot be opened. "
-        msg += "Did you run 'make html' before running 'make install'?"
-        raise FileNotFoundError(msg)
-
-    webbrowser.open_new(f"file://{help_fname}")
 
 
 def help(obj=None, return_text=False):
@@ -100,13 +77,9 @@ def help(obj=None, return_text=False):
             else:
                 show_help_with_pager(obj)
         except FileNotFoundError:
-            print(
-                textwrap.dedent(
-                    f"""
+            print(textwrap.dedent(f"""
                 Sorry, there is no help for model '{obj}'.
-                Use the Python help() function to obtain help on PyNEST functions."""
-                )
-            )
+                Use the Python help() function to obtain help on PyNEST functions."""))
     else:
         print(nest.__doc__)
 

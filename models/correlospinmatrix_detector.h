@@ -222,18 +222,18 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;    //!< width of correlation histogram bins
-    Time tau_max_;      //!< maximum time difference of events to detect
-    Time Tstart_;       //!< start of recording
-    Time Tstop_;        //!< end of recording
-    size_t N_channels_; //!< number of channels
+    Time delta_tau_;     //!< width of correlation histogram bins
+    Time tau_max_;       //!< maximum time difference of events to detect
+    Time Tstart_;        //!< start of recording
+    Time Tstop_;         //!< end of recording
+    size_t N_channels_;  //!< number of channels
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Recalibrate all times
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -258,11 +258,11 @@ private:
    */
   struct State_
   {
-    BinaryPulselistType incoming_; //!< incoming binary pulses, sorted
-                                   /**
-                                    * rport of last event coming in
-                                    * (needed for decoding logic of binary events)
-                                    */
+    BinaryPulselistType incoming_;  //!< incoming binary pulses, sorted
+                                    /**
+                                     * rport of last event coming in
+                                     * (needed for decoding logic of binary events)
+                                     */
     size_t last_i_;
     /**
      * time of last event coming in (needed for decoding logic of binary events)
@@ -272,7 +272,7 @@ private:
     //! potentially a down transition (single spike received)
     bool tentative_down_;
 
-    std::vector< bool > curr_state_; //!< current state of neuron i
+    std::vector< bool > curr_state_;  //!< current state of neuron i
 
     //! last time pointof change of neuron i
     std::vector< long > last_change_;
@@ -281,7 +281,7 @@ private:
      */
     std::vector< std::vector< std::vector< long > > > count_covariance_;
 
-    State_(); //!< initialize default state
+    State_();  //!< initialize default state
 
     void get( Dictionary& ) const;
 
@@ -345,6 +345,6 @@ correlospinmatrix_detector::Parameters_::get_default_delta_tau()
   return Time::get_resolution();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CORRELOSPINMATRIX_DETECTOR_H */

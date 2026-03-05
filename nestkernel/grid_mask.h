@@ -165,6 +165,6 @@ GridMask< D >::set_anchor( const Position< D, int >& anchor )
   upper_left_ = -anchor;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

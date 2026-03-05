@@ -192,8 +192,8 @@ PoorMansAllocator::alloc( size_t obj_size )
     new_chunk();
   }
   char* ptr = head_;
-  head_ += obj_size; // Advance pointer to next free location.
-                     // This works, because sizeof(head*) == 1
+  head_ += obj_size;  // Advance pointer to next free location.
+                      // This works, because sizeof(head*) == 1
   capacity_ -= obj_size;
   return ptr;
 }

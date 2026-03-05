@@ -149,6 +149,6 @@ proxynode::is_proxy() const
   return true;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef PROXYNODE_H */

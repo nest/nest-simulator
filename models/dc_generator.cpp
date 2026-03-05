@@ -54,7 +54,7 @@ RecordablesMap< dc_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::Parameters_::Parameters_()
-  : amp_( 0.0 ) // pA
+  : amp_( 0.0 )  // pA
 {
 }
 
@@ -77,7 +77,7 @@ nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 }
 
 nest::dc_generator::State_::State_()
-  : I_( 0.0 ) // pA
+  : I_( 0.0 )  // pA
 {
 }
 
@@ -188,7 +188,7 @@ nest::dc_generator::handle( DataLoggingRequest& e )
 void
 nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

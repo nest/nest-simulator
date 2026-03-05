@@ -349,8 +349,8 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
-                                 // properties or "static"?
+  unsigned int discrete_weight_;  // TODO: TP: only needed in send, move to common
+                                  // properties or "static"?
   double t_lastspike_;
 };
 
@@ -534,6 +534,6 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
 
   return true;
 }
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H
+#endif  // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H

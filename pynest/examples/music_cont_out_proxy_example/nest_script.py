@@ -29,6 +29,7 @@ the NEST instances are observed by the music_cont_out_proxy and their
 values are forwarded through MUSIC to the receiver.
 
 """
+
 import nest
 
 proxy = nest.Create("music_cont_out_proxy", 1)

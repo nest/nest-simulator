@@ -194,15 +194,15 @@ void
 eprop_readout_bsshslm_2020::init_buffers_()
 {
   B_.normalization_rate_ = 0;
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_readout_bsshslm_2020::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   if ( P_.loss_ == "mean_squared_error" )
   {
@@ -383,14 +383,14 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double grad = 0.0;  // gradient value to be calculated
-  double L = 0.0;     // error signal
-  double z = 0.0;     // spiking variable
-  double z_bar = 0.0; // low-pass filtered spiking variable
+  double grad = 0.0;   // gradient value to be calculated
+  double L = 0.0;      // error signal
+  double z = 0.0;      // spiking variable
+  double z_bar = 0.0;  // low-pass filtered spiking variable
 
   for ( long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    z = 1.0;  // set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
@@ -400,7 +400,7 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       grad += L * z_bar;
-      z = 0.0; // set spiking variable to 0 between spikes
+      z = 0.0;  // set spiking variable to 0 between spikes
 
       ++eprop_hist_it;
     }
@@ -416,4 +416,4 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   return grad;
 }
 
-} // namespace nest
+}  // namespace nest

@@ -110,7 +110,7 @@ MusicRateInHandler::publish_port()
       *it = 0;
     }
 
-    MUSIC::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI::DOUBLE, 0, port_width_ );
+    MUSIC::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI_DOUBLE, 0, port_width_ );
 
     MP_->map( &data_map );
     published_ = true;
@@ -140,6 +140,6 @@ MusicRateInHandler::update( Time const&, const long, const long )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifdef HAVE_MUSIC */

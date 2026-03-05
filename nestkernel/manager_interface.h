@@ -45,8 +45,8 @@ namespace nest
 class ManagerInterface
 {
 public:
-  ManagerInterface( ManagerInterface const& ) = delete; // do not implement
-  void operator=( ManagerInterface const& ) = delete;   // do not implement
+  ManagerInterface( ManagerInterface const& ) = delete;  // do not implement
+  void operator=( ManagerInterface const& ) = delete;    // do not implement
 
 public:
   ManagerInterface()

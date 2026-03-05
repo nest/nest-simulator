@@ -114,6 +114,6 @@ nest::ModelRangeManager::end() const
   return modelranges_.end();
 }
 
-} // namespace nest end
+}  // namespace nest end
 
 #endif

@@ -138,6 +138,13 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   endif ()
 
   message( "" )
+  if ( CYCLE_TIMERS )
+    message( "Cycle timers        : Yes" )
+  else ()
+    message( "Cycle timers        : No" )
+  endif ()
+
+  message( "" )
   if ( THREADED_TIMERS )
     message( "Threaded timers     : Yes" )
   else ()

@@ -192,9 +192,6 @@ typedef binary_neuron< nest::gainfunction_ginzburg > ginzburg_neuron;
 void register_ginzburg_neuron( const std::string& name );
 
 
-template <>
-void RecordablesMap< ginzburg_neuron >::create();
-
 } // namespace nest
 
 

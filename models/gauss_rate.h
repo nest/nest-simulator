@@ -188,9 +188,6 @@ void register_gauss_rate_ipn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_gauss_rate > rate_transformer_gauss;
 void register_rate_transformer_gauss( const std::string& name );
 
-
-template <>
-void RecordablesMap< gauss_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_gauss >::create();
 

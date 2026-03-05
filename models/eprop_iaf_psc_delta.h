@@ -702,9 +702,6 @@ eprop_iaf_psc_delta::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< eprop_iaf_psc_delta >::create();
-
 } // namespace nest
 
 #endif // EPROP_IAF_PSC_DELTA_H

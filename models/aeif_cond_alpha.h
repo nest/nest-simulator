@@ -482,9 +482,6 @@ aeif_cond_alpha::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< aeif_cond_alpha >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

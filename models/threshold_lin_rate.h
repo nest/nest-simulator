@@ -191,9 +191,6 @@ void register_threshold_lin_rate_opn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 void register_rate_transformer_threshold_lin( const std::string& name );
 
-
-template <>
-void RecordablesMap< threshold_lin_rate_ipn >::create();
 template <>
 void RecordablesMap< threshold_lin_rate_opn >::create();
 template <>

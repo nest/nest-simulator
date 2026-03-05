@@ -684,9 +684,6 @@ eprop_iaf_adapt::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< eprop_iaf_adapt >::create();
-
 } // namespace nest
 
 #endif // EPROP_IAF_ADAPT_H

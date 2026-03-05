@@ -494,9 +494,6 @@ amat2_psc_exp::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< amat2_psc_exp >::create();
-
 } // namespace
 
 #endif // AMAT2_PSC_EXP_H

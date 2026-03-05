@@ -198,9 +198,6 @@ void register_lin_rate_opn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_lin_rate > rate_transformer_lin;
 void register_rate_transformer_lin( const std::string& name );
 
-
-template <>
-void RecordablesMap< lin_rate_ipn >::create();
 template <>
 void RecordablesMap< lin_rate_opn >::create();
 template <>

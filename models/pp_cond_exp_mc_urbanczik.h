@@ -667,9 +667,6 @@ pp_cond_exp_mc_urbanczik::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< pp_cond_exp_mc_urbanczik >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

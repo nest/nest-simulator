@@ -485,9 +485,6 @@ iaf_tum_2000::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< iaf_tum_2000 >::create();
-
 } // namespace
 
 #endif // IAF_TUM_2000_H

@@ -514,9 +514,6 @@ astrocyte_lr_1994::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< astrocyte_lr_1994 >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

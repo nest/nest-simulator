@@ -490,9 +490,6 @@ hh_psc_alpha_gap::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< hh_psc_alpha_gap >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

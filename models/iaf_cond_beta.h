@@ -456,9 +456,6 @@ iaf_cond_beta::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< iaf_cond_beta >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

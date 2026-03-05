@@ -525,9 +525,6 @@ gif_cond_exp::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< gif_cond_exp >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

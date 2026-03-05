@@ -379,9 +379,6 @@ noise_generator::Parameters_::get_default_dt()
   return 10 * Time::get_resolution();
 }
 
-template <>
-void RecordablesMap< noise_generator >::create();
-
 } // namespace
 
 #endif // NOISE_GENERATOR_H

@@ -599,9 +599,6 @@ eprop_readout::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< eprop_readout >::create();
-
 } // namespace nest
 
 #endif // EPROP_READOUT_H

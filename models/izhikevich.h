@@ -370,9 +370,6 @@ izhikevich::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< izhikevich >::create();
-
 } // namespace nest
 
 #endif /* #ifndef IZHIKEVICH_H */

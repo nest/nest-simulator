@@ -187,9 +187,6 @@ void register_sigmoid_rate_ipn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
 void register_rate_transformer_sigmoid( const std::string& name );
 
-
-template <>
-void RecordablesMap< sigmoid_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_sigmoid >::create();
 

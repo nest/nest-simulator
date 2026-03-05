@@ -457,9 +457,6 @@ iaf_psc_delta::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< iaf_psc_delta >::create();
-
 } // namespace
 
 #endif /* #ifndef IAF_PSC_DELTA_H */

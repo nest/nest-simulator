@@ -499,9 +499,6 @@ gif_psc_exp_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< gif_psc_exp_multisynapse >::create();
-
 } // namespace
 
 #endif /* #ifndef GIF_PSC_EXP_MULTISYNAPSE_H */

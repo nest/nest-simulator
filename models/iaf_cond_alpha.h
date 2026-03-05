@@ -434,9 +434,6 @@ iaf_cond_alpha::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< iaf_cond_alpha >::create();
-
 } // namespace
 
 #endif // IAF_COND_ALPHA_H

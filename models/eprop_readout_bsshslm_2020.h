@@ -604,9 +604,6 @@ eprop_readout_bsshslm_2020::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< eprop_readout_bsshslm_2020 >::create();
-
 } // namespace nest
 
 #endif // EPROP_READOUT_BSSHSLM_2020_H

@@ -534,9 +534,6 @@ hh_cond_beta_gap_traub::set_status( const Dictionary& d )
   pre_run_hook();
 }
 
-template <>
-void RecordablesMap< hh_cond_beta_gap_traub >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

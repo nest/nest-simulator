@@ -184,9 +184,6 @@ void register_tanh_rate_opn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
 void register_rate_transformer_tanh( const std::string& name );
 
-
-template <>
-void RecordablesMap< tanh_rate_ipn >::create();
 template <>
 void RecordablesMap< tanh_rate_opn >::create();
 template <>

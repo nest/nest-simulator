@@ -476,9 +476,6 @@ iaf_chxk_2008::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< iaf_chxk_2008 >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

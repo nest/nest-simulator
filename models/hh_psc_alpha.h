@@ -426,9 +426,6 @@ hh_psc_alpha::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< hh_psc_alpha >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

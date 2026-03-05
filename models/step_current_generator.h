@@ -286,9 +286,6 @@ step_current_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
-template <>
-void RecordablesMap< step_current_generator >::create();
-
 } // namespace
 
 #endif /* #ifndef STEP_CURRENT_GENERATOR_H */

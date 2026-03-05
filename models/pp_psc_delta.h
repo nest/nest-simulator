@@ -478,9 +478,6 @@ pp_psc_delta::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-template <>
-void RecordablesMap< pp_psc_delta >::create();
-
 } // namespace
 
 #endif /* #ifndef PP_PSC_DELTA_H */

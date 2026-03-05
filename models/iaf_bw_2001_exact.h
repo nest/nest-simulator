@@ -556,9 +556,6 @@ iaf_bw_2001_exact::set_status( const Dictionary& d )
   S_ = stmp;
 };
 
-template <>
-void RecordablesMap< iaf_bw_2001_exact >::create();
-
 } // namespace
 
 #endif // HAVE_GSL

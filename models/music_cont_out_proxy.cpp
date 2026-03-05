@@ -22,6 +22,8 @@
 
 #include "music_cont_out_proxy.h"
 
+#ifdef HAVE_MUSIC
+
 #include <bits/std_abs.h>
 #include <boost/any.hpp>
 #include <limits>
@@ -40,8 +42,6 @@
 #include "music/port.hh"
 #include "music/setup.hh"
 #include "nest_names.h"
-
-#ifdef HAVE_MUSIC
 
 #include <string>
 

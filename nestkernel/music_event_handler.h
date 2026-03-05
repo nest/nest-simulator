@@ -23,6 +23,8 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
+#ifdef HAVE_MUSIC
+
 #include <functional>
 #include <stddef.h>
 #include <string>
@@ -43,8 +45,6 @@ namespace nest
 {
 class Node;
 } // namespace nest
-
-#ifdef HAVE_MUSIC
 
 // C++ includes:
 #include <music.hh>

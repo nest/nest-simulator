@@ -23,6 +23,8 @@
 #ifndef MUSIC_EVENT_OUT_PROXY_H
 #define MUSIC_EVENT_OUT_PROXY_H
 
+#ifdef HAVE_MUSIC
+
 #include <stddef.h>
 #include <string>
 
@@ -43,8 +45,6 @@ namespace nest
 {
 class SpikeEvent;
 } // namespace nest
-
-#ifdef HAVE_MUSIC
 
 // External includes:
 #include <music.hh>

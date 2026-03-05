@@ -23,12 +23,14 @@
 #ifndef MUSIC_RATE_OUT_PROXY_H
 #define MUSIC_RATE_OUT_PROXY_H
 
+#ifdef HAVE_MUSIC
+
 #include <stddef.h>
 #include <string>
 
 // Generated includes:
 #include "config.h"
-#include "music/index_map.hh"
+#include "music/index_map.h"
 #include "nest_time.h"
 
 class Dictionary;
@@ -41,8 +43,6 @@ namespace nest
 {
 class InstantaneousRateConnectionEvent;
 } // namespace nest
-
-#ifdef HAVE_MUSIC
 
 // External includes:
 #include <music.hh>

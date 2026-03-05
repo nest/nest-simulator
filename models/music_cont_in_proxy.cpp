@@ -22,6 +22,8 @@
 
 #include "music_cont_in_proxy.h"
 
+#ifdef HAVE_MUSIC
+
 #include <boost/any.hpp>
 
 #include "dictionary.h"
@@ -32,8 +34,6 @@
 #include "music/setup.hh"
 #include "nest_names.h"
 #include "node.h"
-
-#ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"

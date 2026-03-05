@@ -23,6 +23,8 @@
 #ifndef MUSIC_RATE_IN_HANDLER
 #define MUSIC_RATE_IN_HANDLER
 
+#ifdef HAVE_MUSIC
+
 #include <string>
 #include <vector>
 
@@ -38,8 +40,6 @@ namespace nest
 {
 class Node;
 } // namespace nest
-
-#ifdef HAVE_MUSIC
 
 // C++ includes:
 #include <music.hh>

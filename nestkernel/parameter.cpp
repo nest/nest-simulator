@@ -83,9 +83,9 @@ NormalParameter::NormalParameter( const Dictionary& d )
 {
   d.update_value( names::mean, mean_ );
   d.update_value( names::std, std_ );
-  if ( std_ <= 0 )
+  if ( std_ < 0 )
   {
-    throw BadProperty( "nest::NormalParameter: std > 0 required." );
+    throw BadProperty( "nest::NormalParameter: std ≥ 0 required." );
   }
   normal_distribution dist;
   normal_distribution::param_type param( mean_, std_ );
@@ -109,9 +109,9 @@ LognormalParameter::LognormalParameter( const Dictionary& d )
 {
   d.update_value( names::mean, mean_ );
   d.update_value( names::std, std_ );
-  if ( std_ <= 0 )
+  if ( std_ < 0 )
   {
-    throw BadProperty( "nest::LognormalParameter: std > 0 required." );
+    throw BadProperty( "nest::LognormalParameter: std ≥ 0 required." );
   }
   lognormal_distribution dist;
   const lognormal_distribution::param_type param( mean_, std_ );

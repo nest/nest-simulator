@@ -27,8 +27,8 @@ nest::Na::Na( double v_comp )
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
   // parameters
-  , gbar_Na_( 0.0 ) // uS
-  , e_Na_( 50. )    // mV
+  , gbar_Na_( 0.0 )  // uS
+  , e_Na_( 50. )     // mV
   , q10_( 1. / 3.21 )
 {
   // some default initialization
@@ -39,8 +39,8 @@ nest::Na::Na( double v_comp, const Dictionary& channel_params )
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
   // parameters
-  , gbar_Na_( 0.0 ) // uS
-  , e_Na_( 50. )    // mV
+  , gbar_Na_( 0.0 )  // uS
+  , e_Na_( 50. )     // mV
   , q10_( 1. / 3.21 )
 {
   // update sodium channel parameters
@@ -190,8 +190,8 @@ nest::K::K( double v_comp )
   // state variables
   : n_K_( 0.0 )
   // parameters
-  , gbar_K_( 0.0 ) // uS
-  , e_K_( -85. )   // mV
+  , gbar_K_( 0.0 )  // uS
+  , e_K_( -85. )    // mV
   , q10_( 1. / 3.21 )
 {
   init_statevars( v_comp );
@@ -201,8 +201,8 @@ nest::K::K( double v_comp, const Dictionary& channel_params )
   // state variables
   : n_K_( 0.0 )
   // parameters
-  , gbar_K_( 0.0 ) // uS
-  , e_K_( -85. )   // mV
+  , gbar_K_( 0.0 )  // uS
+  , e_K_( -85. )    // mV
   , q10_( 1. / 3.21 )
 {
   // update potassium channel parameters
@@ -304,9 +304,9 @@ nest::AMPA::AMPA( const long syn_index )
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0.0 ) // mV
-  , tau_r_( 0.2 ) // ms
-  , tau_d_( 3.0 ) // ms
+  , e_rev_( 0.0 )  // mV
+  , tau_r_( 0.2 )  // ms
+  , tau_d_( 3.0 )  // ms
   // will be recomputed based on parameters
   , g_norm_( 1.0 )
   , prop_r_( 0.0 )
@@ -323,9 +323,9 @@ nest::AMPA::AMPA( const long syn_index, const Dictionary& receptor_params )
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0.0 ) // mV
-  , tau_r_( 0.2 ) // ms
-  , tau_d_( 3.0 ) // ms
+  , e_rev_( 0.0 )  // mV
+  , tau_r_( 0.2 )  // ms
+  , tau_d_( 3.0 )  // ms
   // will be recomputed based on parameters
   , g_norm_( 1.0 )
   , prop_r_( 0.0 )
@@ -391,9 +391,9 @@ nest::GABA::GABA( const long syn_index )
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
   // initialization parameters
-  , e_rev_( -80. ) // mV
-  , tau_r_( 0.2 )  // ms
-  , tau_d_( 10.0 ) // ms
+  , e_rev_( -80. )  // mV
+  , tau_r_( 0.2 )   // ms
+  , tau_d_( 10.0 )  // ms
   // will be recomputed based on parameters
   , g_norm_( 1.0 )
   , prop_r_( 0.0 )
@@ -410,9 +410,9 @@ nest::GABA::GABA( const long syn_index, const Dictionary& receptor_params )
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
   // initialization parameters
-  , e_rev_( -80. ) // mV
-  , tau_r_( 0.2 )  // ms
-  , tau_d_( 10.0 ) // ms
+  , e_rev_( -80. )  // mV
+  , tau_r_( 0.2 )   // ms
+  , tau_d_( 10.0 )  // ms
   // will be recomputed based on parameters
   , g_norm_( 1.0 )
   , prop_r_( 0.0 )
@@ -478,9 +478,9 @@ nest::NMDA::NMDA( const long syn_index )
   : g_r_NMDA_( 0.0 )
   , g_d_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )   // mV
-  , tau_r_( 0.2 )  // ms
-  , tau_d_( 43.0 ) // ms
+  , e_rev_( 0. )    // mV
+  , tau_r_( 0.2 )   // ms
+  , tau_d_( 43.0 )  // ms
   // will be recomputed based on parameters
   , g_norm_( 1.0 )
   , prop_r_( 0.0 )
@@ -570,11 +570,11 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   , g_r_AN_NMDA_( 0.0 )
   , g_d_AN_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )        // mV
-  , tau_r_AMPA_( 0.2 )  // ms
-  , tau_d_AMPA_( 3.0 )  // ms
-  , tau_r_NMDA_( 0.2 )  // ms
-  , tau_d_NMDA_( 43.0 ) // ms
+  , e_rev_( 0. )         // mV
+  , tau_r_AMPA_( 0.2 )   // ms
+  , tau_d_AMPA_( 3.0 )   // ms
+  , tau_r_NMDA_( 0.2 )   // ms
+  , tau_d_NMDA_( 43.0 )  // ms
   , NMDA_ratio_( 2.0 )
   // will be recomputed based on parameters
   , g_norm_AMPA_( 1.0 )
@@ -601,11 +601,11 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const Dictionary& receptor_par
   , g_r_AN_NMDA_( 0.0 )
   , g_d_AN_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )        // mV
-  , tau_r_AMPA_( 0.2 )  // ms
-  , tau_d_AMPA_( 3.0 )  // ms
-  , tau_r_NMDA_( 0.2 )  // ms
-  , tau_d_NMDA_( 43.0 ) // ms
+  , e_rev_( 0. )         // mV
+  , tau_r_AMPA_( 0.2 )   // ms
+  , tau_d_AMPA_( 3.0 )   // ms
+  , tau_r_NMDA_( 0.2 )   // ms
+  , tau_d_NMDA_( 43.0 )  // ms
   , NMDA_ratio_( 2.0 )
   // will be recomputed based on parameters
   , g_norm_AMPA_( 1.0 )

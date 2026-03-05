@@ -254,26 +254,26 @@ private:
 
   struct Parameters_
   {
-    double G_;                        //!< membrane conductance in nS
-    double E_L_;                      //!< resting potential in mV
-    double th_inf_;                   //!< infinity threshold in mV
-    double C_m_;                      //!< capacitance in pF
-    double t_ref_;                    //!< refractory time in ms
-    double V_reset_;                  //!< Membrane voltage following spike in mV
-    double th_spike_add_;             //!< threshold additive constant following reset in mV
-    double th_spike_decay_;           //!< spike induced threshold in 1/ms
-    double voltage_reset_fraction_;   //!< voltage fraction following reset coefficient
-    double voltage_reset_add_;        //!< voltage additive constant following reset in mV
-    double th_voltage_index_;         //!< a 'leak-conductance' for the voltage-dependent
-                                      //!< component of the threshold in 1/ms
-    double th_voltage_decay_;         //!< inverse of which is the time constant of the
-                                      //!< voltage-dependent component of the threshold in 1/ms
-    std::vector< double > asc_init_;  //!< initial values of ASCurrents_ in pA
-    std::vector< double > asc_decay_; //!< predefined time scale in 1/ms
-    std::vector< double > asc_amps_;  //!< in pA
-    std::vector< double > asc_r_;     //!< coefficient
-    std::vector< double > tau_syn_;   //!< synaptic port time constants in ms
-    std::vector< double > E_rev_;     //!< reversal potential in mV
+    double G_;                         //!< membrane conductance in nS
+    double E_L_;                       //!< resting potential in mV
+    double th_inf_;                    //!< infinity threshold in mV
+    double C_m_;                       //!< capacitance in pF
+    double t_ref_;                     //!< refractory time in ms
+    double V_reset_;                   //!< Membrane voltage following spike in mV
+    double th_spike_add_;              //!< threshold additive constant following reset in mV
+    double th_spike_decay_;            //!< spike induced threshold in 1/ms
+    double voltage_reset_fraction_;    //!< voltage fraction following reset coefficient
+    double voltage_reset_add_;         //!< voltage additive constant following reset in mV
+    double th_voltage_index_;          //!< a 'leak-conductance' for the voltage-dependent
+                                       //!< component of the threshold in 1/ms
+    double th_voltage_decay_;          //!< inverse of which is the time constant of the
+                                       //!< voltage-dependent component of the threshold in 1/ms
+    std::vector< double > asc_init_;   //!< initial values of ASCurrents_ in pA
+    std::vector< double > asc_decay_;  //!< predefined time scale in 1/ms
+    std::vector< double > asc_amps_;   //!< in pA
+    std::vector< double > asc_r_;      //!< coefficient
+    std::vector< double > tau_syn_;    //!< synaptic port time constants in ms
+    std::vector< double > E_rev_;      //!< reversal potential in mV
 
     //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -287,7 +287,7 @@ private:
     //! boolean flag which indicates whether the neuron has voltage dependent threshold component
     bool has_theta_voltage_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const;  //!< Returns the size of tau_syn_
 
     Parameters_();
 
@@ -299,12 +299,12 @@ private:
   struct State_
   {
 
-    double threshold_;                 //!< voltage threshold in mV
-    double threshold_spike_;           //!< spike component of threshold in mV
-    double threshold_voltage_;         //!< voltage component of threshold in mV
-    std::vector< double > ASCurrents_; //!< after-spike currents in pA
-    double ASCurrents_sum_;            //!< in pA
-    int refractory_steps_;             //!< Number of refractory steps remaining
+    double threshold_;                  //!< voltage threshold in mV
+    double threshold_spike_;            //!< spike component of threshold in mV
+    double threshold_voltage_;          //!< voltage component of threshold in mV
+    std::vector< double > ASCurrents_;  //!< after-spike currents in pA
+    double ASCurrents_sum_;             //!< in pA
+    int refractory_steps_;              //!< Number of refractory steps remaining
 
     //! Symbolic indices to the elements of the state vector y and recordables
     //! y only includes state of V_M and DG_SYN, G_SYN
@@ -325,11 +325,11 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;         // V_M
-    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1; // I, ASC, TH, Th_SPK, TH_VLT
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;  // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
+    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
 
-    std::vector< double > y_; //!< neuron state
+    std::vector< double > y_;  //!< neuron state
 
     State_( const Parameters_& );
 
@@ -343,24 +343,24 @@ private:
     Buffers_( glif_cond& );
     Buffers_( const Buffers_&, glif_cond& );
 
-    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
+    std::vector< nest::RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
+    nest::RingBuffer currents_;               //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
     DynamicUniversalDataLogger< glif_cond > logger_;
 
     /* GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -374,16 +374,16 @@ private:
 
   struct Variables_
   {
-    int RefractoryCounts_;                             //!< counter during refractory period
-    double theta_spike_decay_rate_;                    //!< threshold spike component decay rate
-    double theta_spike_refractory_decay_rate_;         //!< threshold spike component decay rate during refractory
-    double theta_voltage_decay_rate_inverse_;          //!< inverse of threshold voltage component decay rate
-    double potential_decay_rate_;                      //!< membrane potential decay rate
-    double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
-    std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
-    std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
-    std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
-    double phi;                                        //!< threshold voltage component coefficient
+    int RefractoryCounts_;                              //!< counter during refractory period
+    double theta_spike_decay_rate_;                     //!< threshold spike component decay rate
+    double theta_spike_refractory_decay_rate_;          //!< threshold spike component decay rate during refractory
+    double theta_voltage_decay_rate_inverse_;           //!< inverse of threshold voltage component decay rate
+    double potential_decay_rate_;                       //!< membrane potential decay rate
+    double abpara_ratio_voltage_;                       //!< ratio of parameters of voltage threshold component av/bv
+    std::vector< double > asc_decay_rates_;             //!< after spike current decay rates
+    std::vector< double > asc_stable_coeff_;            //!< after spike current stable coefficient
+    std::vector< double > asc_refractory_decay_rates_;  //!< after spike current decay rates during refractory
+    double phi;                                         //!< threshold voltage component coefficient
 
     /** Amplitude of the synaptic conductance.
         This value is chosen such that an event of weight 1.0 results in a peak
@@ -495,10 +495,10 @@ glif_cond::get_status( Dictionary& d ) const
 inline void
 glif_cond::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   ArchivingNode::set_status( d );
 
@@ -506,7 +506,7 @@ glif_cond::set_status( const Dictionary& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.n_receptors_() > P_.n_receptors_() ) // Number of receptors increased
+  if ( ptmp.n_receptors_() > P_.n_receptors_() )  // Number of receptors increased
   {
     for ( size_t receptor = P_.n_receptors_(); receptor < ptmp.n_receptors_(); ++receptor )
     {
@@ -515,7 +515,7 @@ glif_cond::set_status( const Dictionary& d )
     }
   }
   else if ( ptmp.n_receptors_() < P_.n_receptors_() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t receptor = ptmp.n_receptors_(); receptor < P_.n_receptors_(); ++receptor )
     {
       recordablesMap_.erase( get_g_receptor_name( receptor ) );
@@ -527,7 +527,7 @@ glif_cond::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL
 #endif

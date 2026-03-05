@@ -67,23 +67,23 @@ RecordablesMap< nest::glif_psc >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::Parameters_::Parameters_()
-  : G_( 9.43 )               // in nS
-  , E_L_( -78.85 )           // in mV
-  , th_inf_( -51.68 - E_L_ ) // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
-  , C_m_( 58.72 )            // in pF
-  , t_ref_( 3.75 )           // in ms
-  , V_reset_( 0.0 )          // in mV, rel to E_L_, -78.85 - E_L_
-  , th_spike_add_( 0.37 )    // in mV
-  , th_spike_decay_( 0.009 ) // in 1/ms
+  : G_( 9.43 )                // in nS
+  , E_L_( -78.85 )            // in mV
+  , th_inf_( -51.68 - E_L_ )  // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
+  , C_m_( 58.72 )             // in pF
+  , t_ref_( 3.75 )            // in ms
+  , V_reset_( 0.0 )           // in mV, rel to E_L_, -78.85 - E_L_
+  , th_spike_add_( 0.37 )     // in mV
+  , th_spike_decay_( 0.009 )  // in 1/ms
   , voltage_reset_fraction_( 0.20 )
-  , voltage_reset_add_( 18.51 )                           // in mV
-  , th_voltage_index_( 0.005 )                            // in 1/ms
-  , th_voltage_decay_( 0.09 )                             // in 1/ms
-  , asc_init_( std::vector< double >( 2, 0.0 ) )          // in pA
-  , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
-  , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
+  , voltage_reset_add_( 18.51 )                            // in mV
+  , th_voltage_index_( 0.005 )                             // in 1/ms
+  , th_voltage_decay_( 0.09 )                              // in 1/ms
+  , asc_init_( std::vector< double >( 2, 0.0 ) )           // in pA
+  , asc_decay_( std::vector< double > { 0.003, 0.1 } )     // in 1/ms
+  , asc_amps_( std::vector< double > { -9.18, -198.94 } )  // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
-  , tau_syn_( std::vector< double >( 1, 2.0 ) ) // in ms
+  , tau_syn_( std::vector< double >( 1, 2.0 ) )  // in ms
   , has_connections_( false )
   , has_theta_spike_( false )
   , has_asc_( false )
@@ -92,14 +92,14 @@ nest::glif_psc::Parameters_::Parameters_()
 }
 
 nest::glif_psc::State_::State_( const Parameters_& p )
-  : U_( 0.0 )                  // in mV
-  , threshold_( p.th_inf_ )    // in mV
-  , threshold_spike_( 0.0 )    // in mV
-  , threshold_voltage_( 0.0 )  // in mV
-  , I_( 0.0 )                  // in pA
-  , I_syn_( 0.0 )              // in pA
-  , ASCurrents_( p.asc_init_ ) // in pA
-  , ASCurrents_sum_( 0.0 )     // in pA
+  : U_( 0.0 )                   // in mV
+  , threshold_( p.th_inf_ )     // in mV
+  , threshold_spike_( 0.0 )     // in mV
+  , threshold_voltage_( 0.0 )   // in mV
+  , I_( 0.0 )                   // in pA
+  , I_syn_( 0.0 )               // in pA
+  , ASCurrents_( p.asc_init_ )  // in pA
+  , ASCurrents_sum_( 0.0 )      // in pA
   , refractory_steps_( 0 )
 {
   for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )
@@ -193,11 +193,11 @@ nest::glif_psc::Parameters_::set( const Dictionary& d, Node* node )
   update_value_param( d, names::adapting_threshold, has_theta_voltage_, node );
 
   // check model mechanisms parameter
-  if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
-         ( has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or        // glif2
-         ( not has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or        // glif3
-         ( has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or            // glif4
-         ( has_theta_spike_ and has_asc_ and has_theta_voltage_ )                   // glif5
+  if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or  // glif1
+         ( has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or         // glif2
+         ( not has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or         // glif3
+         ( has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or             // glif4
+         ( has_theta_spike_ and has_asc_ and has_theta_voltage_ )                    // glif5
          ) )
   {
     throw BadProperty(
@@ -383,9 +383,9 @@ nest::glif_psc::glif_psc( const glif_psc& n )
 void
 nest::glif_psc::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // include resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // include resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
@@ -393,7 +393,7 @@ nest::glif_psc::pre_run_hook()
 {
   B_.logger_.init();
 
-  const double h = Time::get_resolution().get_ms(); // in ms
+  const double h = Time::get_resolution().get_ms();  // in ms
 
   // pre-computing of decay parameters
   if ( P_.has_theta_spike_ )
@@ -436,7 +436,7 @@ nest::glif_psc::pre_run_hook()
 
   B_.spikes_.resize( P_.n_receptors_() );
 
-  double Tau_ = P_.C_m_ / P_.G_; // in ms
+  double Tau_ = P_.C_m_ / P_.G_;  // in ms
   V_.P33_ = std::exp( -h / Tau_ );
   V_.P30_ = 1 / P_.C_m_ * ( 1 - V_.P33_ ) * Tau_;
 
@@ -627,5 +627,5 @@ nest::glif_psc::handle( CurrentEvent& e )
 void
 nest::glif_psc::handle( DataLoggingRequest& e )
 {
-  B_.logger_.handle( e ); // the logger does this for us
+  B_.logger_.handle( e );  // the logger does this for us
 }

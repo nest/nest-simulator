@@ -26,7 +26,6 @@ Test that neurons are assigned to the correct ranks and VPs.
 This test should be run for 1, 2, and 3 MPI processes.
 """
 
-
 import nest
 import numpy as np
 import pytest

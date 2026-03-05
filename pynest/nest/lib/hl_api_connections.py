@@ -203,7 +203,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
-    # Converting conn_spec to dict, without putting it on the SLI stack.
+    # Converting conn_spec to dict
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.

@@ -175,10 +175,7 @@ class TestStdpSpikeMultiplicity:
             w_post_ps = syn_ps.get("weight")
 
             assert w_post != w_pre, "Plain parrot weight did not change."
-            assert (
-                w_post_ps != w_pre_ps
-            ), "Precise parrot \
-                weight did not change."
+            assert w_post_ps != w_pre_ps, "Precise parrot weight did not change."
 
             post_weights["parrot"].append(w_post)
             post_weights["parrot_ps"].append(w_post_ps)

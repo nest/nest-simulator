@@ -37,7 +37,7 @@ DeprecationWarning::deprecation_warning( std::string name )
   {
     LOG( VerbosityLevel::DEPRECATED, name, name + " is deprecated and will be removed in a future version of NEST." );
 
-    deprecated_functions_[ name ] = false; // to not issue warning again
+    deprecated_functions_[ name ] = false;  // to not issue warning again
   }
 }
 
@@ -50,7 +50,7 @@ DeprecationWarning::deprecation_warning( std::string name, std::string new_name 
       name,
       name + " is deprecated and will be removed in a future version of NEST, use " + new_name + " instead." );
 
-    deprecated_functions_[ name ] = false; // to not issue warning again
+    deprecated_functions_[ name ] = false;  // to not issue warning again
   }
 }
 }

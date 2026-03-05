@@ -275,7 +275,7 @@ private:
   struct State_
   {
     State_();
-    size_t position_; //!< index of next spike to deliver
+    size_t position_;  //!< index of next spike to deliver
   };
 
   /**
@@ -301,11 +301,11 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
     Parameters_& operator=( const Parameters_& ) = default;
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -350,7 +350,7 @@ spike_train_injector::get_status( Dictionary& d ) const
 inline void
 spike_train_injector::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // To detect "now" spikes and shift them, we need the origin. In case
   // it is set in this call, we need to extract it explicitly here.
@@ -377,6 +377,6 @@ spike_train_injector::set_status( const Dictionary& d )
   P_ = ptmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // SPIKE_TRAIN_INJECTOR_H
+#endif  // SPIKE_TRAIN_INJECTOR_H

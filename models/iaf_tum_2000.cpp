@@ -69,21 +69,21 @@ RecordablesMap< iaf_tum_2000 >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_tum_2000::Parameters_::Parameters_()
-  : Tau_( 10.0 )             // in ms
-  , C_( 250.0 )              // in pF
-  , t_ref_( 2.0 )            // in ms
-  , E_L_( -70.0 )            // in mV
-  , I_e_( 0.0 )              // in pA
-  , Theta_( -55.0 - E_L_ )   // relative E_L_
-  , V_reset_( -70.0 - E_L_ ) // in mV
-  , tau_ex_( 2.0 )           // in ms
-  , tau_in_( 2.0 )           // in ms
-  , rho_( 0.01 )             // in 1/s
-  , delta_( 0.0 )            // in mV
-  , tau_fac_( 1000.0 )       // in ms
-  , tau_psc_( 2.0 )          // in ms
-  , tau_rec_( 400.0 )        // in ms
-  , U_( 0.5 )                // dimensionless
+  : Tau_( 10.0 )              // in ms
+  , C_( 250.0 )               // in pF
+  , t_ref_( 2.0 )             // in ms
+  , E_L_( -70.0 )             // in mV
+  , I_e_( 0.0 )               // in pA
+  , Theta_( -55.0 - E_L_ )    // relative E_L_
+  , V_reset_( -70.0 - E_L_ )  // in mV
+  , tau_ex_( 2.0 )            // in ms
+  , tau_in_( 2.0 )            // in ms
+  , rho_( 0.01 )              // in 1/s
+  , delta_( 0.0 )             // in mV
+  , tau_fac_( 1000.0 )        // in ms
+  , tau_psc_( 2.0 )           // in ms
+  , tau_rec_( 400.0 )         // in ms
+  , U_( 0.5 )                 // dimensionless
 {
 }
 
@@ -107,9 +107,9 @@ nest::iaf_tum_2000::State_::State_()
 void
 nest::iaf_tum_2000::Parameters_::get( Dictionary& d ) const
 {
-  d[ names::E_L ] = E_L_; // resting potential
+  d[ names::E_L ] = E_L_;  // resting potential
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_th ] = Theta_ + E_L_;  // threshold value
   d[ names::V_reset ] = V_reset_ + E_L_;
   d[ names::C_m ] = C_;
   d[ names::tau_m ] = Tau_;
@@ -204,7 +204,7 @@ nest::iaf_tum_2000::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_tum_2000::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
   d[ names::x ] = x_;
   d[ names::y ] = y_;
   d[ names::u ] = u_;
@@ -289,7 +289,7 @@ nest::iaf_tum_2000::iaf_tum_2000( const iaf_tum_2000& n )
 void
 nest::iaf_tum_2000::init_buffers_()
 {
-  B_.input_buffer_.clear(); // includes resize
+  B_.input_buffer_.clear();  // includes resize
   B_.logger_.reset();
   ArchivingNode::clear_history();
 }
@@ -345,7 +345,7 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.r_ref_ == 0 )  // neuron not refractory, so evolve V
     {
       S_.V_m_ =
         S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
@@ -376,8 +376,8 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                   // deterministic threshold crossing
-      or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) ) // stochastic threshold crossing
+    if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                    // deterministic threshold crossing
+      or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) )  // stochastic threshold crossing
     {
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;

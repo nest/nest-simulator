@@ -732,6 +732,6 @@ eprop_iaf_psc_delta_adapt::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_IAF_PSC_DELTA_ADAPT_H
+#endif  // EPROP_IAF_PSC_DELTA_ADAPT_H

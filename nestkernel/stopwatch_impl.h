@@ -164,8 +164,8 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
     {
       d[ walltime_name ] = walltime_timer_.elapsed();
       d[ cputime_name ] = cputime_timer_.elapsed();
-    } // use_timer_array
-  }   // enable_timer
+    }  // use_timer_array
+  }  // enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -191,9 +191,9 @@ Stopwatch< detailed_timer, threaded_timer >::reset()
       walltime_timer_.reset();
       cputime_timer_.reset();
     }
-  } //
+  }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

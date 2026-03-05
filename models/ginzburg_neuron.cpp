@@ -68,4 +68,4 @@ RecordablesMap< nest::ginzburg_neuron >::create()
   insert_( names::h, &nest::ginzburg_neuron::get_input__ );
 }
 
-} // namespace nest
+}  // namespace nest

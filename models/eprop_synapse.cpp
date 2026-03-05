@@ -143,4 +143,4 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
 }
 
 
-} // namespace nest
+}  // namespace nest

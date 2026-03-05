@@ -304,7 +304,7 @@ private:
     /** Time constants of synaptic currents in ms */
     std::vector< double > tau_syn_;
 
-    std::vector< double > E_rev_; //!< reversal potentials in mV
+    std::vector< double > E_rev_;  //!< reversal potentials in mV
 
     /** External DC current. */
     double I_e_;
@@ -312,12 +312,12 @@ private:
     /** boolean flag which indicates whether the neuron has connections */
     bool has_connections_;
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol;  //!< error bound for GSL integrator
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -342,27 +342,27 @@ private:
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; //!< V_M
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1; //!< G
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;  //!< V_M
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;  //!< G
 
-    std::vector< double > y_; //!< neuron state
+    std::vector< double > y_;  //!< neuron state
 
-    double I_stim_; //!< This is piecewise constant external current
-    double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
-    double stc_;    //!< Spike-triggered current.
+    double I_stim_;  //!< This is piecewise constant external current
+    double sfa_;     //!< This is the change of the 'threshold' due to adaptation.
+    double stc_;     //!< Spike-triggered current.
 
-    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
-    std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
+    std::vector< double > sfa_elems_;  //!< Vector of adaptation parameters.
+    std::vector< double > stc_elems_;  //!< Vector of spike-triggered parameters.
 
     //!< absolute refractory counter (no membrane potential propagation)
     unsigned int r_ref_;
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
     void set( const Dictionary&, const Parameters_&, Node* );
 
-  }; // State_
+  };  // State_
 
   // ----------------------------------------------------------------
 
@@ -382,16 +382,16 @@ private:
     UniversalDataLogger< gif_cond_exp_multisynapse > logger_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
   };
 
   // ----------------------------------------------------------------
@@ -401,9 +401,9 @@ private:
    */
   struct Variables_
   {
-    std::vector< double > P_sfa_; //!< decay terms of spike-triggered current elements
-    std::vector< double > P_stc_; //!< decay terms of adaptive threshold elements
-    RngPtr rng_;                  //!< random number generator of my own thread
+    std::vector< double > P_sfa_;  //!< decay terms of spike-triggered current elements
+    std::vector< double > P_stc_;  //!< decay terms of adaptive threshold elements
+    RngPtr rng_;                   //!< random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };
@@ -503,10 +503,10 @@ gif_cond_exp_multisynapse::get_status( Dictionary& d ) const
 inline void
 gif_cond_exp_multisynapse::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -519,7 +519,7 @@ gif_cond_exp_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif /* #ifndef GIF_COND_EXP_MULTISYNAPSE_H */
+#endif  // HAVE_GSL
+#endif  /* #ifndef GIF_COND_EXP_MULTISYNAPSE_H */

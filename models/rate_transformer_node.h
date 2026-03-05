@@ -171,9 +171,9 @@ private:
     **/
     bool linear_summation_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     void set( const Dictionary&, Node* node );
   };
@@ -185,9 +185,9 @@ private:
    */
   struct State_
   {
-    double rate_; //!< Rate
+    double rate_;  //!< Rate
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary& ) const;
 
@@ -253,9 +253,9 @@ template < class TNonlinearities >
 inline bool
 rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr update
+  State_ old_state = S_;  // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -309,10 +309,10 @@ template < class TNonlinearities >
 inline void
 rate_transformer_node< TNonlinearities >::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
@@ -327,6 +327,6 @@ rate_transformer_node< TNonlinearities >::set_status( const Dictionary& d )
   nonlinearities_.set( d, this );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_TRANSFORMER_NODE_H */

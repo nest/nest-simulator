@@ -116,18 +116,18 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV
-  , I_e( 0.0 )        // pA
+  : V_peak_( 0.0 )     // mV
+  , V_reset_( -60.0 )  // mV
+  , t_ref_( 0.0 )      // ms
+  , g_L( 30.0 )        // nS
+  , C_m( 281.0 )       // pF
+  , E_L( -70.6 )       // mV
+  , Delta_T( 2.0 )     // mV
+  , tau_w( 144.0 )     // ms
+  , a( 4.0 )           // nS
+  , b( 80.5 )          // pA
+  , V_th( -50.4 )      // mV
+  , I_e( 0.0 )         // pA
   , gsl_error_tol( 1e-6 )
   , with_refr_input_( false )
 {
@@ -342,16 +342,16 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 void
 nest::aeif_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.s_ )
   {
@@ -400,7 +400,7 @@ nest::aeif_psc_delta::pre_run_hook()
   }
   else
   {
-    V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak_ = P_.V_th;  // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -440,11 +440,11 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
@@ -471,9 +471,9 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
           S_.refr_spikes_buffer_ = 0.0;
         }
       }
-      else // neuron is absolute refractory
+      else  // neuron is absolute refractory
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+        S_.y_[ State_::V_M ] = P_.V_reset_;  // clamp it to V_reset
 
         // read spikes from buffer and accumulate them, discounting
         // for decay until end of refractory period
@@ -483,7 +483,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
         }
         else
         {
-          B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+          B_.spikes_.get_value( lag );  // clear buffer entry, ignore spike
         }
       }
       if ( S_.r_ == 0 and S_.y_[ State_::V_M ] >= V_.V_peak_ )
@@ -496,7 +496,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
          *   artifact inside while loop.
          */
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;  // spike-driven adaptation
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
@@ -544,4 +544,4 @@ nest::aeif_psc_delta::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

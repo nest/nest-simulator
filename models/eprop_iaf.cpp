@@ -146,7 +146,7 @@ eprop_iaf::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( update_value_param( d, names::f_target, f_target_, node ) )
   {
-    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
+    f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
   update_value_param( d, names::beta, beta_, node );
@@ -256,15 +256,15 @@ eprop_iaf::eprop_iaf( const eprop_iaf& n )
 void
 eprop_iaf::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_iaf::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
@@ -354,7 +354,7 @@ eprop_iaf::handle( LearningSignalConnectionEvent& e )
   {
     const long time_step = e.get_stamp().get_steps();
     const double weight = e.get_weight();
-    const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const double error_signal = e.get_coeffvalue( it_event );  // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
     write_learning_signal_to_history( time_step, learning_signal );
@@ -379,13 +379,13 @@ eprop_iaf::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  double e = 0.0;                // eligibility trace
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double psi = 0.0;              // surrogate gradient
-  double L = 0.0;                // learning signal
-  double firing_rate_reg = 0.0;  // firing rate regularization
-  double grad = 0.0;             // gradient
+  double e = 0.0;                 // eligibility trace
+  double z = 0.0;                 // spiking variable
+  double z_current_buffer = 1.0;  // buffer containing the spike that triggered the current integration
+  double psi = 0.0;               // surrogate gradient
+  double L = 0.0;                 // learning signal
+  double firing_rate_reg = 0.0;   // firing rate regularization
+  double grad = 0.0;              // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
@@ -435,4 +435,4 @@ eprop_iaf::compute_gradient( const long t_spike,
   }
 }
 
-} // namespace nest
+}  // namespace nest

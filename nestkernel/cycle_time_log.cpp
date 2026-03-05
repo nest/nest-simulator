@@ -55,20 +55,14 @@ CycleTimeLog::add_entry( double cycle_update_time, double communicate_time, long
 void
 CycleTimeLog::to_dict( Dictionary& events ) const
 {
-  // initialize_property_doublevector( events, names::times );
-  // append_property( events, names::times, cycle_update_time_ );
-  auto& times = events.get_vector< int >( names::times );
+  auto& times = events.get_vector< double >( names::time_update );
   times.insert( times.end(), cycle_update_time_.begin(), cycle_update_time_.end() );
 
-  // initialize_property_doublevector( events, "communicate_time" );
-  // append_property( events, "communicate_time", communicate_time_ );
-  auto& communicate_time = events.get_vector< int >( names::communicate_time );
+  auto& communicate_time = events.get_vector< double >( names::time_communicate_spike_data );
   communicate_time.insert( communicate_time.end(), communicate_time_.begin(), communicate_time_.end() );
 
-  // initialize_property_intvector( events, "local_spike_counter" );
-  // append_property( events, "local_spike_counter", local_spike_counter_ );
-  auto& local_spike_counter = events.get_vector< int >( names::local_spike_counter );
-  times.insert( local_spike_counter.end(), local_spike_counter_.begin(), local_spike_counter_.end() );
+  auto& local_spike_counter = events.get_vector< size_t >( names::local_spike_counter );
+  local_spike_counter.insert( local_spike_counter.end(), local_spike_counter_.begin(), local_spike_counter_.end() );
 }
 
 }

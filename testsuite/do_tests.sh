@@ -106,11 +106,7 @@ if ! ${PYTHON} -c "import junitparser" >/dev/null 2>&1; then
     exit 1
 fi
 
-# Set PATH (for cpptests) and PYTHONPATH (for Python tests)
-set -x
-export PATH="${PREFIX}/bin${PATH:+:$PATH}"
-echo "PATH: ${PATH}"
-
+# Set PYTHONPATH
 PYTHON_VERSION="$(python --version | cut -d' ' -f 2)"
 NEST_PY_PATH="${PREFIX}/lib/python${PYTHON_VERSION%.*}/site-packages"
 export PYTHONPATH="${NEST_PY_PATH}${PYTHONPATH:+:$PYTHONPATH}"
@@ -425,9 +421,10 @@ echo
 echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
-if command -v run_all_cpptests >/dev/null 2>&1; then
+CPP_TEST_COMMAND="${PREFIX}/bin/run_all_cpptests"
+if command -v "${CPP_TEST_COMMAND}" >/dev/null 2>&1; then
     set +e
-    CPP_TEST_OUTPUT="$( run_all_cpptests --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )"
+    CPP_TEST_OUTPUT="$( "${CPP_TEST_COMMAND}" --logger=JUNIT,error,"${REPORTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )"
     set -e
     echo "${CPP_TEST_OUTPUT}" | tail -2
 else

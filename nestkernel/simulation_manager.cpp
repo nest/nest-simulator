@@ -65,7 +65,6 @@ nest::SimulationManager::SimulationManager()
   , eprop_update_interval_( 1000. )
   , eprop_learning_window_( 1000. )
   , eprop_reset_neurons_on_update_( true )
-  , cycle_time_log_()
 {
 }
 

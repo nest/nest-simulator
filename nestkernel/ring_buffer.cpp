@@ -32,8 +32,8 @@
 
 nest::RingBuffer::RingBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
-    0.0 )
+      kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
+      0.0 )
 {
 }
 
@@ -59,8 +59,8 @@ nest::RingBuffer::clear()
 
 nest::MultRBuffer::MultRBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
-    0.0 )
+      kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
+      0.0 )
 {
 }
 
@@ -85,7 +85,7 @@ nest::MultRBuffer::clear()
 
 nest::ListRingBuffer::ListRingBuffer()
   : buffer_(
-    kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay() )
+      kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay() )
 {
 }
 

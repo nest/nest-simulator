@@ -256,11 +256,11 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
 
 struct NoOpStopwatch
 {
- constexpr void
+  constexpr void
   start() noexcept
   {
   }
- constexpr void
+  constexpr void
   stop() noexcept
   {
   }
@@ -278,7 +278,12 @@ struct NoOpStopwatch
   {
   }
   constexpr double
-  elapsed( ... ) const noexcept
+  elapsed() const noexcept
+  {
+    return std::numeric_limits< double >().quiet_NaN();
+  }
+  constexpr double
+  elapsed( timers::timeunit_t ) const noexcept
   {
     return std::numeric_limits< double >().quiet_NaN();
   }

@@ -35,7 +35,7 @@ template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_ti
 void
 Stopwatch< detailed_timer, threaded_timer >::start()
 {
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     kernel().vp_manager.assert_thread_parallel();
     walltime_timer_[ kernel().vp_manager.get_thread_id() ].start();
@@ -52,14 +52,14 @@ Stopwatch< detailed_timer, threaded_timer >::start()
       walltime_timer_.start();
       cputime_timer_.start();
     }
-  } // use_timer_array and enable_timer
+  }  // use_timer_array and enable_timer
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
 Stopwatch< detailed_timer, threaded_timer >::stop()
 {
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     kernel().vp_manager.assert_thread_parallel();
     walltime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
@@ -72,14 +72,14 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
       walltime_timer_.stop();
       cputime_timer_.stop();
     }
-  } // use_timer_array
+  }  // use_timer_array
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 bool
 Stopwatch< detailed_timer, threaded_timer >::is_running_() const
 {
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     kernel().vp_manager.assert_thread_parallel();
     return walltime_timer_[ kernel().vp_manager.get_thread_id() ].is_running_();
@@ -92,14 +92,14 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
       is_running_ = walltime_timer_.is_running_();
     }
     return is_running_;
-  } // use_timer_array
+  }  // use_timer_array
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 double
 Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeunit ) const
 {
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     kernel().vp_manager.assert_thread_parallel();
     return walltime_timer_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
@@ -112,7 +112,7 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
       elapsed = walltime_timer_.elapsed( timeunit );
     };
     return elapsed;
-  } // use_timer_array
+  }  // use_timer_array
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -121,7 +121,7 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
   timers::timeunit_t timeunit,
   std::ostream& os ) const
 {
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     kernel().vp_manager.assert_thread_parallel();
     walltime_timer_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
@@ -132,7 +132,7 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
     {
       walltime_timer_.print( msg, timeunit, os );
     }
-  } // use_timer_array
+  }  // use_timer_array
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -173,7 +173,7 @@ void
 Stopwatch< detailed_timer, threaded_timer >::reset()
 {
   kernel().vp_manager.assert_single_threaded();
-  if constexpr ( use_timer_array and enable_timer )
+  if constexpr ( enable_timer and use_timer_array )
   {
     const size_t num_threads = kernel().vp_manager.get_num_threads();
     walltime_timer_.resize( num_threads );

@@ -66,16 +66,16 @@ RecordablesMap< iaf_psc_alpha >::create()
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha::Parameters_::Parameters_()
-  : Tau_( 10.0 )             // ms
-  , C_( 250.0 )              // pF
-  , TauR_( 2.0 )             // ms
-  , E_L_( -70.0 )            // mV
-  , I_e_( 0.0 )              // pA
-  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
-  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
+  : Tau_( 10.0 )              // ms
+  , C_( 250.0 )               // pF
+  , TauR_( 2.0 )              // ms
+  , E_L_( -70.0 )             // mV
+  , I_e_( 0.0 )               // pA
+  , V_reset_( -70.0 - E_L_ )  // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )    // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double >::infinity() )
-  , tau_ex_( 2.0 ) // ms
-  , tau_in_( 2.0 ) // ms
+  , tau_ex_( 2.0 )  // ms
+  , tau_in_( 2.0 )  // ms
 {
 }
 
@@ -97,9 +97,9 @@ iaf_psc_alpha::State_::State_()
 void
 iaf_psc_alpha::Parameters_::get( Dictionary& d ) const
 {
-  d[ names::E_L ] = E_L_; // Resting potential
+  d[ names::E_L ] = E_L_;  // Resting potential
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_th ] = Theta_ + E_L_;  // threshold value
   d[ names::V_reset ] = V_reset_ + E_L_;
   d[ names::V_min ] = LowerBound_ + E_L_;
   d[ names::C_m ] = C_;
@@ -182,7 +182,7 @@ iaf_psc_alpha::Parameters_::set( const Dictionary& d, Node* node )
 void
 iaf_psc_alpha::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = y3_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = y3_ + p.E_L_;  // Membrane potential
 }
 
 void
@@ -237,7 +237,7 @@ iaf_psc_alpha::iaf_psc_alpha( const iaf_psc_alpha& n )
 void
 iaf_psc_alpha::init_buffers_()
 {
-  B_.input_buffer_.clear(); // includes resize
+  B_.input_buffer_.clear();  // includes resize
 
   B_.logger_.reset();
 
@@ -403,4 +403,4 @@ iaf_psc_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

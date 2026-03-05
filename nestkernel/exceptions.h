@@ -1527,7 +1527,7 @@ public:
     return "MUSICChannelAlreadyMapped";
   }
 };
-#endif // HAVE_MUSIC
+#endif  // HAVE_MUSIC
 
 #ifdef HAVE_MPI
 class MPIPortsFileUnknown : public KernelException
@@ -1590,7 +1590,7 @@ class MPIErrorCode : public KernelException
 private:
   std::string msg_;
   std::string error_;
-  char errmsg_[ 2 * MPI_MAX_ERROR_STRING ]; // Multiply by two for extra safety
+  char errmsg_[ 2 * MPI_MAX_ERROR_STRING ];  // Multiply by two for extra safety
   int len_;
 
 public:
@@ -1613,7 +1613,7 @@ public:
     return "MPIErrorCode";
   }
 };
-#endif // HAVE_MPI
+#endif  // HAVE_MPI
 
 class UnmatchedSteps : public KernelException
 {
@@ -1808,5 +1808,5 @@ public:
   }
 };
 
-} // namespace nest
-#endif // EXCEPTIONS_H
+}  // namespace nest
+#endif  // EXCEPTIONS_H

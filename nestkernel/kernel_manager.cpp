@@ -140,12 +140,17 @@ nest::KernelManager::get_build_info_()
   return build_info;
 }
 
-void nest::KernelManager::create_kernel_manager() {
+void
+nest::KernelManager::create_kernel_manager()
+{
 #pragma omp master
-  { if ( not kernel_manager_instance_ ) { kernel_manager_instance_ = new KernelManager();
-assert( kernel_manager_instance_ );
-}
-}
+  {
+    if ( not kernel_manager_instance_ )
+    {
+      kernel_manager_instance_ = new KernelManager();
+      assert( kernel_manager_instance_ );
+    }
+  }
 #pragma omp barrier
 }
 

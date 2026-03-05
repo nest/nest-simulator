@@ -27,7 +27,7 @@
 #include <ctime>
 #include <memory>
 #include <ostream>
-#include <stdexcept> // out_of_range
+#include <stdexcept>  // out_of_range
 #include <vector>
 
 // Includes from libnestuil:
@@ -93,9 +93,9 @@ public:
 class NodeIDTriple
 {
 public:
-  size_t node_id { 0 };  //!< Global ID of neuron
-  size_t model_id { 0 }; //!< ID of neuron model
-  size_t nc_index { 0 }; //!< position with node collection
+  size_t node_id { 0 };   //!< Global ID of neuron
+  size_t model_id { 0 };  //!< ID of neuron model
+  size_t nc_index { 0 };  //!< position with node collection
   NodeIDTriple() = default;
 };
 
@@ -422,19 +422,19 @@ public:
   //! Markers for kind of iterator, required by `composite_update_indices_()`.
   enum class NCIteratorKind
   {
-    GLOBAL,       //!< iterate over all elements of node collection
-    RANK_LOCAL,   //!< iterate only over elements on owning rank
-    THREAD_LOCAL, //!< iterate only over elements on owning thread
-    END           //!< end iterator, never increase
+    GLOBAL,        //!< iterate over all elements of node collection
+    RANK_LOCAL,    //!< iterate only over elements on owning rank
+    THREAD_LOCAL,  //!< iterate only over elements on owning thread
+    END            //!< end iterator, never increase
   };
 
 private:
-  NodeCollectionPTR coll_ptr_; //!< pointer to keep node collection alive, see note
-  size_t element_idx_;         //!< index into (current) primitive node collection
-  size_t part_idx_;            //!< index into parts vector of composite collection
-  size_t step_;                //!< internal step also accounting for stepping over rank/thread
-  const NCIteratorKind kind_;  //!< whether to iterate over all elements or rank/thread specific
-  const size_t rank_or_vp_;    //!< rank or vp iterator is bound to
+  NodeCollectionPTR coll_ptr_;  //!< pointer to keep node collection alive, see note
+  size_t element_idx_;          //!< index into (current) primitive node collection
+  size_t part_idx_;             //!< index into parts vector of composite collection
+  size_t step_;                 //!< internal step also accounting for stepping over rank/thread
+  const NCIteratorKind kind_;   //!< whether to iterate over all elements or rank/thread specific
+  const size_t rank_or_vp_;     //!< rank or vp iterator is bound to
 
   //! Pointer to primitive collection to iterate over.  Zero if iterator is for composite collection.
   NodeCollectionPrimitive const* const primitive_collection_;
@@ -506,7 +506,7 @@ public:
   bool operator>=( const nc_const_iterator& rhs ) const;
 
   nc_const_iterator& operator++();
-  nc_const_iterator operator++( int ); // postfix
+  nc_const_iterator operator++( int );  // postfix
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 
@@ -786,7 +786,7 @@ public:
 
 
 private:
-  unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
+  unsigned long fingerprint_;  //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
   static NodeCollectionPTR create_( const std::vector< size_t >& );
 };
@@ -804,11 +804,11 @@ class NodeCollectionPrimitive : public NodeCollection
 private:
   // Even though all members are logically const, we cannot declare them const because
   // sorting or merging the parts_ array requires assignment.
-  size_t first_;                       //!< The first node ID in the primitive
-  size_t last_;                        //!< The last node ID in the primitive
-  size_t model_id_;                    //!< Model ID of the node IDs
-  NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the node IDs
-  bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
+  size_t first_;                        //!< The first node ID in the primitive
+  size_t last_;                         //!< The last node ID in the primitive
+  size_t model_id_;                     //!< Model ID of the node IDs
+  NodeCollectionMetadataPTR metadata_;  //!< Pointer to the metadata of the node IDs
+  bool nodes_have_no_proxies_;          //!< Whether the primitive contains devices or not
 
   /**
    * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id.
@@ -949,17 +949,17 @@ class NodeCollectionComposite : public NodeCollection
   friend class nc_const_iterator;
 
 private:
-  std::vector< NodeCollectionPrimitive > parts_; //!< Primitives forming composite
-  size_t size_;                                  //!< Total number of node IDs, takes into account slicing
-  size_t stride_;                                //!< Step length, set when slicing.
-  size_t first_part_;                            //!< Primitive to start at, set when slicing
-  size_t first_elem_;                            //!< Element to start at, set when slicing
-  size_t last_part_;                             //!< Last entry of parts_ belonging to sliced NC
-  size_t last_elem_;                             //!< Last entry of parts_[last_part_] belonging to sliced NC
-  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
-  std::vector< size_t > cumul_abs_size_;         //!< Cumulative size of parts
+  std::vector< NodeCollectionPrimitive > parts_;  //!< Primitives forming composite
+  size_t size_;                                   //!< Total number of node IDs, takes into account slicing
+  size_t stride_;                                 //!< Step length, set when slicing.
+  size_t first_part_;                             //!< Primitive to start at, set when slicing
+  size_t first_elem_;                             //!< Element to start at, set when slicing
+  size_t last_part_;                              //!< Last entry of parts_ belonging to sliced NC
+  size_t last_elem_;                              //!< Last entry of parts_[last_part_] belonging to sliced NC
+  bool is_sliced_;                                //!< Whether the NodeCollectionComposite is sliced
+  std::vector< size_t > cumul_abs_size_;          //!< Cumulative size of parts
   std::vector< size_t >
-    first_in_part_; //!< Local index to first element in each part when slicing is taken into account, or invalid_index
+    first_in_part_;  //!< Local index to first element in each part when slicing is taken into account, or invalid_index
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -1419,6 +1419,6 @@ NodeCollectionComposite::valid_idx_( const size_t part_idx, const size_t element
   return part_idx < last_part_ or ( part_idx == last_part_ and element_idx <= last_elem_ );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef NODE_COLLECTION_H */

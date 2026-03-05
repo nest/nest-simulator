@@ -400,6 +400,6 @@ Connection< targetidentifierT >::get_secondary_event()
   return nullptr;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_H */

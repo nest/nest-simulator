@@ -577,4 +577,4 @@ Node::event_hook( DSCurrentEvent& e )
   e.get_receiver().handle( e );
 }
 
-} // namespace
+}  // namespace

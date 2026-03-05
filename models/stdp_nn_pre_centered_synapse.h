@@ -297,7 +297,7 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::send( Event& e, size_t t, con
   // depression due to the latest postsynaptic spike finish->t_
   // before the current pre-synaptic spike t_spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and Kminus_triplet here
+  double value_to_throw_away;  // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
@@ -374,6 +374,6 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const Dictionary&
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H
+#endif  // of #ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H

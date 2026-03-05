@@ -77,4 +77,4 @@ CommonSynapseProperties::calibrate( const TimeConverter& )
 {
 }
 
-} // namespace nest
+}  // namespace nest

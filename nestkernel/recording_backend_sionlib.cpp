@@ -235,7 +235,7 @@ nest::RecordingBackendSIONlib::open_files_()
     {
       exceptions_raised.at( tid ) = std::current_exception();
     }
-  } // parallel region
+  }  // parallel region
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised )
@@ -308,7 +308,7 @@ nest::RecordingBackendSIONlib::close_files_()
     {
       int mc;
       sion_int64* cs = nullptr;
-      int info_blk; // here int, other place sion_int64 due to sion api
+      int info_blk;  // here int, other place sion_int64 due to sion api
       sion_int64 info_pos;
 
       // all recorded data written, determine location in sionlib file
@@ -634,8 +634,8 @@ nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&,
 void
 nest::RecordingBackendSIONlib::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( *this, d );  // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( *this, d );   // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

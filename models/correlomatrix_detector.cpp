@@ -23,8 +23,8 @@
 #include "correlomatrix_detector.h"
 
 // C++ includes:
-#include <cmath>      // for less
-#include <functional> // for bind2nd
+#include <cmath>       // for less
+#include <functional>  // for bind2nd
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -325,7 +325,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       // calculate the effect of this spike immediately with respect to all
       // spikes in the past of the respectively other sources
 
-      S_.n_events_[ sender ]++; // count this spike
+      S_.n_events_[ sender ]++;  // count this spike
 
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
@@ -375,9 +375,9 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
         }
       }
 
-    } // t in [TStart, Tstop]
+    }  // t in [TStart, Tstop]
 
-  } // device active
+  }  // device active
 }
 
 void

@@ -721,8 +721,8 @@ const std::string y_1( "y_1" );
 const std::string z( "z" );
 const std::string z_connected( "z_connected" );
 
-} // namespace names
+}  // namespace names
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef NEST_NAMES_H */

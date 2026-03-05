@@ -67,7 +67,7 @@ RecordablesMap< gif_cond_exp >::create()
   insert_( names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
   insert_( names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
 }
-} // namespace
+}  // namespace
 
 extern "C" int
 nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
@@ -109,23 +109,23 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::gif_cond_exp::Parameters_::Parameters_()
-  : g_L_( 4.0 )        // nS
-  , E_L_( -70.0 )      // mV
-  , V_reset_( -55.0 )  // mV
-  , Delta_V_( 0.5 )    // mV
-  , V_T_star_( -35 )   // mV
-  , lambda_0_( 0.001 ) // 1/ms
-  , E_ex_( 0.0 )       // mV
-  , E_in_( -85.0 )     // mV
-  , tau_synE_( 2.0 )   // ms
-  , tau_synI_( 2.0 )   // ms
-  , t_ref_( 4.0 )      // ms
-  , c_m_( 80.0 )       // pF
-  , tau_stc_()         // ms
-  , q_stc_()           // nA
-  , tau_sfa_()         // ms
-  , q_sfa_()           // mV
-  , I_e_( 0.0 )        // pA
+  : g_L_( 4.0 )         // nS
+  , E_L_( -70.0 )       // mV
+  , V_reset_( -55.0 )   // mV
+  , Delta_V_( 0.5 )     // mV
+  , V_T_star_( -35 )    // mV
+  , lambda_0_( 0.001 )  // 1/ms
+  , E_ex_( 0.0 )        // mV
+  , E_in_( -85.0 )      // mV
+  , tau_synE_( 2.0 )    // ms
+  , tau_synI_( 2.0 )    // ms
+  , t_ref_( 4.0 )       // ms
+  , c_m_( 80.0 )        // pF
+  , tau_stc_()          // ms
+  , q_stc_()            // nA
+  , tau_sfa_()          // ms
+  , q_sfa_()            // mV
+  , I_e_( 0.0 )         // pA
   , gsl_error_tol( 1e-3 )
 {
 }
@@ -207,7 +207,7 @@ nest::gif_cond_exp::Parameters_::get( Dictionary& d ) const
   d[ names::V_reset ] = V_reset_;
   d[ names::Delta_V ] = Delta_V_;
   d[ names::V_T_star ] = V_T_star_;
-  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0;  // convert to 1/s
   d[ names::t_ref ] = t_ref_;
   d[ names::tau_syn_ex ] = tau_synE_;
   d[ names::tau_syn_in ] = tau_synI_;
@@ -233,7 +233,7 @@ nest::gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
-    lambda_0_ /= 1000.0; // convert to 1/ms
+    lambda_0_ /= 1000.0;  // convert to 1/ms
   }
 
   update_value_param( d, names::t_ref, t_ref_, node );
@@ -310,11 +310,11 @@ nest::gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::gif_cond_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m ] = neuron_state_[ V_M ]; // Membrane potential
+  d[ names::V_m ] = neuron_state_[ V_M ];  // Membrane potential
   d[ names::g_ex ] = neuron_state_[ G_EXC ];
   d[ names::g_in ] = neuron_state_[ G_INH ];
-  d[ names::E_sfa ] = sfa_; // Adaptive threshold potential
-  d[ names::I_stc ] = stc_; // Spike-triggered current
+  d[ names::E_sfa ] = sfa_;  // Adaptive threshold potential
+  d[ names::I_stc ] = stc_;  // Spike-triggered current
 }
 
 void
@@ -390,10 +390,10 @@ nest::gif_cond_exp::~gif_cond_exp()
 void
 nest::gif_cond_exp::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  //!< includes resize
-  B_.logger_.reset();    //!< includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   //!< includes resize
+  B_.logger_.reset();     //!< includes resize
   ArchivingNode::clear_history();
 
   B_.step_ = Time::get_resolution().get_ms();
@@ -504,11 +504,11 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.neuron_state_ );   // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.neuron_state_ );    // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -518,7 +518,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
     S_.neuron_state_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
     S_.neuron_state_[ State_::G_INH ] += B_.spike_inh_.get_value( lag );
 
-    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
+    if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
 
       const double lambda = P_.lambda_0_ * std::exp( ( S_.neuron_state_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
@@ -551,7 +551,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
       }
     }
     else
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_ref_;
       S_.neuron_state_[ State_::V_M ] = P_.V_reset_;
     }
@@ -582,7 +582,7 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // keep conductance positive
+  }  // keep conductance positive
 }
 
 void
@@ -603,4 +603,4 @@ nest::gif_cond_exp::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

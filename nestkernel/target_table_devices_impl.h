@@ -80,8 +80,8 @@ nest::TargetTableDevices::send_to_device( const size_t tid,
 {
   const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );
   for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
-        it != target_to_devices_[ tid ][ lid ].end();
-        ++it )
+    it != target_to_devices_[ tid ][ lid ].end();
+    ++it )
   {
     if ( *it )
     {

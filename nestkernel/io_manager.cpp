@@ -148,8 +148,8 @@ IOManager::set_data_path_prefix_( const Dictionary& dict )
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir )
     {
-      data_path_ = tmp;    // absolute path & directory exists
-      closedir( testdir ); // we only opened it to check it exists
+      data_path_ = tmp;     // absolute path & directory exists
+      closedir( testdir );  // we only opened it to check it exists
     }
     else
     {
@@ -389,4 +389,4 @@ IOManager::get_recording_backend_device_status( const std::string& backend_name,
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }
 
-} // namespace nest
+}  // namespace nest

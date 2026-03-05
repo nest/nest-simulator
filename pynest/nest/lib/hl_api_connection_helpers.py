@@ -141,7 +141,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
 def _process_spatial_projections(conn_spec, syn_spec):
     """
     Processes the connection and synapse specifications to a single dictionary
-    for the SLI function `ConnectLayers`.
+    for the spatial ``connect_layers`` C++ function.
     """
     allowed_conn_spec_keys = [
         "mask",
@@ -212,7 +212,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
 
 
 def _connect_layers_needed(conn_spec, syn_spec):
-    """Determins if connection has to be made with the SLI function `ConnectLayers`."""
+    """Determines if the connection must use the spatial ``connect_layers`` path."""
     if isinstance(conn_spec, dict):
         # If a conn_spec entry is based on spatial properties, we must use ConnectLayers.
         for key, item in conn_spec.items():

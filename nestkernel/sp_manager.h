@@ -204,7 +204,7 @@ private:
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 
-  Dictionary growthcurvedict_; //!< Dictionary for growth rules.
+  Dictionary growthcurvedict_;  //!< Dictionary for growth rules.
 };
 
 inline GrowthCurve*
@@ -226,6 +226,6 @@ SPManager::get_structural_plasticity_update_interval() const
   return structural_plasticity_update_interval_;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SP_MANAGER_H */

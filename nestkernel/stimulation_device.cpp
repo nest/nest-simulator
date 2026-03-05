@@ -38,7 +38,7 @@ nest::StimulationDevice::StimulationDevice( StimulationDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
   , P_( sd.P_ )
-  , first_syn_id_( invalid_synindex ) // a new instance can't have any connections
+  , first_syn_id_( invalid_synindex )  // a new instance can't have any connections
   , backend_params_( sd.backend_params_ )
 {
 }
@@ -123,12 +123,12 @@ void
 nest::StimulationDevice::set_status( const Dictionary& d )
 {
 
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
 
   Device::set_status( d );
 
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 )  // this is a model prototype, not an actual instance
   {
     Dictionary backend_params;
 
@@ -171,7 +171,7 @@ nest::StimulationDevice::get_status( Dictionary& d ) const
 
   d[ names::element_type ] = names::stimulator;
 
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 )  // this is a model prototype, not an actual instance
   {
     // overwrite with cached parameters
     for ( const auto& [ param_name, param_value ] : backend_params_ )

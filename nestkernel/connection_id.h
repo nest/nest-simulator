@@ -93,6 +93,6 @@ ConnectionID::get_port() const
   return port_;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CONNECTION_ID_H */

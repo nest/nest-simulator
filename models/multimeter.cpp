@@ -237,4 +237,4 @@ voltmeter::voltmeter( const voltmeter& n )
 {
 }
 
-} // namespace nest
+}  // namespace nest

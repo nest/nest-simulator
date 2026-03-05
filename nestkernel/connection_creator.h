@@ -186,6 +186,6 @@ private:
   std::vector< ParameterPTR > delay_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

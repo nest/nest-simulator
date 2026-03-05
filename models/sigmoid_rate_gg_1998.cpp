@@ -75,4 +75,4 @@ RecordablesMap< nest::rate_transformer_sigmoid_gg_1998 >::create()
   insert_( names::rate, &nest::rate_transformer_sigmoid_gg_1998::get_rate_ );
 }
 
-} // namespace nest
+}  // namespace nest

@@ -29,7 +29,6 @@ that with NMDA-currents, we get a larger V_m.
 We then test the AMPA and GABA gating variables against analytical soluton.
 """
 
-
 import nest
 import numpy as np
 import numpy.testing as nptest

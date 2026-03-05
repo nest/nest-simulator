@@ -311,6 +311,6 @@ private:
   double psi_;
 };
 
-} // of namespace
+}  // of namespace
 
 #endif

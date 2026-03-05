@@ -22,14 +22,14 @@
 
 #include "music_rate_in_proxy.h"
 
+#ifdef HAVE_MUSIC
+
 #include <boost/any.hpp>
 
 #include "dictionary.h"
 #include "event_delivery_manager.h"
 #include "nest_names.h"
 #include "secondary_event.h"
-
-#ifdef HAVE_MUSIC
 
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"

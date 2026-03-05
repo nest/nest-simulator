@@ -49,7 +49,7 @@ namespace nest
 {
 
 Dictionary
-nest::KernelManager::get_build_info_()
+KernelManager::get_build_info_()
 {
   // Exit codes
   constexpr unsigned int EXITCODE_UNKNOWN_ERROR = 10;
@@ -341,7 +341,7 @@ KernelManager::get_fingerprint() const
 #include <sstream>
 
 size_t
-nest::KernelManager::get_memsize_linux_() const
+KernelManager::get_memsize_linux_() const
 {
   // code based on mistral.ai
   std::ifstream file( "/proc/self/status" );
@@ -376,7 +376,7 @@ nest::KernelManager::get_memsize_linux_() const
 #else
 
 size_t
-nest::KernelManager::get_memsize_linux_() const
+KernelManager::get_memsize_linux_() const
 {
   assert( false || "Only implemented on Linux systems." );
   return 0;
@@ -390,7 +390,7 @@ nest::KernelManager::get_memsize_linux_() const
 #include <mach/mach.h>
 
 size_t
-nest::KernelManager::get_memsize_darwin_() const
+KernelManager::get_memsize_darwin_() const
 {
   struct task_basic_info t_info;
   mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
@@ -406,7 +406,7 @@ nest::KernelManager::get_memsize_darwin_() const
 #else
 
 size_t
-nest::KernelManager::get_memsize_darwin_() const
+KernelManager::get_memsize_darwin_() const
 {
   assert( false || "Only implemented on macOS." );
   return 0;

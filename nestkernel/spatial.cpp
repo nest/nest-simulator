@@ -41,6 +41,7 @@
 #include "grid_mask.h"
 #include "grid_mask_impl.h"
 #include "kernel_manager.h"
+#include "layer_impl.h"
 #include "mask_impl.h"
 #include "nest_impl.h"
 #include "nest_names.h"

@@ -39,6 +39,7 @@
 #include "exceptions.h"
 #include "logging.h"
 #include "logging_manager.h"
+#include "music_event_handler.h"
 
 class Dictionary;
 
@@ -50,8 +51,8 @@ class Node;
 MUSICManager::MUSICManager()
 {
 #ifdef HAVE_MUSIC
-  music_setup = 0;
-  music_runtime = 0;
+  music_setup = nullptr;
+  music_runtime = nullptr;
   music_in_portlist_.clear();
 #endif
 }
@@ -93,9 +94,9 @@ MUSICManager::enter_runtime( double h_min_delay )
   LOG( VerbosityLevel::INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
-  // std::cout << "nest::MPIManager::enter_runtime\n";
+  // std::cout << "MPIManager::enter_runtime\n";
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-  if ( music_runtime == 0 )
+  if ( not music_runtime )
   {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
   }
@@ -119,7 +120,7 @@ void
 MUSICManager::music_finalize()
 {
 #ifdef HAVE_MUSIC
-  if ( music_runtime == 0 )
+  if ( not music_runtime )
   {
     // we need a Runtime object to call finalize(), so we create
     // one, if we don't have one already
@@ -197,7 +198,7 @@ MUSICManager::unregister_music_in_port( std::string portname )
 }
 
 void
-MUSICManager::register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp )
+MUSICManager::register_music_event_in_proxy( std::string portname, int channel, Node* mp )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   it = music_event_in_portmap_.find( portname );
@@ -215,7 +216,7 @@ MUSICManager::register_music_event_in_proxy( std::string portname, int channel, 
 }
 
 void
-MUSICManager::register_music_rate_in_proxy( std::string portname, int channel, nest::Node* mp )
+MUSICManager::register_music_rate_in_proxy( std::string portname, int channel, Node* mp )
 {
   std::map< std::string, MusicRateInHandler >::iterator it;
   it = music_rate_in_portmap_.find( portname );

@@ -22,6 +22,8 @@
 
 #include "music_rate_out_proxy.h"
 
+#ifdef HAVE_MUSIC
+
 #include <algorithm>
 #include <boost/any.hpp>
 
@@ -34,8 +36,6 @@
 #include "nest_names.h"
 #include "secondary_event.h"
 #include "secondary_event_impl.h"
-
-#ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"

@@ -25,10 +25,6 @@
 
 #include <string>
 
-// Generated includes:
-#include "config.h"
-#include "nest_time.h"
-
 class Dictionary;
 
 namespace nest
@@ -48,6 +44,10 @@ class InstantaneousRateConnectionEvent;
 #include "device_node.h"
 #include "nest_types.h"
 #include "node.h"
+
+// Generated includes:
+#include "config.h"
+#include "nest_time.h"
 
 
 /* BeginUserDocs: device, rate, MUSIC

@@ -23,6 +23,16 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
+namespace MUSIC
+{
+class EventInputPort;
+class PermutationIndex;
+} // namespace MUSIC
+namespace nest
+{
+class Node;
+} // namespace nest
+
 #ifdef HAVE_MUSIC
 
 #include <functional>
@@ -35,16 +45,6 @@
 #include "music/event.hh"
 #include "music/index_map.hh"
 #include "nest_time.h"
-
-namespace MUSIC
-{
-class EventInputPort;
-class PermutationIndex;
-} // namespace MUSIC
-namespace nest
-{
-class Node;
-} // namespace nest
 
 // C++ includes:
 #include <music.hh>

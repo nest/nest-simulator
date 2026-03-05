@@ -496,8 +496,8 @@ nest::SimulationManager::get_status( Dictionary& d )
   d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
 
 #ifdef CYCLE_TIMERS
-  DictionaryDatum log_events = DictionaryDatum( new Dictionary );
-  ( *d )[ names::cycle_time_log ] = log_events;
+  Dictionary log_events;
+  d[ names::cycle_time_log ] = log_events;
   cycle_time_log_.to_dict( log_events );
 #endif
 }

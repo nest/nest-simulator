@@ -119,9 +119,13 @@ jobs:
        - name: Get master config files
          if: matrix.version != 'master'
          run: |
-           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1
-           git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master
-           git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master
+           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1 || true
+           git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master 2>/dev/null || true
+           git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master 2>/dev/null || true
+           if [ ! -s doc/fulldoc.conf.in.master ]; then
+             echo "Using current branch doxyfile (master version not available)"
+             cp doc/fulldoc.conf.in doc/fulldoc.conf.in.master 2>/dev/null || true
+           fi
 
        - name: Install dependencies
          run: |
@@ -132,9 +136,9 @@ jobs:
          run: |
            mkdir -p build-${{ matrix.version }}
            cd build-${{ matrix.version }}
-           if [ "${{ matrix.version }}" != "master" ]; then
+           if [ "${{ matrix.version }}" != "master" ] && [ -f ../doc/fulldoc.conf.in.master ]; then
              cp ../doc/fulldoc.conf.in.master ../doc/fulldoc.conf.in
-             cp ../doc/htmldoc/static/css/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
+             cp ../doc/htmldoc/static/css/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css 2>/dev/null || true
            fi
            cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
 
@@ -305,15 +309,17 @@ jobs:
       - name: Get master config files (if not changed in PR)
         if: steps.check-changes.outputs.doxyfile_changed != 'true' || steps.check-changes.outputs.css_changed != 'true'
         run: |
-          git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1
-          # Get master config files only if they weren't changed in the PR
-          # This ensures consistent output when config files are unchanged
+          git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1 || true
           if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ]; then
-            git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master
-            echo "Using master Doxyfile (not changed in PR)"
+            git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master 2>/dev/null || true
+            if [ -s $RUNNER_TEMP/fulldoc.conf.in.master ]; then
+              echo "Using master Doxyfile (not changed in PR)"
+            else
+              echo "Master Doxyfile not available, using current"
+            fi
           fi
           if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ]; then
-            git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master
+            git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master 2>/dev/null || true
             echo "Using master CSS (not changed in PR)"
           fi
 
@@ -326,15 +332,13 @@ jobs:
         run: |
           mkdir -p build-${{ github.run_id }}
           cd build-${{ github.run_id }}
-          # Use master config files only if they weren't changed in the PR
-          # If they changed, use the PR version to preview the changes
-          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ]; then
+          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ] && [ -f $RUNNER_TEMP/fulldoc.conf.in.master ]; then
             cp $RUNNER_TEMP/fulldoc.conf.in.master ../doc/fulldoc.conf.in
             echo "Copied master Doxyfile"
           else
             echo "Using PR version of Doxyfile for preview"
           fi
-          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ]; then
+          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ] && [ -f $RUNNER_TEMP/doxygen-awesome.css.master ]; then
             cp $RUNNER_TEMP/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
             echo "Copied master CSS"
           else

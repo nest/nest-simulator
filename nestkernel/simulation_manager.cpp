@@ -853,7 +853,7 @@ nest::SimulationManager::update_()
   std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 #ifdef CYCLE_TIMERS
-  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
   size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
 #endif
 
@@ -1121,7 +1121,8 @@ nest::SimulationManager::update_()
 
 #ifdef CYCLE_TIMERS
 
-          const double end_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
+          const double end_current_communicate =
+            kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
           const double communicate_time = end_current_communicate - start_current_communicate;
           start_current_communicate = end_current_communicate;
 

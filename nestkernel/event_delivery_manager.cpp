@@ -1085,16 +1085,16 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 }
 
 #ifdef CYCLE_TIMERS
-Stopwatch<StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly>
+Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >
 EventDeliveryManager::get_sw_communicate_spike_data() const
 {
   return sw_communicate_spike_data_;
 }
 
-unsigned long
+size_t
 EventDeliveryManager::get_local_spike_counter() const
 {
-  return std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0UL );
+  return std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
 }
 #endif
 

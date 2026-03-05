@@ -372,9 +372,6 @@ iaf_psc_exp_multisynapse::get_status( Dictionary& d ) const
   d[ names::recordables ] = recordablesMap_.get_list();
 }
 
-template <>
-void DynamicRecordablesMap< iaf_psc_exp_multisynapse >::create( iaf_psc_exp_multisynapse& host );
-
 } // namespace
 
 #endif /* #ifndef IAF_PSC_EXP_MULTISYNAPSE_H */

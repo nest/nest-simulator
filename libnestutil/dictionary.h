@@ -25,9 +25,7 @@
 
 #include <assert.h>
 #include <boost/any.hpp>
-#include <boost/any/bad_any_cast.hpp>
 #include <boost/core/demangle.hpp>
-#include <boost/type_index/type_index_facade.hpp>
 #include <iosfwd>
 #include <limits>
 #include <map>

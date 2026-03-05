@@ -85,6 +85,8 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
+set( with-lto OFF CACHE STRING "Control link-time optimization (LTO) [default=OFF]." )
+set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build." )
 
 # documentation build configuration
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
@@ -162,6 +164,8 @@ nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
 nest_process_full_logging()
+nest_process_pgo()
+nest_process_lto()
 
 nest_process_models()
 
@@ -220,84 +224,6 @@ add_custom_target( installcheck
 # However, an issue in CMake at time of writing (May 2020, see
 # https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
 # so.
-
-################################################################################
-##################                LTO and PGO                 ##################
-################################################################################
-
-# enable link-time optimizations
-include(CheckIPOSupported)
-check_ipo_supported()
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-
-# prevent semantic interposition to enable inlining of functions that could otherwise be overridden via LD_PRELOAD
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-fno-semantic-interposition" COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
-if(COMPILER_SUPPORTS_NO_SEMANTIC_INTERPOSITION)
-    add_compile_options("-fno-semantic-interposition")
-    add_link_options("-fno-semantic-interposition")
-endif()
-
-# optional profile-guided optimization
-set(PGO_MODE "OFF" CACHE STRING "Control Profile Guided Optimization: OFF, GENERATE, USE")
-
-if(PGO_MODE STREQUAL "GENERATE")
-    message(STATUS "PGO: Instrumentation Build Enabled")
-    add_compile_options(-fprofile-generate)
-    add_link_options(-fprofile-generate)
-
-elseif(PGO_MODE STREQUAL "USE")
-    message(STATUS "PGO: Optimized Build Enabled")
-    add_compile_options(-fprofile-use -fprofile-correction)
-    add_link_options(-fprofile-use -fprofile-correction)
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    execute_process(
-        COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ar
-        OUTPUT_VARIABLE LLVM_AR_PATH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
-    execute_process(
-        COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ranlib
-        OUTPUT_VARIABLE LLVM_RANLIB_PATH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
-    # clang with LTO requires "llvm-ar" to be used instead of the standard "ar"
-    find_program(LLVM_AR NAMES ${LLVM_AR_PATH} llvm-ar)
-    find_program(LLVM_RANLIB NAMES ${LLVM_RANLIB_PATH} llvm-ranlib)
-
-    set(CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld")
-    set(CMAKE_SHARED_LINKER_FLAGS_INIT "-fuse-ld=lld")
-    set(CMAKE_MODULE_LINKER_FLAGS_INIT "-fuse-ld=lld")
-
-    if(LLVM_AR)
-        set(CMAKE_AR ${LLVM_AR} CACHE FILEPATH "Archiver" FORCE)
-    else()
-        message( SEND_ERROR "Clang with LTO requires llvm-ar" )
-    endif()
-
-    if(LLVM_RANLIB)
-        set(CMAKE_RANLIB ${LLVM_RANLIB} CACHE FILEPATH "Ranlib" FORCE)
-    else()
-        message( SEND_ERROR "Clang with LTO requires llvm-ranlib" )
-    endif()
-elseif()
-    get_filename_component(GCC_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
-
-    find_program(GCC_AR NAMES gcc-ar HINTS ${GCC_BIN_DIR})
-    find_program(GCC_RANLIB NAMES gcc-ranlib HINTS ${GCC_BIN_DIR})
-
-    if(GCC_AR)
-        set(CMAKE_AR ${GCC_AR} CACHE FILEPATH "Archiver" FORCE)
-    endif()
-
-    if(GCC_RANLIB)
-        set(CMAKE_RANLIB ${GCC_RANLIB} CACHE FILEPATH "Ranlib" FORCE)
-endif()
-endif()
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

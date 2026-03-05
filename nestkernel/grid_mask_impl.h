@@ -24,6 +24,7 @@
 #define GRID_MASK_IMPL_H
 
 #include "grid_mask.h"
+#include "nest_names.h"
 
 namespace nest
 {

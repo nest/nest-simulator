@@ -45,9 +45,7 @@ CycleTimeLog::clear()
 }
 
 void
-CycleTimeLog::add_entry( double cycle_update_time,
-  double communicate_time,
-  long local_spike_counter )
+CycleTimeLog::add_entry( double cycle_update_time, double communicate_time, long local_spike_counter )
 {
   cycle_update_time_.emplace_back( cycle_update_time );
   communicate_time_.emplace_back( communicate_time );

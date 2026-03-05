@@ -1094,8 +1094,8 @@ EventDeliveryManager::get_sw_communicate_spike_data() const
 unsigned long
 EventDeliveryManager::get_local_spike_counter() const
 {
-  return std::accumulate(local_spike_counter_.begin(), local_spike_counter_.end(), 0UL);
+  return std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0UL );
 }
 #endif
 
-} // of namespace nest
+}  // of namespace nest

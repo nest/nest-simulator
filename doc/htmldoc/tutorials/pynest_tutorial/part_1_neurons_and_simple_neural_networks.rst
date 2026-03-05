@@ -41,13 +41,12 @@ PyNEST - an interface to the NEST Simulator
    :width: 600px
 
    Python Interface Figure.
-   The Python interpreter imports NEST as a module and
-   dynamically loads the NEST Simulator kernel (``pynestkernel.so``).
-   A simulation script of
-   the user (``mysimulation.py``) uses functions defined in this high-level
-   API. These functions generate code in SLI (Simulation Language
-   Interpreter), the native language of the interpreter of NEST. This
-   interpreter, in turn, controls the NEST simulation kernel.
+
+   The Python interpreter imports NEST as a module and dynamically
+   loads the NEST simulation kernel (``nestkernel_api.so``). A
+   simulation script of the user (``mysimulation.py``) uses functions
+   defined in this high-level API, which control the simulation
+   kernel.
 
 The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
 is designed for the simulation of large heterogeneous networks of point
@@ -94,11 +93,9 @@ prompted for.
 
 If you want to obtain more information about a particular command, you
 may use Python's standard help system, which will return the help text
-(docstring) explaining the use of this particular function. There is a
-help system within NEST as well. You can open the help pages in a
-browser using ``nest.helpdesk()`` and you can get the help page for a
-particular NEST object (like a synapse or neuron model) using
-``nest.help('object')``.
+(docstring) explaining the use of this particular function. You can get
+the help page for a particular NEST object (like a synapse or neuron model)
+using ``nest.help('object')``.
 
 Creating nodes
 --------------
@@ -145,9 +142,9 @@ to see which properties a neuron has, you may ask it for its status.
 This will print out the corresponding dictionary in the Python console.
 Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
-documentation of the model through the helpdesk. If you already know
-which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
+online documentation. If you already know which properties you are interested
+in, you can specify a key, or a list of keys, as an optional argument to
+:py:meth:`~.NodeCollection.get`:
 
 ::
 

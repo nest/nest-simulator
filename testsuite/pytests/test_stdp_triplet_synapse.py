@@ -28,12 +28,11 @@ import nest
 import numpy as np
 
 
-@nest.ll_api.check_stack
 class STDPTripletSynapseTestCase(unittest.TestCase):
     """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # settings
@@ -113,8 +112,8 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
             nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            msg = "BadProperty(.+)" + content
-            self.assertRaisesRegex(nest.kernel.NESTError, msg, setupProperty, parameters)
+            msg = content
+            self.assertRaisesRegex(nest.NESTError, msg, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})
@@ -147,7 +146,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         # trigger computation
         self.generateSpikes(self.pre_neuron, [2.0 + self.decay_duration])
 
-        (Kplus, Kplus_triplet, _, _) = self.decay(self.decay_duration, 1.0, 1.0, 0.0, 0.0)
+        Kplus, Kplus_triplet, _, _ = self.decay(self.decay_duration, 1.0, 1.0, 0.0, 0.0)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
@@ -164,7 +163,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         # trigger computation
         self.generateSpikes(self.pre_neuron, [2.0 + self.decay_duration])
 
-        (Kplus, Kplus_triplet, _, _) = self.decay(self.decay_duration, 1.0, 1.0, 0.0, 0.0)
+        Kplus, Kplus_triplet, _, _ = self.decay(self.decay_duration, 1.0, 1.0, 0.0, 0.0)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
@@ -185,19 +184,19 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         Kminus_triplet = 0.0
         weight = self.status("weight")
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
         weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(
             2.0 + self.dendritic_delay, Kplus, Kplus_triplet, Kminus, Kminus_triplet
         )
         weight = self.facilitate(weight, Kplus, Kminus_triplet)
         Kminus += 1.0
         Kminus_triplet += 1.0
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(
             2.0 - self.dendritic_delay, Kplus, Kplus_triplet, Kminus, Kminus_triplet
         )
         weight = self.depress(weight, Kminus, Kplus_triplet)
@@ -219,12 +218,12 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         Kminus_triplet = 0.0
         weight = self.status("weight")
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
         weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(
             2.0 + self.dendritic_delay, Kplus, Kplus_triplet, Kminus, Kminus_triplet
         )
 
@@ -232,14 +231,14 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         Kminus += 1.0
         Kminus_triplet += 1.0
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(
             2.0 - self.dendritic_delay, Kplus, Kplus_triplet, Kminus, Kminus_triplet
         )
         weight = self.depress(weight, Kminus, Kplus_triplet)
         Kplus += 1.0
         Kplus_triplet += 1.0
 
-        (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
+        Kplus, Kplus_triplet, Kminus, Kminus_triplet = self.decay(2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
         weight = self.depress(weight, Kminus, Kplus_triplet)
 
         nest.Simulate(20.0)
@@ -262,10 +261,9 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         self.assertAlmostEqualDetailed(limited_weight, self.status("weight"), "weight should have been limited")
 
 
-@nest.ll_api.check_stack
 class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
     def setUp(self):
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # settings

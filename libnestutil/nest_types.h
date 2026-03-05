@@ -34,13 +34,13 @@
 #include "config.h"
 
 #ifdef HAVE_32BIT_ARCH
-#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
-#include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#ifdef HAVE_UINT64_T  // 32-bit platforms usually provide the ...
+#include <stdint.h>   // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
 #else
 #error "32-bit platform does not provide a 64-bit unsigned integer data type"
 #endif
 #else
-#include <cstdint> // `uint64_t` on 64-bit platforms
+#include <cstdint>  // `uint64_t` on 64-bit platforms
 #endif
 
 /**
@@ -129,7 +129,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
 /**
  *  For enumerations of synapse types.
  */
-typedef unsigned int synindex;
+typedef size_t synindex;
 const synindex invalid_synindex = MAX_SYN_ID;
 
 /**

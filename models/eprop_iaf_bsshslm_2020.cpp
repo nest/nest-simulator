@@ -37,9 +37,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -112,56 +109,55 @@ eprop_iaf_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_bsshslm_2
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_bsshslm_2020::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::f_target, f_target_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::gamma, gamma_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
-  def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ );
+  d[ names::C_m ] = C_m_;
+  d[ names::c_reg ] = c_reg_;
+  d[ names::E_L ] = E_L_;
+  d[ names::f_target ] = f_target_;
+  d[ names::beta ] = beta_;
+  d[ names::gamma ] = gamma_;
+  d[ names::I_e ] = I_e_;
+  d[ names::regular_spike_arrival ] = regular_spike_arrival_;
+  d[ names::surrogate_gradient_function ] = surrogate_gradient_function_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::V_min ] = V_min_ + E_L_;
+  d[ names::V_th ] = V_th_ + E_L_;
 }
 
 double
-eprop_iaf_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
-  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
+  V_th_ -= update_value_param( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
+  V_min_ -= update_value_param( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::c_reg, c_reg_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::c_reg, c_reg_, node );
 
-  if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
+  if ( update_value_param( d, names::f_target, f_target_, node ) )
   {
-    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
+    f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::gamma, gamma_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
-
-  if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::gamma, gamma_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::regular_spike_arrival, regular_spike_arrival_, node );
+  if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
     eprop_iaf_bsshslm_2020* nrn = dynamic_cast< eprop_iaf_bsshslm_2020* >( node );
     assert( nrn );
     nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
 
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -197,17 +193,17 @@ eprop_iaf_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-eprop_iaf_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_bsshslm_2020::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
-  def< double >( d, names::learning_signal, learning_signal_ );
+  d[ names::V_m ] = v_m_ + p.E_L_;
+  d[ names::surrogate_gradient ] = surrogate_gradient_;
+  d[ names::learning_signal ] = learning_signal_;
 }
 
 void
-eprop_iaf_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_bsshslm_2020::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -238,15 +234,15 @@ eprop_iaf_bsshslm_2020::eprop_iaf_bsshslm_2020( const eprop_iaf_bsshslm_2020& n 
 void
 eprop_iaf_bsshslm_2020::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_iaf_bsshslm_2020::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -361,7 +357,7 @@ eprop_iaf_bsshslm_2020::handle( LearningSignalConnectionEvent& e )
   {
     const long time_step = e.get_stamp().get_steps();
     const double weight = e.get_weight();
-    const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const double error_signal = e.get_coeffvalue( it_event );  // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
     write_learning_signal_to_history( time_step, learning_signal );
@@ -383,18 +379,18 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e = 0.0;     // eligibility trace
-  double e_bar = 0.0; // low-pass filtered eligibility trace
-  double grad = 0.0;  // gradient value to be calculated
-  double L = 0.0;     // learning signal
-  double psi = 0.0;   // surrogate gradient
-  double sum_e = 0.0; // sum of eligibility traces
-  double z = 0.0;     // spiking variable
-  double z_bar = 0.0; // low-pass filtered spiking variable
+  double e = 0.0;      // eligibility trace
+  double e_bar = 0.0;  // low-pass filtered eligibility trace
+  double grad = 0.0;   // gradient value to be calculated
+  double L = 0.0;      // learning signal
+  double psi = 0.0;    // surrogate gradient
+  double sum_e = 0.0;  // sum of eligibility traces
+  double z = 0.0;      // spiking variable
+  double z_bar = 0.0;  // low-pass filtered spiking variable
 
   for ( long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    z = 1.0;  // set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
@@ -408,7 +404,7 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
+      z = 0.0;  // set spiking variable to 0 between spikes
 
       ++eprop_hist_it;
     }
@@ -429,4 +425,4 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   return grad;
 }
 
-} // namespace nest
+}  // namespace nest

@@ -34,16 +34,11 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "doubledatum.h"
-
 void
 nest::register_ppd_sup_generator( const std::string& name )
 {
   register_node_model< ppd_sup_generator >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Constructor of age distribution class
@@ -65,7 +60,7 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bi
 unsigned long
 nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr rng )
 {
-  unsigned long n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
+  unsigned long n_spikes;  // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
   {
     /*The binomial distribution converges towards the Poisson distribution as
@@ -111,11 +106,11 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr r
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 )      // Hz
-  , dead_time_( 0.0 ) // ms
+  : rate_( 0.0 )       // Hz
+  , dead_time_( 0.0 )  // ms
   , n_proc_( 1 )
-  , frequency_( 0.0 ) // Hz
-  , amplitude_( 0.0 ) // percentage
+  , frequency_( 0.0 )  // Hz
+  , amplitude_( 0.0 )  // percentage
   , num_targets_( 0 )
 {
 }
@@ -125,32 +120,32 @@ nest::ppd_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::ppd_sup_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::dead_time ] = dead_time_;
-  ( *d )[ names::n_proc ] = n_proc_;
-  ( *d )[ names::frequency ] = frequency_;
-  ( *d )[ names::relative_amplitude ] = amplitude_;
+  d[ names::rate ] = rate_;
+  d[ names::dead_time ] = dead_time_;
+  d[ names::n_proc ] = n_proc_;
+  d[ names::frequency ] = frequency_;
+  d[ names::relative_amplitude ] = amplitude_;
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::ppd_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::dead_time, dead_time_, node );
+  update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( 1000.0 / rate_ <= dead_time_ )
   {
     throw BadProperty( "The inverse rate has to be larger than the dead time." );
   }
 
   long n_proc_l = n_proc_;
-  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
+  update_value_param( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
@@ -160,9 +155,9 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
     n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 
-  updateValueParam< double >( d, names::frequency, frequency_, node );
+  update_value_param( d, names::frequency, frequency_, node );
 
-  updateValueParam< double >( d, names::relative_amplitude, amplitude_, node );
+  update_value_param( d, names::relative_amplitude, amplitude_, node );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
   {
     throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );
@@ -248,7 +243,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 
     if ( not StimulationDevice::is_active( t ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     // get current (time-dependent) hazard rate and store it.
@@ -282,7 +277,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
   unsigned long n_spikes =
     B_.age_distributions_[ prt ].update( V_.hazard_step_t_, get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -296,7 +291,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 void
 nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -307,12 +302,12 @@ nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double 
         "The size of the data for the ppd_sup_generator needs to be 5 "
         "[dead_time, rate, n_proc, frequency, relative_amplitude]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
-    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
-    ( *d )[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
+    Dictionary d;
+    d[ names::dead_time ] = input_param[ 0 ];
+    d[ names::rate ] = input_param[ 1 ];
+    d[ names::n_proc ] = input_param[ 2 ];
+    d[ names::frequency ] = input_param[ 3 ];
+    d[ names::relative_amplitude ] = input_param[ 4 ];
     ptmp.set( d, this );
   }
 

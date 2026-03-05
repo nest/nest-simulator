@@ -34,7 +34,6 @@ except Exception:
     DEBUG_PLOTS = False
 
 
-@nest.ll_api.check_stack
 class TestStdpSpikeMultiplicity:
     """
     Test correct handling of spike multiplicity in STDP.
@@ -113,7 +112,7 @@ class TestStdpSpikeMultiplicity:
 
         multiplicity = 2**3
         resolution = 2.0**-4
-        tics_per_ms = 1.0 / resolution * multiplicity * 4
+        tics_per_ms = int(1.0 / resolution * multiplicity * 4)
         deltas = [resolution / multiplicity / 2**m for m in range(2, 10)]
 
         delay = 1.0
@@ -121,7 +120,7 @@ class TestStdpSpikeMultiplicity:
         # k spikes will be emitted at these two times
         pre_spike_times_base = [100.0, 200.0]
 
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
 
         post_weights = {"parrot": [], "parrot_ps": []}
 
@@ -176,10 +175,7 @@ class TestStdpSpikeMultiplicity:
             w_post_ps = syn_ps.get("weight")
 
             assert w_post != w_pre, "Plain parrot weight did not change."
-            assert (
-                w_post_ps != w_pre_ps
-            ), "Precise parrot \
-                weight did not change."
+            assert w_post_ps != w_pre_ps, "Precise parrot weight did not change."
 
             post_weights["parrot"].append(w_post)
             post_weights["parrot_ps"].append(w_post_ps)

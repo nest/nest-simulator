@@ -60,13 +60,13 @@ public:
 
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ )
     {
-      def< long >( d, names::rport, rport_ );
-      def< long >( d, names::target, target_->get_node_id() );
+      d[ names::rport ] = rport_;
+      d[ names::target ] = target_->get_node_id();
     }
   }
 
@@ -95,8 +95,8 @@ public:
   }
 
 private:
-  Node* target_; //!< Target node
-  size_t rport_; //!< Receiver port at the target node
+  Node* target_;  //!< Target node
+  size_t rport_;  //!< Receiver port at the target node
 };
 
 
@@ -122,13 +122,13 @@ public:
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ != invalid_targetindex )
     {
-      def< long >( d, names::rport, 0 );
-      def< long >( d, names::target, target_ );
+      d[ names::rport ] = 0;
+      d[ names::target ] = target_;
     }
   }
 
@@ -160,7 +160,7 @@ public:
   }
 
 private:
-  targetindex target_; //!< Target node
+  targetindex target_;  //!< Target node
 };
 
 inline void
@@ -180,7 +180,7 @@ TargetIdentifierIndex::set_target( Node* target )
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif

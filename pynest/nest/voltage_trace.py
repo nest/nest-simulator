@@ -33,7 +33,8 @@ __all__ = [
 
 
 def from_file(fname, title=None, grayscale=False):
-    """Plot voltage trace from file.
+    """
+    Plot voltage trace from file.
 
     Parameters
     ----------
@@ -43,11 +44,8 @@ def from_file(fname, title=None, grayscale=False):
         Plot title
     grayscale : bool, optional
         Plot in grayscale
-
-    Raises
-    ------
-    ValueError
     """
+
     import matplotlib.pyplot as plt
 
     if isinstance(fname, (list, tuple)):
@@ -66,18 +64,13 @@ def from_file(fname, title=None, grayscale=False):
         line_style = ""
 
     if len(data.shape) == 1:
-        print(
-            "INFO: only found 1 column in the file. \
-            Assuming that only one neuron was recorded."
-        )
+        print("INFO: only found 1 column in the file. Assuming that only one neuron was recorded.")
         plotid = plt.plot(data, line_style)
         plt.xlabel("Time (steps of length interval)")
 
     elif data.shape[1] == 2:
-        print(
-            "INFO: found 2 columns in the file. Assuming \
-            them to be node ID, pot."
-        )
+        print("INFO: found 2 columns in the file. Assuming \
+            them to be node ID, pot.")
 
         plotid = []
         data_dict = {}
@@ -126,8 +119,11 @@ def from_file(fname, title=None, grayscale=False):
 
 
 def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms"):
-    """Plot the membrane potential of a set of neurons recorded by
-    the given voltmeter or multimeter.
+    """
+    Plot voltage trace from device.
+
+    Plots the membrane potential of a set of neurons recorded by the given
+    ``voltmeter`` or ``multimeter``.
 
     Parameters
     ----------
@@ -141,34 +137,21 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
         Plot in grayscale
     timeunit : str, optional
         Unit of time
-
-    Raises
-    ------
-    nest.kernel.NESTError
-        Description
     """
+
     import matplotlib.pyplot as plt
 
     if len(detec) > 1:
-        raise nest.kernel.NESTError("Please provide a single voltmeter.")
+        raise ValueError("Please provide a single 'voltmeter' or 'multimeter'.")
 
     type_id = nest.GetDefaults(detec.get("model"), "type_id")
     if type_id not in ("voltmeter", "multimeter"):
-        raise nest.kernel.NESTError(
-            "Please provide a voltmeter or a \
-            multimeter measuring V_m."
-        )
+        raise TypeError("Please provide a 'voltmeter' or a 'multimeter' measuring V_m.")
     elif type_id == "multimeter":
         if "V_m" not in detec.get("record_from"):
-            raise nest.kernel.NESTError(
-                "Please provide a multimeter \
-                measuring V_m."
-            )
+            raise ValueError("Please provide a 'multimeter' measuring 'V_m'.")
         elif not detec.get("record_to") == "memory" and len(detec.get("record_from")) > 1:
-            raise nest.kernel.NESTError(
-                "Please provide a multimeter \
-                measuring only V_m or record to memory!"
-            )
+            raise ValueError("Please provide a 'multimeter' measuring only 'V_m' or record to memory.")
 
     if detec.get("record_to") == "memory":
         timefactor = 1.0
@@ -181,7 +164,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
         times, voltages = _from_memory(detec)
 
         if not len(times):
-            raise nest.NESTError("No events recorded!")
+            raise ValueError("No events recorded.")
 
         if neurons is None:
             neurons = voltages.keys()
@@ -206,7 +189,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
 
         plt.ylabel("Membrane potential (mV)")
 
-        if nest.GetStatus(detec)[0]["time_in_steps"]:
+        if detec.time_in_steps:
             plt.xlabel("Steps")
         else:
             plt.xlabel("Time (%s)" % timeunit)
@@ -220,18 +203,18 @@ def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms")
         fname = detec.get("filenames")
         return from_file(fname, title, grayscale)
     else:
-        raise nest.kernel.NESTError(
-            "Provided devices neither record to \
-            ascii file, nor to memory."
-        )
+        raise ValueError("Provided device neither records to ascii file nor to memory.")
 
 
 def _from_memory(detec):
     """Get voltage traces from memory.
+
+    Parameters
     ----------
     detec : list
         Global id of voltmeter or multimeter
     """
+
     import array
 
     ev = detec.get("events")

@@ -48,7 +48,7 @@ def simulator(num_threads):
 
     nest.Simulate(200.0)
 
-    df = pd.DataFrame(srec.get("events"))
+    df = pd.DataFrame(srec.events)
 
     return df
 

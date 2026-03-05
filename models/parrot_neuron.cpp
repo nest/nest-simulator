@@ -32,8 +32,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -52,7 +50,7 @@ parrot_neuron::parrot_neuron()
 void
 parrot_neuron::init_buffers_()
 {
-  B_.n_spikes_.clear(); // includes resize
+  B_.n_spikes_.clear();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -79,13 +77,13 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 }
 
 void
-parrot_neuron::get_status( DictionaryDatum& d ) const
+parrot_neuron::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron::set_status( const DictionaryDatum& d )
+parrot_neuron::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 }
@@ -101,4 +99,4 @@ parrot_neuron::handle( SpikeEvent& e )
   }
 }
 
-} // namespace
+}  // namespace

@@ -37,18 +37,17 @@ def prepare_kernel():
 def test_noise_generator_set_parameters(prepare_kernel):
     params = {"mean": 10.5, "std": 0.23, "dt": 0.5}
 
-    ng1 = nest.Create("noise_generator")
-    ng1.set(params)
+    ng1 = nest.Create("noise_generator", params=params)
 
-    nest.SetDefaults("noise_generator", params)
-
+    nest.SetDefaults("noise_generator", params=params)
     ng2 = nest.Create("noise_generator")
+
     assert ng1.get(params) == ng2.get(params)
 
 
 def test_noise_generator_incorrect_noise_dt(prepare_kernel):
-    with pytest.raises(nest.kernel.NESTError, match="StepMultipleRequired"):
-        nest.Create("noise_generator", {"dt": 0.25})
+    with pytest.raises(nest.NESTErrors.StepMultipleRequired):
+        nest.Create("noise_generator", params={"dt": 0.25})
 
 
 def test_noise_generator_(prepare_kernel):

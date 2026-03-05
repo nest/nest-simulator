@@ -185,7 +185,7 @@ params_setup = {
 
 nest.ResetKernel()
 nest.set(**params_setup)
-nest.set_verbosity("M_FATAL")
+nest.verbosity = nest.VerbosityLevel.FATAL
 
 # %% ###########################################################################################################
 # Create neurons

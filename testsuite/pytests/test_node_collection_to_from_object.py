@@ -23,7 +23,6 @@
 Test ``NodeCollection`` to and from object functionality.
 """
 
-
 import nest
 import numpy as np
 import numpy.testing as nptest
@@ -47,7 +46,7 @@ def test_node_collection_from_list_no_created_nodes_raises():
     """Ensure exception if creating ``NodeCollection`` from ``list`` without creating nodes first."""
 
     node_ids_in = [5, 10, 15, 20]
-    with pytest.raises(nest.kernel.NESTErrors.UnknownNode):
+    with pytest.raises(nest.NESTErrors.UnknownNode):
         nc = nest.NodeCollection(node_ids_in)
 
 
@@ -104,8 +103,8 @@ def test_node_collection_from_unsorted_list_raises():
 
     nest.Create("iaf_psc_alpha", 10)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.NodeCollection([5, 4, 6])
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.NodeCollection([5, 6, 4])

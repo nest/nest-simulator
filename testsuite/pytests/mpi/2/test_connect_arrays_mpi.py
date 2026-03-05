@@ -24,18 +24,22 @@ import unittest
 import nest
 import numpy as np
 
+# Check that NEST is installed with MPI support and mpi4py is available.
+# If mpi4py is missing, we get an ImportError
+# If mpi4py is installed but libmpi is missing, we get a RuntimeError.
+# This only happens if we explicitly import MPI.
 try:
     from mpi4py import MPI
 
     HAVE_MPI4PY = True
-except ImportError:
+except (ImportError, RuntimeError):
     HAVE_MPI4PY = False
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_MPI = nest.build_info["have_mpi"]
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 @unittest.skipIf(not HAVE_MPI4PY, "mpi4py is not available")
 class TestConnectArraysMPICase(unittest.TestCase):
     """
@@ -52,7 +56,14 @@ class TestConnectArraysMPICase(unittest.TestCase):
     if HAVE_MPI4PY:
         comm = MPI.COMM_WORLD.Clone()
 
-    def assert_connections(self, expected_sources, expected_targets, expected_weights, expected_delays, rule):
+    def assert_connections(
+        self,
+        expected_sources,
+        expected_targets,
+        expected_weights,
+        expected_delays,
+        rule,
+    ):
         """Gather connections from all processes and assert against expected connections"""
         conns = nest.GetConnections()
         projections = [[s, t] for s, t in zip(conns.source, conns.target)]
@@ -129,14 +140,10 @@ class TestConnectArraysMPICase(unittest.TestCase):
         sources = np.arange(1, n + 1, dtype=np.uint64)
         targets = self.non_unique
         syn_model = "static_synapse"
-        weights = np.linspace(0.6, 1.5, len(sources))  # Interval endpoints are carefully selected to get nice values,
-        delays = np.linspace(0.4, 1.3, len(sources))  # that is, a step of 0.1 between values.
+        weights = np.linspace(0.6, 1.5, len(sources))  # Interval endpoints are carefully selected to get
+        delays = np.linspace(0.4, 1.3, len(sources))  # nice values, i.e., a step of 0.1 between values.
 
-        nest.Connect(
-            sources,
-            targets,
-            conn_spec="one_to_one",
-            syn_spec={"weight": weights, "delay": delays, "synapse_model": syn_model},
-        )
+        syn_spec = {"weight": weights, "delay": delays, "synapse_model": syn_model}
+        nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec=syn_spec)
 
         self.assert_connections(sources, targets, weights, delays, "one_to_one")

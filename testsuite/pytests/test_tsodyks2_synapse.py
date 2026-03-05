@@ -26,7 +26,6 @@ import numpy as np
 import pytest
 
 
-@nest.ll_api.check_stack
 class TestTsodyks2Synapse:
     """
     Functional test for the "tsodyks2" synapse: compare NEST implementation to
@@ -69,7 +68,7 @@ class TestTsodyks2Synapse:
         Returns the generated pre- and post spike sequences
         and the resulting weight established by the tsodyks2 synapse.
         """
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
         nest.resolution = self.resolution
 
@@ -98,10 +97,11 @@ class TestTsodyks2Synapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_recorder.events
-        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.get("global_id")]
+        senders = spike_recorder.events["senders"]
+        times = spike_recorder.events["times"]
+        pre_spikes = times[senders == presynaptic_neuron.global_id]
 
-        weights = wr.get("events", "weights")
+        weights = wr.events["weights"]
 
         return (pre_spikes, weights)
 

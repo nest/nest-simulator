@@ -130,6 +130,32 @@ n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
 ==================== ======== ==================================================
 
+Remarks:
+
+This recorder does not record to file, screen or memory in the usual
+sense.
+
+Correlation detectors IGNORE any connection delays.
+
+Correlation detector breaks with the persistence scheme as
+follows: the internal buffers for storing spikes are part
+of State_, but are initialized by init_buffers_().
+
+@todo The correlation detector could be made more efficient as follows
+(HEP 2008-07-01):
+- incoming_ is vector of two deques
+- let handle() push_back() entries in incoming_ and do nothing else
+- keep index to last "old spike" in each incoming_; cannot
+  be iterator since that may change
+- update() deletes all entries before now-tau_max, sorts the new
+  entries, then registers new entries in histogram
+
+Example:
+
+See Auto- and crosscorrelation functions for spike
+trains[cross_check_mip_corrdet.py]
+in pynest/examples.
+
 Receives
 ++++++++
 
@@ -181,7 +207,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -199,8 +225,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -246,24 +272,24 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_; //!< width of correlation histogram bins
-    Time tau_max_;   //!< maximum time difference of events to detect
-    Time Tstart_;    //!< start of recording
-    Time Tstop_;     //!< end of recording
+    Time delta_tau_;  //!< width of correlation histogram bins
+    Time tau_max_;    //!< maximum time difference of events to detect
+    Time Tstart_;     //!< start of recording
+    Time Tstop_;      //!< end of recording
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Recalibrate all times
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlation_detector&, Node* );
+    bool set( const Dictionary&, const correlation_detector&, Node* );
 
     Time get_default_delta_tau();
   };
@@ -281,8 +307,8 @@ private:
    */
   struct State_
   {
-    std::vector< long > n_events_;          //!< spike counters
-    std::vector< SpikelistType > incoming_; //!< incoming spikes, sorted
+    std::vector< long > n_events_;           //!< spike counters
+    std::vector< SpikelistType > incoming_;  //!< incoming spikes, sorted
 
     /** Weighted histogram.
      * @note Data type is double to accommodate weights.
@@ -295,14 +321,14 @@ private:
     //! Unweighted histogram.
     std::vector< long > count_histogram_;
 
-    State_(); //!< initialize default state
+    State_();  //!< initialize default state
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
+    void set( const Dictionary&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -326,7 +352,7 @@ correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-correlation_detector::get_status( DictionaryDatum& d ) const
+correlation_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -334,7 +360,7 @@ correlation_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-correlation_detector::set_status( const DictionaryDatum& d )
+correlation_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -353,6 +379,6 @@ correlation_detector::Parameters_::get_default_delta_tau()
 }
 
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CORRELATION_DETECTOR_H */

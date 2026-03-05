@@ -30,9 +30,9 @@
 namespace nest
 {
 Event::Event()
-  : sender_node_id_( 0 ) // initializing to 0 as this is an unsigned type
-                         // node ID 0 is network, can never send an event, so
-                         // this is safe
+  : sender_node_id_( 0 )  // initializing to 0 as this is an unsigned type
+                          // node ID 0 is network, can never send an event, so
+                          // this is safe
   , sender_spike_data_()
   , sender_( nullptr )
   , receiver_( nullptr )
@@ -163,4 +163,4 @@ SICEvent::operator()()
   receiver_->handle( *this );
 }
 
-} // namespace nest
+}  // namespace nest

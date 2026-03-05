@@ -27,13 +27,12 @@ from math import exp
 import nest
 
 
-@nest.ll_api.check_stack
 class VogelsSprekelerConnectionTestCase(unittest.TestCase):
     """Check vogels_sprekeler_synapse model properties."""
 
     def setUp(self):
         """Set up the test."""
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.ResetKernel()
 
         # settings
@@ -96,8 +95,8 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
             nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            msg = "BadProperty(.+)" + content
-            self.assertRaisesRegex(nest.kernel.NESTError, msg, setupProperty, parameters)
+            msg = content
+            self.assertRaisesRegex(nest.NESTError, msg, setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
 

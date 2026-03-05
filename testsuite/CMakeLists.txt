@@ -18,29 +18,17 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( TESTSUBDIRS
-    selftests
-    unittests
-    regressiontests
-    mpitests
-    mpi_selftests
-    musictests
-    cpptests
     pytests
+    cpptests
+    sli2py_music
 )
 
-add_subdirectory( selftests )
-add_subdirectory( unittests )
-add_subdirectory( unittests/sli2py_ignore )
-add_subdirectory( regressiontests )
-add_subdirectory( regressiontests/sli2py_ignore )
-add_subdirectory( mpi_selftests/fail )
-add_subdirectory( mpi_selftests/pass )
-add_subdirectory( mpitests )
-add_subdirectory( musictests )
 add_subdirectory( cpptests )
+add_subdirectory( sli2py_music )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
+    USE_SOURCE_PERMISSIONS
 )
 
 install( PROGRAMS
@@ -48,12 +36,7 @@ install( PROGRAMS
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
 )
 
-install( PROGRAMS
-    nest_indirect
-    nest_serial
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install( FILES junit_xml.sh run_test.sh summarize_tests.py
+install( FILES
+    junit_xml.sh summarize_tests.py
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
 )

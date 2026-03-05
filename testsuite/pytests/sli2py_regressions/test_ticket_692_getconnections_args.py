@@ -44,5 +44,5 @@ def test_ticket_692_getconnections_rejects_non_collections(key, value):
 
     nest.ResetKernel()
 
-    with pytest.raises((TypeError, nest.kernel.NESTError)):
+    with pytest.raises(TypeError):
         nest.GetConnections(**{key: value})

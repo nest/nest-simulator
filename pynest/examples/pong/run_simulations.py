@@ -190,10 +190,10 @@ class AIPong:
 
 
 if __name__ == "__main__":
-    nest.set_verbosity("M_WARNING")
+    nest.verbosity = nest.VerbosityLevel.WARNING
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--runs", type=int, default=5000, help="Number of game steps to simulate.")
+    parser.add_argument("--runs", type=int, default=50, help="Number of game steps to simulate.")
     parser.add_argument("--debug", action="store_true", help="Verbose debugging output.")
     parser.add_argument(
         "--out_dir",
@@ -223,13 +223,11 @@ if __name__ == "__main__":
 
     p1, p2 = args.players
     if p1[0] == p2[0] == "d":
-        logging.error(
-            """Nest currently (August 2022) does not support
+        logging.error("""Nest currently (August 2022) does not support
         addressing multiple populations of dopaminergic synapses because all of
         them recieve their signal from a single volume transmitter. For this
         reason, no two dopaminergic networks can be trained simultaneously. One
-        of the players needs to be changed to the R-STDP type."""
-        )
+        of the players needs to be changed to the R-STDP type.""")
         sys.exit()
 
     apply_noise = len(p1) > 1

@@ -120,7 +120,6 @@ const std::string capacity( "capacity" );
 const std::string center( "center" );
 const std::string circular( "circular" );
 const std::string clear( "clear" );
-const std::string communicate_time( "communicate_time" );
 const std::string comp_idx( "comp_idx" );
 const std::string comparator( "comparator" );
 const std::string compartments( "compartments" );

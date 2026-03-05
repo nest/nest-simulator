@@ -198,6 +198,9 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long t_spike, 
       }
     }
 
+    // Erase eprop history between the previous spike and the cutoff, unless other synapses require it.
+    // For each spike in the search window, shrink the erase interval to keep history within cutoff steps afterward.
+
     const long cutoff = get_eprop_isi_trace_cutoff();
 
     const long erase_candidate_begin = t_spike_previous - 1;

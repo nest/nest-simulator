@@ -1085,10 +1085,10 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 }
 
 #ifdef CYCLE_TIMERS
-double
+Stopwatch<StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly>
 EventDeliveryManager::get_sw_communicate_spike_data() const
 {
-  return sw_communicate_spike_data_.elapsed();
+  return sw_communicate_spike_data_;
 }
 
 unsigned long

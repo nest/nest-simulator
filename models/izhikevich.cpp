@@ -22,18 +22,19 @@
 
 #include "izhikevich.h"
 
+#include <assert.h>
 // C++ includes:
 #include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
-// Includes from nestkernel:
-#include "exceptions.h"
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "simulation_manager.h"
 #include "universal_data_logger_impl.h"
 
 

@@ -22,15 +22,17 @@
 
 #include "poisson_generator.h"
 
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include <boost/any.hpp>
+
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "dictionary.h"
+#include "event_delivery_manager_impl.h"
+#include "nest_names.h"
 
 void
 nest::register_poisson_generator( const std::string& name )

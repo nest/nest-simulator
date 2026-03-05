@@ -22,7 +22,11 @@
 
 #include "correlomatrix_detector.h"
 
+#include <assert.h>
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cmath>      // for less
 #include <functional> // for bind2nd
 
@@ -30,12 +34,15 @@
 #include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 
 void

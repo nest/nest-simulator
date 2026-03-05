@@ -23,23 +23,31 @@
 // nest models
 #include "eprop_readout.h"
 
+#include <assert.h>
 // C++
+#include <cmath>
 #include <limits>
 
 // libnestutil
 #include "dict_util.h"
-#include "numerics.h"
-
 // nestkernel
+#include "connection_manager.h"
+#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_readout_impl.h"
-#include "eprop_archiving_node_recurrent_impl.h"
+#include "eprop_synapse.h"
+#include "event.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+#include "weight_optimizer.h"
 
 namespace nest
 {
+class CommonSynapseProperties;
 
 void
 register_eprop_readout( const std::string& name )

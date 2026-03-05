@@ -22,11 +22,17 @@
 
 #include "gauss_rate.h"
 
-// Includes from nestkernel
-#include "kernel_manager.h"
+#include <boost/any.hpp>
+
+#include "dictionary.h"
+#include "genericmodel_impl.h"
+#include "nest_impl.h"
+#include "nest_names.h"
 
 namespace nest
 {
+class Node;
+
 void
 register_gauss_rate_ipn( const std::string& name )
 {

@@ -22,6 +22,9 @@
 
 #include "diffusion_connection.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

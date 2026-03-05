@@ -23,11 +23,16 @@
 #ifndef SECONDARY_EVENT_H
 #define SECONDARY_EVENT_H
 
+#include <assert.h>
+#include <string.h>
+// C++ includes
+#include <algorithm>
+#include <set>
+#include <vector>
+
 // Includes from nestkernel
 #include "event.h"
-
-// C++ includes
-#include <set>
+#include "nest_types.h"
 
 namespace nest
 {

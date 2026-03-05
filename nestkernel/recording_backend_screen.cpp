@@ -20,18 +20,20 @@
  *
  */
 
+#include <boost/any.hpp>
+#include <nest_names.h>
 // C++ includes:
 #include <iostream>
+#include <utility>
 
 // Includes from nestkernel:
-#include "recording_device.h"
-
-#include "recording_backend_screen.h"
-
+#include "dictionary.h"
 #include "event.h"
+#include "kernel_manager.h"
+#include "nest_time.h"
+#include "recording_backend_screen.h"
+#include "recording_device.h"
 #include "vp_manager.h"
-
-#include <nest_names.h>
 
 void
 nest::RecordingBackendScreen::initialize()

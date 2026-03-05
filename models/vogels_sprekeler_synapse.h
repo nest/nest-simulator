@@ -23,10 +23,30 @@
 #ifndef VOGELS_SPREKELER_SYNAPSE_H
 #define VOGELS_SPREKELER_SYNAPSE_H
 
+#include <assert.h>
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
+#include <cmath>
+#include <deque>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+
 // C-header for math.h since copysign() is in C99 but not C++98
+#include "common_synapse_properties.h"
 #include "connection.h"
 #include "connection_manager.h"
-#include <math.h>
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 
 namespace nest
 {

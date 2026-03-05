@@ -23,24 +23,27 @@
 #ifndef CM_TREE_H
 #define CM_TREE_H
 
+#include <map>
 #include <stdlib.h>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "nest_time.h"
 #include "ring_buffer.h"
-
 // compartmental model
 #include "cm_compartmentcurrents.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
+
+class Dictionary;
 
 
 namespace nest

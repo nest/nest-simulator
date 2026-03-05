@@ -22,7 +22,11 @@
 
 #include "mask.h"
 
+#include <algorithm>
+#include <utility>
+
 #include "nest_names.h"
+#include "position_impl.h"
 
 // Explicit specializations behave as normal methods and must
 // be defined here to avoid duplicate symbols.

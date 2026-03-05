@@ -22,16 +22,23 @@
 
 #include "correlation_detector.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cmath>      // for less
 #include <functional> // for bind2nd
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "dictionary.h"
+#include "event.h"
 #include "genericmodel_impl.h"
 #include "logging.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlation_detector( const std::string& name )

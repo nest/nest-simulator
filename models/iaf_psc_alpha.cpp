@@ -22,11 +22,16 @@
 
 #include "iaf_psc_alpha.h"
 
+#include <assert.h>
 // C++ includes:
+#include <array>
+#include <cmath>
 #include <limits>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
@@ -34,6 +39,7 @@
 #include "nest_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
+#include "simulation_manager.h"
 
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;

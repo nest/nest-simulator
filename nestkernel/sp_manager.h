@@ -23,13 +23,16 @@
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
 #include "nest_time.h"
@@ -40,8 +43,8 @@
 namespace nest
 {
 class Node;
-
 class SPBuilder;
+class GrowthCurve;
 
 /**
  * The SPManager class is in charge of managing the dynamic creation and

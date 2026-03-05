@@ -22,22 +22,23 @@
 
 #include "delay_checker.h"
 
+#include <boost/any.hpp>
+#include <simulation_manager.h>
 // C++ includes:
 #include <algorithm> // min, max
+#include <string>
 
 // Includes from nestkernel:
-#include "exceptions.h"
-#include "kernel_manager.h"
-#include "nest_timeconverter.h"
-
 #include "compose.hpp"
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
-
-#include <simulation_manager.h>
+#include "nest_timeconverter.h"
 
 
 nest::DelayChecker::DelayChecker()

@@ -31,16 +31,19 @@
 #include <mpi.h>
 #endif
 
+#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <limits>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "spike_data.h"
+
+class Dictionary;
 
 
 namespace nest

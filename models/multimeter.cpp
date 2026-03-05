@@ -22,9 +22,15 @@
 
 #include "multimeter.h"
 
+#include <boost/any.hpp>
+
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event.h"
+#include "event_delivery_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
+#include "nest_impl.h"
 #include "recording_backend.h"
 
 namespace nest

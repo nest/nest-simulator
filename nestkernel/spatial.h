@@ -23,14 +23,16 @@
 #ifndef SPATIAL_H
 #define SPATIAL_H
 
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "node_collection.h"
-
 // Includes from spatial:
+#include "dictionary.h"
 #include "free_layer.h"
 #include "layer.h"
 #include "mask.h"
@@ -38,6 +40,7 @@
 
 namespace nest
 {
+class ConnectionID;
 
 /**
  * Class containing spatial information to be used as metadata in a NodeCollection.

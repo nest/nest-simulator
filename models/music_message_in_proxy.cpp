@@ -22,23 +22,25 @@
 
 #include "music_message_in_proxy.h"
 
-#ifdef HAVE_MUSIC
+#include "logging_manager.h"
+#include "music/port.hh"
+#include "music/setup.hh"
 
-// External includes:
-#include <music.hh>
+namespace nest
+{
+class Node;
+} // namespace nest
+
+#ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "logging.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
 #include "music_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 void
 nest::register_music_message_in_proxy( const std::string& name )

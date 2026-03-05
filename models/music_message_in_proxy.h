@@ -23,24 +23,38 @@
 #ifndef MUSIC_MESSAGE_IN_PROXY_H
 #define MUSIC_MESSAGE_IN_PROXY_H
 
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <stddef.h>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "music/message.hh"
+#include "nest_time.h"
+
+namespace MUSIC
+{
+class MessageInputPort;
+} // namespace MUSIC
+namespace nest
+{
+class Node;
+} // namespace nest
 
 #ifdef HAVE_MUSIC
 
 // C includes:
 #include <mpi.h>
-
+// External includes:
+#include <music.hh>
 // C++ includes:
 #include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-
-// External includes:
-#include <music.hh>
-
 // Includes from nestkernel:
 #include "device_node.h"
 #include "nest_names.h"

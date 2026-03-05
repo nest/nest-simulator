@@ -22,11 +22,14 @@
 
 #include "structural_plasticity_node.h"
 
-// Includes from nestkernel:
-#include "kernel_manager.h"
-
-
+#include <assert.h>
+#include <boost/any.hpp>
+#include <cmath>
 #include <nest_names.h>
+#include <utility>
+
+#include "dictionary.h"
+#include "exceptions.h"
 
 namespace nest
 {

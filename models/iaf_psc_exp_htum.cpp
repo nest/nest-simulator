@@ -22,14 +22,18 @@
 
 #include "iaf_psc_exp_htum.h"
 
+#include <assert.h>
+#include <cmath>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "simulation_manager.h"
 
 
 /* ----------------------------------------------------------------

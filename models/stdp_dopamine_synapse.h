@@ -23,15 +23,34 @@
 #ifndef STDP_DOPAMINE_SYNAPSE_H
 #define STDP_DOPAMINE_SYNAPSE_H
 
+#include <boost/any.hpp>
+#include <cmath>
+#include <deque>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Includes from libnestutil:
 #include "numerics.h"
-
 // Includes from models:
 #include "volume_transmitter.h"
-
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "spikecounter.h"
+#include "vp_manager.h"
 
 namespace nest
 {

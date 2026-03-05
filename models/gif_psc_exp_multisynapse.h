@@ -23,14 +23,30 @@
 #ifndef GIF_PSC_EXP_MULTISYNAPSE_H
 #define GIF_PSC_EXP_MULTISYNAPSE_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
-#include "ring_buffer.h"
-#include "universal_data_logger_impl.h"
-
+#include "exceptions.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

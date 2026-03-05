@@ -22,15 +22,19 @@
 
 #include "music_rate_in_proxy.h"
 
+#include <boost/any.hpp>
+
+#include "dictionary.h"
+#include "event_delivery_manager.h"
+#include "nest_names.h"
+#include "secondary_event.h"
+
 #ifdef HAVE_MUSIC
 
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 void
 nest::register_music_rate_in_proxy( const std::string& name )

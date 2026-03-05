@@ -22,17 +22,23 @@
 
 #include "iaf_psc_alpha_multisynapse.h"
 
+#include <assert.h>
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <sstream>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "numerics.h"
+#include "simulation_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

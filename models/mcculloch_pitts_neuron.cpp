@@ -22,11 +22,18 @@
 
 #include "mcculloch_pitts_neuron.h"
 
-// Includes from nestkernel
-#include "kernel_manager.h"
+#include <boost/any.hpp>
+
+#include "dict_util.h"
+#include "dictionary.h"
+#include "genericmodel_impl.h"
+#include "nest_impl.h"
+#include "nest_names.h"
 
 namespace nest
 {
+class Node;
+
 void
 register_mcculloch_pitts_neuron( const std::string& name )
 {

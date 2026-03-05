@@ -24,8 +24,10 @@
 
 // Includes from nestkernel
 #include "kernel_manager.h"
-
 #include "simulation_manager.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
+#include "vp_manager.h"
 
 namespace nest
 {

@@ -22,11 +22,16 @@
 
 #include "parrot_neuron_ps.h"
 
+#include <assert.h>
+
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "simulation_manager.h"
+
+class Dictionary;
 
 
 namespace nest

@@ -23,21 +23,24 @@
 
 #include "hh_cond_beta_gap_traub.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
 
-// C++ includes:
-#include <cmath> // in case we need isnan() // fabs
-#include <cstdio>
-#include <iostream>
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_errno.h>
+// C++ includes:
+#include <cmath> // in case we need isnan() // fabs
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

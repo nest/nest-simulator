@@ -23,22 +23,34 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+#include <stddef.h>
 // C++ includes:
 #include <bitset>
+#include <iosfwd>
+#include <iterator>
+#include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
 // Includes from spatial:
 #include "connection_creator.h"
+#include "mask.h"
+#include "node_collection.h"
+#include "ntree.h"
 #include "ntree_impl.h"
 #include "position.h"
+
+class Dictionary;
 
 namespace nest
 {
 
 template < int D >
 class GridLayer;
-
 class AbstractLayer;
+class ConnectionCreator;
+
 typedef std::shared_ptr< AbstractLayer > AbstractLayerPTR;
 
 /**

@@ -24,21 +24,26 @@
 
 // C++ includes:
 #include <algorithm>
+#include <map>
+#include <utility>
 
 // Includes from nestkernel:
+#include "block_vector.h"
 #include "conn_builder.h"
-#include "conn_parameter.h"
 #include "connection_manager.h"
-#include "connector_base.h"
 #include "connector_model.h"
+#include "exceptions.h"
+#include "growth_curve.h"
 #include "kernel_manager.h"
-#include "logging.h"
-#include "logging_manager.h"
 #include "model_manager.h"
-#include "nest.h"
+#include "mpi_manager.h"
 #include "nest_names.h"
-
+#include "nest_time.h"
+#include "node.h"
 #include "node_manager.h"
+#include "simulation_manager.h"
+#include "sparse_node_array.h"
+#include "vp_manager.h"
 
 namespace nest
 {

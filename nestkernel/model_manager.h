@@ -23,12 +23,17 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
+#include <memory>
 #include <string>
+#include <vector>
 
 // Includes from nestkernel:
 #include "connector_model.h"
 #include "dictionary.h"
+#include "exceptions.h"
 #include "manager_interface.h"
 #include "model.h"
 #include "nest_time.h"
@@ -36,11 +41,13 @@
 #include "node.h"
 #include "secondary_event.h"
 
-#include <memory>
-
 
 namespace nest
 {
+class Model;
+class Node;
+class SecondaryEvent;
+class TimeConverter;
 
 class ModelManager : public ManagerInterface
 {

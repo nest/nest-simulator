@@ -23,8 +23,20 @@
 #ifndef DIFFUSION_CONNECTION_H
 #define DIFFUSION_CONNECTION_H
 
+#include <boost/any.hpp>
+#include <memory>
+#include <stddef.h>
+#include <string>
+
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "event.h"
+#include "exceptions.h"
 #include "nest_names.h"
+#include "node.h"
+#include "secondary_event.h"
 
 namespace nest
 {

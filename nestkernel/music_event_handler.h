@@ -23,8 +23,26 @@
 #ifndef MUSIC_EVENT_HANDLER
 #define MUSIC_EVENT_HANDLER
 
+#include <functional>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "music/event.hh"
+#include "music/index_map.hh"
+#include "nest_time.h"
+
+namespace MUSIC
+{
+class EventInputPort;
+class PermutationIndex;
+} // namespace MUSIC
+namespace nest
+{
+class Node;
+} // namespace nest
 
 #ifdef HAVE_MUSIC
 

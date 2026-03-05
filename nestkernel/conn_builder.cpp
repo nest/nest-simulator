@@ -22,28 +22,41 @@
 
 #include "conn_builder.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+// Includes from C++:
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <memory>
+#include <utility>
+
 // Includes from libnestutil:
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "block_vector.h"
+#include "config.h"
 #include "conn_parameter.h"
 #include "connection_manager.h"
-#include "connector_model_impl.h"
+#include "connector_model.h"
+#include "dictionary.h"
 #include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
 #include "mpi_manager_impl.h"
-#include "nest.h"
 #include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
 #include "node.h"
 #include "node_manager.h"
+#include "numerics.h"
 #include "random_manager.h"
 #include "sp_manager.h"
-
-// Includes from C++:
-#include <algorithm>
+#include "sparse_node_array.h"
+#include "vp_manager.h"
 
 
 nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
@@ -1535,7 +1548,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume indegree is a scalar
-    const size_t value = conn_spec.get< size_t >( names::indegree );
+    const size_t value = static_cast< size_t >( conn_spec.get< long >( names::indegree ) );
     indegree_ = ParameterPTR( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled

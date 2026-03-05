@@ -23,15 +23,21 @@
 #ifndef NODE_COLLECTION_H
 #define NODE_COLLECTION_H
 
+#include <stddef.h>
 // C++ includes:
+#include <iosfwd>
+#include <iterator>
 #include <memory>
+#include <string>
+#include <utility>
 #include <vector>
 
 // Includes from libnestuil:
 #include "dictionary.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
+
+class Dictionary;
 
 namespace nest
 {

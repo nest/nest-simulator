@@ -22,6 +22,9 @@
 
 #include "stdp_nn_symm_synapse.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

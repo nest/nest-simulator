@@ -22,6 +22,14 @@
 
 #include "aeif_cond_alpha_multisynapse.h"
 
+#include <algorithm>
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
+#include <sstream>
+
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
@@ -30,7 +38,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "exceptions.h"

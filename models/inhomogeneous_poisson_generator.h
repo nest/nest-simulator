@@ -23,7 +23,9 @@
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
@@ -31,9 +33,14 @@
 #include "device_node.h"
 #include "event.h"
 #include "nest_impl.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
+
+class Dictionary;
 
 namespace nest
 {

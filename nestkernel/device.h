@@ -23,11 +23,14 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include <string>
+
 // Includes from libnestutil:
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "nest_time.h"
+
+class Dictionary;
 
 
 namespace nest

@@ -22,8 +22,9 @@
 
 #include "correlospinmatrix_detector.h"
 
-// C++ includes:
-#include <cmath>
+#include <algorithm>
+#include <assert.h>
+#include <boost/any.hpp>
 #include <functional>
 
 // Includes from libnestutil:
@@ -31,11 +32,14 @@
 #include "dict_util.h"
 #include "genericmodel_impl.h"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlospinmatrix_detector( const std::string& name )

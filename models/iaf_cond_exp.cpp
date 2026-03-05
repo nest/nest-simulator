@@ -22,16 +22,16 @@
 
 #include "iaf_cond_exp.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"

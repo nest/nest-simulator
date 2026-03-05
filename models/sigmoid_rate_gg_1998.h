@@ -23,15 +23,24 @@
 #ifndef SIGMOID_RATE_GG_1998_H
 #define SIGMOID_RATE_GG_1998_H
 
+#include <boost/type_index/type_index_facade.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cmath>
+#include <map>
+#include <string>
 
 // Includes from models:
+#include "dict_util.h"
 #include "rate_neuron_ipn.h"
 #include "rate_transformer_node.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 

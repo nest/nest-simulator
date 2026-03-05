@@ -23,17 +23,26 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>
 
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "nest_types.h"
 #include "node.h"
 
 
 namespace nest
 {
 class TimeConverter;
+class DelayedRateConnectionEvent;
+class DiffusionConnectionEvent;
+class GapJunctionEvent;
+class InstantaneousRateConnectionEvent;
+class LearningSignalConnectionEvent;
+class SICEvent;
 
 /**
  * Base class for all Models.

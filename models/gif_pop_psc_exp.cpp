@@ -33,10 +33,18 @@
 
 #include "gif_pop_psc_exp.h"
 
+#include <assert.h>
+#include <cmath>
+#include <limits>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+#include "simulation_manager.h"
 
 #ifdef HAVE_GSL
 

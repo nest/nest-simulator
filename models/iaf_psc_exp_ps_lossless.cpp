@@ -22,18 +22,23 @@
 
 #include "iaf_psc_exp_ps_lossless.h"
 
+#include <assert.h>
 // C++ includes:
+#include <cmath>
 #include <limits>
 
 // Includes from nestkernel:
 #include "exceptions.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
+#include "kernel_manager.h"
 #include "nest_impl.h"
+#include "numerics.h"
 #include "regula_falsi.h"
+#include "simulation_manager.h"
 
 
 /* ----------------------------------------------------------------

@@ -22,10 +22,20 @@
 #ifndef CM_COMPARTMENTCURRENTS_H
 #define CM_COMPARTMENTCURRENTS_H
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <cmath>
+#include <map>
 #include <stdlib.h>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "dictionary.h"
 #include "logging.h"
 #include "logging_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "ring_buffer.h"
 
 namespace nest

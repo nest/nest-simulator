@@ -22,15 +22,19 @@
 
 // Includes from nestkernel:
 #include "target_table.h"
+
+#include <algorithm>
+#include <cassert>
+#include <iterator>
+#include <node_manager.h>
+
 #include "kernel_manager.h"
 #include "model_manager.h"
 #include "mpi_manager.h"
 #include "vp_manager.h"
-
 // Includes from libnestutil
+#include "target_data.h"
 #include "vector_util.h"
-
-#include <node_manager.h>
 
 void
 nest::TargetTable::initialize()

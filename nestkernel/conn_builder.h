@@ -30,17 +30,24 @@
  *
  */
 
+#include <stddef.h>
 // C++ includes:
+#include <exception>
 #include <map>
 #include <set>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil
 #include "block_vector.h"
-
 // Includes from nestkernel:
 #include "node_collection.h"
 #include "parameter.h"
+#include "random_generators.h"
+
+class Dictionary;
+template < typename value_type_ >
+class BlockVector;
 
 
 namespace nest

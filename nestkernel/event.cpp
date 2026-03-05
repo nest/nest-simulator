@@ -25,7 +25,6 @@
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "kernel_manager.h"
-#include "node.h"
 
 namespace nest
 {

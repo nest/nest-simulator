@@ -23,13 +23,32 @@
 #ifndef STDP_SYNAPSE_FACETSHW_HOM_H
 #define STDP_SYNAPSE_FACETSHW_HOM_H
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <deque>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
 #include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 
 namespace nest
 {

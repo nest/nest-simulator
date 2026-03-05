@@ -21,19 +21,25 @@
  */
 
 // C++ includes:
+#include <algorithm>
 #include <fstream>
-#include <iostream>
+#include <numeric>
+#include <sstream>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
-#include "stimulation_backend.h"
+#include "mpi.h"
+#include "nest_names.h"
 #include "stimulation_backend_mpi.h"
 #include "stimulation_device.h"
+#include "vp_manager.h"
 
 nest::StimulationBackendMPI::StimulationBackendMPI()
   : enrolled_( false )

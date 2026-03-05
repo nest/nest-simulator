@@ -23,6 +23,7 @@
 #ifndef SEND_BUFFER_POSITION_H
 #define SEND_BUFFER_POSITION_H
 
+#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <limits>
@@ -33,6 +34,7 @@
 
 namespace nest
 {
+struct AssignedRanks;
 
 /**
  * This class simplifies keeping track of write position in MPI buffer

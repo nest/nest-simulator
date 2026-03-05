@@ -26,9 +26,11 @@
 // C++ includes:
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "exceptions.h"
 #include "manager_interface.h"
 

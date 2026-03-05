@@ -22,12 +22,15 @@
 
 #include "stdp_dopamine_synapse.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <memory>
+#include <utility>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "kernel_manager.h"
-
-
 #include "nest_impl.h"
+#include "node_collection.h"
 #include "node_manager.h"
 
 void

@@ -23,12 +23,17 @@
 #ifndef VP_MANAGER_H
 #define VP_MANAGER_H
 
+#include <assert.h>
+#include <cmath>
+#include <stddef.h>
+
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "kernel_manager.h"
 #include "manager_interface.h"
-
 #include "mpi_manager.h"
+
+class Dictionary;
 
 #ifdef _OPENMP
 // C includes:

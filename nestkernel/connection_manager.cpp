@@ -20,50 +20,70 @@
  *
  */
 
-#include "connection_manager_impl.h"
-
-// Generated includes:
-#include "config.h"
-
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
+#include <stddef.h>
 // C++ includes:
 #include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <filesystem>
+#include <deque>
+#include <exception>
 #include <iomanip>
 #include <limits>
-#include <set>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
 #include <vector>
 
+#include "connection_manager_impl.h"
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "block_vector.h"
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
 #include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connection_label.h"
+#include "connection_manager.h"
 #include "connector_base.h"
-#include "connector_model_impl.h"
+#include "connector_model.h"
 #include "delay_checker.h"
+#include "dictionary.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
 #include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "node_collection.h"
 #include "node_manager.h"
+#include "numerics.h"
+#include "per_thread_bool_indicator.h"
+#include "secondary_event.h"
+#include "send_buffer_position.h"
 #include "simulation_manager.h"
-#include "sonata_connector.h"
+#include "source_table.h"
 #include "sp_manager.h"
+#include "spike_data.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
+#include "target_data.h"
+#include "target_table.h"
+#include "target_table_devices.h"
+#include "vp_manager.h"
 
 namespace nest
 {
+class TimeConverter;
+class spikecounter;
 
 ConnectionManager::ConnectionManager()
   : connruledict_()

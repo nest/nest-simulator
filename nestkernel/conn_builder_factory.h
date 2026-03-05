@@ -23,12 +23,20 @@
 #ifndef CONN_BUILDER_FACTORY_H
 #define CONN_BUILDER_FACTORY_H
 
+#include <vector>
+
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "node_collection.h"
+
+class Dictionary;
 
 
 namespace nest
 {
+class BipartiteConnBuilder;
+class ThirdInBuilder;
+class ThirdOutBuilder;
 
 /**
  * Generic factory class for bipartite ConnBuilder objects.

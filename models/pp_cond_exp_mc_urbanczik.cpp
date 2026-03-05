@@ -23,14 +23,16 @@
 
 #include "pp_cond_exp_mc_urbanczik.h"
 
-#ifdef HAVE_GSL
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
+#include "archiving_node.h"
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

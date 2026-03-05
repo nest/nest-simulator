@@ -22,20 +22,20 @@
 
 #include "ppd_sup_generator.h"
 
-// C++ includes:
-#include <algorithm>
+#include <assert.h>
+#include <boost/any.hpp>
+#include <cmath>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "nest_names.h"
+#include "numerics.h"
 
 void
 nest::register_ppd_sup_generator( const std::string& name )

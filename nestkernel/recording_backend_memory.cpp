@@ -23,11 +23,19 @@
 // Includes from nestkernel:
 #include "recording_backend_memory.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <nest_names.h>
+#include <utility>
+
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_time.h"
 #include "recording_device.h"
 #include "simulation_manager.h"
-
-#include <nest_names.h>
+#include "vp_manager.h"
 
 nest::RecordingBackendMemory::RecordingBackendMemory()
 {

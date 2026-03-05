@@ -22,29 +22,36 @@
 
 #include "node_manager.h"
 
+#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
+#include <memory>
 #include <set>
+#include <sstream>
+#include <string>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "block_vector.h"
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model.h"
 #include "model_manager.h"
+#include "modelrange.h"
 #include "modelrange_manager.h"
+#include "mpi_manager.h"
+#include "nest_names.h"
 #include "node.h"
+#include "secondary_event.h"
 #include "secondary_event_impl.h"
-#include "vp_manager.h"
-
-
 #include "simulation_manager.h"
+#include "stopwatch_impl.h"
+#include "vp_manager.h"
 
 namespace nest
 {

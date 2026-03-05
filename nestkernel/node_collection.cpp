@@ -22,19 +22,30 @@
 
 #include "node_collection.h"
 
+#include <algorithm> // copy
+#include <assert.h>
+#include <limits>
+#include <ostream>
+#include <stdexcept>
+#include <tuple>
+
 // Includes from libnestutil
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "model_manager.h"
 #include "modelrange_manager.h"
 #include "node.h"
-
 // C++ includes:
-#include "numeric"   // accumulate
-#include <algorithm> // copy
-#include <cmath>     // lcm
+#include "compose.hpp"
+#include "exceptions.h"
+#include "model.h"
+#include "mpi_manager.h"
+#include "nest_types.h"
+#include "numeric" // accumulate
+#include "vp_manager.h"
+
+class Dictionary;
 
 
 namespace nest

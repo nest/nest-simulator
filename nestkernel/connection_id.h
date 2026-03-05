@@ -23,6 +23,8 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+#include <iosfwd>
+
 #include "dictionary.h"
 
 

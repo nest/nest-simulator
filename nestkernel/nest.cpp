@@ -20,12 +20,26 @@
  *
  */
 
-#include "nest_impl.h"
-
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <algorithm>
 #include <cassert>
+#include <deque>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "nest_impl.h"
 // Includes from nestkernel:
+#include "compose.hpp"
+#include "connection_id.h"
 #include "connection_manager.h"
 #include "dictionary.h"
 #include "exceptions.h"
@@ -34,11 +48,20 @@
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
+#include "mask.h"
+#include "model.h"
 #include "model_manager.h"
-#include "model_manager_impl.h"
 #include "module_manager.h"
+#include "mpi_manager.h"
+#include "nest.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node_collection.h"
 #include "node_manager.h"
 #include "parameter.h"
+#include "position.h"
+#include "position_impl.h"
+#include "random_generators.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"
 #include "spatial.h"

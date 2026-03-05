@@ -22,12 +22,13 @@
 
 #include "buffer_resize_log.h"
 
-// Includes from libnestutil
-#include "dict_util.h"
+#include <boost/type_index/type_index_facade.hpp>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 namespace nest

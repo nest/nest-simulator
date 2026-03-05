@@ -22,18 +22,24 @@
 
 #include "music_event_handler.h"
 
+#include <assert.h>
+
+#include "exceptions.h"
+#include "music/permutation_index.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "node.h"
+
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "event.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "music_manager.h"
-#include "nest_types.h"
 
 namespace nest
 {

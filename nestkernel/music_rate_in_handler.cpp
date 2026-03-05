@@ -22,18 +22,27 @@
 
 #include "music_rate_in_handler.h"
 
+#include <algorithm>
+#include <stddef.h>
+
+#include "exceptions.h"
+#include "mpi.h"
+#include "music/array_data.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "node.h"
+#include "secondary_event.h"
+
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "music_manager.h"
-#include "nest_types.h"
 
 namespace nest
 {

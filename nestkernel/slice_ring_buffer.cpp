@@ -22,12 +22,18 @@
 
 #include "slice_ring_buffer.h"
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
+#include <algorithm>
 #include <cmath>
+#include <functional>
 #include <limits>
 
+#include "config.h"
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
+#include "kernel_manager.h"
 
 nest::SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )

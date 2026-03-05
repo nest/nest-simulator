@@ -23,27 +23,43 @@
 #ifndef EVENT_DELIVERY_MANAGER_H
 #define EVENT_DELIVERY_MANAGER_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch_impl.h"
-
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
 #include "connection_manager.h"
 #include "event.h"
+#include "kernel_manager.h"
 #include "mpi_manager.h" // OffGridSpike
+#include "node.h"
 #include "per_thread_bool_indicator.h"
 #include "secondary_event.h"
+#include "simulation_manager.h"
 #include "spike_data.h"
+#include "stopwatch.h"
+#include "target.h"
 #include "target_table.h"
 #include "vp_manager.h"
+
+class Dictionary;
 
 
 namespace nest
 {
+class OffGridSpikeData;
+class SecondaryEvent;
+class SpikeData;
+struct AssignedRanks;
+struct OffGridSpikeDataWithRank;
+struct SpikeDataWithRank;
+class Node;
+
 typedef MPIManager::OffGridSpike OffGridSpike;
 
 class TargetData;
@@ -472,14 +488,6 @@ template <>
 void EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag );
 template <>
 void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long lag );
-
-template <>
-inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
-{
-  e.set_sender_node_id( source.get_node_id() );
-  send_local_( source, e, lag );
-}
 
 inline size_t
 EventDeliveryManager::write_toggle() const

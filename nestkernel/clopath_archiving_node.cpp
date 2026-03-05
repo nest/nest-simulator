@@ -22,9 +22,16 @@
 
 #include "clopath_archiving_node.h"
 
+#include <boost/any.hpp>
+#include <math.h>
+#include <string>
+
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 
 
 namespace nest

@@ -23,16 +23,24 @@
 #ifndef MULTIMETER_H
 #define MULTIMETER_H
 
+#include <boost/type_index/type_index_facade.hpp>
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "dictionary.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "node.h"
 #include "node_manager.h"
 #include "recording_device.h"
 
@@ -134,6 +142,7 @@ EndUserDocs */
 
 namespace nest
 {
+class DataLoggingReply;
 
 void register_multimeter( const std::string& name );
 void register_voltmeter( const std::string& name );

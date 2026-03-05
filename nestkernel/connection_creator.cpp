@@ -22,9 +22,17 @@
 
 #include "connection_creator.h"
 
+#include <boost/any.hpp>
+#include <string>
+
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "model_manager.h"
 #include "nest.h"
+#include "nest_names.h"
+#include "numerics.h"
 #include "spatial.h"
+#include "vp_manager.h"
 
 namespace nest
 {

@@ -23,8 +23,11 @@
 #ifndef PARAMETER_H_
 #define PARAMETER_H_
 
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <memory>
+#include <vector>
 
 // Includes from nestkernel:
 #include "node.h"
@@ -36,6 +39,8 @@ class Dictionary;
 namespace nest
 {
 class Parameter;
+class Node;
+
 using ParameterPTR = std::shared_ptr< Parameter >;
 
 class AbstractLayer;

@@ -22,6 +22,21 @@
 
 #include "siegert_neuron.h"
 
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_sf_dawson.h>
+#include <gsl/gsl_sf_erf.h>
+
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
+namespace nest
+{
+class DataLoggingRequest;
+} // namespace nest
+
 #ifdef HAVE_GSL
 
 // C++ includes:
@@ -31,7 +46,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

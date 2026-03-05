@@ -22,6 +22,11 @@
 
 #include "clopath_synapse.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
+#include "nest_impl.h"
+
 void
 nest::register_clopath_synapse( const std::string& name )
 {

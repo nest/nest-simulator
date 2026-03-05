@@ -23,8 +23,13 @@
 #ifndef WEIGHT_OPTIMIZER_H
 #define WEIGHT_OPTIMIZER_H
 
+#include <stddef.h>
+#include <string>
+
 // nestkernel
 #include "dictionary.h"
+
+class Dictionary;
 
 namespace nest
 {

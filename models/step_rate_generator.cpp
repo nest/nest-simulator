@@ -22,16 +22,20 @@
 
 #include "step_rate_generator.h"
 
+#include <assert.h>
+#include <sstream>
+
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-
-#include "nest_impl.h"
-
 namespace nest
 {
+class DataLoggingRequest;
+
 void
 register_step_rate_generator( const std::string& name )
 {

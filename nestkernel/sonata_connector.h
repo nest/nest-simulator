@@ -35,12 +35,10 @@
 
 // Includes from libnestutil
 #include "dict_util.h"
-
 // Includes from nestkernel:
+#include "H5Cpp.h"
 #include "conn_parameter.h"
 #include "kernel_manager.h"
-
-#include "H5Cpp.h"
 
 namespace nest
 {

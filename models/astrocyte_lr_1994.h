@@ -23,7 +23,28 @@
 #ifndef ASTROCYTE_LR_1994_H
 #define ASTROCYTE_LR_1994_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
+class CurrentEvent;
+class DataLoggingRequest;
+class SICEvent;
+class SpikeEvent;
+} // namespace nest
 
 #ifdef HAVE_GSL
 

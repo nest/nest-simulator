@@ -23,6 +23,8 @@
 #ifndef DEVICE_NODE_H
 #define DEVICE_NODE_H
 
+#include <stddef.h>
+
 // Includes from nestkernel:
 #include "node.h"
 

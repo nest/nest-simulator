@@ -22,6 +22,8 @@
 
 #include "poisson_generator_ps.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <limits>
@@ -31,10 +33,11 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "nest_names.h"
-
 // Includes from libnestutil:
+#include "device.h"
 #include "dict_util.h"
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
 
 void
 nest::register_poisson_generator_ps( const std::string& name )

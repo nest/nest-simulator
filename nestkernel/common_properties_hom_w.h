@@ -25,12 +25,14 @@
 
 // Includes from libnestutil:
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 
+class Dictionary;
+
 namespace nest
 {
+class ConnectorModel;
 
 /**
  * Class containing the common properties for all synapses with common weight.

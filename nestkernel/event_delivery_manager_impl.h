@@ -42,6 +42,13 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
   kernel::manager< ConnectionManager >.send_from_device( t, ldid, e );
 }
 
+template <>
+inline void
+EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
+{
+  e.set_sender_node_id( source.get_node_id() );
+  send_local_( source, e, lag );
+}
 
 template < class EventT >
 inline void

@@ -23,11 +23,16 @@
 #ifndef STRUCTURAL_PLASTICITY_NODE_H
 #define STRUCTURAL_PLASTICITY_NODE_H
 
+#include <map>
+#include <string>
+
 // Includes from nestkernel:
 #include "dictionary.h"
 #include "nest_time.h"
 #include "node.h"
 #include "synaptic_element.h"
+
+class Dictionary;
 
 
 namespace nest

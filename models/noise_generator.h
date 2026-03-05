@@ -23,19 +23,37 @@
 #ifndef NOISE_GENERATOR_H
 #define NOISE_GENERATOR_H
 
+#include <boost/any.hpp>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <algorithm>
+#include <map>
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
+#include "recordables_map.h"
 #include "stimulation_device.h"
+#include "universal_data_logger.h"
 #include "universal_data_logger_impl.h"
+#include "vp_manager.h"
 
 namespace nest
 {
+class DSCurrentEvent;
+class DataLoggingRequest;
+class TimeConverter;
 
 /* BeginUserDocs: device, generator
 

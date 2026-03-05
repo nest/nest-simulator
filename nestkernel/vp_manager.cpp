@@ -22,18 +22,24 @@
 
 #include "vp_manager.h"
 
+#include <boost/any.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cstdlib>
+#include <string>
+#include <vector>
 
 // Includes from libnestutil:
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "logging_manager.h"
 #include "model_manager.h"
 #include "mpi_manager.h"
+#include "nest_names.h"
 #include "node_manager.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"

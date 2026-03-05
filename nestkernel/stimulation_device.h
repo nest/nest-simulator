@@ -23,17 +23,20 @@
 #ifndef STIMULATION_DEVICE_H
 #define STIMULATION_DEVICE_H
 
+// From standard library:
+#include <string>
+#include <vector>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
+#include "exceptions.h"
+#include "nest_time.h"
 #include "nest_types.h"
-
-// From standard library:
-#include <string>
+#include "node.h"
 
 namespace nest
 {

@@ -22,15 +22,14 @@
 
 #include "logging_event.h"
 
-#include "kernel_manager.h"
-
-// C++ includes:
-#include "logging_manager.h"
-
-
 #include <cassert>
 #include <ctime>
 #include <iomanip>
+#include <ostream>
+
+#include "kernel_manager.h"
+// C++ includes:
+#include "logging_manager.h"
 
 nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   const std::string& fctn,

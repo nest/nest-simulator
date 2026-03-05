@@ -21,8 +21,6 @@
  */
 
 #include "sonata_connector.h"
-#include "connection_manager.h"
-#include "model_manager.h"
 
 #ifdef HAVE_HDF5
 
@@ -34,13 +32,11 @@
 
 // Includes from libnestutil
 #include "dict_util.h"
-
 // Includes from nestkernel:
+#include "H5Cpp.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "node_manager.h"
-
-#include "H5Cpp.h"
 
 extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 

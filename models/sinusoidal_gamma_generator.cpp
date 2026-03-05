@@ -22,24 +22,26 @@
 
 #include "sinusoidal_gamma_generator.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <bits/std_abs.h>
 
-// C++ includes:
-#include <cmath>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_sf_gamma.h>
+// C++ includes:
+#include <cmath>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "numerics.h"
 
 
 namespace nest

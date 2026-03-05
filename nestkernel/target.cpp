@@ -23,6 +23,9 @@
 #include "target.h"
 
 #include <cassert>
+#include <string>
+
+#include "exceptions.h"
 
 namespace nest
 {

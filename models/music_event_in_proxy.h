@@ -23,8 +23,15 @@
 #ifndef MUSIC_EVENT_IN_PROXY_H
 #define MUSIC_EVENT_IN_PROXY_H
 
+#include <stddef.h>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "nest_time.h"
+#include "node.h"
+
+class Dictionary;
 
 #ifdef HAVE_MUSIC
 

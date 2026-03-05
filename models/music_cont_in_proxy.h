@@ -23,19 +23,31 @@
 #ifndef MUSIC_CONT_IN_PROXY_H
 #define MUSIC_CONT_IN_PROXY_H
 
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "nest_time.h"
+
+class Dictionary;
+
+namespace MUSIC
+{
+class ContInputPort;
+} // namespace MUSIC
+namespace nest
+{
+class Node;
+} // namespace nest
 
 #ifdef HAVE_MUSIC
 
 // C includes:
 #include <mpi.h>
-
-// C++ includes:
-#include <vector>
-
 // External includes:
 #include <music.hh>
+// C++ includes:
+#include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"

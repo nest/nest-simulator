@@ -22,18 +22,22 @@
 
 #include "pulsepacket_generator.h"
 
+#include <assert.h>
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "simulation_manager.h"
 
 void
 nest::register_pulsepacket_generator( const std::string& name )

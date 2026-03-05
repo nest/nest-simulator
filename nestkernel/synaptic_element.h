@@ -81,9 +81,10 @@
 
 // Includes from nestkernel:
 #include "growth_curve.h"
-
 // Includes from libnestutil:
 #include "dictionary.h"
+
+class Dictionary;
 
 
 namespace nest

@@ -24,17 +24,24 @@
 #include <boost/any.hpp>
 #include <boost/core/demangle.hpp>
 #include <iomanip>
-#include <iostream>
+#include <iterator>
 #include <map>
+#include <memory>
+#include <numeric>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "dictionary.h"
-
 #include "kernel_manager.h"
 #include "logging_manager.h"
-#include "parameter.h"
+#include "node_collection.h"
 #include "vp_manager.h"
+
+namespace nest
+{
+class Parameter;
+} // namespace nest
 
 /**
  * General vector streamer.

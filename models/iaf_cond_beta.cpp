@@ -23,17 +23,17 @@
 
 #include "iaf_cond_beta.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

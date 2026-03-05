@@ -20,8 +20,15 @@
  *
  */
 
+#include <assert.h>
+#include <list>
+#include <stddef.h>
+#include <vector>
+
 #include "connection_manager.h"
-#include "ring_buffer_impl.h"
+#include "event_delivery_manager.h"
+#include "kernel_manager.h"
+#include "ring_buffer.h"
 
 nest::RingBuffer::RingBuffer()
   : buffer_(

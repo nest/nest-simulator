@@ -22,6 +22,10 @@
 
 #include "eprop_synapse_bsshslm_2020.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
+#include "block_vector.h"
 #include "connection_manager.h"
 #include "nest_impl.h"
 
@@ -29,6 +33,8 @@
 
 namespace nest
 {
+class TargetIdentifierIndex;
+class TargetIdentifierPtrRport;
 
 void
 register_eprop_synapse_bsshslm_2020( const std::string& name )

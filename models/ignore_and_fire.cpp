@@ -22,15 +22,18 @@
 
 #include "ignore_and_fire.h"
 
+#include <assert.h>
+
 // Includes from nestkernel:
 #include "exceptions.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "ring_buffer_impl.h"
+#include "simulation_manager.h"
 #include "universal_data_logger_impl.h"
 
 nest::RecordablesMap< nest::ignore_and_fire > nest::ignore_and_fire::recordablesMap_;

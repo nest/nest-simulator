@@ -24,7 +24,9 @@
 #ifndef LOGGING_EVENT_H
 #define LOGGING_EVENT_H
 
+#include <time.h>
 // C++ includes:
+#include <iosfwd>
 #include <string>
 
 // Includes from libnestutil:

@@ -23,22 +23,25 @@
 #ifndef RECORDING_DEVICE_H
 #define RECORDING_DEVICE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <fstream>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
 #include "kernel_manager.h"
+#include "nest_time.h"
 #include "node.h"
 
 
 namespace nest
 {
+class Event;
 
 /* BeginUserDocs: NOINDEX
 

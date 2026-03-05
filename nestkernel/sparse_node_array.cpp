@@ -22,6 +22,9 @@
 
 #include "sparse_node_array.h"
 
+#include <algorithm>
+#include <cmath>
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"

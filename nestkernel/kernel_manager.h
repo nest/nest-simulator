@@ -24,6 +24,9 @@
 #define KERNEL_MANAGER_H
 
 #include <fstream>
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 #include "dictionary.h"
 #include "manager_interface.h"

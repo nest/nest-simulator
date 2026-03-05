@@ -23,6 +23,8 @@
 #ifndef HISTENTRY_H
 #define HISTENTRY_H
 
+#include <stddef.h>
+
 #include "nest_types.h"
 
 namespace nest

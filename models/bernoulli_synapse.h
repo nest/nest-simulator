@@ -24,14 +24,27 @@
 #ifndef BERNOULLI_SYNAPSE_H
 #define BERNOULLI_SYNAPSE_H
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "kernel_manager.h"
+#include <assert.h>
+#include <boost/any.hpp>
+#include <stddef.h>
+#include <string>
 
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, static
 

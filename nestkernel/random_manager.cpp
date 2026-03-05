@@ -22,11 +22,20 @@
 
 #include "random_manager.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
 // C++ includes:
+#include <algorithm>
+#include <limits>
 #include <random>
 #include <utility>
 
 // Includes from nestkernel:
+#include "Random123/features/compilerfeatures.h"
+#include "compose.hpp"
+#include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager.h"
 #include "nest_names.h"

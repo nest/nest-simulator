@@ -23,16 +23,22 @@
 #ifndef ppd_sup_generator_H
 #define ppd_sup_generator_H
 
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
+
+class Dictionary;
 
 namespace nest
 {

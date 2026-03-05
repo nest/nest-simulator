@@ -22,17 +22,21 @@
 
 #include "glif_psc_double_alpha.h"
 
-// C++ includes:
-#include <iostream>
-#include <limits>
+#include <assert.h>
+#include <cmath>
+#include <cstddef>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "numerics.h"
+#include "simulation_manager.h"
 
 using namespace nest;
 

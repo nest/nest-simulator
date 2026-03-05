@@ -23,9 +23,23 @@
 #ifndef AEIF_COND_ALPHA_MULTISYNAPSE_H
 #define AEIF_COND_ALPHA_MULTISYNAPSE_H
 
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <sstream>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
-#include <sstream>
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 

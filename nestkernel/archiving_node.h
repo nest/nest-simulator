@@ -23,6 +23,7 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <deque>
 
@@ -31,6 +32,8 @@
 #include "histentry.h"
 #include "nest_time.h"
 #include "structural_plasticity_node.h"
+
+class Dictionary;
 
 
 #define DEBUG_ARCHIVER 1

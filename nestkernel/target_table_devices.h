@@ -23,12 +23,13 @@
 #ifndef TARGET_TABLE_DEVICES_H
 #define TARGET_TABLE_DEVICES_H
 
+#include <stddef.h>
 // C++ includes:
+#include <deque>
 #include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "connection_id.h"
 #include "connector_base.h"
@@ -36,11 +37,17 @@
 #include "nest_types.h"
 #include "secondary_event.h"
 
+class Dictionary;
+
 
 namespace nest
 {
 class Node;
 class ConnectorModel;
+class ConnectionID;
+class ConnectorBase;
+class Event;
+class SecondaryEvent;
 
 /**
  * This data structure stores the connections between local neurons

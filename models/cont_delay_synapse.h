@@ -24,19 +24,31 @@
 #define CONT_DELAY_SYNAPSE_H
 
 
+#include <boost/any.hpp>
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <string>
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
-#include "logging_manager.h"
-
 #include "connection_manager.h"
+#include "connector_model.h"
 #include "delay_checker.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "kernel_manager.h"
 #include "logging.h"
+#include "logging_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, continuous delay
 

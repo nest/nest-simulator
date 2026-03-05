@@ -22,10 +22,13 @@
 
 #include "music_event_in_proxy.h"
 
-#ifdef HAVE_MUSIC
+#include <boost/any.hpp>
 
-// External includes:
-#include <music.hh>
+#include "dictionary.h"
+#include "nest_names.h"
+#include "vp_manager.h"
+
+#ifdef HAVE_MUSIC
 
 // Includes from nestkernel:
 #include "connection_manager.h"

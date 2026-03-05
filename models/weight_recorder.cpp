@@ -22,14 +22,16 @@
 
 #include "weight_recorder.h"
 
-
-// Includes from libnestutil:
-#include "compose.hpp"
+#include <algorithm>
+#include <boost/any.hpp>
+#include <iterator>
+#include <vector>
 
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "event.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 #include "node_collection.h"
 #include "node_manager.h"

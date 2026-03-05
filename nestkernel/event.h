@@ -23,10 +23,13 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <cassert>
+#include <limits>
 #include <memory>
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:

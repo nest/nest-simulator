@@ -22,10 +22,18 @@
 
 #include "sigmoid_rate.h"
 
+#include <boost/any.hpp>
+
 #include "dict_util.h"
+#include "dictionary.h"
+#include "genericmodel_impl.h"
+#include "nest_impl.h"
+#include "nest_names.h"
 
 namespace nest
 {
+class Node;
+
 void
 register_sigmoid_rate_ipn( const std::string& name )
 {

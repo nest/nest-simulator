@@ -23,7 +23,25 @@
 #ifndef HH_PSC_ALPHA_GAP_H
 #define HH_PSC_ALPHA_GAP_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
+class GapJunctionEvent;
+} // namespace nest
 
 #ifdef HAVE_GSL
 

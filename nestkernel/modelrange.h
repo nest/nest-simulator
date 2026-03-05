@@ -23,6 +23,8 @@
 #ifndef MODELRANGE_H
 #define MODELRANGE_H
 
+#include <stddef.h>
+
 // Includes from nestkernel:
 #include "nest_types.h"
 

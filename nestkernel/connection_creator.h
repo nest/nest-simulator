@@ -23,25 +23,30 @@
 #ifndef CONNECTION_CREATOR_H
 #define CONNECTION_CREATOR_H
 
+#include <stddef.h>
 // C++ includes:
+#include <iterator>
+#include <utility>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "nest.h"
-
 // Includes from spatial:
+#include "dictionary.h"
 #include "mask.h"
+#include "node_collection.h"
 #include "ntree.h"
+#include "parameter.h"
 #include "position.h"
 
 namespace nest
 {
 template < int D >
 class Layer;
-
 template < int D >
 class MaskedLayer;
+class Node;
 
 /**
  * This class is a representation of the dictionary of connection

@@ -23,12 +23,21 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
+#include <assert.h>
 #include <boost/any.hpp>
+#include <boost/any/bad_any_cast.hpp>
 #include <boost/core/demangle.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <iosfwd>
+#include <limits>
 #include <map>
+#include <stddef.h>
 #include <string>
+#include <typeinfo>
+#include <utility>
 #include <vector>
 
+#include "compose.hpp"
 #include "exceptions.h"
 
 /**

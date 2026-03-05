@@ -23,17 +23,22 @@
 #ifndef SPIKE_TRAIN_INJECTOR_H
 #define SPIKE_TRAIN_INJECTOR_H
 
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "device.h"
+#include "dictionary.h"
 #include "event.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "simulation_manager.h"
 
 namespace nest
 {

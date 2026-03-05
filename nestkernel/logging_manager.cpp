@@ -22,15 +22,14 @@
 
 #include "logging_manager.h"
 
+#include <boost/any.hpp>
 // C++ includes:
 #include <cassert>
 #include <iostream>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging_event.h"
-
-// Includes from thirdparty:
-#include "compose.hpp"
 #include "nest_names.h"
 
 

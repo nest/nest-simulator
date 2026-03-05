@@ -22,20 +22,35 @@
 
 #include "spatial.h"
 
+#include <assert.h>
 // C++ includes:
+#include <algorithm>
+#include <cmath>
 #include <fstream>
+#include <map>
 #include <memory>
-#include <ostream>
 #include <string>
+#include <typeinfo>
+#include <utility>
 
 // Includes from nestkernel:
+#include "connection_creator.h"
+#include "connection_id.h"
 #include "connection_manager.h"
 #include "exceptions.h"
+#include "grid_mask.h"
 #include "grid_mask_impl.h"
 #include "kernel_manager.h"
 #include "mask_impl.h"
-#include "nest.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "node_manager.h"
+#include "ntree.h"
+#include "ntree_impl.h"
+#include "position.h"
+#include "position_impl.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 
 namespace nest

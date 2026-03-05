@@ -22,19 +22,26 @@
 
 #include "module_manager.h"
 
+#include <boost/any.hpp>
+#include <exception>
+#include <vector>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "logging_manager.h"
+#include "nest_names.h"
+
 #ifdef HAVE_LIBLTDL
+
+#include <node_manager.h>
 
 // Includes from libnestutil:
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
-
-#include <node_manager.h>
 
 
 namespace nest

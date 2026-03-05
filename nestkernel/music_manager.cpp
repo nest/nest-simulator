@@ -22,6 +22,8 @@
 
 #include "music_manager.h"
 
+#include <utility>
+
 // C includes:
 #ifdef HAVE_MPI
 #ifndef HAVE_MUSIC
@@ -31,13 +33,18 @@
 
 // Includes from nestkernel:
 #include "compose.hpp"
-#include "kernel_manager.h"
+#include "exceptions.h"
 #include "logging.h"
 #include "logging_manager.h"
+#include "music/runtime.hh"
+#include "music/setup.hh"
+
+class Dictionary;
 
 
 namespace nest
 {
+class Node;
 
 MUSICManager::MUSICManager()
 {

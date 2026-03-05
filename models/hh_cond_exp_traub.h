@@ -23,8 +23,22 @@
 #ifndef HH_COND_EXP_TRAUB_H
 #define HH_COND_EXP_TRAUB_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 

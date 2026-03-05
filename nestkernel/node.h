@@ -23,9 +23,12 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
 #include <bitset>
 #include <deque>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -64,6 +67,7 @@ class DiffusionConnectionEvent;
 class DelayedRateConnectionEvent;
 class LearningSignalConnectionEvent;
 class SICEvent;
+class CommonSynapseProperties;
 
 /**
  * @defgroup user_interface Model developer interface.

@@ -23,18 +23,19 @@
 
 #include "hh_cond_exp_traub.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <cmath>
 
-// C++ includes:
-#include <cstdio>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

@@ -22,10 +22,11 @@
 
 #include "stdp_synapse_hom.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
-
-
 #include "nest_impl.h"
 
 void

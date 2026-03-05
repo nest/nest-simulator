@@ -23,17 +23,30 @@
 #ifndef NEST_H
 #define NEST_H
 
+#include <deque>
+#include <iostream>
+#include <map>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_id.h"
 #include "generic_factory.h"
+#include "generic_factory_impl.h"
+#include "logging_manager.h"
 #include "mask.h"
+#include "node_collection.h"
 #include "parameter.h"
+#include "random_generators.h"
 
-#include <deque>
+namespace boost
+{
+class any;
+} // namespace boost
 
 namespace nest
 {

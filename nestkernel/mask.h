@@ -24,21 +24,25 @@
 #define MASK_H
 
 // C++ includes:
+#include <cmath>
+#include <limits>
 #include <memory>
+#include <string>
+#include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
-
 // Includes from spatial:
+#include "position.h"
 #include "position_impl.h"
 
 namespace nest
 {
 class AbstractMask;
+
 using MaskPTR = std::shared_ptr< AbstractMask >;
 
 

@@ -23,6 +23,7 @@
 #ifndef SOURCE_TABLE_H
 #define SOURCE_TABLE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <iostream>
@@ -35,14 +36,19 @@
 #include "source.h"
 #include "source_table_position.h"
 #include "spike_data.h"
-
 // Includes from libnestutil
 #include "block_vector.h"
+#include "static_assert.h"
+
+template < typename value_type_ >
+class BlockVector;
 
 namespace nest
 {
 
 class TargetData;
+class Source;
+class SpikeData;
 
 /**
  * Entry of compressed_spike_data_map_.

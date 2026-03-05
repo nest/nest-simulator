@@ -23,18 +23,23 @@
 
 #include "node.h"
 
+#include <boost/any.hpp>
+
 // Includes from libnestutil:
 #include "compose.hpp"
-
 // Includes from nestkernel:
+#include "event.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model.h"
 #include "model_manager.h"
 #include "nest_names.h"
 #include "node_manager.h"
 
 namespace nest
 {
+class CommonSynapseProperties;
+
 Node::Node()
   : deprecation_warning()
   , node_id_( 0 )

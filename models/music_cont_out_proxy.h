@@ -23,20 +23,30 @@
 #ifndef MUSIC_CONT_OUT_PROXY_H
 #define MUSIC_CONT_OUT_PROXY_H
 
+#include <stddef.h>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "nest_time.h"
+#include "node.h"
+
+class Dictionary;
+
+namespace nest
+{
+class DataLoggingReply;
+} // namespace nest
 
 
 #ifdef HAVE_MUSIC
 
 // C includes:
 #include <mpi.h>
-
-// C++ includes:
-#include <vector>
-
 // External includes:
 #include <music.hh>
+// C++ includes:
+#include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"
@@ -170,7 +180,6 @@ protected:
 
 private:
   struct State_; //!< Forward declarations
-
   struct Buffers_;
 
   struct Parameters_

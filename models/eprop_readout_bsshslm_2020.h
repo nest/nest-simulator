@@ -23,17 +23,37 @@
 #ifndef EPROP_READOUT_BSSHSLM_2020_H
 #define EPROP_READOUT_BSSHSLM_2020_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // nestkernel
 #include "connection.h"
+#include "dictionary.h"
 #include "eprop_archiving_node_readout.h"
 #include "event.h"
-#include "ring_buffer.h"
-#include "universal_data_logger_impl.h"
-
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
 #include "model_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "secondary_event.h"
+#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
+class CurrentEvent;
+class DataLoggingRequest;
+class SpikeEvent;
 
 /* BeginUserDocs: neuron, e-prop plasticity, current-based
 

@@ -22,20 +22,29 @@
 
 #include "music_rate_out_proxy.h"
 
+#include <algorithm>
+#include <boost/any.hpp>
+
+#include "dictionary.h"
+#include "logging_manager.h"
+#include "mpi.h"
+#include "music/array_data.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "nest_names.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "logging.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
 #include "music_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

@@ -20,20 +20,35 @@
  *
  */
 
-#include "layer_impl.h"
+#include <algorithm>
+#include <assert.h>
+#include <boost/any.hpp>
+#include <functional>
+#include <iterator>
+#include <math.h>
+#include <memory>
+#include <numeric>
+#include <stddef.h>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
+#include "layer_impl.h"
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "exceptions.h"
+#include "free_layer.h"
+#include "grid_layer.h"
 #include "kernel_manager.h"
+#include "layer.h"
 #include "model_manager.h"
 #include "nest_names.h"
 #include "node_collection.h"
+#include "node_manager.h"
+#include "ntree_impl.h"
 #include "parameter.h"
-
-
-// Includes from spatial:
-#include "free_layer_impl.h"
-#include "grid_layer_impl.h"
+#include "position_impl.h"
 #include "spatial.h"
 
 namespace nest

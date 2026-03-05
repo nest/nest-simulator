@@ -22,6 +22,11 @@
 
 #include "bernoulli_synapse.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
+#include "nest_impl.h"
+
 void
 nest::register_bernoulli_synapse( const std::string& name )
 {

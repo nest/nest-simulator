@@ -29,6 +29,7 @@
 
 // Includes from nestkernel:
 #include "device.h"
+#include "nest_time.h"
 #include "nest_types.h"
 
 

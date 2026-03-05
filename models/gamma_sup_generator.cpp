@@ -22,16 +22,19 @@
 
 #include "gamma_sup_generator.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <math.h>
+
 // Includes from libnestutil:
 #include "dict_util.h"
-
-// Includes from nestkernel:
+#include "dictionary.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "nest_names.h"
 
 void
 nest::register_gamma_sup_generator( const std::string& name )

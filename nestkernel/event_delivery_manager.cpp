@@ -20,24 +20,47 @@
  *
  */
 
-#include "event_delivery_manager_impl.h"
-
+#include <assert.h>
+#include <boost/any.hpp>
+#include <stddef.h>
 // C++ includes:
 #include <algorithm> // rotate
-#include <numeric>   // accumulate
+#include <cmath>
+#include <numeric> // accumulate
+#include <set>
+#include <string>
+#include <vector>
 
+#include "event_delivery_manager_impl.h"
 // Includes from nestkernel:
+#include "buffer_resize_log.h"
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
+#include "event_delivery_manager.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
 #include "mpi_manager_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "per_thread_bool_indicator.h"
+#include "secondary_event.h"
 #include "send_buffer_position.h"
 #include "simulation_manager.h"
+#include "spike_data.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
+#include "target_data.h"
 #include "vp_manager.h"
 
 
 namespace nest
 {
+class ConnectorModel;
 
 
 EventDeliveryManager::EventDeliveryManager()

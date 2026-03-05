@@ -22,7 +22,13 @@
 
 #include "synaptic_element.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <cmath>
+#include <string>
+
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"

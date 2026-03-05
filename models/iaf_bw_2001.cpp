@@ -22,22 +22,27 @@
 
 #include "iaf_bw_2001.h"
 
+#include <cmath>
+#include <gsl/gsl_errno.h>
+
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+
 #ifdef HAVE_GSL
 #ifdef HAVE_BOOST
+
+// Includes from standard library
+#include <boost/math/special_functions/gamma.hpp>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from standard library
-#include <boost/math/special_functions/gamma.hpp>
 
 /* ---------------------------------------------------------------------------
  * Recordables map

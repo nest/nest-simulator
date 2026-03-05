@@ -21,6 +21,8 @@
  */
 
 #include "connector_model.h"
+
+#include "kernel_manager.h"
 #include "model_manager.h"
 
 namespace nest

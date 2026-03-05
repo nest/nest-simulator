@@ -22,6 +22,8 @@
 
 #include "device_node.h"
 
+#include "nest_types.h"
+
 namespace nest
 {
 

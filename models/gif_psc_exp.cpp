@@ -22,19 +22,20 @@
 
 #include "gif_psc_exp.h"
 
+#include <assert.h>
+#include <cmath>
+
 // Includes from nestkernel:
 #include "compose.hpp"
+#include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "numerics.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "dict_util.h"
-#include "iaf_propagator.h"
-#include "numerics.h"
+#include "simulation_manager.h"
 
 namespace nest
 {

@@ -23,23 +23,31 @@
 
 #include "recording_backend_ascii.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
 // C++ includes:
+#include <cmath>
 #include <iomanip>
+#include <sstream>
+#include <utility>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-
 // Includes from nestkernel:
+#include "config.h"
+#include "dictionary.h"
+#include "event.h"
+#include "exceptions.h"
 #include "io_manager.h"
+#include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
-#include "node_manager.h"
-#include "recording_backend_ascii.h"
-
-#include "event.h"
 #include "nest_names.h"
+#include "nest_time.h"
+#include "node_manager.h"
 #include "recording_device.h"
 #include "simulation_manager.h"
+#include "vp_manager.h"
 
 
 const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;

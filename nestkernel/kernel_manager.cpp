@@ -22,7 +22,14 @@
 
 #include "kernel_manager.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <stdexcept>
+#include <stdlib.h>
+
 // Include concrete manager headers only in the implementation.
+#include "compose.hpp"
+#include "config.h"
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "io_manager.h"
@@ -332,6 +339,7 @@ KernelManager::get_fingerprint() const
 
 #include <fstream>
 #include <sstream>
+
 size_t
 nest::KernelManager::get_memsize_linux_() const
 {
@@ -380,6 +388,7 @@ nest::KernelManager::get_memsize_linux_() const
 #if defined __APPLE__
 
 #include <mach/mach.h>
+
 size_t
 nest::KernelManager::get_memsize_darwin_() const
 {

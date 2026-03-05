@@ -23,15 +23,37 @@
 #ifndef EPROP_SYNAPSE_BSSHSLM_2020_H
 #define EPROP_SYNAPSE_BSSHSLM_2020_H
 
+#include <assert.h>
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <cmath>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // nestkernel
+#include "common_synapse_properties.h"
 #include "connection.h"
 #include "connector_base.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
 #include "eprop_archiving_node_impl.h"
+#include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "simulation_manager.h"
 #include "target_identifier.h"
 #include "weight_optimizer.h"
 
 namespace nest
 {
+class TargetIdentifierIndex;
+class TargetIdentifierPtrRport;
 
 /* BeginUserDocs: synapse, e-prop plasticity
 

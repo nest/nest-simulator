@@ -23,8 +23,21 @@
 #ifndef MUSIC_RATE_IN_HANDLER
 #define MUSIC_RATE_IN_HANDLER
 
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "nest_time.h"
+
+namespace MUSIC
+{
+class ContInputPort;
+} // namespace MUSIC
+namespace nest
+{
+class Node;
+} // namespace nest
 
 #ifdef HAVE_MUSIC
 

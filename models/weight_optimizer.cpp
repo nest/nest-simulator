@@ -22,7 +22,12 @@
 
 #include "weight_optimizer.h"
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <cmath>
+
 // nestkernel
+#include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
 

@@ -22,17 +22,22 @@
 
 #include "aeif_cond_alpha_astro.h"
 
+#include <assert.h>
+#include <gsl/gsl_errno.h>
+
+#include "connection_manager.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
-#include <cstdio>
 #include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "exceptions.h"

@@ -20,13 +20,25 @@
  *
  */
 
+#include <algorithm>
+#include <assert.h>
+#include <bits/std_abs.h>
 #include <cmath>
+#include <string>
 
+#include "compose.hpp"
 #include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "layer.h"
+#include "nest_names.h"
 #include "node.h"
 #include "node_collection.h"
+#include "node_manager.h"
+#include "numerics.h"
 #include "parameter.h"
 #include "spatial.h"
+#include "vp_manager.h"
 
 
 namespace nest

@@ -23,18 +23,30 @@
 #ifndef IAF_COND_ALPHA_MC_H
 #define IAF_COND_ALPHA_MC_H
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
-
-// C++ includes:
-#include <vector>
 
 // C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+// C++ includes:
+#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"

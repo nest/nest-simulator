@@ -22,10 +22,27 @@
 
 #include "music_cont_out_proxy.h"
 
+#include <bits/std_abs.h>
+#include <boost/any.hpp>
+#include <limits>
+#include <memory>
+
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
+#include "event_delivery_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "mpi.h"
+#include "music/array_data.hh"
+#include "music/index_map.hh"
+#include "music/permutation_index.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "nest_names.h"
+
 #ifdef HAVE_MUSIC
 
-// C++ includes:
-#include <numeric>
 #include <string>
 
 // Includes from nestkernel:
@@ -36,8 +53,6 @@
 #include "music_manager.h"
 #include "nest_impl.h"
 #include "node_manager.h"
-#include "universal_data_logger_impl.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"

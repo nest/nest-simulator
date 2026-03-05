@@ -23,7 +23,12 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
+#include <string>
+#include <vector>
+
 // Includes from spatial:
+#include "dictionary.h"
+#include "exceptions.h"
 #include "mask.h"
 #include "position.h"
 

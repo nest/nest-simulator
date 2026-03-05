@@ -22,6 +22,8 @@
 
 #include "allocator.h"
 
+#include <cassert>
+
 nest::pool::pool()
   : initial_block_size( 1024 )
   , growth_factor( 1 )

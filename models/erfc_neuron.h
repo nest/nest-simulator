@@ -23,11 +23,23 @@
 #ifndef ERFC_NEURON_H
 #define ERFC_NEURON_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Includes from models:
 #include "binary_neuron.h"
+#include "nest_time.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, binary
 

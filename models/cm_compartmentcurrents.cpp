@@ -21,6 +21,8 @@
  */
 #include "cm_compartmentcurrents.h"
 
+#include <bits/std_abs.h>
+
 
 nest::Na::Na( double v_comp )
   // state variables

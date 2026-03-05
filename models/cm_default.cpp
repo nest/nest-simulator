@@ -22,6 +22,20 @@
 
 #include "cm_default.h"
 
+#include <algorithm>
+#include <assert.h>
+#include <boost/any.hpp>
+#include <utility>
+
+#include "cm_compartmentcurrents.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
+#include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+#include "nest_names.h"
+#include "simulation_manager.h"
+
 namespace nest
 {
 void

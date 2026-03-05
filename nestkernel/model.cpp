@@ -22,14 +22,17 @@
 
 #include "model.h"
 
+#include <assert.h>
+#include <boost/any.hpp>
+
 // Includes from libnestutil:
 #include "compose.hpp"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
 #include "nest_names.h"
+#include "vp_manager.h"
 
 
 namespace nest

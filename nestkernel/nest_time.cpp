@@ -22,9 +22,10 @@
 
 #include "nest_time.h"
 
+#include <limits>
+
 // Generated includes:
 #include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 

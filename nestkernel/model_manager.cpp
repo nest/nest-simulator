@@ -22,31 +22,39 @@
 
 #include "model_manager.h"
 
+#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
+#include <exception>
 #include <iomanip>
 #include <iostream>
+#include <map>
+#include <utility>
 #include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
-#include "connector_model_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "proxynode.h"
-
 // Includes from models:
-#include "models.h"
-
+#include "genericmodel.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "model.h"
 #include "modelrange_manager.h"
+#include "models.h"
+#include "nest_names.h"
+#include "node.h"
+#include "secondary_event.h"
+#include "vp_manager.h"
 
 namespace nest
 {
+class TimeConverter;
 
 ModelManager::ModelManager()
   : node_models_()

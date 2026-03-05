@@ -23,6 +23,7 @@
 #ifndef TARGET_TABLE_H
 #define TARGET_TABLE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <iostream>
@@ -37,6 +38,7 @@
 
 namespace nest
 {
+class TargetData;
 
 /**
  * This data structure stores all targets of the local neurons.

@@ -22,11 +22,12 @@
 
 #include "device.h"
 
+#include <boost/any.hpp>
+
 // Includes from nestkernel:
 #include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "node.h"
 
 
 /* ----------------------------------------------------------------

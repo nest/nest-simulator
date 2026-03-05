@@ -22,10 +22,12 @@
 
 #include "connection_id.h"
 
-// Includes from nestkernel:
-#include "nest_names.h"
+#include <boost/any.hpp>
+#include <ostream>
 
+// Includes from nestkernel:
 #include "dictionary.h"
+#include "nest_names.h"
 
 namespace nest
 {

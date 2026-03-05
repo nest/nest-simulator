@@ -22,9 +22,18 @@
 
 #include "archiving_node.h"
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <cmath>
+#include <iterator>
+#include <string>
+
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 
 
 namespace nest

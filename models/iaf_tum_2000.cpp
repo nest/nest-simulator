@@ -22,16 +22,21 @@
 
 #include "iaf_tum_2000.h"
 
+#include <array>
+#include <assert.h>
+#include <cmath>
+
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "ring_buffer_impl.h"
+#include "simulation_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map

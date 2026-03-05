@@ -23,11 +23,16 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
+#include <stddef.h>
 // C++ includes:
+#include <deque>
 #include <fstream>
+#include <string>
 #include <vector>
 
 // Includes from models:
+#include "block_vector.h"
+#include "nest_types.h"
 #include "weight_recorder.h"
 
 #ifdef HAVE_SIONLIB
@@ -41,6 +46,8 @@
 #include "source_table.h"
 #include "spikecounter.h"
 
+class Dictionary;
+
 
 namespace nest
 {
@@ -48,6 +55,13 @@ namespace nest
 class ConnectorModel;
 template < typename ConnectionT >
 class GenericConnectorModel;
+class CommonSynapseProperties;
+class ConnectionID;
+class Event;
+class Source;
+class SourceTable;
+class WeightRecorderEvent;
+class spikecounter;
 
 /**
  * Base class to allow storing Connectors for different synapse types

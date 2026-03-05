@@ -23,15 +23,18 @@
 
 #include "hh_psc_alpha.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

@@ -23,16 +23,29 @@
 #ifndef IAF_PSC_EXP_MULTISYNAPSE_H
 #define IAF_PSC_EXP_MULTISYNAPSE_H
 
+#include <boost/any.hpp>
+#include <math.h>
+#include <stddef.h>
 // Generated includes:
+#include <map>
+#include <numeric>
 #include <sstream>
+#include <string>
+#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
+#include "universal_data_logger.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest

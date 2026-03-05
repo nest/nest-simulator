@@ -23,20 +23,28 @@
 #ifndef CONNECTION_MANAGER_H
 #define CONNECTION_MANAGER_H
 
+#include <assert.h>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <deque>
+#include <map>
 #include <string>
+#include <utility>
+#include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "manager_interface.h"
 #include "numerics.h"
 #include "stopwatch_impl.h"
-
 // Includes from nestkernel:
 #include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connector_base.h"
+#include "kernel_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
@@ -44,6 +52,7 @@
 #include "send_buffer_position.h"
 #include "source_table.h"
 #include "spike_data.h"
+#include "stopwatch.h"
 #include "target_table.h"
 #include "target_table_devices.h"
 
@@ -63,6 +72,11 @@ class ThirdOutBuilder;
 class ThirdInBuilder;
 class Time;
 class TimeConverter;
+class ConnectorModel;
+class Target;
+class TargetData;
+class TargetSendBufferPosition;
+class spikecounter;
 
 class ConnectionManager : public ManagerInterface
 {

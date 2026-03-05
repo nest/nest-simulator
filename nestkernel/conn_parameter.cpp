@@ -22,9 +22,18 @@
 
 #include "conn_parameter.h"
 
-// Includes from nestkernel:
-#include "kernel_manager.h"
-#include "nest_names.h"
+#include <boost/any.hpp>
+#include <boost/type_index/type_index_facade.hpp>
+#include <memory>
+#include <string>
+
+#include "dictionary.h"
+#include "exceptions.h"
+
+namespace nest
+{
+class Node;
+} // namespace nest
 
 
 nest::ConnParameter*

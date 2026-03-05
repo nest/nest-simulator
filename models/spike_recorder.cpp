@@ -22,14 +22,18 @@
 
 #include "spike_recorder.h"
 
+#include <assert.h>
+#include <vector>
 
 // Includes from nestkernel:
+#include "event.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
 #include "node_manager.h"
 #include "recording_backend.h"
+
+class Dictionary;
 
 void
 nest::register_spike_recorder( const std::string& name )

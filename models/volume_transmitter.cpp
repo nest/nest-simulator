@@ -22,6 +22,7 @@
 
 #include "volume_transmitter.h"
 
+#include <boost/any.hpp>
 
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
@@ -29,9 +30,11 @@
 #include "nest_impl.h"
 #include "simulation_manager.h"
 #include "spikecounter.h"
-
 // Includes from libnestutil:
+#include "connection_manager.h"
 #include "dict_util.h"
+#include "dictionary.h"
+#include "event.h"
 
 
 void

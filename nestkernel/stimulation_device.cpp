@@ -23,10 +23,14 @@
 
 // Includes from nestkernel:
 #include "stimulation_device.h"
+
+#include <boost/any.hpp>
+#include <map>
+#include <nest_names.h>
+
+#include "compose.hpp"
 #include "io_manager.h"
 #include "kernel_manager.h"
-
-#include <nest_names.h>
 
 
 nest::StimulationDevice::StimulationDevice()

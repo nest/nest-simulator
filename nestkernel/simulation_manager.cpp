@@ -23,29 +23,46 @@
 #include "simulation_manager.h"
 
 // C includes:
+#include <boost/any.hpp>
 #include <sys/time.h>
-
 // C++ includes:
+#include <algorithm>
+#include <cmath>
+#include <exception>
 #include <iomanip>
+#include <iostream>
 #include <limits>
+#include <sstream>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "numerics.h"
-
 // Includes from nestkernel:
+#include "block_vector.h"
+#include "config.h"
+#include "connection_manager.h"
+#include "dictionary.h"
 #include "event_delivery_manager.h"
+#include "exceptions.h"
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
 #include "music_manager.h"
+#include "nest_names.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "node.h"
 #include "node_manager.h"
 #include "random_manager.h"
 #include "sp_manager.h"
+#include "sparse_node_array.h"
+#include "stopwatch_impl.h"
+#include "vp_manager.h"
 
 
 nest::SimulationManager::SimulationManager()

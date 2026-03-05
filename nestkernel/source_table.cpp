@@ -20,16 +20,29 @@
  *
  */
 
-// C++ includes:
-#include <iostream>
+#include <algorithm>
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
 
 // Includes from nestkernel:
+#include "block_vector.h"
 #include "connection_manager.h"
+#include "connector_model.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "mpi_manager.h"
+#include "secondary_event.h"
+#include "simulation_manager.h"
+#include "source.h"
 #include "source_table.h"
-
-#include "connector_model.h"
+#include "spike_data.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
+#include "target_data.h"
+#include "vp_manager.h"
 
 nest::SourceTable::SourceTable()
 {

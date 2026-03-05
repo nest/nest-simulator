@@ -23,16 +23,19 @@
 #ifndef SPIKE_DATA_H
 #define SPIKE_DATA_H
 
+#include <stddef.h>
 // C++ includes
 #include <cassert>
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "static_assert.h"
 #include "target.h"
 
 
 namespace nest
 {
+class Target;
 
 /**
  * Mark spike transmission status in SpikeData entries.

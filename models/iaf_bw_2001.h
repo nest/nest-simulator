@@ -23,8 +23,27 @@
 #ifndef IAF_BW_2001_H
 #define IAF_BW_2001_H
 
+#include <algorithm>
+#include <assert.h>
+#include <boost/any.hpp>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "simulation_manager.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 #ifdef HAVE_BOOST

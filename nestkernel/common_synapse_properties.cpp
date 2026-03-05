@@ -22,13 +22,20 @@
 
 #include "common_synapse_properties.h"
 
-// Includes from nestkernel:
-#include "connector_model.h"
+#include <boost/any.hpp>
+#include <memory>
+#include <stddef.h>
+#include <string>
+
 #include "dictionary.h"
 #include "node.h"
 #include "node_manager.h"
-
 // Includes from models:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "node_collection.h"
+#include "vp_manager.h"
 #include "weight_recorder.h"
 
 namespace nest

@@ -22,15 +22,24 @@
 
 #include "proxynode.h"
 
-// Includes from nestkernel:
-#include "connection.h"
+#include <boost/any.hpp>
+#include <string>
+
+#include "dictionary.h"
 #include "kernel_manager.h"
+#include "model.h"
 #include "model_manager.h"
 #include "nest_names.h"
 
 
 namespace nest
 {
+class DelayedRateConnectionEvent;
+class DiffusionConnectionEvent;
+class GapJunctionEvent;
+class InstantaneousRateConnectionEvent;
+class LearningSignalConnectionEvent;
+class SICEvent;
 
 proxynode::proxynode( size_t node_id, size_t model_id, size_t vp )
   : Node()

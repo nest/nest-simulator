@@ -23,20 +23,25 @@
 // nest models
 #include "eprop_readout_bsshslm_2020.h"
 
+#include <assert.h>
 // C++
+#include <cmath>
 #include <limits>
 
 // libnestutil
 #include "dict_util.h"
-#include "numerics.h"
-
 // nestkernel
+#include "connection_manager.h"
+#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_readout_impl.h"
-#include "eprop_archiving_node_recurrent_impl.h"
+#include "event.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
 
 namespace nest
 {

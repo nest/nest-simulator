@@ -22,10 +22,15 @@
 
 #include "connector_base.h"
 
+#include "common_synapse_properties.h"
 #include "connection_manager.h"
+#include "event.h"
+#include "kernel_manager.h"
+#include "weight_recorder.h"
 
 namespace nest
 {
+class Node;
 
 void
 ConnectorBase::prepare_weight_recorder_event( WeightRecorderEvent& wr_e,

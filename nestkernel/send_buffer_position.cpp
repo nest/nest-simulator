@@ -20,10 +20,13 @@
  *
  */
 
+#include <cassert>
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
-
+#include "mpi_manager.h"
 #include "send_buffer_position.h"
+#include "vp_manager.h"
 
 nest::SendBufferPosition::SendBufferPosition()
   : begin_( kernel::manager< MPIManager >.get_num_processes(), 0 )

@@ -23,6 +23,7 @@
 #ifndef LOGGING_MANAGER_H
 #define LOGGING_MANAGER_H
 
+#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>
@@ -30,6 +31,8 @@
 // Includes from libnestutil:
 #include "dictionary.h"
 #include "manager_interface.h"
+
+class Dictionary;
 
 namespace nest
 {

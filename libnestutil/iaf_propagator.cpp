@@ -22,6 +22,11 @@
 
 #include "iaf_propagator.h"
 
+#include <bits/std_abs.h>
+#include <cmath>
+
+#include "numerics.h"
+
 
 // Just dummy for buffer construction, these objects will never be used
 IAFPropagator::IAFPropagator()

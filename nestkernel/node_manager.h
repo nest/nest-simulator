@@ -23,18 +23,27 @@
 #ifndef NODE_MANAGER_H
 #define NODE_MANAGER_H
 
+#include <assert.h>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <exception>
+#include <iosfwd>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch_impl.h"
-
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "dictionary.h"
+#include "kernel_manager.h"
 #include "nest_types.h"
+#include "node.h"
 #include "node_collection.h"
 #include "sparse_node_array.h"
+#include "stopwatch.h"
+#include "vp_manager.h"
 
 
 namespace nest

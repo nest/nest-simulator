@@ -20,14 +20,15 @@
  *
  */
 #include "source_table_position.h"
-#include "block_vector.h"
-#include "source.h"
+
 #include <cassert>
-#include <iostream>
 #include <vector>
+
+#include "block_vector.h"
 
 namespace nest
 {
+class Source;
 
 SourceTablePosition::SourceTablePosition()
   : tid( -1 )

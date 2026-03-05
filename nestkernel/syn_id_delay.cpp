@@ -22,6 +22,8 @@
 
 #include "syn_id_delay.h"
 
+#include "nest_time.h"
+
 namespace nest
 {
 

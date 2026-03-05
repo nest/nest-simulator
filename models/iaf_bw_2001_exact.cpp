@@ -22,11 +22,17 @@
 
 #include "iaf_bw_2001_exact.h"
 
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
+
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "dict_util.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"

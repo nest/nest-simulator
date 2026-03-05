@@ -43,8 +43,7 @@ set ( nestkernel_sources
       exceptions.h exceptions.cpp
       genericmodel.h
       node_collection.h node_collection.cpp
-      generic_factory.h
-      generic_factory_impl.h
+      generic_factory.h generic_factory_impl.h
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager.cpp model_manager_impl.h

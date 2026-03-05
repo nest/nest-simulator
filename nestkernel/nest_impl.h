@@ -23,6 +23,9 @@
 #ifndef NEST_IMPL_H
 #define NEST_IMPL_H
 
+#include "generic_factory_impl.h"
+#include "kernel_manager.h"
+#include "mask_impl.h"
 #include "model_manager_impl.h"
 #include "nest.h"
 
@@ -41,6 +44,35 @@ void
 register_node_model( const std::string& name, std::string deprecation_info )
 {
   kernel::manager< ModelManager >.template register_node_model< NodeModelT >( name, deprecation_info );
+}
+
+template < class T >
+inline bool
+register_parameter( const std::string& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
+
+template < class T >
+inline bool
+register_mask()
+{
+  return mask_factory_().register_subtype< T >( T::get_name() );
+}
+
+inline bool
+register_mask( const std::string& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+inline MaskPTR
+create_mask( const std::string& name, const Dictionary& d )
+{
+  d.init_access_flags();
+  auto mask = MaskPTR( mask_factory_().create( name, d ) );
+  d.all_entries_accessed( "CreateMask", "specs" );
+  return mask;
 }
 
 }

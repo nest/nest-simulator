@@ -20,7 +20,7 @@
  *
  */
 
-#include "nest.h"
+#include "nest_impl.h"
 
 // C++ includes:
 #include <cassert>
@@ -29,6 +29,7 @@
 #include "connection_manager.h"
 #include "dictionary.h"
 #include "exceptions.h"
+#include "generic_factory_impl.h"
 #include "grid_mask.h"
 #include "io_manager.h"
 #include "kernel_manager.h"

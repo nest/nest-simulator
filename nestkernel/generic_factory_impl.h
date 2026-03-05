@@ -24,35 +24,37 @@
 #define GENERIC_FACTORY_IMPL_H
 
 #include "generic_factory.h"
+#include "grid_mask_impl.h"
+#include "mask_impl.h"
 
 namespace nest
 {
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const Name& name, const Dictionary& d ) const
+GenericFactory< BaseT >::create( const std::string& name, const Dictionary& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
   {
     return ( i->second )( d );
   }
-  throw UndefinedName( name.toString() );
+  throw UndefinedName( name );
 }
 
 template < class BaseT >
 template < class T >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name )
+GenericFactory< BaseT >::register_subtype( const std::string& name )
 {
   return register_subtype( name, new_from_dict_< T > );
 }
 
 template < class BaseT >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction creator )
+GenericFactory< BaseT >::register_subtype( const std::string& name, CreatorFunction creator )
 {
-  return associations_.insert( std::pair< Name, CreatorFunction >( name, creator ) ).second;
+  return associations_.insert( std::pair< std::string, CreatorFunction >( name, creator ) ).second;
 }
 
 template < class BaseT >
@@ -62,7 +64,6 @@ GenericFactory< BaseT >::new_from_dict_( const Dictionary& d )
 {
   return new T( d );
 }
-
 
 } // namespace nest
 

@@ -30,7 +30,6 @@
 // Includes from nestkernel:
 #include "connection_id.h"
 #include "generic_factory.h"
-#include "kernel_manager.h"
 #include "mask.h"
 #include "parameter.h"
 
@@ -255,35 +254,6 @@ NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection
 
 // for debugging and testing mostly
 std::vector< size_t > node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection );
-
-template < class T >
-inline bool
-register_parameter( const std::string& name )
-{
-  return parameter_factory_().register_subtype< T >( name );
-}
-
-template < class T >
-inline bool
-register_mask()
-{
-  return mask_factory_().register_subtype< T >( T::get_name() );
-}
-
-inline bool
-register_mask( const std::string& name, MaskCreatorFunction creator )
-{
-  return mask_factory_().register_subtype( name, creator );
-}
-
-inline MaskPTR
-create_mask( const std::string& name, const Dictionary& d )
-{
-  d.init_access_flags();
-  auto mask = MaskPTR( mask_factory_().create( name, d ) );
-  d.all_entries_accessed( "CreateMask", "specs" );
-  return mask;
-}
 
 void message( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t );
 

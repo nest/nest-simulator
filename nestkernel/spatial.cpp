@@ -28,16 +28,14 @@
 #include <ostream>
 #include <string>
 
-// Includes from libnestutil:
-#include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "exceptions.h"
-#include "grid_mask.h"
+#include "grid_mask_impl.h"
 #include "kernel_manager.h"
-#include "logging_manager.h"
+#include "mask_impl.h"
 #include "nest.h"
+#include "nest_impl.h"
 
 
 namespace nest

@@ -855,7 +855,7 @@ nest::SimulationManager::update_()
 #ifdef CYCLE_TIMERS
   double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data();
   long start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
-#endif 
+#endif
 
 // parallel section begins
 #pragma omp parallel
